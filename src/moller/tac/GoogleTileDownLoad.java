@@ -12,6 +12,8 @@ import java.nio.channels.FileChannel;
 
 public class GoogleTileDownLoad {
 	
+	public static final String SECURESTRING = "Galileo"; 
+	
 	public static void getImage(int x, int y, int theZoomValue, File destinationDirectory, int server, boolean isAtlasDownload) throws IOException {
 
 		TileStore ts = TileStore.getInstance();
@@ -68,12 +70,23 @@ public class GoogleTileDownLoad {
 			
 			String url = "";
 			
+			int staticEndDotCom = 0;
+			staticEndDotCom = s.getMapsGoogleCom().indexOf("&x");
+			
+			int staticDituDotCom = 0;
+			staticDituDotCom = s.getDituGoogleCom().indexOf("&x");
+			
+			int index = calculateSecureWordLength(x, y);
+			int serverC = calculateSeverNumber(x, y);
+			
+			String secureSuffix = SECURESTRING.substring(0, index);
+			
 			if (googleDownloadSite.equals("maps.google.com")) {
-				url = "http://mt" + server + s.getMapsGoogleCom().substring(10,39) + "x=" + x + "&y=" + y + "&zoom=" + theZoomValue;
+				url = "http://mt" + serverC + s.getMapsGoogleCom().substring(11, staticEndDotCom) + "&x=" + x + "&y=" + y + "&z=" + theZoomValue + "&s=" + secureSuffix;
 			}
 			
 			else if (googleDownloadSite.equals("ditu.google.com")) {
-				url = s.getDituGoogleCom() + "x=" + x + "&y=" + y + "&zoom=" + theZoomValue;
+				url = "http://mt" + serverC + s.getDituGoogleCom().substring(10, staticDituDotCom) + "&x=" + x + "&y=" + y + "&z=" + theZoomValue + "&s=" + secureSuffix;
 			}
 				
 			URL               u   = new URL(url) ;
@@ -102,6 +115,8 @@ public class GoogleTileDownLoad {
 					outputStream.write(buffer,0,bytes) ;
 				}
 				outputStream.close();
+			} else {
+				System.out.println("Wrong URL to image");
 			}
 			huc.disconnect();
 			
@@ -134,5 +149,13 @@ public class GoogleTileDownLoad {
 				ts.add(theZoomValue, "y" + y + "x" + x + ".png", s.getSelectedGoogleDownloadSite());
 			}
 		}
+	}
+	
+	private static int calculateSecureWordLength(int x, int y) {
+		return ((x * 3) + y ) % 8;
+	}
+	
+	private static int calculateSeverNumber (int x, int y) {
+		return ((2 * y) + x) % 4;
 	}
 }

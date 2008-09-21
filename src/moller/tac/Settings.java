@@ -113,8 +113,8 @@ public class Settings {
 	public void createDefaultSettingsFile() throws IOException {
 		p.setProperty("tile.store.enabled", "true");
 		p.setProperty("google.download.site", "maps.google.com");
-		p.setProperty("ditu.google.com", "http://mt1.google.cn/googlechina/maptile?v");
-		p.setProperty("maps.google.com", "http://mt0.google.com/mt?n");
+		p.setProperty("ditu.google.com", "http://mt0.google.cn/mt?v");
+		p.setProperty("maps.google.com", "http://mt0.google.com/mt/v=nq.83&hl=sv");
 		p.setProperty("maps.size", "2048");
 		this.store();
 	}

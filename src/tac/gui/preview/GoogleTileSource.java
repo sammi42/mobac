@@ -46,7 +46,7 @@ public class GoogleTileSource {
 		private static int SERVER_NUM = 0;
 
 		public int getMaxZoom() {
-			return 16;
+			return 20;
 		}
 
 		public String getName() {

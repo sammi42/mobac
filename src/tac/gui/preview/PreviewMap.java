@@ -15,7 +15,9 @@ import javax.swing.JComboBox;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -45,7 +47,10 @@ public class PreviewMap extends JMapViewer {
 
 	public PreviewMap() {
 		super();
+		tileCache = new MemoryTileCache();
+		((MemoryTileCache) tileCache).setCacheSize(500);
 		mapMarkersVisible = false;
+		tileLoader = new OsmTileLoader(this);
 		gridSizeSelector = new JComboBox();
 		gridSizeSelector.setEditable(false);
 		gridSizeSelector.setBounds(40, 10, 100, 20);
@@ -84,7 +89,7 @@ public class PreviewMap extends JMapViewer {
 		if (gridZoom == this.gridZoom)
 			return;
 		this.gridZoom = gridZoom;
-		int gridZoomDiff = MAX_ZOOM - gridZoom;
+		int gridZoomDiff = 20 - gridZoom;
 		gridFactor = 256 << gridZoomDiff;
 		updateGridValues();
 		if (iSelectionRectStart != null && iSelectionRectEnd != null) {
@@ -191,7 +196,7 @@ public class PreviewMap extends JMapViewer {
 		int x_2 = OsmMercator.LonToX(ms.lon_min, zoom);
 		int y_1 = OsmMercator.LatToY(ms.lat_max, zoom);
 		int y_2 = OsmMercator.LatToY(ms.lat_min, zoom);
-		pStart.x = Math.min(x_1, x_2); 
+		pStart.x = Math.min(x_1, x_2);
 		pStart.y = Math.min(y_1, y_2);
 		pEnd.x = Math.max(x_1, x_2);
 		pEnd.y = Math.max(y_1, y_2);

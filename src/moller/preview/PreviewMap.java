@@ -46,11 +46,13 @@ public class PreviewMap extends JMapViewer {
 		gridSizeSelector.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				GridZoom g = (GridZoom)gridSizeSelector.getSelectedItem();
+				GridZoom g = (GridZoom) gridSizeSelector.getSelectedItem();
+				if (g == null)
+					return;
 				setGridZoom(g.getZoom());
 				repaint();
 			}
-			
+
 		});
 		add(gridSizeSelector);
 		new PreviewMapController(this);
@@ -61,8 +63,8 @@ public class PreviewMap extends JMapViewer {
 	public void setTileSource(TileSource arg0) {
 		super.setTileSource(arg0);
 		gridSizeSelector.removeAllItems();
-		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom()+1);
-		for (int i=0; i<tileSource.getMaxZoom(); i++) {
+		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom() + 1);
+		for (int i = tileSource.getMaxZoom(); i >=0; i--) {
 			gridSizeSelector.addItem(new GridZoom(i));
 		}
 	}

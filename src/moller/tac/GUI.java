@@ -47,9 +47,13 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import moller.preview.GoogleTileSource;
 import moller.preview.MapSelectionListener;
+import moller.preview.OpenStreetMapTileSource;
 import moller.preview.PreviewMap;
 import moller.tac.utilities.PersistentProfiles;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class GUI extends JFrame implements MapSelectionListener {
 
@@ -101,8 +105,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private JComboBox tileSizeWidthComboBox;
 	private JComboBox tileSizeHeightComboBox;
-
-	private GridLayout previewLayout;
+	private JComboBox mapSource;
 
 	private Vector<Integer> tileSizeValues;
 	private Vector<Profile> profilesVector;
@@ -178,7 +181,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
-		leftPanel.setPreferredSize(new Dimension(280, 750));
+		leftPanel.setPreferredSize(new Dimension(280, 780));
 
 		coordinatesLabel = new JLabel("COORDINATES");
 
@@ -232,6 +235,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel.add(previewButton);
 
+		mapSource = new JComboBox(new Object[] {
+				new GoogleTileSource.GoogleMaps(),
+				new GoogleTileSource.GoogleEarth(),
+				new OpenStreetMapTileSource.Mapnik(),
+				new OpenStreetMapTileSource.TilesAtHome(),
+				new OpenStreetMapTileSource.CycleMap() });
+		mapSource.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				previewMap.setTileSource((TileSource) mapSource
+						.getSelectedItem());
+			}
+		});
 		// Zoom Panel
 
 		String s = "ZOOM LEVELS (0, 1, 2 ..... ";
@@ -372,6 +388,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		leftPanel.add(coordinatesLabel, gbc);
 		leftPanel.add(coordinatesPanel, gbc);
+		leftPanel.add(new JLabel("Map Source"), gbc);
+		leftPanel.add(mapSource, gbc);
 		leftPanel.add(zoomLevelLabel, gbc);
 		leftPanel.add(amountOfTilesLabel, gbc);
 		leftPanel.add(zoomLevelPanel, gbc);

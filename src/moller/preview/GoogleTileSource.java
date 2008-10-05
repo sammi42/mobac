@@ -31,8 +31,14 @@ public class GoogleTileSource {
 
 		public String getTileUrl(int zoom, int x, int y) {
 			return String.format(GOOGLE_MAPS, new Object[] {
-					getNextServerNum(), "de", x, y, zoom});
+					getNextServerNum(), "de", x, y, zoom });
 		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+
 	}
 
 	public static class GoogleEarth implements TileSource {
@@ -62,6 +68,10 @@ public class GoogleTileSource {
 					getNextServerNum(), "de", x, y, zoom });
 		}
 
+		@Override
+		public String toString() {
+			return getName();
+		}
 	}
 
 }

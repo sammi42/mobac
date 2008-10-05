@@ -8,14 +8,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JComboBox;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+
+import tac.program.MapSelection;
 
 public class PreviewMap extends JMapViewer {
 	private static final long serialVersionUID = 1L;
@@ -40,9 +45,10 @@ public class PreviewMap extends JMapViewer {
 
 	public PreviewMap() {
 		super();
+		mapMarkersVisible = false;
 		gridSizeSelector = new JComboBox();
 		gridSizeSelector.setEditable(false);
-		gridSizeSelector.setBounds(40, 10, 80, 20);
+		gridSizeSelector.setBounds(40, 10, 100, 20);
 		gridSizeSelector.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -51,6 +57,7 @@ public class PreviewMap extends JMapViewer {
 					return;
 				setGridZoom(g.getZoom());
 				repaint();
+				updateMapSelection();
 			}
 
 		});
@@ -64,7 +71,7 @@ public class PreviewMap extends JMapViewer {
 		super.setTileSource(arg0);
 		gridSizeSelector.removeAllItems();
 		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom() + 1);
-		for (int i = tileSource.getMaxZoom(); i >=0; i--) {
+		for (int i = tileSource.getMaxZoom(); i >= 0; i--) {
 			gridSizeSelector.addItem(new GridZoom(i));
 		}
 	}
@@ -175,8 +182,29 @@ public class PreviewMap extends JMapViewer {
 				- (getHeight() / 2));
 	}
 
-	public void setSelection(Point aStart, Point aEnd,
-			boolean selectionInProgress) {
+	public void setSelection(MapSelection ms) {
+		if (ms.lat_max == ms.lat_min || ms.lon_max == ms.lon_min)
+			return;
+		Point pEnd = new Point();
+		Point pStart = new Point();
+		int x_1 = OsmMercator.LonToX(ms.lon_max, zoom);
+		int x_2 = OsmMercator.LonToX(ms.lon_min, zoom);
+		int y_1 = OsmMercator.LatToY(ms.lat_max, zoom);
+		int y_2 = OsmMercator.LatToY(ms.lat_min, zoom);
+		pStart.x = Math.min(x_1, x_2); 
+		pStart.y = Math.min(y_1, y_2);
+		pEnd.x = Math.max(x_1, x_2);
+		pEnd.y = Math.max(y_1, y_2);
+		setSelectionByTilePoint(pStart, pEnd, true);
+		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
+		mml.add(new MapMarkerDot(ms.lat_max, ms.lon_max));
+		mml.add(new MapMarkerDot(ms.lat_min, ms.lon_min));
+		setMapMarkerList(mml);
+		setDisplayToFitMapMarkers();
+	}
+
+	public void setSelectionByScreenPoint(Point aStart, Point aEnd,
+			boolean notifyListeners) {
 		if (aStart == null || aEnd == null)
 			return;
 		Point p_max = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y,
@@ -188,6 +216,11 @@ public class PreviewMap extends JMapViewer {
 
 		Point pEnd = new Point(p_max.x + tlc.x, p_max.y + tlc.y);
 		Point pStart = new Point(p_min.x + tlc.x, p_min.y + tlc.y);
+		setSelectionByTilePoint(pStart, pEnd, notifyListeners);
+	}
+
+	public void setSelectionByTilePoint(Point pStart, Point pEnd,
+			boolean notifyListeners) {
 
 		int zoomDiff = MAX_ZOOM - zoom;
 
@@ -211,31 +244,35 @@ public class PreviewMap extends JMapViewer {
 		iSelectionRectEnd = pEnd;
 		gridSelectionStart = pStart;
 		gridSelectionEnd = pEnd;
-		if (!selectionInProgress) {
-			Point2D.Double max = new Point2D.Double();
-			Point2D.Double min = new Point2D.Double();
-
-			int zoomDiff1 = PreviewMap.MAX_ZOOM - gridZoom;
-			if (iSelectionRectStart == null || iSelectionRectEnd == null)
-				return;
-			int x_min = (iSelectionRectStart.x >> zoomDiff1);
-			int y_min = (iSelectionRectStart.y >> zoomDiff1);
-			int x_max = (iSelectionRectEnd.x >> zoomDiff1);
-			int y_max = (iSelectionRectEnd.y >> zoomDiff1);
-			// x_min = x_min >> 8 << 8;
-			// y_min = y_min >> 8 << 8;
-			// x_max = (x_max + 255) >> 8 << 8;
-			// y_max = (y_max + 255) >> 8 << 8;
-
-			max.x = OsmMercator.XToLon(x_max, gridZoom);
-			max.y = OsmMercator.YToLat(y_max, gridZoom);
-			min.x = OsmMercator.XToLon(x_min, gridZoom);
-			min.y = OsmMercator.YToLat(y_min, gridZoom);
-			for (MapSelectionListener msp : mapSelectionListeners) {
-				msp.selectionChanged(max, min);
-			}
+		if (notifyListeners) {
+			updateMapSelection();
 		}
 		repaint();
+	}
+
+	protected void updateMapSelection() {
+		Point2D.Double max = new Point2D.Double();
+		Point2D.Double min = new Point2D.Double();
+
+		int zoomDiff1 = PreviewMap.MAX_ZOOM - gridZoom;
+		if (iSelectionRectStart == null || iSelectionRectEnd == null)
+			return;
+		int x_min = (gridSelectionStart.x >> zoomDiff1);
+		int y_min = (gridSelectionStart.y >> zoomDiff1);
+		int x_max = (gridSelectionEnd.x >> zoomDiff1);
+		int y_max = (gridSelectionEnd.y >> zoomDiff1);
+		// x_min = x_min >> 8 << 8;
+		// y_min = y_min >> 8 << 8;
+		// x_max = (x_max + 255) >> 8 << 8;
+		// y_max = (y_max + 255) >> 8 << 8;
+
+		max.x = OsmMercator.XToLon(x_max, gridZoom);
+		min.y = OsmMercator.YToLat(y_max, gridZoom);
+		min.x = OsmMercator.XToLon(x_min, gridZoom);
+		max.y = OsmMercator.YToLat(y_min, gridZoom);
+		for (MapSelectionListener msp : mapSelectionListeners) {
+			msp.selectionChanged(max, min);
+		}
 	}
 
 	public void addMapSelectionListener(MapSelectionListener msl) {

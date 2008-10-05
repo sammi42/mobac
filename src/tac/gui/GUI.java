@@ -47,7 +47,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.preview.GoogleTileSource;
@@ -57,6 +56,7 @@ import tac.gui.preview.PreviewMap;
 import tac.program.GoogleDownLoad;
 import tac.program.GoogleTileDownLoad;
 import tac.program.GoogleTileUtils;
+import tac.program.MapSelection;
 import tac.program.OziToAtlas;
 import tac.program.ProcessValues;
 import tac.program.Profile;
@@ -87,7 +87,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JButton createAtlasButton;
 	private JButton deleteProfileButton;
 	private JButton saveAsProfileButton;
-	private JButton previewButton;
+	private JButton previewSelectionButton;
 	private JButton settingsGUIButton;
 
 	private JToggleButton chooseProfileButton;
@@ -107,8 +107,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private JTextField latMinTextField;
 	private JTextField latMaxTextField;
-	private JTextField longMinTextField;
-	private JTextField longMaxTextField;
+	private JTextField lonMinTextField;
+	private JTextField lonMaxTextField;
 	private JTextField tileSizeWidthTextField;
 	private JTextField tileSizeHeightTextField;
 	private JTextField atlasNameTextField;
@@ -214,16 +214,16 @@ public class GUI extends JFrame implements MapSelectionListener {
 		longMinLabel = new JLabel("Longitude Min");
 		longMinLabel.setBounds(20, 70, 100, 20);
 
-		longMinTextField = new JTextField();
-		longMinTextField.setBounds(5, 90, 100, 20);
-		longMinTextField.setActionCommand("longMinTextField");
+		lonMinTextField = new JTextField();
+		lonMinTextField.setBounds(5, 90, 100, 20);
+		lonMinTextField.setActionCommand("longMinTextField");
 
 		longMaxLabel = new JLabel("Longitude Max");
 		longMaxLabel.setBounds(185, 70, 100, 20);
 
-		longMaxTextField = new JTextField();
-		longMaxTextField.setBounds(162, 90, 100, 20);
-		longMaxTextField.setActionCommand("longMaxTextField");
+		lonMaxTextField = new JTextField();
+		lonMaxTextField.setBounds(162, 90, 100, 20);
+		lonMaxTextField.setActionCommand("longMaxTextField");
 
 		latMinLabel = new JLabel("Latitude Min");
 		latMinLabel.setBounds(112, 120, 100, 20);
@@ -232,8 +232,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		latMinTextField.setBounds(88, 140, 100, 20);
 		latMinTextField.setActionCommand("latMinTextField");
 
-		previewButton = new JButton("Preview");
-		previewButton.setBounds(88, 170, 100, 20);
+		previewSelectionButton = new JButton("Display selection");
+		previewSelectionButton.setBounds(78, 170, 120, 20);
 
 		coordinatesPanel.add(latMinLabel);
 		coordinatesPanel.add(latMaxLabel);
@@ -242,10 +242,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel.add(latMinTextField);
 		coordinatesPanel.add(latMaxTextField);
-		coordinatesPanel.add(longMinTextField);
-		coordinatesPanel.add(longMaxTextField);
+		coordinatesPanel.add(lonMinTextField);
+		coordinatesPanel.add(lonMaxTextField);
 
-		coordinatesPanel.add(previewButton);
+		coordinatesPanel.add(previewSelectionButton);
 
 		mapSource = new JComboBox(new Object[] {
 				new GoogleTileSource.GoogleMaps(),
@@ -450,7 +450,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 		deleteProfileButton.addActionListener(new ButtonListener());
 		settingsGUIButton.addActionListener(new ButtonListener());
 		createAtlasButton.addActionListener(new ButtonListener());
-		previewButton.addActionListener(new ButtonListener());
+		previewSelectionButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				previewSelection();
+
+			}
+		});
 		// latMinTextField.getDocument().addDocumentListener(
 		// new JTextFieldListener());
 		// latMaxTextField.getDocument().addDocumentListener(
@@ -475,6 +481,52 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		topLeftCorner.addActionListener(new JPopupMenuListener());
 		bottomRightCorner.addActionListener(new JPopupMenuListener());
+	}
+
+	/**
+	 * Reads the entered coordinates and 
+	 */
+	protected void previewSelection() {
+		checkCoordinates();
+		MapSelection ms = getMapSelectionCoordinates();
+		previewMap.setSelection(ms);
+	}
+
+	protected void checkCoordinates() {
+		MapSelection ms = getMapSelectionCoordinates();
+		latMaxTextField.setText(Utilities.FORMAT_6_DEC.format(ms.lat_max));
+		latMinTextField.setText(Utilities.FORMAT_6_DEC.format(ms.lat_min));
+		lonMaxTextField.setText(Utilities.FORMAT_6_DEC.format(ms.lon_max));
+		lonMinTextField.setText(Utilities.FORMAT_6_DEC.format(ms.lon_min));
+	}
+
+	protected MapSelection getMapSelectionCoordinates() {
+		MapSelection ms = new MapSelection();
+		try {
+			ms.lat_max = Utilities.FORMAT_6_DEC
+					.parse(latMaxTextField.getText()).doubleValue();
+		} catch (ParseException e) {
+			ms.lat_max = 0.0;
+		}
+		try {
+			ms.lat_min = Utilities.FORMAT_6_DEC
+					.parse(latMinTextField.getText()).doubleValue();
+		} catch (ParseException e) {
+			ms.lat_min = 0.0;
+		}
+		try {
+			ms.lon_max = Utilities.FORMAT_6_DEC
+					.parse(lonMaxTextField.getText()).doubleValue();
+		} catch (ParseException e) {
+			ms.lon_max = 0.0;
+		}
+		try {
+			ms.lon_min = Utilities.FORMAT_6_DEC
+					.parse(lonMinTextField.getText()).doubleValue();
+		} catch (ParseException e) {
+			ms.lon_min = 0.0;
+		}
+		return ms;
 	}
 
 	public void initiateProgram() {
@@ -518,12 +570,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		String errorText = "";
 
-		if (longMinTextField.getText().length() < 1) {
+		if (lonMinTextField.getText().length() < 1) {
 			errorText = "A value of \"Longitude Min\" must be entered \n";
 		} else {
 			try {
 				Double temp = Utilities.FORMAT_6_DEC.parse(
-						longMinTextField.getText()).doubleValue();
+						lonMinTextField.getText()).doubleValue();
 
 				if (temp < -179 || temp > 179) {
 					errorText += "Value of \"Longitude Min\" must be between -179 and 179 \n";
@@ -533,12 +585,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 			}
 		}
 
-		if (longMaxTextField.getText().length() < 1) {
+		if (lonMaxTextField.getText().length() < 1) {
 			errorText += "A value of \"Longitude Max\" must be entered \n";
 		} else {
 			try {
 				Double temp = Utilities.FORMAT_6_DEC.parse(
-						longMaxTextField.getText()).doubleValue();
+						lonMaxTextField.getText()).doubleValue();
 
 				if (temp < -179 || temp > 179) {
 					errorText += "Value of \"Longitude Max\" must be between -179 and 179 \n";
@@ -673,9 +725,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 					.doubleValue();
 			latMin = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText())
 					.doubleValue();
-			longMax = Utilities.FORMAT_6_DEC.parse(longMaxTextField.getText())
+			longMax = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText())
 					.doubleValue();
-			longMin = Utilities.FORMAT_6_DEC.parse(longMinTextField.getText())
+			longMin = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText())
 					.doubleValue();
 		} catch (ParseException e) {
 			return false;
@@ -715,16 +767,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			for (int i = 0; i < nrOfLayers; i++) {
 
-				Point topLeft = GoogleTileUtils
-						.toTileXY(
-								Double.parseDouble(latMaxTextField.getText()),
-								Double.parseDouble(longMaxTextField.getText()),
-								zoomLevels[i]);
-				Point bottomRight = GoogleTileUtils
-						.toTileXY(
-								Double.parseDouble(latMinTextField.getText()),
-								Double.parseDouble(longMinTextField.getText()),
-								zoomLevels[i]);
+				Point topLeft = GoogleTileUtils.toTileXY(Double
+						.parseDouble(latMaxTextField.getText()), Double
+						.parseDouble(lonMaxTextField.getText()), zoomLevels[i]);
+				Point bottomRight = GoogleTileUtils.toTileXY(Double
+						.parseDouble(latMinTextField.getText()), Double
+						.parseDouble(lonMinTextField.getText()), zoomLevels[i]);
 
 				totalNrOfTiles = totalNrOfTiles
 						+ Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(
@@ -1036,14 +1084,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				latMaxTextField.setText(Utilities.nrOfDecimals(
 						latMaxApproximitation, 6));
-				longMinTextField.setText(Utilities.nrOfDecimals(
-						selectedLongMin, 6));
+				lonMinTextField.setText(Utilities.nrOfDecimals(selectedLongMin,
+						6));
 				jpm.setVisible(false);
 			} else if (actionCommand.equals("Bottom right corner")) {
 				latMinTextField.setText(Utilities.nrOfDecimals(
 						latMaxApproximitation, 6));
-				longMaxTextField.setText(Utilities.nrOfDecimals(
-						selectedLongMin, 6));
+				lonMaxTextField.setText(Utilities.nrOfDecimals(selectedLongMin,
+						6));
 				jpm.setVisible(false);
 			}
 		}
@@ -1176,16 +1224,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			for (int i = 0; i < nrOfLayers; i++) {
 
-				Point topLeft = GoogleTileUtils
-						.toTileXY(
-								Double.parseDouble(latMaxTextField.getText()),
-								Double.parseDouble(longMaxTextField.getText()),
-								zoomLevels[i]);
-				Point bottomRight = GoogleTileUtils
-						.toTileXY(
-								Double.parseDouble(latMinTextField.getText()),
-								Double.parseDouble(longMinTextField.getText()),
-								zoomLevels[i]);
+				Point topLeft = GoogleTileUtils.toTileXY(Double
+						.parseDouble(latMaxTextField.getText()), Double
+						.parseDouble(lonMaxTextField.getText()), zoomLevels[i]);
+				Point bottomRight = GoogleTileUtils.toTileXY(Double
+						.parseDouble(latMinTextField.getText()), Double
+						.parseDouble(lonMinTextField.getText()), zoomLevels[i]);
 
 				totalNrOfTiles = totalNrOfTiles
 						+ Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(
@@ -1213,10 +1257,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 					Point topLeft = GoogleTileUtils.toTileXY(Double
 							.parseDouble(latMaxTextField.getText()), Double
-							.parseDouble(longMaxTextField.getText()), zoom);
+							.parseDouble(lonMaxTextField.getText()), zoom);
 					Point bottomRight = GoogleTileUtils.toTileXY(Double
 							.parseDouble(latMinTextField.getText()), Double
-							.parseDouble(longMinTextField.getText()), zoom);
+							.parseDouble(lonMinTextField.getText()), zoom);
 
 					int apMax = Utilities
 							.calculateNrOfTiles(new TileXYMinMaxAndZoom(
@@ -1426,9 +1470,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 					theProfile.setLatitudeMin(Double
 							.parseDouble(latMinTextField.getText()));
 					theProfile.setLongitudeMax(Double
-							.parseDouble(longMaxTextField.getText()));
+							.parseDouble(lonMaxTextField.getText()));
 					theProfile.setLongitudeMin(Double
-							.parseDouble(longMinTextField.getText()));
+							.parseDouble(lonMinTextField.getText()));
 
 					boolean[] zoomLevels = new boolean[cbZoom.length];
 					for (int i = 0; i < cbZoom.length; i++) {
@@ -1520,10 +1564,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				latMinTextField.setText(Double.toString(temp.getLatitudeMin()));
 				latMaxTextField.setText(Double.toString(temp.getLatitudeMax()));
-				longMinTextField.setText(Double
-						.toString(temp.getLongitudeMin()));
-				longMaxTextField.setText(Double
-						.toString(temp.getLongitudeMax()));
+				lonMinTextField
+						.setText(Double.toString(temp.getLongitudeMin()));
+				lonMaxTextField
+						.setText(Double.toString(temp.getLongitudeMax()));
 
 				if (temp.getCustomTileSizeWidth() == 0) {
 					tileSizeWidthTextField.setText("");
@@ -1577,8 +1621,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 					createAtlasButton.setText("Wait...");
 					createAtlasButton.setEnabled(false);
-					previewButton.setText("Wait...");
-					previewButton.setEnabled(false);
+					// previewButton.setText("Wait...");
 					GoogleDownLoad.getDownloadString();
 				}
 			};
@@ -1738,8 +1781,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public void selectionChanged(java.awt.geom.Point2D.Double max,
 			java.awt.geom.Point2D.Double min) {
-		longMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.x));
-		longMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.x));
+		lonMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.x));
+		lonMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.x));
 		latMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.y));
 		latMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.y));
 	}

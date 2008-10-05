@@ -14,7 +14,7 @@ public class GridZoom {
 
 	@Override
 	public String toString() {
-		return "Zoom " + zoom;
+		return "Grid zoom " + zoom;
 	}
 
 }

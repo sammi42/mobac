@@ -33,7 +33,7 @@ public class PreviewMapController extends JMapController implements
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
 			if (iStartSelectionPoint != null) {
 				iEndSelectionPoint = e.getPoint();
-				((PreviewMap) map).setSelection(iStartSelectionPoint,
+				((PreviewMap) map).setSelectionByScreenPoint(iStartSelectionPoint,
 						iEndSelectionPoint, true);
 			}
 		}
@@ -46,8 +46,8 @@ public class PreviewMapController extends JMapController implements
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (e.getClickCount() == 1) {
-				((PreviewMap) map).setSelection(iStartSelectionPoint, e
-						.getPoint(), false);
+				((PreviewMap) map).setSelectionByScreenPoint(iStartSelectionPoint, e
+						.getPoint(), true);
 
 				// reset the selections start and end
 				iEndSelectionPoint = null;

@@ -28,7 +28,7 @@
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Main-Class" value="moller.tac.StartGUI" />
+				<attribute name="Main-Class" value="tac.Start" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="build">

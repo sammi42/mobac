@@ -1,24 +1,21 @@
 package moller.tac;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
@@ -26,9 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -45,6 +40,7 @@ import javax.swing.JToggleButton;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -58,6 +54,7 @@ import moller.tac.utilities.PersistentProfiles;
 public class GUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = -8444942802691874960L;
+	private static final String VERSION = "0.9";
 
 	// public static final NumberFormat DF = new DecimalFormat("0.000000");
 
@@ -68,7 +65,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JPanel tileSizePanel;
 	private JPanel atlasNamePanel;
 	private JPanel profilesPanel;
-	private JPanel previewPanel;
 
 	private PreviewMap previewMap;
 
@@ -101,16 +97,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JTextField tileSizeHeightTextField;
 	private JTextField atlasNameTextField;
 
-	private JCheckBox cbOne;
-	private JCheckBox cbTwo;
-	private JCheckBox cbThree;
-	private JCheckBox cbFour;
-	private JCheckBox cbFive;
-	private JCheckBox cbSix;
-	private JCheckBox cbSeven;
-	private JCheckBox cbEight;
-	private JCheckBox cbNine;
-	private JCheckBox cbTen;
+	private JCheckBox[] cbZoom = new JCheckBox[18];
 
 	private JComboBox tileSizeWidthComboBox;
 	private JComboBox tileSizeHeightComboBox;
@@ -121,22 +108,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private Vector<Profile> profilesVector;
 	private Vector<String> profileNamesVector;
 
-	private Double latMax;
-	private Double latMin;
-	private Double longMax;
-	private Double longMin;
-
-	private File preview;
-	private File overlay;
-
 	private JList profilesJList;
 	private Thread downloadThread;
 	private Thread atlasThread;
 	private Thread getGoogleDownloadStringThread;
 
-	private PreviewProgressBar pb;
 	private AtlasProgress ap;
-	private TileXYMinMaxAndZoom tXY;
 	private String fileSeparator;
 
 	private JPopupMenu jpm;
@@ -156,7 +133,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private void createMainFrame() {
 
-		this.setTitle("TrekBuddy Atlas Creator v0.8");
+		this.setTitle("TrekBuddy Atlas Creator v" + VERSION);
 
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension dContent = new Dimension(1000, 768);
@@ -194,16 +171,21 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public void createLeftPanel() {
 
-		leftPanel = new JPanel(null);
-		leftPanel.setPreferredSize(new Dimension(280, 730));
-		leftPanel.setBorder(BorderFactory
-				.createBevelBorder(BevelBorder.LOWERED));
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(2, 5, 2, 2);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+		leftPanel = new JPanel();
+		leftPanel.setLayout(new GridBagLayout());
+		leftPanel.setPreferredSize(new Dimension(280, 750));
 
 		coordinatesLabel = new JLabel("COORDINATES");
-		coordinatesLabel.setBounds(5, 5, 150, 20);
+
+		// Coordinates Panel
 
 		coordinatesPanel = new JPanel(null);
-		coordinatesPanel.setBounds(3, 28, 275, 231);
+		coordinatesPanel.setMinimumSize(new Dimension(270, 200));
 		coordinatesPanel.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 
@@ -215,87 +197,85 @@ public class GUI extends JFrame implements MapSelectionListener {
 		latMaxTextField.setActionCommand("latMaxTextField");
 
 		longMinLabel = new JLabel("Longitude Min");
-		longMinLabel.setBounds(20, 80, 100, 20);
+		longMinLabel.setBounds(20, 70, 100, 20);
 
 		longMinTextField = new JTextField();
-		longMinTextField.setBounds(5, 102, 100, 20);
+		longMinTextField.setBounds(5, 90, 100, 20);
 		longMinTextField.setActionCommand("longMinTextField");
 
 		longMaxLabel = new JLabel("Longitude Max");
-		longMaxLabel.setBounds(190, 80, 100, 20);
+		longMaxLabel.setBounds(185, 70, 100, 20);
 
 		longMaxTextField = new JTextField();
-		longMaxTextField.setBounds(169, 102, 100, 20);
+		longMaxTextField.setBounds(162, 90, 100, 20);
 		longMaxTextField.setActionCommand("longMaxTextField");
 
 		latMinLabel = new JLabel("Latitude Min");
-		latMinLabel.setBounds(112, 150, 100, 20);
+		latMinLabel.setBounds(112, 120, 100, 20);
 
 		latMinTextField = new JTextField();
-		latMinTextField.setBounds(88, 172, 100, 20);
+		latMinTextField.setBounds(88, 140, 100, 20);
 		latMinTextField.setActionCommand("latMinTextField");
 
 		previewButton = new JButton("Preview");
-		previewButton.setBounds(88, 200, 100, 20);
+		previewButton.setBounds(88, 170, 100, 20);
 
-		zoomLevelLabel = new JLabel("ZOOM LEVELS (1, 2, 3 ..... 8, 9, 10)");
-		zoomLevelLabel.setBounds(5, 260, 200, 20);
+		coordinatesPanel.add(latMinLabel);
+		coordinatesPanel.add(latMaxLabel);
+		coordinatesPanel.add(longMinLabel);
+		coordinatesPanel.add(longMaxLabel);
+
+		coordinatesPanel.add(latMinTextField);
+		coordinatesPanel.add(latMaxTextField);
+		coordinatesPanel.add(longMinTextField);
+		coordinatesPanel.add(longMaxTextField);
+
+		coordinatesPanel.add(previewButton);
+
+		// Zoom Panel
+
+		String s = "ZOOM LEVELS (0, 1, 2 ..... ";
+		for (int i = cbZoom.length - 3; i < cbZoom.length; i++) {
+			s += i;
+			if (i != (cbZoom.length - 1))
+				s += ", ";
+		}
+		s += ")";
+		zoomLevelLabel = new JLabel(s);
+		zoomLevelLabel.setAlignmentX(Component.BOTTOM_ALIGNMENT);
 
 		amountOfTilesLabel = new JLabel();
 		amountOfTilesLabel.setBounds(175, 260, 100, 20);
 		amountOfTilesLabel.setHorizontalAlignment(JLabel.RIGHT);
 		amountOfTilesLabel.setToolTipText("Total amount of tiles to download");
 
-		zoomLevelPanel = new JPanel(null);
-		zoomLevelPanel.setBounds(3, 283, 275, 30);
+		zoomLevelPanel = new JPanel(new GridLayout(2, cbZoom.length + 2 / 2, 0,
+				0));
+		zoomLevelPanel.setPreferredSize(new Dimension(280, 30));
 		zoomLevelPanel.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 
-		cbOne = new JCheckBox();
-		cbOne.setBounds(5, 5, 20, 20);
-		cbOne.setToolTipText("Zoom Level 1 (Maximum zoom)");
+		CheckBoxListener cbl = new CheckBoxListener();
 
-		cbTwo = new JCheckBox();
-		cbTwo.setBounds(30, 5, 20, 20);
-		cbTwo.setToolTipText("Zoom Level 2");
-
-		cbThree = new JCheckBox();
-		cbThree.setBounds(55, 5, 20, 20);
-		cbThree.setToolTipText("Zoom Level 3");
-
-		cbFour = new JCheckBox();
-		cbFour.setBounds(80, 5, 20, 20);
-		cbFour.setToolTipText("Zoom Level 4");
-
-		cbFive = new JCheckBox();
-		cbFive.setBounds(105, 5, 20, 20);
-		cbFive.setToolTipText("Zoom Level 5");
-
-		cbSix = new JCheckBox();
-		cbSix.setBounds(130, 5, 20, 20);
-		cbSix.setToolTipText("Zoom Level 6");
-
-		cbSeven = new JCheckBox();
-		cbSeven.setBounds(155, 5, 20, 20);
-		cbSeven.setToolTipText("Zoom Level 7");
-
-		cbEight = new JCheckBox();
-		cbEight.setBounds(180, 5, 20, 20);
-		cbEight.setToolTipText("Zoom Level 8");
-
-		cbNine = new JCheckBox();
-		cbNine.setBounds(205, 5, 20, 20);
-		cbNine.setToolTipText("Zoom Level 9");
-
-		cbTen = new JCheckBox();
-		cbTen.setBounds(230, 5, 20, 20);
-		cbTen.setToolTipText("Zoom Level 10 (Minimum zoom)");
+		for (int i = 0; i < cbZoom.length; i++) {
+			JCheckBox cb = new JCheckBox();
+			cb.setPreferredSize(new Dimension(17, 17));
+			s = "Zoom level " + i;
+			if (i == 0)
+				s += " (Minimum zoom)";
+			if (i == cbZoom.length - 1)
+				s += " (Maximum zoom)";
+			cb.setToolTipText(s);
+			cb.addActionListener(cbl);
+			zoomLevelPanel.add(cb);
+			cbZoom[i] = cb;
+		}
 
 		tileSizeLabel = new JLabel("TILE SIZE (Pixels)");
-		tileSizeLabel.setBounds(5, 316, 100, 20);
+		// tileSizeLabel.setBounds(5, 316, 100, 20);
 
 		tileSizePanel = new JPanel(null);
-		tileSizePanel.setBounds(3, 340, 275, 55);
+		tileSizePanel.setMinimumSize(new Dimension(275, 55));
 		tileSizePanel.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 
@@ -338,7 +318,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		atlasNameLabel.setBounds(5, 400, 100, 20);
 
 		atlasNamePanel = new JPanel(null);
-		atlasNamePanel.setBounds(3, 425, 275, 30);
+		atlasNamePanel.setMinimumSize(new Dimension(275, 30));
 		atlasNamePanel.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 
@@ -350,10 +330,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		profilesLabel.setBounds(5, 460, 100, 20);
 
 		chooseProfileButton = new JToggleButton("UNLOCK/LOCK");
-		chooseProfileButton.setBounds(110, 460, 110, 20);
 
 		profilesPanel = new JPanel(null);
-		profilesPanel.setBounds(3, 485, 275, 191);
+		profilesPanel.setMinimumSize(new Dimension(275, 231));
 		profilesPanel.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 
@@ -367,39 +346,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 		scrollPane.setBounds(5, 5, 264, 180);
 
 		saveAsProfileButton = new JButton("Save as profile");
-		saveAsProfileButton.setBounds(3, 708, 110, 20);
+		saveAsProfileButton.setBounds(3, 195, 110, 25);
 
 		deleteProfileButton = new JButton("Delete profile");
-		deleteProfileButton.setBounds(3, 688, 110, 20);
+		deleteProfileButton.setBounds(159, 195, 110, 25);
 
 		settingsGUIButton = new JButton("Settings");
-		settingsGUIButton.setBounds(179, 688, 100, 20);
 
 		createAtlasButton = new JButton("Create Atlas");
-		createAtlasButton.setBounds(179, 708, 100, 20);
-
-		coordinatesPanel.add(latMinLabel);
-		coordinatesPanel.add(latMaxLabel);
-		coordinatesPanel.add(longMinLabel);
-		coordinatesPanel.add(longMaxLabel);
-
-		coordinatesPanel.add(latMinTextField);
-		coordinatesPanel.add(latMaxTextField);
-		coordinatesPanel.add(longMinTextField);
-		coordinatesPanel.add(longMaxTextField);
-
-		coordinatesPanel.add(previewButton);
-
-		zoomLevelPanel.add(cbOne);
-		zoomLevelPanel.add(cbTwo);
-		zoomLevelPanel.add(cbThree);
-		zoomLevelPanel.add(cbFour);
-		zoomLevelPanel.add(cbFive);
-		zoomLevelPanel.add(cbSix);
-		zoomLevelPanel.add(cbSeven);
-		zoomLevelPanel.add(cbEight);
-		zoomLevelPanel.add(cbNine);
-		zoomLevelPanel.add(cbTen);
 
 		tileSizePanel.add(tileSizeWidth);
 		tileSizePanel.add(tileSizeWidthComboBox);
@@ -413,30 +367,28 @@ public class GUI extends JFrame implements MapSelectionListener {
 		atlasNamePanel.add(atlasNameTextField);
 
 		profilesPanel.add(scrollPane);
+		profilesPanel.add(saveAsProfileButton, gbc);
+		profilesPanel.add(deleteProfileButton, gbc);
 
-		leftPanel.add(coordinatesLabel);
-		leftPanel.add(coordinatesPanel);
+		leftPanel.add(coordinatesLabel, gbc);
+		leftPanel.add(coordinatesPanel, gbc);
+		leftPanel.add(zoomLevelLabel, gbc);
+		leftPanel.add(amountOfTilesLabel, gbc);
+		leftPanel.add(zoomLevelPanel, gbc);
+		leftPanel.add(tileSizeLabel, gbc);
+		leftPanel.add(tileSizePanel, gbc);
+		leftPanel.add(atlasNameLabel, gbc);
+		leftPanel.add(atlasNamePanel, gbc);
+		leftPanel.add(profilesLabel, gbc);
+		leftPanel.add(chooseProfileButton, gbc);
+		leftPanel.add(profilesPanel, gbc);
+		leftPanel.add(settingsGUIButton, gbc);
+		leftPanel.add(createAtlasButton, gbc);
 
-		leftPanel.add(zoomLevelLabel);
-		leftPanel.add(amountOfTilesLabel);
-		leftPanel.add(zoomLevelPanel);
-
-		leftPanel.add(tileSizeLabel);
-		leftPanel.add(tileSizePanel);
-
-		leftPanel.add(atlasNameLabel);
-		leftPanel.add(atlasNamePanel);
-
-		leftPanel.add(profilesLabel);
-		leftPanel.add(profilesPanel);
-		leftPanel.add(chooseProfileButton);
-
-		leftPanel.add(saveAsProfileButton);
-		leftPanel.add(deleteProfileButton);
-		leftPanel.add(settingsGUIButton);
-		leftPanel.add(createAtlasButton);
-
-		add(leftPanel, BorderLayout.WEST);
+		JPanel leftBorderPanel = new JPanel();
+		leftBorderPanel.add(leftPanel);
+		leftBorderPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
+		add(leftBorderPanel, BorderLayout.WEST);
 	}
 
 	public void createRightPanel() {
@@ -445,13 +397,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		rightPanel.setBorder(BorderFactory
 				.createBevelBorder(BevelBorder.LOWERED));
 
-		previewPanel = new JPanel(previewLayout = new GridLayout(1, 1));
-
-		// JScrollPane scrollPane = new JScrollPane(previewPanel,
-		// JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-		// JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		// scrollPane.setBounds(1, 1, 729, 729);
-		// rightPanel.add(scrollPane, BorderLayout.CENTER);
 		previewMap = new PreviewMap();
 		previewMap.addMapSelectionListener(this);
 		rightPanel.add(previewMap, BorderLayout.CENTER);
@@ -476,14 +421,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 		settingsGUIButton.addActionListener(new ButtonListener());
 		createAtlasButton.addActionListener(new ButtonListener());
 		previewButton.addActionListener(new ButtonListener());
-		latMinTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
-		latMaxTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
-		longMinTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
-		longMaxTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
+		// latMinTextField.getDocument().addDocumentListener(
+		// new JTextFieldListener());
+		// latMaxTextField.getDocument().addDocumentListener(
+		// new JTextFieldListener());
+		// longMinTextField.getDocument().addDocumentListener(
+		// new JTextFieldListener());
+		// longMaxTextField.getDocument().addDocumentListener(
+		// new JTextFieldListener());
 		tileSizeWidthTextField
 				.addFocusListener(new JTextFieldFocusChangeListener());
 		tileSizeWidthTextField.getDocument().addDocumentListener(
@@ -500,17 +445,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		topLeftCorner.addActionListener(new JPopupMenuListener());
 		bottomRightCorner.addActionListener(new JPopupMenuListener());
-
-		cbOne.addActionListener(new CheckBoxListener());
-		cbTwo.addActionListener(new CheckBoxListener());
-		cbThree.addActionListener(new CheckBoxListener());
-		cbFour.addActionListener(new CheckBoxListener());
-		cbFive.addActionListener(new CheckBoxListener());
-		cbSix.addActionListener(new CheckBoxListener());
-		cbSeven.addActionListener(new CheckBoxListener());
-		cbEight.addActionListener(new CheckBoxListener());
-		cbNine.addActionListener(new CheckBoxListener());
-		cbTen.addActionListener(new CheckBoxListener());
 	}
 
 	public void initiateProgram() {
@@ -636,35 +570,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			boolean zoomLevelChosen = false;
 
-			if (cbOne.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbTwo.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbThree.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbFour.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbFive.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbSix.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbSeven.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbEight.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbNine.isSelected()) {
-				zoomLevelChosen = true;
-			}
-			if (cbTen.isSelected()) {
-				zoomLevelChosen = true;
+			for (int i = 0; i < cbZoom.length; i++) {
+				if (cbZoom[i].isSelected()) {
+					zoomLevelChosen = true;
+					break;
+				}
 			}
 
 			if (zoomLevelChosen == false) {
@@ -1072,17 +982,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		SelectedZoomLevels sZL = new SelectedZoomLevels();
 
-		sZL.setZoomLevelSelected(1, cbOne.isSelected());
-		sZL.setZoomLevelSelected(2, cbTwo.isSelected());
-		sZL.setZoomLevelSelected(3, cbThree.isSelected());
-		sZL.setZoomLevelSelected(4, cbFour.isSelected());
-		sZL.setZoomLevelSelected(5, cbFive.isSelected());
-		sZL.setZoomLevelSelected(6, cbSix.isSelected());
-		sZL.setZoomLevelSelected(7, cbSeven.isSelected());
-		sZL.setZoomLevelSelected(8, cbEight.isSelected());
-		sZL.setZoomLevelSelected(9, cbNine.isSelected());
-		sZL.setZoomLevelSelected(10, cbTen.isSelected());
-
+		for (int i = 0; i < cbZoom.length; i++) {
+			sZL.setZoomLevelSelected(i, cbZoom[i].isSelected());
+		}
 		sZL.sort();
 		return sZL;
 	}
@@ -1444,27 +1346,31 @@ public class GUI extends JFrame implements MapSelectionListener {
 			} else {
 				String errorDescription = "";
 
-				try {
-					latMax = Double.parseDouble(latMaxTextField.getText());
-				} catch (NumberFormatException nfex) {
-					errorDescription = "Invalid format of \"Latitude Max\" value\n";
-				}
-				try {
-					latMin = Double.parseDouble(latMinTextField.getText());
-				} catch (NumberFormatException nfex) {
-					errorDescription += "Invalid format of \"Latitude Min\" value\n";
-				}
-				try {
-					longMax = Double.parseDouble(longMaxTextField.getText());
-				} catch (NumberFormatException nfex) {
-					errorDescription += "Invalid format of \"Longitude Max\" value\n";
-				}
-				try {
-					longMin = Double.parseDouble(longMinTextField.getText());
-				} catch (NumberFormatException nfex) {
-					errorDescription += "Invalid format of \"Longitude Min\" value\n";
-				}
-
+				// try {
+				// latMax = Double.parseDouble(latMaxTextField.getText());
+				// } catch (NumberFormatException nfex) {
+				// errorDescription =
+				// "Invalid format of \"Latitude Max\" value\n";
+				// }
+				// try {
+				// latMin = Double.parseDouble(latMinTextField.getText());
+				// } catch (NumberFormatException nfex) {
+				// errorDescription +=
+				// "Invalid format of \"Latitude Min\" value\n";
+				// }
+				// try {
+				// longMax = Double.parseDouble(longMaxTextField.getText());
+				// } catch (NumberFormatException nfex) {
+				// errorDescription +=
+				// "Invalid format of \"Longitude Max\" value\n";
+				// }
+				// try {
+				// longMin = Double.parseDouble(longMinTextField.getText());
+				// } catch (NumberFormatException nfex) {
+				// errorDescription +=
+				// "Invalid format of \"Longitude Min\" value\n";
+				// }
+				//
 				if (!tileSizeWidthComboBox.isEnabled()) {
 					try {
 						Integer.parseInt(tileSizeWidthTextField.getText());
@@ -1494,17 +1400,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 					theProfile.setLongitudeMin(Double
 							.parseDouble(longMinTextField.getText()));
 
-					boolean[] zoomLevels = new boolean[10];
-					zoomLevels[0] = cbOne.isSelected();
-					zoomLevels[1] = cbTwo.isSelected();
-					zoomLevels[2] = cbThree.isSelected();
-					zoomLevels[3] = cbFour.isSelected();
-					zoomLevels[4] = cbFive.isSelected();
-					zoomLevels[5] = cbSix.isSelected();
-					zoomLevels[6] = cbSeven.isSelected();
-					zoomLevels[7] = cbEight.isSelected();
-					zoomLevels[8] = cbNine.isSelected();
-					zoomLevels[9] = cbTen.isSelected();
+					boolean[] zoomLevels = new boolean[cbZoom.length];
+					for (int i = 0; i < cbZoom.length; i++) {
+						zoomLevels[i] = cbZoom[i].isSelected();
+					}
 
 					theProfile.setZoomLevels(zoomLevels);
 					theProfile.setTileSizeWidth(tileSizeWidthComboBox
@@ -1548,2126 +1447,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	private void preview() {
-		String errorText = validateInput(false);
-
-		if (errorText.length() > 0) {
-
-			JOptionPane.showMessageDialog(null, errorText, "Errors",
-					JOptionPane.ERROR_MESSAGE);
-		} else {
-
-			boolean maxIsBiggerThanMin = true;
-
-			maxIsBiggerThanMin = validateLatLongMinMax();
-
-			if (maxIsBiggerThanMin) {
-
-				System.gc();
-
-				previewPanel.removeAll();
-				previewPanel.updateUI();
-
-				System.gc();
-
-				String workingDir = System.getProperty("user.dir");
-
-				preview = new File(workingDir + fileSeparator + "preview");
-				overlay = new File(preview + fileSeparator + "overlay");
-
-				// Check whether preview folder exists or not...
-				if (preview.exists()) {
-
-					// ...if it exists check if there is any files in it
-					File[] files = preview.listFiles();
-
-					// ...if so, delete all of them
-					if (files.length > 0) {
-
-						for (int i = 0; i < files.length; i++) {
-							if (!files[i].isDirectory()) {
-								files[i].delete();
-							}
-						}
-					}
-				} else {
-					preview.mkdir();
-				}
-
-				// Check whether overlay folder exists or not...
-				if (overlay.exists()) {
-
-					// ...if it exists check if there is any files in it
-					File[] files = overlay.listFiles();
-
-					// ...if so, delete all of them
-					if (files.length > 0) {
-
-						boolean deleted = false;
-
-						for (int i = 0; i < files.length; i++) {
-							while (!deleted) {
-								deleted = files[i].delete();
-							}
-							deleted = false;
-						}
-					}
-				} else {
-					overlay.mkdir();
-				}
-
-				latMax = Double.parseDouble(latMaxTextField.getText());
-				latMin = Double.parseDouble(latMinTextField.getText());
-				longMax = Double.parseDouble(longMaxTextField.getText());
-				longMin = Double.parseDouble(longMinTextField.getText());
-
-				tXY = GoogleTileUtils.getTileXYMinMax(latMax, longMax, latMin,
-						longMin);
-
-				ProcessValues.setPreviewLatMaxTile(tXY.getYMax());
-				ProcessValues.setPreviewLatMinTile(tXY.getYMin());
-				ProcessValues.setPreviewLongMaxTile(tXY.getXMax());
-				ProcessValues.setPreviewLongMinTile(tXY.getXMin());
-
-				Rectangle2D.Double rect = null;
-
-				// Get the lat max coord
-				rect = GoogleTileUtils.getTileRect(tXY.getXMax(),
-						tXY.getYMin(), tXY.getZoom());
-				ProcessValues.setPreviewLatMaxCoord(rect.getMaxY());
-
-				// System.out.println("rect.getMaxY() : " +
-				// rect.getMaxY());
-				// System.out.println("rect.getMinY() : " +
-				// rect.getMinY());
-
-				// Get the lat min coord
-				rect = GoogleTileUtils.getTileRect(tXY.getXMax(),
-						tXY.getYMax(), tXY.getZoom());
-				ProcessValues.setPreviewLatMinCoord(rect.getMinY());
-
-				// Get the long max coord
-				rect = GoogleTileUtils.getTileRect(tXY.getXMax(),
-						tXY.getYMin(), tXY.getZoom());
-				ProcessValues.setPreviewLongMaxCoord(rect.getMaxX());
-
-				// Get the long min coord
-				rect = GoogleTileUtils.getTileRect(tXY.getXMin(),
-						tXY.getYMin(), tXY.getZoom());
-				ProcessValues.setPreviewLongMinCoord(rect.getMinX());
-
-				// set the zoomlevel
-				ProcessValues.setPreviewZoomValue(tXY.getZoom());
-
-				// System.out.println(
-				// "ProcessValues.getPreviewLatMaxCoord : " +
-				// ProcessValues.getPreviewLatMaxCoord());
-				// System.out.println(
-				// "ProcessValues.getPreviewLatMinCoord : " +
-				// ProcessValues.getPreviewLatMinCoord());
-				// System.out.println(
-				// "ProcessValues.getPreviewLongMaxCoord : " +
-				// ProcessValues.getPreviewLongMaxCoord());
-				// System.out.println(
-				// "ProcessValues.getPreviewLongMinCoord : " +
-				// ProcessValues.getPreviewLongMinCoord());
-
-				pb = new PreviewProgressBar(0, Utilities
-						.calculateNrOfTiles(tXY));
-				pb.setVisible(true);
-
-				downloadThread = new Thread() {
-
-					public void run() {
-
-						int serverSwitcher = 0;
-						int counter = 0;
-
-						for (int i = tXY.getYMin(); i <= tXY.getYMax(); i++) {
-							for (int j = tXY.getXMin(); j <= tXY.getXMax(); j++) {
-
-								if (serverSwitcher == 4) {
-									serverSwitcher = 0;
-								}
-								try {
-
-									GoogleTileDownLoad.getImage(j, i, tXY
-											.getZoom(), preview,
-											serverSwitcher, false);
-								} catch (IOException e) {
-
-									boolean retryOK;
-
-									retryOK = retryDownloadPreviewTile(j, i,
-											tXY.getZoom(), preview,
-											serverSwitcher);
-
-									if (retryOK == false) {
-										JOptionPane
-												.showMessageDialog(
-														null,
-														"Something is wrong with connection to download server. Please check connection to internet and try again",
-														"Error",
-														JOptionPane.ERROR_MESSAGE);
-										System.exit(1);
-									}
-								}
-								serverSwitcher++;
-
-								counter++;
-
-								pb.updateProgressBar(counter);
-							}
-						}
-
-						pb.dispose();
-
-						// ...list files
-						File[] files = preview.listFiles();
-
-						files = preview.listFiles();
-
-						String xValue = "";
-						String yValue = "";
-						String fileName;
-
-						int maxXValue = -2147483648;
-						int minXValue = 2147483647;
-						int maxYValue = -2147483648;
-						int minYValue = 2147483647;
-
-						int nrOfXValues = 0;
-						int nrOfYValues = 0;
-
-						if (files.length > 0) {
-
-							// Hitta min och maxvärden för x och y, för
-							// att kunna
-							// rendera den totala bilden i rätt ordning
-							for (int i = 0; i < files.length; i++) {
-
-								if (!files[i].isDirectory()) {
-
-									int intYValue = Integer.parseInt(files[i]
-											.getName().substring(
-													1,
-													files[i].getName().indexOf(
-															"x")));
-									int intXValue = Integer
-											.parseInt(files[i]
-													.getName()
-													.substring(
-															files[i]
-																	.getName()
-																	.indexOf(
-																			"x") + 1,
-															files[i].getName()
-																	.length() - 4));
-
-									if (intYValue < minYValue) {
-										minYValue = intYValue;
-									}
-
-									if (intYValue > maxYValue) {
-										maxYValue = intYValue;
-									}
-
-									if (intXValue < minXValue) {
-										minXValue = intXValue;
-									}
-
-									if (intXValue > maxXValue) {
-										maxXValue = intXValue;
-									}
-								}
-							}
-
-							fileName = files[1].getName();
-
-							// För att få ett startvärde på första
-							// filens x och y värde
-							yValue = fileName.substring(1, fileName
-									.indexOf("x"));
-							xValue = fileName.substring(
-									fileName.indexOf("x") + 1, fileName
-											.length() - 4);
-
-							nrOfXValues = 0;
-
-							// Iterera igenom alla filer för att
-							// kontrollera hur många rader det finns i
-							// den
-							// hämtade "kartarrayen"
-							for (int i = 0; i < files.length; i++) {
-								if (!files[i].isDirectory()) {
-
-									if (((files[i].getName()).substring(1,
-											fileName.indexOf("x"))
-											.equals(yValue))) {
-										nrOfXValues = nrOfXValues + 1;
-									}
-								}
-							}
-						}
-
-						nrOfYValues = (files.length - 1) / nrOfXValues;
-
-						previewLayout.setRows(nrOfYValues);
-						previewLayout.setColumns(nrOfXValues);
-
-						for (int i = minYValue; i <= maxYValue; i++) {
-
-							for (int j = minXValue; j <= maxXValue; j++) {
-
-								try {
-									BufferedImage image = ImageIO
-											.read(new File(System
-													.getProperty("user.dir")
-													+ fileSeparator
-													+ "preview"
-													+ fileSeparator
-													+ "y"
-													+ i
-													+ "x" + j + ".png"));
-									ImageIO
-											.write(
-													image,
-													"jpg",
-													new FileOutputStream(
-															new File(
-																	System
-																			.getProperty("user.dir")
-																			+ fileSeparator
-																			+ "preview"
-																			+ fileSeparator
-																			+ "overlay"
-																			+ fileSeparator
-																			+ "y"
-																			+ i
-																			+ "x"
-																			+ j
-																			+ ".jpg")));
-								} catch (IOException iox) {
-									System.out.println(iox);
-								}
-
-								// 2 Rows
-								if (nrOfYValues == 2
-										&& (nrOfXValues > 2 || nrOfXValues < 2)) {
-
-									// Left top corner
-									if (i == minYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Top row not a corner
-									if (i == minYValue
-											&& !(j == minXValue || j == maxXValue)) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY(),
-													256, 1);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0,
-													(int) theOffset.getY() + 1,
-													256, 256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right top corner
-									if (i == minYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Left bottom corner
-									if (i == maxYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Bottom row not a corner
-									if (i == maxYValue
-											&& !(j == minXValue || j == maxXValue)) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY() - 1,
-													256, 1);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0, 256,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right bottom corner
-									if (i == maxYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1, 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									JLabel temp = new JLabel(new ImageIcon(
-											System.getProperty("user.dir")
-													+ fileSeparator + "preview"
-													+ fileSeparator + "overlay"
-													+ fileSeparator + "y" + i
-													+ "x" + j + ".png"));
-
-									// Row 1
-									if (i == minYValue) {
-										temp
-												.setVerticalAlignment(JLabel.BOTTOM);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-									// Row 2
-									else {
-										temp.setVerticalAlignment(JLabel.TOP);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-								}
-
-								// 2 Columns
-								if (nrOfXValues == 2
-										&& (nrOfYValues > 2 || nrOfYValues < 2)) {
-
-									// Left top corner
-									if (i == minYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Left column not a corner
-									if (!(i == minYValue || i == maxYValue)
-											&& j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), 0, 1, 256);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1, 0,
-													256 - (int) theOffset
-															.getX() - 1, 256);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right top corner
-									if (i == minYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Left bottom corner
-									if (i == maxYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right column not a corner
-									if (!(i == minYValue || i == maxYValue)
-											&& j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1, 0, 1,
-													256);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0,
-													256 - (int) theOffset
-															.getX() - 1, 256);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right bottom corner
-									if (i == maxYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1, 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									JLabel temp = new JLabel(new ImageIcon(
-											System.getProperty("user.dir")
-													+ fileSeparator + "preview"
-													+ fileSeparator + "overlay"
-													+ fileSeparator + "y" + i
-													+ "x" + j + ".png"));
-
-									// Column 1
-									if (j == minXValue) {
-										temp
-												.setHorizontalAlignment(JLabel.RIGHT);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-
-									// Column 2
-									else {
-										temp
-												.setHorizontalAlignment(JLabel.LEFT);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-								}
-
-								// 2 Rows & 2 Columns
-								if (nrOfXValues == 2 && nrOfYValues == 2) {
-
-									// Left top corner
-									if (i == minYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right top corner
-									if (i == minYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Left bottom corner
-									if (i == maxYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right bottom corner
-									if (i == maxYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect(
-													256 - (int) theOffset
-															.getX() - 1, 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									JLabel temp = new JLabel(new ImageIcon(
-											System.getProperty("user.dir")
-													+ fileSeparator + "preview"
-													+ fileSeparator + "overlay"
-													+ fileSeparator + "y" + i
-													+ "x" + j + ".png"));
-
-									if (i == minYValue && j == minXValue) {
-										temp
-												.setVerticalAlignment(JLabel.BOTTOM);
-										temp
-												.setHorizontalAlignment(JLabel.RIGHT);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-									if (i == minYValue && j == maxXValue) {
-										temp
-												.setVerticalAlignment(JLabel.BOTTOM);
-										temp
-												.setHorizontalAlignment(JLabel.LEFT);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-
-									if (i == maxYValue && j == minXValue) {
-										temp.setVerticalAlignment(JLabel.TOP);
-										temp
-												.setHorizontalAlignment(JLabel.RIGHT);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-
-									if (i == maxYValue && j == maxXValue) {
-										temp.setVerticalAlignment(JLabel.TOP);
-										temp
-												.setHorizontalAlignment(JLabel.LEFT);
-										previewPanel.add(temp);
-										previewPanel.updateUI();
-									}
-								}
-
-								if (nrOfYValues != 2 && nrOfXValues != 2) {
-
-									// Left top corner
-									if (i == minYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(),
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1,
-													(int) theOffset.getY() + 1,
-													256 - (int) theOffset
-															.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right top corner
-									if (i == minYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY(),
-													(int) theOffset.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX() - 1,
-													(int) theOffset.getY(), 1,
-													256 - (int) theOffset
-															.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0,
-													(int) theOffset.getY() + 1,
-													(int) theOffset.getX() - 1,
-													256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right column not a corner
-									if (!(i == minYValue || i == maxYValue)
-											&& j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX() - 1, 0, 1, 256);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0,
-													(int) theOffset.getX() - 1,
-													256);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Left column not a corner
-									if (!(i == minYValue || i == maxYValue)
-											&& j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), 0, 1, 256);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1, 0,
-													256 - (int) theOffset
-															.getX() - 1, 256);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Top row not a corner
-									if (i == minYValue
-											&& !(j == minXValue || j == maxXValue)) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMax,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY(),
-													256, 1);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0,
-													(int) theOffset.getY() + 1,
-													256, 256 - (int) theOffset
-															.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Bottom row not a corner
-									if (i == maxYValue
-											&& !(j == minXValue || j == maxXValue)) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY() - 1,
-													256, 1);
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0, 256,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Inner tiles
-									if (!(j == minXValue || j == maxXValue
-											|| i == minYValue || i == maxYValue)) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0, 256, 256);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Left bottom corner
-									if (i == maxYValue && j == minXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMin, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect((int) theOffset
-													.getX(), (int) theOffset
-													.getY() - 1,
-													256 - (int) theOffset
-															.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX(), 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect((int) theOffset
-													.getX() + 1, 0,
-													256 - (int) theOffset
-															.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									// Right bottom corner
-									if (i == maxYValue && j == maxXValue) {
-
-										Point theOffset = GoogleTileUtils
-												.getPixelOffsetInTile(latMin,
-														longMax, tXY.getZoom());
-
-										try {
-
-											BufferedImage image = ImageIO
-													.read(new File(
-															System
-																	.getProperty("user.dir")
-																	+ fileSeparator
-																	+ "preview"
-																	+ fileSeparator
-																	+ "overlay"
-																	+ fileSeparator
-																	+ "y"
-																	+ i
-																	+ "x"
-																	+ j
-																	+ ".jpg"));
-
-											Graphics graphics = image
-													.getGraphics();
-
-											graphics.setColor(new Color(0, 0,
-													0, 128));
-											graphics.fillRect(0,
-													(int) theOffset.getY() - 1,
-													(int) theOffset.getX(), 1);
-											graphics.fillRect((int) theOffset
-													.getX() - 1, 0, 1,
-													(int) theOffset.getY());
-
-											graphics.setColor(new Color(0, 255,
-													0, 64));
-											graphics.fillRect(0, 0,
-													(int) theOffset.getX() - 1,
-													(int) theOffset.getY() - 1);
-											graphics.dispose();
-
-											ImageIO
-													.write(
-															image,
-															"png",
-															new FileOutputStream(
-																	new File(
-																			System
-																					.getProperty("user.dir")
-																					+ fileSeparator
-																					+ "preview"
-																					+ fileSeparator
-																					+ "overlay"
-																					+ fileSeparator
-																					+ "y"
-																					+ i
-																					+ "x"
-																					+ j
-																					+ ".png")));
-										} catch (IOException iox) {
-											System.out.println(iox);
-										}
-									}
-
-									JLabel temp = new JLabel(new ImageIcon(
-											System.getProperty("user.dir")
-													+ fileSeparator + "preview"
-													+ fileSeparator + "overlay"
-													+ fileSeparator + "y" + i
-													+ "x" + j + ".png"));
-									previewPanel.add(temp);
-									previewPanel.updateUI();
-								}
-							}
-						}
-					}
-				};
-				downloadThread.start();
-			}
-		}
-	}
-
-	// Knapplyssnarklass
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String actionCommand = e.getActionCommand();
@@ -3681,13 +1460,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 			else if (actionCommand.equals("Settings")) {
 				SettingsGUI sgui = new SettingsGUI();
 				sgui.setVisible(true);
-			} else if (actionCommand.equals("Preview")) {
-				preview();
 			}
 		}
 	}
 
-	// Knapplyssnarklass
 	private class JToggleButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String actionCommand = e.getActionCommand();
@@ -3735,20 +1511,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				atlasNameTextField.setText(temp.getAtlasName());
 
-				boolean[] zoomValues = new boolean[10];
+				boolean[] zoomValues = new boolean[cbZoom.length];
 
 				zoomValues = temp.getZoomLevels();
 
-				cbOne.setSelected(zoomValues[0]);
-				cbTwo.setSelected(zoomValues[1]);
-				cbThree.setSelected(zoomValues[2]);
-				cbFour.setSelected(zoomValues[3]);
-				cbFive.setSelected(zoomValues[4]);
-				cbSix.setSelected(zoomValues[5]);
-				cbSeven.setSelected(zoomValues[6]);
-				cbEight.setSelected(zoomValues[7]);
-				cbNine.setSelected(zoomValues[8]);
-				cbTen.setSelected(zoomValues[9]);
+				for (int i = 0; i < cbZoom.length; i++) {
+					cbZoom[i].setSelected(zoomValues[i]);
+				}
 
 				int tileSizeWidth = temp.getTileSizeWidth();
 				int indexWidth = (tileSizeWidth / 256) - 1;
@@ -3926,85 +1695,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 			 * createAtlasButton.setEnabled(true); //
 			 * previewPanel.addMouseListener(new // PreviewMouseListener());
 			 */
-		}
-
-	}
-
-	private class PreviewMouseListener extends MouseAdapter {
-
-		public void mouseClicked(MouseEvent me) {
-
-			if (me.getButton() == 3) {
-
-				jpm.setVisible(true);
-				jpm.setLocation(me.getX()
-						+ previewPanel.getLocationOnScreen().x, me.getY()
-						+ previewPanel.getLocationOnScreen().y);
-
-				int columns = previewLayout.getColumns();
-				int rows = previewLayout.getRows();
-
-				int width = previewPanel.getWidth();
-				int height = previewPanel.getHeight();
-
-				int offsetX = width - (columns * 256);
-				int offsetY = height - (rows * 256);
-
-				System.out.println("width: " + width);
-				System.out.println("height: " + height);
-
-				System.out.println("offsetX: " + offsetX);
-				System.out.println("offsetY: " + offsetY);
-
-				if (offsetX > 0) {
-					ProcessValues.setMouseXCoordinat(me.getX() - (offsetX / 2));
-				} else {
-					ProcessValues.setMouseXCoordinat(me.getX());
-				}
-
-				if (offsetY > 0) {
-					ProcessValues.setMouseYCoordinat(me.getY() - (offsetY / 2));
-				} else {
-					ProcessValues.setMouseYCoordinat(me.getY());
-				}
-
-				double borderTileLatMax = GoogleTileUtils
-						.getTileBorderCordinate(ProcessValues
-								.getPreviewLatMaxCoord(), ProcessValues
-								.getPreviewLongMaxCoord(), ProcessValues
-								.getPreviewZoomValue(), "N");
-				double borderTileLongMax = GoogleTileUtils
-						.getTileBorderCordinate(ProcessValues
-								.getPreviewLatMaxCoord(), ProcessValues
-								.getPreviewLongMaxCoord(), ProcessValues
-								.getPreviewZoomValue(), "E");
-
-				double borderTileLatMin = GoogleTileUtils
-						.getTileBorderCordinate(ProcessValues
-								.getPreviewLatMinCoord(), ProcessValues
-								.getPreviewLongMinCoord(), ProcessValues
-								.getPreviewZoomValue(), "S");
-				double borderTileLongMin = GoogleTileUtils
-						.getTileBorderCordinate(ProcessValues
-								.getPreviewLatMinCoord(), ProcessValues
-								.getPreviewLongMinCoord(), ProcessValues
-								.getPreviewZoomValue(), "W");
-
-				double longDiff = borderTileLongMax - borderTileLongMin;
-				double latDiff = borderTileLatMax - borderTileLatMin;
-
-				System.out.println("longDiff: " + longDiff);
-				System.out.println("latDiff: " + latDiff);
-
-				ProcessValues
-						.setPreviewXResolution(((((ProcessValues
-								.getPreviewLongMaxTile()
-								- ProcessValues.getPreviewLongMinTile() + 1)) * 256) / longDiff));
-				ProcessValues
-						.setPreviewYResolution(((((ProcessValues
-								.getPreviewLatMaxTile()
-								- ProcessValues.getPreviewLatMinTile() + 1)) * 256) / latDiff));
-			}
 		}
 
 	}

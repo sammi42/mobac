@@ -4,14 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
+import javax.swing.JComboBox;
+
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class PreviewMap extends JMapViewer {
 	private static final long serialVersionUID = 1L;
@@ -30,12 +34,37 @@ public class PreviewMap extends JMapViewer {
 	private int gridFactor;
 	private int gridSize;
 
+	private JComboBox gridSizeSelector;
+
 	private LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
 
 	public PreviewMap() {
 		super();
+		gridSizeSelector = new JComboBox();
+		gridSizeSelector.setEditable(false);
+		gridSizeSelector.setBounds(40, 10, 80, 20);
+		gridSizeSelector.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				GridZoom g = (GridZoom)gridSizeSelector.getSelectedItem();
+				setGridZoom(g.getZoom());
+				repaint();
+			}
+			
+		});
+		add(gridSizeSelector);
 		new PreviewMapController(this);
 		setTileSource(new GoogleTileSource.GoogleMaps());
+	}
+
+	@Override
+	public void setTileSource(TileSource arg0) {
+		super.setTileSource(arg0);
+		gridSizeSelector.removeAllItems();
+		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom()+1);
+		for (int i=0; i<tileSource.getMaxZoom(); i++) {
+			gridSizeSelector.addItem(new GridZoom(i));
+		}
 	}
 
 	protected void zoomChanged(int oldZoom) {
@@ -183,7 +212,7 @@ public class PreviewMap extends JMapViewer {
 		if (!selectionInProgress) {
 			Point2D.Double max = new Point2D.Double();
 			Point2D.Double min = new Point2D.Double();
-			
+
 			int zoomDiff1 = PreviewMap.MAX_ZOOM - gridZoom;
 			if (iSelectionRectStart == null || iSelectionRectEnd == null)
 				return;
@@ -191,10 +220,10 @@ public class PreviewMap extends JMapViewer {
 			int y_min = (iSelectionRectStart.y >> zoomDiff1);
 			int x_max = (iSelectionRectEnd.x >> zoomDiff1);
 			int y_max = (iSelectionRectEnd.y >> zoomDiff1);
-//			x_min = x_min >> 8 << 8;
-//			y_min = y_min >> 8 << 8;
-//			x_max = (x_max + 255) >> 8 << 8;
-//			y_max = (y_max + 255) >> 8 << 8;
+			// x_min = x_min >> 8 << 8;
+			// y_min = y_min >> 8 << 8;
+			// x_max = (x_max + 255) >> 8 << 8;
+			// y_max = (y_max + 255) >> 8 << 8;
 
 			max.x = OsmMercator.XToLon(x_max, gridZoom);
 			max.y = OsmMercator.YToLat(y_max, gridZoom);

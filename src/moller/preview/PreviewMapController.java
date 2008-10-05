@@ -30,7 +30,7 @@ public class PreviewMapController extends JMapController implements
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		if ((e.getModifiersEx() | MouseEvent.BUTTON1_DOWN_MASK) != 0) {
+		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
 			if (iStartSelectionPoint != null) {
 				iEndSelectionPoint = e.getPoint();
 				((PreviewMap) map).setSelection(iStartSelectionPoint,

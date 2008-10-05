@@ -26,6 +26,8 @@ public class GoogleDownLoad {
 
 			try {
 				URL               u   = new URL(url) ;
+				//TODO Remove the following line
+				/*
 				HttpURLConnection huc = (HttpURLConnection)u.openConnection() ;
 
 				huc.setRequestMethod( "GET" ) ;
@@ -89,6 +91,7 @@ public class GoogleDownLoad {
 					}
 				}
 				huc.disconnect();
+				*/
 			}
 			catch(IOException e){
 				e.printStackTrace();

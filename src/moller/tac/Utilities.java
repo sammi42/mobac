@@ -8,8 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import java.text.ParseException;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -21,8 +20,8 @@ public class Utilities {
 
 	public  static final int           COORD_KIND_LATTITUDE = 1;
 	public  static final int           COORD_KIND_LONGITUDE = 2;
-	private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.ENGLISH);
-	private static final DecimalFormat format6dec = new DecimalFormat("#0.000000",dfs);
+	//private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.ENGLISH);
+	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 
 	/***
 	 * Metod för att kontrollera om en sträng är giltig. I detta fall kontrolleras strängen genom
@@ -79,9 +78,9 @@ public class Utilities {
 
 		if (!theCordinateInput.equals("-")) {
 			try {
-				Double.parseDouble(theCordinateInput);
+				FORMAT_6_DEC.parse(theCordinateInput);
 			}
-			catch (NumberFormatException nfex) {
+			catch (ParseException nfex) {
 				notValidCharacter = nfex.getMessage().substring(nfex.getMessage().length() - 2, nfex.getMessage().length() - 1);
 			}
 		}
@@ -192,10 +191,10 @@ public class Utilities {
 	    sbMap.append("MMPXY,2,"+(width-1)+",0\r\n");
 	    sbMap.append("MMPXY,3,0,"+(height-1)+"\r\n");
 	    sbMap.append("MMPXY,4,"+(width-1)+","+(height-1)+"\r\n");
-	    sbMap.append("MMPLL,1,  "+format6dec.format(longitudeMin)+","+format6dec.format(latitudeMax)+"\r\n");
-	    sbMap.append("MMPLL,2,  "+format6dec.format(longitudeMax)+","+format6dec.format(latitudeMax)+"\r\n");
-	    sbMap.append("MMPLL,3,  "+format6dec.format(longitudeMin)+","+format6dec.format(latitudeMin)+"\r\n");
-	    sbMap.append("MMPLL,4,  "+format6dec.format(longitudeMax)+","+format6dec.format(latitudeMin)+"\r\n");
+	    sbMap.append("MMPLL,1,  "+FORMAT_6_DEC.format(longitudeMin)+","+FORMAT_6_DEC.format(latitudeMax)+"\r\n");
+	    sbMap.append("MMPLL,2,  "+FORMAT_6_DEC.format(longitudeMax)+","+FORMAT_6_DEC.format(latitudeMax)+"\r\n");
+	    sbMap.append("MMPLL,3,  "+FORMAT_6_DEC.format(longitudeMin)+","+FORMAT_6_DEC.format(latitudeMin)+"\r\n");
+	    sbMap.append("MMPLL,4,  "+FORMAT_6_DEC.format(longitudeMax)+","+FORMAT_6_DEC.format(latitudeMin)+"\r\n");
 
 	    sbMap.append("IWH,Map Image Width/Height," + width + "," + height + "\r\n");
 
@@ -211,7 +210,7 @@ public class Utilities {
 		StringBuffer sbOut = new StringBuffer();
 		sbOut.append((int)Math.abs(deg));
 		sbOut.append(",");
-		sbOut.append(format6dec.format(Math.abs(min)));
+		sbOut.append(FORMAT_6_DEC.format(Math.abs(min)));
 		sbOut.append(",");
 
 		if(COORD_KIND==COORD_KIND_LATTITUDE){

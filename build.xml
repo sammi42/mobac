@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="all" name="Compile and build java classes plus jar archives">
+
+	<property name="version" value="0.8" />
+	<property name="jar.name" value="TrekBuddy_Atlas_Creator_v${version}.jar" />
+
+	<target name="all" depends="clean,build,create_jar" />
+
+	<target name="clean">
+		<delete failonerror="no">
+			<fileset dir="build">
+				<include name="**" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="build">
+		<mkdir dir="build" />
+		<javac srcdir="src" destdir="build" target="1.5">
+			<exclude name="**/unittest/**" />
+		</javac>
+	</target>
+
+	<target name="create_jar">
+		<delete file="${jar.name}" />
+		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="moller.tac.StartGUI" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="build">
+				<exclude name="**/unittest/**"/>
+			</fileset>
+		</jar>
+	</target>
+</project>

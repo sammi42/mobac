@@ -9,6 +9,8 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+
 import tac.gui.AtlasProgress;
 import tac.gui.GUI;
 import tac.utilities.Utilities;
@@ -18,15 +20,17 @@ public class AtlasThread extends Thread {
 	private GUI gui;
 	private AtlasProgress ap;
 	private MapSelection mapSelection;
+	private TileSource tileSource;
 	private String atlasName;
 	private SelectedZoomLevels sZL;
 	private int tileSizeWidth = 0;
 	private int tileSizeHeight = 0;
 
-	public AtlasThread(GUI gui, String atlasName, MapSelection mapSelection,
+	public AtlasThread(GUI gui, String atlasName, TileSource tileSource, MapSelection mapSelection,
 			SelectedZoomLevels sZL, int tileSizeWidth, int tileSizeHeight) {
 		super();
 		this.gui = gui;
+		this.tileSource = tileSource;
 		this.atlasName = atlasName;
 		this.mapSelection = mapSelection;
 		this.sZL = sZL;
@@ -95,18 +99,7 @@ public class AtlasThread extends Thread {
 		int totalNrOfTiles = 0;
 
 		for (int i = 0; i < nrOfLayers; i++) {
-
-			Point topLeft =
-					GoogleTileUtils.toTileXY(mapSelection.lat_max, mapSelection.lon_max,
-							zoomLevels[i]);
-			Point bottomRight =
-					GoogleTileUtils.toTileXY(mapSelection.lat_min, mapSelection.lon_min,
-							zoomLevels[i]);
-
-			totalNrOfTiles =
-					totalNrOfTiles
-							+ Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(topLeft,
-									bottomRight, zoomLevels[i]));
+			totalNrOfTiles += mapSelection.calculateNrOfTiles(zoomLevels[i]);
 		}
 
 		ap = AtlasProgress.getInstance();
@@ -126,79 +119,59 @@ public class AtlasThread extends Thread {
 				 **/
 				int zoom = zoomLevels[layer];
 
-				Point topLeft =
-						GoogleTileUtils.toTileXY(mapSelection.lat_max, mapSelection.lon_max, zoom);
-				Point bottomRight =
-						GoogleTileUtils.toTileXY(mapSelection.lat_min, mapSelection.lon_min, zoom);
-				int apMax =
-						Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(topLeft, bottomRight,
-								zoom));
+				Point topLeft = mapSelection.getTopLeftTile(zoom);
+				Point bottomRight = mapSelection.getBottomRightTile(zoom);
 
+				System.out.println("Selection to download: \n\t" + topLeft + "\n\t" + bottomRight
+						+ "\n\tzoom: " + zoom);
+				int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
+
+				int xMin = topLeft.x;
+				int xMax = bottomRight.x;
+				int yMin = topLeft.y;
+				int yMax = bottomRight.y;
 				ap.setMinMaxForCurrentLayer(0, apMax);
 				ap.setZoomLevel(zoom);
 				ap.setInitiateTimeForLayer();
 
-				int xMax = (int) topLeft.getX();
-				int xMin = (int) bottomRight.getX();
-				int yMax = (int) bottomRight.getY();
-				int yMin = (int) topLeft.getY();
-
-				int serverSwitcher = 0;
 				int counter = 0;
 
 				File oziZoom = new File(ozi + File.separator + zoom);
 				oziZoom.mkdir();
+				for (int y = yMin; y <= yMax; y++) {
+					for (int x = xMin; x <= xMax; x++) {
+						if (ProcessValues.getAbortAtlasDownload())
+							break tileDownloadsLoop;
+						try {
+							GoogleTileDownLoad.getImage(x, y, zoom, oziZoom, tileSource, true);
+						} catch (IOException e) {
 
-				for (int i = yMin; i <= yMax; i++) {
+							boolean retryOK;
 
-					if (ProcessValues.getAbortAtlasDownload()) {
-						break tileDownloadsLoop;
-					} else {
+							retryOK = retryDownloadAtlasTile(x, y, zoom, oziZoom, tileSource);
 
-						for (int j = xMin; j <= xMax; j++) {
-
-							if (ProcessValues.getAbortAtlasDownload()) {
-								break tileDownloadsLoop;
-							} else {
-
-								if (serverSwitcher == 4) {
-									serverSwitcher = 0;
-								}
-
-								try {
-
-									GoogleTileDownLoad.getImage(j, i, zoom, oziZoom,
-											serverSwitcher, true);
-								} catch (IOException e) {
-
-									boolean retryOK;
-
-									retryOK =
-											retryDownloadAtlasTile(j, i, zoom, oziZoom,
-													serverSwitcher);
-
-									if (retryOK == false) {
-										JOptionPane
-												.showMessageDialog(
-														null,
-														"Something is wrong with connection to download server. Please check connection to internet and try again",
-														"Error", JOptionPane.ERROR_MESSAGE);
-										System.exit(1);
-									}
-								}
-								serverSwitcher++;
-								counter++;
-
-								ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
-								ap.updateLayerProgressBar(counter);
-								ap.updateViewNrOfDownloadedBytes();
-								ap.updateViewNrOfDownloadedBytesPerSecond();
-								ap.updateTotalDownloadTime();
-
+							if (retryOK == false) {
+								JOptionPane
+										.showMessageDialog(
+												null,
+												"Something is wrong with connection to download server. Please check connection to internet and try again",
+												"Error", JOptionPane.ERROR_MESSAGE);
+								return;
 							}
 						}
+						counter++;
+
+						ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
+						ap.updateLayerProgressBar(counter);
+						ap.updateViewNrOfDownloadedBytes();
+						ap.updateViewNrOfDownloadedBytesPerSecond();
+						ap.updateTotalDownloadTime();
 					}
 				}
+
+				// TODO XXXXXXXXXXXXXXXXXXXXXX
+				if (1 == 1)
+					return;
 
 				if ((oziZoom.list().length) != ((yMax - yMin + 1) * (xMax - xMin + 1))) {
 					JOptionPane
@@ -243,19 +216,19 @@ public class AtlasThread extends Thread {
 		ProcessValues.setAbortAtlasDownload(false);
 	}
 
+	protected void downloadTiles() {
+	}
+
 	protected boolean retryDownloadAtlasTile(int xValue, int yValue, int zoomValue,
-			File destinationFolder, int serverSwitcher) {
+			File destinationFolder, TileSource tileSource) {
 
 		boolean retryOk = false;
 
 		for (int i = 0; i < 10; i++) {
 
-			if (serverSwitcher == 4) {
-				serverSwitcher = 0;
-			}
 			try {
 				GoogleTileDownLoad.getImage(xValue, yValue, zoomValue, destinationFolder,
-						serverSwitcher, true);
+						tileSource, true);
 				retryOk = true;
 			} catch (IOException e) {
 				retryOk = false;
@@ -265,7 +238,6 @@ public class AtlasThread extends Thread {
 				} catch (InterruptedException iex) {
 				}
 			}
-			serverSwitcher++;
 		}
 		return retryOk;
 	}

@@ -34,8 +34,7 @@ public class PreviewMap extends JMapViewer {
 	private Point gridSelectionStart;
 	private Point gridSelectionEnd;
 
-	private BufferedImage gridTile = new BufferedImage(256, 256,
-			BufferedImage.TYPE_INT_ARGB);
+	private BufferedImage gridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 
 	private int gridZoom = 10;
 	private int gridFactor;
@@ -43,7 +42,8 @@ public class PreviewMap extends JMapViewer {
 
 	private JComboBox gridSizeSelector;
 
-	private LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
+	private LinkedList<MapSelectionListener> mapSelectionListeners =
+			new LinkedList<MapSelectionListener>();
 
 	public PreviewMap() {
 		super();
@@ -116,8 +116,7 @@ public class PreviewMap extends JMapViewer {
 			gridSize = 256 << zoomToGridZoom;
 		} else {
 			gridSize = 256 >> (-zoomToGridZoom);
-			BufferedImage newGridTile = new BufferedImage(256, 256,
-					BufferedImage.TYPE_INT_ARGB);
+			BufferedImage newGridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 			if (gridSize > 2) {
 				Graphics2D g = newGridTile.createGraphics();
 				int alpha = 5 + (6 + zoomToGridZoom) * 16;
@@ -183,39 +182,27 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	protected Point getTopLeftCoordinate() {
-		return new Point(center.x - (getWidth() / 2), center.y
-				- (getHeight() / 2));
+		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}
 
 	public void setSelection(MapSelection ms) {
-		if (ms.lat_max == ms.lat_min || ms.lon_max == ms.lon_min)
+		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min())
 			return;
-		Point pEnd = new Point();
-		Point pStart = new Point();
-		int x_1 = OsmMercator.LonToX(ms.lon_max, zoom);
-		int x_2 = OsmMercator.LonToX(ms.lon_min, zoom);
-		int y_1 = OsmMercator.LatToY(ms.lat_max, zoom);
-		int y_2 = OsmMercator.LatToY(ms.lat_min, zoom);
-		pStart.x = Math.min(x_1, x_2);
-		pStart.y = Math.min(y_1, y_2);
-		pEnd.x = Math.max(x_1, x_2);
-		pEnd.y = Math.max(y_1, y_2);
+		Point pStart = ms.getTopLeftTile(zoom);
+		Point pEnd = ms.getBottomRightTile(zoom);
 		setSelectionByTilePoint(pStart, pEnd, true);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
-		mml.add(new MapMarkerDot(ms.lat_max, ms.lon_max));
-		mml.add(new MapMarkerDot(ms.lat_min, ms.lon_min));
+		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
+		mml.add(new MapMarkerDot(ms.getLat_min(), ms.getLon_min()));
 		setMapMarkerList(mml);
 		setDisplayToFitMapMarkers();
 	}
 
-	public void setSelectionByScreenPoint(Point aStart, Point aEnd,
-			boolean notifyListeners) {
+	public void setSelectionByScreenPoint(Point aStart, Point aEnd, boolean notifyListeners) {
 		if (aStart == null || aEnd == null)
 			return;
-		Point p_max = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y,
-				aStart.y));
-		Point p_min = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y,
-				aStart.y));
+		Point p_max = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y, aStart.y));
+		Point p_min = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y, aStart.y));
 
 		Point tlc = getTopLeftCoordinate();
 
@@ -224,8 +211,7 @@ public class PreviewMap extends JMapViewer {
 		setSelectionByTilePoint(pStart, pEnd, notifyListeners);
 	}
 
-	public void setSelectionByTilePoint(Point pStart, Point pEnd,
-			boolean notifyListeners) {
+	public void setSelectionByTilePoint(Point pStart, Point pEnd, boolean notifyListeners) {
 
 		int zoomDiff = MAX_ZOOM - zoom;
 

@@ -75,6 +75,7 @@ public class AtlasProgress extends JFrame{
 		
 	private AtlasProgress() {
 		
+		super("Downloading tiles...");
 		tarProgressValue = 0;
 
 		// Hämta in skärmstorlek för att kunna positionera progressbarfönstret här nedan
@@ -233,7 +234,6 @@ public class AtlasProgress extends JFrame{
 	}
 
 	public void setMinMaxForCurrentLayer(int theMinimumValue, int theMaximumValue){
-
 		layerProgress.setMinimum(theMinimumValue);
 		layerProgress.setMaximum(theMaximumValue);
   	}

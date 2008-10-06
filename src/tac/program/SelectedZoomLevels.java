@@ -6,18 +6,16 @@ public class SelectedZoomLevels {
 	private int[] zoomLevels;
 	private int nrOfLayers;
 
-	public SelectedZoomLevels() {
-		zoomLevels = new int[10];
+	public SelectedZoomLevels(int zommLevelCount) {
+		zoomLevels = new int[zommLevelCount];
+		for (int i = 0; i < zoomLevels.length; i++)
+			zoomLevels[i] = Integer.MAX_VALUE;
 		nrOfLayers = 0;
 	}
 
-	public void setZoomLevelSelected(int zoomLevel, boolean isSelected) {
-		if (isSelected) {
-			zoomLevels[zoomLevel - 1] = zoomLevel;
-			nrOfLayers++;
-		} else {
-			zoomLevels[zoomLevel - 1] = 99;
-		}
+	public void setZoomLevelSelected(int zoomLevel) {
+		zoomLevels[zoomLevel] = zoomLevel;
+		nrOfLayers++;
 	}
 
 	public int[] getZoomLevels() {

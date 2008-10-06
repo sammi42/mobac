@@ -22,8 +22,8 @@ public class TileXYMinMaxAndZoom {
 
 	public TileXYMinMaxAndZoom(Point theTopLeft, Point theBottomRight, int theZoom) {
 
-		xMax = (int)theTopLeft.getX();
-		xMin = (int)theBottomRight.getX();
+		xMin = (int)theTopLeft.getX();
+		xMax = (int)theBottomRight.getX();
 		yMax = (int)theBottomRight.getY();
 		yMin = (int)theTopLeft.getY();
 		zoom = theZoom;

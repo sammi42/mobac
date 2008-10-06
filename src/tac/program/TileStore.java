@@ -16,8 +16,8 @@ public class TileStore {
 	public static synchronized TileStore getInstance() {
 		if (sObj == null) {
 			sObj = new TileStore();
-			tileStoreDituGoogleCom = new ArrayList<TreeSet<String>>(17);
-			tileStoreMapsGoogleCom = new ArrayList<TreeSet<String>>(17);
+			tileStoreDituGoogleCom = new ArrayList<TreeSet<String>>(20);
+			tileStoreMapsGoogleCom = new ArrayList<TreeSet<String>>(20);
 			for (int i = 0; i < 17; i++) {
 				tileStoreDituGoogleCom.add(new TreeSet<String>());
 				tileStoreMapsGoogleCom.add(new TreeSet<String>());
@@ -41,11 +41,11 @@ public class TileStore {
 	public boolean contains (int zoomLevel, String tileName, String tileStore){
 		
 		if(tileStore.equals("ditu.google.com")) {
-			if ((tileStoreDituGoogleCom.get(zoomLevel - 1)).contains(tileName)) 
+			if ((tileStoreDituGoogleCom.get(zoomLevel)).contains(tileName)) 
 				return true;
 		}
 		else {
-			if ((tileStoreMapsGoogleCom.get(zoomLevel - 1)).contains(tileName))
+			if ((tileStoreMapsGoogleCom.get(zoomLevel)).contains(tileName))
 				return true;
 		}
 		return false;
@@ -59,10 +59,10 @@ public class TileStore {
 	 */
 	public void add (int zoomLevel, String tileName, String tileStore) {
 		if (tileStore.equals("ditu.google.com")) {
-			tileStoreDituGoogleCom.get(zoomLevel - 1).add(tileName);	
+			tileStoreDituGoogleCom.get(zoomLevel).add(tileName);	
 		}
 		else {
-			tileStoreMapsGoogleCom.get(zoomLevel - 1).add(tileName);
+			tileStoreMapsGoogleCom.get(zoomLevel).add(tileName);
 		}
 	}
 	
@@ -83,10 +83,10 @@ public class TileStore {
 	 */
 	public void remove (int zoomLevel, String tileName, String tileStore) {
 		if (tileStore.equals("ditu.google.com")) {
-			tileStoreDituGoogleCom.get(zoomLevel - 1).remove(tileName);	
+			tileStoreDituGoogleCom.get(zoomLevel).remove(tileName);	
 		}
 		else {
-			tileStoreMapsGoogleCom.get(zoomLevel - 1).remove(tileName);
+			tileStoreMapsGoogleCom.get(zoomLevel).remove(tileName);
 		}
 	}
 	
@@ -125,13 +125,13 @@ public class TileStore {
 	
 	public void debugDitu() {
 		for (int i = 1; i < 18; i++) {
-			System.out.println(sObj.get(i - 1, "ditu.google.com"));
+			System.out.println(sObj.get(i, "ditu.google.com"));
 		}
 	}
 	
 	public void debugMaps() {
 		for (int i = 1; i < 18; i++) {
-			System.out.println(sObj.get(i - 1, "maps.google.com"));
+			System.out.println(sObj.get(i, "maps.google.com"));
 		}
 	}
 }

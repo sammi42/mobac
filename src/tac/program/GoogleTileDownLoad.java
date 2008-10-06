@@ -1,12 +1,8 @@
 package tac.program;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
@@ -26,38 +22,20 @@ public class GoogleTileDownLoad {
 		 * settings is to use the tile store
 		 */
 		Settings s = Settings.getInstance();
+		File destFile = new File(destinationDirectory + "/y" + y + "x" + x + ".png");
 
-		/*
-		 * if (s.getTileStoreEnabled() && ts.contains(zoom, "y" + y + "x" + x +
-		 * ".png", s.getSelectedGoogleDownloadSite())) { String fileSeparator =
-		 * System.getProperty("file.separator");
-		 * 
-		 * // Copy the file from the persistent tilestore instead of //
-		 * downloading it from internet. File sourceFile = new
-		 * File(System.getProperty("user.dir") + fileSeparator + "tilestore" +
-		 * fileSeparator + s.getSelectedGoogleDownloadSite() + fileSeparator +
-		 * zoom + fileSeparator + "y" + y + "x" + x + ".png"); File destFile =
-		 * new File(destinationDirectory + System.getProperty("file.separator")
-		 * + "y" + y + "x" + x + ".png");
-		 * 
-		 * FileChannel source = null; FileChannel destination = null;
-		 * FileInputStream fis = null; FileOutputStream fos = null;
-		 * 
-		 * try { fis = new FileInputStream(sourceFile); fos = new
-		 * FileOutputStream(destFile);
-		 * 
-		 * source = fis.getChannel(); destination = fos.getChannel();
-		 * destination.transferFrom(source, 0, source.size()); if
-		 * (isAtlasDownload) {
-		 * ProcessValues.setNrOfDownloadedBytes(ProcessValues
-		 * .getNrOfDownloadedBytes() + (double) source.size()); } } catch
-		 * (FileNotFoundException fnfex) {
-		 * System.out.println(fnfex.getMessage()); } finally { fis.close();
-		 * fos.close();
-		 * 
-		 * if (source != null) { source.close(); } if (destination != null) {
-		 * destination.close(); } } }
-		 */
+		if (s.getTileStoreEnabled()) {
+
+			// Copy the file from the persistent tilestore instead of
+			// downloading it from internet.
+			try {
+				if (ts.copyStoredTileTo(destFile, x, y, zoom, tileSource)) {
+					return;
+				}
+			} catch (IOException e) {
+			}
+		}
+
 		/**
 		 * otherwise download it from internet
 		 */

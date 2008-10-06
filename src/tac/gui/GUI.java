@@ -50,13 +50,11 @@ import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.OpenStreetMapTileSource;
 import tac.gui.preview.PreviewMap;
 import tac.program.AtlasThread;
-import tac.program.GoogleDownLoad;
 import tac.program.MapSelection;
 import tac.program.ProcessValues;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
-import tac.program.TileStore;
 import tac.utilities.PersistentProfiles;
 import tac.utilities.Utilities;
 
@@ -513,11 +511,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		// Check if all necessary files and folder exists
 		Utilities.checkFileSetup();
-
-		// Load the tile store with the persistent
-		// objects from disk
-		TileStore ts = TileStore.getInstance();
-		ts.init();
 
 		profilesVector = new Vector<Profile>();
 		profileNamesVector = new Vector<String>();
@@ -1265,18 +1258,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		Thread getDefaultMapThread;
 
 		public void windowOpened(WindowEvent e) {
-
-			getGoogleDownloadStringThread = new Thread() {
-
-				public void run() {
-
-					// createAtlasButton.setText("Wait...");
-					// createAtlasButton.setEnabled(false);
-					GoogleDownLoad.getDownloadString();
-				}
-			};
-			getGoogleDownloadStringThread.start();
-
+			// createAtlasButton.setText("Wait...");
+			// createAtlasButton.setEnabled(false);
 			getDefaultMapThread = new DefaultMapThread();
 			getDefaultMapThread.start();
 		}

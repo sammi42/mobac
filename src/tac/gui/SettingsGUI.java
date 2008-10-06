@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 
-import tac.program.GoogleDownLoad;
 import tac.program.Settings;
 
 public class SettingsGUI extends JDialog {	
@@ -270,8 +269,6 @@ public class SettingsGUI extends JDialog {
 				}				
 				s.setMapSize(size);
 								
-				GoogleDownLoad.getDownloadString();
-				
 				// Close the dialog window
 				jdialogGUI.dispose();
 			}

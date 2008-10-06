@@ -1,137 +1,63 @@
 package tac.program;
+
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class TileStore {
-	
-	private static TileStore sObj;
-	private static List<TreeSet<String>> tileStoreDituGoogleCom;
-	private static List<TreeSet<String>> tileStoreMapsGoogleCom;
-	
+
+	private static TileStore sObj = null;
+
+	private String tileStorePath;
+
 	private TileStore() {
+		tileStorePath = System.getProperty("user.dir") + "/tilestore/";
 	}
-	
-	public static synchronized TileStore getInstance() {
-		if (sObj == null) {
-			sObj = new TileStore();
-			tileStoreDituGoogleCom = new ArrayList<TreeSet<String>>(20);
-			tileStoreMapsGoogleCom = new ArrayList<TreeSet<String>>(20);
-			for (int i = 0; i < 17; i++) {
-				tileStoreDituGoogleCom.add(new TreeSet<String>());
-				tileStoreMapsGoogleCom.add(new TreeSet<String>());
-			}
-		}
-		return sObj;
-	}
-	
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException(); 
-    }
-	
-	/**
-	 * Method to see if a specific tile is already existing in the tilestore
-	 * 
-	 * @param zoomLevel, in which zoom level the search for the specific tile shall be performed
-	 * @param tileName, the name of the tile for which the search will be performed.
-	 * @return if the specified tile is found in this TileStore object the true is returned
-	 *         otherwise false is returned.
-	 */
-	public boolean contains (int zoomLevel, String tileName, String tileStore){
-		
-		if(tileStore.equals("ditu.google.com")) {
-			if ((tileStoreDituGoogleCom.get(zoomLevel)).contains(tileName)) 
-				return true;
-		}
-		else {
-			if ((tileStoreMapsGoogleCom.get(zoomLevel)).contains(tileName))
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Add a tile to this TileStore object.
-	 * 
-	 * @param zoomLevel, to which zoom level the tile shall be added
-	 * @param tileName, the name of the tile that shall be added
-	 */
-	public void add (int zoomLevel, String tileName, String tileStore) {
-		if (tileStore.equals("ditu.google.com")) {
-			tileStoreDituGoogleCom.get(zoomLevel).add(tileName);	
-		}
-		else {
-			tileStoreMapsGoogleCom.get(zoomLevel).add(tileName);
+
+	public static TileStore getInstance() {
+		if (sObj != null)
+			return sObj;
+		synchronized (TileStore.class) {
+			if (sObj == null)
+				sObj = new TileStore();
+			return sObj;
 		}
 	}
-	
-	public String get (int zoomLevel, String tileStore) {
-		if (tileStore.equals("ditu.google.com")) {
-			return tileStoreDituGoogleCom.get(zoomLevel).toString();	
-		}
-		else {
-			return tileStoreMapsGoogleCom.get(zoomLevel).toString();
-		}
+
+	private String getTilePath(int x, int y, int zoom, TileSource tileSource) {
+		return tileStorePath + tileSource + "/z" + zoom + "_" + x + "_" + y + ".png";
 	}
-		
-	/**
-	 * Remove a specific tile in this TileStore object.
-	 * 
-	 * @param zoomLevel, from which zoom level the tile shall be removed.
-	 * @param tileName, which tile that shall be removed
-	 */
-	public void remove (int zoomLevel, String tileName, String tileStore) {
-		if (tileStore.equals("ditu.google.com")) {
-			tileStoreDituGoogleCom.get(zoomLevel).remove(tileName);	
-		}
-		else {
-			tileStoreMapsGoogleCom.get(zoomLevel).remove(tileName);
-		}
+
+	public File getTileFile(int x, int y, int zoom, TileSource tileSource) {
+		return new File(getTilePath(x, y, zoom, tileSource));
 	}
-	
-	/**
-	 * Remove all tiles in this TileStore object
-	 */
-	public void removeAll () {
-		for (int i = 0; i < 17; i++) {
-			(tileStoreDituGoogleCom.get(i)).clear();
-			(tileStoreMapsGoogleCom.get(i)).clear();
-		}
+
+	public boolean copyStoredTileTo(File targetFileName, int x, int y, int zoom,
+			TileSource tileSource) throws IOException {
+		File sourceFile = getTileFile(x, y, zoom, tileSource);
+		if (!sourceFile.exists())
+			return false;
+		FileInputStream fis = new FileInputStream(sourceFile);
+		FileOutputStream fos = new FileOutputStream(targetFileName);
+
+		FileChannel source = fis.getChannel();
+		FileChannel destination = fos.getChannel();
+		long sourceBytes = source.size();
+		long writtenBytes = destination.transferFrom(source, 0, sourceBytes);
+		fis.close();
+		fos.close();
+		if (writtenBytes != source.size())
+			throw new IOException("Target file's size is not equal to the source file's size!");
+		return true;
 	}
-	
-	/**
-	 * This method is used to load all current tiles in the persistent tilestore 
-	 * to this TileStore object. This method shall only be invoked at application
-	 * start
-	 */
-	public void init() {
-		
-		String fileSeparator = System.getProperty("file.separator");
-		File dituTiles;
-		File mapsTiles;
-		
-		for (int i = 1; i < 18; i++) {
-			dituTiles = new File(System.getProperty("user.dir") + fileSeparator + "tilestore" + fileSeparator + "ditu.google.com" + fileSeparator + i);
-			mapsTiles = new File(System.getProperty("user.dir") + fileSeparator + "tilestore" + fileSeparator + "maps.google.com" + fileSeparator + i); 
-			for (String s : dituTiles.list()) {
-				sObj.add(i, s, "ditu.google.com");
-			}
-			for (String s : mapsTiles.list()) {
-				sObj.add(i, s, "maps.google.com");
-			}
-		}
+
+	public boolean contains(int x, int y, int zoom, TileSource tileSource) {
+		File f = getTileFile(x, y, zoom, tileSource);
+		return f.exists();
 	}
-	
-	public void debugDitu() {
-		for (int i = 1; i < 18; i++) {
-			System.out.println(sObj.get(i, "ditu.google.com"));
-		}
-	}
-	
-	public void debugMaps() {
-		for (int i = 1; i < 18; i++) {
-			System.out.println(sObj.get(i, "maps.google.com"));
-		}
-	}
+
 }

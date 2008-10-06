@@ -1,35 +1,34 @@
 package tac.program;
+
 import java.util.Arrays;
 
-
 public class SelectedZoomLevels {
-	private int [] zoomLevels;
+	private int[] zoomLevels;
 	private int nrOfLayers;
-	
-	public SelectedZoomLevels()  {
-		zoomLevels = new int [10];
+
+	public SelectedZoomLevels() {
+		zoomLevels = new int[10];
 		nrOfLayers = 0;
 	}
-	
+
 	public void setZoomLevelSelected(int zoomLevel, boolean isSelected) {
 		if (isSelected) {
-			zoomLevels[zoomLevel -1] = zoomLevel;
+			zoomLevels[zoomLevel - 1] = zoomLevel;
 			nrOfLayers++;
-		}
-		else {
-			zoomLevels[zoomLevel -1] = 99;
+		} else {
+			zoomLevels[zoomLevel - 1] = 99;
 		}
 	}
-	
-	public int [] getZoomLevels () {
+
+	public int[] getZoomLevels() {
 		return zoomLevels;
 	}
-	
-	public int getNrOfLayers () {
+
+	public int getNrOfLayers() {
 		return nrOfLayers;
 	}
-	
-	public void sort () {
+
+	public void sort() {
 		Arrays.sort(zoomLevels);
 	}
 }

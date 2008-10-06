@@ -16,11 +16,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -53,11 +50,11 @@ import tac.gui.preview.GoogleTileSource;
 import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.OpenStreetMapTileSource;
 import tac.gui.preview.PreviewMap;
+import tac.program.AtlasThread;
 import tac.program.GoogleDownLoad;
 import tac.program.GoogleTileDownLoad;
 import tac.program.GoogleTileUtils;
 import tac.program.MapSelection;
-import tac.program.OziToAtlas;
 import tac.program.ProcessValues;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
@@ -70,7 +67,7 @@ import tac.utilities.Utilities;
 public class GUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = -8444942802691874960L;
-	private static final String VERSION = "0.9";
+	private static final String VERSION = "0.9 alpha";
 
 	// public static final NumberFormat DF = new DecimalFormat("0.000000");
 
@@ -128,7 +125,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private Thread atlasThread;
 	private Thread getGoogleDownloadStringThread;
 
-	private AtlasProgress ap;
 	private String fileSeparator;
 
 	private JPopupMenu jpm;
@@ -165,19 +161,16 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		// Try to set the Windows look and feel...
 		try {
-			UIManager
-					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		}
 		// ... if that is not possible, try to set the look and feel associated
 		// to the system
 		catch (Exception e) {
 			try {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (UnsupportedLookAndFeelException e1) {
-				System.out
-						.println("The selection of look and feel was not possible, due to: "
-								+ e1.toString());
+				System.out.println("The selection of look and feel was not possible, due to: "
+						+ e1.toString());
 				e1.printStackTrace();
 			} catch (Exception e1) {
 			}
@@ -201,8 +194,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel = new JPanel(null);
 		coordinatesPanel.setMinimumSize(new Dimension(270, 200));
-		coordinatesPanel.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		coordinatesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		latMaxLabel = new JLabel("Latitude Max");
 		latMaxLabel.setBounds(112, 20, 100, 20);
@@ -247,17 +239,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel.add(previewSelectionButton);
 
-		mapSource = new JComboBox(new Object[] {
-				new GoogleTileSource.GoogleMaps(),
-				new GoogleTileSource.GoogleEarth(),
-				new OpenStreetMapTileSource.Mapnik(),
-				new OpenStreetMapTileSource.TilesAtHome(),
-				new OpenStreetMapTileSource.CycleMap() });
+		mapSource =
+				new JComboBox(new Object[] { new GoogleTileSource.GoogleMaps(),
+						new GoogleTileSource.GoogleEarth(), new OpenStreetMapTileSource.Mapnik(),
+						new OpenStreetMapTileSource.TilesAtHome(),
+						new OpenStreetMapTileSource.CycleMap() });
 		mapSource.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				previewMap.setTileSource((TileSource) mapSource
-						.getSelectedItem());
+				previewMap.setTileSource((TileSource) mapSource.getSelectedItem());
 			}
 		});
 		// Zoom Panel
@@ -277,11 +267,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		amountOfTilesLabel.setHorizontalAlignment(JLabel.RIGHT);
 		amountOfTilesLabel.setToolTipText("Total amount of tiles to download");
 
-		zoomLevelPanel = new JPanel(new GridLayout(2, cbZoom.length + 2 / 2, 0,
-				0));
+		zoomLevelPanel = new JPanel(new GridLayout(2, cbZoom.length + 2 / 2, 0, 0));
 		zoomLevelPanel.setPreferredSize(new Dimension(280, 30));
-		zoomLevelPanel.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		zoomLevelPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		CheckBoxListener cbl = new CheckBoxListener();
 
@@ -304,8 +292,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		tileSizePanel = new JPanel(null);
 		tileSizePanel.setMinimumSize(new Dimension(275, 55));
-		tileSizePanel.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		tileSizeValues = new Vector<Integer>();
 		for (int i = 0; i < 7; i++) {
@@ -347,8 +334,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		atlasNamePanel = new JPanel(null);
 		atlasNamePanel.setMinimumSize(new Dimension(275, 30));
-		atlasNamePanel.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		atlasNamePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		atlasNameTextField = new JTextField();
 		atlasNameTextField.setBounds(5, 5, 264, 20);
@@ -361,16 +347,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		profilesPanel = new JPanel(null);
 		profilesPanel.setMinimumSize(new Dimension(275, 231));
-		profilesPanel.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		profilesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		profilesJList = new JList();
 		profilesJList.setBounds(1, 1, 264, 180);
 		profilesJList.setEnabled(false);
 
-		JScrollPane scrollPane = new JScrollPane(profilesJList,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPane =
+				new JScrollPane(profilesJList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setBounds(5, 5, 264, 180);
 
 		saveAsProfileButton = new JButton("Save as profile");
@@ -424,8 +409,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	public void createRightPanel() {
 
 		rightPanel = new JPanel(new BorderLayout());
-		rightPanel.setBorder(BorderFactory
-				.createBevelBorder(BevelBorder.LOWERED));
+		rightPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
 		previewMap = new PreviewMap();
 		previewMap.addMapSelectionListener(this);
@@ -465,16 +449,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// new JTextFieldListener());
 		// longMaxTextField.getDocument().addDocumentListener(
 		// new JTextFieldListener());
-		tileSizeWidthTextField
-				.addFocusListener(new JTextFieldFocusChangeListener());
-		tileSizeWidthTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
-		tileSizeHeightTextField
-				.addFocusListener(new JTextFieldFocusChangeListener());
-		tileSizeHeightTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
-		atlasNameTextField.getDocument().addDocumentListener(
-				new JTextFieldListener());
+		tileSizeWidthTextField.addFocusListener(new JTextFieldFocusChangeListener());
+		tileSizeWidthTextField.getDocument().addDocumentListener(new JTextFieldListener());
+		tileSizeHeightTextField.addFocusListener(new JTextFieldFocusChangeListener());
+		tileSizeHeightTextField.getDocument().addDocumentListener(new JTextFieldListener());
+		atlasNameTextField.getDocument().addDocumentListener(new JTextFieldListener());
 
 		chooseProfileButton.addActionListener(new JToggleButtonListener());
 		profilesJList.addListSelectionListener(new JListListener());
@@ -484,7 +463,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	/**
-	 * Reads the entered coordinates and 
+	 * Reads the entered coordinates and
 	 */
 	protected void previewSelection() {
 		checkCoordinates();
@@ -503,26 +482,22 @@ public class GUI extends JFrame implements MapSelectionListener {
 	protected MapSelection getMapSelectionCoordinates() {
 		MapSelection ms = new MapSelection();
 		try {
-			ms.lat_max = Utilities.FORMAT_6_DEC
-					.parse(latMaxTextField.getText()).doubleValue();
+			ms.lat_max = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText()).doubleValue();
 		} catch (ParseException e) {
 			ms.lat_max = 0.0;
 		}
 		try {
-			ms.lat_min = Utilities.FORMAT_6_DEC
-					.parse(latMinTextField.getText()).doubleValue();
+			ms.lat_min = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText()).doubleValue();
 		} catch (ParseException e) {
 			ms.lat_min = 0.0;
 		}
 		try {
-			ms.lon_max = Utilities.FORMAT_6_DEC
-					.parse(lonMaxTextField.getText()).doubleValue();
+			ms.lon_max = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText()).doubleValue();
 		} catch (ParseException e) {
 			ms.lon_max = 0.0;
 		}
 		try {
-			ms.lon_min = Utilities.FORMAT_6_DEC
-					.parse(lonMinTextField.getText()).doubleValue();
+			ms.lon_min = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText()).doubleValue();
 		} catch (ParseException e) {
 			ms.lon_min = 0.0;
 		}
@@ -546,17 +521,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 			settings.load();
 		} catch (IOException iox) {
 			JOptionPane.showMessageDialog(null,
-					"Could not create file settings.xml program will exit.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+					"Could not create file settings.xml program will exit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 
 		fileSeparator = System.getProperty("file.separator");
 
 		// Load all profiles from the profiles file from disk
-		profilesVector = PersistentProfiles.load(new File(System
-				.getProperty("user.dir")
-				+ fileSeparator + "profiles.xml"));
+		profilesVector =
+				PersistentProfiles.load(new File(System.getProperty("user.dir") + fileSeparator
+						+ "profiles.xml"));
 
 		for (Profile p : profilesVector) {
 			profileNamesVector.add(p.getProfileName());
@@ -574,8 +549,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText = "A value of \"Longitude Min\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(
-						lonMinTextField.getText()).doubleValue();
+				Double temp = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText()).doubleValue();
 
 				if (temp < -179 || temp > 179) {
 					errorText += "Value of \"Longitude Min\" must be between -179 and 179 \n";
@@ -589,8 +563,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText += "A value of \"Longitude Max\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(
-						lonMaxTextField.getText()).doubleValue();
+				Double temp = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText()).doubleValue();
 
 				if (temp < -179 || temp > 179) {
 					errorText += "Value of \"Longitude Max\" must be between -179 and 179 \n";
@@ -604,8 +577,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText += "A value of \"Latitude Max\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(
-						latMaxTextField.getText()).doubleValue();
+				Double temp = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText()).doubleValue();
 
 				if (temp < -85 || temp > 85) {
 					errorText += "Value of \"Latitude Max\" must be between -85 and 85 \n";
@@ -619,8 +591,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText += "A value of \"Latitude Min\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(
-						latMinTextField.getText()).doubleValue();
+				Double temp = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText()).doubleValue();
 
 				if (temp < -85 || temp > 85) {
 					errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
@@ -638,12 +609,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				int result = -1;
 
-				result = Utilities.validateString(atlasNameTextField.getText(),
-						false);
+				result = Utilities.validateString(atlasNameTextField.getText(), false);
 
 				if (result > -1) {
-					errorText += "Atlas name contains illegal characters ("
-							+ (char) result + ")\n";
+					errorText += "Atlas name contains illegal characters (" + (char) result + ")\n";
 				}
 			}
 		}
@@ -672,17 +641,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 				result = Utilities.validateTileSizeInput(input);
 
 				if (result > -1) {
-					errorText += "\"" + (char) result
-							+ "\" is not valid input of Custom size (W)";
+					errorText += "\"" + (char) result + "\" is not valid input of Custom size (W)";
 
 				} else {
 					if (Integer.parseInt(input) > 1792) {
-						errorText += "\"" + input
-								+ "\" is not valid input of Custom size (W)";
+						errorText += "\"" + input + "\" is not valid input of Custom size (W)";
 					}
 					if (Integer.parseInt(input) < 50) {
-						errorText += "\"" + input
-								+ "\" is not valid input of Custom size (W)";
+						errorText += "\"" + input + "\" is not valid input of Custom size (W)";
 					}
 				}
 			}
@@ -696,17 +662,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 				result = Utilities.validateTileSizeInput(input);
 
 				if (result > -1) {
-					errorText += "\"" + (char) result
-							+ "\" is not valid input of Custom size (H)";
+					errorText += "\"" + (char) result + "\" is not valid input of Custom size (H)";
 
 				} else {
 					if (Integer.parseInt(input) > 1792) {
-						errorText += "\"" + input
-								+ "\" is not valid input of Custom size (H)";
+						errorText += "\"" + input + "\" is not valid input of Custom size (H)";
 					}
 					if (Integer.parseInt(input) < 50) {
-						errorText += "\"" + input
-								+ "\" is not valid input of Custom size (H)";
+						errorText += "\"" + input + "\" is not valid input of Custom size (H)";
 					}
 				}
 			}
@@ -721,14 +684,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		Double longMax;
 		Double longMin;
 		try {
-			latMax = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText())
-					.doubleValue();
-			latMin = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText())
-					.doubleValue();
-			longMax = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText())
-					.doubleValue();
-			longMin = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText())
-					.doubleValue();
+			latMax = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText()).doubleValue();
+			latMin = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText()).doubleValue();
+			longMax = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText()).doubleValue();
+			longMin = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText()).doubleValue();
 		} catch (ParseException e) {
 			return false;
 		}
@@ -737,17 +696,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		if (latMax < latMin) {
 
-			JOptionPane.showMessageDialog(null,
-					"Latitude Min is greater than Latitude Max", "Errors",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Latitude Min is greater than Latitude Max",
+					"Errors", JOptionPane.ERROR_MESSAGE);
 			maxIsBiggerThanMin = false;
 		}
 
 		if (longMax < longMin) {
 
-			JOptionPane.showMessageDialog(null,
-					"Longitude Min is greater than Longitude Max", "Errors",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Longitude Min is greater than Longitude Max",
+					"Errors", JOptionPane.ERROR_MESSAGE);
 			maxIsBiggerThanMin = false;
 		}
 
@@ -767,19 +724,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			for (int i = 0; i < nrOfLayers; i++) {
 
-				Point topLeft = GoogleTileUtils.toTileXY(Double
-						.parseDouble(latMaxTextField.getText()), Double
-						.parseDouble(lonMaxTextField.getText()), zoomLevels[i]);
-				Point bottomRight = GoogleTileUtils.toTileXY(Double
-						.parseDouble(latMinTextField.getText()), Double
-						.parseDouble(lonMinTextField.getText()), zoomLevels[i]);
+				Point topLeft =
+						GoogleTileUtils.toTileXY(Double.parseDouble(latMaxTextField.getText()),
+								Double.parseDouble(lonMaxTextField.getText()), zoomLevels[i]);
+				Point bottomRight =
+						GoogleTileUtils.toTileXY(Double.parseDouble(latMinTextField.getText()),
+								Double.parseDouble(lonMinTextField.getText()), zoomLevels[i]);
 
-				totalNrOfTiles = totalNrOfTiles
-						+ Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(
-								topLeft, bottomRight, zoomLevels[i]));
+				totalNrOfTiles =
+						totalNrOfTiles
+								+ Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(topLeft,
+										bottomRight, zoomLevels[i]));
 			}
-			amountOfTilesLabel.setText("( " + Integer.toString(totalNrOfTiles)
-					+ " )");
+			amountOfTilesLabel.setText("( " + Integer.toString(totalNrOfTiles) + " )");
 		}
 	}
 
@@ -791,11 +748,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 			try {
 				s.store();
 			} catch (IOException iox) {
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Could not create file settings.xml program will exit.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,
+						"Could not create file settings.xml program will exit.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			System.exit(0);
 		}
@@ -852,14 +807,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 					if (result == -1) {
 						if (Integer.parseInt(input) < 50) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"\""
-													+ input
-													+ "\" is not valid input of Custom size (W) \n\n"
-													+ "Accepted values are between 50 and 1792",
-											"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, "\"" + input
+									+ "\" is not valid input of Custom size (W) \n\n"
+									+ "Accepted values are between 50 and 1792", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -892,15 +843,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		String input = "";
 
-		if ((((this.getFocusOwner()).getClass()).toString())
-				.equals("class javax.swing.JTextField")) {
+		if ((((this.getFocusOwner()).getClass()).toString()).equals("class javax.swing.JTextField")) {
 
 			input = ((JTextField) this.getFocusOwner()).getText();
 
 			if (input.length() > 0) {
 
-				String jtfobjAsString = ((JTextField) this.getFocusOwner())
-						.toString();
+				String jtfobjAsString = ((JTextField) this.getFocusOwner()).toString();
 
 				if (jtfobjAsString.indexOf("latMaxTextField") > -1
 						|| jtfobjAsString.indexOf("latMinTextField") > -1
@@ -909,15 +858,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 					String result = "";
 
-					result = Utilities.validateCordinateInput(input,
-							jtfobjAsString);
+					result = Utilities.validateCordinateInput(input, jtfobjAsString);
 
 					if (result.length() > 0) {
 						JOptionPane.showMessageDialog(null, "\"" + result
 								+ "\" is not valid input.\n"
 								+ "Please enter a valid number in the form "
-								+ Utilities.FORMAT_6_DEC.format(1.12345),
-								"Error", JOptionPane.ERROR_MESSAGE);
+								+ Utilities.FORMAT_6_DEC.format(1.12345), "Error",
+								JOptionPane.ERROR_MESSAGE);
 						return false;
 					}
 				}
@@ -929,13 +877,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 					result = Utilities.validateTileSizeInput(input);
 
 					if (result > -1) {
-						JOptionPane
-								.showMessageDialog(
-										null,
-										"\""
-												+ (char) result
-												+ "\" is not valid input \n\nOnly accepted input is \"0-9\"",
-										"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "\"" + (char) result
+								+ "\" is not valid input \n\nOnly accepted input is \"0-9\"",
+								"Error", JOptionPane.ERROR_MESSAGE);
 						return false;
 					} else if (input.length() > 3) {
 						if (Integer.parseInt(input) > 1792) {
@@ -958,13 +902,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 					result = Utilities.validateTileSizeInput(input);
 
 					if (result > -1) {
-						JOptionPane
-								.showMessageDialog(
-										null,
-										"\""
-												+ (char) result
-												+ "\" is not valid input \n\nOnly accepted input is \"0-9\"",
-										"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "\"" + (char) result
+								+ "\" is not valid input \n\nOnly accepted input is \"0-9\"",
+								"Error", JOptionPane.ERROR_MESSAGE);
 						return false;
 					} else if (input.length() > 3) {
 						if (Integer.parseInt(input) > 1792) {
@@ -988,9 +928,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 					result = Utilities.validateString(input, false);
 
 					if (result > -1) {
-						JOptionPane.showMessageDialog(null, "\""
-								+ (char) result + "\" is not valid input",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "\"" + (char) result
+								+ "\" is not valid input", "Error", JOptionPane.ERROR_MESSAGE);
 						return false;
 					}
 				}
@@ -999,35 +938,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		return true;
 	}
 
-	public boolean retryDownloadAtlasTile(int xValue, int yValue,
-			int zoomValue, File destinationFolder, int serverSwitcher) {
-
-		boolean retryOk = false;
-
-		for (int i = 0; i < 10; i++) {
-
-			if (serverSwitcher == 4) {
-				serverSwitcher = 0;
-			}
-			try {
-				GoogleTileDownLoad.getImage(xValue, yValue, zoomValue,
-						destinationFolder, serverSwitcher, true);
-				retryOk = true;
-			} catch (IOException e) {
-				retryOk = false;
-
-				try {
-					Thread.sleep(10 * 1000);
-				} catch (InterruptedException iex) {
-				}
-			}
-			serverSwitcher++;
-		}
-		return retryOk;
-	}
-
-	public boolean retryDownloadPreviewTile(int xValue, int yValue,
-			int zoomValue, File destinationFolder, int serverSwitcher) {
+	public boolean retryDownloadPreviewTile(int xValue, int yValue, int zoomValue,
+			File destinationFolder, int serverSwitcher) {
 
 		boolean retryOk = false;
 
@@ -1038,8 +950,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 			}
 
 			try {
-				GoogleTileDownLoad.getImage(xValue, yValue, zoomValue,
-						destinationFolder, serverSwitcher, true);
+				GoogleTileDownLoad.getImage(xValue, yValue, zoomValue, destinationFolder,
+						serverSwitcher, true);
 				retryOk = true;
 			} catch (IOException e) {
 				retryOk = false;
@@ -1071,9 +983,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		public void actionPerformed(ActionEvent e) {
 
-			double[] coordinates = Utilities.calculatePreviewCoordinates(
-					ProcessValues.getMouseXCoordinat(), ProcessValues
-							.getMouseYCoordinat());
+			double[] coordinates =
+					Utilities.calculatePreviewCoordinates(ProcessValues.getMouseXCoordinat(),
+							ProcessValues.getMouseYCoordinat());
 
 			double selectedLongMin = coordinates[0];
 			double latMaxApproximitation = coordinates[1];
@@ -1082,16 +994,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			if (actionCommand.equals("Top left corner")) {
 
-				latMaxTextField.setText(Utilities.nrOfDecimals(
-						latMaxApproximitation, 6));
-				lonMinTextField.setText(Utilities.nrOfDecimals(selectedLongMin,
-						6));
+				latMaxTextField.setText(Utilities.nrOfDecimals(latMaxApproximitation, 6));
+				lonMinTextField.setText(Utilities.nrOfDecimals(selectedLongMin, 6));
 				jpm.setVisible(false);
 			} else if (actionCommand.equals("Bottom right corner")) {
-				latMinTextField.setText(Utilities.nrOfDecimals(
-						latMaxApproximitation, 6));
-				lonMaxTextField.setText(Utilities.nrOfDecimals(selectedLongMin,
-						6));
+				latMinTextField.setText(Utilities.nrOfDecimals(latMaxApproximitation, 6));
+				lonMaxTextField.setText(Utilities.nrOfDecimals(selectedLongMin, 6));
 				jpm.setVisible(false);
 			}
 		}
@@ -1102,8 +1010,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			String errorText = validateInput(true);
 			if (errorText.length() > 0) {
-				JOptionPane.showMessageDialog(null, errorText, "Errors",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
 			} else {
 
 				boolean maxIsBiggerThanMin = true;
@@ -1122,11 +1029,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 						} catch (NumberFormatException nfex) {
 
 							customTileSizeWidthIsOk = false;
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"Custom tile size width value is not a valid integer value",
-											"Errors", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null,
+									"Custom tile size width value is not a valid integer value",
+									"Errors", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					if (tileSizeHeightComboBox.isEnabled() == false) {
@@ -1136,18 +1041,37 @@ public class GUI extends JFrame implements MapSelectionListener {
 						} catch (NumberFormatException nfex) {
 
 							customTileSizeHeightIsOk = false;
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"Custom tile size height value is not a valid integer value",
-											"Errors", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null,
+									"Custom tile size height value is not a valid integer value",
+									"Errors", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					if (customTileSizeWidthIsOk && customTileSizeHeightIsOk) {
 						createAtlasButton.setEnabled(false);
 
+						int tileSizeWidth = 0;
+						int tileSizeHeight = 0;
+
+						if (tileSizeWidthComboBox.isEnabled()) {
+							tileSizeWidth =
+									Integer.parseInt(tileSizeWidthComboBox.getSelectedItem()
+											.toString());
+						} else {
+							tileSizeWidth = Integer.parseInt(tileSizeWidthTextField.getText());
+						}
+						if (tileSizeHeightComboBox.isEnabled()) {
+							tileSizeHeight =
+									Integer.parseInt(tileSizeHeightComboBox.getSelectedItem()
+											.toString());
+						} else {
+							tileSizeHeight = Integer.parseInt(tileSizeHeightTextField.getText());
+						}
+
 						try {
-							atlasThread = new AtlasThread();
+							atlasThread =
+									new AtlasThread(this, atlasNameTextField.getText(),
+											getMapSelectionCoordinates(), getSelectedZoomlevels(),
+											tileSizeWidth, tileSizeHeight);
 							atlasThread.start();
 						} catch (Exception ex) {
 							System.out.println(ex);
@@ -1156,243 +1080,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 				}
 			}
 			System.gc();
-		}
-	}
-
-	private class AtlasThread extends Thread {
-
-		public void run() {
-
-			String workingDir = System.getProperty("user.dir");
-
-			Date date = new Date();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-			String formattedDateString = sdf.format(date);
-
-			File ozi = new File(workingDir + fileSeparator + "ozi"
-					+ fileSeparator + formattedDateString);
-
-			// Check whether preview folder exists
-			// or not...
-			if (!ozi.exists()) {
-				ozi.mkdir();
-			}
-
-			/***
-			 * In this section of code below, atlas is created.
-			 **/
-
-			File atlas = new File(workingDir + fileSeparator + "atlases"
-					+ fileSeparator + formattedDateString);
-
-			// Check whether preview folder exists
-			// or not...
-			if (!atlas.exists()) {
-				// Create if not already existing
-				atlas.mkdir();
-			}
-
-			File atlasTar = new File(workingDir + fileSeparator
-					+ "atlasestared" + fileSeparator + formattedDateString);
-
-			// Check whether preview folder exists
-			// or not...
-			if (!atlasTar.exists()) {
-				// Create if not already existing
-				atlasTar.mkdir();
-			}
-
-			File crtba = new File(atlas.getAbsolutePath() + fileSeparator
-					+ "cr.tba");
-
-			try {
-				FileWriter fw = new FileWriter(crtba);
-				fw.write("Atlas 1.0\r\n");
-				fw.close();
-			} catch (IOException iox) {
-				System.out.println(iox);
-			}
-
-			SelectedZoomLevels sZL = getSelectedZoomlevels();
-
-			int nrOfLayers = sZL.getNrOfLayers();
-			int[] zoomLevels = sZL.getZoomLevels();
-
-			ProcessValues.resetNrOfDownloadedBytes();
-
-			int totalNrOfTiles = 0;
-
-			for (int i = 0; i < nrOfLayers; i++) {
-
-				Point topLeft = GoogleTileUtils.toTileXY(Double
-						.parseDouble(latMaxTextField.getText()), Double
-						.parseDouble(lonMaxTextField.getText()), zoomLevels[i]);
-				Point bottomRight = GoogleTileUtils.toTileXY(Double
-						.parseDouble(latMinTextField.getText()), Double
-						.parseDouble(lonMinTextField.getText()), zoomLevels[i]);
-
-				totalNrOfTiles = totalNrOfTiles
-						+ Utilities.calculateNrOfTiles(new TileXYMinMaxAndZoom(
-								topLeft, bottomRight, zoomLevels[i]));
-			}
-
-			ap = AtlasProgress.getInstance();
-			ap.init(totalNrOfTiles, nrOfLayers);
-			ap.setVisible(true);
-
-			ProcessValues.setTileSizeErrorNotified(false);
-
-			tileDownloadsLoop: for (int layer = 0; layer < nrOfLayers; layer++) {
-
-				if (ProcessValues.getAbortAtlasDownload()) {
-					break tileDownloadsLoop;
-				} else {
-					/***
-					 * In this section of code below, tiles for Atlas is being
-					 * downloaded and put into folder "ozi"
-					 **/
-					int zoom = zoomLevels[layer];
-
-					String mapName = atlasNameTextField.getText().trim();
-
-					Point topLeft = GoogleTileUtils.toTileXY(Double
-							.parseDouble(latMaxTextField.getText()), Double
-							.parseDouble(lonMaxTextField.getText()), zoom);
-					Point bottomRight = GoogleTileUtils.toTileXY(Double
-							.parseDouble(latMinTextField.getText()), Double
-							.parseDouble(lonMinTextField.getText()), zoom);
-
-					int apMax = Utilities
-							.calculateNrOfTiles(new TileXYMinMaxAndZoom(
-									topLeft, bottomRight, zoom));
-
-					ap.setMinMaxForCurrentLayer(0, apMax);
-					ap.setZoomLevel(zoom);
-					ap.setInitiateTimeForLayer();
-
-					int xMax = (int) topLeft.getX();
-					int xMin = (int) bottomRight.getX();
-					int yMax = (int) bottomRight.getY();
-					int yMin = (int) topLeft.getY();
-
-					int serverSwitcher = 0;
-					int counter = 0;
-
-					File oziZoom = new File(ozi + fileSeparator + zoom);
-					oziZoom.mkdir();
-
-					for (int i = yMin; i <= yMax; i++) {
-
-						if (ProcessValues.getAbortAtlasDownload()) {
-							break tileDownloadsLoop;
-						} else {
-
-							for (int j = xMin; j <= xMax; j++) {
-
-								if (ProcessValues.getAbortAtlasDownload()) {
-									break tileDownloadsLoop;
-								} else {
-
-									if (serverSwitcher == 4) {
-										serverSwitcher = 0;
-									}
-
-									try {
-
-										GoogleTileDownLoad.getImage(j, i, zoom,
-												oziZoom, serverSwitcher, true);
-									} catch (IOException e) {
-
-										boolean retryOK;
-
-										retryOK = retryDownloadAtlasTile(j, i,
-												zoom, oziZoom, serverSwitcher);
-
-										if (retryOK == false) {
-											JOptionPane
-													.showMessageDialog(
-															null,
-															"Something is wrong with connection to download server. Please check connection to internet and try again",
-															"Error",
-															JOptionPane.ERROR_MESSAGE);
-											System.exit(1);
-										}
-									}
-									serverSwitcher++;
-									counter++;
-
-									ap.updateAtlasProgressBar(ap
-											.getAtlasProgressValue() + 1);
-									ap.updateLayerProgressBar(counter);
-									ap.updateViewNrOfDownloadedBytes();
-									ap.updateViewNrOfDownloadedBytesPerSecond();
-									ap.updateTotalDownloadTime();
-
-								}
-							}
-						}
-					}
-
-					if ((oziZoom.list().length) != ((yMax - yMin + 1) * (xMax
-							- xMin + 1))) {
-						JOptionPane
-								.showMessageDialog(
-										null,
-										"Something is wrong with download of atlas tiles. Actual amount of downoladed tiles is not the same as the supposed amount of tiles downoladed. It might be connection problems to internet or something else. Please try again.",
-										"Error", JOptionPane.ERROR_MESSAGE);
-						System.exit(1);
-					}
-
-					File atlasFolder = new File(atlas.getAbsolutePath()
-							+ fileSeparator + mapName + zoom);
-					atlasFolder.mkdir();
-
-					int tileSizeWidth = 0;
-					int tileSizeHeight = 0;
-
-					if (tileSizeWidthComboBox.isEnabled()) {
-						tileSizeWidth = Integer.parseInt(tileSizeWidthComboBox
-								.getSelectedItem().toString());
-					} else {
-						tileSizeWidth = Integer.parseInt(tileSizeWidthTextField
-								.getText());
-					}
-					if (tileSizeHeightComboBox.isEnabled()) {
-						tileSizeHeight = Integer
-								.parseInt(tileSizeHeightComboBox
-										.getSelectedItem().toString());
-					} else {
-						tileSizeHeight = Integer
-								.parseInt(tileSizeHeightTextField.getText());
-					}
-
-					OziToAtlas ota = new OziToAtlas(oziZoom, atlasFolder,
-							tileSizeWidth, tileSizeHeight, mapName, zoom);
-					ota.convert(xMax, xMin, yMax, yMin);
-
-					ap.updateAtlasProgressBarLayerText(layer + 1);
-				}
-			}
-
-			if (ProcessValues.getAbortAtlasDownload()) {
-				JOptionPane.showMessageDialog(null, "Atlas download aborted",
-						"Information", JOptionPane.INFORMATION_MESSAGE);
-				ap.setButtonText();
-			} else {
-				ap.setButtonText();
-
-				Utilities.createCR_TAR(atlas, atlasTar, new File(workingDir
-						+ fileSeparator + "tarwrkdir"));
-				AtlasProgress ap = AtlasProgress.getInstance();
-				ap.updateTarPrograssBar();
-				Utilities.createTarPackedLayers(atlas, atlasTar);
-				ap.updateTarPrograssBar();
-
-				JOptionPane.showMessageDialog(null, "Atlas download completed",
-						"Information", JOptionPane.INFORMATION_MESSAGE);
-			}
-			createAtlasButton.setEnabled(true);
-			ProcessValues.setAbortAtlasDownload(false);
 		}
 	}
 
@@ -1415,8 +1102,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			if (profileNameExists) {
 				JOptionPane.showMessageDialog(null,
-						"Profile name already exists, choose a different name",
-						"Error", JOptionPane.ERROR_MESSAGE);
+						"Profile name already exists, choose a different name", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			} else {
 				String errorDescription = "";
 
@@ -1465,14 +1152,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 					theProfile.setProfileName(inputValue);
 					theProfile.setAtlasName(atlasNameTextField.getText());
-					theProfile.setLatitudeMax(Double
-							.parseDouble(latMaxTextField.getText()));
-					theProfile.setLatitudeMin(Double
-							.parseDouble(latMinTextField.getText()));
-					theProfile.setLongitudeMax(Double
-							.parseDouble(lonMaxTextField.getText()));
-					theProfile.setLongitudeMin(Double
-							.parseDouble(lonMinTextField.getText()));
+					theProfile.setLatitudeMax(Double.parseDouble(latMaxTextField.getText()));
+					theProfile.setLatitudeMin(Double.parseDouble(latMinTextField.getText()));
+					theProfile.setLongitudeMax(Double.parseDouble(lonMaxTextField.getText()));
+					theProfile.setLongitudeMin(Double.parseDouble(lonMinTextField.getText()));
 
 					boolean[] zoomLevels = new boolean[cbZoom.length];
 					for (int i = 0; i < cbZoom.length; i++) {
@@ -1480,21 +1163,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 					}
 
 					theProfile.setZoomLevels(zoomLevels);
-					theProfile.setTileSizeWidth(tileSizeWidthComboBox
-							.getSelectedIndex());
-					theProfile.setTileSizeHeight(tileSizeHeightComboBox
-							.getSelectedIndex());
+					theProfile.setTileSizeWidth(tileSizeWidthComboBox.getSelectedIndex());
+					theProfile.setTileSizeHeight(tileSizeHeightComboBox.getSelectedIndex());
 
 					if (!tileSizeWidthComboBox.isEnabled()) {
-						theProfile.setCustomTileSizeWidth(Integer
-								.parseInt(tileSizeWidthTextField.getText()));
+						theProfile.setCustomTileSizeWidth(Integer.parseInt(tileSizeWidthTextField
+								.getText()));
 					} else {
 						theProfile.setCustomTileSizeWidth(0);
 					}
 
 					if (!tileSizeHeightComboBox.isEnabled()) {
-						theProfile.setCustomTileSizeHeight(Integer
-								.parseInt(tileSizeHeightTextField.getText()));
+						theProfile.setCustomTileSizeHeight(Integer.parseInt(tileSizeHeightTextField
+								.getText()));
 					} else {
 						theProfile.setCustomTileSizeHeight(0);
 					}
@@ -1503,8 +1184,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 					PersistentProfiles.store(profilesVector);
 					initiateProgram();
 				} else {
-					JOptionPane.showMessageDialog(null, errorDescription,
-							"Errors", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, errorDescription, "Errors",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -1564,23 +1245,20 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				latMinTextField.setText(Double.toString(temp.getLatitudeMin()));
 				latMaxTextField.setText(Double.toString(temp.getLatitudeMax()));
-				lonMinTextField
-						.setText(Double.toString(temp.getLongitudeMin()));
-				lonMaxTextField
-						.setText(Double.toString(temp.getLongitudeMax()));
+				lonMinTextField.setText(Double.toString(temp.getLongitudeMin()));
+				lonMaxTextField.setText(Double.toString(temp.getLongitudeMax()));
 
 				if (temp.getCustomTileSizeWidth() == 0) {
 					tileSizeWidthTextField.setText("");
 				} else {
-					tileSizeWidthTextField.setText(Integer.toString(temp
-							.getCustomTileSizeWidth()));
+					tileSizeWidthTextField.setText(Integer.toString(temp.getCustomTileSizeWidth()));
 				}
 
 				if (temp.getCustomTileSizeHeight() == 0) {
 					tileSizeHeightTextField.setText("");
 				} else {
-					tileSizeHeightTextField.setText(Integer.toString(temp
-							.getCustomTileSizeHeight()));
+					tileSizeHeightTextField.setText(Integer
+							.toString(temp.getCustomTileSizeHeight()));
 				}
 
 				atlasNameTextField.setText(temp.getAtlasName());
@@ -1621,7 +1299,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 					createAtlasButton.setText("Wait...");
 					createAtlasButton.setEnabled(false);
-					// previewButton.setText("Wait...");
 					GoogleDownLoad.getDownloadString();
 				}
 			};
@@ -1779,11 +1456,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	public void selectionChanged(java.awt.geom.Point2D.Double max,
-			java.awt.geom.Point2D.Double min) {
+	public void selectionChanged(java.awt.geom.Point2D.Double max, java.awt.geom.Point2D.Double min) {
 		lonMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.x));
 		lonMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.x));
 		latMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.y));
 		latMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.y));
+	}
+
+	public void setCreateAtlasButtonEnabled(boolean enabled) {
+		createAtlasButton.setEnabled(enabled);
 	}
 }

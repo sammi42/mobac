@@ -80,14 +80,19 @@ public class AtlasThread extends Thread {
 
 		ProcessValues.resetNrOfDownloadedBytes();
 
-		int totalNrOfTiles = 0;
+		long totalNrOfTiles = 0;
 
 		for (int i = 0; i < nrOfLayers; i++) {
 			totalNrOfTiles += mapSelection.calculateNrOfTiles(zoomLevels[i]);
 		}
+		if (totalNrOfTiles > Integer.MAX_VALUE) {
+			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		ap = AtlasProgress.getInstance();
-		ap.init(totalNrOfTiles, nrOfLayers);
+		ap.init((int) totalNrOfTiles, nrOfLayers);
 		ap.setVisible(true);
 
 		ProcessValues.setTileSizeErrorNotified(false);
@@ -95,10 +100,10 @@ public class AtlasThread extends Thread {
 		TileStore ts = TileStore.getInstance();
 		Settings s = Settings.getInstance();
 
-		tileDownloadsLoop: for (int layer = 0; layer < nrOfLayers; layer++) {
+		for (int layer = 0; layer < nrOfLayers; layer++) {
 
 			if (ProcessValues.getAbortAtlasDownload())
-				break tileDownloadsLoop;
+				return;
 
 			// Prepare the tile store directory
 			if (s.isTileStoreEnabled())
@@ -132,7 +137,7 @@ public class AtlasThread extends Thread {
 			for (int y = yMin; y < yMax; y++) {
 				for (int x = xMin; x < xMax; x++) {
 					if (ProcessValues.getAbortAtlasDownload())
-						break tileDownloadsLoop;
+						return;
 					try {
 						TileDownLoader.getImage(x, y, zoom, oziZoomDir, tileSource, true);
 					} catch (IOException e) {

@@ -47,7 +47,7 @@ public class OziToAtlas {
 			mapNumberString = String.format("%06d", new Object[] { mapNumber });
 			MapCreator mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, zoom, mapNumberString,
 					tileSizeWidth, tileSizeHeight);
-			mc.create();
+			mc.createMap();
 			mapNumber++;
 		}
 	}

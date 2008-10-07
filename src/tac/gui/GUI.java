@@ -23,7 +23,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -35,7 +34,6 @@ import javax.swing.JToggleButton;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -59,9 +57,8 @@ import tac.utilities.Utilities;
 public class GUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = -8444942802691874960L;
-	private static final String VERSION = "0.9 alpha";
 
-	// public static final NumberFormat DF = new DecimalFormat("0.000000");
+	private static final String VERSION = "0.9 alpha";
 
 	private JPanel leftPanel;
 	private JPanel rightPanel;
@@ -70,6 +67,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JPanel tileSizePanel;
 	private JPanel atlasNamePanel;
 	private JPanel profilesPanel;
+
+	private JScrollPane leftScrollPane;
 
 	private PreviewMap previewMap;
 
@@ -158,15 +157,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public void createLeftPanel() {
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(2, 5, 2, 2);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
 
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
-		leftPanel.setMinimumSize(new Dimension(280, 830));
-		leftPanel.setPreferredSize(new Dimension(280, 830));
+//		leftPanel.setMinimumSize(new Dimension(290, 800));
+//		leftPanel.setPreferredSize(leftPanel.getMinimumSize());
+
+		leftScrollPane = new JScrollPane(leftPanel);
+		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		leftScrollPane.setPreferredSize(new Dimension(315, 200));
 
 		coordinatesLabel = new JLabel("COORDINATES");
 
@@ -174,6 +173,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel = new JPanel(null);
 		coordinatesPanel.setMinimumSize(new Dimension(270, 200));
+		coordinatesPanel.setPreferredSize(coordinatesPanel.getMinimumSize());
 		coordinatesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		latMaxLabel = new JLabel("Latitude Max");
@@ -238,7 +238,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		amountOfTilesLabel.setToolTipText("Total amount of tiles to download");
 
 		zoomLevelPanel = new JPanel();
-		zoomLevelPanel.setPreferredSize(new Dimension(280, 30));
+		zoomLevelPanel.setPreferredSize(new Dimension(280, 44));
+		zoomLevelPanel.setMinimumSize(zoomLevelPanel.getPreferredSize());
 		zoomLevelPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		tileSizeLabel = new JLabel("TILE SIZE (Pixels)");
@@ -246,6 +247,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		tileSizePanel = new JPanel(null);
 		tileSizePanel.setMinimumSize(new Dimension(275, 55));
+		tileSizePanel.setPreferredSize(tileSizePanel.getMinimumSize());
 		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		tileSizeValues = new Vector<Integer>();
@@ -288,6 +290,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		atlasNamePanel = new JPanel(null);
 		atlasNamePanel.setMinimumSize(new Dimension(275, 30));
+		atlasNamePanel.setPreferredSize(atlasNamePanel.getMinimumSize());
 		atlasNamePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		atlasNameTextField = new JTextField();
@@ -301,6 +304,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		profilesPanel = new JPanel(null);
 		profilesPanel.setMinimumSize(new Dimension(275, 231));
+		profilesPanel.setPreferredSize(profilesPanel.getMinimumSize());
 		profilesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		profilesJList = new JList();
@@ -333,6 +337,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		atlasNamePanel.add(atlasNameTextField);
 
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(2, 5, 2, 2);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+
 		profilesPanel.add(scrollPane);
 		profilesPanel.add(saveAsProfileButton, gbc);
 		profilesPanel.add(deleteProfileButton, gbc);
@@ -341,7 +350,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(coordinatesPanel, gbc);
 		leftPanel.add(new JLabel("Map Source"), gbc);
 		leftPanel.add(mapSource, gbc);
+		gbc.gridwidth = 1;
 		leftPanel.add(zoomLevelLabel, gbc);
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		leftPanel.add(amountOfTilesLabel, gbc);
 		leftPanel.add(zoomLevelPanel, gbc);
 		leftPanel.add(tileSizeLabel, gbc);
@@ -354,9 +365,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(settingsGUIButton, gbc);
 		leftPanel.add(createAtlasButton, gbc);
 
-		JComponent leftScrollPane = new JScrollPane(leftPanel);
-		leftScrollPane.setPreferredSize(new Dimension(290, 200));
-		leftScrollPane.setBorder(new EmptyBorder(3, 3, 3, 3));
 		add(leftScrollPane, BorderLayout.WEST);
 
 		// TODO not working -> disable it
@@ -374,6 +382,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		previewMap = new PreviewMap();
 		previewMap.addMapSelectionListener(this);
+
+		// Allows to disable map painting and tile loading
+		// for debugging purposes
+		// TODO Enable map preview
+		//previewMap.setEnabled(false);
+
 		rightPanel.add(previewMap, BorderLayout.CENTER);
 		add(rightPanel, BorderLayout.CENTER);
 		createZoomLevelCheckBoxes();
@@ -396,7 +410,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		for (int i = 0; i < cbZoom.length; i++) {
 			JCheckBox cb = new JCheckBox();
-			cb.setPreferredSize(new Dimension(17, 17));
+			cb.setPreferredSize(new Dimension(17, 25));
+			cb.setMinimumSize(cb.getPreferredSize());
 			s = "Zoom level " + i;
 			if (i == 0)
 				s += " (Minimum zoom)";
@@ -693,13 +708,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 			int nrOfLayers = sZL.getNrOfLayers();
 			int[] zoomLevels = sZL.getZoomLevels();
 
-			int totalNrOfTiles = 0;
+			long totalNrOfTiles = 0;
 
 			for (int i = 0; i < nrOfLayers; i++) {
 				MapSelection ms = getMapSelectionCoordinates();
 				totalNrOfTiles += ms.calculateNrOfTiles(zoomLevels[i]);
 			}
-			amountOfTilesLabel.setText("( " + Integer.toString(totalNrOfTiles) + " )");
+			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
 		} catch (Exception e) {
 			amountOfTilesLabel.setText("( ? )");
 			e.printStackTrace();
@@ -937,50 +952,54 @@ public class GUI extends JFrame implements MapSelectionListener {
 				boolean customTileSizeWidthIsOk = true;
 				boolean customTileSizeHeightIsOk = true;
 
-				//TODO Reactivate
-				
-//				if (tileSizeWidthComboBox.isEnabled() == false) {
-//
-//					try {
-//						Integer.parseInt(tileSizeWidthTextField.getText());
-//					} catch (NumberFormatException nfex) {
-//
-//						customTileSizeWidthIsOk = false;
-//						JOptionPane.showMessageDialog(null,
-//								"Custom tile size width value is not a valid integer value",
-//								"Errors", JOptionPane.ERROR_MESSAGE);
-//					}
-//				}
-//				if (tileSizeHeightComboBox.isEnabled() == false) {
-//
-//					try {
-//						Integer.parseInt(tileSizeHeightTextField.getText());
-//					} catch (NumberFormatException nfex) {
-//
-//						customTileSizeHeightIsOk = false;
-//						JOptionPane.showMessageDialog(null,
-//								"Custom tile size height value is not a valid integer value",
-//								"Errors", JOptionPane.ERROR_MESSAGE);
-//					}
-//				}
+				// TODO Reactivate
+
+				// if (tileSizeWidthComboBox.isEnabled() == false) {
+				//
+				// try {
+				// Integer.parseInt(tileSizeWidthTextField.getText());
+				// } catch (NumberFormatException nfex) {
+				//
+				// customTileSizeWidthIsOk = false;
+				// JOptionPane.showMessageDialog(null,
+				// "Custom tile size width value is not a valid integer value",
+				// "Errors", JOptionPane.ERROR_MESSAGE);
+				// }
+				// }
+				// if (tileSizeHeightComboBox.isEnabled() == false) {
+				//
+				// try {
+				// Integer.parseInt(tileSizeHeightTextField.getText());
+				// } catch (NumberFormatException nfex) {
+				//
+				// customTileSizeHeightIsOk = false;
+				// JOptionPane.showMessageDialog(null,
+				// "Custom tile size height value is not a valid integer value",
+				// "Errors", JOptionPane.ERROR_MESSAGE);
+				// }
+				// }
 				if (customTileSizeWidthIsOk && customTileSizeHeightIsOk) {
 					// createAtlasButton.setEnabled(false);
 
 					int tileSizeWidth = 256;
 					int tileSizeHeight = 256;
 
-//					if (tileSizeWidthComboBox.isEnabled()) {
-//						tileSizeWidth = Integer.parseInt(tileSizeWidthComboBox.getSelectedItem()
-//								.toString());
-//					} else {
-//						tileSizeWidth = Integer.parseInt(tileSizeWidthTextField.getText());
-//					}
-//					if (tileSizeHeightComboBox.isEnabled()) {
-//						tileSizeHeight = Integer.parseInt(tileSizeHeightComboBox.getSelectedItem()
-//								.toString());
-//					} else {
-//						tileSizeHeight = Integer.parseInt(tileSizeHeightTextField.getText());
-//					}
+					// if (tileSizeWidthComboBox.isEnabled()) {
+					// tileSizeWidth =
+					// Integer.parseInt(tileSizeWidthComboBox.getSelectedItem()
+					// .toString());
+					// } else {
+					// tileSizeWidth =
+					// Integer.parseInt(tileSizeWidthTextField.getText());
+					// }
+					// if (tileSizeHeightComboBox.isEnabled()) {
+					// tileSizeHeight =
+					// Integer.parseInt(tileSizeHeightComboBox.getSelectedItem()
+					// .toString());
+					// } else {
+					// tileSizeHeight =
+					// Integer.parseInt(tileSizeHeightTextField.getText());
+					// }
 
 					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
 					try {
@@ -1207,6 +1226,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			// createAtlasButton.setText("Wait...");
 			// createAtlasButton.setEnabled(false);
 		}
+
 	}
 
 	private class CheckBoxListener implements ActionListener {

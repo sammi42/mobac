@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class MapCreator {
 	private int yMax;
 
 	private File oziFolder;
-	private File atlasFolder;
+	private File atlasLayerFolder;
 	private int zoom;
 	private int tileSizeWidth;
 	private int tileSizeHeight;
@@ -49,48 +48,27 @@ public class MapCreator {
 		yMin = smp.getYMin();
 		yMax = smp.getYMax();
 		this.oziFolder = oziFolder;
-		this.atlasFolder = atlasFolder;
 		this.zoom = zoom;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
 		layerName = mapName + zoom + mapNumber;
 		tilesInFileFormat = new HashMap<String, File>();
 		setFiles = new LinkedList<String>();
+		atlasLayerFolder = new File(atlasFolder, layerName);
 	}
 
-	public void create() {
-		File atlasContentFolder = new File(atlasFolder, layerName);
-		atlasContentFolder.mkdir();
+	public void createMap() {
+		atlasLayerFolder.mkdir();
 
-		File mapFile = new File(atlasContentFolder, layerName + ".map");
-
-		try {
-			FileWriter fw = new FileWriter(mapFile);
-
-			double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
-			double longitudeMax = OsmMercator.XToLon(xMax * Tile.SIZE, zoom);
-			double latitudeMin = OsmMercator.YToLat(yMax * Tile.SIZE, zoom);
-			double latitudeMax = OsmMercator.YToLat(yMin * Tile.SIZE, zoom);
-
-			int width = (xMax - xMin) * Tile.SIZE;
-			int height = (yMax - yMin) * Tile.SIZE;
-
-			fw.write(Utilities.prepareMapString(layerName + ".png", longitudeMin, longitudeMax,
-					latitudeMin, latitudeMax, width, height));
-			fw.close();
-		} catch (IOException iox) {
-			iox.printStackTrace();
-		}
+		// write the .map file containing the calibration points
+		writeMapFile();
 
 		// Create the set folder where all the tiles shall be stored.
-		File setFolder = new File(atlasContentFolder, "set");
+		File setFolder = new File(atlasLayerFolder, "set");
 		setFolder.mkdir();
 
 		// List all tiles in the ozi folder.
 		File[] tiles = oziFolder.listFiles();
-
-		// Sort the files so they end up in alphabetical order.
-		Arrays.sort(tiles);
 
 		// Put all tiles in a Hash Map so the will be easy to access later on.
 		for (int i = 0; i < tiles.length; i++) {
@@ -107,9 +85,35 @@ public class MapCreator {
 			// User has aborted process
 			return;
 		}
-		// Create the set file for this map
-		File setFile = new File(atlasContentFolder, layerName + ".set");
-		createSetFile(setFile);
+		writeSetFile();
+	}
+
+	private void writeMapFile() {
+		File mapFile = new File(atlasLayerFolder, layerName + ".map");
+
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(mapFile);
+
+			double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
+			double longitudeMax = OsmMercator.XToLon(xMax * Tile.SIZE, zoom);
+			double latitudeMin = OsmMercator.YToLat(yMax * Tile.SIZE, zoom);
+			double latitudeMax = OsmMercator.YToLat(yMin * Tile.SIZE, zoom);
+
+			int width = (xMax - xMin) * Tile.SIZE;
+			int height = (yMax - yMin) * Tile.SIZE;
+
+			fw.write(Utilities.prepareMapString(layerName + ".png", longitudeMin, longitudeMax,
+					latitudeMin, latitudeMax, width, height));
+			fw.close();
+		} catch (IOException iox) {
+			iox.printStackTrace();
+		} finally {
+			try {
+				fw.close();
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	private void createDefaultSizedTiles(File setFolder) throws InterruptedException {
@@ -153,8 +157,8 @@ public class MapCreator {
 						"Information", JOptionPane.INFORMATION_MESSAGE);
 				ProcessValues.setTileSizeErrorNotified(true);
 			}
-			tileSizeWidth = 256;
-			tileSizeHeight = 256;
+			createDefaultSizedTiles(setFolder);
+			return;
 		}
 
 		BufferedImage mergedImage = new BufferedImage(mergedWidth, mergedHeight,
@@ -288,6 +292,7 @@ public class MapCreator {
 
 			try {
 				File fo = new File(setFolder, layerName + "_" + x + "_" + y + ".png");
+				setFiles.add(fo.getName());
 				FileOutputStream fos = new FileOutputStream(fo);
 				ImageIO.write(buf, "png", fos);
 				fos.close();
@@ -300,16 +305,22 @@ public class MapCreator {
 		cuttingPoints.clear();
 	}
 
-	private void createSetFile(File setFile) {
+	private void writeSetFile() {
+		// Create the set file for this map
+		File setFile = new File(atlasLayerFolder, layerName + ".set");
+		FileWriter fw = null;
 		try {
-			FileWriter fw = new FileWriter(setFile);
-
+			fw = new FileWriter(setFile);
 			for (String file : setFiles) {
 				fw.write(file + "\r\n");
 			}
-			fw.close();
 		} catch (IOException iox) {
 			iox.printStackTrace();
+		} finally {
+			try {
+				fw.close();
+			} catch (Exception e) {
+			}
 		}
 	}
 }

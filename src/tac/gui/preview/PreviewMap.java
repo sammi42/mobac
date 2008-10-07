@@ -42,8 +42,7 @@ public class PreviewMap extends JMapViewer {
 
 	private JComboBox gridSizeSelector;
 
-	private LinkedList<MapSelectionListener> mapSelectionListeners =
-			new LinkedList<MapSelectionListener>();
+	private LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
 
 	public PreviewMap() {
 		super();
@@ -134,6 +133,8 @@ public class PreviewMap extends JMapViewer {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		if (!isEnabled())
+			return;
 		super.paintComponent(g);
 		Point tlc = getTopLeftCoordinate();
 
@@ -269,4 +270,5 @@ public class PreviewMap extends JMapViewer {
 	public void addMapSelectionListener(MapSelectionListener msl) {
 		mapSelectionListeners.add(msl);
 	}
+
 }

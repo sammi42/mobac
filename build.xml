@@ -24,15 +24,15 @@
 
 	<target name="create_jar">
 		<delete file="${jar.name}" />
-		<unjar src="lib/JMapViewer.jar" dest="build"/>
+		<unjar src="lib/JMapViewer.jar" dest="build" />
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Main-Class" value="tac.Start" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="build">
 				<exclude name="**/unittest/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</jar>
 	</target>

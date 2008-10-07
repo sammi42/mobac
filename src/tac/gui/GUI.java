@@ -23,13 +23,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -51,7 +50,6 @@ import tac.gui.preview.OpenStreetMapTileSource;
 import tac.gui.preview.PreviewMap;
 import tac.program.AtlasThread;
 import tac.program.MapSelection;
-import tac.program.ProcessValues;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
@@ -115,42 +113,29 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private Vector<String> profileNamesVector;
 
 	private JList profilesJList;
-	private Thread downloadThread;
-	private Thread atlasThread;
-	private Thread getGoogleDownloadStringThread;
-
 	private String fileSeparator;
-
-	private JPopupMenu jpm;
-
-	private JMenuItem topLeftCorner;
-	private JMenuItem bottomRightCorner;
 
 	public GUI() {
 		super();
 		createMainFrame();
 		createLeftPanel();
 		createRightPanel();
-		createJPopupMenu();
 		addListeners();
 		initiateProgram();
 	}
 
 	private void createMainFrame() {
 
-		this.setTitle("TrekBuddy Atlas Creator v" + VERSION);
+		setTitle("TrekBuddy Atlas Creator v" + VERSION);
 
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension dContent = new Dimension(1000, 768);
-
-		this.setLocation((dScreen.width - dContent.width) / 2,
-				(dScreen.height - dContent.height) / 2);
-		this.setSize(dContent);
-		this.setMinimumSize(dContent);
-		this.setResizable(true);
+		dScreen.width = Math.min(1024, dScreen.width);
+		dScreen.height = Math.min(768, dScreen.height);
+		setSize(dScreen);
+		setMinimumSize(new Dimension(800, 600));
+		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		// this.getContentPane().setLayout(null);
 		setLayout(new BorderLayout());
 
 		// Try to set the Windows look and feel...
@@ -180,7 +165,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
-		leftPanel.setPreferredSize(new Dimension(280, 780));
+		leftPanel.setMinimumSize(new Dimension(280, 830));
+		leftPanel.setPreferredSize(new Dimension(280, 830));
 
 		coordinatesLabel = new JLabel("COORDINATES");
 
@@ -233,11 +219,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel.add(previewSelectionButton);
 
-		mapSource =
-				new JComboBox(new Object[] { new GoogleTileSource.GoogleMaps(),
-						new GoogleTileSource.GoogleEarth(), new OpenStreetMapTileSource.Mapnik(),
-						new OpenStreetMapTileSource.TilesAtHome(),
-						new OpenStreetMapTileSource.CycleMap() });
+		mapSource = new JComboBox(new Object[] { new GoogleTileSource.GoogleMaps(),
+				new GoogleTileSource.GoogleEarth(), new OpenStreetMapTileSource.Mapnik(),
+				new OpenStreetMapTileSource.TilesAtHome(), new OpenStreetMapTileSource.CycleMap() });
 		mapSource.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -323,9 +307,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		profilesJList.setBounds(1, 1, 264, 180);
 		profilesJList.setEnabled(false);
 
-		JScrollPane scrollPane =
-				new JScrollPane(profilesJList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPane = new JScrollPane(profilesJList,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setBounds(5, 5, 264, 180);
 
 		saveAsProfileButton = new JButton("Save as profile");
@@ -370,10 +354,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(settingsGUIButton, gbc);
 		leftPanel.add(createAtlasButton, gbc);
 
-		JPanel leftBorderPanel = new JPanel();
-		leftBorderPanel.add(leftPanel);
-		leftBorderPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
-		add(leftBorderPanel, BorderLayout.WEST);
+		JComponent leftScrollPane = new JScrollPane(leftPanel);
+		leftScrollPane.setPreferredSize(new Dimension(290, 200));
+		leftScrollPane.setBorder(new EmptyBorder(3, 3, 3, 3));
+		add(leftScrollPane, BorderLayout.WEST);
+
+		// TODO not working -> disable it
+		tileSizeWidthComboBox.setEnabled(false);
+		tileSizeHeightComboBox.setEnabled(false);
+		tileSizeWidthTextField.setEnabled(false);
+		tileSizeHeightTextField.setEnabled(false);
+		atlasNameTextField.setText("Test");
 	}
 
 	public void createRightPanel() {
@@ -386,16 +377,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		rightPanel.add(previewMap, BorderLayout.CENTER);
 		add(rightPanel, BorderLayout.CENTER);
 		createZoomLevelCheckBoxes();
-	}
-
-	public void createJPopupMenu() {
-		jpm = new JPopupMenu();
-
-		topLeftCorner = new JMenuItem("Top left corner");
-		bottomRightCorner = new JMenuItem("Bottom right corner");
-
-		jpm.add(topLeftCorner);
-		jpm.add(bottomRightCorner);
 	}
 
 	protected void createZoomLevelCheckBoxes() {
@@ -458,10 +439,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		chooseProfileButton.addActionListener(new JToggleButtonListener());
 		profilesJList.addListSelectionListener(new JListListener());
-
-		JPopupMenuListener jpml = new JPopupMenuListener();
-		topLeftCorner.addActionListener(jpml);
-		bottomRightCorner.addActionListener(jpml);
 	}
 
 	/**
@@ -527,9 +504,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		fileSeparator = System.getProperty("file.separator");
 
 		// Load all profiles from the profiles file from disk
-		profilesVector =
-				PersistentProfiles.load(new File(System.getProperty("user.dir") + fileSeparator
-						+ "profiles.xml"));
+		profilesVector = PersistentProfiles.load(new File(System.getProperty("user.dir")
+				+ fileSeparator + "profiles.xml"));
 
 		for (Profile p : profilesVector) {
 			profileNamesVector.add(p.getProfileName());
@@ -945,32 +921,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		return sZL;
 	}
 
-	private class JPopupMenuListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-
-			double[] coordinates =
-					Utilities.calculatePreviewCoordinates(ProcessValues.getMouseXCoordinat(),
-							ProcessValues.getMouseYCoordinat());
-
-			double selectedLongMin = coordinates[0];
-			double latMaxApproximitation = coordinates[1];
-
-			String actionCommand = e.getActionCommand();
-
-			if (actionCommand.equals("Top left corner")) {
-
-				latMaxTextField.setText(Utilities.nrOfDecimals(latMaxApproximitation, 6));
-				lonMinTextField.setText(Utilities.nrOfDecimals(selectedLongMin, 6));
-				jpm.setVisible(false);
-			} else if (actionCommand.equals("Bottom right corner")) {
-				latMinTextField.setText(Utilities.nrOfDecimals(latMaxApproximitation, 6));
-				lonMaxTextField.setText(Utilities.nrOfDecimals(selectedLongMin, 6));
-				jpm.setVisible(false);
-			}
-		}
-	}
-
 	private void createAtlas() {
 
 		String errorText = validateInput(true);
@@ -987,58 +937,56 @@ public class GUI extends JFrame implements MapSelectionListener {
 				boolean customTileSizeWidthIsOk = true;
 				boolean customTileSizeHeightIsOk = true;
 
-				if (tileSizeWidthComboBox.isEnabled() == false) {
-
-					try {
-						Integer.parseInt(tileSizeWidthTextField.getText());
-					} catch (NumberFormatException nfex) {
-
-						customTileSizeWidthIsOk = false;
-						JOptionPane.showMessageDialog(null,
-								"Custom tile size width value is not a valid integer value",
-								"Errors", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				if (tileSizeHeightComboBox.isEnabled() == false) {
-
-					try {
-						Integer.parseInt(tileSizeHeightTextField.getText());
-					} catch (NumberFormatException nfex) {
-
-						customTileSizeHeightIsOk = false;
-						JOptionPane.showMessageDialog(null,
-								"Custom tile size height value is not a valid integer value",
-								"Errors", JOptionPane.ERROR_MESSAGE);
-					}
-				}
+				//TODO Reactivate
+				
+//				if (tileSizeWidthComboBox.isEnabled() == false) {
+//
+//					try {
+//						Integer.parseInt(tileSizeWidthTextField.getText());
+//					} catch (NumberFormatException nfex) {
+//
+//						customTileSizeWidthIsOk = false;
+//						JOptionPane.showMessageDialog(null,
+//								"Custom tile size width value is not a valid integer value",
+//								"Errors", JOptionPane.ERROR_MESSAGE);
+//					}
+//				}
+//				if (tileSizeHeightComboBox.isEnabled() == false) {
+//
+//					try {
+//						Integer.parseInt(tileSizeHeightTextField.getText());
+//					} catch (NumberFormatException nfex) {
+//
+//						customTileSizeHeightIsOk = false;
+//						JOptionPane.showMessageDialog(null,
+//								"Custom tile size height value is not a valid integer value",
+//								"Errors", JOptionPane.ERROR_MESSAGE);
+//					}
+//				}
 				if (customTileSizeWidthIsOk && customTileSizeHeightIsOk) {
 					// createAtlasButton.setEnabled(false);
 
-					int tileSizeWidth = 0;
-					int tileSizeHeight = 0;
+					int tileSizeWidth = 256;
+					int tileSizeHeight = 256;
 
-					if (tileSizeWidthComboBox.isEnabled()) {
-						tileSizeWidth =
-								Integer
-										.parseInt(tileSizeWidthComboBox.getSelectedItem()
-												.toString());
-					} else {
-						tileSizeWidth = Integer.parseInt(tileSizeWidthTextField.getText());
-					}
-					if (tileSizeHeightComboBox.isEnabled()) {
-						tileSizeHeight =
-								Integer.parseInt(tileSizeHeightComboBox.getSelectedItem()
-										.toString());
-					} else {
-						tileSizeHeight = Integer.parseInt(tileSizeHeightTextField.getText());
-					}
+//					if (tileSizeWidthComboBox.isEnabled()) {
+//						tileSizeWidth = Integer.parseInt(tileSizeWidthComboBox.getSelectedItem()
+//								.toString());
+//					} else {
+//						tileSizeWidth = Integer.parseInt(tileSizeWidthTextField.getText());
+//					}
+//					if (tileSizeHeightComboBox.isEnabled()) {
+//						tileSizeHeight = Integer.parseInt(tileSizeHeightComboBox.getSelectedItem()
+//								.toString());
+//					} else {
+//						tileSizeHeight = Integer.parseInt(tileSizeHeightTextField.getText());
+//					}
 
 					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
 					try {
-						atlasThread =
-								new AtlasThread(this, atlasNameTextField.getText(), tileSource,
-										getMapSelectionCoordinates(), getSelectedZoomlevels(),
-										tileSizeWidth, tileSizeHeight);
+						Thread atlasThread = new AtlasThread(this, atlasNameTextField.getText(),
+								tileSource, getMapSelectionCoordinates(), getSelectedZoomlevels(),
+								tileSizeWidth, tileSizeHeight);
 						atlasThread.start();
 					} catch (Exception ex) {
 						System.out.println(ex);
@@ -1255,154 +1203,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private class JFrameListener extends WindowAdapter {
 
-		Thread getDefaultMapThread;
-
 		public void windowOpened(WindowEvent e) {
 			// createAtlasButton.setText("Wait...");
 			// createAtlasButton.setEnabled(false);
-			getDefaultMapThread = new DefaultMapThread();
-			getDefaultMapThread.start();
 		}
-	}
-
-	private class DefaultMapThread extends Thread {
-
-		public void run() {
-			while (getGoogleDownloadStringThread.isAlive()) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-			}
-			downloadThread = new DownloadThread();
-			downloadThread.start();
-		}
-	}
-
-	private class DownloadThread extends Thread {
-
-		public void run() {
-			/*
-			 * tXY = GoogleTileUtils.getTileXYMinMax(85.0, 179.0, -85.0,
-			 * -179.0);
-			 * 
-			 * ProcessValues.setPreviewLatMaxTile(tXY.getYMax());
-			 * ProcessValues.setPreviewLatMinTile(tXY.getYMin());
-			 * ProcessValues.setPreviewLongMaxTile(tXY.getXMax());
-			 * ProcessValues.setPreviewLongMinTile(tXY.getXMin());
-			 * ProcessValues.setPreviewLatMaxCoord(85.0);
-			 * ProcessValues.setPreviewLatMinCoord(-85.0);
-			 * ProcessValues.setPreviewLongMaxCoord(179.0);
-			 * ProcessValues.setPreviewLongMinCoord(-179.0);
-			 * ProcessValues.setPreviewZoomValue(tXY.getZoom());
-			 * 
-			 * String workingDir = System.getProperty("user.dir");
-			 * 
-			 * preview = new File(workingDir + fileSeparator + "preview");
-			 * overlay = new File(preview + fileSeparator + "overlay");
-			 * 
-			 * // Check whether preview folder exists or not... if
-			 * (preview.exists()) {
-			 * 
-			 * // ...if it exists check if there is any files // in it File[]
-			 * files = preview.listFiles();
-			 * 
-			 * // ...if so, delete all of them if (files.length > 0) {
-			 * 
-			 * for (int i = 0; i < files.length; i++) { if
-			 * (!files[i].isDirectory()) { files[i].delete(); } } } } else {
-			 * preview.mkdir(); }
-			 * 
-			 * int serverSwitcher = 0; int counter = 0;
-			 * 
-			 * for (int i = tXY.getYMin(); i <= tXY.getYMax(); i++) { for (int j
-			 * = tXY.getXMin(); j <= tXY.getXMax(); j++) {
-			 * 
-			 * if (serverSwitcher == 4) { serverSwitcher = 0; }
-			 * 
-			 * try {
-			 * 
-			 * GoogleTileDownLoad.getImage(j, i, tXY.getZoom(), preview,
-			 * serverSwitcher, false); } catch (IOException e) {
-			 * 
-			 * boolean retryOK;
-			 * 
-			 * retryOK = retryDownloadPreviewTile(j, i, tXY.getZoom(), preview,
-			 * serverSwitcher);
-			 * 
-			 * if (retryOK == false) { JOptionPane .showMessageDialog( null,
-			 * "Something is wrong with connection to download server. Please check connection to internet and try again"
-			 * , "Error", JOptionPane.ERROR_MESSAGE); System.exit(1); } }
-			 * serverSwitcher++;
-			 * 
-			 * counter++; } }
-			 * 
-			 * // ...list files File[] files = preview.listFiles();
-			 * 
-			 * files = preview.listFiles();
-			 * 
-			 * String xValue = ""; String yValue = ""; String fileName;
-			 * 
-			 * int maxXValue = -2147483648; int minXValue = 2147483647; int
-			 * maxYValue = -2147483648; int minYValue = 2147483647;
-			 * 
-			 * int nrOfXValues = 0; int nrOfYValues = 0;
-			 * 
-			 * if (files.length > 0) {
-			 * 
-			 * for (int i = 0; i < files.length; i++) {
-			 * 
-			 * if (!files[i].isDirectory()) {
-			 * 
-			 * int intYValue = Integer.parseInt(files[i].getName() .substring(1,
-			 * files[i].getName().indexOf("x"))); int intXValue =
-			 * Integer.parseInt(files[i].getName()
-			 * .substring(files[i].getName().indexOf("x") + 1,
-			 * files[i].getName().length() - 4));
-			 * 
-			 * if (intYValue < minYValue) { minYValue = intYValue; }
-			 * 
-			 * if (intYValue > maxYValue) { maxYValue = intYValue; }
-			 * 
-			 * if (intXValue < minXValue) { minXValue = intXValue; }
-			 * 
-			 * if (intXValue > maxXValue) { maxXValue = intXValue; } } }
-			 * 
-			 * fileName = files[1].getName();
-			 * 
-			 * yValue = fileName.substring(1, fileName.indexOf("x")); xValue =
-			 * fileName.substring(fileName.indexOf("x") + 1, fileName .length()
-			 * - 4);
-			 * 
-			 * nrOfXValues = 0;
-			 * 
-			 * for (int i = 0; i < files.length; i++) { if
-			 * (!files[i].isDirectory()) {
-			 * 
-			 * if (((files[i].getName()).substring(1, fileName
-			 * .indexOf("x")).equals(yValue))) { nrOfXValues = nrOfXValues + 1;
-			 * } } } }
-			 * 
-			 * nrOfYValues = (files.length - 1) / nrOfXValues;
-			 * 
-			 * previewLayout.setRows(nrOfYValues);
-			 * previewLayout.setColumns(nrOfXValues);
-			 * 
-			 * for (int i = minYValue; i <= maxYValue; i++) {
-			 * 
-			 * for (int j = minXValue; j <= maxXValue; j++) {
-			 * 
-			 * JLabel temp = new JLabel(new ImageIcon(System
-			 * .getProperty("user.dir") + fileSeparator + "preview" +
-			 * fileSeparator + "y" + i + "x" + j + ".png"));
-			 * previewPanel.add(temp); previewPanel.updateUI(); } }
-			 * previewButton.setText("Preview"); previewButton.setEnabled(true);
-			 * createAtlasButton.setText("Create Atlas");
-			 * createAtlasButton.setEnabled(true); //
-			 * previewPanel.addMouseListener(new // PreviewMouseListener());
-			 */
-		}
-
 	}
 
 	private class CheckBoxListener implements ActionListener {

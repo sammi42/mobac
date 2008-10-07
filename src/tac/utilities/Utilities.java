@@ -1,19 +1,18 @@
 package tac.utilities;
 
-import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.Locale;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import tac.program.GoogleTileUtils;
 import tac.program.ProcessValues;
 import tac.program.Profile;
 import tac.program.Settings;
@@ -23,9 +22,9 @@ public class Utilities {
 
 	public static final int COORD_KIND_LATTITUDE = 1;
 	public static final int COORD_KIND_LONGITUDE = 2;
-	// private static final DecimalFormatSymbols dfs = new
-	// DecimalFormatSymbols(Locale.ENGLISH);
+	private static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
+	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
 
 	/***
 	 * Metod för att kontrollera om en sträng är giltig. I detta fall
@@ -85,9 +84,8 @@ public class Utilities {
 			try {
 				FORMAT_6_DEC.parse(theCordinateInput);
 			} catch (ParseException nfex) {
-				notValidCharacter =
-						nfex.getMessage().substring(nfex.getMessage().length() - 2,
-								nfex.getMessage().length() - 1);
+				notValidCharacter = nfex.getMessage().substring(nfex.getMessage().length() - 2,
+						nfex.getMessage().length() - 1);
 			}
 		}
 		return notValidCharacter;
@@ -149,10 +147,7 @@ public class Utilities {
 		sbMap.append("Reserved 1\r\n");
 		sbMap.append("Reserved 2\r\n");
 		sbMap.append("Magnetic Variation,,,E\r\n");
-		sbMap.append("Map Projection,Mercator,PolyCal,No,AutoCalOnly,No,BSBUseWPX,No\r\n");
-		// sbMap.append(
-		// "Map Projection,Latitude/Longitude,PolyCal,No,AutoCalOnly,No,BSBUseWPX,No\r\n"
-		// );
+		sbMap.append("Map Projection,Mercator,PolyCal,No," + "AutoCalOnly,No,BSBUseWPX,No\r\n");
 
 		sbMap.append("Point01,xy,    0,    0,in, deg,"
 				+ getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE) + ","
@@ -170,62 +165,17 @@ public class Utilities {
 				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
 				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
 				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap
-				.append("Point05,xy,     ,     ,in, deg,    ,        ,N,    ,        ,W, grid,   ,           ,           ,N\r\n");
-		sbMap
-				.append("Point06,xy,     ,     ,in, deg,    ,        ,N,    ,        ,W, grid,   ,           ,           ,N\r\n");
-		sbMap
-				.append("Point07,xy,     ,     ,in, deg,    ,        ,N,    ,        ,W, grid,   ,           ,           ,N\r\n");
-		sbMap
-				.append("Point08,xy,     ,     ,in, deg,    ,        ,N,    ,        ,W, grid,   ,           ,           ,N\r\n");
-		sbMap
-				.append("Point09,xy,     ,     ,in, deg,    ,        ,N,    ,        ,W, grid,   ,           ,           ,N\r\n");
-		sbMap
-				.append("Point10,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point11,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point12,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point13,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point14,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point15,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point16,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point17,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point18,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point19,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point20,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point21,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point22,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point23,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point24,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point25,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point26,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point27,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point28,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point29,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
-		sbMap
-				.append("Point30,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,\r\n");
+		String emptyPointLine = "Point%02d,xy,     ,     ,"
+				+ "in, deg,    ,        ,N,    ,        ,W, "
+				+ "grid,   ,           ,           ,N\r\n";
+		for (int i = 5; i <= 30; i++) {
+			String s = String.format(emptyPointLine, new Object[] { i });
+			sbMap.append(s);
+		}
 		sbMap.append("Projection Setup,,,,,,,,,,\r\n");
-		sbMap.append("Map Feature = MF ; Map Comment = MC     These follow if they exist\r\n");
+		sbMap.append("Map Feature = MF ; Map Comment = MC     " + "These follow if they exist\r\n");
 		sbMap.append("Track File = TF      These follow if they exist\r\n");
-		sbMap.append("Moving Map Parameters = MM?    These follow if they exist\r\n");
+		sbMap.append("Moving Map Parameters = MM?    " + "These follow if they exist\r\n");
 
 		sbMap.append("MM0,Yes\r\n");
 		sbMap.append("MMPNUM,4\r\n");
@@ -233,14 +183,14 @@ public class Utilities {
 		sbMap.append("MMPXY,2," + (width - 1) + ",0\r\n");
 		sbMap.append("MMPXY,3,0," + (height - 1) + "\r\n");
 		sbMap.append("MMPXY,4," + (width - 1) + "," + (height - 1) + "\r\n");
-		sbMap.append("MMPLL,1,  " + FORMAT_6_DEC.format(longitudeMin) + ","
-				+ FORMAT_6_DEC.format(latitudeMax) + "\r\n");
-		sbMap.append("MMPLL,2,  " + FORMAT_6_DEC.format(longitudeMax) + ","
-				+ FORMAT_6_DEC.format(latitudeMax) + "\r\n");
-		sbMap.append("MMPLL,3,  " + FORMAT_6_DEC.format(longitudeMin) + ","
-				+ FORMAT_6_DEC.format(latitudeMin) + "\r\n");
-		sbMap.append("MMPLL,4,  " + FORMAT_6_DEC.format(longitudeMax) + ","
-				+ FORMAT_6_DEC.format(latitudeMin) + "\r\n");
+		sbMap.append("MMPLL,1,  " + FORMAT_6_DEC_ENG.format(longitudeMin) + ","
+				+ FORMAT_6_DEC_ENG.format(latitudeMax) + "\r\n");
+		sbMap.append("MMPLL,2,  " + FORMAT_6_DEC_ENG.format(longitudeMax) + ","
+				+ FORMAT_6_DEC_ENG.format(latitudeMax) + "\r\n");
+		sbMap.append("MMPLL,3,  " + FORMAT_6_DEC_ENG.format(longitudeMin) + ","
+				+ FORMAT_6_DEC_ENG.format(latitudeMin) + "\r\n");
+		sbMap.append("MMPLL,4,  " + FORMAT_6_DEC_ENG.format(longitudeMax) + ","
+				+ FORMAT_6_DEC_ENG.format(latitudeMin) + "\r\n");
 
 		sbMap.append("IWH,Map Image Width/Height," + width + "," + height + "\r\n");
 
@@ -256,7 +206,7 @@ public class Utilities {
 		StringBuffer sbOut = new StringBuffer();
 		sbOut.append((int) Math.abs(deg));
 		sbOut.append(",");
-		sbOut.append(FORMAT_6_DEC.format(Math.abs(min)));
+		sbOut.append(FORMAT_6_DEC_ENG.format(Math.abs(min)));
 		sbOut.append(",");
 
 		if (COORD_KIND == COORD_KIND_LATTITUDE) {
@@ -294,30 +244,25 @@ public class Utilities {
 		for (int i = 0; i < temp.size(); i++) {
 
 			// If element in Vector is a file, then this will be added to the
-			// Vector with
-			// files
+			// Vector with files
 			if (temp.elementAt(i).isFile()) {
 				files.addElement(temp.elementAt(i));
 			} else {
 
 				String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
-				String trimmedPath =
-						temp.elementAt(i).getAbsolutePath().substring(
-								atlasWorkTarFolderParent.length(),
-								temp.elementAt(i).getAbsolutePath().length());
+				String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
+						atlasWorkTarFolderParent.length(),
+						temp.elementAt(i).getAbsolutePath().length());
 
-				trimmedPath =
-						trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-								.length());
-				trimmedPath =
-						trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-								.length());
-				trimmedPath =
-						trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-								.length());
+				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
+						trimmedPath.length());
+				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
+						trimmedPath.length());
+				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
+						trimmedPath.length());
 
-				if (new File(atlasWorkTarFolder + fileSeparator + trimmedPath).exists() != true) {
-					new File(atlasWorkTarFolder + fileSeparator + trimmedPath).mkdirs();
+				if (new File(atlasWorkTarFolder, trimmedPath).exists() != true) {
+					new File(atlasWorkTarFolder, trimmedPath).mkdirs();
 				}
 			}
 		}
@@ -326,20 +271,16 @@ public class Utilities {
 			try {
 				String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
 
-				String trimmedPath =
-						files.elementAt(i).getAbsolutePath().substring(
-								atlasWorkTarFolderParent.length(),
-								files.elementAt(i).getAbsolutePath().length());
+				String trimmedPath = files.elementAt(i).getAbsolutePath().substring(
+						atlasWorkTarFolderParent.length(),
+						files.elementAt(i).getAbsolutePath().length());
 
-				trimmedPath =
-						trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-								.length());
-				trimmedPath =
-						trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-								.length());
-				trimmedPath =
-						trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-								.length());
+				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
+						trimmedPath.length());
+				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
+						trimmedPath.length());
+				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
+						trimmedPath.length());
 
 				if (files.elementAt(i).getName().equals("cr.tba")) {
 					fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
@@ -353,10 +294,7 @@ public class Utilities {
 				System.out.println(iox);
 			}
 		}
-		TarArchive ta =
-				new TarArchive(atlasWorkTarFolder, new File(atlasTarFolder
-						+ System.getProperty("file.separator") + "cr.tar"));
-		// ta.createArchive();
+		TarArchive ta = new TarArchive(atlasWorkTarFolder, new File(atlasTarFolder, "cr.tar"));
 		ta.createCRTarArchive();
 	}
 
@@ -371,8 +309,6 @@ public class Utilities {
 
 		Vector<File> setFolders = new Vector<File>();
 
-		String fileSeparator = System.getProperty("file.separator");
-
 		for (int i = 0; i < temp.size(); i++) {
 
 			if (!temp.elementAt(i).isFile()) {
@@ -382,18 +318,16 @@ public class Utilities {
 
 					String atlasTarFolderParent = atlasTarFolder.getParent();
 
-					String trimmedPath =
-							temp.elementAt(i).getAbsolutePath().substring(
-									atlasTarFolderParent.length(),
-									temp.elementAt(i).getAbsolutePath().length());
+					String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
+							atlasTarFolderParent.length(),
+							temp.elementAt(i).getAbsolutePath().length());
 
-					trimmedPath =
-							trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-									trimmedPath.length());
+					trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) + 1,
+							trimmedPath.length());
 
-					if (new File(atlasTarFolder + fileSeparator + trimmedPath).exists() != true) {
-						new File(atlasTarFolder + fileSeparator + trimmedPath).mkdirs();
-					}
+					File f = new File(atlasTarFolder, trimmedPath);
+					if (f.exists() != true)
+						f.mkdirs();
 				}
 			}
 		}
@@ -401,23 +335,20 @@ public class Utilities {
 
 			String atlasTarFolderParent = atlasTarFolder.getParent();
 
-			String trimmedPath =
-					(setFolders.elementAt(i).getParentFile()).getAbsolutePath().substring(
-							atlasTarFolderParent.length(),
+			String trimmedPath = (setFolders.elementAt(i).getParentFile()).getAbsolutePath()
+					.substring(atlasTarFolderParent.length(),
 							(setFolders.elementAt(i).getParentFile()).getAbsolutePath().length());
 
-			trimmedPath =
-					trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1, trimmedPath
-							.length());
+			trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) + 1,
+					trimmedPath.length());
 
-			String destinationPath =
-					atlasTarFolder + fileSeparator + trimmedPath + fileSeparator
-							+ setFolders.elementAt(i).getParentFile().getName();
-			String sourcePath = atlasFolder + fileSeparator + trimmedPath;
+			String destinationDir = atlasTarFolder + File.separator + trimmedPath + File.separator;
+			File destinationFile = new File(destinationDir, setFolders.elementAt(i).getParentFile()
+					.getName()
+					+ ".tar");
+			File sourceFile = new File(atlasFolder, trimmedPath);
 
-			TarArchive ta =
-					new TarArchive(new File(sourcePath), new File(destinationPath + ".tar"));
-			// ta.createArchive();
+			TarArchive ta = new TarArchive(sourceFile, destinationFile);
 			ta.createCRTarArchive();
 		}
 	}
@@ -485,63 +416,28 @@ public class Utilities {
 		if (!atlasFolder.exists())
 			atlasFolder.mkdir();
 
-		File atlasTaredFolder =
-				new File(System.getProperty("user.dir") + fileSeparator + "atlasestared");
+		File atlasTaredFolder = new File(System.getProperty("user.dir") + fileSeparator
+				+ "atlasestared");
 
 		if (!atlasTaredFolder.exists())
 			atlasTaredFolder.mkdir();
 
 		File oziFolder = new File(System.getProperty("user.dir") + fileSeparator + "ozi");
 
-		if (!oziFolder.exists())
-			oziFolder.mkdir();
+		oziFolder.mkdirs();
 
-		File previewFolder = new File(System.getProperty("user.dir") + fileSeparator + "preview");
+		File tarwrkdirFolder = new File(System.getProperty("user.dir") + fileSeparator
+				+ "tarwrkdir");
 
-		if (!previewFolder.exists())
-			previewFolder.mkdir();
+		tarwrkdirFolder.mkdirs();
 
-		File tarwrkdirFolder =
-				new File(System.getProperty("user.dir") + fileSeparator + "tarwrkdir");
+		File tileStoreFolder = new File(System.getProperty("user.dir") + fileSeparator
+				+ "tilestore");
 
-		if (!tarwrkdirFolder.exists())
-			tarwrkdirFolder.mkdir();
+		tileStoreFolder.mkdirs();
 
-		File tileStoreFolder =
-				new File(System.getProperty("user.dir") + fileSeparator + "tilestore");
-
-		if (!tileStoreFolder.exists()) {
-			for (int i = 1; i < 18; i++) {
-				File tileStoreDituZoomLevelFolder =
-						new File(System.getProperty("user.dir") + fileSeparator + "tilestore"
-								+ fileSeparator + "ditu.google.com" + fileSeparator + i);
-				tileStoreDituZoomLevelFolder.mkdirs();
-
-				File tileStoreMapsZoomLevelFolder =
-						new File(System.getProperty("user.dir") + fileSeparator + "tilestore"
-								+ fileSeparator + "maps.google.com" + fileSeparator + i);
-				tileStoreMapsZoomLevelFolder.mkdirs();
-			}
-		} else {
-			for (int i = 1; i < 18; i++) {
-				File tileStoreDituZoomLevelFolder =
-						new File(System.getProperty("user.dir") + fileSeparator + "tilestore"
-								+ fileSeparator + "ditu.google.com" + fileSeparator + i);
-
-				if (!tileStoreDituZoomLevelFolder.exists()) {
-					tileStoreDituZoomLevelFolder.mkdirs();
-				}
-				File tileStoreMapsZoomLevelFolder =
-						new File(System.getProperty("user.dir") + fileSeparator + "tilestore"
-								+ fileSeparator + "maps.google.com" + fileSeparator + i);
-
-				if (!tileStoreMapsZoomLevelFolder.exists())
-					tileStoreMapsZoomLevelFolder.mkdirs();
-			}
-		}
-
-		File settingsFile =
-				new File(System.getProperty("user.dir") + fileSeparator + "settings.xml");
+		File settingsFile = new File(System.getProperty("user.dir") + fileSeparator
+				+ "settings.xml");
 
 		if (settingsFile.exists() == false) {
 
@@ -556,8 +452,8 @@ public class Utilities {
 			}
 		}
 
-		File profilesFile =
-				new File(System.getProperty("user.dir") + fileSeparator + "profiles.xml");
+		File profilesFile = new File(System.getProperty("user.dir") + fileSeparator
+				+ "profiles.xml");
 
 		if (profilesFile.exists() == false) {
 
@@ -574,8 +470,8 @@ public class Utilities {
 				defaultProfile.setLongitudeMax(179.000000);
 				defaultProfile.setLongitudeMin(-179.000000);
 
-				boolean[] zoomValues =
-						{ false, false, false, false, false, false, false, false, false, true };
+				boolean[] zoomValues = { false, false, false, false, false, false, false, false,
+						false, true };
 
 				defaultProfile.setZoomLevels(zoomValues);
 				defaultProfile.setTileSizeWidth(256);
@@ -609,56 +505,4 @@ public class Utilities {
 		return workingString;
 	}
 
-	public static double[] calculatePreviewCoordinates(int mouseXCoordinat, int mouseYCoordinat) {
-
-		double coordinates[] = new double[2];
-
-		double selectedLongMin = 0.0;
-
-		selectedLongMin =
-				ProcessValues.getPreviewLongMinCoord()
-						+ ((double) mouseXCoordinat / ProcessValues.getPreviewXResolution());
-
-		int selectedTileX = ProcessValues.getPreviewLongMinTile() - 1 + (mouseXCoordinat / 256);
-		int selectedTileY = ProcessValues.getPreviewLatMinTile() - 1 + (mouseYCoordinat / 256);
-
-		Rectangle2D rec =
-				GoogleTileUtils.getTileRect(selectedTileX, selectedTileY, ProcessValues
-						.getPreviewZoomValue());
-
-		double latMaxApproximitation = rec.getY();
-
-		Point offset =
-				GoogleTileUtils.getPixelOffsetInTile(latMaxApproximitation, selectedLongMin,
-						ProcessValues.getPreviewZoomValue());
-
-		if ((offset.y + (selectedTileY - ProcessValues.getPreviewLatMinTile() + 1) * 256) != mouseYCoordinat) {
-
-			if ((offset.y + (selectedTileY - ProcessValues.getPreviewLatMinTile() + 1) * 256) < mouseYCoordinat) {
-
-				while (!((offset.y + (selectedTileY - ProcessValues.getPreviewLatMinTile() + 1) * 256) > mouseYCoordinat)) {
-
-					latMaxApproximitation = latMaxApproximitation - 0.01;
-
-					offset =
-							GoogleTileUtils.getPixelOffsetInTile(latMaxApproximitation,
-									selectedLongMin, ProcessValues.getPreviewZoomValue());
-				}
-			} else {
-				while (!((offset.y + (selectedTileY - ProcessValues.getPreviewLatMinTile() + 1) * 256) < mouseYCoordinat)) {
-
-					latMaxApproximitation = latMaxApproximitation + 0.01;
-
-					offset =
-							GoogleTileUtils.getPixelOffsetInTile(latMaxApproximitation,
-									selectedLongMin, ProcessValues.getPreviewZoomValue());
-				}
-			}
-		}
-
-		coordinates[0] = selectedLongMin;
-		coordinates[1] = latMaxApproximitation;
-
-		return coordinates;
-	}
 }

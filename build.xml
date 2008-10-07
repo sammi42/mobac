@@ -16,7 +16,7 @@
 
 	<target name="build">
 		<mkdir dir="build" />
-		<javac srcdir="src" destdir="build" target="1.5">
+		<javac srcdir="src" destdir="build" target="1.5" debug="true">
 			<classpath path="lib/JMapViewer.jar" />
 			<exclude name="**/unittest/**" />
 		</javac>

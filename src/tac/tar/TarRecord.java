@@ -6,45 +6,40 @@ import java.io.IOException;
 
 public class TarRecord {
 
-	private byte [] fileData;
+	private byte[] fileData;
 
-	public TarRecord(File theFile) {
+	public TarRecord(File theFile) throws IOException {
 
-		long fileLength = theFile.length();
+		long fl = theFile.length();
+		if (fl > Integer.MAX_VALUE)
+			throw new RuntimeException("File size too large");
+		int fileLength = (int) fl;
 
 		if (fileLength < 512) {
-			fileData = new byte [512];
+			fileData = new byte[512];
+		} else {
+			int mod = fileLength % 512;
+			// align buffer size on 512 byte block length
+			if (mod != 0)
+				fileLength += 512 - mod;
+			fileData = new byte[fileLength];
 		}
-		else {
-			if (fileLength % 512 == 0) {
-				fileData = new byte [(int)fileLength];
-			}
-			else {
-				fileData = new byte [(((int)fileLength / 512) + 1) * 512];
-			}
-		}
-
 		this.setRecordContent(theFile);
 	}
 
-	public void setRecordContent(File theFile) {
+	public void setRecordContent(File theFile) throws IOException {
 
+		FileInputStream inputFile = null;
 		try {
-			FileInputStream inputFile = new FileInputStream(theFile);
-			inputFile.read(fileData, 0, (int)theFile.length());
-			inputFile.close();
-		}
-		catch (IOException iox) {
-			iox.printStackTrace();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Fel");
-			// TODO: handle exception
+			inputFile = new FileInputStream(theFile);
+			inputFile.read(fileData, 0, (int) theFile.length());
+		} finally {
+			if (inputFile != null)
+				inputFile.close();
 		}
 	}
 
-	public byte [] getRecordContent() {
+	public byte[] getRecordContent() {
 		return fileData;
 	}
 }

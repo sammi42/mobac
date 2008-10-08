@@ -15,7 +15,6 @@ import javax.swing.JComboBox;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
-import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -46,8 +45,7 @@ public class PreviewMap extends JMapViewer {
 
 	public PreviewMap() {
 		super();
-		tileCache = new MemoryTileCache();
-		((MemoryTileCache) tileCache).setCacheSize(500);
+		tileCache = new PreviewTileCache();
 		mapMarkersVisible = false;
 		tileLoader = new OsmTileLoader(this);
 		gridSizeSelector = new JComboBox();
@@ -75,6 +73,14 @@ public class PreviewMap extends JMapViewer {
 		super.setTileSource(arg0);
 		gridSizeSelector.removeAllItems();
 		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom() + 1);
+		gridSizeSelector.addItem(new GridZoom(-1) {
+
+			@Override
+			public String toString() {
+				return "Grid disabled";
+			}
+
+		});
 		for (int i = tileSource.getMaxZoom(); i >= 0; i--) {
 			gridSizeSelector.addItem(new GridZoom(i));
 		}
@@ -88,6 +94,8 @@ public class PreviewMap extends JMapViewer {
 		if (gridZoom == this.gridZoom)
 			return;
 		this.gridZoom = gridZoom;
+		if (gridZoom < 0)
+			return;
 		int gridZoomDiff = 20 - gridZoom;
 		gridFactor = 256 << gridZoomDiff;
 		updateGridValues();
@@ -137,30 +145,32 @@ public class PreviewMap extends JMapViewer {
 			return;
 		super.paintComponent(g);
 		Point tlc = getTopLeftCoordinate();
-
-		int w = getWidth();
-		int h = getHeight();
-		g.setColor(GRID_COLOR);
-		int off_x = (tlc.x % Tile.SIZE);
-		int off_y = (tlc.y % Tile.SIZE);
-		if (gridSize > 1) {
-			int posx;
-			int posy;
-			if (gridSize >= Tile.SIZE) {
-				posx = -(tlc.x % gridSize);
-				posy = -(tlc.y % gridSize);
-				for (int x = posx; x < w; x += gridSize) {
-					g.drawLine(x, 0, x, h);
-				}
-				for (int y = posy; y < h; y += gridSize) {
-					g.drawLine(0, y, w, y);
-				}
-			} else {
-				// posx = -Tile.WIDTH + w / 2 - off_x;
-				// posy = -Tile.HEIGHT + h / 2 - off_y;
-				for (int x = -off_x; x < w; x += 256) {
-					for (int y = -off_y; y < h; y += 256) {
-						g.drawImage(gridTile, x, y, null);
+		if (gridZoom >= 0) {
+			// Only paint grid if it is enabled (gridZoom not -1)
+			int w = getWidth();
+			int h = getHeight();
+			g.setColor(GRID_COLOR);
+			int off_x = (tlc.x % Tile.SIZE);
+			int off_y = (tlc.y % Tile.SIZE);
+			if (gridSize > 1) {
+				int posx;
+				int posy;
+				if (gridSize >= Tile.SIZE) {
+					posx = -(tlc.x % gridSize);
+					posy = -(tlc.y % gridSize);
+					for (int x = posx; x < w; x += gridSize) {
+						g.drawLine(x, 0, x, h);
+					}
+					for (int y = posy; y < h; y += gridSize) {
+						g.drawLine(0, y, w, y);
+					}
+				} else {
+					// posx = -Tile.WIDTH + w / 2 - off_x;
+					// posy = -Tile.HEIGHT + h / 2 - off_y;
+					for (int x = -off_x; x < w; x += 256) {
+						for (int y = -off_y; y < h; y += 256) {
+							g.drawImage(gridTile, x, y, null);
+						}
 					}
 				}
 			}
@@ -172,8 +182,8 @@ public class PreviewMap extends JMapViewer {
 			int x_max = (gridSelectionEnd.x >> zoomDiff) - tlc.x;
 			int y_max = (gridSelectionEnd.y >> zoomDiff) - tlc.y;
 
-			w = x_max - x_min;
-			h = y_max - y_min;
+			int w = x_max - x_min;
+			int h = y_max - y_min;
 			g.setColor(SEL_COLOR);
 			g.fillRect(x_min, y_min, w, h);
 			g.setColor(GRID_COLOR);
@@ -221,17 +231,18 @@ public class PreviewMap extends JMapViewer {
 		pStart.x <<= zoomDiff;
 		pStart.y <<= zoomDiff;
 
-		int gridZoomDiff = MAX_ZOOM - gridZoom;
-		int gridFactor = Tile.SIZE << gridZoomDiff;
+		if (gridZoom >= 0) {
+			int gridZoomDiff = MAX_ZOOM - gridZoom;
+			int gridFactor = Tile.SIZE << gridZoomDiff;
 
-		// Snap to the current grid
-		pStart.x = pStart.x - (pStart.x % gridFactor);
-		pStart.y = pStart.y - (pStart.y % gridFactor);
-		pEnd.x += gridFactor - 1;
-		pEnd.y += gridFactor - 1;
-		pEnd.x = pEnd.x - (pEnd.x % gridFactor);
-		pEnd.y = pEnd.y - (pEnd.y % gridFactor);
-
+			// Snap to the current grid
+			pStart.x = pStart.x - (pStart.x % gridFactor);
+			pStart.y = pStart.y - (pStart.y % gridFactor);
+			pEnd.x += gridFactor - 1;
+			pEnd.y += gridFactor - 1;
+			pEnd.x = pEnd.x - (pEnd.x % gridFactor);
+			pEnd.y = pEnd.y - (pEnd.y % gridFactor);
+		}
 		iSelectionRectStart = pStart;
 		iSelectionRectEnd = pEnd;
 		gridSelectionStart = pStart;

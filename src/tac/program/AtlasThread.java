@@ -14,11 +14,9 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
-import tac.gui.GUI;
 
 public class AtlasThread extends Thread implements ActionListener {
 
-	private GUI gui;
 	private AtlasProgress ap;
 	private MapSelection mapSelection;
 	private TileSource tileSource;
@@ -27,10 +25,9 @@ public class AtlasThread extends Thread implements ActionListener {
 	private int tileSizeWidth = 0;
 	private int tileSizeHeight = 0;
 
-	public AtlasThread(GUI gui, String atlasName, TileSource tileSource, MapSelection mapSelection,
+	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
 			SelectedZoomLevels sZL, int tileSizeWidth, int tileSizeHeight) {
 		super();
-		this.gui = gui;
 		this.tileSource = tileSource;
 		this.atlasName = atlasName;
 		this.mapSelection = mapSelection;
@@ -40,13 +37,17 @@ public class AtlasThread extends Thread implements ActionListener {
 	}
 
 	public void run() {
-		ap = AtlasProgress.getInstance();
+		ap = new AtlasProgress();
+		ap.setAbortListener(this);
 		try {
 			createAtlas();
+			ap.atlasCreationFinished();
 		} catch (InterruptedException e) {
-
-		} finally {
-			ap.setVisible(false);
+			JOptionPane.showMessageDialog(null, "Atlas download aborted", "Information",
+					JOptionPane.INFORMATION_MESSAGE);
+			ap.setAbortListener(null);
+			ap.closeWindow();
+			ap = null;
 		}
 	}
 
@@ -58,8 +59,7 @@ public class AtlasThread extends Thread implements ActionListener {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String formattedDateString = sdf.format(date);
 
-		File oziDir = new File(workingDir + File.separator + "ozi" + File.separator
-				+ formattedDateString);
+		File oziDir = new File(workingDir + "/ozi/" + formattedDateString);
 
 		oziDir.mkdirs();
 
@@ -107,10 +107,11 @@ public class AtlasThread extends Thread implements ActionListener {
 		TileStore ts = TileStore.getInstance();
 		Settings s = Settings.getInstance();
 
+		Thread t = Thread.currentThread();
 		for (int layer = 0; layer < nrOfLayers; layer++) {
 
-			if (ProcessValues.getAbortAtlasDownload())
-				return;
+			if (t.isInterrupted())
+				throw new InterruptedException();
 
 			// Prepare the tile store directory
 			if (s.isTileStoreEnabled())
@@ -143,8 +144,9 @@ public class AtlasThread extends Thread implements ActionListener {
 			oziZoomDir.mkdir();
 			for (int y = yMin; y < yMax; y++) {
 				for (int x = xMin; x < xMax; x++) {
-					if (ProcessValues.getAbortAtlasDownload())
-						return;
+					if (t.isInterrupted())
+						throw new InterruptedException();
+					Thread.sleep(2000);
 					try {
 						TileDownLoader.getImage(x, y, zoom, oziZoomDir, tileSource, true);
 					} catch (IOException e) {
@@ -183,8 +185,8 @@ public class AtlasThread extends Thread implements ActionListener {
 				return;
 			}
 
-			File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] { atlasName,
-					zoom }));
+			File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
+					atlasName, zoom }));
 			atlasFolder.mkdir();
 
 			OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth, tileSizeHeight,
@@ -195,25 +197,17 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		}
 
-		if (ProcessValues.getAbortAtlasDownload()) {
-			JOptionPane.showMessageDialog(null, "Atlas download aborted", "Information",
-					JOptionPane.INFORMATION_MESSAGE);
-			ap.setButtonText();
-		} else {
-			ap.setButtonText();
+		ap.atlasCreationFinished();
 
-			AtlasTarCreator atc = new AtlasTarCreator(atlasDir, atlasTarDir);
-			atc.createAtlasCrTarArchive();
-			ap.updateTarPrograssBar();
+		AtlasTarCreator atc = new AtlasTarCreator(atlasDir, atlasTarDir);
+		atc.createAtlasCrTarArchive();
+		ap.updateTarPrograssBar();
 
-			atc.createMapTars();
-			ap.updateTarPrograssBar();
+		atc.createMapTars();
+		ap.updateTarPrograssBar();
 
-			JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		gui.setCreateAtlasButtonEnabled(true);
-		ProcessValues.setAbortAtlasDownload(false);
+		JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	protected boolean retryDownloadAtlasTile(int xValue, int yValue, int zoomValue,
@@ -241,8 +235,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		try {
-			if (this.isAlive())
-				this.interrupt();
+			this.interrupt();
 		} catch (Exception ex) {
 		}
 	}

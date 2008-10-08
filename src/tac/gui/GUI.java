@@ -992,7 +992,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
 					SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 					try {
-						Thread atlasThread = new AtlasThread(this, atlasNameTextField.getText(),
+						Thread atlasThread = new AtlasThread(atlasNameTextField.getText(),
 								tileSource, getMapSelectionCoordinates(), sZL, tileSizeWidth,
 								tileSizeHeight);
 						atlasThread.start();

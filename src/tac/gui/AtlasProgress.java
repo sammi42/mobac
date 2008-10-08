@@ -25,12 +25,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import tac.program.AtlasThread;
 import tac.program.ProcessValues;
 
+/**
+ * A window showing the progress while {@link AtlasThread} downloads and
+ * processes the map tiles.
+ * 
+ */
 public class AtlasProgress extends JFrame {
 
 	private static final long serialVersionUID = 3159146939361532653L;
-	private static AtlasProgress ap;
 	private JProgressBar atlasProgress;
 	private JProgressBar layerProgress;
 	private JProgressBar tarProgress;
@@ -69,14 +74,7 @@ public class AtlasProgress extends JFrame {
 
 	private ActionListener abortListener = null;
 
-	public static synchronized AtlasProgress getInstance() {
-		if (ap == null) {
-			ap = new AtlasProgress();
-		}
-		return ap;
-	}
-
-	private AtlasProgress() {
+	public AtlasProgress() {
 
 		super("Downloading tiles...");
 		tarProgressValue = 0;
@@ -267,85 +265,63 @@ public class AtlasProgress extends JFrame {
 	}
 
 	private void setAtlasElementsDone(int theElementsDone) {
-		atlasElementsDone.setText(Integer.toString(theElementsDone) + " " + "of" + " " + nrOfLayers
-				+ " " + "layers done");
+		atlasElementsDone.setText(Integer.toString(theElementsDone) + " of " + nrOfLayers
+				+ " layers done");
 	}
 
 	private void setLayerElementsDone(int theElementsDone) {
-		layerElementsDone.setText(Integer.toString(theElementsDone) + " " + "of" + " "
-				+ layerProgress.getMaximum() + " " + "tiles done");
+		layerElementsDone.setText(Integer.toString(theElementsDone) + " of "
+				+ layerProgress.getMaximum() + " tiles done");
 	}
 
 	private void setAtlasTimeLeft() {
-		double timePerElement = (System.currentTimeMillis() - initiateTime)
-				/ this.getAtlasProgressValue();
+		int progress = getAtlasProgressValue();
+		long timePerElement = (System.currentTimeMillis() - initiateTime) / progress;
 
-		int secondsLeft = ((int) timePerElement
-				* (atlasProgress.getMaximum() - this.getAtlasProgressValue()) / 1000);
-		int minutesLeft = 0;
-		String timeLeftString;
-
-		if (secondsLeft > 60) {
-			if (secondsLeft > 119) {
-				minutesLeft = secondsLeft / 60;
-				secondsLeft = secondsLeft % 60;
-				timeLeftString = Integer.toString(minutesLeft) + " " + "minutes" + " "
-						+ Integer.toString(secondsLeft) + " " + "seconds";
-			} else {
-				minutesLeft = secondsLeft / 60;
-				secondsLeft = secondsLeft % 60;
-				timeLeftString = Integer.toString(minutesLeft) + " " + "minute" + " "
-						+ Integer.toString(secondsLeft) + " " + "seconds";
-			}
-		} else {
-			if (secondsLeft > 1) {
-				timeLeftString = Integer.toString(secondsLeft) + " " + "seconds";
-			} else {
-				timeLeftString = Integer.toString(secondsLeft) + " " + "second";
-			}
-		}
-		timeLeft.setText("Time remaining: " + timeLeftString);
+		long seconds = (timePerElement * (atlasProgress.getMaximum() - progress) / 1000);
+		timeLeft.setText(formatRemainingTime(seconds));
 	}
 
 	private void setLayerTimeLeft(int theElementsDoneInt) {
 
-		double timePerElement = (System.currentTimeMillis() - initiateLayerTime)
-				/ theElementsDoneInt;
+		long timePerElement = (System.currentTimeMillis() - initiateLayerTime) / theElementsDoneInt;
+		long seconds = (timePerElement * (layerProgress.getMaximum() - theElementsDoneInt) / 1000);
+		timeLayerLeft.setText(formatRemainingTime(seconds));
+	}
 
-		int secondsLeft = ((int) timePerElement * (layerProgress.getMaximum() - theElementsDoneInt) / 1000);
+	private String formatRemainingTime(long seconds) {
 		int minutesLeft = 0;
 		String timeLeftString;
 
-		if (secondsLeft > 60) {
+		if (seconds > 60) {
+			minutesLeft = (int) (seconds / 60);
+			int secondsLeft = (int) (seconds % 60);
 			if (secondsLeft > 119) {
-				minutesLeft = secondsLeft / 60;
-				secondsLeft = secondsLeft % 60;
 				timeLeftString = Integer.toString(minutesLeft) + " " + "minutes" + " "
 						+ Integer.toString(secondsLeft) + " " + "seconds";
 			} else {
-				minutesLeft = secondsLeft / 60;
-				secondsLeft = secondsLeft % 60;
 				timeLeftString = Integer.toString(minutesLeft) + " " + "minute" + " "
 						+ Integer.toString(secondsLeft) + " " + "seconds";
 			}
 		} else {
-			if (secondsLeft > 1) {
-				timeLeftString = Integer.toString(secondsLeft) + " " + "seconds";
+			if (seconds > 1) {
+				timeLeftString = Long.toString(seconds) + " " + "seconds";
 			} else {
-				timeLeftString = Integer.toString(secondsLeft) + " " + "second";
+				timeLeftString = Long.toString(seconds) + " " + "second";
 			}
 		}
-
-		timeLayerLeft.setText("Time remaining: " + timeLeftString);
+		return "Time remaining: " + timeLeftString;
 	}
 
 	public void setZoomLevel(int theZoomLevel) {
 		layerZoomLevel.setText(Integer.toString(theZoomLevel));
 	}
 
-	public void setButtonText() {
-
+	public void atlasCreationFinished() {
+		abortListener = null;
 		abortAtlasDownloadButton.setEnabled(false);
+		
+		setTitle("Download finished");
 
 		dismissWindowButton.setText("Close");
 		dismissWindowButton.setToolTipText("Close ATLAS DOWNLOAD INFORMATION window");
@@ -357,8 +333,9 @@ public class AtlasProgress extends JFrame {
 	}
 
 	public void closeWindow() {
-		this.dispose();
-		ap = null;
+		abortListener = null;
+		setVisible(false);
+		dispose();
 	}
 
 	public void updateViewNrOfDownloadedBytes() {
@@ -434,6 +411,14 @@ public class AtlasProgress extends JFrame {
 
 	public int getAtlasProgressValue() {
 		return atlasProgress.getValue();
+	}
+
+	public ActionListener getAbortListener() {
+		return abortListener;
+	}
+
+	public void setAbortListener(ActionListener abortListener) {
+		this.abortListener = abortListener;
 	}
 
 	private class JButtonListener implements ActionListener {

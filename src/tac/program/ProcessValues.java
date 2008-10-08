@@ -13,16 +13,10 @@ public class ProcessValues {
 	private static int mouseXCoordinat;
 	private static int mouseYCoordinat;
 	private static boolean tileSizeErrorNotified;
-	private static boolean abortAtlasDownload; 
-
 
 	/***
 	 * S E T Methods
 	 **/
-
-	public static void setAbortAtlasDownload(boolean abortAtlasDownload) {
-		ProcessValues.abortAtlasDownload = abortAtlasDownload;
-	}
 
 	public static void setNrOfBytesToDownload(int theValue) {
 		nrOfBytesToDownload = theValue;
@@ -86,7 +80,4 @@ public class ProcessValues {
 		nrOfDownloadedBytes = 0;
 	}
 
-	public static boolean getAbortAtlasDownload() {
-		return ProcessValues.abortAtlasDownload;
-	}
 }

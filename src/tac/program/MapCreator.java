@@ -120,10 +120,11 @@ public class MapCreator {
 		int pixelValueX = 0;
 		int pixelValueY = 0;
 
+		Thread t = Thread.currentThread(); 
 		for (int x = xMin; x < xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y < yMax; y++) {
-				if (ProcessValues.getAbortAtlasDownload())
+				if (t.isInterrupted())
 					throw new InterruptedException();
 				try {
 					File fDest = new File(setFolder, layerName + "_" + pixelValueX * 256 + "_"
@@ -168,8 +169,12 @@ public class MapCreator {
 		int offsetX = 0;
 		int offsetY = 0;
 
+		Thread t = Thread.currentThread(); 
 		for (int y = yMin; y <= yMax; y++) {
 			for (int x = xMin; x <= xMax; x++) {
+
+				if (t.isInterrupted())
+					throw new InterruptedException();
 
 				File tileToMerge = (File) tilesInFileFormat.get("y" + y + "x" + x + ".png");
 

@@ -17,6 +17,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import tac.program.AtlasThread;
-import tac.program.ProcessValues;
 
 /**
  * A window showing the progress while {@link AtlasThread} downloads and
@@ -36,6 +37,9 @@ import tac.program.ProcessValues;
 public class AtlasProgress extends JFrame {
 
 	private static final long serialVersionUID = 3159146939361532653L;
+
+	private static final NumberFormat F2 = new DecimalFormat("0.00");
+
 	private JProgressBar atlasProgress;
 	private JProgressBar layerProgress;
 	private JProgressBar tarProgress;
@@ -44,6 +48,8 @@ public class AtlasProgress extends JFrame {
 
 	private long initiateTime;
 	private long initiateLayerTime;
+
+	private long numberOfDownloadedBytes = 0;
 
 	private int tarProgressValue;
 
@@ -320,7 +326,7 @@ public class AtlasProgress extends JFrame {
 	public void atlasCreationFinished() {
 		abortListener = null;
 		abortAtlasDownloadButton.setEnabled(false);
-		
+
 		setTitle("Download finished");
 
 		dismissWindowButton.setText("Close");
@@ -342,48 +348,28 @@ public class AtlasProgress extends JFrame {
 
 		String convertedString = "";
 
-		if (ProcessValues.getNrOfDownloadedBytes() > 0) {
-			convertedString = ProcessValues.getNrOfDownloadedBytes() + "";
+		if (numberOfDownloadedBytes > 1000000) {
+			convertedString = F2.format(numberOfDownloadedBytes / 1048576d) + " MiByte";
+		} else if (numberOfDownloadedBytes > 1000) {
+			convertedString = F2.format(numberOfDownloadedBytes / 1024d) + " KiByte";
+		} else if (numberOfDownloadedBytes > 0) {
+			convertedString = Long.toString(numberOfDownloadedBytes);
 
 			if ((convertedString.indexOf(".") < convertedString.length() - 2)
 					&& (convertedString.indexOf(".") > -1)) {
 				convertedString = convertedString.substring(0, convertedString.indexOf((".")) + 2)
 						+ " Bytes";
 			} else {
-				convertedString = convertedString + " Bytes";
-			}
-		}
-
-		if (ProcessValues.getNrOfDownloadedBytes() > 1000) {
-			convertedString = ProcessValues.getNrOfDownloadedBytes() / 1000 + "";
-
-			if ((convertedString.indexOf(".") < convertedString.length() - 2)
-					&& (convertedString.indexOf(".") > -1)) {
-				convertedString = convertedString.substring(0, convertedString.indexOf((".")) + 2)
-						+ " KiloBytes";
-			} else {
-				convertedString = convertedString + " KiloBytes";
-			}
-		}
-
-		if (ProcessValues.getNrOfDownloadedBytes() > 1000000) {
-			convertedString = ProcessValues.getNrOfDownloadedBytes() / 1000000 + "";
-
-			if ((convertedString.indexOf(".") < convertedString.length() - 2)
-					&& (convertedString.indexOf(".") > -1)) {
-				convertedString = convertedString.substring(0, convertedString.indexOf((".")) + 2)
-						+ " MegaBytes";
-			} else {
-				convertedString = convertedString + " MegaBytes";
+				convertedString = convertedString + " Byte";
 			}
 		}
 		nrOfDownloadedBytesValue.setText(": " + convertedString);
 	}
 
 	public void updateViewNrOfDownloadedBytesPerSecond() {
-		nrOfDownloadedBytesPerSecondValue.setText(": "
-				+ Long.toString((long) ProcessValues.getNrOfDownloadedBytes()
-						/ (System.currentTimeMillis() - initiateTime)) + " KiloByte / Second");
+		double rate = ((double) numberOfDownloadedBytes)
+				/ (System.currentTimeMillis() - initiateTime);
+		nrOfDownloadedBytesPerSecondValue.setText(": " + F2.format(rate) + " KiByte / Second");
 	}
 
 	public void updateTotalDownloadTime() {
@@ -419,6 +405,10 @@ public class AtlasProgress extends JFrame {
 
 	public void setAbortListener(ActionListener abortListener) {
 		this.abortListener = abortListener;
+	}
+
+	public void addDownloadedBytes(int bytes) {
+		numberOfDownloadedBytes += bytes;
 	}
 
 	private class JButtonListener implements ActionListener {

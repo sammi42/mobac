@@ -42,9 +42,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-import tac.gui.preview.GoogleTileSource;
 import tac.gui.preview.MapSelectionListener;
-import tac.gui.preview.OpenStreetMapTileSource;
+import tac.gui.preview.MapSources;
 import tac.gui.preview.PreviewMap;
 import tac.program.AtlasThread;
 import tac.program.MapSelection;
@@ -218,9 +217,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel.add(previewSelectionButton);
 
-		mapSource = new JComboBox(new Object[] { new GoogleTileSource.GoogleMaps(),
-				new GoogleTileSource.GoogleEarth(), new OpenStreetMapTileSource.Mapnik(),
-				new OpenStreetMapTileSource.TilesAtHome(), new OpenStreetMapTileSource.CycleMap() });
+		mapSource = new JComboBox(MapSources.getMapSources());
 		mapSource.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

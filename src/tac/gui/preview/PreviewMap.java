@@ -65,7 +65,7 @@ public class PreviewMap extends JMapViewer {
 		});
 		add(gridSizeSelector);
 		new PreviewMapController(this);
-		setTileSource(new GoogleTileSource.GoogleMaps());
+		setTileSource(new MapSources.GoogleMaps());
 	}
 
 	@Override

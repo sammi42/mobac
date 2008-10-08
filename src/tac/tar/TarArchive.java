@@ -1,71 +1,60 @@
 package tac.tar;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
 
 public class TarArchive {
 
-	private File sourceFile;
-	private File destinationFile;
+	private OutputStream tarFileStream;
+	private File baseDir;
 
-	public TarArchive(File theSourceFile, File theDestinationFile) {
-		sourceFile = theSourceFile;
-		destinationFile = theDestinationFile;
+	public TarArchive(File tarFile, File baseDir) throws FileNotFoundException {
+		this.tarFileStream = new BufferedOutputStream(new FileOutputStream(tarFile));
+		this.baseDir = baseDir;
 	}
 
-	public void createArchive() {
-
-		if (sourceFile.isDirectory()) {
-			
-			TarUtilities.emptyFolderContent();
-			List<File> folderContent = TarUtilities.getDirectoryContent(sourceFile);
-			
-			TarHeader th = new TarHeader(sourceFile, sourceFile.getParentFile());				
-			TarArchiveFileHandler.writeArchive(th.getHeaderAsString(), destinationFile);
-						
-			for (int i = 0; i < folderContent.size(); i++) {
-				
-				th = new TarHeader(folderContent.get(i), sourceFile.getParentFile());				
-				//TarHeader th = new TarHeader(folderContent.get(i), sourceFile);
-				TarArchiveFileHandler.writeArchive(th.getHeaderAsString(), destinationFile);
-				
-				if (!folderContent.get(i).isDirectory()) {
-					TarRecord tr = new TarRecord(folderContent.get(i));	
-					TarArchiveFileHandler.writeRecordContent(tr.getRecordContent(), destinationFile);
-				}				
-			}
-			
-			TarArchiveFileHandler.writeEndofArchive(destinationFile);
+	public boolean writeContentFromDir(File dirToAdd) throws IOException {
+		if (!dirToAdd.isDirectory())
+			return false;
+		TarHeader th = new TarHeader(dirToAdd, baseDir);
+		tarFileStream.write(th.getBytes());
+		File[] files = dirToAdd.listFiles();
+		Arrays.sort(files);
+		for (File f : files) {
+			if (!f.isDirectory())
+				writeFile(f);
+			else
+				writeContentFromDir(f);
 		}
-		else {
-			
-			TarHeader th = new TarHeader(sourceFile, sourceFile);
-			TarRecord tr = new TarRecord(sourceFile);
-			
-			TarArchiveFileHandler.writeArchive(th.getHeaderAsString(), destinationFile);
-			TarArchiveFileHandler.writeRecordContent(tr.getRecordContent(), destinationFile);
+		return true;
+	}
+
+	public void writeFile(File fileOrDirToAdd) throws IOException {
+		TarHeader th = new TarHeader(fileOrDirToAdd, baseDir);
+		tarFileStream.write(th.getBytes());
+
+		if (!fileOrDirToAdd.isDirectory()) {
+			TarRecord tr = new TarRecord(fileOrDirToAdd);
+			tarFileStream.write(tr.getRecordContent());
 		}
 	}
-		
-	public void createCRTarArchive() {
 
-		if (sourceFile.isDirectory()) {
+	public void writeEndofArchive() throws IOException {
+		byte[] endOfArchive = new byte[1024];
+		tarFileStream.write(endOfArchive);
+		tarFileStream.flush();
+	}
 
-			TarUtilities.emptyFolderContent();
-			List<File> folderContent = TarUtilities.getDirectoryContent(sourceFile);
-
-			for (int i = 0; i < folderContent.size(); i++) {
-				
-				TarHeader th = new TarHeader(folderContent.get(i), sourceFile);
-				TarArchiveFileHandler.writeArchive(th.getHeaderAsString(), destinationFile);
-
-				if (!folderContent.get(i).isDirectory()) {
-					TarRecord tr = new TarRecord(folderContent.get(i));	
-					TarArchiveFileHandler.writeRecordContent(tr.getRecordContent(), destinationFile);
-				}
-			}
-
-			TarArchiveFileHandler.writeEndofArchive(destinationFile);
+	public void close() {
+		try {
+			tarFileStream.close();
+		} catch (Exception e) {
 		}
+		tarFileStream = null;
 	}
 }

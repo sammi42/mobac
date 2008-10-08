@@ -3,6 +3,7 @@
 
 	<property name="version" value="0.9" />
 	<property name="jar.name" value="TrekBuddy_Atlas_Creator_v${version}.jar" />
+	<property name="main.class" value="tac.StartTAC" />
 
 	<target name="all" depends="clean,build,create_jar" />
 
@@ -27,7 +28,7 @@
 		<unjar src="lib/JMapViewer.jar" dest="build" />
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>
-				<attribute name="Main-Class" value="tac.Start" />
+				<attribute name="Main-Class" value="${main.class}" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="build">

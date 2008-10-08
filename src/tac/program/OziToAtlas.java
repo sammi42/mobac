@@ -3,7 +3,7 @@
  * For instance a tile name of y5015x8755.png will be converted to test13000001_0_0.png. It also resizes
  * the tiles if necessary.
  * 
- * @author      Fredrik Möller
+ * @author      Fredrik Mï¿½ller
  * @version	    1.0	
  */
 
@@ -40,12 +40,10 @@ public class OziToAtlas {
 
 		List<SubMapProperties> subMaps = this.calculateMapSections(mapSize, xMin, xMax, yMin, yMax);
 
-		String mapNumberString;
 		int mapNumber = 1;
 
 		for (SubMapProperties smp : subMaps) {
-			mapNumberString = String.format("%06d", new Object[] { mapNumber });
-			MapCreator mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, zoom, mapNumberString,
+			MapCreator mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, zoom, mapNumber,
 					tileSizeWidth, tileSizeHeight);
 			mc.createMap();
 			mapNumber++;
@@ -59,8 +57,6 @@ public class OziToAtlas {
 		int mapWidth = (xMax - xMin) * 256;
 		int mapHeight = (yMax - yMin) * 256;
 
-		System.out.println("calculateMapSections()");
-		
 		/**
 		 * If the desired map area is either wider or higher than the maximum
 		 * allowed map size then a calculation and splitting into sub maps has

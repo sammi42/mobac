@@ -69,8 +69,8 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	@Override
-	public void setTileSource(TileSource arg0) {
-		super.setTileSource(arg0);
+	public void setTileSource(TileSource newTileSource) {
+		super.setTileSource(newTileSource);
 		gridSizeSelector.removeAllItems();
 		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom() + 1);
 		gridSizeSelector.addItem(new GridZoom(-1) {
@@ -94,8 +94,10 @@ public class PreviewMap extends JMapViewer {
 		if (gridZoom == this.gridZoom)
 			return;
 		this.gridZoom = gridZoom;
-		if (gridZoom < 0)
+		if (gridZoom < 0) {
+			gridFactor = 0;
 			return;
+		}
 		int gridZoomDiff = 20 - gridZoom;
 		gridFactor = 256 << gridZoomDiff;
 		updateGridValues();
@@ -118,6 +120,8 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	protected void updateGridValues() {
+		if (gridZoom < 0)
+			return;
 		int zoomToGridZoom = zoom - gridZoom;
 		if (zoomToGridZoom > 0) {
 			gridSize = 256 << zoomToGridZoom;
@@ -182,6 +186,7 @@ public class PreviewMap extends JMapViewer {
 			int x_max = (gridSelectionEnd.x >> zoomDiff) - tlc.x;
 			int y_max = (gridSelectionEnd.y >> zoomDiff) - tlc.y;
 
+			System.out.println(x_min + " "+y_min);
 			int w = x_max - x_min;
 			int h = y_max - y_min;
 			g.setColor(SEL_COLOR);
@@ -199,8 +204,8 @@ public class PreviewMap extends JMapViewer {
 	public void setSelection(MapSelection ms) {
 		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min())
 			return;
-		Point pStart = ms.getTopLeftTile(zoom);
-		Point pEnd = ms.getBottomRightTile(zoom);
+		Point pStart = ms.getTopLeftTileCoordinate(zoom);
+		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
 		setSelectionByTilePoint(pStart, pEnd, true);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
 		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
@@ -254,25 +259,30 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	protected void updateMapSelection() {
-		Point2D.Double max = new Point2D.Double();
-		Point2D.Double min = new Point2D.Double();
 
-		int zoomDiff1 = PreviewMap.MAX_ZOOM - gridZoom;
 		if (iSelectionRectStart == null || iSelectionRectEnd == null)
 			return;
-		int x_min = (gridSelectionStart.x >> zoomDiff1);
-		int y_min = (gridSelectionStart.y >> zoomDiff1);
-		int x_max = (gridSelectionEnd.x >> zoomDiff1);
-		int y_max = (gridSelectionEnd.y >> zoomDiff1);
-		// x_min = x_min >> 8 << 8;
-		// y_min = y_min >> 8 << 8;
-		// x_max = (x_max + 255) >> 8 << 8;
-		// y_max = (y_max + 255) >> 8 << 8;
+		int selectionZoom;
+		int x_min, y_min, x_max, y_max;
+		int zoomDiff1;
 
-		max.x = OsmMercator.XToLon(x_max, gridZoom);
-		min.y = OsmMercator.YToLat(y_max, gridZoom);
-		min.x = OsmMercator.XToLon(x_min, gridZoom);
-		max.y = OsmMercator.YToLat(y_min, gridZoom);
+		if (gridZoom >= 0) {
+			selectionZoom = gridZoom;
+			zoomDiff1 = PreviewMap.MAX_ZOOM - selectionZoom;
+		} else {
+			selectionZoom = zoom;
+			zoomDiff1 = PreviewMap.MAX_ZOOM - selectionZoom;
+		}
+		x_min = (gridSelectionStart.x >> zoomDiff1);
+		y_min = (gridSelectionStart.y >> zoomDiff1);
+		x_max = (gridSelectionEnd.x >> zoomDiff1);
+		y_max = (gridSelectionEnd.y >> zoomDiff1);
+		Point2D.Double max = new Point2D.Double();
+		Point2D.Double min = new Point2D.Double();
+		max.x = OsmMercator.XToLon(x_max, selectionZoom);
+		min.y = OsmMercator.YToLat(y_max, selectionZoom);
+		min.x = OsmMercator.XToLon(x_min, selectionZoom);
+		max.y = OsmMercator.YToLat(y_min, selectionZoom);
 		for (MapSelectionListener msp : mapSelectionListeners) {
 			msp.selectionChanged(max, min);
 		}

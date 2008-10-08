@@ -1,6 +1,8 @@
 package tac.program;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,9 +15,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
 import tac.gui.GUI;
-import tac.utilities.Utilities;
 
-public class AtlasThread extends Thread {
+public class AtlasThread extends Thread implements ActionListener {
 
 	private GUI gui;
 	private AtlasProgress ap;
@@ -39,6 +40,17 @@ public class AtlasThread extends Thread {
 	}
 
 	public void run() {
+		ap = AtlasProgress.getInstance();
+		try {
+			createAtlas();
+		} catch (InterruptedException e) {
+
+		} finally {
+			ap.setVisible(false);
+		}
+	}
+
+	protected void createAtlas() throws InterruptedException {
 
 		String workingDir = System.getProperty("user.dir");
 
@@ -55,17 +67,13 @@ public class AtlasThread extends Thread {
 		 * In this section of code below, atlas is created.
 		 **/
 
-		File atlas = new File(workingDir + File.separator + "atlases" + File.separator
-				+ formattedDateString);
+		File atlasDir = new File(workingDir + "/atlases/" + formattedDateString);
+		atlasDir.mkdirs();
 
-		atlas.mkdirs();
+		File atlasTarDir = new File(workingDir + "/atlasestared/" + formattedDateString);
+		atlasTarDir.mkdirs();
 
-		File atlasTar = new File(workingDir + File.separator + "atlasestared" + File.separator
-				+ formattedDateString);
-
-		atlasTar.mkdirs();
-
-		File crtba = new File(atlas.getAbsolutePath(), "cr.tba");
+		File crtba = new File(atlasDir.getAbsolutePath(), "cr.tba");
 
 		try {
 			FileWriter fw = new FileWriter(crtba);
@@ -91,7 +99,6 @@ public class AtlasThread extends Thread {
 			return;
 		}
 
-		ap = AtlasProgress.getInstance();
 		ap.init((int) totalNrOfTiles, nrOfLayers);
 		ap.setVisible(true);
 
@@ -115,8 +122,8 @@ public class AtlasThread extends Thread {
 			 **/
 			int zoom = zoomLevels[layer];
 
-			Point topLeft = mapSelection.getTopLeftTile(zoom);
-			Point bottomRight = mapSelection.getBottomRightTile(zoom);
+			Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
+			Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
 
 			System.out.println("Selection to download: \n\t" + topLeft + "\n\t" + bottomRight
 					+ "\n\tzoom: " + zoom);
@@ -166,18 +173,18 @@ public class AtlasThread extends Thread {
 			}
 
 			if ((oziZoomDir.list().length) != ((yMax - yMin) * (xMax - xMin))) {
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Something is wrong with download of atlas tiles. "
-										+ "Actual amount of downoladed tiles is not the same as "
-										+ "the supposed amount of tiles downoladed. It might be connection "
-										+ "problems to internet or something else. Please try again.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,
+						"Something is wrong with download of atlas tiles. "
+								+ "Actual amount of downoladed tiles is not the same as "
+								+ "the supposed amount of tiles downloaded.\n"
+								+ "It might be connection problems to internet "
+								+ "or something else. Please try again.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
-			File atlasFolder = new File(atlas, atlasName + zoom);
+			File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] { atlasName,
+					zoom }));
 			atlasFolder.mkdir();
 
 			OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth, tileSizeHeight,
@@ -195,11 +202,11 @@ public class AtlasThread extends Thread {
 		} else {
 			ap.setButtonText();
 
-			Utilities.createCR_TAR(atlas, atlasTar, new File(workingDir + File.separator
-					+ "tarwrkdir"));
-			AtlasProgress ap = AtlasProgress.getInstance();
+			AtlasTarCreator atc = new AtlasTarCreator(atlasDir, atlasTarDir);
+			atc.createAtlasCrTarArchive();
 			ap.updateTarPrograssBar();
-			Utilities.createTarPackedLayers(atlas, atlasTar);
+
+			atc.createMapTars();
 			ap.updateTarPrograssBar();
 
 			JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
@@ -230,6 +237,14 @@ public class AtlasThread extends Thread {
 			}
 		}
 		return retryOk;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		try {
+			if (this.isAlive())
+				this.interrupt();
+		} catch (Exception ex) {
+		}
 	}
 
 }

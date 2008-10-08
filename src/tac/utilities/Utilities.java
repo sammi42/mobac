@@ -1,6 +1,7 @@
 package tac.utilities;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,15 +9,15 @@ import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import tac.program.ProcessValues;
 import tac.program.Profile;
 import tac.program.Settings;
-import tac.tar.TarArchive;
 
 public class Utilities {
 
@@ -26,13 +27,6 @@ public class Utilities {
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
 
-	/***
-	 * Metod för att kontrollera om en sträng är giltig. I detta fall
-	 * kontrolleras strängen genom att söka efter tecken som inte är tillåtna i
-	 * en sökväg eller filnamn. hittas otillåtna tecken så returnerar metoden
-	 * ascii-värdet för det tecken som funnits. Hittas inga otillåtna tecken
-	 * returneras -1
-	 **/
 	public static int validateString(String theStringToValidate, boolean isPath) {
 
 		int isValid = -1;
@@ -217,179 +211,205 @@ public class Utilities {
 		return sbOut.toString();
 	}
 
-	public static void createCR_TAR(File atlasFolder, File atlasTarFolder, File atlasWorkTarFolder) {
-
-		File[] taredFolderFiles = atlasWorkTarFolder.listFiles();
-
-		for (int i = 0; i < taredFolderFiles.length; i++) {
-
-			if (taredFolderFiles[i].isDirectory()) {
-				deleteDirectory(taredFolderFiles[i]);
-			} else {
-				taredFolderFiles[i].delete();
-			}
-		}
-
-		ProcessValues.clearCrTarContentVector();
-
-		listAtlasDirectoryContent(atlasFolder);
-
-		Vector<File> temp = new Vector<File>();
-		temp = ProcessValues.getCrTarContentVector();
-
-		Vector<File> files = new Vector<File>();
-
-		String fileSeparator = System.getProperty("file.separator");
-
-		for (int i = 0; i < temp.size(); i++) {
-
-			// If element in Vector is a file, then this will be added to the
-			// Vector with files
-			if (temp.elementAt(i).isFile()) {
-				files.addElement(temp.elementAt(i));
-			} else {
-
-				String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
-				String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
-						atlasWorkTarFolderParent.length(),
-						temp.elementAt(i).getAbsolutePath().length());
-
-				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-						trimmedPath.length());
-				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-						trimmedPath.length());
-				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-						trimmedPath.length());
-
-				if (new File(atlasWorkTarFolder, trimmedPath).exists() != true) {
-					new File(atlasWorkTarFolder, trimmedPath).mkdirs();
-				}
-			}
-		}
-		for (int i = 0; i < files.size(); i++) {
-
-			try {
-				String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
-
-				String trimmedPath = files.elementAt(i).getAbsolutePath().substring(
-						atlasWorkTarFolderParent.length(),
-						files.elementAt(i).getAbsolutePath().length());
-
-				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-						trimmedPath.length());
-				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-						trimmedPath.length());
-				trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) + 1,
-						trimmedPath.length());
-
-				if (files.elementAt(i).getName().equals("cr.tba")) {
-					fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
-							+ files.elementAt(i).getName()));
-				}
-				if (files.elementAt(i).getName().endsWith(".map")) {
-					fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
-							+ trimmedPath));
-				}
-			} catch (IOException iox) {
-				System.out.println(iox);
-			}
-		}
-		TarArchive ta = new TarArchive(atlasWorkTarFolder, new File(atlasTarFolder, "cr.tar"));
-		ta.createCRTarArchive();
-	}
-
-	public static void createTarPackedLayers(File atlasFolder, File atlasTarFolder) {
-
-		ProcessValues.clearCrTarContentVector();
-
-		listAtlasDirectoryContent(atlasFolder);
-
-		Vector<File> temp = new Vector<File>();
-		temp = ProcessValues.getCrTarContentVector();
-
-		Vector<File> setFolders = new Vector<File>();
-
-		for (int i = 0; i < temp.size(); i++) {
-
-			if (!temp.elementAt(i).isFile()) {
-				if (temp.elementAt(i).getName().equals("set")) {
-					setFolders.addElement(temp.elementAt(i));
-				} else {
-
-					String atlasTarFolderParent = atlasTarFolder.getParent();
-
-					String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
-							atlasTarFolderParent.length(),
-							temp.elementAt(i).getAbsolutePath().length());
-
-					trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) + 1,
-							trimmedPath.length());
-
-					File f = new File(atlasTarFolder, trimmedPath);
-					if (f.exists() != true)
-						f.mkdirs();
-				}
-			}
-		}
-		for (int i = 0; i < setFolders.size(); i++) {
-
-			String atlasTarFolderParent = atlasTarFolder.getParent();
-
-			String trimmedPath = (setFolders.elementAt(i).getParentFile()).getAbsolutePath()
-					.substring(atlasTarFolderParent.length(),
-							(setFolders.elementAt(i).getParentFile()).getAbsolutePath().length());
-
-			trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) + 1,
-					trimmedPath.length());
-
-			String destinationDir = atlasTarFolder + File.separator + trimmedPath + File.separator;
-			File destinationFile = new File(destinationDir, setFolders.elementAt(i).getParentFile()
-					.getName()
-					+ ".tar");
-			File sourceFile = new File(atlasFolder, trimmedPath);
-
-			TarArchive ta = new TarArchive(sourceFile, destinationFile);
-			ta.createCRTarArchive();
-		}
-	}
-
-	/***
-	 * Method for recursively iterate through a directory and save paths to a
-	 * Vector in ProcessValues class if the founded item is an directory or an
-	 * file with suffix ".map"
-	 **/
-	public static void listAtlasDirectoryContent(File theDirectoryToList) {
-
-		File[] directoryContent = theDirectoryToList.listFiles();
-
-		/***
-		 * Iterate through all files in directory
-		 **/
-		for (int i = 0; i < directoryContent.length; i++) {
-			/***
-			 * If directory is found, add pathname to ProcessValues and do a
-			 * recursive call to this method with current directory as parameter
-			 **/
-			if (directoryContent[i].isDirectory()) {
-				ProcessValues.addCrTarContent(directoryContent[i]);
-				listAtlasDirectoryContent(directoryContent[i]);
-			}
-			/***
-			 * If current file is cr.tba file, then add it´s path to
-			 * ProcessValues
-			 **/
-			if (directoryContent[i].getName().endsWith(".tba")) {
-				ProcessValues.addCrTarContent(directoryContent[i]);
-			}
-			/***
-			 * If current file is an *.map file, then add it´s path to
-			 * ProcessValues
-			 **/
-			if (directoryContent[i].getName().endsWith(".map")) {
-				ProcessValues.addCrTarContent(directoryContent[i]);
-			}
-		}
-	}
+	// public static boolean createCR_TAR(File atlasFolder, File atlasTarFolder)
+	// {
+	//
+	// File[] taredFolderFiles = atlasWorkTarFolder.listFiles();
+	//
+	// for (int i = 0; i < taredFolderFiles.length; i++) {
+	//
+	// if (taredFolderFiles[i].isDirectory()) {
+	// deleteDirectory(taredFolderFiles[i]);
+	// } else {
+	// taredFolderFiles[i].delete();
+	// }
+	// }
+	//
+	// ProcessValues.clearCrTarContentVector();
+	//
+	// listAtlasDirectoryContent(atlasFolder);
+	//
+	// Vector<File> temp = new Vector<File>();
+	// temp = ProcessValues.getCrTarContentVector();
+	//
+	// Vector<File> files = new Vector<File>();
+	//
+	// String fileSeparator = System.getProperty("file.separator");
+	//
+	// for (int i = 0; i < temp.size(); i++) {
+	//
+	// // If element in Vector is a file, then this will be added to the
+	// // Vector with files
+	// if (temp.elementAt(i).isFile()) {
+	// files.addElement(temp.elementAt(i));
+	// } else {
+	//
+	// String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
+	// String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
+	// atlasWorkTarFolderParent.length(),
+	// temp.elementAt(i).getAbsolutePath().length());
+	//
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
+	// 1,
+	// trimmedPath.length());
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
+	// 1,
+	// trimmedPath.length());
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
+	// 1,
+	// trimmedPath.length());
+	//
+	// if (new File(atlasWorkTarFolder, trimmedPath).exists() != true) {
+	// new File(atlasWorkTarFolder, trimmedPath).mkdirs();
+	// }
+	// }
+	// }
+	// for (int i = 0; i < files.size(); i++) {
+	//
+	// try {
+	// String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
+	//
+	// String trimmedPath = files.elementAt(i).getAbsolutePath().substring(
+	// atlasWorkTarFolderParent.length(),
+	// files.elementAt(i).getAbsolutePath().length());
+	//
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
+	// 1,
+	// trimmedPath.length());
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
+	// 1,
+	// trimmedPath.length());
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
+	// 1,
+	// trimmedPath.length());
+	//
+	// if (files.elementAt(i).getName().equals("cr.tba")) {
+	// fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
+	// + files.elementAt(i).getName()));
+	// }
+	// if (files.elementAt(i).getName().endsWith(".map")) {
+	// fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
+	// + trimmedPath));
+	// }
+	// } catch (IOException iox) {
+	// iox.printStackTrace();
+	// return false;
+	// }
+	// }
+	// TarArchive ta = null;
+	// try {
+	// ta = new TarArchive(atlasFolder, new File(atlasTarFolder, "cr.tar"));
+	// ta.createCRTarArchive();
+	// } catch (FileNotFoundException e) {
+	// e.printStackTrace();
+	// return false;
+	// }
+	// return true;
+	// }
+	//
+	// public static void createTarPackedLayers(File atlasFolder, File
+	// atlasTarFolder) {
+	//
+	// ProcessValues.clearCrTarContentVector();
+	//
+	// listAtlasDirectoryContent(atlasFolder);
+	//
+	// Vector<File> temp = new Vector<File>();
+	// temp = ProcessValues.getCrTarContentVector();
+	//
+	// Vector<File> setFolders = new Vector<File>();
+	//
+	// for (int i = 0; i < temp.size(); i++) {
+	//
+	// if (!temp.elementAt(i).isFile()) {
+	// if (temp.elementAt(i).getName().equals("set")) {
+	// setFolders.addElement(temp.elementAt(i));
+	// } else {
+	//
+	// String atlasTarFolderParent = atlasTarFolder.getParent();
+	//
+	// String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
+	// atlasTarFolderParent.length(),
+	// temp.elementAt(i).getAbsolutePath().length());
+	//
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) +
+	// 1,
+	// trimmedPath.length());
+	//
+	// File f = new File(atlasTarFolder, trimmedPath);
+	// if (f.exists() != true)
+	// f.mkdirs();
+	// }
+	// }
+	// }
+	// for (int i = 0; i < setFolders.size(); i++) {
+	//
+	// String atlasTarFolderParent = atlasTarFolder.getParent();
+	//
+	// String trimmedPath =
+	// (setFolders.elementAt(i).getParentFile()).getAbsolutePath()
+	// .substring(atlasTarFolderParent.length(),
+	// (setFolders.elementAt(i).getParentFile()).getAbsolutePath().length());
+	//
+	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) +
+	// 1,
+	// trimmedPath.length());
+	//
+	// String destinationDir = atlasTarFolder + File.separator + trimmedPath +
+	// File.separator;
+	// File destinationFile = new File(destinationDir,
+	// setFolders.elementAt(i).getParentFile()
+	// .getName()
+	// + ".tar");
+	// File sourceFile = new File(atlasFolder, trimmedPath);
+	//
+	// TarArchive ta = null;
+	// try {
+	// ta = new TarArchive(sourceFile, destinationFile);
+	// ta.createArchive();
+	// } catch (FileNotFoundException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// }
+	//
+	// /***
+	// * Method for recursively iterate through a directory and save paths to a
+	// * Vector in ProcessValues class if the founded item is an directory or an
+	// * file with suffix ".map"
+	// **/
+	// public static void listAtlasDirectoryContent(File theDirectoryToList) {
+	//
+	// File[] directoryContent = theDirectoryToList.listFiles();
+	//
+	// /***
+	// * Iterate through all files in directory
+	// **/
+	// for (int i = 0; i < directoryContent.length; i++) {
+	// /***
+	// * If directory is found, add pathname to ProcessValues and do a
+	// * recursive call to this method with current directory as parameter
+	// **/
+	// if (directoryContent[i].isDirectory()) {
+	// ProcessValues.addCrTarContent(directoryContent[i]);
+	// listAtlasDirectoryContent(directoryContent[i]);
+	// }
+	// /***
+	// * If current file is cr.tba file, then add itï¿½s path to
+	// * ProcessValues
+	// **/
+	// if (directoryContent[i].getName().endsWith(".tba")) {
+	// ProcessValues.addCrTarContent(directoryContent[i]);
+	// }
+	// /***
+	// * If current file is an *.map file, then add itï¿½s path to
+	// * ProcessValues
+	// **/
+	// if (directoryContent[i].getName().endsWith(".map")) {
+	// ProcessValues.addCrTarContent(directoryContent[i]);
+	// }
+	// }
+	// }
 
 	public static boolean deleteDirectory(File path) {
 
@@ -409,35 +429,21 @@ public class Utilities {
 
 	public static void checkFileSetup() {
 
-		String fileSeparator = System.getProperty("file.separator");
+		File userDir = new File(System.getProperty("user.dir"));
 
-		File atlasFolder = new File(System.getProperty("user.dir") + fileSeparator + "atlases");
+		File atlasFolder = new File(userDir, "atlases");
+		atlasFolder.mkdir();
 
-		if (!atlasFolder.exists())
-			atlasFolder.mkdir();
+		File atlasTaredFolder = new File(userDir, "atlasestared");
+		atlasTaredFolder.mkdir();
 
-		File atlasTaredFolder = new File(System.getProperty("user.dir") + fileSeparator
-				+ "atlasestared");
+		File oziFolder = new File(userDir, "ozi");
+		oziFolder.mkdir();
 
-		if (!atlasTaredFolder.exists())
-			atlasTaredFolder.mkdir();
+		File tileStoreFolder = new File(userDir, "tilestore");
+		tileStoreFolder.mkdir();
 
-		File oziFolder = new File(System.getProperty("user.dir") + fileSeparator + "ozi");
-
-		oziFolder.mkdirs();
-
-		File tarwrkdirFolder = new File(System.getProperty("user.dir") + fileSeparator
-				+ "tarwrkdir");
-
-		tarwrkdirFolder.mkdirs();
-
-		File tileStoreFolder = new File(System.getProperty("user.dir") + fileSeparator
-				+ "tilestore");
-
-		tileStoreFolder.mkdirs();
-
-		File settingsFile = new File(System.getProperty("user.dir") + fileSeparator
-				+ "settings.xml");
+		File settingsFile = new File(userDir, "settings.xml");
 
 		if (settingsFile.exists() == false) {
 
@@ -452,8 +458,7 @@ public class Utilities {
 			}
 		}
 
-		File profilesFile = new File(System.getProperty("user.dir") + fileSeparator
-				+ "profiles.xml");
+		File profilesFile = new File(userDir, "profiles.xml");
 
 		if (profilesFile.exists() == false) {
 
@@ -505,4 +510,35 @@ public class Utilities {
 		return workingString;
 	}
 
+	/**
+	 * Lists all direct sub directories of <code>dir</code>
+	 * 
+	 * @param dir
+	 * @return list of directories
+	 */
+	public static File[] listSubDirectories(File dir) {
+		return dir.listFiles(new DirectoryFilter());
+	}
+
+	public static List<File> listSubDirectoriesRec(File dir, int maxDepth) {
+		List<File> dirList = new LinkedList<File>();
+		addSubDirectories(dirList, dir, maxDepth);
+		return dirList;
+	}
+
+	public static void addSubDirectories(List<File> dirList, File dir, int maxDepth) {
+		File[] subDirs = dir.listFiles(new DirectoryFilter());
+		for (File f : subDirs) {
+			dirList.add(f);
+			if (maxDepth > 0)
+				addSubDirectories(dirList, f, maxDepth - 1);
+		}
+	}
+
+	public static class DirectoryFilter implements FileFilter {
+
+		public boolean accept(File f) {
+			return f.isDirectory();
+		}
+	}
 }

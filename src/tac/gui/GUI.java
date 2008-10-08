@@ -157,11 +157,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public void createLeftPanel() {
 
-
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
-//		leftPanel.setMinimumSize(new Dimension(290, 800));
-//		leftPanel.setPreferredSize(leftPanel.getMinimumSize());
+		// leftPanel.setMinimumSize(new Dimension(290, 800));
+		// leftPanel.setPreferredSize(leftPanel.getMinimumSize());
 
 		leftScrollPane = new JScrollPane(leftPanel);
 		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -386,7 +385,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// Allows to disable map painting and tile loading
 		// for debugging purposes
 		// TODO Enable map preview
-		//previewMap.setEnabled(false);
+		// previewMap.setEnabled(false);
 
 		rightPanel.add(previewMap, BorderLayout.CENTER);
 		add(rightPanel, BorderLayout.CENTER);
@@ -703,16 +702,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 	public void calculateNrOfTilesToDownload() {
 
 		try {
-			SelectedZoomLevels sZL = getSelectedZoomlevels();
+			SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 
-			int nrOfLayers = sZL.getNrOfLayers();
 			int[] zoomLevels = sZL.getZoomLevels();
 
 			long totalNrOfTiles = 0;
 
-			for (int i = 0; i < nrOfLayers; i++) {
+			for (int i = 0; i < zoomLevels.length; i++) {
 				MapSelection ms = getMapSelectionCoordinates();
 				totalNrOfTiles += ms.calculateNrOfTiles(zoomLevels[i]);
+				System.out.println("Tiles on zoom " + zoomLevels[i] + ": "
+						+ ms.calculateNrOfTiles(zoomLevels[i]));
 			}
 			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
 		} catch (Exception e) {
@@ -924,18 +924,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		createZoomLevelCheckBoxes();
 	}
 
-	public SelectedZoomLevels getSelectedZoomlevels() {
-
-		SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom.length);
-
-		for (int i = 0; i < cbZoom.length; i++) {
-			if (cbZoom[i].isSelected())
-				sZL.setZoomLevelSelected(i);
-		}
-		sZL.sort();
-		return sZL;
-	}
-
 	private void createAtlas() {
 
 		String errorText = validateInput(true);
@@ -1002,10 +990,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 					// }
 
 					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
+					SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 					try {
 						Thread atlasThread = new AtlasThread(this, atlasNameTextField.getText(),
-								tileSource, getMapSelectionCoordinates(), getSelectedZoomlevels(),
-								tileSizeWidth, tileSizeHeight);
+								tileSource, getMapSelectionCoordinates(), sZL, tileSizeWidth,
+								tileSizeHeight);
 						atlasThread.start();
 					} catch (Exception ex) {
 						System.out.println(ex);

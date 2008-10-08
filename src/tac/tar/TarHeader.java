@@ -6,45 +6,45 @@ public class TarHeader {
 
 	private File baseFilePath;
 
-	private char [] fileName;
-	private char [] fileMode;
-	private char [] fileOwnerUserID;
-	private char [] fileOwnerGroupID;
-	private char [] fileSize;
-	private char [] lastModificationTime;
-	private char [] checksum;
-	private char [] linkIndicator;
-	private char [] nameOfLinkedFile;
-	private char [] padding;
+	private char[] fileName;
+	private char[] fileMode;
+	private char[] fileOwnerUserID;
+	private char[] fileOwnerGroupID;
+	private char[] fileSize;
+	private char[] lastModificationTime;
+	private char[] checksum;
+	private char[] linkIndicator;
+	private char[] nameOfLinkedFile;
+	private char[] padding;
 
 	public TarHeader() {
 
-		fileName = new char [100];
-		fileMode = new char [8];
-		fileOwnerUserID = new char [8];
-		fileOwnerGroupID = new char [8];
-		fileSize = new char [12];
-		lastModificationTime = new char [12];
-		checksum = new char [8];
-		linkIndicator = new char [1];
-		nameOfLinkedFile = new char [100];
-		padding = new char [255];
+		fileName = new char[100];
+		fileMode = new char[8];
+		fileOwnerUserID = new char[8];
+		fileOwnerGroupID = new char[8];
+		fileSize = new char[12];
+		lastModificationTime = new char[12];
+		checksum = new char[8];
+		linkIndicator = new char[1];
+		nameOfLinkedFile = new char[100];
+		padding = new char[255];
 	}
 
 	public TarHeader(File theFile, File theBaseFilePath) {
 
 		baseFilePath = theBaseFilePath;
 
-		fileName = new char [100];
-		fileMode = new char [8];
-		fileOwnerUserID = new char [8];
-		fileOwnerGroupID = new char [8];
-		fileSize = new char [12];
-		lastModificationTime = new char [12];
-		checksum = new char [8];
-		linkIndicator = new char [1];
-		nameOfLinkedFile = new char [100];
-		padding = new char [255];
+		fileName = new char[100];
+		fileMode = new char[8];
+		fileOwnerUserID = new char[8];
+		fileOwnerGroupID = new char[8];
+		fileSize = new char[12];
+		lastModificationTime = new char[12];
+		checksum = new char[8];
+		linkIndicator = new char[1];
+		nameOfLinkedFile = new char[100];
+		padding = new char[255];
 
 		this.setFileName(theFile, baseFilePath);
 		this.setFileMode();
@@ -61,26 +61,29 @@ public class TarHeader {
 	// S E T - Methods
 	public void setFileName(File theFile, File theBaseFilePath) {
 
-		String tarFileName = theFile.getAbsolutePath().substring(theBaseFilePath.getAbsolutePath().length(), theFile.getAbsolutePath().length());
+		String filePath = theFile.getAbsolutePath();
+		String basePath = theBaseFilePath.getAbsolutePath();
+		if (!filePath.startsWith(basePath))
+			throw new RuntimeException("File \"" + filePath
+					+ "\" is outside of archive base path \"" + basePath + "\"!");
 
-		tarFileName = tarFileName.replace((char)92, (char)47);
-		
-		if (tarFileName.startsWith("/")) {
+		String tarFileName = filePath.substring(basePath.length(), filePath.length());
+
+		tarFileName = tarFileName.replace('\\', '/');
+
+		if (tarFileName.startsWith("/"))
 			tarFileName = tarFileName.substring(1, tarFileName.length());
-		}
-				
-		if (theFile.isDirectory()) {
-			tarFileName = tarFileName + "/"; //System.getProperty("file.separator");
-		}
 
-		char [] theFileName = tarFileName.toCharArray();
+		if (theFile.isDirectory())
+			tarFileName = tarFileName + "/";
+
+		char[] theFileName = tarFileName.toCharArray();
 
 		for (int i = 0; i < fileName.length; i++) {
 
 			if (i < theFileName.length) {
 				fileName[i] = theFileName[i];
-			}
-			else {
+			} else {
 				fileName[i] = 0;
 			}
 		}
@@ -130,18 +133,16 @@ public class TarHeader {
 			fileSizeLong = theFile.length();
 		}
 
-		char [] fileSizeCharArray = Long.toString(fileSizeLong, 8).toCharArray();
+		char[] fileSizeCharArray = Long.toString(fileSizeLong, 8).toCharArray();
 
 		int offset = 11 - fileSizeCharArray.length;
 
 		for (int i = 0; i < 12; i++) {
 			if (i < offset) {
 				fileSize[i] = ' ';
-			}
-			else if (i == 11) {
+			} else if (i == 11) {
 				fileSize[i] = ' ';
-			}
-			else {
+			} else {
 				fileSize[i] = fileSizeCharArray[i - offset];
 			}
 		}
@@ -150,12 +151,12 @@ public class TarHeader {
 	public void setLastModificationTime(File theFile) {
 
 		long lastModifiedTime = 0;
-		
+
 		lastModifiedTime = theFile.lastModified();
 		lastModifiedTime = theFile.lastModified() / 1000;
 
-		char [] fileLastModifiedTimeCharArray = Long.toString(lastModifiedTime, 8).toCharArray();
-		
+		char[] fileLastModifiedTimeCharArray = Long.toString(lastModifiedTime, 8).toCharArray();
+
 		for (int i = 0; i < fileLastModifiedTimeCharArray.length; i++) {
 			lastModificationTime[i] = fileLastModifiedTimeCharArray[i];
 		}
@@ -171,47 +172,47 @@ public class TarHeader {
 
 		int checksumInt = 0;
 
-		for (int i = 0; i < 100; i ++) {
-			checksumInt = checksumInt + (int)fileName[i];
+		for (int i = 0; i < 100; i++) {
+			checksumInt = checksumInt + (int) fileName[i];
 		}
 
-		for (int i = 0; i < 8; i ++) {
-			checksumInt = checksumInt + (int)fileMode[i];
+		for (int i = 0; i < 8; i++) {
+			checksumInt = checksumInt + (int) fileMode[i];
 		}
 
-		for (int i = 0; i < 8; i ++) {
-			checksumInt = checksumInt + (int)fileOwnerUserID[i];
+		for (int i = 0; i < 8; i++) {
+			checksumInt = checksumInt + (int) fileOwnerUserID[i];
 		}
 
-		for (int i = 0; i < 8; i ++) {
-			checksumInt = checksumInt + (int)fileOwnerGroupID[i];
+		for (int i = 0; i < 8; i++) {
+			checksumInt = checksumInt + (int) fileOwnerGroupID[i];
 		}
 
-		for (int i = 0; i < 12; i ++) {
-			checksumInt = checksumInt + (int)fileSize[i];
+		for (int i = 0; i < 12; i++) {
+			checksumInt = checksumInt + (int) fileSize[i];
 		}
 
-		for (int i = 0; i < 12; i ++) {
-			checksumInt = checksumInt + (int)lastModificationTime[i];
+		for (int i = 0; i < 12; i++) {
+			checksumInt = checksumInt + (int) lastModificationTime[i];
 		}
 
-		for (int i = 0; i < 1; i ++) {
-			checksumInt = checksumInt + (int)linkIndicator[i];
+		for (int i = 0; i < 1; i++) {
+			checksumInt = checksumInt + (int) linkIndicator[i];
 		}
 
 		checksumInt = checksumInt + (8 * 32);
-		
-		char [] checkSumIntChar = Integer.toString(checksumInt, 8).toCharArray();
+
+		char[] checkSumIntChar = Integer.toString(checksumInt, 8).toCharArray();
 
 		int offset = 8 - checkSumIntChar.length;
 
 		for (int i = checksum.length - 1; i >= 0; i--) {
 
-			if(i == checksum.length - 1) {
+			if (i == checksum.length - 1) {
 				checksum[i] = 0;
 			}
 
-			if(i == checksum.length - 2) {
+			if (i == checksum.length - 2) {
 				checksum[i] = ' ';
 			}
 
@@ -219,8 +220,7 @@ public class TarHeader {
 
 				if (i - (offset - 2) >= 0) {
 					checksum[i] = checkSumIntChar[i - (offset - 2)];
-				}
-				else {
+				} else {
 					checksum[i] = ' ';
 				}
 			}
@@ -231,8 +231,7 @@ public class TarHeader {
 
 		if (theFile.isDirectory()) {
 			linkIndicator[0] = '5';
-		}
-		else {
+		} else {
 			linkIndicator[0] = '0';
 		}
 	}
@@ -250,47 +249,47 @@ public class TarHeader {
 	}
 
 	// G E T - Methods
-	public char [] getFileName() {
+	public char[] getFileName() {
 		return fileName;
 	}
 
-	public char [] getFileMode() {
+	public char[] getFileMode() {
 		return fileMode;
 	}
 
-	public char [] getFileOwnerUserID() {
+	public char[] getFileOwnerUserID() {
 		return fileOwnerUserID;
 	}
 
-	public char [] getFileOwnerGroupID() {
+	public char[] getFileOwnerGroupID() {
 		return fileOwnerGroupID;
 	}
 
-	public char [] getFileSize() {
+	public char[] getFileSize() {
 		return fileSize;
 	}
 
-	public char [] getLastModificationTime() {
+	public char[] getLastModificationTime() {
 		return lastModificationTime;
 	}
 
-	public char [] getChecksum() {
+	public char[] getChecksum() {
 		return checksum;
 	}
 
-	public char [] getLinkIndicator() {
+	public char[] getLinkIndicator() {
 		return linkIndicator;
 	}
 
-	public char [] getNameOfLinkedFile() {
+	public char[] getNameOfLinkedFile() {
 		return nameOfLinkedFile;
 	}
 
-	public char [] getPadding() {
+	public char[] getPadding() {
 		return padding;
 	}
 
-	public String getHeaderAsString() {
+	public byte[] getBytes() {
 
 		StringBuffer sb = new StringBuffer(512);
 
@@ -304,7 +303,8 @@ public class TarHeader {
 		sb.append(linkIndicator);
 		sb.append(nameOfLinkedFile);
 		sb.append(padding);
-		
-		return sb.toString();
+
+		return sb.toString().getBytes();
 	}
+
 }

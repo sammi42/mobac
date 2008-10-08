@@ -42,7 +42,7 @@ public class MapCreator {
 	private String layerName;
 
 	public MapCreator(SubMapProperties smp, File oziFolder, File atlasFolder, String mapName,
-			int zoom, String mapNumber, int tileSizeWidth, int tileSizeHeight) {
+			int zoom, int mapNumber, int tileSizeWidth, int tileSizeHeight) {
 		xMin = smp.getXMin();
 		xMax = smp.getXMax();
 		yMin = smp.getYMin();
@@ -51,7 +51,7 @@ public class MapCreator {
 		this.zoom = zoom;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
-		layerName = mapName + zoom + mapNumber;
+		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
 		tilesInFileFormat = new HashMap<String, File>();
 		setFiles = new LinkedList<String>();
 		atlasLayerFolder = new File(atlasFolder, layerName);
@@ -129,7 +129,6 @@ public class MapCreator {
 					File fDest = new File(setFolder, layerName + "_" + pixelValueX * 256 + "_"
 							+ pixelValueY * 256 + ".png");
 					File fSource = (File) tilesInFileFormat.get("y" + y + "x" + x + ".png");
-					System.out.println(fSource.getName() + " -> " + fDest.getName());
 					setFiles.add(fDest.getName());
 					Utilities.fileCopy(fSource, fDest);
 				} catch (IOException iox) {

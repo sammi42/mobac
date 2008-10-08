@@ -15,7 +15,7 @@ public class Profile {
 	private int customTileSizeWidth;
 	private int customTileSizeHeight;
 
-	private boolean [] zoomLevels = new boolean [10];
+	private boolean[] zoomLevels;
 
 	// Default constructor
 	public Profile() {
@@ -31,14 +31,17 @@ public class Profile {
 		customTileSizeWidth = 0;
 		customTileSizeHeight = 0;
 
+		zoomLevels = new boolean[10];
 		for (int i = 0; i < zoomLevels.length; i++) {
 			zoomLevels[i] = false;
 		}
 	}
 
 	// Constructor
-	public Profile(String theProfileName, String theAtlasName, Double theLatitudeMax, Double theLatitudeMin, Double theLongitudeMax,
-	               Double theLongitudeMin, boolean [] theZoomLevels, int theTileSizeWidth, int theTileSizeHeight, int theCustomTileSizeWidth, int theCustomTileSizeHeight) {
+	public Profile(String theProfileName, String theAtlasName, Double theLatitudeMax,
+			Double theLatitudeMin, Double theLongitudeMax, Double theLongitudeMin,
+			boolean[] theZoomLevels, int theTileSizeWidth, int theTileSizeHeight,
+			int theCustomTileSizeWidth, int theCustomTileSizeHeight) {
 
 		profileName = theProfileName;
 		atlasName = theAtlasName;
@@ -57,33 +60,43 @@ public class Profile {
 	public void setProfileName(String theProfileName) {
 		profileName = theProfileName;
 	}
+
 	public void setAtlasName(String theAtlasName) {
 		atlasName = theAtlasName;
 	}
+
 	public void setLatitudeMax(Double theLatitudeMax) {
 		latitudeMax = theLatitudeMax;
 	}
+
 	public void setLatitudeMin(Double theLatitudeMin) {
 		latitudeMin = theLatitudeMin;
 	}
+
 	public void setLongitudeMax(Double theLongitudeMax) {
 		longitudeMax = theLongitudeMax;
 	}
+
 	public void setLongitudeMin(Double theLongitudeMin) {
 		longitudeMin = theLongitudeMin;
 	}
-	public void setZoomLevels(boolean [] theZoomLevels) {
-		zoomLevels =	theZoomLevels;
+
+	public void setZoomLevels(boolean[] theZoomLevels) {
+		zoomLevels = theZoomLevels;
 	}
+
 	public void setTileSizeWidth(int tileSizeWidth) {
 		this.tileSizeWidth = tileSizeWidth;
 	}
+
 	public void setTileSizeHeight(int tileSizeHeight) {
 		this.tileSizeHeight = tileSizeHeight;
 	}
+
 	public void setCustomTileSizeWidth(int customTileSizeWidth) {
 		this.customTileSizeWidth = customTileSizeWidth;
 	}
+
 	public void setCustomTileSizeHeight(int customTileSizeHeight) {
 		this.customTileSizeHeight = customTileSizeHeight;
 	}
@@ -92,33 +105,43 @@ public class Profile {
 	public String getProfileName() {
 		return profileName;
 	}
+
 	public String getAtlasName() {
 		return atlasName;
 	}
+
 	public Double getLatitudeMax() {
 		return latitudeMax;
 	}
+
 	public Double getLatitudeMin() {
 		return latitudeMin;
 	}
+
 	public Double getLongitudeMax() {
 		return longitudeMax;
 	}
+
 	public Double getLongitudeMin() {
 		return longitudeMin;
 	}
-	public boolean [] getZoomLevels() {
+
+	public boolean[] getZoomLevels() {
 		return zoomLevels;
 	}
+
 	public int getTileSizeWidth() {
 		return tileSizeWidth;
 	}
+
 	public int getTileSizeHeight() {
 		return tileSizeHeight;
 	}
+
 	public int getCustomTileSizeWidth() {
 		return customTileSizeWidth;
 	}
+
 	public int getCustomTileSizeHeight() {
 		return customTileSizeHeight;
 	}

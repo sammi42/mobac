@@ -25,6 +25,8 @@ import tac.utilities.Utilities;
  */
 public class MapCreator {
 
+	private static boolean tileSizeErrorNotified = false;
+
 	private int xMin;
 	private int xMax;
 	private int yMin;
@@ -120,7 +122,7 @@ public class MapCreator {
 		int pixelValueX = 0;
 		int pixelValueY = 0;
 
-		Thread t = Thread.currentThread(); 
+		Thread t = Thread.currentThread();
 		for (int x = xMin; x < xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y < yMax; y++) {
@@ -151,11 +153,11 @@ public class MapCreator {
 		int mergedHeight = (yMax - yMin) * 256;
 
 		if (tileSizeWidth > mergedWidth || tileSizeHeight > mergedHeight) {
-			if (!ProcessValues.getTileSizeErrorNotified()) {
+			if (!tileSizeErrorNotified) {
 				JOptionPane.showMessageDialog(null,
 						"Tile size settings is too large: default of 256 will be used instead, ",
 						"Information", JOptionPane.INFORMATION_MESSAGE);
-				ProcessValues.setTileSizeErrorNotified(true);
+				tileSizeErrorNotified = true;
 			}
 			createDefaultSizedTiles(setFolder);
 			return;
@@ -169,7 +171,7 @@ public class MapCreator {
 		int offsetX = 0;
 		int offsetY = 0;
 
-		Thread t = Thread.currentThread(); 
+		Thread t = Thread.currentThread();
 		for (int y = yMin; y <= yMax; y++) {
 			for (int x = xMin; x <= xMax; x++) {
 

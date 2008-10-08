@@ -15,11 +15,11 @@ public class TileDownLoader {
 
 	public static final String SECURESTRING = "Galileo";
 
-	public static boolean getImage(int x, int y, int zoom, File destinationDirectory,
+	public static int getImage(int x, int y, int zoom, File destinationDirectory,
 			TileSource tileSource, boolean isAtlasDownload) throws IOException {
 
 		if (x == 0 || y == 0)
-			return false;
+			return 0;
 		TileStore ts = TileStore.getInstance();
 
 		/**
@@ -27,7 +27,8 @@ public class TileDownLoader {
 		 * settings is to use the tile store
 		 */
 		Settings s = Settings.getInstance();
-		File destFile = new File(destinationDirectory + "/y" + y + "x" + x + ".png");
+		String tileFileName = "y" + y + "x" + x + ".png";
+		File destFile = new File(destinationDirectory, tileFileName);
 
 		if (s.isTileStoreEnabled()) {
 
@@ -35,14 +36,14 @@ public class TileDownLoader {
 			// downloading it from internet.
 			try {
 				if (ts.copyStoredTileTo(destFile, x, y, zoom, tileSource))
-					return true;
+					return 0;
 			} catch (IOException e) {
 			}
 		}
 
 		String url = tileSource.getTileUrl(zoom, x, y);
 
-		System.out.println("Downloading "+url);
+		System.out.println("Downloading " + url);
 		URL u = new URL(url);
 		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 
@@ -57,24 +58,19 @@ public class TileDownLoader {
 			throw new IOException("Invaild HTTP response: " + code);
 
 		byte[] buffer = new byte[4096];
-		output = new File(destinationDirectory,"y" + y
-				+ "x" + x + ".png");
+		output = new File(destinationDirectory, tileFileName);
 		FileOutputStream outputStream = new FileOutputStream(output);
 
-		int bytes = 0;
+		int bytesRead = 0;
 		int sumBytes = 0;
 
-		if (isAtlasDownload) {
-			ProcessValues.setNrOfDownloadedBytes(ProcessValues.getNrOfDownloadedBytes()
-					+ (double) huc.getContentLength());
-		}
-
-		while ((bytes = is.read(buffer)) > 0) {
-			sumBytes += bytes;
-			outputStream.write(buffer, 0, bytes);
+		while ((bytesRead = is.read(buffer)) > 0) {
+			sumBytes += bytesRead;
+			outputStream.write(buffer, 0, bytesRead);
 		}
 		outputStream.close();
 		huc.disconnect();
+		int downloadedBytes = sumBytes;
 
 		if (s.isTileStoreEnabled()) {
 
@@ -99,7 +95,7 @@ public class TileDownLoader {
 				}
 			}
 		}
-		return true;
+		return downloadedBytes;
 	}
 
 }

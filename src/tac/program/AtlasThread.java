@@ -86,8 +86,6 @@ public class AtlasThread extends Thread implements ActionListener {
 		int nrOfLayers = sZL.getNrOfLayers();
 		int[] zoomLevels = sZL.getZoomLevels();
 
-		ProcessValues.resetNrOfDownloadedBytes();
-
 		long totalNrOfTiles = 0;
 
 		for (int i = 0; i < nrOfLayers; i++) {
@@ -101,8 +99,6 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		ap.init((int) totalNrOfTiles, nrOfLayers);
 		ap.setVisible(true);
-
-		ProcessValues.setTileSizeErrorNotified(false);
 
 		TileStore ts = TileStore.getInstance();
 		Settings s = Settings.getInstance();
@@ -146,9 +142,10 @@ public class AtlasThread extends Thread implements ActionListener {
 				for (int x = xMin; x < xMax; x++) {
 					if (t.isInterrupted())
 						throw new InterruptedException();
-					Thread.sleep(2000);
 					try {
-						TileDownLoader.getImage(x, y, zoom, oziZoomDir, tileSource, true);
+						int bytes = TileDownLoader.getImage(x, y, zoom, oziZoomDir, tileSource,
+								true);
+						ap.addDownloadedBytes(bytes);
 					} catch (IOException e) {
 
 						boolean retryOK;
@@ -218,8 +215,9 @@ public class AtlasThread extends Thread implements ActionListener {
 		for (int i = 0; i < 10; i++) {
 
 			try {
-				TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder, tileSource,
-						true);
+				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
+						tileSource, true);
+				ap.addDownloadedBytes(bytes);
 				retryOk = true;
 			} catch (IOException e) {
 				retryOk = false;

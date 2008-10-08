@@ -10,52 +10,53 @@ import java.io.OutputStream;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import tac.utilities.Utilities;
+
 public class Settings {
 
-	private static Settings s;
-	private static Properties p;
+	private static Settings instance;
+
+	private Properties p;
 
 	private Settings() {
+		p = new Properties();
 	}
 
-	public static synchronized Settings getInstance() {
-		if (s == null) {
-			s = new Settings();
-			p = new Properties();
+	public static Settings getInstance() {
+		if (instance != null)
+			return instance;
+		synchronized (Settings.class) {
+			if (instance == null) {
+				instance = new Settings();
+			}
+			return instance;
 		}
-		return s;
-	}
-
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
 	}
 
 	public void load() throws IOException {
-		InputStream is;
-
+		InputStream is = null;
 		try {
-			is = new FileInputStream(
-					new File(System.getProperty("user.dir") + "/" + "settings.xml"));
+			is = new FileInputStream(new File(System.getProperty("user.dir"), "settings.xml"));
 			p.loadFromXML(is);
-			is.close();
 		} catch (FileNotFoundException e) {
 			this.createDefaultSettingsFile();
 			this.load();
 		} catch (InvalidPropertiesFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			Utilities.closeStream(is);
 		}
 	}
 
 	public void store() throws IOException {
-		OutputStream os;
-
+		OutputStream os = null;
 		try {
-			os = new FileOutputStream(new File(System.getProperty("user.dir") + "/settings.xml"));
+			os = new FileOutputStream(new File(System.getProperty("user.dir"), "settings.xml"));
 			p.storeToXML(os, null);
-			os.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} finally {
+			Utilities.closeStream(os);
 		}
 	}
 
@@ -88,9 +89,6 @@ public class Settings {
 
 	public void createDefaultSettingsFile() throws IOException {
 		p.setProperty("tile.store.enabled", "true");
-		p.setProperty("google.download.site", "maps.google.com");
-		p.setProperty("ditu.google.com", "http://mt0.google.cn/mt?v");
-		p.setProperty("maps.google.com", "http://mt0.google.com/mt/v=nq.83&hl=sv");
 		p.setProperty("maps.size", "2048");
 		this.store();
 	}

@@ -5,6 +5,8 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -26,6 +28,20 @@ public class Utilities {
 	private static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
+
+	public static void closeStream(InputStream in) {
+		try {
+			in.close();
+		} catch (Exception e) {
+		}
+	}
+
+	public static void closeStream(OutputStream out) {
+		try {
+			out.close();
+		} catch (Exception e) {
+		}
+	}
 
 	public static int validateString(String theStringToValidate, boolean isPath) {
 

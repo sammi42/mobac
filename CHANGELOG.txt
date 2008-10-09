@@ -1,0 +1,12 @@
+TrekBuddy Atlas Creator v 0.9 alpha
+ 
+ * GUI is now resizeable
+ * preview map uses now JMapViewer component which has several advantages:
+   + different map sources 
+   + preview loads in background automatical
+   + easy zooming (mouse wheel) and movement (right mouse button)
+ * map selection can be done by selecting an area
+ * tmi files for faster map loading are created
+ * tar generation rewritten, each tar is now only opened one time, not 
+   once for each tile to be added (increases tar creation in case of a virus 
+   scanner being active)   

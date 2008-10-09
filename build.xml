@@ -2,10 +2,11 @@
 <project default="all" name="Compile and build java classes plus jar archives">
 
 	<property name="version" value="0.9" />
-	<property name="jar.name" value="TrekBuddy_Atlas_Creator_v${version}.jar" />
+	<property name="jar.name" value="TrekBuddy_Atlas_Creator.jar" />
+	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${version}.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
-	<target name="all" depends="clean,build,create_jar" />
+	<target name="all" depends="clean,build,create_jar,create_release" />
 
 	<target name="clean">
 		<delete failonerror="no">
@@ -32,9 +33,21 @@
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="build">
-				<exclude name="**/unittest/**"/>
-				<exclude name="**/*.java"/>
+				<exclude name="**/unittest/**" />
+				<exclude name="**/*.java" />
 			</fileset>
 		</jar>
+	</target>
+
+	<target name="create_release">
+		<zip destfile="${zip.name}">
+			<fileset dir="./">
+				<include name="${jar.name}" />
+				<include name="gpl.txt" />
+				<include name="README.txt" />
+				<include name="CHANGELOG.txt" />
+				<include name="start.*" />
+			</fileset>
+		</zip>
 	</target>
 </project>

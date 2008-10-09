@@ -1,156 +1,6 @@
 T O D O
 
-* Add tmi file according to this:
-
-block          0: 19_Okoli_Prahy_jih.map
-block          9: set/
-block         10: set/19_0_0.png
-block         72: set/19_0_1280.png
-block        123: set/19_0_1600.png
-block        176: set/19_0_1920.png
-block        231: set/19_0_2240.png
-block        283: set/19_0_2560.png
-block        286: set/19_0_320.png
-block        356: set/19_0_640.png
-block        430: set/19_0_960.png
-block        490: set/19_1200_0.png
-block        554: set/19_1200_1280.png
-block        619: set/19_1200_1600.png
-block        692: set/19_1200_1920.png
-block        760: set/19_1200_2240.png
-block        823: set/19_1200_2560.png
-block        826: set/19_1200_320.png
-block        906: set/19_1200_640.png
-block        971: set/19_1200_960.png
-block       1045: set/19_1440_0.png
-block       1121: set/19_1440_1280.png
-block       1204: set/19_1440_1600.png
-block       1291: set/19_1440_1920.png
-block       1367: set/19_1440_2240.png
-block       1445: set/19_1440_2560.png
-block       1450: set/19_1440_320.png
-block       1526: set/19_1440_640.png
-block       1613: set/19_1440_960.png
-block       1690: set/19_1680_0.png
-block       1756: set/19_1680_1280.png
-block       1838: set/19_1680_1600.png
-block       1925: set/19_1680_1920.png
-block       2010: set/19_1680_2240.png
-block       2084: set/19_1680_2560.png
-block       2089: set/19_1680_320.png
-block       2164: set/19_1680_640.png
-block       2221: set/19_1680_960.png
-block       2272: set/19_1920_0.png
-block       2342: set/19_1920_1280.png
-block       2424: set/19_1920_1600.png
-block       2508: set/19_1920_1920.png
-block       2582: set/19_1920_2240.png
-block       2646: set/19_1920_2560.png
-block       2649: set/19_1920_320.png
-block       2712: set/19_1920_640.png
-block       2750: set/19_1920_960.png
-block       2806: set/19_2160_0.png
-block       2877: set/19_2160_1280.png
-block       2955: set/19_2160_1600.png
-block       3033: set/19_2160_1920.png
-block       3101: set/19_2160_2240.png
-block       3170: set/19_2160_2560.png
-block       3173: set/19_2160_320.png
-block       3230: set/19_2160_640.png
-block       3286: set/19_2160_960.png
-block       3355: set/19_2400_0.png
-block       3413: set/19_2400_1280.png
-block       3494: set/19_2400_1600.png
-block       3571: set/19_2400_1920.png
-block       3633: set/19_2400_2240.png
-block       3700: set/19_2400_2560.png
-block       3704: set/19_2400_320.png
-block       3767: set/19_2400_640.png
-block       3819: set/19_2400_960.png
-block       3873: set/19_240_0.png
-block       3921: set/19_240_1280.png
-block       3985: set/19_240_1600.png
-block       4042: set/19_240_1920.png
-block       4101: set/19_240_2240.png
-block       4170: set/19_240_2560.png
-block       4174: set/19_240_320.png
-block       4240: set/19_240_640.png
-block       4304: set/19_240_960.png
-block       4387: set/19_2640_0.png
-block       4439: set/19_2640_1280.png
-block       4511: set/19_2640_1600.png
-block       4577: set/19_2640_1920.png
-block       4642: set/19_2640_2240.png
-block       4700: set/19_2640_2560.png
-block       4703: set/19_2640_320.png
-block       4750: set/19_2640_640.png
-block       4795: set/19_2640_960.png
-block       4851: set/19_2880_0.png
-block       4895: set/19_2880_1280.png
-block       4967: set/19_2880_1600.png
-block       5032: set/19_2880_1920.png
-block       5091: set/19_2880_2240.png
-block       5157: set/19_2880_2560.png
-block       5160: set/19_2880_320.png
-block       5221: set/19_2880_640.png
-block       5276: set/19_2880_960.png
-block       5335: set/19_3120_0.png
-block       5370: set/19_3120_1280.png
-block       5433: set/19_3120_1600.png
-block       5504: set/19_3120_1920.png
-block       5568: set/19_3120_2240.png
-block       5634: set/19_3120_2560.png
-block       5638: set/19_3120_320.png
-block       5697: set/19_3120_640.png
-block       5753: set/19_3120_960.png
-block       5827: set/19_3360_0.png
-block       5854: set/19_3360_1280.png
-block       5939: set/19_3360_1600.png
-block       6012: set/19_3360_1920.png
-block       6073: set/19_3360_2240.png
-block       6131: set/19_3360_2560.png
-block       6134: set/19_3360_320.png
-block       6186: set/19_3360_640.png
-block       6241: set/19_3360_960.png
-block       6308: set/19_3600_0.png
-block       6323: set/19_3600_1280.png
-block       6368: set/19_3600_1600.png
-block       6413: set/19_3600_1920.png
-block       6452: set/19_3600_2240.png
-block       6486: set/19_3600_2560.png
-block       6488: set/19_3600_320.png
-block       6523: set/19_3600_640.png
-block       6565: set/19_3600_960.png
-block       6604: set/19_480_0.png
-block       6647: set/19_480_1280.png
-block       6719: set/19_480_1600.png
-block       6783: set/19_480_1920.png
-block       6849: set/19_480_2240.png
-block       6907: set/19_480_2560.png
-block       6911: set/19_480_320.png
-block       6959: set/19_480_640.png
-block       7019: set/19_480_960.png
-block       7091: set/19_720_0.png
-block       7135: set/19_720_1280.png
-block       7198: set/19_720_1600.png
-block       7267: set/19_720_1920.png
-block       7326: set/19_720_2240.png
-block       7395: set/19_720_2560.png
-block       7397: set/19_720_320.png
-block       7445: set/19_720_640.png
-block       7509: set/19_720_960.png
-block       7586: set/19_960_0.png
-block       7642: set/19_960_1280.png
-block       7695: set/19_960_1600.png
-block       7751: set/19_960_1920.png
-block       7812: set/19_960_2240.png
-block       7873: set/19_960_2560.png
-block       7875: set/19_960_320.png
-block       7945: set/19_960_640.png
-block       8021: set/19_960_960.png
-block       8105: ** Block of NULs **
-
-http://www.linuxtechs.net/kruch/tb/forum/viewtopic.php?t=897
+* Open folder in AtlasProgress is platform specific (Windows only)
 
 * But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
 
@@ -162,9 +12,11 @@ http://www.linuxtechs.net/kruch/tb/forum/viewtopic.php?t=897
 
 
 Done in version:
+0.9:
+ + Added code to create tmi file for each tared map 
 
 0.61:
-* Sättande av Look and Feel misslyckades på grund av: javax.swing.UnsupportedLookAndFeelException: [The Microsoft Windows Look and Feel - com.sun.java.swing.plaf.windows.WindowsLookAndFeel] not supported on this platform
+* catched: javax.swing.UnsupportedLookAndFeelException: [The Microsoft Windows Look and Feel - com.sun.java.swing.plaf.windows.WindowsLookAndFeel] not supported on this platform
 * Also, can you add another function to choose url of : ditu.google.com rather just maps.google.com
 
 0.7:

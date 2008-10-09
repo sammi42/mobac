@@ -28,7 +28,7 @@ public class MapSources {
 		}
 
 		public TileUpdate getTileUpdate() {
-			return TileUpdate.None;
+			return TileUpdate.IfModifiedSince;
 		}
 
 		private int getNextServerNum() {
@@ -44,6 +44,10 @@ public class MapSources {
 		@Override
 		public String toString() {
 			return getName();
+		}
+
+		public String getTileType() {
+			return "png";
 		}
 
 	}
@@ -63,7 +67,7 @@ public class MapSources {
 		}
 
 		public TileUpdate getTileUpdate() {
-			return TileUpdate.None;
+			return TileUpdate.IfModifiedSince;
 		}
 
 		private int getNextServerNum() {
@@ -79,6 +83,10 @@ public class MapSources {
 		@Override
 		public String toString() {
 			return getName();
+		}
+
+		public String getTileType() {
+			return "jpg";
 		}
 	}
 

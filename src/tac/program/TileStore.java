@@ -29,7 +29,8 @@ public class TileStore {
 	}
 
 	private String getTilePath(int x, int y, int zoom, TileSource tileSource) {
-		return tileStorePath + tileSource + "/z" + zoom + "_" + x + "_" + y + ".png";
+		return tileStorePath + tileSource + "/" + zoom + "_" + x + "_" + y + "."
+				+ tileSource.getTileType();
 	}
 
 	public File getTileFile(int x, int y, int zoom, TileSource tileSource) {

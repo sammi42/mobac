@@ -13,10 +13,11 @@ import java.util.LinkedList;
 
 import javax.swing.JComboBox;
 
+import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -44,10 +45,14 @@ public class PreviewMap extends JMapViewer {
 	private LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
 
 	public PreviewMap() {
-		super();
-		tileCache = new PreviewTileCache();
+		super(new PreviewTileCache(), 5);
+		new DefaultMapController(this);
+		// tileLoader = new OsmTileLoader(this);
+		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
+		cacheTileLoader.setCacheMaxFileAge(OsmFileCacheTileLoader.FILE_AGE_ONE_DAY);
+		cacheTileLoader.setTileCacheDir("./tilestore");
+		setTileLoader(cacheTileLoader);
 		mapMarkersVisible = false;
-		tileLoader = new OsmTileLoader(this);
 		gridSizeSelector = new JComboBox();
 		gridSizeSelector.setEditable(false);
 		gridSizeSelector.setBounds(40, 10, 100, 20);

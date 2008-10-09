@@ -89,7 +89,7 @@ public class Settings {
 
 	public void createDefaultSettingsFile() throws IOException {
 		p.setProperty("tile.store.enabled", "true");
-		p.setProperty("maps.size", "2048");
+		p.setProperty("maps.size", "0");
 		this.store();
 	}
 }

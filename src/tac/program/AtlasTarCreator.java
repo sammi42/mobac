@@ -1,16 +1,15 @@
 package tac.program;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import tac.tar.PreparedTarEntry;
 import tac.tar.TarArchive;
-import tac.tar.TarRecord;
 import tac.tar.TarUtilities;
 import tac.utilities.Utilities;
 
@@ -93,38 +92,32 @@ public class AtlasTarCreator {
 		PreparedTarEntry preparedMapFileEntry = new PreparedTarEntry(mapFile, atlasLayerDir);
 		preparedEntries.add(preparedMapFileEntry);
 
-		// Calculate the tmi file size - as the tmi is the first file in the tar
-		// archive every block offset of files after depend on the tmi file
-		// size.
-		int tmiFileSize = preparedMapFileEntry.getTmiEntryLength();
+		StringWriter sw = new StringWriter(50 * folderContent.size());
+		sw.write(preparedMapFileEntry.getTmiLine(0));
+		int blocksUsed = preparedMapFileEntry.getTarBlocksRequired();
+
 		for (File f : folderContent) {
 			PreparedTarEntry entry = new PreparedTarEntry(f, atlasLayerDir);
 			preparedEntries.add(entry);
-			tmiFileSize += entry.getTmiEntryLength();
-		}
-
-		int tmiBlocks = TarRecord.calculateFileSizeInTar(tmiFileSize) / 512;
-		int blocksUsed = 1 + tmiBlocks;
-
-		StringWriter sw = new StringWriter(50 * folderContent.size());
-		for (PreparedTarEntry entry : preparedEntries) {
-			sw.write(String.format("block %10d: %s\r\n", new Object[] { blocksUsed,
-					entry.getTarHeader().getFileName() }));
+			sw.write(entry.getTmiLine(blocksUsed));
 			blocksUsed += entry.getTarBlocksRequired();
 		}
 
-		byte[] tmiFileData = null;
+		File tmiFile = new File(atlasTarLayerDir, layerName + ".tmi");
+		FileWriter fw = null;
 		try {
-			tmiFileData = sw.toString().getBytes("ASCII");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-			System.exit(-1);
+			fw = new FileWriter(tmiFile);
+			fw.write(sw.toString());
+		} catch (IOException e) {
+			System.err.println("Failed writing tmi file \"" + tmiFile.getPath() + "\":\n\t"
+					+ e.getMessage());
+		} finally {
+			Utilities.closeWriter(fw);
 		}
 
 		TarArchive ta = null;
 		try {
 			ta = new TarArchive(new File(atlasTarLayerDir, layerName + ".tar"), atlasLayerDir);
-			ta.writeFileFromData(layerName + ".tmi", tmiFileData);
 			for (PreparedTarEntry entry : preparedEntries) {
 				ta.writePreparedEntry(entry);
 			}

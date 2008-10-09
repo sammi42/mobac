@@ -7,6 +7,7 @@ public class PreparedTarEntry {
 
 	private TarHeader tarHeader;
 	private File fileToBeTared;
+
 	public File getFileToBeTared() {
 		return fileToBeTared;
 	}
@@ -35,6 +36,11 @@ public class PreparedTarEntry {
 
 	public int getTarBlocksRequired() {
 		return tarBlocksRequired;
+	}
+
+	public String getTmiLine(int blocksUsed) {
+		return String.format("block %10d: %s\r\n", new Object[] { blocksUsed,
+				getTarHeader().getFileName() });
 	}
 
 	/**

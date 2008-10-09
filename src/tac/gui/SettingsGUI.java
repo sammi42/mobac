@@ -32,6 +32,8 @@ public class SettingsGUI extends JDialog {
 	private JDialog jdialogGUI;
 	private WindowDestroyer windowListener;
 
+	private Vector<MapSize> mapSizes;
+
 	public SettingsGUI() {
 		this.createJFrame();
 		this.createTabbedPane();
@@ -95,10 +97,11 @@ public class SettingsGUI extends JDialog {
 	private JPanel createMapSizePanel() {
 
 		// Sizes from 512 to 4096
-		Vector<Integer> mapSizes = new Vector<Integer>();
+		mapSizes = new Vector<MapSize>(10);
+		mapSizes.addElement(new MapSize(0));
 		int valueToAdd = 512;
-		for (int i = 0; i < 4; i++) {
-			mapSizes.addElement(valueToAdd);
+		for (int i = 0; i < 8; i++) {
+			mapSizes.addElement(new MapSize(valueToAdd));
 			valueToAdd *= 2;
 		}
 
@@ -134,25 +137,9 @@ public class SettingsGUI extends JDialog {
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
 		int size = s.getMapSize();
-		int index = 0;
-
-		switch (size) {
-		case 512:
+		int index = mapSizes.indexOf(new MapSize(size));
+		if (index < 0)
 			index = 0;
-			break;
-		case 1024:
-			index = 1;
-			break;
-		case 2048:
-			index = 2;
-			break;
-		case 4096:
-			index = 3;
-			break;
-		default:
-			index = 0;
-			break;
-		}
 		mapSize.setSelectedIndex(index);
 	}
 
@@ -195,26 +182,7 @@ public class SettingsGUI extends JDialog {
 
 				s.setTileStoreEnabled(tileStoreEnabled.isSelected());
 
-				int index = mapSize.getSelectedIndex();
-				int size = 512;
-
-				switch (index) {
-				case 0:
-					size = 512;
-					break;
-				case 1:
-					size = 1024;
-					break;
-				case 2:
-					size = 2048;
-					break;
-				case 3:
-					size = 4096;
-					break;
-				default:
-					size = 512;
-					break;
-				}
+				int size = ((MapSize) mapSize.getSelectedItem()).getMapSize();
 				s.setMapSize(size);
 
 				// Close the dialog window
@@ -222,5 +190,38 @@ public class SettingsGUI extends JDialog {
 			} else if (actionCommand.equals("Cancel"))
 				jdialogGUI.dispose();
 		}
+	}
+
+	private static class MapSize implements Comparable<MapSize> {
+
+		private int mapSize;
+
+		public MapSize(int mapSize) {
+			super();
+			this.mapSize = mapSize;
+		}
+
+		@Override
+		public String toString() {
+			if (mapSize == 0)
+				return "Unlimited";
+			return Integer.toString(mapSize);
+		}
+
+		public int getMapSize() {
+			return mapSize;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof MapSize)
+				return ((MapSize) obj).mapSize == mapSize;
+			return false;
+		}
+
+		public int compareTo(MapSize o) {
+			return new Integer(mapSize).compareTo(o.mapSize);
+		}
+
 	}
 }

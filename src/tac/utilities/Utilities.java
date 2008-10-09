@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -39,6 +40,20 @@ public class Utilities {
 	public static void closeStream(OutputStream out) {
 		try {
 			out.close();
+		} catch (Exception e) {
+		}
+	}
+
+	public static void closeWriter(Writer writer) {
+		try {
+			writer.close();
+		} catch (Exception e) {
+		}
+	}
+
+	public static void closeReader(OutputStream reader) {
+		try {
+			reader.close();
 		} catch (Exception e) {
 		}
 	}

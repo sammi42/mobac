@@ -80,7 +80,7 @@ public class AtlasThread extends Thread implements ActionListener {
 			fw.write("Atlas 1.0\r\n");
 			fw.close();
 		} catch (IOException iox) {
-			System.out.println(iox);
+			iox.printStackTrace();
 		}
 
 		int nrOfLayers = sZL.getNrOfLayers();
@@ -122,8 +122,8 @@ public class AtlasThread extends Thread implements ActionListener {
 			Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
 			Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
 
-			System.out.println("Selection to download: \n\t" + topLeft + "\n\t" + bottomRight
-					+ "\n\tzoom: " + zoom);
+//			System.out.println("Selection to download: \n\t" + topLeft + "\n\t" + bottomRight
+//					+ "\n\tzoom: " + zoom);
 			int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
 
 			int xMin = topLeft.x;

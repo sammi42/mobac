@@ -34,6 +34,16 @@ public class TarArchive {
 		return true;
 	}
 
+	public void writePreparedEntry(PreparedTarEntry entry) throws IOException {
+		TarHeader th = entry.getTarHeader();
+		tarFileStream.write(th.getBytes());
+
+		if (!entry.getFileToBeTared().isDirectory()) {
+			TarRecord tr = entry.getTarRecord();
+			tarFileStream.write(tr.getRecordContent());
+		}
+	}
+
 	public void writeFile(File fileOrDirToAdd) throws IOException {
 		TarHeader th = new TarHeader(fileOrDirToAdd, baseDir);
 		tarFileStream.write(th.getBytes());
@@ -42,6 +52,20 @@ public class TarArchive {
 			TarRecord tr = new TarRecord(fileOrDirToAdd);
 			tarFileStream.write(tr.getRecordContent());
 		}
+	}
+
+	/**
+	 * Writes a "file" into tar archive that does only exists in memory
+	 * 
+	 * @param fileName
+	 * @param data
+	 * @throws IOException
+	 */
+	public void writeFileFromData(String fileName, byte[] data) throws IOException {
+		TarHeader th = new TarHeader(fileName, data.length);
+		tarFileStream.write(th.getBytes());
+		TarRecord tr = new TarRecord(data);
+		tarFileStream.write(tr.getRecordContent());
 	}
 
 	public void writeEndofArchive() throws IOException {

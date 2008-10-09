@@ -186,7 +186,6 @@ public class PreviewMap extends JMapViewer {
 			int x_max = (gridSelectionEnd.x >> zoomDiff) - tlc.x;
 			int y_max = (gridSelectionEnd.y >> zoomDiff) - tlc.y;
 
-			System.out.println(x_min + " "+y_min);
 			int w = x_max - x_min;
 			int h = y_max - y_min;
 			g.setColor(SEL_COLOR);

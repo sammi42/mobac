@@ -6,6 +6,7 @@ public class TarHeader {
 
 	private File baseFilePath;
 
+	private int fileNameLength;
 	private char[] fileName;
 	private char[] fileMode;
 	private char[] fileOwnerUserID;
@@ -18,7 +19,6 @@ public class TarHeader {
 	private char[] padding;
 
 	public TarHeader() {
-
 		fileName = new char[100];
 		fileMode = new char[8];
 		fileOwnerUserID = new char[8];
@@ -32,19 +32,8 @@ public class TarHeader {
 	}
 
 	public TarHeader(File theFile, File theBaseFilePath) {
-
+		this();
 		baseFilePath = theBaseFilePath;
-
-		fileName = new char[100];
-		fileMode = new char[8];
-		fileOwnerUserID = new char[8];
-		fileOwnerGroupID = new char[8];
-		fileSize = new char[12];
-		lastModificationTime = new char[12];
-		checksum = new char[8];
-		linkIndicator = new char[1];
-		nameOfLinkedFile = new char[100];
-		padding = new char[255];
 
 		this.setFileName(theFile, baseFilePath);
 		this.setFileMode();
@@ -53,6 +42,20 @@ public class TarHeader {
 		this.setFileSize(theFile);
 		this.setLastModificationTime(theFile);
 		this.setLinkIndicator(theFile);
+		this.setNameOfLinkedFile();
+		this.setPadding();
+		this.setChecksum();
+	}
+
+	public TarHeader(String fileName, int fileSize) {
+		this();
+		this.setFileName(fileName);
+		this.setFileMode();
+		this.setFileOwnerUserID();
+		this.setFileOwnerGroupID();
+		this.setFileSize(fileSize);
+		this.setLastModificationTime(System.currentTimeMillis());
+		this.setLinkIndicator(false);
 		this.setNameOfLinkedFile();
 		this.setPadding();
 		this.setChecksum();
@@ -76,11 +79,14 @@ public class TarHeader {
 
 		if (theFile.isDirectory())
 			tarFileName = tarFileName + "/";
+		setFileName(tarFileName);
+	}
 
-		char[] theFileName = tarFileName.toCharArray();
+	public void setFileName(String newFileName) {
+		char[] theFileName = newFileName.toCharArray();
 
+		fileNameLength = newFileName.length();
 		for (int i = 0; i < fileName.length; i++) {
-
 			if (i < theFileName.length) {
 				fileName[i] = theFileName[i];
 			} else {
@@ -126,34 +132,36 @@ public class TarHeader {
 	}
 
 	public void setFileSize(File theFile) {
-
 		long fileSizeLong = 0;
-
 		if (!theFile.isDirectory()) {
 			fileSizeLong = theFile.length();
 		}
+		setFileSize(fileSizeLong);
+	}
 
-		char[] fileSizeCharArray = Long.toString(fileSizeLong, 8).toCharArray();
+	public void setFileSize(long fileSize) {
+		char[] fileSizeCharArray = Long.toString(fileSize, 8).toCharArray();
 
 		int offset = 11 - fileSizeCharArray.length;
 
 		for (int i = 0; i < 12; i++) {
 			if (i < offset) {
-				fileSize[i] = ' ';
+				this.fileSize[i] = ' ';
 			} else if (i == 11) {
-				fileSize[i] = ' ';
+				this.fileSize[i] = ' ';
 			} else {
-				fileSize[i] = fileSizeCharArray[i - offset];
+				this.fileSize[i] = fileSizeCharArray[i - offset];
 			}
 		}
 	}
 
 	public void setLastModificationTime(File theFile) {
 
-		long lastModifiedTime = 0;
+		setLastModificationTime(theFile.lastModified());
+	}
 
-		lastModifiedTime = theFile.lastModified();
-		lastModifiedTime = theFile.lastModified() / 1000;
+	public void setLastModificationTime(long lastModifiedTime) {
+		lastModifiedTime /= 1000;
 
 		char[] fileLastModifiedTimeCharArray = Long.toString(lastModifiedTime, 8).toCharArray();
 
@@ -228,8 +236,11 @@ public class TarHeader {
 	}
 
 	public void setLinkIndicator(File theFile) {
+		setLinkIndicator(theFile.isDirectory());
+	}
 
-		if (theFile.isDirectory()) {
+	public void setLinkIndicator(boolean isDirectory) {
+		if (isDirectory) {
 			linkIndicator[0] = '5';
 		} else {
 			linkIndicator[0] = '0';
@@ -249,8 +260,12 @@ public class TarHeader {
 	}
 
 	// G E T - Methods
-	public char[] getFileName() {
-		return fileName;
+	public String getFileName() {
+		return new String(fileName, 0, fileNameLength);
+	}
+
+	public int getFileNameLength() {
+		return fileNameLength;
 	}
 
 	public char[] getFileMode() {

@@ -324,6 +324,7 @@ public class MapCreator {
 			iox.printStackTrace();
 		} finally {
 			try {
+				
 				fw.close();
 			} catch (Exception e) {
 			}

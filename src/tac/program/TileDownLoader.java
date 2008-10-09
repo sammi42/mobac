@@ -85,7 +85,7 @@ public class TileDownLoader {
 				destination = new FileOutputStream(tileStoreFile).getChannel();
 				destination.transferFrom(source, 0, source.size());
 			} catch (IOException e) {
-				System.out.println(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				if (source != null) {
 					source.close();

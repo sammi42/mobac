@@ -98,12 +98,12 @@ public class MapCreator {
 			fw = new FileWriter(mapFile);
 
 			double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
-			double longitudeMax = OsmMercator.XToLon(xMax * Tile.SIZE, zoom);
-			double latitudeMin = OsmMercator.YToLat(yMax * Tile.SIZE, zoom);
+			double longitudeMax = OsmMercator.XToLon((xMax + 1) * Tile.SIZE, zoom);
+			double latitudeMin = OsmMercator.YToLat((yMax + 1) * Tile.SIZE, zoom);
 			double latitudeMax = OsmMercator.YToLat(yMin * Tile.SIZE, zoom);
 
-			int width = (xMax - xMin) * Tile.SIZE;
-			int height = (yMax - yMin) * Tile.SIZE;
+			int width = (xMax - xMin + 1) * Tile.SIZE;
+			int height = (yMax - yMin + 1) * Tile.SIZE;
 
 			fw.write(Utilities.prepareMapString(layerName + ".png", longitudeMin, longitudeMax,
 					latitudeMin, latitudeMax, width, height));
@@ -118,14 +118,22 @@ public class MapCreator {
 		}
 	}
 
+	/**
+	 * Copies the tile files (without any modification) from the ozi directory
+	 * into the set directory of the map. While copying the filename is adapted
+	 * to the tile naming schema.
+	 * 
+	 * @param setFolder
+	 * @throws InterruptedException
+	 */
 	private void createDefaultSizedTiles(File setFolder) throws InterruptedException {
 		int pixelValueX = 0;
 		int pixelValueY = 0;
 
 		Thread t = Thread.currentThread();
-		for (int x = xMin; x < xMax; x++) {
+		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
-			for (int y = yMin; y < yMax; y++) {
+			for (int y = yMin; y <= yMax; y++) {
 				if (t.isInterrupted())
 					throw new InterruptedException();
 				try {
@@ -146,11 +154,11 @@ public class MapCreator {
 	private void createCustomSizedTiles(File setFolder) throws InterruptedException {
 
 		// TODO XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
-		if (1 == 1)
-			throw new RuntimeException("Not working!");
+		// if (1 == 1)
+		// throw new RuntimeException("Not working!");
 
-		int mergedWidth = (xMax - xMin) * 256;
-		int mergedHeight = (yMax - yMin) * 256;
+		int mergedWidth = (xMax - xMin + 1) * 256;
+		int mergedHeight = (yMax - yMin + 1) * 256;
 
 		if (tileSizeWidth > mergedWidth || tileSizeHeight > mergedHeight) {
 			if (!tileSizeErrorNotified) {
@@ -324,7 +332,7 @@ public class MapCreator {
 			iox.printStackTrace();
 		} finally {
 			try {
-				
+
 				fw.close();
 			} catch (Exception e) {
 			}

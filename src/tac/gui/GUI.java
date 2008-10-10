@@ -363,11 +363,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		add(leftScrollPane, BorderLayout.WEST);
 
-		// TODO not working -> disable it
-		tileSizeWidthComboBox.setEnabled(false);
-		tileSizeHeightComboBox.setEnabled(false);
-		tileSizeWidthTextField.setEnabled(false);
-		tileSizeHeightTextField.setEnabled(false);
 		atlasNameTextField.setText("Test");
 	}
 
@@ -934,69 +929,54 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			if (maxIsBiggerThanMin) {
 
-				boolean customTileSizeWidthIsOk = true;
-				boolean customTileSizeHeightIsOk = true;
+				int customTileSizeWidth = -1;
+				int customTileSizeHeight = -1;
 
-				// TODO Reactivate
-
-				// if (tileSizeWidthComboBox.isEnabled() == false) {
-				//
-				// try {
-				// Integer.parseInt(tileSizeWidthTextField.getText());
-				// } catch (NumberFormatException nfex) {
-				//
-				// customTileSizeWidthIsOk = false;
-				// JOptionPane.showMessageDialog(null,
-				// "Custom tile size width value is not a valid integer value",
-				// "Errors", JOptionPane.ERROR_MESSAGE);
-				// }
-				// }
-				// if (tileSizeHeightComboBox.isEnabled() == false) {
-				//
-				// try {
-				// Integer.parseInt(tileSizeHeightTextField.getText());
-				// } catch (NumberFormatException nfex) {
-				//
-				// customTileSizeHeightIsOk = false;
-				// JOptionPane.showMessageDialog(null,
-				// "Custom tile size height value is not a valid integer value",
-				// "Errors", JOptionPane.ERROR_MESSAGE);
-				// }
-				// }
-				if (customTileSizeWidthIsOk && customTileSizeHeightIsOk) {
-					// createAtlasButton.setEnabled(false);
-
-					int tileSizeWidth = 256;
-					int tileSizeHeight = 256;
-
-					// if (tileSizeWidthComboBox.isEnabled()) {
-					// tileSizeWidth =
-					// Integer.parseInt(tileSizeWidthComboBox.getSelectedItem()
-					// .toString());
-					// } else {
-					// tileSizeWidth =
-					// Integer.parseInt(tileSizeWidthTextField.getText());
-					// }
-					// if (tileSizeHeightComboBox.isEnabled()) {
-					// tileSizeHeight =
-					// Integer.parseInt(tileSizeHeightComboBox.getSelectedItem()
-					// .toString());
-					// } else {
-					// tileSizeHeight =
-					// Integer.parseInt(tileSizeHeightTextField.getText());
-					// }
-
-					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
-					SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
+				if (tileSizeWidthComboBox.isEnabled() == false) {
 					try {
-						Thread atlasThread = new AtlasThread(atlasNameTextField.getText(),
-								tileSource, getMapSelectionCoordinates(), sZL, tileSizeWidth,
-								tileSizeHeight);
-						atlasThread.start();
-					} catch (Exception ex) {
-						System.out.println(ex);
+						customTileSizeWidth = Integer.parseInt(tileSizeWidthTextField.getText());
+					} catch (NumberFormatException nfex) {
+						JOptionPane.showMessageDialog(null,
+								"Custom tile size width value is not a valid integer value",
+								"Errors", JOptionPane.ERROR_MESSAGE);
+						return;
 					}
 				}
+				if (tileSizeHeightComboBox.isEnabled() == false) {
+					try {
+						customTileSizeHeight = Integer.parseInt(tileSizeHeightTextField.getText());
+					} catch (NumberFormatException nfex) {
+						JOptionPane.showMessageDialog(null,
+								"Custom tile size height value is not a valid integer value",
+								"Errors", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				int tileSizeWidth = 256;
+				int tileSizeHeight = 256;
+
+				if (tileSizeWidthComboBox.isEnabled()) {
+					tileSizeWidth = ((Integer) tileSizeWidthComboBox.getSelectedItem()).intValue();
+				} else {
+					tileSizeWidth = customTileSizeWidth;
+				}
+				if (tileSizeHeightComboBox.isEnabled()) {
+					tileSizeHeight = ((Integer) tileSizeHeightComboBox.getSelectedItem())
+							.intValue();
+				} else {
+					tileSizeHeight = customTileSizeHeight;
+				}
+
+				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
+				SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
+				try {
+					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
+							getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
+					atlasThread.start();
+				} catch (Exception ex) {
+					System.out.println(ex);
+				}
+
 			}
 		}
 		System.gc();

@@ -70,8 +70,8 @@ public class MapSelection {
 	 * @return tile number [0..2<sup>zoom</sup>]
 	 */
 	public Point getBottomRightTileNumber(int zoom) {
-		int x = (OsmMercator.LonToX(lon_max, zoom) + Tile.SIZE - 1) / Tile.SIZE;
-		int y = (OsmMercator.LatToY(lat_min, zoom) + Tile.SIZE - 1) / Tile.SIZE;
+		int x = OsmMercator.LonToX(lon_max, zoom) / Tile.SIZE;
+		int y = OsmMercator.LatToY(lat_min, zoom) / Tile.SIZE;
 		return new Point(x, y);
 	}
 
@@ -89,8 +89,10 @@ public class MapSelection {
 	}
 
 	public long calculateNrOfTiles(int zoom) {
+		Point max = getBottomRightTileCoordinate(zoom);
+		max.x = (max.x + Tile.SIZE - 1) / Tile.SIZE;
+		max.y = (max.y + Tile.SIZE - 1) / Tile.SIZE;
 		Point min = getTopLeftTileNumber(zoom);
-		Point max = getBottomRightTileNumber(zoom);
 		long width = max.x - min.x;
 		long height = max.y - min.y;
 		return width * height;

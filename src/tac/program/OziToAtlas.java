@@ -59,14 +59,14 @@ public class OziToAtlas {
 	 * @param xMax
 	 * @param yMin
 	 * @param yMax
-	 * @return map selections 
+	 * @return map selections
 	 */
 	public List<SubMapProperties> calculateMapSections(int mapSize, int xMin, int xMax, int yMin,
 			int yMax) {
 		List<SubMapProperties> subMaps = new LinkedList<SubMapProperties>();
 
-		int mapWidth = (xMax - xMin) * 256;
-		int mapHeight = (yMax - yMin) * 256;
+		int mapWidth = (xMax - xMin + 1) * 256;
+		int mapHeight = (yMax - yMin + 1) * 256;
 
 		if ((mapSize == 0) || ((mapWidth <= mapSize) && (mapHeight <= mapSize))) {
 			/**

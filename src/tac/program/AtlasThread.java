@@ -138,8 +138,8 @@ public class AtlasThread extends Thread implements ActionListener {
 
 			File oziZoomDir = new File(oziDir, Integer.toString(zoom));
 			oziZoomDir.mkdir();
-			for (int y = yMin; y < yMax; y++) {
-				for (int x = xMin; x < xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				for (int x = xMin; x <= xMax; x++) {
 					if (t.isInterrupted())
 						throw new InterruptedException();
 					try {
@@ -171,7 +171,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				}
 			}
 
-			if ((oziZoomDir.list().length) != ((yMax - yMin) * (xMax - xMin))) {
+			if ((oziZoomDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
 				JOptionPane.showMessageDialog(null,
 						"Something is wrong with download of atlas tiles. "
 								+ "Actual amount of downoladed tiles is not the same as "

@@ -40,7 +40,6 @@ public class JCoordinateListener implements DocumentListener {
 	private void checkCoordinate(DocumentEvent de) {
 		if (!enabled)
 			return;
-		System.out.println("" + de);
 		boolean valid = false;
 		try {
 			double d = Utilities.parseLocaleDouble(textField.getText());

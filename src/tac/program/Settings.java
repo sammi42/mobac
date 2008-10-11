@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.InvalidPropertiesFormatException;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+
+import tac.gui.preview.MapSources;
 import tac.utilities.Utilities;
 
 public class Settings {
@@ -21,6 +24,7 @@ public class Settings {
 	private static final String PREVIEW_ZOOM = "preview.zoom";
 	private static final String PREVIEW_LAT = "preview.lat";
 	private static final String PREVIEW_LON = "preview.lon";
+	private static final String PREVIEW_MAPSOURCE = "preview.mapsource";
 
 	private int maxMapSize = 0;
 
@@ -29,6 +33,8 @@ public class Settings {
 	private int previewDefaultZoom = 3;
 	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(9,50);
 
+	private TileSource defaultMapSource = MapSources.getMapSources()[0];
+	
 	private Settings() {
 	}
 
@@ -60,6 +66,7 @@ public class Settings {
 					previewDefaultCoordinate.lat);
 			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
 					previewDefaultCoordinate.lon);
+			defaultMapSource = MapSources.getSourceByName(p.getProperty(PREVIEW_MAPSOURCE));
 		} catch (FileNotFoundException e) {
 		} catch (InvalidPropertiesFormatException e) {
 			e.printStackTrace();
@@ -78,6 +85,7 @@ public class Settings {
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
+			p.setProperty(PREVIEW_MAPSOURCE, defaultMapSource.getName());
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
 			result = true;
@@ -121,4 +129,12 @@ public class Settings {
 		this.previewDefaultCoordinate = previewDefaultCoordinate;
 	}
 
+	public TileSource getDefaultMapSource() {
+		return defaultMapSource;
+	}
+
+	public void setDefaultMapSource(TileSource defaultMapSource) {
+		this.defaultMapSource = defaultMapSource;
+	}
+	
 }

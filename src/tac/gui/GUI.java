@@ -508,6 +508,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			System.exit(0);
 		}
 		previewMap.settingsLoadPosition();
+		mapSource.setSelectedItem(settings.getDefaultMapSource());
 
 		fileSeparator = System.getProperty("file.separator");
 
@@ -721,6 +722,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
+			s.setDefaultMapSource((TileSource) mapSource.getSelectedItem());
 			try {
 				s.store();
 			} catch (IOException iox) {

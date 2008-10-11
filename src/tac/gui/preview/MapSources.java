@@ -6,11 +6,19 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 public class MapSources {
 
 	private static TileSource[] MAP_SOURCES = { new MapSources.GoogleMaps(),
-		new MapSources.GoogleEarth(), new MapSources.Mapnik(),
-		new MapSources.TilesAtHome(), new MapSources.CycleMap() };
-	
+			new MapSources.GoogleEarth(), new MapSources.Mapnik(), new MapSources.TilesAtHome(),
+			new MapSources.CycleMap() };
+
 	public static TileSource[] getMapSources() {
-		return MAP_SOURCES;		
+		return MAP_SOURCES;
+	}
+
+	public static TileSource getSourceByName(String name) {
+		for (TileSource t : MAP_SOURCES) {
+			if (t.getName().equals(name))
+				return t;
+		}
+		return MAP_SOURCES[0];
 	}
 
 	public static class GoogleMaps implements TileSource {

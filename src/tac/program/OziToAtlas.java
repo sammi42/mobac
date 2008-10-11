@@ -36,7 +36,7 @@ public class OziToAtlas {
 	public void convert(int xMax, int xMin, int yMax, int yMin) {
 
 		Settings s = Settings.getInstance();
-		int mapSize = s.getMapSize();
+		int mapSize = s.getMaxMapsSize();
 
 		List<SubMapProperties> subMaps = this.calculateMapSections(mapSize, xMin, xMax, yMin, yMax);
 

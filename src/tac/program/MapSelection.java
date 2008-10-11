@@ -7,6 +7,11 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 
 public class MapSelection {
 
+	public static final int LAT_MAX = 85;
+	public static final int LAT_MIN = -85;
+	public static final int LON_MAX = 179;
+	public static final int LON_MIN = -179;
+
 	private double lat_max;
 	private double lat_min;
 	private double lon_max;
@@ -34,6 +39,11 @@ public class MapSelection {
 
 	public double getLon_min() {
 		return lon_min;
+	}
+
+	public boolean coordinatesAreValid() {
+		return (!(Double.isNaN(lat_max) || Double.isNaN(lat_min) || Double.isNaN(lon_max) || Double
+				.isNaN(lon_min)));
 	}
 
 	/**

@@ -46,6 +46,7 @@ import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.MapSources;
 import tac.gui.preview.PreviewMap;
 import tac.program.AtlasThread;
+import tac.program.EastNorthCoordinate;
 import tac.program.MapSelection;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
@@ -92,10 +93,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JLabel profilesLabel;
 	private JLabel amountOfTilesLabel;
 
-	private JTextField latMinTextField;
-	private JTextField latMaxTextField;
-	private JTextField lonMinTextField;
-	private JTextField lonMaxTextField;
+	private JCoordinateField latMinTextField;
+	private JCoordinateField latMaxTextField;
+	private JCoordinateField lonMinTextField;
+	private JCoordinateField lonMaxTextField;
 	private JTextField tileSizeWidthTextField;
 	private JTextField tileSizeHeightTextField;
 	private JTextField atlasNameTextField;
@@ -177,28 +178,28 @@ public class GUI extends JFrame implements MapSelectionListener {
 		latMaxLabel = new JLabel("Latitude Max");
 		latMaxLabel.setBounds(112, 20, 100, 20);
 
-		latMaxTextField = new JTextField();
+		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
 		latMaxTextField.setBounds(88, 42, 100, 20);
 		latMaxTextField.setActionCommand("latMaxTextField");
 
 		longMinLabel = new JLabel("Longitude Min");
 		longMinLabel.setBounds(20, 70, 100, 20);
 
-		lonMinTextField = new JTextField();
+		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
 		lonMinTextField.setBounds(5, 90, 100, 20);
 		lonMinTextField.setActionCommand("longMinTextField");
 
 		longMaxLabel = new JLabel("Longitude Max");
 		longMaxLabel.setBounds(185, 70, 100, 20);
 
-		lonMaxTextField = new JTextField();
+		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
 		lonMaxTextField.setBounds(162, 90, 100, 20);
 		lonMaxTextField.setActionCommand("longMaxTextField");
 
 		latMinLabel = new JLabel("Latitude Min");
 		latMinLabel.setBounds(112, 120, 100, 20);
 
-		latMinTextField = new JTextField();
+		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
 		latMinTextField.setBounds(88, 140, 100, 20);
 		latMinTextField.setActionCommand("latMinTextField");
 
@@ -452,40 +453,40 @@ public class GUI extends JFrame implements MapSelectionListener {
 	 * (zooms automatically to the selected area.
 	 */
 	protected void previewSelection() {
-		checkCoordinates();
-		MapSelection ms = getMapSelectionCoordinates();
+		MapSelection ms = checkCoordinates();
 		previewMap.setSelection(ms);
 	}
 
-	protected void checkCoordinates() {
+	protected MapSelection checkCoordinates() {
 		MapSelection ms = getMapSelectionCoordinates();
-		latMaxTextField.setText(Utilities.FORMAT_6_DEC.format(ms.getLat_max()));
-		latMinTextField.setText(Utilities.FORMAT_6_DEC.format(ms.getLat_min()));
-		lonMaxTextField.setText(Utilities.FORMAT_6_DEC.format(ms.getLon_max()));
-		lonMinTextField.setText(Utilities.FORMAT_6_DEC.format(ms.getLon_min()));
+		latMaxTextField.setCoordinate(ms.getLat_max());
+		latMinTextField.setCoordinate(ms.getLat_min());
+		lonMaxTextField.setCoordinate(ms.getLon_max());
+		lonMinTextField.setCoordinate(ms.getLon_min());
+		return ms;
 	}
 
 	protected MapSelection getMapSelectionCoordinates() {
 		double lat_max, lat_min, lon_max, lon_min;
 		try {
-			lat_max = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText()).doubleValue();
+			lat_max = Utilities.parseLocaleDouble(latMaxTextField.getText());
 		} catch (ParseException e) {
-			lat_max = 0.0;
+			lat_max = Double.NaN;
 		}
 		try {
-			lat_min = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText()).doubleValue();
+			lat_min = Utilities.parseLocaleDouble(latMinTextField.getText());
 		} catch (ParseException e) {
-			lat_min = 0.0;
+			lat_min = Double.NaN;
 		}
 		try {
-			lon_max = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText()).doubleValue();
+			lon_max = Utilities.parseLocaleDouble(lonMaxTextField.getText());
 		} catch (ParseException e) {
-			lon_max = 0.0;
+			lon_max = Double.NaN;
 		}
 		try {
-			lon_min = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText()).doubleValue();
+			lon_min = Utilities.parseLocaleDouble(lonMinTextField.getText());
 		} catch (ParseException e) {
-			lon_min = 0.0;
+			lon_min = Double.NaN;
 		}
 		return new MapSelection(lat_max, lat_min, lon_max, lon_min);
 	}
@@ -506,6 +507,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
+		previewMap.settingsLoadPosition();
 
 		fileSeparator = System.getProperty("file.separator");
 
@@ -529,7 +531,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText = "A value of \"Longitude Min\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText()).doubleValue();
+				Double temp = Utilities.parseLocaleDouble(lonMinTextField.getText());
 
 				if (temp < -179 || temp > 179) {
 					errorText += "Value of \"Longitude Min\" must be between -179 and 179 \n";
@@ -543,7 +545,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText += "A value of \"Longitude Max\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText()).doubleValue();
+				Double temp = Utilities.parseLocaleDouble(lonMaxTextField.getText());
 
 				if (temp < -179 || temp > 179) {
 					errorText += "Value of \"Longitude Max\" must be between -179 and 179 \n";
@@ -557,7 +559,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText += "A value of \"Latitude Max\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText()).doubleValue();
+				Double temp = Utilities.parseLocaleDouble(latMaxTextField.getText());
 
 				if (temp < -85 || temp > 85) {
 					errorText += "Value of \"Latitude Max\" must be between -85 and 85 \n";
@@ -571,7 +573,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			errorText += "A value of \"Latitude Min\" must be entered \n";
 		} else {
 			try {
-				Double temp = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText()).doubleValue();
+				Double temp = Utilities.parseLocaleDouble(latMinTextField.getText());
 
 				if (temp < -85 || temp > 85) {
 					errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
@@ -718,6 +720,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		public void windowClosing(WindowEvent e) {
 
 			Settings s = Settings.getInstance();
+			previewMap.settingsSavePosition();
 			try {
 				s.store();
 			} catch (IOException iox) {
@@ -829,18 +832,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 						|| jtfobjAsString.indexOf("longMaxTextField") > -1
 						|| jtfobjAsString.indexOf("longMinTextField") > -1) {
 
-					String result = "";
-
-					result = Utilities.validateCordinateInput(input, jtfobjAsString);
-
-					if (result.length() > 0) {
-						JOptionPane.showMessageDialog(null, "\"" + result
-								+ "\" is not valid input.\n"
-								+ "Please enter a valid number in the form "
-								+ Utilities.FORMAT_6_DEC.format(1.12345), "Error",
-								JOptionPane.ERROR_MESSAGE);
-						return false;
-					}
 				}
 
 				if (jtfobjAsString.indexOf("tileSizeWidthTextField") > -1) {
@@ -1006,31 +997,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 			} else {
 				String errorDescription = "";
 
-				// try {
-				// latMax = Double.parseDouble(latMaxTextField.getText());
-				// } catch (NumberFormatException nfex) {
-				// errorDescription =
-				// "Invalid format of \"Latitude Max\" value\n";
-				// }
-				// try {
-				// latMin = Double.parseDouble(latMinTextField.getText());
-				// } catch (NumberFormatException nfex) {
-				// errorDescription +=
-				// "Invalid format of \"Latitude Min\" value\n";
-				// }
-				// try {
-				// longMax = Double.parseDouble(longMaxTextField.getText());
-				// } catch (NumberFormatException nfex) {
-				// errorDescription +=
-				// "Invalid format of \"Longitude Max\" value\n";
-				// }
-				// try {
-				// longMin = Double.parseDouble(longMinTextField.getText());
-				// } catch (NumberFormatException nfex) {
-				// errorDescription +=
-				// "Invalid format of \"Longitude Min\" value\n";
-				// }
-				//
+				MapSelection ms = checkCoordinates();
+
+				if (!ms.coordinatesAreValid()) {
+					errorDescription += "Coordinates are not all valid - please check";
+				}
+
 				if (!tileSizeWidthComboBox.isEnabled()) {
 					try {
 						Integer.parseInt(tileSizeWidthTextField.getText());
@@ -1112,7 +1084,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			else if (actionCommand.equals("Delete profile"))
 				deleteProfile();
 			else if (actionCommand.equals("Settings")) {
-				SettingsGUI sgui = new SettingsGUI();
+				SettingsGUI sgui = new SettingsGUI(GUI.this);
 				sgui.setVisible(true);
 			}
 		}
@@ -1142,10 +1114,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				temp = profilesVector.elementAt(selectedIndex);
 
-				latMinTextField.setText(Double.toString(temp.getLatitudeMin()));
-				latMaxTextField.setText(Double.toString(temp.getLatitudeMax()));
-				lonMinTextField.setText(Double.toString(temp.getLongitudeMin()));
-				lonMaxTextField.setText(Double.toString(temp.getLongitudeMax()));
+				latMinTextField.setCoordinate(temp.getLatitudeMin());
+				latMaxTextField.setCoordinate(temp.getLatitudeMax());
+				lonMinTextField.setCoordinate(temp.getLongitudeMin());
+				lonMaxTextField.setCoordinate(temp.getLongitudeMax());
 
 				if (temp.getCustomTileSizeWidth() == 0) {
 					tileSizeWidthTextField.setText("");
@@ -1202,11 +1174,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	public void selectionChanged(java.awt.geom.Point2D.Double max, java.awt.geom.Point2D.Double min) {
-		lonMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.x));
-		lonMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.x));
-		latMaxTextField.setText(Utilities.FORMAT_6_DEC.format(max.y));
-		latMinTextField.setText(Utilities.FORMAT_6_DEC.format(min.y));
+	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min) {
+		lonMaxTextField.setCoordinate(max.lon);
+		lonMinTextField.setCoordinate(min.lon);
+		latMaxTextField.setCoordinate(max.lat);
+		latMinTextField.setCoordinate(min.lat);
 		calculateNrOfTilesToDownload();
 	}
 

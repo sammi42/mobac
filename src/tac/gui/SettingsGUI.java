@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -13,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -29,19 +29,18 @@ public class SettingsGUI extends JDialog {
 	private JButton cancelButton;
 
 	private JTabbedPane tabbedPane;
-	private JDialog jdialogGUI;
-	private WindowDestroyer windowListener;
 
 	private Vector<MapSize> mapSizes;
 
-	public SettingsGUI() {
+	public SettingsGUI(JFrame owner) {
+		super(owner);
+		setModal(true);
 		this.createJFrame();
 		this.createTabbedPane();
 		this.createJButtons();
-		this.applySettings();
+		this.loadSettings();
 		this.addListeners();
 
-		jdialogGUI = this;
 	}
 
 	private void createJFrame() {
@@ -60,21 +59,10 @@ public class SettingsGUI extends JDialog {
 	public void createTabbedPane() {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
-		tabbedPane.add(createGoogleSitePanel(), "Google site");
 		tabbedPane.add(createTileStorePanel(), "Tile store");
 		tabbedPane.add(createMapSizePanel(), "Map size");
 
 		this.getContentPane().add(tabbedPane);
-	}
-
-	private JPanel createGoogleSitePanel() {
-		JPanel leftPanel = new JPanel(null);
-		leftPanel.setBounds(5, 5, 475, 240);
-		leftPanel.setBorder(BorderFactory.createTitledBorder("Site to download tiles from"));
-
-		JPanel thumbNailBackGround = new JPanel(null);
-		thumbNailBackGround.add(leftPanel);
-		return thumbNailBackGround;
 	}
 
 	private JPanel createTileStorePanel() {
@@ -98,21 +86,27 @@ public class SettingsGUI extends JDialog {
 
 		// Sizes from 512 to 4096
 		mapSizes = new Vector<MapSize>(10);
-		mapSizes.addElement(new MapSize(0));
 		int valueToAdd = 512;
 		for (int i = 0; i < 8; i++) {
 			mapSizes.addElement(new MapSize(valueToAdd));
 			valueToAdd *= 2;
 		}
+		mapSizes.addElement(new MapSize(0));
 
 		mapSize = new JComboBox(mapSizes);
 		mapSize.setBounds(7, 40, 120, 20);
+
+		JLabel mapSizeLabel = new JLabel("<html>If the image of the selected region to download "
+				+ "is larger in height or width than the mapsize it will be splitted into "
+				+ "several maps that are no larger than the selected mapsize.</html>");
+		mapSizeLabel.setBounds(150, 5, 300, 100);
 
 		JPanel leftPanel = new JPanel(null);
 		leftPanel.setBounds(5, 5, 475, 240);
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Map size settings"));
 
 		leftPanel.add(mapSize);
+		leftPanel.add(mapSizeLabel);
 
 		JPanel thumbNailBackGround = new JPanel(null);
 		thumbNailBackGround.add(leftPanel);
@@ -131,65 +125,42 @@ public class SettingsGUI extends JDialog {
 		this.getContentPane().add(cancelButton);
 	}
 
-	private void applySettings() {
+	private void loadSettings() {
 		Settings s = Settings.getInstance();
 
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
-		int size = s.getMapSize();
+		int size = s.getMaxMapsSize();
 		int index = mapSizes.indexOf(new MapSize(size));
 		if (index < 0)
 			index = 0;
 		mapSize.setSelectedIndex(index);
 	}
 
+	private void applySettings() {
+		Settings s = Settings.getInstance();
+
+		s.setTileStoreEnabled(tileStoreEnabled.isSelected());
+
+		int size = ((MapSize) mapSize.getSelectedItem()).getMapSize();
+		s.setMaxMapSize(size);
+
+		// Close the dialog window
+		SettingsGUI.this.dispose();
+	}
+
 	private void addListeners() {
 
-		windowListener = new WindowDestroyer();
-
-		this.addWindowListener(windowListener);
-		okButton.addActionListener(new JButtonListener());
-		cancelButton.addActionListener(new JButtonListener());
-	}
-
-	public void removeWindowListener() {
-		this.removeWindowListener(windowListener);
-	}
-
-	public void addWindowListener() {
-		this.addWindowListener(windowListener);
-	}
-
-	// WindowDestroyer
-	private class WindowDestroyer extends WindowAdapter {
-		public void windowClosing(WindowEvent e) {
-			((JDialog) e.getComponent()).dispose();
-		}
-
-		public void windowDeactivated(WindowEvent e) {
-			((JDialog) e.getComponent()).requestFocus();
-		}
-	}
-
-	private class JButtonListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			String actionCommand = e.getActionCommand();
-
-			if (actionCommand.equals("Ok")) {
-
-				Settings s = Settings.getInstance();
-
-				s.setTileStoreEnabled(tileStoreEnabled.isSelected());
-
-				int size = ((MapSize) mapSize.getSelectedItem()).getMapSize();
-				s.setMapSize(size);
-
-				// Close the dialog window
-				jdialogGUI.dispose();
-			} else if (actionCommand.equals("Cancel"))
-				jdialogGUI.dispose();
-		}
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				applySettings();
+			}
+		});
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SettingsGUI.this.dispose();
+			}
+		});
 	}
 
 	private static class MapSize implements Comparable<MapSize> {

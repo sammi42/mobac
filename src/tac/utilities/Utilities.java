@@ -1,5 +1,6 @@
 package tac.utilities;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -12,11 +13,14 @@ import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import tac.program.Profile;
@@ -55,6 +59,23 @@ public class Utilities {
 		try {
 			reader.close();
 		} catch (Exception e) {
+		}
+	}
+
+	public static double parseLocaleDouble(String text) throws ParseException {
+		ParsePosition pos = new ParsePosition(0);
+		Number n = Utilities.FORMAT_6_DEC.parse(text, pos);
+		if (pos.getIndex() != text.length()) {
+			throw new ParseException("Text ends with unparsable characters", pos.getIndex());
+		}
+		return n.doubleValue();
+	}
+
+	public static void showTooltipNow(JComponent c) {
+		Action toolTipAction = c.getActionMap().get("postTip");
+		if (toolTipAction != null) {
+			ActionEvent postTip = new ActionEvent(c, ActionEvent.ACTION_PERFORMED, "");
+			toolTipAction.actionPerformed(postTip);
 		}
 	}
 
@@ -99,21 +120,6 @@ public class Utilities {
 		}
 
 		return isValid;
-	}
-
-	public static String validateCordinateInput(String theCordinateInput, String theCallingObject) {
-
-		String notValidCharacter = "";
-
-		if (!theCordinateInput.equals("-")) {
-			try {
-				FORMAT_6_DEC.parse(theCordinateInput);
-			} catch (ParseException nfex) {
-				notValidCharacter = nfex.getMessage().substring(nfex.getMessage().length() - 2,
-						nfex.getMessage().length() - 1);
-			}
-		}
-		return notValidCharacter;
 	}
 
 	public static int validateTileSizeInput(String theTileSizeInput) {
@@ -480,7 +486,7 @@ public class Utilities {
 
 			try {
 				Settings s = Settings.getInstance();
-				s.createDefaultSettingsFile();
+				s.store();
 			} catch (IOException iox) {
 				JOptionPane.showMessageDialog(null,
 						"Could not create file settings.xml program will exit.", "Error",

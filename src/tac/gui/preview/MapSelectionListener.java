@@ -1,8 +1,8 @@
 package tac.gui.preview;
 
-import java.awt.geom.Point2D;
+import tac.program.EastNorthCoordinate;
 
 public interface MapSelectionListener {
 
-	public void selectionChanged(Point2D.Double max, Point2D.Double min);
+	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min);
 }

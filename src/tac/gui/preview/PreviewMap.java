@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -22,7 +21,9 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.program.EastNorthCoordinate;
 import tac.program.MapSelection;
+import tac.program.Settings;
 
 public class PreviewMap extends JMapViewer {
 	private static final long serialVersionUID = 1L;
@@ -71,6 +72,28 @@ public class PreviewMap extends JMapViewer {
 		add(gridSizeSelector);
 		new PreviewMapController(this);
 		setTileSource(new MapSources.GoogleMaps());
+	}
+
+	public void setDisplayPositionByLatLon(EastNorthCoordinate c, int zoom) {
+		setDisplayPositionByLatLon(new Point(getWidth() / 2, getHeight() / 2), c.lat, c.lon, zoom);
+	}
+
+	/**
+	 * Updates the current position in {@link Settings} to the current view
+	 */
+	public void settingsSavePosition() {
+		Settings settings = Settings.getInstance();
+		settings.setPreviewDefaultZoom(getZoom());
+		settings.setPreviewDefaultCoordinate(getPositionCoordinate());
+	}
+
+	/**
+	 * Sets the current view by the current values from {@link Settings}
+	 */
+	public void settingsLoadPosition() {
+		Settings settings = Settings.getInstance();
+		EastNorthCoordinate c = settings.getPreviewDefaultCoordinate();
+		setDisplayPositionByLatLon(c, settings.getPreviewDefaultZoom());
 	}
 
 	@Override
@@ -201,6 +224,12 @@ public class PreviewMap extends JMapViewer {
 
 	}
 
+	public EastNorthCoordinate getPositionCoordinate() {
+		double lon = OsmMercator.XToLon(center.x, zoom);
+		double lat = OsmMercator.YToLat(center.y, zoom);
+		return new EastNorthCoordinate(lat, lon);
+	}
+
 	protected Point getTopLeftCoordinate() {
 		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}
@@ -281,12 +310,12 @@ public class PreviewMap extends JMapViewer {
 		y_min = (gridSelectionStart.y >> zoomDiff1);
 		x_max = (gridSelectionEnd.x >> zoomDiff1);
 		y_max = (gridSelectionEnd.y >> zoomDiff1);
-		Point2D.Double max = new Point2D.Double();
-		Point2D.Double min = new Point2D.Double();
-		max.x = OsmMercator.XToLon(x_max, selectionZoom);
-		min.y = OsmMercator.YToLat(y_max, selectionZoom);
-		min.x = OsmMercator.XToLon(x_min, selectionZoom);
-		max.y = OsmMercator.YToLat(y_min, selectionZoom);
+		EastNorthCoordinate max = new EastNorthCoordinate();
+		EastNorthCoordinate min = new EastNorthCoordinate();
+		max.lon = OsmMercator.XToLon(x_max, selectionZoom);
+		min.lat = OsmMercator.YToLat(y_max, selectionZoom);
+		min.lon = OsmMercator.XToLon(x_min, selectionZoom);
+		max.lat = OsmMercator.YToLat(y_min, selectionZoom);
 		for (MapSelectionListener msp : mapSelectionListeners) {
 			msp.selectionChanged(max, min);
 		}

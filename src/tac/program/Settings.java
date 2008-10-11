@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.InvalidPropertiesFormatException;
-import java.util.Properties;
 
 import tac.utilities.Utilities;
 
@@ -16,10 +15,21 @@ public class Settings {
 
 	private static Settings instance;
 
-	private Properties p;
+	private static final String SETTINGS_FILE = "settings.xml";
+	private static final String MAPS_SIZE = "maps.size";
+	private static final String TILE_STORE = "tile.store.enabled";
+	private static final String PREVIEW_ZOOM = "preview.zoom";
+	private static final String PREVIEW_LAT = "preview.lat";
+	private static final String PREVIEW_LON = "preview.lon";
+
+	private int maxMapSize = 0;
+
+	private boolean tileStoreEnabled = true;
+
+	private int previewDefaultZoom = 3;
+	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(9,50);
 
 	private Settings() {
-		p = new Properties();
 	}
 
 	public static Settings getInstance() {
@@ -33,14 +43,24 @@ public class Settings {
 		}
 	}
 
+	public static String getUserDir() {
+		return System.getProperty("user.dir");
+	}
+
 	public void load() throws IOException {
 		InputStream is = null;
 		try {
-			is = new FileInputStream(new File(System.getProperty("user.dir"), "settings.xml"));
+			SettingsProperties p = new SettingsProperties();
+			is = new FileInputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.loadFromXML(is);
+			maxMapSize = p.getIntProperty(MAPS_SIZE, maxMapSize);
+			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
+			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
+			previewDefaultCoordinate.lat = p.getDouble6Property(PREVIEW_LAT,
+					previewDefaultCoordinate.lat);
+			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
+					previewDefaultCoordinate.lon);
 		} catch (FileNotFoundException e) {
-			this.createDefaultSettingsFile();
-			this.load();
 		} catch (InvalidPropertiesFormatException e) {
 			e.printStackTrace();
 		} finally {
@@ -48,48 +68,57 @@ public class Settings {
 		}
 	}
 
-	public void store() throws IOException {
+	public boolean store() throws IOException {
+		boolean result = false;
 		OutputStream os = null;
 		try {
-			os = new FileOutputStream(new File(System.getProperty("user.dir"), "settings.xml"));
+			SettingsProperties p = new SettingsProperties();
+			p.setIntProperty(MAPS_SIZE, maxMapSize);
+			p.setIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
+			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
+			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
+			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
+			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
+			result = true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
 			Utilities.closeStream(os);
 		}
+		return result;
 	}
 
-	public void setProperty(String key, String value) {
-		p.setProperty(key, value);
+	public int getMaxMapsSize() {
+		return maxMapSize;
 	}
 
-	public String getProperty(String key) {
-		return p.getProperty(key);
-	}
-
-	public void setTileStoreEnabled(boolean enabled) {
-		p.setProperty("tile.store.enabled", String.valueOf(enabled));
+	public void setMaxMapSize(int mapsSize) {
+		this.maxMapSize = mapsSize;
 	}
 
 	public boolean isTileStoreEnabled() {
-		if (p.getProperty("tile.store.enabled").equals("true"))
-			return true;
-		else
-			return false;
+		return tileStoreEnabled;
 	}
 
-	public void setMapSize(int i) {
-		p.setProperty("maps.size", Integer.toString(i));
+	public void setTileStoreEnabled(boolean tileStoreEnabled) {
+		this.tileStoreEnabled = tileStoreEnabled;
 	}
 
-	public int getMapSize() {
-		return Integer.parseInt(p.getProperty("maps.size"));
+	public int getPreviewDefaultZoom() {
+		return previewDefaultZoom;
 	}
 
-	public void createDefaultSettingsFile() throws IOException {
-		p.setProperty("tile.store.enabled", "true");
-		p.setProperty("maps.size", "0");
-		this.store();
+	public void setPreviewDefaultZoom(int previewDefaultZoom) {
+		this.previewDefaultZoom = previewDefaultZoom;
 	}
+
+	public EastNorthCoordinate getPreviewDefaultCoordinate() {
+		return previewDefaultCoordinate;
+	}
+
+	public void setPreviewDefaultCoordinate(EastNorthCoordinate previewDefaultCoordinate) {
+		this.previewDefaultCoordinate = previewDefaultCoordinate;
+	}
+
 }

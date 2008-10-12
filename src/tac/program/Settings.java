@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.InvalidPropertiesFormatException;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-
 import tac.gui.preview.MapSources;
 import tac.utilities.Utilities;
 
@@ -31,10 +29,10 @@ public class Settings {
 	private boolean tileStoreEnabled = true;
 
 	private int previewDefaultZoom = 3;
-	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(9,50);
+	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(9, 50);
 
-	private TileSource defaultMapSource = MapSources.getMapSources()[0];
-	
+	private String defaultMapSource = MapSources.getMapSources()[0].getName();
+
 	private Settings() {
 	}
 
@@ -66,7 +64,7 @@ public class Settings {
 					previewDefaultCoordinate.lat);
 			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
 					previewDefaultCoordinate.lon);
-			defaultMapSource = MapSources.getSourceByName(p.getProperty(PREVIEW_MAPSOURCE));
+			defaultMapSource = p.getProperty(PREVIEW_MAPSOURCE);
 		} catch (FileNotFoundException e) {
 		} catch (InvalidPropertiesFormatException e) {
 			e.printStackTrace();
@@ -85,7 +83,7 @@ public class Settings {
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
-			p.setProperty(PREVIEW_MAPSOURCE, defaultMapSource.getName());
+			p.setProperty(PREVIEW_MAPSOURCE, defaultMapSource);
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
 			result = true;
@@ -129,12 +127,12 @@ public class Settings {
 		this.previewDefaultCoordinate = previewDefaultCoordinate;
 	}
 
-	public TileSource getDefaultMapSource() {
+	public String getDefaultMapSource() {
 		return defaultMapSource;
 	}
 
-	public void setDefaultMapSource(TileSource defaultMapSource) {
+	public void setDefaultMapSource(String defaultMapSource) {
 		this.defaultMapSource = defaultMapSource;
 	}
-	
+
 }

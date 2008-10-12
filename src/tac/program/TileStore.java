@@ -8,6 +8,8 @@ import java.nio.channels.FileChannel;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.utilities.Utilities;
+
 public class TileStore {
 
 	private static TileStore sObj = null;
@@ -42,16 +44,22 @@ public class TileStore {
 		File sourceFile = getTileFile(x, y, zoom, tileSource);
 		if (!sourceFile.exists())
 			return false;
-		FileInputStream fis = new FileInputStream(sourceFile);
-		FileOutputStream fos = new FileOutputStream(targetFileName);
-
-		FileChannel source = fis.getChannel();
-		FileChannel destination = fos.getChannel();
-		long sourceBytes = source.size();
-		long writtenBytes = destination.transferFrom(source, 0, sourceBytes);
-		fis.close();
-		fos.close();
-		if (writtenBytes != source.size())
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		long sourceBytes =0;
+		long writtenBytes=0;
+		try {
+			fis = new FileInputStream(sourceFile);
+			fos = new FileOutputStream(targetFileName);
+			FileChannel source = fis.getChannel();
+			FileChannel destination = fos.getChannel();
+			sourceBytes = source.size();
+			writtenBytes = destination.transferFrom(source, 0, sourceBytes);
+		} finally {
+			Utilities.closeStream(fis);
+			Utilities.closeStream(fos);
+		}
+		if (writtenBytes != sourceBytes)
 			throw new IOException("Target file's size is not equal to the source file's size!");
 		return true;
 	}

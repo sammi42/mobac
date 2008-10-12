@@ -469,22 +469,22 @@ public class GUI extends JFrame implements MapSelectionListener {
 	protected MapSelection getMapSelectionCoordinates() {
 		double lat_max, lat_min, lon_max, lon_min;
 		try {
-			lat_max = Utilities.parseLocaleDouble(latMaxTextField.getText());
+			lat_max = latMaxTextField.getCoordinate();
 		} catch (ParseException e) {
 			lat_max = Double.NaN;
 		}
 		try {
-			lat_min = Utilities.parseLocaleDouble(latMinTextField.getText());
+			lat_min = latMinTextField.getCoordinate();
 		} catch (ParseException e) {
 			lat_min = Double.NaN;
 		}
 		try {
-			lon_max = Utilities.parseLocaleDouble(lonMaxTextField.getText());
+			lon_max = lonMaxTextField.getCoordinate();
 		} catch (ParseException e) {
 			lon_max = Double.NaN;
 		}
 		try {
-			lon_min = Utilities.parseLocaleDouble(lonMinTextField.getText());
+			lon_min = lonMinTextField.getCoordinate();
 		} catch (ParseException e) {
 			lon_min = Double.NaN;
 		}
@@ -508,7 +508,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			System.exit(0);
 		}
 		previewMap.settingsLoadPosition();
-		mapSource.setSelectedItem(settings.getDefaultMapSource());
+		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
 		fileSeparator = System.getProperty("file.separator");
 
@@ -528,61 +528,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		String errorText = "";
 
-		if (lonMinTextField.getText().length() < 1) {
-			errorText = "A value of \"Longitude Min\" must be entered \n";
-		} else {
-			try {
-				Double temp = Utilities.parseLocaleDouble(lonMinTextField.getText());
+		if (!lonMinTextField.isInputValid())
+			errorText += "Value of \"Longitude Min\" must be between -179 and 179 \n";
 
-				if (temp < -179 || temp > 179) {
-					errorText += "Value of \"Longitude Min\" must be between -179 and 179 \n";
-				}
-			} catch (ParseException nfex) {
-				errorText += "Value of \"Longitude Min\" is not a valid decimal number \n";
-			}
-		}
+		if (!lonMaxTextField.isInputValid())
+			errorText += "Value of \"Longitude Max\" must be between -179 and 179 \n";
 
-		if (lonMaxTextField.getText().length() < 1) {
-			errorText += "A value of \"Longitude Max\" must be entered \n";
-		} else {
-			try {
-				Double temp = Utilities.parseLocaleDouble(lonMaxTextField.getText());
+		if (!latMaxTextField.isInputValid())
+			errorText += "Value of \"Latitude Max\" must be between -85 and 85 \n";
 
-				if (temp < -179 || temp > 179) {
-					errorText += "Value of \"Longitude Max\" must be between -179 and 179 \n";
-				}
-			} catch (ParseException nfex) {
-				errorText += "Value of \"Longitude Max\" is not a valid decimal number \n";
-			}
-		}
-
-		if (latMaxTextField.getText().length() < 1) {
-			errorText += "A value of \"Latitude Max\" must be entered \n";
-		} else {
-			try {
-				Double temp = Utilities.parseLocaleDouble(latMaxTextField.getText());
-
-				if (temp < -85 || temp > 85) {
-					errorText += "Value of \"Latitude Max\" must be between -85 and 85 \n";
-				}
-			} catch (ParseException nfex) {
-				errorText += "Value of \"Latitude Max\" is not a valid decimal number \n";
-			}
-		}
-
-		if (latMinTextField.getText().length() < 1) {
-			errorText += "A value of \"Latitude Min\" must be entered \n";
-		} else {
-			try {
-				Double temp = Utilities.parseLocaleDouble(latMinTextField.getText());
-
-				if (temp < -85 || temp > 85) {
-					errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
-				}
-			} catch (ParseException nfex) {
-				errorText += "Value of \"Latitude Min\" is not a valid decimal number \n";
-			}
-		}
+		if (!latMinTextField.isInputValid())
+			errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
 
 		if (isCreateAtlasValidate) {
 
@@ -667,10 +623,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		Double longMax;
 		Double longMin;
 		try {
-			latMax = Utilities.FORMAT_6_DEC.parse(latMaxTextField.getText()).doubleValue();
-			latMin = Utilities.FORMAT_6_DEC.parse(latMinTextField.getText()).doubleValue();
-			longMax = Utilities.FORMAT_6_DEC.parse(lonMaxTextField.getText()).doubleValue();
-			longMin = Utilities.FORMAT_6_DEC.parse(lonMinTextField.getText()).doubleValue();
+			latMax = latMaxTextField.getCoordinate();
+			latMin = latMinTextField.getCoordinate();
+			longMax = lonMaxTextField.getCoordinate();
+			longMin = lonMinTextField.getCoordinate();
 		} catch (ParseException e) {
 			return false;
 		}
@@ -706,8 +662,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 			for (int i = 0; i < zoomLevels.length; i++) {
 				MapSelection ms = getMapSelectionCoordinates();
 				totalNrOfTiles += ms.calculateNrOfTiles(zoomLevels[i]);
-				System.out.println("Tiles on zoom " + zoomLevels[i] + ": "
-						+ ms.calculateNrOfTiles(zoomLevels[i]));
 			}
 			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
 		} catch (Exception e) {
@@ -722,7 +676,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
-			s.setDefaultMapSource((TileSource) mapSource.getSelectedItem());
+			s.setDefaultMapSource(((TileSource) mapSource.getSelectedItem()).getName());
 			try {
 				s.store();
 			} catch (IOException iox) {
@@ -1021,14 +975,18 @@ public class GUI extends JFrame implements MapSelectionListener {
 					}
 				}
 
-				if (errorDescription.equals("")) {
-
+				if (errorDescription.length() > 0) {
+					JOptionPane.showMessageDialog(null, errorDescription, "Errors",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				try {
 					theProfile.setProfileName(inputValue);
 					theProfile.setAtlasName(atlasNameTextField.getText());
-					theProfile.setLatitudeMax(Double.parseDouble(latMaxTextField.getText()));
-					theProfile.setLatitudeMin(Double.parseDouble(latMinTextField.getText()));
-					theProfile.setLongitudeMax(Double.parseDouble(lonMaxTextField.getText()));
-					theProfile.setLongitudeMin(Double.parseDouble(lonMinTextField.getText()));
+					theProfile.setLatitudeMax(latMaxTextField.getCoordinate());
+					theProfile.setLatitudeMin(latMinTextField.getCoordinate());
+					theProfile.setLongitudeMax(lonMaxTextField.getCoordinate());
+					theProfile.setLongitudeMin(lonMinTextField.getCoordinate());
 
 					boolean[] zoomLevels = new boolean[cbZoom.length];
 					for (int i = 0; i < cbZoom.length; i++) {
@@ -1056,9 +1014,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 					profilesVector.addElement(theProfile);
 					PersistentProfiles.store(profilesVector);
 					initiateProgram();
-				} else {
-					JOptionPane.showMessageDialog(null, errorDescription, "Errors",
-							JOptionPane.ERROR_MESSAGE);
+				} catch (ParseException e) {
+					e.printStackTrace();
 				}
 			}
 		}

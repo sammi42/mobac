@@ -23,6 +23,7 @@ public class Settings {
 	private static final String PREVIEW_LAT = "preview.lat";
 	private static final String PREVIEW_LON = "preview.lon";
 	private static final String PREVIEW_MAPSOURCE = "preview.mapsource";
+	private static final String ATLAS_NAME = "atlas.name";
 
 	private int maxMapSize = 0;
 
@@ -33,6 +34,8 @@ public class Settings {
 
 	private String defaultMapSource = MapSources.getMapSources()[0].getName();
 
+	private String atlasName = "";
+	
 	private Settings() {
 	}
 
@@ -65,6 +68,7 @@ public class Settings {
 			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
 					previewDefaultCoordinate.lon);
 			defaultMapSource = p.getProperty(PREVIEW_MAPSOURCE);
+			atlasName = p.getProperty(ATLAS_NAME, atlasName);
 		} catch (FileNotFoundException e) {
 		} catch (InvalidPropertiesFormatException e) {
 			e.printStackTrace();
@@ -84,6 +88,7 @@ public class Settings {
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
 			p.setProperty(PREVIEW_MAPSOURCE, defaultMapSource);
+			p.setProperty(ATLAS_NAME, atlasName);
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
 			result = true;
@@ -133,6 +138,14 @@ public class Settings {
 
 	public void setDefaultMapSource(String defaultMapSource) {
 		this.defaultMapSource = defaultMapSource;
+	}
+
+	public String getAtlasName() {
+		return atlasName;
+	}
+
+	public void setAtlasName(String atlasName) {
+		this.atlasName = atlasName;
 	}
 
 }

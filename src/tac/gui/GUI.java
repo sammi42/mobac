@@ -10,8 +10,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -97,11 +95,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
 	private JCoordinateField lonMaxTextField;
-	private JTextField tileSizeWidthTextField;
-	private JTextField tileSizeHeightTextField;
+	private JTileSizeField tileSizeWidthTextField;
+	private JTileSizeField tileSizeHeightTextField;
 	private JTextField atlasNameTextField;
 
-	private JCheckBox[] cbZoom;
+	private JCheckBox[] cbZoom = new JCheckBox[0];
 
 	private JComboBox tileSizeWidthComboBox;
 	private JComboBox tileSizeHeightComboBox;
@@ -262,9 +260,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		customTileSizeWidthLabel = new JLabel("Custom size (W):");
 		customTileSizeWidthLabel.setBounds(130, 5, 100, 20);
 
-		tileSizeWidthTextField = new JTextField();
+		tileSizeWidthTextField = new JTileSizeField();
 		tileSizeWidthTextField.setBounds(218, 5, 50, 20);
-		tileSizeWidthTextField.setActionCommand("tileSizeWidthTextField");
 		tileSizeWidthTextField.setToolTipText("Width");
 
 		JLabel tileSizeHeight = new JLabel("Height:");
@@ -277,9 +274,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		customTileSizeHeightLabel = new JLabel("Custom size (H):");
 		customTileSizeHeightLabel.setBounds(130, 29, 100, 20);
 
-		tileSizeHeightTextField = new JTextField();
+		tileSizeHeightTextField = new JTileSizeField();
 		tileSizeHeightTextField.setBounds(218, 29, 50, 20);
-		tileSizeHeightTextField.setActionCommand("tileSizeHeightTextField");
 		tileSizeHeightTextField.setToolTipText("Height");
 
 		atlasNameLabel = new JLabel("ATLAS NAME");
@@ -364,7 +360,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		add(leftScrollPane, BorderLayout.WEST);
 
-		atlasNameTextField.setText("Test");
 	}
 
 	public void createRightPanel() {
@@ -387,21 +382,20 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	protected void createZoomLevelCheckBoxes() {
 		int zoomLevels = ((TileSource) mapSource.getSelectedItem()).getMaxZoom();
+		JCheckBox[] oldCbZoom = cbZoom;
 		cbZoom = new JCheckBox[zoomLevels];
-		String s = "ZOOM LEVELS (0, 1, 2 ..... ";
-		for (int i = cbZoom.length - 3; i < cbZoom.length; i++) {
-			s += i;
-			if (i != (cbZoom.length - 1))
-				s += ", ";
-		}
-		s += ")";
-		zoomLevelLabel.setText(s);
+		int x = cbZoom.length - 1;
+		Object[] o = new Object[] { x--, x--, x-- };
+		zoomLevelLabel.setText(String.format("ZOOM LEVELS (%d, %d, %d ... 2, 1, 0)", o));
 		zoomLevelPanel.removeAll();
 		zoomLevelPanel.setLayout(new GridLayout(2, cbZoom.length + 2 / 2, 0, 0));
 		CheckBoxListener cbl = new CheckBoxListener();
 
-		for (int i = 0; i < cbZoom.length; i++) {
+		String s = "";
+		for (int i = cbZoom.length - 1; i >= 0; i--) {
 			JCheckBox cb = new JCheckBox();
+			if (i < oldCbZoom.length)
+				cb.setSelected(oldCbZoom[i].isSelected());
 			cb.setPreferredSize(new Dimension(17, 25));
 			cb.setMinimumSize(cb.getPreferredSize());
 			s = "Zoom level " + i;
@@ -438,9 +432,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			}
 		});
 		JTextFieldListener jtfl = new JTextFieldListener();
-		tileSizeWidthTextField.addFocusListener(new JTextFieldFocusChangeListener());
 		tileSizeWidthTextField.getDocument().addDocumentListener(jtfl);
-		tileSizeHeightTextField.addFocusListener(new JTextFieldFocusChangeListener());
 		tileSizeHeightTextField.getDocument().addDocumentListener(jtfl);
 		atlasNameTextField.getDocument().addDocumentListener(jtfl);
 
@@ -507,6 +499,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
+		atlasNameTextField.setText(settings.getAtlasName());
 		previewMap.settingsLoadPosition();
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
@@ -571,47 +564,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 				errorText += "A zoom level must be selected\n";
 			}
 
-			String input = tileSizeWidthTextField.getText();
-
-			if (input.length() > 0) {
-
-				int result = -1;
-
-				result = Utilities.validateTileSizeInput(input);
-
-				if (result > -1) {
-					errorText += "\"" + (char) result + "\" is not valid input of Custom size (W)";
-
-				} else {
-					if (Integer.parseInt(input) > 1792) {
-						errorText += "\"" + input + "\" is not valid input of Custom size (W)";
-					}
-					if (Integer.parseInt(input) < 50) {
-						errorText += "\"" + input + "\" is not valid input of Custom size (W)";
-					}
-				}
-			}
-
-			input = tileSizeHeightTextField.getText();
-
-			if (input.length() > 0) {
-
-				int result = -1;
-
-				result = Utilities.validateTileSizeInput(input);
-
-				if (result > -1) {
-					errorText += "\"" + (char) result + "\" is not valid input of Custom size (H)";
-
-				} else {
-					if (Integer.parseInt(input) > 1792) {
-						errorText += "\"" + input + "\" is not valid input of Custom size (H)";
-					}
-					if (Integer.parseInt(input) < 50) {
-						errorText += "\"" + input + "\" is not valid input of Custom size (H)";
-					}
-				}
-			}
 		}
 		return errorText;
 	}
@@ -677,6 +629,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
 			s.setDefaultMapSource(((TileSource) mapSource.getSelectedItem()).getName());
+			s.setAtlasName(atlasNameTextField.getText());
 			try {
 				s.store();
 			} catch (IOException iox) {
@@ -692,12 +645,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		public void insertUpdate(DocumentEvent e) {
 
-			if (tileSizeWidthTextField.getText().length() > 0) {
-				tileSizeWidthComboBox.setEnabled(false);
-			}
-			if (tileSizeHeightTextField.getText().length() > 0) {
-				tileSizeHeightComboBox.setEnabled(false);
-			}
+			tileSizeWidthComboBox.setEnabled(!tileSizeWidthTextField.isInputValid());
+			tileSizeHeightComboBox.setEnabled(!tileSizeHeightTextField.isInputValid());
 			if (handleInputInRealTime()) {
 				calculateNrOfTilesToDownload();
 			}
@@ -705,12 +654,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		public void removeUpdate(DocumentEvent e) {
 
-			if (tileSizeWidthTextField.getText().length() == 0) {
-				tileSizeWidthComboBox.setEnabled(true);
-			}
-			if (tileSizeHeightTextField.getText().length() == 0) {
-				tileSizeHeightComboBox.setEnabled(true);
-			}
+			tileSizeWidthComboBox.setEnabled(!tileSizeWidthTextField.isInputValid());
+			tileSizeHeightComboBox.setEnabled(!tileSizeHeightTextField.isInputValid());
 			if (handleInputInRealTime()) {
 				calculateNrOfTilesToDownload();
 			}
@@ -720,139 +665,53 @@ public class GUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	private class JTextFieldFocusChangeListener implements FocusListener {
-
-		public void focusGained(FocusEvent arg0) {
-		}
-
-		public void focusLost(FocusEvent arg0) {
-
-			String component = ((JTextField) arg0.getComponent()).toString();
-
-			if (component.indexOf("tileSizeWidthTextField") > -1) {
-				String input = tileSizeWidthTextField.getText();
-
-				if (input.length() > 0) {
-
-					int result = -1;
-					result = Utilities.validateTileSizeInput(input);
-
-					if (result == -1) {
-						if (Integer.parseInt(input) < 50) {
-							JOptionPane.showMessageDialog(null, "\"" + input
-									+ "\" is not valid input of Custom size (W) \n\n"
-									+ "Accepted values are between 50 and 1792", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				}
-			}
-			if (component.indexOf("tileSizeHeightTextField") > -1) {
-				String input = tileSizeHeightTextField.getText();
-
-				if (input.length() > 0) {
-
-					int result = -1;
-					result = Utilities.validateTileSizeInput(input);
-
-					if (result == -1) {
-						if (Integer.parseInt(input) < 50) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"\""
-													+ input
-													+ "\" is not valid input of Custom size (H) \n\nAccepted values are between 50 and 1792",
-											"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				}
-			}
-		}
-	}
-
 	private boolean handleInputInRealTime() {
 
+		if (!(getFocusOwner() instanceof JTextField))
+			return false;
 		String input = "";
 
-		if ((((this.getFocusOwner()).getClass()).toString()).equals("class javax.swing.JTextField")) {
+		JTextField textField = (JTextField) getFocusOwner();
+		input = textField.getText();
 
-			input = ((JTextField) this.getFocusOwner()).getText();
+		if (input.length() == 0)
+			return false;
 
-			if (input.length() > 0) {
+		// if (tileSizeWidthTextField.equals(textField) ||
+		// tileSizeHeightTextField.equals(textField)) {
+		// int result = -1;
+		// result = Utilities.validateTileSizeInput(input);
+		//
+		// if (result > -1) {
+		// JOptionPane.showMessageDialog(null, "\"" + (char) result
+		// + "\" is not valid input \n\nOnly accepted input is \"0-9\"",
+		// "Error",
+		// JOptionPane.ERROR_MESSAGE);
+		// return false;
+		// }
+		// if (input.length() > 3) {
+		// if (Integer.parseInt(input) > 1792) {
+		// JOptionPane
+		// .showMessageDialog(
+		// null,
+		// "\""
+		// + input
+		// +
+		// "\" is not valid input \n\nOnly accepted input is values between 50 and 1792"
+		// ,
+		// "Error", JOptionPane.ERROR_MESSAGE);
+		// return false;
+		// }
+		// }
+		// }
 
-				String jtfobjAsString = ((JTextField) this.getFocusOwner()).toString();
-
-				if (jtfobjAsString.indexOf("latMaxTextField") > -1
-						|| jtfobjAsString.indexOf("latMinTextField") > -1
-						|| jtfobjAsString.indexOf("longMaxTextField") > -1
-						|| jtfobjAsString.indexOf("longMinTextField") > -1) {
-
-				}
-
-				if (jtfobjAsString.indexOf("tileSizeWidthTextField") > -1) {
-
-					int result = -1;
-
-					result = Utilities.validateTileSizeInput(input);
-
-					if (result > -1) {
-						JOptionPane.showMessageDialog(null, "\"" + (char) result
-								+ "\" is not valid input \n\nOnly accepted input is \"0-9\"",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						return false;
-					} else if (input.length() > 3) {
-						if (Integer.parseInt(input) > 1792) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"\""
-													+ input
-													+ "\" is not valid input \n\nOnly accepted input is values between 50 and 1792",
-											"Error", JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-
-				if (jtfobjAsString.indexOf("tileSizeHeightTextField") > -1) {
-
-					int result = -1;
-
-					result = Utilities.validateTileSizeInput(input);
-
-					if (result > -1) {
-						JOptionPane.showMessageDialog(null, "\"" + (char) result
-								+ "\" is not valid input \n\nOnly accepted input is \"0-9\"",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						return false;
-					} else if (input.length() > 3) {
-						if (Integer.parseInt(input) > 1792) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"\""
-													+ input
-													+ "\" is not valid input \n\nOnly accepted input are values between 50 and 1792",
-											"Error", JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-
-					}
-				}
-
-				if (jtfobjAsString.indexOf("atlasNameTextField") > -1) {
-
-					int result = -1;
-
-					result = Utilities.validateString(input, false);
-
-					if (result > -1) {
-						JOptionPane.showMessageDialog(null, "\"" + (char) result
-								+ "\" is not valid input", "Error", JOptionPane.ERROR_MESSAGE);
-						return false;
-					}
-				}
+		if (atlasNameTextField.equals(textField)) {
+			int result = -1;
+			result = Utilities.validateString(input, false);
+			if (result > -1) {
+				JOptionPane.showMessageDialog(null, "\"" + (char) result + "\" is not valid input",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				return false;
 			}
 		}
 		return true;
@@ -876,52 +735,29 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			if (maxIsBiggerThanMin) {
 
-				int customTileSizeWidth = -1;
-				int customTileSizeHeight = -1;
-
-				if (tileSizeWidthComboBox.isEnabled() == false) {
-					try {
-						customTileSizeWidth = Integer.parseInt(tileSizeWidthTextField.getText());
-					} catch (NumberFormatException nfex) {
-						JOptionPane.showMessageDialog(null,
-								"Custom tile size width value is not a valid integer value",
-								"Errors", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-				if (tileSizeHeightComboBox.isEnabled() == false) {
-					try {
-						customTileSizeHeight = Integer.parseInt(tileSizeHeightTextField.getText());
-					} catch (NumberFormatException nfex) {
-						JOptionPane.showMessageDialog(null,
-								"Custom tile size height value is not a valid integer value",
-								"Errors", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
 				int tileSizeWidth = 256;
 				int tileSizeHeight = 256;
 
-				if (tileSizeWidthComboBox.isEnabled()) {
-					tileSizeWidth = ((Integer) tileSizeWidthComboBox.getSelectedItem()).intValue();
-				} else {
-					tileSizeWidth = customTileSizeWidth;
-				}
-				if (tileSizeHeightComboBox.isEnabled()) {
-					tileSizeHeight = ((Integer) tileSizeHeightComboBox.getSelectedItem())
-							.intValue();
-				} else {
-					tileSizeHeight = customTileSizeHeight;
-				}
-
-				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
-				SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 				try {
+					if (tileSizeWidthTextField.isInputValid())
+						tileSizeWidth = tileSizeWidthTextField.getTileSize();
+					else
+						tileSizeWidth = ((Integer) tileSizeWidthComboBox.getSelectedItem())
+								.intValue();
+
+					if (tileSizeHeightTextField.isInputValid())
+						tileSizeHeight = tileSizeHeightTextField.getTileSize();
+					else
+						tileSizeHeight = ((Integer) tileSizeHeightComboBox.getSelectedItem())
+								.intValue();
+
+					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
+					SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
 							getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
 					atlasThread.start();
 				} catch (Exception ex) {
-					System.out.println(ex);
+					ex.printStackTrace();
 				}
 
 			}

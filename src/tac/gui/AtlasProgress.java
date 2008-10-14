@@ -19,6 +19,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,6 +41,8 @@ public class AtlasProgress extends JFrame {
 	private static final long serialVersionUID = 3159146939361532653L;
 
 	private static final NumberFormat F2 = new DecimalFormat("0.00");
+
+	private static final Timer TIMER = new Timer(true);
 
 	private JProgressBar atlasProgress;
 	private JProgressBar layerProgress;
@@ -80,9 +84,12 @@ public class AtlasProgress extends JFrame {
 
 	private ActionListener abortListener = null;
 
+	private UpdateTask updateDisplay = null;
+
 	public AtlasProgress() {
 
 		super("Downloading tiles...");
+		updateDisplay = new UpdateTask();
 		tarProgressValue = 0;
 
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -221,6 +228,7 @@ public class AtlasProgress extends JFrame {
 
 		initiateTime = System.currentTimeMillis();
 		initiateLayerTime = System.currentTimeMillis();
+		TIMER.schedule(updateDisplay, 0, 500);
 	}
 
 	public void setMinMaxForCurrentLayer(int theMinimumValue, int theMaximumValue) {
@@ -324,6 +332,7 @@ public class AtlasProgress extends JFrame {
 	}
 
 	public void atlasCreationFinished() {
+		stopUpdateTask();
 		abortListener = null;
 		abortAtlasDownloadButton.setEnabled(false);
 
@@ -338,7 +347,16 @@ public class AtlasProgress extends JFrame {
 		openProgramFolderButton.setEnabled(true);
 	}
 
+	private synchronized void stopUpdateTask() {
+		try {
+			updateDisplay.cancel();
+			updateDisplay = null;
+		} catch (Exception e) {
+		}
+	}
+
 	public void closeWindow() {
+		stopUpdateTask();
 		abortListener = null;
 		setVisible(false);
 		dispose();
@@ -436,6 +454,16 @@ public class AtlasProgress extends JFrame {
 				if (abortListener != null)
 					abortListener.actionPerformed(null);
 			}
+		}
+	}
+
+	private class UpdateTask extends TimerTask {
+
+		@Override
+		public void run() {
+			updateTotalDownloadTime();
+			if (!AtlasProgress.this.isVisible())
+				stopUpdateTask();
 		}
 	}
 }

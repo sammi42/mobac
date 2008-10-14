@@ -16,12 +16,12 @@ public class TileDownLoader {
 	public static final String SECURESTRING = "Galileo";
 
 	public static int getImage(int x, int y, int zoom, File destinationDirectory,
-			TileSource tileSource, boolean isAtlasDownload) throws IOException {
+			TileSource tileSource, boolean isAtlasDownload) throws IOException, InterruptedException {
 
-		if (x == 0 || y == 0)
-			return 0;
 		TileStore ts = TileStore.getInstance();
 
+			Thread.sleep(2000);
+		
 		/**
 		 * If the desired tile already exist in the persistent tilestore and
 		 * settings is to use the tile store

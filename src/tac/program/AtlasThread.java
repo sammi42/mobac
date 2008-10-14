@@ -208,7 +208,7 @@ public class AtlasThread extends Thread implements ActionListener {
 	}
 
 	protected boolean retryDownloadAtlasTile(int xValue, int yValue, int zoomValue,
-			File destinationFolder, TileSource tileSource) {
+			File destinationFolder, TileSource tileSource) throws InterruptedException {
 
 		boolean retryOk = false;
 

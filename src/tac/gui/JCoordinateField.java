@@ -60,6 +60,7 @@ public class JCoordinateField extends JTextField {
 		return inputIsValid;
 	}
 
+	
 	protected class JCoordinateListener implements DocumentListener {
 
 		private Color defaultColor;

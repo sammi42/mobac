@@ -110,7 +110,7 @@ public class MapSources {
 	public static class TilesAtHome extends OsmTileSource.TilesAtHome {
 		@Override
 		public String toString() {
-			return "OpenStreetMap Osmrenderer";
+			return "OpenStreetMap Osmarenderer";
 		}
 	}
 

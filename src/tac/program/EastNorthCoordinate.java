@@ -7,6 +7,8 @@ public class EastNorthCoordinate {
 	public double lon;
 
 	public EastNorthCoordinate() {
+		lat = Double.NaN;
+		lon = Double.NaN;
 	}
 
 	public EastNorthCoordinate(double lat, double lon) {

@@ -65,9 +65,10 @@ public class Utilities {
 	public static double parseLocaleDouble(String text) throws ParseException {
 		ParsePosition pos = new ParsePosition(0);
 		Number n = Utilities.FORMAT_6_DEC.parse(text, pos);
-		if (pos.getIndex() != text.length()) {
+		if (n == null)
+			throw new ParseException("Unknown error", 0);
+		if (pos.getIndex() != text.length())
 			throw new ParseException("Text ends with unparsable characters", pos.getIndex());
-		}
 		return n.doubleValue();
 	}
 

@@ -20,7 +20,7 @@ public class TileDownLoader {
 
 		TileStore ts = TileStore.getInstance();
 
-			Thread.sleep(2000);
+		//Thread.sleep(2000);
 		
 		/**
 		 * If the desired tile already exist in the persistent tilestore and

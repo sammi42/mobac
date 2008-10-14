@@ -6,9 +6,15 @@
 	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${version}.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
-	<target name="all" depends="clean,build,create_jar,create_release" />
+	<target name="all" depends="clean_build,build,create_jar,create_release" />
 
-	<target name="clean">
+	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
+		<delete failonerror="no" dir="ozi" />
+		<delete failonerror="no" dir="atlases" />
+		<delete failonerror="no" dir="atlasestared" />
+	</target>
+
+	<target name="clean_build">
 		<delete failonerror="no">
 			<fileset dir="build">
 				<include name="**" />
@@ -20,6 +26,7 @@
 		<mkdir dir="build" />
 		<javac srcdir="src" destdir="build" target="1.5" debug="true">
 			<classpath path="lib/JMapViewer.jar" />
+			<include name="tac/**" />
 			<exclude name="**/unittest/**" />
 		</javac>
 	</target>
@@ -32,7 +39,7 @@
 				<attribute name="Main-Class" value="${main.class}" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
-			<fileset dir="build">
+			<fileset dir="build" >
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />
 			</fileset>

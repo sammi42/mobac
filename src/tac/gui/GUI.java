@@ -56,7 +56,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = -8444942802691874960L;
 
-	private static final String VERSION = "0.9 alpha";
+	private static final String VERSION = "0.9.1";
 
 	private JPanel leftPanel;
 	private JPanel rightPanel;

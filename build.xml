@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
-	<property name="version" value="0.9" />
+	<property name="version" value="0.9.1" />
 	<property name="jar.name" value="TrekBuddy_Atlas_Creator.jar" />
 	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${version}.zip" />
 	<property name="main.class" value="tac.StartTAC" />
@@ -20,6 +20,10 @@
 				<include name="**" />
 			</fileset>
 		</delete>
+	</target>
+	
+	<target name="delete_build" description="Deleted the entire build folder">
+		<delete failonerror="yes" dir="build" />
 	</target>
 
 	<target name="build">

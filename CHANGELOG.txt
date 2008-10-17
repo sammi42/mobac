@@ -1,3 +1,7 @@
+TrekBuddy Atlas Creator v 0.9.1
+
+ * Fixed wrong calculation of number of tiles when the amount was large. 
+
 TrekBuddy Atlas Creator v 0.9 alpha
  
  * GUI is now resizeable

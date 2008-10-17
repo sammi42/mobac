@@ -98,13 +98,18 @@ public class MapSelection {
 		return new Point(x, y);
 	}
 
+	/**
+	 * Return the amount of tiles for the current selection in the specified 
+	 * zoom level. 
+	 * 
+	 * @param zoom is the zoom level to calculate the amount of tiles for 
+	 * @return the amount of tiles in the current selection in the supplied zoom level 
+	 */
 	public long calculateNrOfTiles(int zoom) {
-		Point max = getBottomRightTileCoordinate(zoom);
-		max.x = (max.x + Tile.SIZE - 1) / Tile.SIZE;
-		max.y = (max.y + Tile.SIZE - 1) / Tile.SIZE;
+		Point max = getBottomRightTileNumber(zoom);
 		Point min = getTopLeftTileNumber(zoom);
-		long width = max.x - min.x;
-		long height = max.y - min.y;
+		long width = max.x - min.x + 1;
+		long height = max.y - min.y + 1;
 		return width * height;
 	}
 }

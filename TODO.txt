@@ -9,28 +9,3 @@ T O D O
 * Add 4 threaded simultaneous download of tiles.
 
 * Add possibility to enter download string for tile repository.
-
-
-Done in version:
-0.9:
- + Added code to create tmi file for each tared map 
-
-0.61:
-* catched: javax.swing.UnsupportedLookAndFeelException: [The Microsoft Windows Look and Feel - com.sun.java.swing.plaf.windows.WindowsLookAndFeel] not supported on this platform
-* Also, can you add another function to choose url of : ditu.google.com rather just maps.google.com
-
-0.7:
- + Added possibility to abort an ongoing download of Atlas
- + Added label that shows how many tiles that will be downloaded with current lat, long & zoom settings 
- + Added persistent tile store (cache of tiles in a store which is persistent between program sessions) 
-
- ! Fixed wrong download link to ditu.google.com
- 
- 0.8:
- + Added xml based settings file via Java Properties
- + Added possibility to change tile size for the downloaded tiles.
- + Added possibility to set map size in atlas. Giving the possibility to create large atlases 
-  
- ! Fixed the non working setting tile store enabled. It was always enabled, despite of what was written in the settings file
- ! Fixed (hopefully) the generation of mixed up atlases at some Linux operating system(s).
- ! Fixed bugs related to defect profiles in profiles.xml file by adding some validation of the xml data at application start.

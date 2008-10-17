@@ -23,7 +23,7 @@ installed.
 A P P L I C A T I O N  S T A R T
 ================================
 
-The application is started by executing the start.bat in a Windows environment or
+The application is started by executing the start.cmd in a Windows environment or
  the start.sh under an Linux / Unix environment. At the first application start
  all necessary files and folders are automatically created by the application.
 
@@ -52,4 +52,19 @@ The application is started by executing the start.bat in a Windows environment o
  ! Fixed (hopefully) the generation of mixed up atlases at some Linux operating system(s).
  ! Fixed bugs related to defect profiles in profiles.xml file by adding some validation of the xml data at application start.
  
- 
+ 0.9 alpha: (2008-10-15)
+  
+ + GUI is now resizeable
+ + preview map uses now JMapViewer component which has several advantages:
+    different map sources 
+    preview loads in background automatical
+    easy zooming (mouse wheel) and movement (right mouse button)
+ + map selection can be done by selecting an area
+ + tmi files for faster map loading are created
+ + tar generation rewritten, each tar is now only opened one time, not 
+   once for each tile to be added (increases tar creation in case of a virus 
+   scanner being active)
+     
+ 0.9.1: (2008-10-17)
+
+ ! Fixed wrong calculation of number of tiles when the amount was large. 

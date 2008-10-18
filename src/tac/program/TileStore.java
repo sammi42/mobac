@@ -31,7 +31,7 @@ public class TileStore {
 	}
 
 	private String getTilePath(int x, int y, int zoom, TileSource tileSource) {
-		return tileStorePath + tileSource + "/" + zoom + "_" + x + "_" + y + "."
+		return tileStorePath + tileSource.getName() + "/" + zoom + "_" + x + "_" + y + "."
 				+ tileSource.getTileType();
 	}
 
@@ -46,8 +46,8 @@ public class TileStore {
 			return false;
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
-		long sourceBytes =0;
-		long writtenBytes=0;
+		long sourceBytes = 0;
+		long writtenBytes = 0;
 		try {
 			fis = new FileInputStream(sourceFile);
 			fos = new FileOutputStream(targetFileName);

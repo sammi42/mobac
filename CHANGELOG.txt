@@ -4,6 +4,12 @@ V E R S I O N  I N F O R M A T I O N
  + = Additions since previous version
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
+
+ 0.?: (2008-??-??)
+
+ + Detailed log files can be created by providing a configuration file log4j.xml
+     (see README.txt for details).
+ + HTTP Proxy (host & port) can be specified via GUI
  
  0.9.1: (2008-10-17)
 

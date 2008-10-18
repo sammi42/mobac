@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,6 +20,8 @@ import org.w3c.dom.NodeList;
 import tac.program.Profile;
 
 public class PersistentProfiles {
+
+	private static Logger log = Logger.getLogger(PersistentProfiles.class);
 
 	public static Vector<Profile> load(File profiles) {
 		Vector<Profile> profilesVector = new Vector<Profile>();
@@ -268,7 +271,7 @@ public class PersistentProfiles {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error while loading profile", e);
 		}
 		return profilesVector;
 	}
@@ -375,8 +378,10 @@ public class PersistentProfiles {
 			}
 			out.print("</profiles>");
 		} catch (IOException e) {
+			log.error("Error while saving profile", e);
+		} finally {
+			Utilities.closeWriter(out);
 		}
-		out.close();
 	}
 
 	public static Double validateCoordinate(String direction, Double directionValue) {

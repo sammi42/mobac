@@ -14,6 +14,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 
@@ -24,7 +25,7 @@ import tac.utilities.Utilities;
  * 
  */
 public class MapCreator {
-
+	private Logger log = Logger.getLogger(MapCreator.class);
 	private static boolean tileSizeErrorNotified = false;
 
 	private int xMin;
@@ -108,13 +109,10 @@ public class MapCreator {
 			fw.write(Utilities.prepareMapString(layerName + ".png", longitudeMin, longitudeMax,
 					latitudeMin, latitudeMax, width, height));
 			fw.close();
-		} catch (IOException iox) {
-			iox.printStackTrace();
+		} catch (IOException e) {
+			log.error("",e);
 		} finally {
-			try {
-				fw.close();
-			} catch (Exception e) {
-			}
+			Utilities.closeWriter(fw);
 		}
 	}
 
@@ -142,8 +140,8 @@ public class MapCreator {
 					File fSource = (File) tilesInFileFormat.get("y" + y + "x" + x + ".png");
 					setFiles.add(fDest.getName());
 					Utilities.fileCopy(fSource, fDest);
-				} catch (IOException iox) {
-					iox.printStackTrace();
+				} catch (IOException e) {
+					log.error("",e);
 				}
 				pixelValueY++;
 			}
@@ -193,7 +191,7 @@ public class MapCreator {
 						graphics.drawImage(ImageIO.read(tileToMerge), null, offsetX * 256,
 								offsetY * 256);
 					} catch (IOException e) {
-						e.printStackTrace();
+						log.error("Image loading failed!",e);
 					}
 				}
 				offsetX++;
@@ -311,7 +309,7 @@ public class MapCreator {
 				ImageIO.write(buf, "png", fos);
 				fos.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("",e);
 			}
 			buf = null;
 		}
@@ -328,14 +326,10 @@ public class MapCreator {
 			for (String file : setFiles) {
 				fw.write(file + "\r\n");
 			}
-		} catch (IOException iox) {
-			iox.printStackTrace();
+		} catch (IOException e) {
+			log.error("",e);
 		} finally {
-			try {
-
-				fw.close();
-			} catch (Exception e) {
-			}
+			Utilities.closeWriter(fw);
 		}
 	}
 }

@@ -11,11 +11,14 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
 
 public class AtlasThread extends Thread implements ActionListener {
+
+	private Logger log = Logger.getLogger(AtlasThread.class);
 
 	private AtlasProgress ap;
 	private MapSelection mapSelection;
@@ -79,8 +82,8 @@ public class AtlasThread extends Thread implements ActionListener {
 			FileWriter fw = new FileWriter(crtba);
 			fw.write("Atlas 1.0\r\n");
 			fw.close();
-		} catch (IOException iox) {
-			iox.printStackTrace();
+		} catch (IOException e) {
+			log.error("", e);
 		}
 
 		int nrOfLayers = sZL.getNrOfLayers();
@@ -122,8 +125,9 @@ public class AtlasThread extends Thread implements ActionListener {
 			Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
 			Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
 
-//			System.out.println("Selection to download: \n\t" + topLeft + "\n\t" + bottomRight
-//					+ "\n\tzoom: " + zoom);
+			// System.out.println("Selection to download: \n\t" + topLeft +
+			// "\n\t" + bottomRight
+			// + "\n\tzoom: " + zoom);
 			int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
 
 			int xMin = topLeft.x;

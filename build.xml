@@ -6,12 +6,13 @@
 	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${version}.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
-	<target name="all" depends="clean_build,build,create_jar,create_release" />
+	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete failonerror="no" dir="ozi" />
 		<delete failonerror="no" dir="atlases" />
 		<delete failonerror="no" dir="atlasestared" />
+		<delete failonerror="no" dir="build" />
 	</target>
 
 	<target name="clean_build">
@@ -21,7 +22,7 @@
 			</fileset>
 		</delete>
 	</target>
-	
+
 	<target name="delete_build" description="Deleted the entire build folder">
 		<delete failonerror="yes" dir="build" />
 	</target>
@@ -29,7 +30,9 @@
 	<target name="build">
 		<mkdir dir="build" />
 		<javac srcdir="src" destdir="build" target="1.5" debug="true">
-			<classpath path="lib/JMapViewer.jar" />
+			<classpath>
+				<fileset dir="lib" includes="*.jar" />
+			</classpath>
 			<include name="tac/**" />
 			<exclude name="**/unittest/**" />
 		</javac>
@@ -38,16 +41,30 @@
 	<target name="create_jar">
 		<delete file="${jar.name}" />
 		<unjar src="lib/JMapViewer.jar" dest="build" />
+		<unjar src="lib/log4j-1.2.15.jar" dest="build" />
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="${main.class}" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
-			<fileset dir="build" >
+			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />
 			</fileset>
 		</jar>
+	</target>
+
+	<target name="shrink" depends="create_jar" description="Removes unused classes from compiled jar">
+		<move file="${jar.name}" tofile="build/temp.jar" overwrite="true" />
+		<java jar="lib/proguard.jar" fork="true">
+			<arg line=" -injars build/temp.jar " />
+			<arg line=" -outjars ${jar.name} " />
+			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
+			<arg line=" -keep public class ${main.class} { public static void main(java.lang.String[]); }" />
+
+			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
+		</java>
+		<delete file="build/temp.jar" />
 	</target>
 
 	<target name="create_release">

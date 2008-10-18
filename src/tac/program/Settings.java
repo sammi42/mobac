@@ -9,10 +9,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.InvalidPropertiesFormatException;
 
+import javax.swing.JOptionPane;
+
+import org.apache.log4j.Logger;
+
 import tac.gui.preview.MapSources;
 import tac.utilities.Utilities;
 
 public class Settings {
+
+	private static Logger log = Logger.getLogger(Settings.class);
 
 	private static Settings instance;
 
@@ -24,6 +30,8 @@ public class Settings {
 	private static final String PREVIEW_LON = "preview.lon";
 	private static final String PREVIEW_MAPSOURCE = "preview.mapsource";
 	private static final String ATLAS_NAME = "atlas.name";
+	private static final String PROXY_HOST = "proxy.host";
+	private static final String PROXY_PORT = "proxy.port";
 
 	private int maxMapSize = 0;
 
@@ -35,7 +43,7 @@ public class Settings {
 	private String defaultMapSource = MapSources.getMapSources()[0].getName();
 
 	private String atlasName = "";
-	
+
 	private Settings() {
 	}
 
@@ -54,6 +62,18 @@ public class Settings {
 		return System.getProperty("user.dir");
 	}
 
+	public void loadOrQuit() {
+		try {
+			load();
+		} catch (IOException e) {
+			log.error(e);
+			JOptionPane.showMessageDialog(null,
+					"Could not create file settings.xml program will exit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+	}
+
 	public void load() throws IOException {
 		InputStream is = null;
 		try {
@@ -69,9 +89,16 @@ public class Settings {
 					previewDefaultCoordinate.lon);
 			defaultMapSource = p.getProperty(PREVIEW_MAPSOURCE);
 			atlasName = p.getProperty(ATLAS_NAME, atlasName);
+			String proxyHost = p.getProperty(PROXY_HOST);
+			String proxyPort = p.getProperty(PROXY_PORT);
+			if (proxyHost != null)
+				System.setProperty("http.proxyHost", proxyHost);
+			if (proxyPort != null)
+				System.setProperty("http.proxyPort", proxyPort);
+
 		} catch (FileNotFoundException e) {
 		} catch (InvalidPropertiesFormatException e) {
-			e.printStackTrace();
+			log.error("", e);
 		} finally {
 			Utilities.closeStream(is);
 		}
@@ -89,11 +116,13 @@ public class Settings {
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
 			p.setProperty(PREVIEW_MAPSOURCE, defaultMapSource);
 			p.setProperty(ATLAS_NAME, atlasName);
+			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
+			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
 			result = true;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("Error while saving settings!", e);
 		} finally {
 			Utilities.closeStream(os);
 		}

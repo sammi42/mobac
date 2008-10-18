@@ -1,6 +1,9 @@
 package tac.program;
 
 import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import tac.utilities.Utilities;
 
@@ -51,4 +54,18 @@ public class SettingsProperties extends Properties {
 		setProperty(key, Utilities.FORMAT_6_DEC_ENG.format(value));
 	}
 
+	public void setStringProperty(String key, String value) {
+		if (value == null)
+			return;
+		setProperty(key, value);
+	}
+
+	@Override
+	public Set<Object> keySet() {
+		return new TreeSet<Object>(super.keySet());
+	}
+
+
+
+	
 }

@@ -1,6 +1,8 @@
 package tac.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import tac.program.Settings;
 
@@ -24,6 +27,9 @@ public class SettingsGUI extends JDialog {
 	private JCheckBox tileStoreEnabled;
 
 	private JComboBox mapSize;
+
+	private JTextField proxyHost;
+	private JTextField proxyPort;
 
 	private JButton okButton;
 	private JButton cancelButton;
@@ -61,6 +67,7 @@ public class SettingsGUI extends JDialog {
 		tabbedPane.setBounds(0, 0, 492, 275);
 		tabbedPane.add(createTileStorePanel(), "Tile store");
 		tabbedPane.add(createMapSizePanel(), "Map size");
+		tabbedPane.add(createNetworkPanel(), "Network");
 
 		this.getContentPane().add(tabbedPane);
 	}
@@ -114,6 +121,21 @@ public class SettingsGUI extends JDialog {
 		return thumbNailBackGround;
 	}
 
+	private JPanel createNetworkPanel() {
+		JPanel panel = new JPanel(new GridLayout(2, 2));
+		JLabel proxyHostLabel = new JLabel("HTTP Proxy host name: ");
+		proxyHost = new JTextField(System.getProperty("http.proxyHost"));
+		JLabel proxyPortLabel = new JLabel("HTTP Proxy port: ");
+		proxyPort = new JTextField(System.getProperty("http.proxyPort"));
+		panel.add(proxyHostLabel);
+		panel.add(proxyHost);
+		panel.add(proxyPortLabel);
+		panel.add(proxyPort);
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(panel, BorderLayout.NORTH);
+		return p;
+	}
+
 	public void createJButtons() {
 		okButton = new JButton("Ok");
 		okButton.setBounds(364, 280, 50, 25);
@@ -144,6 +166,9 @@ public class SettingsGUI extends JDialog {
 
 		int size = ((MapSize) mapSize.getSelectedItem()).getMapSize();
 		s.setMaxMapSize(size);
+
+		System.setProperty("http.proxyHost", proxyHost.getText());
+		System.setProperty("http.proxyPort", proxyPort.getText());
 
 		// Close the dialog window
 		SettingsGUI.this.dispose();

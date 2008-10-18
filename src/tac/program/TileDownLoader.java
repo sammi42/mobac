@@ -9,19 +9,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class TileDownLoader {
 
+	private static Logger log = Logger.getLogger(TileDownLoader.class);
+
 	public static final String SECURESTRING = "Galileo";
 
 	public static int getImage(int x, int y, int zoom, File destinationDirectory,
-			TileSource tileSource, boolean isAtlasDownload) throws IOException, InterruptedException {
+			TileSource tileSource, boolean isAtlasDownload) throws IOException,
+			InterruptedException {
 
 		TileStore ts = TileStore.getInstance();
 
-		//Thread.sleep(2000);
-		
+		// Thread.sleep(2000);
+
 		/**
 		 * If the desired tile already exist in the persistent tilestore and
 		 * settings is to use the tile store
@@ -43,7 +47,7 @@ public class TileDownLoader {
 
 		String url = tileSource.getTileUrl(zoom, x, y);
 
-		System.out.println("Downloading " + url);
+		log.info("Downloading " + url);
 		URL u = new URL(url);
 		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 
@@ -85,7 +89,7 @@ public class TileDownLoader {
 				destination = new FileOutputStream(tileStoreFile).getChannel();
 				destination.transferFrom(source, 0, source.size());
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Error while copying tile from tilestore!", e);
 			} finally {
 				if (source != null) {
 					source.close();

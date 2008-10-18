@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import tac.tar.PreparedTarEntry;
 import tac.tar.TarArchive;
 import tac.tar.TarUtilities;
@@ -22,6 +24,8 @@ import tac.utilities.Utilities;
  * TrekBuddy tmi map tar index file description</a>
  */
 public class AtlasTarCreator {
+
+	private Logger log = Logger.getLogger(AtlasTarCreator.class);
 
 	private File atlasDir;
 	private File atlasTarDir;
@@ -63,7 +67,7 @@ public class AtlasTarCreator {
 
 			ta.writeEndofArchive();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("", e);
 		} finally {
 			if (ta != null)
 				ta.close();
@@ -123,7 +127,7 @@ public class AtlasTarCreator {
 			}
 			ta.writeEndofArchive();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("", e);
 		} finally {
 			if (ta != null)
 				ta.close();

@@ -38,6 +38,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.preview.MapSelectionListener;
@@ -57,6 +58,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private static final long serialVersionUID = -8444942802691874960L;
 
 	private static final String VERSION = "0.9.1";
+
+	private static Logger log = Logger.getLogger(GUI.class);
 
 	private JPanel leftPanel;
 	private JPanel rightPanel;
@@ -114,6 +117,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public GUI() {
 		super();
+		setTitle("TrekBuddy Atlas Creator v" + VERSION);
+		log.trace("Creating main dialog - " + getTitle());
 		createMainFrame();
 		createLeftPanel();
 		createRightPanel();
@@ -122,9 +127,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void createMainFrame() {
-
-		setTitle("TrekBuddy Atlas Creator v" + VERSION);
-
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		dScreen.width = Math.min(1024, dScreen.width);
 		dScreen.height = Math.min(768, dScreen.height);
@@ -145,9 +147,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (UnsupportedLookAndFeelException e1) {
-				System.out.println("The selection of look and feel was not possible, due to: "
-						+ e1.toString());
-				e1.printStackTrace();
+				log.error("The selection of look and feel was not possible!", e1);
 			} catch (Exception e1) {
 			}
 		}
@@ -491,14 +491,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		profilesVector = new Vector<Profile>();
 		profileNamesVector = new Vector<String>();
 		Settings settings = Settings.getInstance();
-		try {
-			settings.load();
-		} catch (IOException iox) {
-			JOptionPane.showMessageDialog(null,
-					"Could not create file settings.xml program will exit.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		}
 		atlasNameTextField.setText(settings.getAtlasName());
 		previewMap.settingsLoadPosition();
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
@@ -541,7 +533,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 				int result = -1;
 
-				result = Utilities.validateString(atlasNameTextField.getText(), false);
+				result = Utilities.validateString(atlasNameTextField.getText());
 
 				if (result > -1) {
 					errorText += "Atlas name contains illegal characters (" + (char) result + ")\n";
@@ -618,7 +610,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
 		} catch (Exception e) {
 			amountOfTilesLabel.setText("( ? )");
-			e.printStackTrace();
+			log.error("", e);
 		}
 	}
 
@@ -707,7 +699,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		if (atlasNameTextField.equals(textField)) {
 			int result = -1;
-			result = Utilities.validateString(input, false);
+			result = Utilities.validateString(input);
 			if (result > -1) {
 				JOptionPane.showMessageDialog(null, "\"" + (char) result + "\" is not valid input",
 						"Error", JOptionPane.ERROR_MESSAGE);
@@ -756,8 +748,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
 							getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
 					atlasThread.start();
-				} catch (Exception ex) {
-					ex.printStackTrace();
+				} catch (Exception e) {
+					log.error("", e);
 				}
 
 			}
@@ -851,7 +843,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 					PersistentProfiles.store(profilesVector);
 					initiateProgram();
 				} catch (ParseException e) {
-					e.printStackTrace();
+					log.error("", e);
 				}
 			}
 		}

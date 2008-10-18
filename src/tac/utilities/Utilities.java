@@ -18,6 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -33,6 +36,21 @@ public class Utilities {
 	private static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
+
+	public static final Pattern VALID_FILENAME_PATTERN = buildDisallowedCharatersPattern();
+
+	private static Pattern buildDisallowedCharatersPattern() {
+		char[] disallowedChars = new char[] { '/', '\\', ':', '<', '>', '|', '*', '?', '\"', ',',
+				'.' };
+		String regex = "";
+		for (int i = 0; i < disallowedChars.length; i++) {
+			// We are dealing with special characters
+			// better we escape each disallowed character...
+			regex += "\\" + disallowedChars[i];
+		}
+		regex = "[" + regex + "]";
+		return Pattern.compile(regex);
+	}
 
 	public static void closeStream(InputStream in) {
 		try {
@@ -80,62 +98,18 @@ public class Utilities {
 		}
 	}
 
-	public static int validateString(String theStringToValidate, boolean isPath) {
+	public static int validateString(String theStringToValidate) {
 
 		int isValid = -1;
 
-		if (!isPath) {
-			if (theStringToValidate.indexOf(47) > -1) { // "/"
-				isValid = 47;
-			}
-			if (theStringToValidate.indexOf(92) > -1) { // "\"
-				isValid = 92;
-			}
-			if (theStringToValidate.indexOf(58) > -1) { // ":"
-				isValid = 58;
-			}
-		}
-		if (theStringToValidate.indexOf(60) > -1) { // "<"
-			isValid = 60;
-		}
-		if (theStringToValidate.indexOf(62) > -1) { // ">"
-			isValid = 62;
-		}
-		if (theStringToValidate.indexOf(124) > -1) { // "|"
-			isValid = 124;
-		}
-		if (theStringToValidate.indexOf(42) > -1) { // "*"
-			isValid = 42;
-		}
-		if (theStringToValidate.indexOf(63) > -1) { // "?"
-			isValid = 63;
-		}
-		if (theStringToValidate.indexOf(34) > -1) { // """
-			isValid = 34;
-		}
-		if (theStringToValidate.indexOf(44) > -1) { // ","
-			isValid = 44;
-		}
-		if (theStringToValidate.indexOf(46) > -1) { // "."
-			isValid = 46;
+		Matcher m = VALID_FILENAME_PATTERN.matcher(theStringToValidate);
+		if (m.find()) {
+			MatchResult mr = m.toMatchResult();
+			char match = theStringToValidate.charAt(mr.start());
+			return match;
 		}
 
 		return isValid;
-	}
-
-	public static int validateTileSizeInput(String theTileSizeInput) {
-
-		int notValidCharacter = -1;
-
-		char[] chars = theTileSizeInput.toCharArray();
-
-		for (int i = 0; i < chars.length; i++) {
-
-			if (chars[i] < 48 || chars[i] > 57) {
-				return notValidCharacter = chars[i];
-			}
-		}
-		return notValidCharacter;
 	}
 
 	public static void fileCopy(File sourceFile, File destFile) throws IOException {
@@ -249,206 +223,6 @@ public class Utilities {
 		return sbOut.toString();
 	}
 
-	// public static boolean createCR_TAR(File atlasFolder, File atlasTarFolder)
-	// {
-	//
-	// File[] taredFolderFiles = atlasWorkTarFolder.listFiles();
-	//
-	// for (int i = 0; i < taredFolderFiles.length; i++) {
-	//
-	// if (taredFolderFiles[i].isDirectory()) {
-	// deleteDirectory(taredFolderFiles[i]);
-	// } else {
-	// taredFolderFiles[i].delete();
-	// }
-	// }
-	//
-	// ProcessValues.clearCrTarContentVector();
-	//
-	// listAtlasDirectoryContent(atlasFolder);
-	//
-	// Vector<File> temp = new Vector<File>();
-	// temp = ProcessValues.getCrTarContentVector();
-	//
-	// Vector<File> files = new Vector<File>();
-	//
-	// String fileSeparator = System.getProperty("file.separator");
-	//
-	// for (int i = 0; i < temp.size(); i++) {
-	//
-	// // If element in Vector is a file, then this will be added to the
-	// // Vector with files
-	// if (temp.elementAt(i).isFile()) {
-	// files.addElement(temp.elementAt(i));
-	// } else {
-	//
-	// String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
-	// String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
-	// atlasWorkTarFolderParent.length(),
-	// temp.elementAt(i).getAbsolutePath().length());
-	//
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
-	// 1,
-	// trimmedPath.length());
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
-	// 1,
-	// trimmedPath.length());
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
-	// 1,
-	// trimmedPath.length());
-	//
-	// if (new File(atlasWorkTarFolder, trimmedPath).exists() != true) {
-	// new File(atlasWorkTarFolder, trimmedPath).mkdirs();
-	// }
-	// }
-	// }
-	// for (int i = 0; i < files.size(); i++) {
-	//
-	// try {
-	// String atlasWorkTarFolderParent = atlasWorkTarFolder.getParent();
-	//
-	// String trimmedPath = files.elementAt(i).getAbsolutePath().substring(
-	// atlasWorkTarFolderParent.length(),
-	// files.elementAt(i).getAbsolutePath().length());
-	//
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
-	// 1,
-	// trimmedPath.length());
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
-	// 1,
-	// trimmedPath.length());
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(fileSeparator) +
-	// 1,
-	// trimmedPath.length());
-	//
-	// if (files.elementAt(i).getName().equals("cr.tba")) {
-	// fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
-	// + files.elementAt(i).getName()));
-	// }
-	// if (files.elementAt(i).getName().endsWith(".map")) {
-	// fileCopy(files.elementAt(i), new File(atlasWorkTarFolder + fileSeparator
-	// + trimmedPath));
-	// }
-	// } catch (IOException iox) {
-	// iox.printStackTrace();
-	// return false;
-	// }
-	// }
-	// TarArchive ta = null;
-	// try {
-	// ta = new TarArchive(atlasFolder, new File(atlasTarFolder, "cr.tar"));
-	// ta.createCRTarArchive();
-	// } catch (FileNotFoundException e) {
-	// e.printStackTrace();
-	// return false;
-	// }
-	// return true;
-	// }
-	//
-	// public static void createTarPackedLayers(File atlasFolder, File
-	// atlasTarFolder) {
-	//
-	// ProcessValues.clearCrTarContentVector();
-	//
-	// listAtlasDirectoryContent(atlasFolder);
-	//
-	// Vector<File> temp = new Vector<File>();
-	// temp = ProcessValues.getCrTarContentVector();
-	//
-	// Vector<File> setFolders = new Vector<File>();
-	//
-	// for (int i = 0; i < temp.size(); i++) {
-	//
-	// if (!temp.elementAt(i).isFile()) {
-	// if (temp.elementAt(i).getName().equals("set")) {
-	// setFolders.addElement(temp.elementAt(i));
-	// } else {
-	//
-	// String atlasTarFolderParent = atlasTarFolder.getParent();
-	//
-	// String trimmedPath = temp.elementAt(i).getAbsolutePath().substring(
-	// atlasTarFolderParent.length(),
-	// temp.elementAt(i).getAbsolutePath().length());
-	//
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) +
-	// 1,
-	// trimmedPath.length());
-	//
-	// File f = new File(atlasTarFolder, trimmedPath);
-	// if (f.exists() != true)
-	// f.mkdirs();
-	// }
-	// }
-	// }
-	// for (int i = 0; i < setFolders.size(); i++) {
-	//
-	// String atlasTarFolderParent = atlasTarFolder.getParent();
-	//
-	// String trimmedPath =
-	// (setFolders.elementAt(i).getParentFile()).getAbsolutePath()
-	// .substring(atlasTarFolderParent.length(),
-	// (setFolders.elementAt(i).getParentFile()).getAbsolutePath().length());
-	//
-	// trimmedPath = trimmedPath.substring(trimmedPath.indexOf(File.separator) +
-	// 1,
-	// trimmedPath.length());
-	//
-	// String destinationDir = atlasTarFolder + File.separator + trimmedPath +
-	// File.separator;
-	// File destinationFile = new File(destinationDir,
-	// setFolders.elementAt(i).getParentFile()
-	// .getName()
-	// + ".tar");
-	// File sourceFile = new File(atlasFolder, trimmedPath);
-	//
-	// TarArchive ta = null;
-	// try {
-	// ta = new TarArchive(sourceFile, destinationFile);
-	// ta.createArchive();
-	// } catch (FileNotFoundException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	//
-	// /***
-	// * Method for recursively iterate through a directory and save paths to a
-	// * Vector in ProcessValues class if the founded item is an directory or an
-	// * file with suffix ".map"
-	// **/
-	// public static void listAtlasDirectoryContent(File theDirectoryToList) {
-	//
-	// File[] directoryContent = theDirectoryToList.listFiles();
-	//
-	// /***
-	// * Iterate through all files in directory
-	// **/
-	// for (int i = 0; i < directoryContent.length; i++) {
-	// /***
-	// * If directory is found, add pathname to ProcessValues and do a
-	// * recursive call to this method with current directory as parameter
-	// **/
-	// if (directoryContent[i].isDirectory()) {
-	// ProcessValues.addCrTarContent(directoryContent[i]);
-	// listAtlasDirectoryContent(directoryContent[i]);
-	// }
-	// /***
-	// * If current file is cr.tba file, then add it�s path to
-	// * ProcessValues
-	// **/
-	// if (directoryContent[i].getName().endsWith(".tba")) {
-	// ProcessValues.addCrTarContent(directoryContent[i]);
-	// }
-	// /***
-	// * If current file is an *.map file, then add it�s path to
-	// * ProcessValues
-	// **/
-	// if (directoryContent[i].getName().endsWith(".map")) {
-	// ProcessValues.addCrTarContent(directoryContent[i]);
-	// }
-	// }
-	// }
-
 	public static boolean deleteDirectory(File path) {
 
 		if (path.exists()) {
@@ -519,8 +293,6 @@ public class Utilities {
 				defaultProfile.setZoomLevels(zoomValues);
 				defaultProfile.setTileSizeWidth(256);
 				defaultProfile.setTileSizeHeight(256);
-				defaultProfile.setCustomTileSizeWidth(256);
-				defaultProfile.setCustomTileSizeHeight(256);
 				defaultProfile.setAtlasName("Default");
 
 				defaultProfiles.addElement(defaultProfile);
@@ -533,19 +305,6 @@ public class Utilities {
 				System.exit(0);
 			}
 		}
-	}
-
-	public static String nrOfDecimals(double theValue, int nrOfDecimals) {
-
-		String workingString = Double.toString(theValue);
-
-		int stringLength = workingString.length();
-		int decimalPointIndex = workingString.indexOf(".");
-
-		if (decimalPointIndex + nrOfDecimals < stringLength) {
-			workingString = workingString.substring(0, decimalPointIndex + nrOfDecimals + 1);
-		}
-		return workingString;
 	}
 
 	/**

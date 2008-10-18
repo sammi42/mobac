@@ -1,16 +1,49 @@
-TrekBuddy Atlas Creator v 0.9.1
-
- * Fixed wrong calculation of number of tiles when the amount was large. 
-
-TrekBuddy Atlas Creator v 0.9 alpha
+V E R S I O N  I N F O R M A T I O N
+ ====================================
  
- * GUI is now resizeable
- * preview map uses now JMapViewer component which has several advantages:
-   + different map sources 
-   + preview loads in background automatical
-   + easy zooming (mouse wheel) and movement (right mouse button)
- * map selection can be done by selecting an area
- * tmi files for faster map loading are created
- * tar generation rewritten, each tar is now only opened one time, not 
+ + = Additions since previous version
+ ! = Bug fixes since previous version
+ ~ = Changes   since previous version
+ 
+ 0.9.1: (2008-10-17)
+
+ ! Fixed wrong calculation of number of tiles when the amount was large. 
+ 
+ 0.9 alpha: (2008-10-15)
+  
+ + Added resizeable GUI
+ + Added possibility to select map area by selection an area with mouse
+ + Added tmi files for the tared atlases which make the  map loading faster
+ 
+ ~ Changed preview viewer to JMapViewer. It has several advantages:
+    different map sources 
+    preview loads in background automatical
+    easy zooming (mouse wheel) and movement (right mouse button)
+  ~ Tar generation rewritten, each tar is now only opened one time, not 
    once for each tile to be added (increases tar creation in case of a virus 
-   scanner being active)   
+   scanner being active)
+ 
+ 0.8:
+ + Added xml based settings file via Java Properties
+ + Added possibility to change tile size for the downloaded tiles.
+ + Added possibility to set map size in atlas. Giving the possibility to create large atlases 
+  
+ ! Fixed the non working setting tile store enabled. It was always enabled, despite of what was written in the settings file
+ ! Fixed (hopefully) the generation of mixed up atlases at some Linux operating system(s).
+ ! Fixed bugs related to defect profiles in profiles.xml file by adding some validation of the xml data at application start.
+  
+0.7:
+ + Added possibility to abort an ongoing download of Atlas
+ + Added label that shows how many tiles that will be downloaded with current lat, long & zoom settings 
+ + Added persistent tile store (cache of tiles in a store which is persistent between program sessions) 
+
+ ! Fixed wrong download link to ditu.google.com
+ 
+  0.61:
+ + Added a possibility to select to download tiles from either ditu.google.com or maps.google.com
+  
+ ! Fixed hard coded look and feel, which resulted in an javax.swing.UnsupportedLookAndFeelException at other environments then Windows
+ 
+ 
+     
+ 

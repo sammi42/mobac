@@ -2,7 +2,6 @@ package tac.program;
 
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import tac.utilities.Utilities;

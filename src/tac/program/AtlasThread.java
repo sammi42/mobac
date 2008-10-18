@@ -18,7 +18,8 @@ import tac.gui.AtlasProgress;
 
 public class AtlasThread extends Thread implements ActionListener {
 
-	private Logger log = Logger.getLogger(AtlasThread.class);
+	private static int threadNum = 0;
+	private static Logger log = Logger.getLogger(AtlasThread.class);
 
 	private AtlasProgress ap;
 	private MapSelection mapSelection;
@@ -30,13 +31,18 @@ public class AtlasThread extends Thread implements ActionListener {
 
 	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
 			SelectedZoomLevels sZL, int tileSizeWidth, int tileSizeHeight) {
-		super();
+		super("AtlasThread " + getNextThreadNum());
 		this.tileSource = tileSource;
 		this.atlasName = atlasName;
 		this.mapSelection = mapSelection;
 		this.sZL = sZL;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
+	}
+
+	private static synchronized int getNextThreadNum() {
+		threadNum++;
+		return threadNum;
 	}
 
 	public void run() {

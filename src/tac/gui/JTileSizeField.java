@@ -52,6 +52,10 @@ public class JTileSizeField extends JTextField {
 		return Integer.parseInt(getText());
 	}
 
+	public void setTileSize(int newTileSize) {
+		super.setText(Integer.toString(newTileSize));
+	}
+
 	public void setText(String t) {
 		throw new RuntimeException("Calling setText() is not allowed!");
 	}

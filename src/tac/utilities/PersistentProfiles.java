@@ -44,17 +44,12 @@ public class PersistentProfiles {
 
 					Element fstElmnt = (Element) fstNode;
 
-					NodeList nameElmntLst = fstElmnt.getElementsByTagName("name");
-					Element nameElmnt = (Element) nameElmntLst.item(0);
-					NodeList name = nameElmnt.getChildNodes();
+					NodeList name = getNamedNodeChildren(fstElmnt,"name");
 					String profileName = ((Node) name.item(0)).getNodeValue();
 
 					theProfile.setProfileName(profileName);
 
-					NodeList latMaxElmntLst = fstElmnt.getElementsByTagName("latMax");
-					Element latMaxElmnt = (Element) latMaxElmntLst.item(0);
-					NodeList latMax = latMaxElmnt.getChildNodes();
-
+					NodeList latMax = getNamedNodeChildren(fstElmnt,"latMax");
 					try {
 						theProfile.setLatitudeMax(validateCoordinate("lat", Double
 								.parseDouble(((Node) latMax.item(0)).getNodeValue())));
@@ -67,10 +62,7 @@ public class PersistentProfiles {
 						System.exit(0);
 					}
 
-					NodeList latMinElmntLst = fstElmnt.getElementsByTagName("latMin");
-					Element latMinElmnt = (Element) latMinElmntLst.item(0);
-					NodeList latMin = latMinElmnt.getChildNodes();
-
+					NodeList latMin = getNamedNodeChildren(fstElmnt,"latMin");
 					try {
 						theProfile.setLatitudeMin(validateCoordinate("lat", Double
 								.parseDouble(((Node) latMin.item(0)).getNodeValue())));
@@ -83,10 +75,7 @@ public class PersistentProfiles {
 						System.exit(0);
 					}
 
-					NodeList longMaxElmntLst = fstElmnt.getElementsByTagName("longMax");
-					Element longMaxElmnt = (Element) longMaxElmntLst.item(0);
-					NodeList longMax = longMaxElmnt.getChildNodes();
-
+					NodeList longMax = getNamedNodeChildren(fstElmnt,"longMax");
 					try {
 						theProfile.setLongitudeMax(validateCoordinate("long", Double
 								.parseDouble(((Node) longMax.item(0)).getNodeValue())));
@@ -99,9 +88,7 @@ public class PersistentProfiles {
 						System.exit(0);
 					}
 
-					NodeList longMinElmntLst = fstElmnt.getElementsByTagName("longMin");
-					Element longMinElmnt = (Element) longMinElmntLst.item(0);
-					NodeList longMin = longMinElmnt.getChildNodes();
+					NodeList longMin = getNamedNodeChildren(fstElmnt,"longMin");
 
 					try {
 						theProfile.setLongitudeMin(validateCoordinate("long", Double
@@ -115,87 +102,41 @@ public class PersistentProfiles {
 						System.exit(0);
 					}
 
-					boolean[] zoomLevels = new boolean[10];
+					NodeList mapSource = getNamedNodeChildren(fstElmnt, "mapSource");
+					theProfile.setMapSource(mapSource.item(0).getNodeValue());
 
-					NodeList zoomLevelOneElmntLst = fstElmnt.getElementsByTagName("zoomLevelOne");
-					Element zoomLevelOneElmnt = (Element) zoomLevelOneElmntLst.item(0);
-					NodeList zoomLevelOne = zoomLevelOneElmnt.getChildNodes();
+					NodeList zoomLevelNodes = getNamedNodeChildren(fstElmnt, "zoomLevels");
+					int[] zoomLevelsInt = new int[zoomLevelNodes.getLength()];
 
-					zoomLevels[0] = Boolean.parseBoolean(((Node) zoomLevelOne.item(0))
-							.getNodeValue());
+					int zoomLevelCount = 0;
+					int zoomLevelMax = 0;
+					for (int i = 0; i < zoomLevelNodes.getLength(); i++) {
+						try {
+							Element e = (Element) zoomLevelNodes.item(i);
+							String nodeName = e.getNodeName();
+							if (nodeName.startsWith("z")) {
+								nodeName = nodeName.substring(1);
+								int z = Integer.parseInt(nodeName);
+								zoomLevelMax = Math.max(z, zoomLevelMax);
+								zoomLevelsInt[zoomLevelCount++] = z;
+							}
+						} catch (Exception e) {
+						}
+					}
 
-					NodeList zoomLevelTwoElmntLst = fstElmnt.getElementsByTagName("zoomLevelTwo");
-					Element zoomLevelTwoElmnt = (Element) zoomLevelTwoElmntLst.item(0);
-					NodeList zoomLevelTwo = zoomLevelTwoElmnt.getChildNodes();
+					boolean[] zoomLevels = new boolean[zoomLevelMax + 1];
+					for (int i = 0; i < zoomLevels.length; i++)
+						zoomLevels[i] = false;
 
-					zoomLevels[1] = Boolean.parseBoolean(((Node) zoomLevelTwo.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelThreeElmntLst = fstElmnt
-							.getElementsByTagName("zoomLevelThree");
-					Element zoomLevelThreeElmnt = (Element) zoomLevelThreeElmntLst.item(0);
-					NodeList zoomLevelThree = zoomLevelThreeElmnt.getChildNodes();
-
-					zoomLevels[2] = Boolean.parseBoolean(((Node) zoomLevelThree.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelFourElmntLst = fstElmnt.getElementsByTagName("zoomLevelFour");
-					Element zoomLevelFourElmnt = (Element) zoomLevelFourElmntLst.item(0);
-					NodeList zoomLevelFour = zoomLevelFourElmnt.getChildNodes();
-
-					zoomLevels[3] = Boolean.parseBoolean(((Node) zoomLevelFour.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelFiveElmntLst = fstElmnt.getElementsByTagName("zoomLevelFive");
-					Element zoomLevelFiveElmnt = (Element) zoomLevelFiveElmntLst.item(0);
-					NodeList zoomLevelFive = zoomLevelFiveElmnt.getChildNodes();
-
-					zoomLevels[4] = Boolean.parseBoolean(((Node) zoomLevelFive.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelSixElmntLst = fstElmnt.getElementsByTagName("zoomLevelSix");
-					Element zoomLevelSixElmnt = (Element) zoomLevelSixElmntLst.item(0);
-					NodeList zoomLevelSix = zoomLevelSixElmnt.getChildNodes();
-
-					zoomLevels[5] = Boolean.parseBoolean(((Node) zoomLevelSix.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelSevenElmntLst = fstElmnt
-							.getElementsByTagName("zoomLevelSeven");
-					Element zoomLevelSevenElmnt = (Element) zoomLevelSevenElmntLst.item(0);
-					NodeList zoomLevelSeven = zoomLevelSevenElmnt.getChildNodes();
-
-					zoomLevels[6] = Boolean.parseBoolean(((Node) zoomLevelSeven.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelEightElmntLst = fstElmnt
-							.getElementsByTagName("zoomLevelEight");
-					Element zoomLevelEightElmnt = (Element) zoomLevelEightElmntLst.item(0);
-					NodeList zoomLevelEight = zoomLevelEightElmnt.getChildNodes();
-
-					zoomLevels[7] = Boolean.parseBoolean(((Node) zoomLevelEight.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelNineElmntLst = fstElmnt.getElementsByTagName("zoomLevelNine");
-					Element zoomLevelNineElmnt = (Element) zoomLevelNineElmntLst.item(0);
-					NodeList zoomLevelNine = zoomLevelNineElmnt.getChildNodes();
-
-					zoomLevels[8] = Boolean.parseBoolean(((Node) zoomLevelNine.item(0))
-							.getNodeValue());
-
-					NodeList zoomLevelTenElmntLst = fstElmnt.getElementsByTagName("zoomLevelTen");
-					Element zoomLevelTenElmnt = (Element) zoomLevelTenElmntLst.item(0);
-					NodeList zoomLevelTen = zoomLevelTenElmnt.getChildNodes();
-
-					zoomLevels[9] = Boolean.parseBoolean(((Node) zoomLevelTen.item(0))
-							.getNodeValue());
-
+					for (int i = 0; i < zoomLevelCount; i++) {
+						try {
+							zoomLevels[zoomLevelsInt[i]] = true;
+						} catch (Exception e) {
+						}
+					}
 					theProfile.setZoomLevels(zoomLevels);
 
-					NodeList tileSizeWidthElmntLst = fstElmnt.getElementsByTagName("tileSizeWidth");
-					Element tileSizeWidthElmnt = (Element) tileSizeWidthElmntLst.item(0);
-					NodeList tileSizeWidth = tileSizeWidthElmnt.getChildNodes();
-
+					NodeList tileSizeWidth = getNamedNodeChildren(fstElmnt,"tileSizeWidth");
 					try {
 						theProfile.setTileSizeWidth(validateTileSize(Integer
 								.parseInt(((Node) tileSizeWidth.item(0)).getNodeValue())));
@@ -208,11 +149,7 @@ public class PersistentProfiles {
 						System.exit(0);
 					}
 
-					NodeList tileSizeHeightElmntLst = fstElmnt
-							.getElementsByTagName("tileSizeHeight");
-					Element tileSizeHeightElmnt = (Element) tileSizeHeightElmntLst.item(0);
-					NodeList tileSizeHeight = tileSizeHeightElmnt.getChildNodes();
-
+					NodeList tileSizeHeight = getNamedNodeChildren(fstElmnt,"tileSizeHeight");
 					try {
 						theProfile.setTileSizeHeight(validateTileSize(Integer
 								.parseInt(((Node) tileSizeHeight.item(0)).getNodeValue())));
@@ -225,46 +162,7 @@ public class PersistentProfiles {
 						System.exit(0);
 					}
 
-					NodeList customTileSizeWidthElmntLst = fstElmnt
-							.getElementsByTagName("customTileSizeWidth");
-					Element customTileSizeWidthElmnt = (Element) customTileSizeWidthElmntLst
-							.item(0);
-					NodeList customTileSizeWidth = customTileSizeWidthElmnt.getChildNodes();
-
-					try {
-						theProfile.setCustomTileSizeWidth(validateCustomTileSize(Integer
-								.parseInt(((Node) customTileSizeWidth.item(0)).getNodeValue())));
-					} catch (NumberFormatException nfe) {
-						JOptionPane.showMessageDialog(null, "Profile: " + profileName
-								+ " has illegal value in <customTileSizeWidth> tag\nValue: "
-								+ ((Node) customTileSizeWidth.item(0)).getNodeValue()
-								+ "\n\nPlease correct and restart application",
-								"Error in profiles.xml file", JOptionPane.ERROR_MESSAGE);
-						System.exit(0);
-					}
-
-					NodeList customTileSizeHeightElmntLst = fstElmnt
-							.getElementsByTagName("customTileSizeHeight");
-					Element customTileSizeHeightElmnt = (Element) customTileSizeHeightElmntLst
-							.item(0);
-					NodeList customTileSizeHeight = customTileSizeHeightElmnt.getChildNodes();
-
-					try {
-						theProfile.setCustomTileSizeHeight(validateCustomTileSize(Integer
-								.parseInt(((Node) customTileSizeHeight.item(0)).getNodeValue())));
-					} catch (NumberFormatException nfe) {
-						JOptionPane.showMessageDialog(null, "Profile: " + profileName
-								+ " has illegal value in <customTileSizeHeight> tag\nValue: "
-								+ ((Node) customTileSizeHeight.item(0)).getNodeValue()
-								+ "\n\nPlease correct and restart application",
-								"Error in profiles.xml file", JOptionPane.ERROR_MESSAGE);
-						System.exit(0);
-					}
-
-					NodeList atlasNameElmntLst = fstElmnt.getElementsByTagName("atlasName");
-					Element atlasNameElmnt = (Element) atlasNameElmntLst.item(0);
-					NodeList atlasName = atlasNameElmnt.getChildNodes();
-
+					NodeList atlasName = getNamedNodeChildren(fstElmnt,"atlasName");
 					theProfile.setAtlasName(((Node) atlasName.item(0)).getNodeValue());
 
 					profilesVector.addElement(theProfile);
@@ -276,6 +174,17 @@ public class PersistentProfiles {
 		return profilesVector;
 	}
 
+	protected static NodeList getNamedNodeChildren(Element parent, String tagName)
+			throws ProfileException {
+		NodeList ElmntLst = parent.getElementsByTagName(tagName);
+		if (ElmntLst.getLength() > 1)
+			throw new ProfileException("More than one \"" + tagName + "\" entry!");
+		if (ElmntLst.getLength() == 0)
+			throw new ProfileException("No \"" + tagName + "\" entry found!");
+		Element Elmnt = (Element) ElmntLst.item(0);
+		return Elmnt.getChildNodes();
+	}
+
 	public static void store(Vector<Profile> theProfileVector) {
 		PrintWriter out = null;
 		try {
@@ -285,95 +194,61 @@ public class PersistentProfiles {
 
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-16\"?>");
 
-			out.println("<!DOCTYPE profiles [");
-			out.println("	<!ELEMENT profiles (profile)>");
-			out
-					.println("	<!ELEMENT profile (name, latMax, latMin, longMax, longMin, zoomLevelOne, zoomLevelTwo, zoomLevelThree, zoomLevelFour, zoomLevelFive, zoomLevelSix, zoomLevelSeven, zoomLevelEight, zoomLevelNine, zoomLevelTen, tileSizeWidth, tileSizeHeight, customTileSizeWidth, customTileSizeWidth, atlasName)>");
-			out.println("	<!ELEMENT name (CDATA)>");
-			out.println("	<!ELEMENT latMax (CDATA)>");
-			out.println("	<!ELEMENT latMin (CDATA)>");
-			out.println("	<!ELEMENT longMax (CDATA)>");
-			out.println("	<!ELEMENT longMin (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelOne (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelTwo (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelThree (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelFour (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelFive (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelSix (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelSeven (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelEight (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelNine (CDATA)>");
-			out.println("	<!ELEMENT zoomLevelTen (CDATA)>");
-			out.println("	<!ELEMENT tileSizeWidth (CDATA)>");
-			out.println("	<!ELEMENT tileSizeHeight (CDATA)>");
-			out.println("	<!ELEMENT customTileSizeWidth (CDATA)>");
-			out.println("	<!ELEMENT customTileSizeHeight (CDATA)>");
-			out.println("	<!ELEMENT atlasName (CDATA)>");
-			out.println("]>");
+			// out.println("<!DOCTYPE profiles [");
+			// out.println("	<!ELEMENT profiles (profile)>");
+			// out
+			// .println("	<!ELEMENT profile (name, latMax, latMin, longMax, "
+			// +
+			// "longMin, zoomLevelOne, zoomLevelTwo, zoomLevelThree,
+			// zoomLevelFour,
+			// zoomLevelFive, zoomLevelSix, zoomLevelSeven, zoomLevelEight,
+			// zoomLevelNine, zoomLevelTen, tileSizeWidth, tileSizeHeight,
+			// customTileSizeWidth, customTileSizeWidth, atlasName)>"
+			// );
+			// out.println("	<!ELEMENT name (CDATA)>");
+			// out.println("	<!ELEMENT latMax (CDATA)>");
+			// out.println("	<!ELEMENT latMin (CDATA)>");
+			// out.println("	<!ELEMENT longMax (CDATA)>");
+			// out.println("	<!ELEMENT longMin (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelOne (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelTwo (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelThree (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelFour (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelFive (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelSix (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelSeven (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelEight (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelNine (CDATA)>");
+			// out.println("	<!ELEMENT zoomLevelTen (CDATA)>");
+			// out.println("	<!ELEMENT tileSizeWidth (CDATA)>");
+			// out.println("	<!ELEMENT tileSizeHeight (CDATA)>");
+			// out.println("	<!ELEMENT customTileSizeWidth (CDATA)>");
+			// out.println("	<!ELEMENT customTileSizeHeight (CDATA)>");
+			// out.println("	<!ELEMENT atlasName (CDATA)>");
+			// out.println("]>");
 
 			out.println("<profiles>");
 
-			for (int i = 0; i < theProfileVector.size(); i++) {
+			for (Profile profile : theProfileVector) {
 				out.println("    <profile>");
-				out.println("        <name>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getProfileName() + "</name>");
-				out.println("        <latMax>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getLatitudeMax()
-						+ "</latMax>");
-				out.println("        <latMin>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getLatitudeMin()
-						+ "</latMin>");
-				out.println("        <longMax>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getLongitudeMax()
-						+ "</longMax>");
-				out.println("        <longMin>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getLongitudeMin()
-						+ "</longMin>");
-				out.println("        <zoomLevelOne>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[0]
-						+ "</zoomLevelOne>");
-				out.println("        <zoomLevelTwo>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[1]
-						+ "</zoomLevelTwo>");
-				out.println("        <zoomLevelThree>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[2]
-						+ "</zoomLevelThree>");
-				out.println("        <zoomLevelFour>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[3]
-						+ "</zoomLevelFour>");
-				out.println("        <zoomLevelFive>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[4]
-						+ "</zoomLevelFive>");
-				out.println("        <zoomLevelSix>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[5]
-						+ "</zoomLevelSix>");
-				out.println("        <zoomLevelSeven>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[6]
-						+ "</zoomLevelSeven>");
-				out.println("        <zoomLevelEight>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[7]
-						+ "</zoomLevelEight>");
-				out.println("        <zoomLevelNine>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[8]
-						+ "</zoomLevelNine>");
-				out.println("        <zoomLevelTen>"
-						+ (((Profile) (theProfileVector.elementAt(i))).getZoomLevels())[9]
-						+ "</zoomLevelTen>");
-				out.println("        <tileSizeWidth>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getTileSizeWidth()
+				out.println("        <name>" + profile.getProfileName() + "</name>");
+				out.println("        <atlasName>" + profile.getAtlasName() + "</atlasName>");
+				out.println("        <mapSource>" + profile.getMapSource() + "</mapSource>");
+				out.println("        <latMax>" + profile.getLatitudeMax() + "</latMax>");
+				out.println("        <latMin>" + profile.getLatitudeMin() + "</latMin>");
+				out.println("        <longMax>" + profile.getLongitudeMax() + "</longMax>");
+				out.println("        <longMin>" + profile.getLongitudeMin() + "</longMin>");
+				out.println("        <zoomLevels>");
+				boolean[] zoomLevels = profile.getZoomLevels();
+				for (int i = 0; i < zoomLevels.length; i++) {
+					if (zoomLevels[i])
+						out.println("            <z" + i + " />");
+				}
+				out.println("        </zoomLevels>");
+				out.println("        <tileSizeWidth>" + profile.getTileSizeWidth()
 						+ "</tileSizeWidth>");
-				out.println("        <tileSizeHeight>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getTileSizeHeight()
+				out.println("        <tileSizeHeight>" + profile.getTileSizeHeight()
 						+ "</tileSizeHeight>");
-				out.println("        <customTileSizeWidth>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getCustomTileSizeWidth()
-						+ "</customTileSizeWidth>");
-				out.println("        <customTileSizeHeight>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getCustomTileSizeHeight()
-						+ "</customTileSizeHeight>");
-				out.println("        <atlasName>"
-						+ ((Profile) (theProfileVector.elementAt(i))).getAtlasName()
-						+ "</atlasName>");
 				out.println("    </profile>");
 			}
 			out.print("</profiles>");
@@ -401,24 +276,20 @@ public class PersistentProfiles {
 	}
 
 	public static int validateTileSize(int tileSize) {
-
-		if (tileSize > 1792)
-			return 1792;
-		if (tileSize < 256)
-			return 256;
-		if (tileSize % 256 != 0)
-			return 256;
-
-		return tileSize;
-	}
-
-	public static int validateCustomTileSize(int tileSize) {
-
 		if (tileSize > 1792)
 			return 1792;
 		if (tileSize < 1)
 			return 256;
-
 		return tileSize;
+	}
+
+	public static class ProfileException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+
+		public ProfileException(String message) {
+			super(message);
+		}
+
 	}
 }

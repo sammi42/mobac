@@ -109,8 +109,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JComboBox mapSource;
 
 	private Vector<Integer> tileSizeValues;
-	private Vector<Profile> profilesVector;
-	private Vector<String> profileNamesVector;
+	private Vector<Profile> profilesVector = new Vector<Profile>();
+	private Vector<String> profileNamesVector = new Vector<String>();
 
 	private JList profilesJList;
 	private String fileSeparator;
@@ -488,8 +488,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// Check if all necessary files and folder exists
 		Utilities.checkFileSetup();
 
-		profilesVector = new Vector<Profile>();
-		profileNamesVector = new Vector<String>();
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.getAtlasName());
 		previewMap.settingsLoadPosition();
@@ -501,17 +499,20 @@ public class GUI extends JFrame implements MapSelectionListener {
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
 		fileSeparator = System.getProperty("file.separator");
+		updateProfilesList();
+		UpdateGUI.updateAllUIs();
+	}
 
+	protected void updateProfilesList() {
 		// Load all profiles from the profiles file from disk
 		profilesVector = PersistentProfiles.load(new File(System.getProperty("user.dir")
 				+ fileSeparator + "profiles.xml"));
+		profileNamesVector.clear();
 
 		for (Profile p : profilesVector) {
 			profileNamesVector.add(p.getProfileName());
 		}
 		profilesJList.setListData(profileNamesVector);
-
-		UpdateGUI.updateAllUIs();
 	}
 
 	public String validateInput(boolean isCreateAtlasValidate) {
@@ -678,34 +679,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		if (input.length() == 0)
 			return false;
 
-		// if (tileSizeWidthTextField.equals(textField) ||
-		// tileSizeHeightTextField.equals(textField)) {
-		// int result = -1;
-		// result = Utilities.validateTileSizeInput(input);
-		//
-		// if (result > -1) {
-		// JOptionPane.showMessageDialog(null, "\"" + (char) result
-		// + "\" is not valid input \n\nOnly accepted input is \"0-9\"",
-		// "Error",
-		// JOptionPane.ERROR_MESSAGE);
-		// return false;
-		// }
-		// if (input.length() > 3) {
-		// if (Integer.parseInt(input) > 1792) {
-		// JOptionPane
-		// .showMessageDialog(
-		// null,
-		// "\""
-		// + input
-		// +
-		// "\" is not valid input \n\nOnly accepted input is values between 50 and 1792"
-		// ,
-		// "Error", JOptionPane.ERROR_MESSAGE);
-		// return false;
-		// }
-		// }
-		// }
-
 		if (atlasNameTextField.equals(textField)) {
 			int result = -1;
 			result = Utilities.validateString(input);
@@ -728,144 +701,166 @@ public class GUI extends JFrame implements MapSelectionListener {
 		String errorText = validateInput(true);
 		if (errorText.length() > 0) {
 			JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
-		} else {
+			return;
+		}
 
-			boolean maxIsBiggerThanMin = true;
+		boolean maxIsBiggerThanMin = true;
 
-			maxIsBiggerThanMin = validateLatLongMinMax();
+		maxIsBiggerThanMin = validateLatLongMinMax();
 
-			if (maxIsBiggerThanMin) {
+		if (maxIsBiggerThanMin) {
 
-				int tileSizeWidth = 256;
-				int tileSizeHeight = 256;
+			int tileSizeWidth = 256;
+			int tileSizeHeight = 256;
 
-				try {
-					if (tileSizeWidthTextField.isInputValid())
-						tileSizeWidth = tileSizeWidthTextField.getTileSize();
-					else
-						tileSizeWidth = ((Integer) tileSizeWidthComboBox.getSelectedItem())
-								.intValue();
+			try {
+				if (tileSizeWidthTextField.isInputValid())
+					tileSizeWidth = tileSizeWidthTextField.getTileSize();
+				else
+					tileSizeWidth = ((Integer) tileSizeWidthComboBox.getSelectedItem()).intValue();
 
-					if (tileSizeHeightTextField.isInputValid())
-						tileSizeHeight = tileSizeHeightTextField.getTileSize();
-					else
-						tileSizeHeight = ((Integer) tileSizeHeightComboBox.getSelectedItem())
-								.intValue();
+				if (tileSizeHeightTextField.isInputValid())
+					tileSizeHeight = tileSizeHeightTextField.getTileSize();
+				else
+					tileSizeHeight = ((Integer) tileSizeHeightComboBox.getSelectedItem())
+							.intValue();
 
-					TileSource tileSource = (TileSource) mapSource.getSelectedItem();
-					SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
-					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
-							getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
-					atlasThread.start();
-				} catch (Exception e) {
-					log.error("", e);
-				}
-
+				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
+				SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
+				Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
+						getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
+				atlasThread.start();
+			} catch (Exception e) {
+				log.error("", e);
 			}
 		}
 		System.gc();
 	}
 
-	private void saveAsProfile() {
+	private void profileSaveAs() {
 
 		String inputValue = JOptionPane.showInputDialog("Profile Name");
 
 		if (inputValue != null) {
 
-			Profile theProfile = new Profile();
-
-			boolean profileNameExists = false;
+			Profile profile = new Profile();
 
 			for (int i = 0; i < profileNamesVector.size(); i++) {
 				if (inputValue.equals(profileNamesVector.elementAt(i))) {
-					profileNameExists = true;
-					break;
-				}
-			}
-
-			if (profileNameExists) {
-				JOptionPane.showMessageDialog(null,
-						"Profile name already exists, choose a different name", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			} else {
-				String errorDescription = "";
-
-				MapSelection ms = checkCoordinates();
-
-				if (!ms.coordinatesAreValid()) {
-					errorDescription += "Coordinates are not all valid - please check";
-				}
-
-				if (!tileSizeWidthComboBox.isEnabled()) {
-					try {
-						Integer.parseInt(tileSizeWidthTextField.getText());
-					} catch (NumberFormatException nfex) {
-						errorDescription += "Invalid format of \"Custom size\" (TILE SIZE) value\n";
-					}
-				}
-
-				if (!tileSizeHeightComboBox.isEnabled()) {
-					try {
-						Integer.parseInt(tileSizeHeightTextField.getText());
-					} catch (NumberFormatException nfex) {
-						errorDescription += "Invalid format of \"Custom size\" (TILE SIZE) value\n";
-					}
-				}
-
-				if (errorDescription.length() > 0) {
-					JOptionPane.showMessageDialog(null, errorDescription, "Errors",
+					JOptionPane.showMessageDialog(null,
+							"Profile name already exists, choose a different name", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				try {
-					theProfile.setProfileName(inputValue);
-					theProfile.setAtlasName(atlasNameTextField.getText());
-					theProfile.setLatitudeMax(latMaxTextField.getCoordinate());
-					theProfile.setLatitudeMin(latMinTextField.getCoordinate());
-					theProfile.setLongitudeMax(lonMaxTextField.getCoordinate());
-					theProfile.setLongitudeMin(lonMinTextField.getCoordinate());
+			}
+			String errorDescription = "";
+			MapSelection ms = checkCoordinates();
 
-					boolean[] zoomLevels = new boolean[cbZoom.length];
-					for (int i = 0; i < cbZoom.length; i++) {
-						zoomLevels[i] = cbZoom[i].isSelected();
-					}
+			if (!ms.coordinatesAreValid())
+				errorDescription += "Coordinates are not all valid - please check";
 
-					theProfile.setZoomLevels(zoomLevels);
-					theProfile.setTileSizeWidth(tileSizeWidthComboBox.getSelectedIndex());
-					theProfile.setTileSizeHeight(tileSizeHeightComboBox.getSelectedIndex());
+			if (!tileSizeWidthComboBox.isEnabled() && !tileSizeWidthTextField.isInputValid())
+				errorDescription += "Invalid format of \"Custom size\" (TILE SIZE) value\n";
 
-					if (!tileSizeWidthComboBox.isEnabled()) {
-						theProfile.setCustomTileSizeWidth(Integer.parseInt(tileSizeWidthTextField
-								.getText()));
-					} else {
-						theProfile.setCustomTileSizeWidth(0);
-					}
+			if (!tileSizeHeightComboBox.isEnabled() && !tileSizeHeightTextField.isValid())
+				errorDescription += "Invalid format of \"Custom size\" (TILE SIZE) value\n";
 
-					if (!tileSizeHeightComboBox.isEnabled()) {
-						theProfile.setCustomTileSizeHeight(Integer.parseInt(tileSizeHeightTextField
-								.getText()));
-					} else {
-						theProfile.setCustomTileSizeHeight(0);
-					}
+			if (errorDescription.length() > 0) {
+				JOptionPane.showMessageDialog(null, errorDescription, "Errors",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			try {
+				profile.setProfileName(inputValue);
+				profile.setAtlasName(atlasNameTextField.getText());
+				profile.setMapSource(((TileSource) mapSource.getSelectedItem()).getName());
+				profile.setLatitudeMax(latMaxTextField.getCoordinate());
+				profile.setLatitudeMin(latMinTextField.getCoordinate());
+				profile.setLongitudeMax(lonMaxTextField.getCoordinate());
+				profile.setLongitudeMin(lonMinTextField.getCoordinate());
 
-					profilesVector.addElement(theProfile);
-					PersistentProfiles.store(profilesVector);
-					initiateProgram();
-				} catch (ParseException e) {
-					log.error("", e);
+				boolean[] zoomLevels = new boolean[cbZoom.length];
+				for (int i = 0; i < cbZoom.length; i++) {
+					zoomLevels[i] = cbZoom[i].isSelected();
 				}
+
+				profile.setZoomLevels(zoomLevels);
+
+				if (tileSizeWidthTextField.isInputValid()) {
+					profile.setTileSizeWidth(tileSizeWidthTextField.getTileSize());
+				} else {
+					profile.setTileSizeWidth(((Integer) tileSizeWidthComboBox.getSelectedItem())
+							.intValue());
+				}
+
+				if (tileSizeHeightTextField.isInputValid()) {
+					profile.setTileSizeHeight(tileSizeHeightTextField.getTileSize());
+				} else {
+					profile.setTileSizeHeight(((Integer) tileSizeHeightComboBox.getSelectedItem())
+							.intValue());
+				}
+
+				profilesVector.addElement(profile);
+				PersistentProfiles.store(profilesVector);
+				updateProfilesList();
+			} catch (ParseException e) {
+				log.error("", e);
 			}
 		}
 	}
 
-	private void deleteProfile() {
+	private void profileLoad(Profile profile) {
+		TileSource map = MapSources.getSourceByName(profile.getMapSource());
+		mapSource.setSelectedItem(map);
+		mapSourceChanged();
 
+		latMinTextField.setCoordinate(profile.getLatitudeMin());
+		latMaxTextField.setCoordinate(profile.getLatitudeMax());
+		lonMinTextField.setCoordinate(profile.getLongitudeMin());
+		lonMaxTextField.setCoordinate(profile.getLongitudeMax());
+
+		int tileSizeWidth = profile.getTileSizeWidth();
+		int tileSizeHeight = profile.getTileSizeHeight();
+		int index;
+		index = tileSizeValues.indexOf(new Integer(tileSizeWidth));
+		if (index >= 0) {
+			tileSizeWidthComboBox.setSelectedIndex(index);
+			tileSizeWidthTextField.setTileSize(0);
+		} else {
+			tileSizeWidthTextField.setTileSize(tileSizeWidth);
+		}
+		index = tileSizeValues.indexOf(new Integer(tileSizeHeight));
+		if (index >= 0) {
+			tileSizeHeightComboBox.setSelectedIndex(index);
+			tileSizeHeightTextField.setTileSize(0);
+		} else {
+			tileSizeHeightTextField.setTileSize(tileSizeHeight);
+		}
+
+		atlasNameTextField.setText(profile.getAtlasName());
+
+		boolean[] zoomValues = new boolean[cbZoom.length];
+
+		zoomValues = profile.getZoomLevels();
+
+		int min = Math.min(cbZoom.length, zoomValues.length);
+		for (int i = 0; i < min; i++) {
+			cbZoom[i].setSelected(zoomValues[i]);
+		}
+
+		/**
+		 * Calculate amount of tiles to download
+		 */
+		calculateNrOfTilesToDownload();
+		previewSelection();
+	}
+
+	private void profileDeleteSelected() {
 		if (profilesJList.isEnabled() && profilesJList.getSelectedIndex() > -1) {
 
 			profilesVector.removeElementAt(profilesJList.getSelectedIndex());
-
 			PersistentProfiles.store(profilesVector);
-			initiateProgram();
+			updateProfilesList();
 		}
 	}
 
@@ -876,9 +871,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 			if (actionCommand.equals("Create Atlas"))
 				createAtlas();
 			else if (actionCommand.equals("Save as profile"))
-				saveAsProfile();
+				profileSaveAs();
 			else if (actionCommand.equals("Delete profile"))
-				deleteProfile();
+				profileDeleteSelected();
 			else if (actionCommand.equals("Settings")) {
 				SettingsGUI sgui = new SettingsGUI(GUI.this);
 				sgui.setVisible(true);
@@ -891,7 +886,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 			String actionCommand = e.getActionCommand();
 
 			if (actionCommand.equals("UNLOCK/LOCK")) {
-
 				if (chooseProfileButton.isSelected()) {
 					profilesJList.setEnabled(true);
 				} else {
@@ -906,50 +900,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 			int selectedIndex = profilesJList.getSelectedIndex();
 
 			if (selectedIndex != -1) {
-				Profile temp = new Profile();
+				Profile profile = new Profile();
 
-				temp = profilesVector.elementAt(selectedIndex);
-
-				latMinTextField.setCoordinate(temp.getLatitudeMin());
-				latMaxTextField.setCoordinate(temp.getLatitudeMax());
-				lonMinTextField.setCoordinate(temp.getLongitudeMin());
-				lonMaxTextField.setCoordinate(temp.getLongitudeMax());
-
-				if (temp.getCustomTileSizeWidth() == 0) {
-					tileSizeWidthTextField.setText("");
-				} else {
-					tileSizeWidthTextField.setText(Integer.toString(temp.getCustomTileSizeWidth()));
-				}
-
-				if (temp.getCustomTileSizeHeight() == 0) {
-					tileSizeHeightTextField.setText("");
-				} else {
-					tileSizeHeightTextField.setText(Integer
-							.toString(temp.getCustomTileSizeHeight()));
-				}
-
-				atlasNameTextField.setText(temp.getAtlasName());
-
-				boolean[] zoomValues = new boolean[cbZoom.length];
-
-				zoomValues = temp.getZoomLevels();
-
-				for (int i = 0; i < cbZoom.length; i++) {
-					cbZoom[i].setSelected(zoomValues[i]);
-				}
-
-				int tileSizeWidth = temp.getTileSizeWidth();
-				int indexWidth = (tileSizeWidth / 256) - 1;
-				tileSizeWidthComboBox.setSelectedIndex(indexWidth);
-
-				int tileSizeHeight = temp.getTileSizeHeight();
-				int indexHeight = (tileSizeHeight / 256) - 1;
-				tileSizeHeightComboBox.setSelectedIndex(indexHeight);
-
-				/**
-				 * Calculate amount of tiles to download
-				 */
-				calculateNrOfTilesToDownload();
+				profile = profilesVector.elementAt(selectedIndex);
+				profileLoad(profile);
 			}
 		}
 	}

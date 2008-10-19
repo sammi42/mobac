@@ -1,5 +1,7 @@
 package tac.program;
 
+import tac.gui.preview.MapSources;
+
 public class Profile {
 
 	private String profileName;
@@ -10,10 +12,10 @@ public class Profile {
 	private Double longitudeMax;
 	private Double longitudeMin;
 
+	private String mapSource;
+
 	private int tileSizeWidth;
 	private int tileSizeHeight;
-	private int customTileSizeWidth;
-	private int customTileSizeHeight;
 
 	private boolean[] zoomLevels;
 
@@ -28,23 +30,22 @@ public class Profile {
 		longitudeMin = 0.0;
 		tileSizeWidth = 0;
 		tileSizeHeight = 0;
-		customTileSizeWidth = 0;
-		customTileSizeHeight = 0;
+		mapSource = MapSources.getDefaultMapSourceName();
 
 		zoomLevels = new boolean[10];
-		for (int i = 0; i < zoomLevels.length; i++) {
+		for (int i = 0; i < zoomLevels.length; i++)
 			zoomLevels[i] = false;
-		}
 	}
 
 	// Constructor
-	public Profile(String theProfileName, String theAtlasName, Double theLatitudeMax,
-			Double theLatitudeMin, Double theLongitudeMax, Double theLongitudeMin,
-			boolean[] theZoomLevels, int theTileSizeWidth, int theTileSizeHeight,
-			int theCustomTileSizeWidth, int theCustomTileSizeHeight) {
+	public Profile(String theProfileName, String theAtlasName, String mapSource,
+			Double theLatitudeMax, Double theLatitudeMin, Double theLongitudeMax,
+			Double theLongitudeMin, boolean[] theZoomLevels, int theTileSizeWidth,
+			int theTileSizeHeight, int theCustomTileSizeWidth, int theCustomTileSizeHeight) {
 
 		profileName = theProfileName;
 		atlasName = theAtlasName;
+		this.mapSource = mapSource;
 		latitudeMax = theLatitudeMax;
 		latitudeMin = theLatitudeMin;
 		longitudeMax = theLongitudeMax;
@@ -52,8 +53,6 @@ public class Profile {
 		zoomLevels = theZoomLevels;
 		tileSizeWidth = theTileSizeWidth;
 		tileSizeHeight = theTileSizeHeight;
-		customTileSizeWidth = theCustomTileSizeWidth;
-		customTileSizeHeight = theCustomTileSizeHeight;
 	}
 
 	// SET Methods
@@ -93,14 +92,6 @@ public class Profile {
 		this.tileSizeHeight = tileSizeHeight;
 	}
 
-	public void setCustomTileSizeWidth(int customTileSizeWidth) {
-		this.customTileSizeWidth = customTileSizeWidth;
-	}
-
-	public void setCustomTileSizeHeight(int customTileSizeHeight) {
-		this.customTileSizeHeight = customTileSizeHeight;
-	}
-
 	// GET Methods
 	public String getProfileName() {
 		return profileName;
@@ -138,11 +129,12 @@ public class Profile {
 		return tileSizeHeight;
 	}
 
-	public int getCustomTileSizeWidth() {
-		return customTileSizeWidth;
+	public String getMapSource() {
+		return mapSource;
 	}
 
-	public int getCustomTileSizeHeight() {
-		return customTileSizeHeight;
+	public void setMapSource(String mapSource) {
+		this.mapSource = mapSource;
 	}
+
 }

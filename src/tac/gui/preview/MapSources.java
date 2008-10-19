@@ -13,6 +13,10 @@ public class MapSources {
 		return MAP_SOURCES;
 	}
 
+	public static String getDefaultMapSourceName() {
+		return getMapSources()[0].getName();
+	}
+	
 	public static TileSource getSourceByName(String name) {
 		for (TileSource t : MAP_SOURCES) {
 			if (t.getName().equals(name))

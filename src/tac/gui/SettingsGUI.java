@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import tac.program.Settings;
 
@@ -46,7 +47,6 @@ public class SettingsGUI extends JDialog {
 		this.createJButtons();
 		this.loadSettings();
 		this.addListeners();
-
 	}
 
 	private void createJFrame() {
@@ -122,16 +122,18 @@ public class SettingsGUI extends JDialog {
 	}
 
 	private JPanel createNetworkPanel() {
-		JPanel panel = new JPanel(new GridLayout(2, 2));
-		JLabel proxyHostLabel = new JLabel("HTTP Proxy host name: ");
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
+		panel.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
+		JLabel proxyHostLabel = new JLabel("Proxy host name: ");
 		proxyHost = new JTextField(System.getProperty("http.proxyHost"));
-		JLabel proxyPortLabel = new JLabel("HTTP Proxy port: ");
+		JLabel proxyPortLabel = new JLabel("Proxy port: ");
 		proxyPort = new JTextField(System.getProperty("http.proxyPort"));
 		panel.add(proxyHostLabel);
 		panel.add(proxyHost);
 		panel.add(proxyPortLabel);
 		panel.add(proxyPort);
 		JPanel p = new JPanel(new BorderLayout());
+		p.setBorder(new EmptyBorder(5,5,5,5));
 		p.add(panel, BorderLayout.NORTH);
 		return p;
 	}

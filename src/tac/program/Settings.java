@@ -47,7 +47,7 @@ public class Settings {
 	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
 	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
 
-	private String defaultMapSource = MapSources.getMapSources()[0].getName();
+	private String defaultMapSource = MapSources.getDefaultMapSourceName();
 
 	private String atlasName = "";
 

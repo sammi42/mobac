@@ -53,7 +53,10 @@ public class JTileSizeField extends JTextField {
 	}
 
 	public void setTileSize(int newTileSize) {
-		super.setText(Integer.toString(newTileSize));
+		if (newTileSize <= 0)
+			super.setText("");
+		else
+			super.setText(Integer.toString(newTileSize));
 	}
 
 	public void setText(String t) {

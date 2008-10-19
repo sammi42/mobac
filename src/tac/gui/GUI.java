@@ -16,7 +16,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -43,6 +45,7 @@ import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.StartTAC;
 import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.MapSources;
 import tac.gui.preview.PreviewMap;
@@ -58,8 +61,6 @@ import tac.utilities.Utilities;
 public class GUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = -8444942802691874960L;
-
-	private static final String VERSION = "0.9.1";
 
 	private static Logger log = Logger.getLogger(GUI.class);
 
@@ -119,7 +120,18 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public GUI() {
 		super();
-		setTitle("TrekBuddy Atlas Creator v" + VERSION);
+		InputStream propIn = StartTAC.class.getResourceAsStream("tac.properties");
+		Properties props = new Properties();
+		try {
+			props.load(propIn);
+		} catch (IOException e) {
+			log.error("Can not find tac properties file");
+			props.setProperty("tac.version", "unknown");
+		} finally {
+			Utilities.closeStream(propIn);
+		}
+
+		setTitle("TrekBuddy Atlas Creator v" + props.getProperty("tac.version"));
 		log.trace("Creating main dialog - " + getTitle());
 		createMainFrame();
 		createLeftPanel();
@@ -414,8 +426,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	public void addListeners() {
-		this.addWindowListener(new WindowDestroyer());
-		this.addWindowListener(new JFrameListener());
+		addWindowListener(new WindowDestroyer());
 		ButtonListener bl = new ButtonListener();
 		saveAsProfileButton.addActionListener(bl);
 		deleteProfileButton.addActionListener(bl);
@@ -430,7 +441,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			public void actionPerformed(ActionEvent e) {
 				previewSelection();
-
 			}
 		});
 		JTextFieldListener jtfl = new JTextFieldListener();
@@ -921,15 +931,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 			if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
 				return;
 			loadSelectedProfile();
-		}
-
-	}
-
-	private class JFrameListener extends WindowAdapter {
-
-		public void windowOpened(WindowEvent e) {
-			// createAtlasButton.setText("Wait...");
-			// createAtlasButton.setEnabled(false);
 		}
 
 	}

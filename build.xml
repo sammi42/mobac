@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
-	<property name="version" value="0.9.1" />
+	<property file="src/tac/tac.properties" />
 	<property name="jar.name" value="TrekBuddy_Atlas_Creator.jar" />
-	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${version}.zip" />
+	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${tac.version}.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
 	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />
@@ -36,6 +36,11 @@
 			<include name="tac/**" />
 			<exclude name="**/unittest/**" />
 		</javac>
+		<copy todir="build" overwrite="true">
+			<fileset dir="src">
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="create_jar">

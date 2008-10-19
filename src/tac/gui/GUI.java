@@ -10,6 +10,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -437,7 +439,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		atlasNameTextField.getDocument().addDocumentListener(jtfl);
 
 		chooseProfileButton.addActionListener(new JToggleButtonListener());
-		profilesJList.addListSelectionListener(new JListListener());
+		JListListener jll = new JListListener();
+		profilesJList.addListSelectionListener(jll);
+		profilesJList.addMouseListener(jll);
 	}
 
 	/**
@@ -895,8 +899,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	private class JListListener implements ListSelectionListener {
+	private class JListListener extends MouseAdapter implements ListSelectionListener {
+
 		public void valueChanged(ListSelectionEvent e) {
+			loadSelectedProfile();
+		}
+
+		protected void loadSelectedProfile() {
 			int selectedIndex = profilesJList.getSelectedIndex();
 
 			if (selectedIndex != -1) {
@@ -906,6 +915,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 				profileLoad(profile);
 			}
 		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
+				return;
+			loadSelectedProfile();
+		}
+
 	}
 
 	private class JFrameListener extends WindowAdapter {

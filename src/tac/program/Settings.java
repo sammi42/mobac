@@ -42,7 +42,7 @@ public class Settings {
 	private boolean tileStoreEnabled = true;
 
 	private int previewDefaultZoom = 3;
-	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(9, 50);
+	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(50,9);
 
 	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
 	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();

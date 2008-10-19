@@ -1,11 +1,40 @@
 T O D O
+=======
+
+Importance order: 
+
+1:
+
+* Settings for tile store. Not just enable or disable, maybe a possibility to configure the amount of tiles
+  per map source and / or tile store size in bytes. And to have this store as working as a LRU
+
+2:
+
+* Would it be possible to add ability to switch some layers to photo maps? I think it would be useful 
+  addition
+
+3:
+
+* Add possibility to enter download string for tile repository. (If needed anymore, I have not investigated
+  how the URL to the tiles are resolved at the moment.)
+
+4:
+
+* Add 4 threaded simultaneous download of tiles. (is this already implemented?)
+
+5:
+
+* But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color
+  depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
+
+6:
 
 * Open folder in AtlasProgress is platform specific (Windows only)
 
-* But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
 
-* Would it be possible to add ability to switch some layers to photo maps? I think it wold be usefull addition
 
-* Add 4 threaded simultaneous download of tiles.
 
-* Add possibility to enter download string for tile repository.
+
+
+
+ 

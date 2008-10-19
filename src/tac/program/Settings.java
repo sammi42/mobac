@@ -23,15 +23,19 @@ public class Settings {
 	private static Settings instance;
 
 	private static final String SETTINGS_FILE = "settings.xml";
-	private static final String MAPS_SIZE = "maps.size";
+	private static final String MAPS_MAXSIZE = "maps.maxsize";
 	private static final String TILE_STORE = "tile.store.enabled";
 	private static final String PREVIEW_ZOOM = "preview.zoom";
 	private static final String PREVIEW_LAT = "preview.lat";
 	private static final String PREVIEW_LON = "preview.lon";
-	private static final String PREVIEW_MAPSOURCE = "preview.mapsource";
+	private static final String MAPSOURCE = "mapsource";
 	private static final String ATLAS_NAME = "atlas.name";
-	private static final String PROXY_HOST = "proxy.host";
-	private static final String PROXY_PORT = "proxy.port";
+	private static final String PROXY_HOST = "proxy.http.host";
+	private static final String PROXY_PORT = "proxy.http.port";
+	private static final String SELECTION_LAT_MAX = "selection.max.lat";
+	private static final String SELECTION_LON_MAX = "selection.max.lon";
+	private static final String SELECTION_LAT_MIN = "selection.min.lat";
+	private static final String SELECTION_LON_MIN = "selection.min.lon";
 
 	private int maxMapSize = 0;
 
@@ -39,6 +43,9 @@ public class Settings {
 
 	private int previewDefaultZoom = 3;
 	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(9, 50);
+
+	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
+	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
 
 	private String defaultMapSource = MapSources.getMapSources()[0].getName();
 
@@ -80,14 +87,22 @@ public class Settings {
 			SettingsProperties p = new SettingsProperties();
 			is = new FileInputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.loadFromXML(is);
-			maxMapSize = p.getIntProperty(MAPS_SIZE, maxMapSize);
+			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
 			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
 			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
 			previewDefaultCoordinate.lat = p.getDouble6Property(PREVIEW_LAT,
 					previewDefaultCoordinate.lat);
 			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
 					previewDefaultCoordinate.lon);
-			defaultMapSource = p.getProperty(PREVIEW_MAPSOURCE);
+			selectionMax.lat = p.getDouble6Property(SELECTION_LAT_MAX,
+					selectionMax.lat);
+			selectionMax.lon = p.getDouble6Property(SELECTION_LON_MAX,
+					selectionMax.lon);
+			selectionMin.lat = p.getDouble6Property(SELECTION_LAT_MIN,
+					selectionMin.lat);
+			selectionMin.lon = p.getDouble6Property(SELECTION_LON_MIN,
+					selectionMin.lon);
+			defaultMapSource = p.getProperty(MAPSOURCE);
 			atlasName = p.getProperty(ATLAS_NAME, atlasName);
 			String proxyHost = p.getProperty(PROXY_HOST);
 			String proxyPort = p.getProperty(PROXY_PORT);
@@ -109,15 +124,21 @@ public class Settings {
 		OutputStream os = null;
 		try {
 			SettingsProperties p = new SettingsProperties();
-			p.setIntProperty(MAPS_SIZE, maxMapSize);
+			p.setIntProperty(MAPS_MAXSIZE, maxMapSize);
 			p.setIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
-			p.setProperty(PREVIEW_MAPSOURCE, defaultMapSource);
+			p.setProperty(MAPSOURCE, defaultMapSource);
 			p.setProperty(ATLAS_NAME, atlasName);
 			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
 			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
+			
+			p.setDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
+			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
+			p.setDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
+			p.setDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
+			
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
 			result = true;
@@ -177,4 +198,21 @@ public class Settings {
 		this.atlasName = atlasName;
 	}
 
+	public EastNorthCoordinate getSelectionMax() {
+		return selectionMax;
+	}
+
+	public void setSelectionMax(EastNorthCoordinate selectionMax) {
+		this.selectionMax = selectionMax;
+	}
+
+	public EastNorthCoordinate getSelectionMin() {
+		return selectionMin;
+	}
+
+	public void setSelectionMin(EastNorthCoordinate selectionMin) {
+		this.selectionMin = selectionMin;
+	}
+
+	
 }

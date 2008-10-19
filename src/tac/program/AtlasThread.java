@@ -46,17 +46,22 @@ public class AtlasThread extends Thread implements ActionListener {
 	}
 
 	public void run() {
+		log.info("Starting altas creation");
 		ap = new AtlasProgress();
 		ap.setAbortListener(this);
 		try {
 			createAtlas();
 			ap.atlasCreationFinished();
+			log.info("Altas creation finished");
 		} catch (InterruptedException e) {
 			JOptionPane.showMessageDialog(null, "Atlas download aborted", "Information",
 					JOptionPane.INFORMATION_MESSAGE);
 			ap.setAbortListener(null);
 			ap.closeWindow();
 			ap = null;
+			log.info("Altas creation was interrupted by user");
+		} catch (Exception e) {
+			log.error("Altas creation aborted because of an error: ", e);
 		}
 	}
 

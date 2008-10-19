@@ -50,9 +50,11 @@ public class AtlasTarCreator {
 	}
 
 	public void createAtlasCrTarArchive() {
+		log.trace("Creating cr.tar for atlas in dir \"" + atlasTarDir.getPath() + "\"");
 		TarArchive ta = null;
+		File crFile = new File(atlasTarDir, "cr.tar");
 		try {
-			ta = new TarArchive(new File(atlasTarDir, "cr.tar"), atlasDir);
+			ta = new TarArchive(crFile, atlasDir);
 
 			ta.writeFile(new File(atlasDir, "cr.tba"));
 
@@ -64,10 +66,9 @@ public class AtlasTarCreator {
 						ta.writeFile(f);
 				}
 			}
-
 			ta.writeEndofArchive();
 		} catch (IOException e) {
-			log.error("", e);
+			log.error("Failed writing tar file \"" + crFile.getPath() + "\"", e);
 		} finally {
 			if (ta != null)
 				ta.close();
@@ -80,20 +81,21 @@ public class AtlasTarCreator {
 		}
 	}
 
-	protected void createMapTar(File atlasLayerDir) {
-		String mapName = atlasLayerDir.getParentFile().getName();
-		String layerName = atlasLayerDir.getName();
-		File atlasTarMapDir = new File(atlasTarDir, mapName);
-		File atlasTarLayerDir = new File(atlasTarMapDir, layerName);
+	protected void createMapTar(File atlasMapDir) {
+		log.trace("Creating tar for map in dir \"" + atlasMapDir.getPath() + "\"");
+		String layerName = atlasMapDir.getParentFile().getName();
+		String mapName = atlasMapDir.getName();
+		File atlasTarMapDir = new File(atlasTarDir, layerName);
+		File atlasTarLayerDir = new File(atlasTarMapDir, mapName);
 		atlasTarLayerDir.mkdirs();
 
-		List<File> folderContent = TarUtilities.getDirectoryContent(new File(atlasLayerDir, "set"));
+		List<File> folderContent = TarUtilities.getDirectoryContent(new File(atlasMapDir, "set"));
 
 		List<PreparedTarEntry> preparedEntries = new ArrayList<PreparedTarEntry>(folderContent
 				.size() + 1);
 
-		File mapFile = new File(atlasLayerDir, layerName + ".map");
-		PreparedTarEntry preparedMapFileEntry = new PreparedTarEntry(mapFile, atlasLayerDir);
+		File mapFile = new File(atlasMapDir, mapName + ".map");
+		PreparedTarEntry preparedMapFileEntry = new PreparedTarEntry(mapFile, atlasMapDir);
 		preparedEntries.add(preparedMapFileEntry);
 
 		StringWriter sw = new StringWriter(50 * folderContent.size());
@@ -101,33 +103,33 @@ public class AtlasTarCreator {
 		int blocksUsed = preparedMapFileEntry.getTarBlocksRequired();
 
 		for (File f : folderContent) {
-			PreparedTarEntry entry = new PreparedTarEntry(f, atlasLayerDir);
+			PreparedTarEntry entry = new PreparedTarEntry(f, atlasMapDir);
 			preparedEntries.add(entry);
 			sw.write(entry.getTmiLine(blocksUsed));
 			blocksUsed += entry.getTarBlocksRequired();
 		}
 
-		File tmiFile = new File(atlasTarLayerDir, layerName + ".tmi");
+		File tmiFile = new File(atlasTarLayerDir, mapName + ".tmi");
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(tmiFile);
 			fw.write(sw.toString());
 		} catch (IOException e) {
-			System.err.println("Failed writing tmi file \"" + tmiFile.getPath() + "\":\n\t"
-					+ e.getMessage());
+			log.error("Failed writing tmi file \"" + tmiFile.getPath() + "\"", e);
 		} finally {
 			Utilities.closeWriter(fw);
 		}
 
 		TarArchive ta = null;
+		File tarFile = new File(atlasTarLayerDir, mapName + ".tar");
 		try {
-			ta = new TarArchive(new File(atlasTarLayerDir, layerName + ".tar"), atlasLayerDir);
+			ta = new TarArchive(tarFile, atlasMapDir);
 			for (PreparedTarEntry entry : preparedEntries) {
 				ta.writePreparedEntry(entry);
 			}
 			ta.writeEndofArchive();
 		} catch (IOException e) {
-			log.error("", e);
+			log.error("Error while writing tar archive \"" + tarFile.getPath() + "\"", e);
 		} finally {
 			if (ta != null)
 				ta.close();

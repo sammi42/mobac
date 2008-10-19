@@ -493,6 +493,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.getAtlasName());
 		previewMap.settingsLoadPosition();
+		latMaxTextField.setCoordinate(settings.getSelectionMax().lat);
+		lonMaxTextField.setCoordinate(settings.getSelectionMax().lon);
+		latMinTextField.setCoordinate(settings.getSelectionMin().lat);
+		lonMinTextField.setCoordinate(settings.getSelectionMin().lon);
+
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
 		fileSeparator = System.getProperty("file.separator");
@@ -622,6 +627,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 			previewMap.settingsSavePosition();
 			s.setDefaultMapSource(((TileSource) mapSource.getSelectedItem()).getName());
 			s.setAtlasName(atlasNameTextField.getText());
+			s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
+					lonMaxTextField.getCoordinateOrNaN()));
+			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
+					lonMinTextField.getCoordinateOrNaN()));
 			try {
 				s.store();
 			} catch (IOException iox) {

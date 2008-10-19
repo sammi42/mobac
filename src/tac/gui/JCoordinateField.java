@@ -36,13 +36,15 @@ public class JCoordinateField extends JTextField {
 		try {
 			// We know that the number is valid, therefore we can skip the check
 			// -> saves CPU power while selecting via preview map
-			if (!inputIsValid)
-				coordinateListener.changeValidMode(true);
+			boolean newValid = true;
 			coordinateListener.setEnabled(false);
-			if (Double.isNaN(value))
+			if (Double.isNaN(value)) {
 				super.setText("");
-			else
+				newValid = false;
+			} else
 				super.setText(Utilities.FORMAT_6_DEC.format(value));
+			if (newValid != inputIsValid)
+				coordinateListener.changeValidMode(true);
 		} finally {
 			coordinateListener.setEnabled(true);
 		}
@@ -52,15 +54,22 @@ public class JCoordinateField extends JTextField {
 		return Utilities.parseLocaleDouble(getText());
 	}
 
+	public double getCoordinateOrNaN() {
+		try {
+			return Utilities.parseLocaleDouble(getText());
+		} catch (ParseException e) {
+			return Double.NaN;
+		}
+	}
+
 	public void setText(String t) {
 		throw new RuntimeException("Calling setText() is not allowed!");
 	}
-	
+
 	public boolean isInputValid() {
 		return inputIsValid;
 	}
 
-	
 	protected class JCoordinateListener implements DocumentListener {
 
 		private Color defaultColor;

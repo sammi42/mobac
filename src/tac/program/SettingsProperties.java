@@ -50,6 +50,8 @@ public class SettingsProperties extends Properties {
 	}
 
 	public void setDouble6Property(String key, double value) {
+		if (Double.isNaN(value))
+			return;
 		setProperty(key, Utilities.FORMAT_6_DEC_ENG.format(value));
 	}
 
@@ -64,7 +66,4 @@ public class SettingsProperties extends Properties {
 		return new TreeSet<Object>(super.keySet());
 	}
 
-
-
-	
 }

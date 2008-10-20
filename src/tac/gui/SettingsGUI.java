@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -20,7 +21,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+
+import tac.gui.preview.MapSources;
 import tac.program.Settings;
+import tac.program.TileStore;
 
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
@@ -78,15 +83,34 @@ public class SettingsGUI extends JDialog {
 		tileStoreEnabled.setBounds(7, 40, 120, 15);
 
 		JPanel leftPanel = new JPanel(null);
-		leftPanel.setBounds(5, 5, 475, 240);
+		leftPanel.setBounds(5, 5, 300, 240);
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
+		
+		TileSource [] sources = MapSources.getMapSources();
+		
+		int rows = sources.length;
+		
+		JPanel rightPanel = new JPanel(new GridLayout(rows, 2));
+		rightPanel.setBounds(303, 5, 172, 240);
+		rightPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
 		leftPanel.add(tileStoreEnabled);
+		
+		TileStore tileStore = TileStore.getInstance();
+		
+		for (TileSource ts : MapSources.getMapSources()) {
+			
+			rightPanel.add(new JLabel(ts.getName()));
+			rightPanel.add(new JLabel(Integer.toString(tileStore.getNrOfTiles(ts))));
+			
+			
+		}
 
-		JPanel thumbNailBackGround = new JPanel(null);
-		thumbNailBackGround.add(leftPanel);
+		JPanel backGround = new JPanel(null);
+		backGround.add(leftPanel);
+		backGround.add(rightPanel);
 
-		return thumbNailBackGround;
+		return backGround;
 	}
 
 	private JPanel createMapSizePanel() {

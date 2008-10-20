@@ -15,9 +15,10 @@ public class TileStore {
 	private static TileStore sObj = null;
 
 	private String tileStorePath;
+	private final String FILESEPARATOR = System.getProperty("file.separator");
 
 	private TileStore() {
-		tileStorePath = System.getProperty("user.dir") + "/tilestore/";
+		tileStorePath = System.getProperty("user.dir") + FILESEPARATOR + "tilestore" + FILESEPARATOR;
 	}
 
 	public static TileStore getInstance() {
@@ -68,5 +69,20 @@ public class TileStore {
 		File f = getTileFile(x, y, zoom, tileSource);
 		return f.exists();
 	}
-
+	
+	/**
+	 * This method returns the amount of tiles in the store of
+	 *  tiles which is specified by the TileSource object.
+	 *  
+	 * @param tileSource the store to calculate number of tiles in
+	 * @return the amount of tiles in the specified store.
+	 */
+	public int getNrOfTiles(TileSource tileSource) {
+		File tileStore = new File(tileStorePath + tileSource.getName());
+		if(tileStore.exists()) {
+			return tileStore.list().length;
+		} else {
+			return 0;
+		}
+	}
 }

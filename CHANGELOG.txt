@@ -10,6 +10,8 @@ V E R S I O N  I N F O R M A T I O N
  + Detailed log files can be created by providing a configuration file log4j.xml
      (see README.txt for details).
  + HTTP Proxy (host & port) can be specified via GUI
+ + Added information about amount of tiles in each tile source store in Settings window.
+ 
  ! Saving profiles works now (including map source, zoom levels and tile size) 
  
  0.9.1: (2008-10-17)

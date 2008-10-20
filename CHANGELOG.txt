@@ -5,27 +5,27 @@ V E R S I O N  I N F O R M A T I O N
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 0.?: (2008-??-??)
+ 0.9.5: (2008-??-??)
 
  + Detailed log files can be created by providing a configuration file log4j.xml
      (see README.txt for details).
  + HTTP Proxy (host & port) can be specified via GUI
+ ! Saving profiles works now (including map source, zoom levels and tile size) 
  
  0.9.1: (2008-10-17)
 
  ! Fixed wrong calculation of number of tiles when the amount was large. 
  
  0.9 alpha: (2008-10-15)
-  
  + Added resizeable GUI
  + Added possibility to select map area by selection an area with mouse
  + Added tmi files for the tared atlases which make the  map loading faster
  
  ~ Changed preview viewer to JMapViewer. It has several advantages:
     different map sources 
-    preview loads in background automatical
+    preview loads in background automatically
     easy zooming (mouse wheel) and movement (right mouse button)
-  ~ Tar generation rewritten, each tar is now only opened one time, not 
+ ~ Tar generation rewritten, each tar is now only opened one time, not 
    once for each tile to be added (increases tar creation in case of a virus 
    scanner being active)
  

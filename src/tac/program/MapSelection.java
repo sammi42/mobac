@@ -99,11 +99,13 @@ public class MapSelection {
 	}
 
 	/**
-	 * Return the amount of tiles for the current selection in the specified 
-	 * zoom level. 
+	 * Return the amount of tiles for the current selection in the specified
+	 * zoom level.
 	 * 
-	 * @param zoom is the zoom level to calculate the amount of tiles for 
-	 * @return the amount of tiles in the current selection in the supplied zoom level 
+	 * @param zoom
+	 *            is the zoom level to calculate the amount of tiles for
+	 * @return the amount of tiles in the current selection in the supplied zoom
+	 *         level
 	 */
 	public long calculateNrOfTiles(int zoom) {
 		Point max = getBottomRightTileNumber(zoom);
@@ -112,4 +114,11 @@ public class MapSelection {
 		long height = max.y - min.y + 1;
 		return width * height;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[] { lat_max, lon_max,
+				lat_min, lon_min });
+	}
+
 }

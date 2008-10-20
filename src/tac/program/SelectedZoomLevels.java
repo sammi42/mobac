@@ -40,4 +40,17 @@ public class SelectedZoomLevels {
 		return nrOfLayers;
 	}
 
+	@Override
+	public String toString() {
+		String r = "";
+		for (int i = 0; i < zoomLevels.length; i++) {
+			if (zoomLevels[i])
+				r += " " + i + ",";
+		}
+		r = r.trim();
+		if (r.length() > 0)
+			r = r.substring(0, r.length() - 1);
+		return r;
+	}
+
 }

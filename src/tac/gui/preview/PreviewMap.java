@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import javax.swing.JComboBox;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
@@ -26,6 +27,8 @@ import tac.program.MapSelection;
 import tac.program.Settings;
 
 public class PreviewMap extends JMapViewer {
+
+	private static Logger log = Logger.getLogger(PreviewMap.class);
 	private static final long serialVersionUID = 1L;
 	private static final Color GRID_COLOR = new Color(200, 20, 20, 130);
 	private static final Color SEL_COLOR = new Color(0.9f, 0.7f, 0.7f, 0.6f);
@@ -98,6 +101,7 @@ public class PreviewMap extends JMapViewer {
 
 	@Override
 	public void setTileSource(TileSource newTileSource) {
+		log.trace("Preview map source changed from " + tileSource + " to " + newTileSource);
 		super.setTileSource(newTileSource);
 		gridSizeSelector.removeAllItems();
 		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom() + 1);
@@ -115,6 +119,7 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	protected void zoomChanged(int oldZoom) {
+		log.trace("Preview map zoom changed from " + oldZoom + " to " + zoom);
 		updateGridValues();
 	}
 
@@ -239,6 +244,8 @@ public class PreviewMap extends JMapViewer {
 			return;
 		Point pStart = ms.getTopLeftTileCoordinate(zoom);
 		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
+		// log.trace("Selection: " + pStart.x + "/" + pStart.y + "  " + pEnd.x +
+		// "/" + pEnd.y);
 		setSelectionByTilePoint(pStart, pEnd, true);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
 		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
@@ -257,10 +264,17 @@ public class PreviewMap extends JMapViewer {
 
 		Point pEnd = new Point(p_max.x + tlc.x, p_max.y + tlc.y);
 		Point pStart = new Point(p_min.x + tlc.x, p_min.y + tlc.y);
+		// log.trace("Selection: " + pStart.x + "/" + pStart.y + "  " + pEnd.x +
+		// "/" + pEnd.y);
 		setSelectionByTilePoint(pStart, pEnd, notifyListeners);
 	}
 
 	public void setSelectionByTilePoint(Point pStart, Point pEnd, boolean notifyListeners) {
+
+		pStart.x = Math.max(0, pStart.x);
+		pStart.y = Math.max(0, pStart.y);
+		pEnd.x = Math.min(Tile.SIZE << zoom, pEnd.x);
+		pEnd.y = Math.min(Tile.SIZE << zoom, pEnd.y);
 
 		int zoomDiff = MAX_ZOOM - zoom;
 

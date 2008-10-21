@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -85,25 +84,24 @@ public class SettingsGUI extends JDialog {
 		JPanel leftPanel = new JPanel(null);
 		leftPanel.setBounds(5, 5, 300, 240);
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
-		
-		TileSource [] sources = MapSources.getMapSources();
-		
+
+		TileSource[] sources = MapSources.getMapSources();
+
 		int rows = sources.length;
-		
+
 		JPanel rightPanel = new JPanel(new GridLayout(rows, 2));
 		rightPanel.setBounds(303, 5, 172, 240);
 		rightPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
 		leftPanel.add(tileStoreEnabled);
-		
+
 		TileStore tileStore = TileStore.getInstance();
-		
+
 		for (TileSource ts : MapSources.getMapSources()) {
-			
+
 			rightPanel.add(new JLabel(ts.getName()));
 			rightPanel.add(new JLabel(Integer.toString(tileStore.getNrOfTiles(ts))));
-			
-			
+
 		}
 
 		JPanel backGround = new JPanel(null);
@@ -157,7 +155,7 @@ public class SettingsGUI extends JDialog {
 		panel.add(proxyPortLabel);
 		panel.add(proxyPort);
 		JPanel p = new JPanel(new BorderLayout());
-		p.setBorder(new EmptyBorder(5,5,5,5));
+		p.setBorder(new EmptyBorder(5, 5, 5, 5));
 		p.add(panel, BorderLayout.NORTH);
 		return p;
 	}

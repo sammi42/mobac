@@ -22,6 +22,12 @@ public class TileDownLoader {
 			TileSource tileSource, boolean isAtlasDownload) throws IOException,
 			InterruptedException {
 
+		int maxTileIndex = 2 << zoom;
+		if (x > maxTileIndex)
+			throw new RuntimeException("Invalid tile index x=" + x + " for zoom " + zoom);
+		if (y > maxTileIndex)
+			throw new RuntimeException("Invalid tile index y=" + y + " for zoom " + zoom);
+
 		TileStore ts = TileStore.getInstance();
 
 		// Thread.sleep(2000);
@@ -39,8 +45,10 @@ public class TileDownLoader {
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
 			try {
-				if (ts.copyStoredTileTo(destFile, x, y, zoom, tileSource))
+				if (ts.copyStoredTileTo(destFile, x, y, zoom, tileSource)) {
+					log.trace("Tile used from tilestore");
 					return 0;
+				}
 			} catch (IOException e) {
 			}
 		}

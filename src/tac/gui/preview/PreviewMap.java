@@ -244,8 +244,6 @@ public class PreviewMap extends JMapViewer {
 			return;
 		Point pStart = ms.getTopLeftTileCoordinate(zoom);
 		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
-		// log.trace("Selection: " + pStart.x + "/" + pStart.y + "  " + pEnd.x +
-		// "/" + pEnd.y);
 		setSelectionByTilePoint(pStart, pEnd, true);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
 		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
@@ -264,8 +262,6 @@ public class PreviewMap extends JMapViewer {
 
 		Point pEnd = new Point(p_max.x + tlc.x, p_max.y + tlc.y);
 		Point pStart = new Point(p_min.x + tlc.x, p_min.y + tlc.y);
-		// log.trace("Selection: " + pStart.x + "/" + pStart.y + "  " + pEnd.x +
-		// "/" + pEnd.y);
 		setSelectionByTilePoint(pStart, pEnd, notifyListeners);
 	}
 
@@ -309,6 +305,7 @@ public class PreviewMap extends JMapViewer {
 
 		if (iSelectionRectStart == null || iSelectionRectEnd == null)
 			return;
+
 		int selectionZoom;
 		int x_min, y_min, x_max, y_max;
 		int zoomDiff1;

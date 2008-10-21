@@ -11,8 +11,10 @@ V E R S I O N  I N F O R M A T I O N
      (see README.txt for details).
  + HTTP Proxy (host & port) can be specified via GUI
  + Added information about amount of tiles in each tile source store in Settings window.
- 
+ ! Selection of whole world resulted in a wrong max longitude (-180 instead of 180)
+ ! Tile number and index calculations near to the border of the world corrected 
  ! Saving profiles works now (including map source, zoom levels and tile size) 
+ ! Aborting of stalled downloads works now as expected
  
  0.9.1: (2008-10-17)
 

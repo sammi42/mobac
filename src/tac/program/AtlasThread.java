@@ -229,25 +229,17 @@ public class AtlasThread extends Thread implements ActionListener {
 	protected boolean retryDownloadAtlasTile(int xValue, int yValue, int zoomValue,
 			File destinationFolder, TileSource tileSource) throws InterruptedException {
 
-		boolean retryOk = false;
-
 		for (int i = 0; i < 10; i++) {
-
 			try {
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);
 				ap.addDownloadedBytes(bytes);
-				retryOk = true;
+				return true;
 			} catch (IOException e) {
-				retryOk = false;
-
-				try {
-					Thread.sleep(10 * 1000);
-				} catch (InterruptedException iex) {
-				}
+				Thread.sleep(1000);
 			}
 		}
-		return retryOk;
+		return false;
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -140,9 +140,6 @@ public class AtlasThread extends Thread implements ActionListener {
 			Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
 			Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
 
-			// System.out.println("Selection to download: \n\t" + topLeft +
-			// "\n\t" + bottomRight
-			// + "\n\tzoom: " + zoom);
 			int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
 
 			int xMin = topLeft.x;

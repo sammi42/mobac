@@ -112,7 +112,6 @@ public class MapSelection {
 		Point min = getTopLeftTileNumber(zoom);
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
-		System.out.println(max+" "+min+" -> "+width+" "+height);
 		return width * height;
 	}
 

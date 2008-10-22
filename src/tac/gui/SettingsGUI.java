@@ -106,22 +106,30 @@ public class SettingsGUI extends JDialog {
 		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
 		gbc_mapSource.anchor = GridBagConstraints.WEST;
 		GridBagConstraints gbc_mapTiles = new GridBagConstraints();
-		gbc_mapTiles.gridwidth = GridBagConstraints.REMAINDER;
+//		gbc_mapTiles.gridwidth = GridBagConstraints.REMAINDER;
 		gbc_mapTiles.insets = gbc_mapSource.insets;
 		gbc_mapTiles.anchor = GridBagConstraints.EAST;
+		GridBagConstraints gbc_mapTilesSize = new GridBagConstraints();
+		gbc_mapTilesSize.gridwidth = GridBagConstraints.REMAINDER;
+		gbc_mapTilesSize.insets = gbc_mapSource.insets;
+		gbc_mapTilesSize.anchor = GridBagConstraints.EAST;
 
 		TileStore tileStore = TileStore.getInstance();
 
 		rightPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
-		rightPanel.add(new JLabel("<html><b>Tiles</b></html>"),
-				gbc_mapTiles);
+		rightPanel.add(new JLabel("<html><b>Tiles</b></html>"),	gbc_mapTiles);
+		rightPanel.add(new JLabel("<html><b>Size</b></html>"),	gbc_mapTilesSize);
 		
 		long totalTileCount = 0;
+		long totalTileSize = 0;
 		for (TileSource ts : MapSources.getMapSources()) {
 			int count = tileStore.getNrOfTiles(ts);
+			long size = tileStore.getStoreSize(ts);
 			totalTileCount += count;
+			totalTileSize += size;
 			rightPanel.add(new JLabel(ts.getName()), gbc_mapSource);
 			rightPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
+			rightPanel.add(new JLabel(Long.toString(size)), gbc_mapTilesSize);
 		}
 		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
 		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
@@ -131,8 +139,8 @@ public class SettingsGUI extends JDialog {
 		rightPanel.add(hr,gbc);
 
 		rightPanel.add(new JLabel("<html><b>Total</b></html>"), gbc_mapSource);
-		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount) + "</b></html>"),
-				gbc_mapTiles);
+		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount) + "</b></html>"),	gbc_mapTiles);
+		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileSize) + "</b></html>"),	gbc_mapTilesSize);
 
 		backGround.add(leftPanel, BorderLayout.CENTER);
 		backGround.add(rightPanel, BorderLayout.EAST);
@@ -141,7 +149,7 @@ public class SettingsGUI extends JDialog {
 	private void addMapSizePanel() {
 		JPanel backGround = createNewTab("Map size");
 
-		// Sizes from 512 to 4096
+		// Sizes from 512 to 32768
 		mapSizes = new Vector<Integer>(10);
 		int size = 32768;
 		do {

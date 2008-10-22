@@ -2,7 +2,10 @@ package tac.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,8 +19,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -69,56 +74,79 @@ public class SettingsGUI extends JDialog {
 	public void createTabbedPane() {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
-		tabbedPane.add(createTileStorePanel(), "Tile store");
-		tabbedPane.add(createMapSizePanel(), "Map size");
-		tabbedPane.add(createNetworkPanel(), "Network");
+		addTileStorePanel();
+		addMapSizePanel();
+		addNetworkPanel();
 
-		this.getContentPane().add(tabbedPane);
+		add(tabbedPane);
 	}
 
-	private JPanel createTileStorePanel() {
+	private JPanel createNewTab(String tabTitle) {
+		JPanel tabPanel = new JPanel(new BorderLayout());
+		tabPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tabbedPane.add(tabPanel, tabTitle);
+		return tabPanel;
+	}
+
+	private void addTileStorePanel() {
+
+		JPanel backGround = createNewTab("Tile store");
 
 		tileStoreEnabled = new JCheckBox("Enable tile store");
 		tileStoreEnabled.setBounds(7, 40, 120, 15);
 
 		JPanel leftPanel = new JPanel(null);
-		leftPanel.setBounds(5, 5, 300, 240);
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
+		leftPanel.add(tileStoreEnabled);
 
-		TileSource[] sources = MapSources.getMapSources();
-
-		int rows = sources.length;
-
-		JPanel rightPanel = new JPanel(new GridLayout(rows, 2));
-		rightPanel.setBounds(303, 5, 172, 240);
+		JPanel rightPanel = new JPanel(new GridBagLayout());
 		rightPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
-		leftPanel.add(tileStoreEnabled);
+		GridBagConstraints gbc_mapSource = new GridBagConstraints();
+		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
+		gbc_mapSource.anchor = GridBagConstraints.WEST;
+		GridBagConstraints gbc_mapTiles = new GridBagConstraints();
+		gbc_mapTiles.gridwidth = GridBagConstraints.REMAINDER;
+		gbc_mapTiles.insets = gbc_mapSource.insets;
+		gbc_mapTiles.anchor = GridBagConstraints.EAST;
 
 		TileStore tileStore = TileStore.getInstance();
 
+		rightPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
+		rightPanel.add(new JLabel("<html><b>Tiles</b></html>"),
+				gbc_mapTiles);
+		
+		long totalTileCount = 0;
 		for (TileSource ts : MapSources.getMapSources()) {
-
-			rightPanel.add(new JLabel(ts.getName()));
-			rightPanel.add(new JLabel(Integer.toString(tileStore.getNrOfTiles(ts))));
-
+			int count = tileStore.getNrOfTiles(ts);
+			totalTileCount += count;
+			rightPanel.add(new JLabel(ts.getName()), gbc_mapSource);
+			rightPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
 		}
+		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
+		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		rightPanel.add(hr,gbc);
 
-		JPanel backGround = new JPanel(null);
-		backGround.add(leftPanel);
-		backGround.add(rightPanel);
+		rightPanel.add(new JLabel("<html><b>Total</b></html>"), gbc_mapSource);
+		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount) + "</b></html>"),
+				gbc_mapTiles);
 
-		return backGround;
+		backGround.add(leftPanel, BorderLayout.CENTER);
+		backGround.add(rightPanel, BorderLayout.EAST);
 	}
 
-	private JPanel createMapSizePanel() {
+	private void addMapSizePanel() {
+		JPanel backGround = createNewTab("Map size");
 
 		// Sizes from 512 to 4096
 		mapSizes = new Vector<Integer>(10);
 		int size = 32768;
 		do {
 			mapSizes.addElement(new Integer(size));
-			size >>= 1;
+			size -= 1024;
 		} while (size >= 1024);
 
 		mapSize = new JComboBox(mapSizes);
@@ -136,13 +164,11 @@ public class SettingsGUI extends JDialog {
 		leftPanel.add(mapSize);
 		leftPanel.add(mapSizeLabel);
 
-		JPanel thumbNailBackGround = new JPanel(null);
-		thumbNailBackGround.add(leftPanel);
-
-		return thumbNailBackGround;
+		backGround.add(leftPanel);
 	}
 
-	private JPanel createNetworkPanel() {
+	private void addNetworkPanel() {
+		JPanel backGround = createNewTab("Network");
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
 		panel.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
 		JLabel proxyHostLabel = new JLabel("Proxy host name: ");
@@ -153,10 +179,7 @@ public class SettingsGUI extends JDialog {
 		panel.add(proxyHost);
 		panel.add(proxyPortLabel);
 		panel.add(proxyPort);
-		JPanel p = new JPanel(new BorderLayout());
-		p.setBorder(new EmptyBorder(5, 5, 5, 5));
-		p.add(panel, BorderLayout.NORTH);
-		return p;
+		backGround.add(panel, BorderLayout.NORTH);
 	}
 
 	public void createJButtons() {

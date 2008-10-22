@@ -41,7 +41,7 @@ public class SettingsGUI extends JDialog {
 
 	private JTabbedPane tabbedPane;
 
-	private Vector<MapSize> mapSizes;
+	private Vector<Integer> mapSizes;
 
 	public SettingsGUI(JFrame owner) {
 		super(owner);
@@ -114,13 +114,12 @@ public class SettingsGUI extends JDialog {
 	private JPanel createMapSizePanel() {
 
 		// Sizes from 512 to 4096
-		mapSizes = new Vector<MapSize>(10);
-		int valueToAdd = 512;
-		for (int i = 0; i < 8; i++) {
-			mapSizes.addElement(new MapSize(valueToAdd));
-			valueToAdd *= 2;
-		}
-		mapSizes.addElement(new MapSize(0));
+		mapSizes = new Vector<Integer>(10);
+		int size = 32768;
+		do {
+			mapSizes.addElement(new Integer(size));
+			size >>= 1;
+		} while (size >= 1024);
 
 		mapSize = new JComboBox(mapSizes);
 		mapSize.setBounds(7, 40, 120, 20);
@@ -177,7 +176,7 @@ public class SettingsGUI extends JDialog {
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
 		int size = s.getMaxMapsSize();
-		int index = mapSizes.indexOf(new MapSize(size));
+		int index = mapSizes.indexOf(new Integer(size));
 		if (index < 0)
 			index = 0;
 		mapSize.setSelectedIndex(index);
@@ -188,7 +187,7 @@ public class SettingsGUI extends JDialog {
 
 		s.setTileStoreEnabled(tileStoreEnabled.isSelected());
 
-		int size = ((MapSize) mapSize.getSelectedItem()).getMapSize();
+		int size = ((Integer) mapSize.getSelectedItem()).intValue();
 		s.setMaxMapSize(size);
 
 		System.setProperty("http.proxyHost", proxyHost.getText());
@@ -210,38 +209,5 @@ public class SettingsGUI extends JDialog {
 				SettingsGUI.this.dispose();
 			}
 		});
-	}
-
-	private static class MapSize implements Comparable<MapSize> {
-
-		private int mapSize;
-
-		public MapSize(int mapSize) {
-			super();
-			this.mapSize = mapSize;
-		}
-
-		@Override
-		public String toString() {
-			if (mapSize == 0)
-				return "Unlimited";
-			return Integer.toString(mapSize);
-		}
-
-		public int getMapSize() {
-			return mapSize;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof MapSize)
-				return ((MapSize) obj).mapSize == mapSize;
-			return false;
-		}
-
-		public int compareTo(MapSize o) {
-			return new Integer(mapSize).compareTo(o.mapSize);
-		}
-
 	}
 }

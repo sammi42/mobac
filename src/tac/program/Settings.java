@@ -36,8 +36,8 @@ public class Settings {
 	private static final String SELECTION_LON_MAX = "selection.max.lon";
 	private static final String SELECTION_LAT_MIN = "selection.min.lat";
 	private static final String SELECTION_LON_MIN = "selection.min.lon";
-
-	private int maxMapSize = 0;
+	
+	private int maxMapSize = 32768;
 
 	private boolean tileStoreEnabled = true;
 

@@ -9,9 +9,13 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -27,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.StartTAC;
 import tac.gui.preview.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
@@ -34,6 +39,8 @@ import tac.utilities.Utilities;
 
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
+
+	private JPanel tileStoreInfoPanel;
 
 	private JCheckBox tileStoreEnabled;
 
@@ -100,27 +107,43 @@ public class SettingsGUI extends JDialog {
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
 		leftPanel.add(tileStoreEnabled);
 
-		JPanel rightPanel = new JPanel(new GridBagLayout());
-		rightPanel.setBorder(BorderFactory.createTitledBorder("Information"));
+		tileStoreInfoPanel = new JPanel(new GridBagLayout());
+		tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
+		updateTileStoreInfoPanel();
+
+		backGround.add(leftPanel, BorderLayout.CENTER);
+		backGround.add(tileStoreInfoPanel, BorderLayout.EAST);
+	}
+
+	private void updateTileStoreInfoPanel() {
+		tileStoreInfoPanel.removeAll();
 		GridBagConstraints gbc_mapSource = new GridBagConstraints();
 		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
 		gbc_mapSource.anchor = GridBagConstraints.WEST;
 		GridBagConstraints gbc_mapTiles = new GridBagConstraints();
-//		gbc_mapTiles.gridwidth = GridBagConstraints.REMAINDER;
+		// gbc_mapTiles.gridwidth = GridBagConstraints.REMAINDER;
 		gbc_mapTiles.insets = gbc_mapSource.insets;
 		gbc_mapTiles.anchor = GridBagConstraints.EAST;
-		GridBagConstraints gbc_mapTilesSize = new GridBagConstraints();
-		gbc_mapTilesSize.gridwidth = GridBagConstraints.REMAINDER;
-		gbc_mapTilesSize.insets = gbc_mapSource.insets;
-		gbc_mapTilesSize.anchor = GridBagConstraints.EAST;
+		GridBagConstraints gbc_eol = new GridBagConstraints();
+		gbc_eol.gridwidth = GridBagConstraints.REMAINDER;
+		// gbc_eol.insets = gbc_mapSource.insets;
 
 		TileStore tileStore = TileStore.getInstance();
 
-		rightPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
-		rightPanel.add(new JLabel("<html><b>Tiles</b></html>"),	gbc_mapTiles);
-		rightPanel.add(new JLabel("<html><b>Size</b></html>"),	gbc_mapTilesSize);
-		
+		tileStoreInfoPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
+		tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
+		tileStoreInfoPanel.add(new JLabel("<html><b>Size</b></html>"), gbc_eol);
+
+		InputStream imageStream = StartTAC.class.getResourceAsStream("images/trash.png");
+		ImageIcon trash = new ImageIcon();
+		try {
+			trash.setImage(ImageIO.read(imageStream));
+		} catch (IOException e) {
+		} finally {
+			Utilities.closeStream(imageStream);
+		}
+
 		long totalTileCount = 0;
 		long totalTileSize = 0;
 		for (TileSource ts : MapSources.getMapSources()) {
@@ -128,23 +151,27 @@ public class SettingsGUI extends JDialog {
 			long size = tileStore.getStoreSize(ts);
 			totalTileCount += count;
 			totalTileSize += size;
-			rightPanel.add(new JLabel(ts.getName()), gbc_mapSource);
-			rightPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
-			rightPanel.add(new JLabel(Utilities.formatBytes(size)), gbc_mapTilesSize);
+			tileStoreInfoPanel.add(new JLabel(ts.getName()), gbc_mapSource);
+			tileStoreInfoPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
+			tileStoreInfoPanel.add(new JLabel(Utilities.formatBytes(size)), gbc_mapTiles);
+			JButton deleteButton = new JButton(trash);
+			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+			deleteButton.setToolTipText("Delete all stored " + ts.getName() + " tiles.");
+			deleteButton.addActionListener(new ClearTileCacheAction(ts));
+			tileStoreInfoPanel.add(deleteButton, gbc_eol);
 		}
 		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
 		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		rightPanel.add(hr,gbc);
+		tileStoreInfoPanel.add(hr, gbc);
 
-		rightPanel.add(new JLabel("<html><b>Total</b></html>"), gbc_mapSource);
-		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount) + "</b></html>"),	gbc_mapTiles);
-		rightPanel.add(new JLabel("<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>"),	gbc_mapTilesSize);
-
-		backGround.add(leftPanel, BorderLayout.CENTER);
-		backGround.add(rightPanel, BorderLayout.EAST);
+		tileStoreInfoPanel.add(new JLabel("<html><b>Total</b></html>"), gbc_mapSource);
+		tileStoreInfoPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount)
+				+ "</b></html>"), gbc_mapTiles);
+		tileStoreInfoPanel.add(new JLabel("<html><b>" + Utilities.formatBytes(totalTileSize)
+				+ "</b></html>"), gbc_mapTiles);
 	}
 
 	private void addMapSizePanel() {
@@ -241,5 +268,31 @@ public class SettingsGUI extends JDialog {
 				SettingsGUI.this.dispose();
 			}
 		});
+	}
+
+	private class ClearTileCacheAction implements ActionListener {
+
+		TileSource source;
+
+		public ClearTileCacheAction(TileSource source) {
+			this.source = source;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			final JButton b = (JButton) e.getSource();
+			b.setEnabled(false);
+			b.setToolTipText("Deleting in progress - please wait");
+			Thread t = new Thread() {
+
+				@Override
+				public void run() {
+					TileStore ts = TileStore.getInstance();
+					ts.clearStore(source);
+					SettingsGUI.this.updateTileStoreInfoPanel();
+					SettingsGUI.this.repaint();
+				}
+			};
+			t.start();
+		}
 	}
 }

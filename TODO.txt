@@ -23,18 +23,12 @@ Importance order:
 
 4:
 
-* Add 4 threaded simultaneous download of tiles. 
-  -> Again JMapViewer does show how to this. 
-
-
-5:
-
 * But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color
   depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
   -> That is not that simple in Java. The standard way would be to integrate an Java Advanced Imaging API
      implementation (example implementation provided by Sun: https://jai-core.dev.java.net/ )
 
-6:
+5:
 
 * Open folder in AtlasProgress is platform specific (Windows only)
   -> Requires platform detection - Windows, Linux (KDE), Linux (Gnome), ... 

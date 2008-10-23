@@ -12,6 +12,7 @@ import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.LinkedList;
@@ -36,6 +37,7 @@ public class Utilities {
 	private static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
+	public static final NumberFormat FORMAT_2_DEC = new DecimalFormat("0.00");
 
 	public static final Pattern VALID_FILENAME_PATTERN = buildDisallowedCharatersPattern();
 
@@ -96,6 +98,23 @@ public class Utilities {
 			ActionEvent postTip = new ActionEvent(c, ActionEvent.ACTION_PERFORMED, "");
 			toolTipAction.actionPerformed(postTip);
 		}
+	}
+
+	/**
+	 * Formats a byte value depending on the size to "Bytes", "KiBytes",
+	 * "MiByte" and "GiByte"
+	 * 
+	 * @param bytes
+	 * @return Formatted {@link String}
+	 */
+	public static String formatBytes(long bytes) {
+		if (bytes < 1000)
+			return Long.toString(bytes) + " Bytes";
+		if (bytes < 1000000)
+			return FORMAT_2_DEC.format(bytes / 1024d) + " KiByte";
+		if (bytes < 1000000000)
+			return FORMAT_2_DEC.format(bytes / 1048576d) + " MiByte";
+		return FORMAT_2_DEC.format(bytes / 1073741824d) + " GiByte";
 	}
 
 	public static int validateString(String theStringToValidate) {

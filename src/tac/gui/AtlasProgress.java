@@ -17,8 +17,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import tac.program.AtlasThread;
+import tac.utilities.Utilities;
 
 /**
  * A window showing the progress while {@link AtlasThread} downloads and
@@ -39,8 +38,6 @@ import tac.program.AtlasThread;
 public class AtlasProgress extends JFrame {
 
 	private static final long serialVersionUID = 3159146939361532653L;
-
-	private static final NumberFormat F2 = new DecimalFormat("0.00");
 
 	private static final Timer TIMER = new Timer(true);
 
@@ -363,31 +360,19 @@ public class AtlasProgress extends JFrame {
 	}
 
 	public void updateViewNrOfDownloadedBytes() {
-
-		String convertedString = "";
-
-		if (numberOfDownloadedBytes > 1000000) {
-			convertedString = F2.format(numberOfDownloadedBytes / 1048576d) + " MiByte";
-		} else if (numberOfDownloadedBytes > 1000) {
-			convertedString = F2.format(numberOfDownloadedBytes / 1024d) + " KiByte";
-		} else if (numberOfDownloadedBytes > 0) {
-			convertedString = Long.toString(numberOfDownloadedBytes);
-
-			if ((convertedString.indexOf(".") < convertedString.length() - 2)
-					&& (convertedString.indexOf(".") > -1)) {
-				convertedString = convertedString.substring(0, convertedString.indexOf((".")) + 2)
-						+ " Bytes";
-			} else {
-				convertedString = convertedString + " Byte";
-			}
-		}
-		nrOfDownloadedBytesValue.setText(": " + convertedString);
+		nrOfDownloadedBytesValue.setText(": " + Utilities.formatBytes(numberOfDownloadedBytes));
 	}
 
 	public void updateViewNrOfDownloadedBytesPerSecond() {
-		double rate = ((double) numberOfDownloadedBytes)
-				/ (System.currentTimeMillis() - initiateTime);
-		nrOfDownloadedBytesPerSecondValue.setText(": " + F2.format(rate) + " KiByte / Second");
+		long rate = numberOfDownloadedBytes;
+		long time = (System.currentTimeMillis() - initiateTime) / 1000;
+		if (time == 0) {
+			nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
+		} else {
+			rate /= time;
+			nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
+					+ " / Second");
+		}
 	}
 
 	public void updateTotalDownloadTime() {

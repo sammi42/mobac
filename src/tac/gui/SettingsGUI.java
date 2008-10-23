@@ -30,6 +30,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import tac.gui.preview.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
+import tac.utilities.Utilities;
 
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
@@ -129,7 +130,7 @@ public class SettingsGUI extends JDialog {
 			totalTileSize += size;
 			rightPanel.add(new JLabel(ts.getName()), gbc_mapSource);
 			rightPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
-			rightPanel.add(new JLabel(Long.toString(size)), gbc_mapTilesSize);
+			rightPanel.add(new JLabel(Utilities.formatBytes(size)), gbc_mapTilesSize);
 		}
 		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
 		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
@@ -140,7 +141,7 @@ public class SettingsGUI extends JDialog {
 
 		rightPanel.add(new JLabel("<html><b>Total</b></html>"), gbc_mapSource);
 		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount) + "</b></html>"),	gbc_mapTiles);
-		rightPanel.add(new JLabel("<html><b>" + Long.toString(totalTileSize) + "</b></html>"),	gbc_mapTilesSize);
+		rightPanel.add(new JLabel("<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>"),	gbc_mapTilesSize);
 
 		backGround.add(leftPanel, BorderLayout.CENTER);
 		backGround.add(rightPanel, BorderLayout.EAST);

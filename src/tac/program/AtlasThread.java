@@ -15,12 +15,14 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
+import tac.program.JobDispatcher.Job;
 
 public class AtlasThread extends Thread implements ActionListener {
 
 	private static int threadNum = 0;
 	private static Logger log = Logger.getLogger(AtlasThread.class);
 
+	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap;
 	private MapSelection mapSelection;
 	private TileSource tileSource;
@@ -28,6 +30,8 @@ public class AtlasThread extends Thread implements ActionListener {
 	private SelectedZoomLevels sZL;
 	private int tileSizeWidth = 0;
 	private int tileSizeHeight = 0;
+	private int jobsCompleted = 0;
+	private int jobsError = 0;
 
 	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
 			SelectedZoomLevels sZL, int tileSizeWidth, int tileSizeHeight) {
@@ -122,92 +126,89 @@ public class AtlasThread extends Thread implements ActionListener {
 		Settings s = Settings.getInstance();
 
 		Thread t = Thread.currentThread();
-		for (int layer = 0; layer < nrOfLayers; layer++) {
+		downloadJobDispatcher = new JobDispatcher(6);
+		try {
+			for (int layer = 0; layer < nrOfLayers; layer++) {
+				jobsCompleted = 0;
+				jobsError = 0;
+				if (t.isInterrupted())
+					throw new InterruptedException();
 
-			if (t.isInterrupted())
-				throw new InterruptedException();
+				// Prepare the tile store directory
+				if (s.isTileStoreEnabled())
+					ts.getTileFile(0, 0, 0, tileSource).getParentFile().mkdirs();
 
-			// Prepare the tile store directory
-			if (s.isTileStoreEnabled())
-				ts.getTileFile(0, 0, 0, tileSource).getParentFile().mkdirs();
+				/***
+				 * In this section of code below, tiles for Atlas is being
+				 * downloaded and put into folder "ozi"
+				 **/
+				int zoom = zoomLevels[layer];
 
-			/***
-			 * In this section of code below, tiles for Atlas is being
-			 * downloaded and put into folder "ozi"
-			 **/
-			int zoom = zoomLevels[layer];
+				Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
+				Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
 
-			Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
-			Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
+				int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
 
-			int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
+				int xMin = topLeft.x;
+				int xMax = bottomRight.x;
+				int yMin = topLeft.y;
+				int yMax = bottomRight.y;
+				ap.setMinMaxForCurrentLayer(0, apMax);
+				ap.setZoomLevel(zoom);
+				ap.setInitiateTimeForLayer();
 
-			int xMin = topLeft.x;
-			int xMax = bottomRight.x;
-			int yMin = topLeft.y;
-			int yMax = bottomRight.y;
-			ap.setMinMaxForCurrentLayer(0, apMax);
-			ap.setZoomLevel(zoom);
-			ap.setInitiateTimeForLayer();
-
-			int counter = 0;
-
-			File oziZoomDir = new File(oziDir, Integer.toString(zoom));
-			oziZoomDir.mkdir();
-			for (int y = yMin; y <= yMax; y++) {
-				for (int x = xMin; x <= xMax; x++) {
-					if (t.isInterrupted())
-						throw new InterruptedException();
-					try {
-						int bytes = TileDownLoader.getImage(x, y, zoom, oziZoomDir, tileSource,
-								true);
-						ap.addDownloadedBytes(bytes);
-					} catch (IOException e) {
-
-						boolean retryOK;
-
-						retryOK = retryDownloadAtlasTile(x, y, zoom, oziZoomDir, tileSource);
-
-						if (retryOK == false) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"Something is wrong with connection to download server. Please check connection to internet and try again",
-											"Error", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
+				File oziZoomDir = new File(oziDir, Integer.toString(zoom));
+				oziZoomDir.mkdir();
+				int counter = 0;
+				for (int y = yMin; y <= yMax; y++) {
+					for (int x = xMin; x <= xMax; x++) {
+						if (t.isInterrupted())
+							throw new InterruptedException();
+						DownloadJob job = new DownloadJob(oziZoomDir, tileSource, x, y, zoom);
+						downloadJobDispatcher.addJob(job);
+						counter++;
 					}
-					counter++;
-
-					ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
-					ap.updateLayerProgressBar(counter);
-					ap.updateViewNrOfDownloadedBytes();
-					ap.updateViewNrOfDownloadedBytesPerSecond();
-					ap.updateTotalDownloadTime();
 				}
+
+				while (jobsCompleted < counter) {
+					Thread.sleep(500);
+					if (jobsError > 10) {
+						downloadJobDispatcher.cancelOutstandingJobs();
+						downloadJobDispatcher.killAllWorkerThreads();
+						JOptionPane
+								.showMessageDialog(
+										null,
+										"Something is wrong with connection to download server. Please check connection to internet and try again",
+										"Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				log.debug("All download jobs has been completed!");
+
+				if ((oziZoomDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
+					JOptionPane.showMessageDialog(null,
+							"Something is wrong with download of atlas tiles. "
+									+ "Actual amount of downoladed tiles is not the same as "
+									+ "the supposed amount of tiles downloaded.\n"
+									+ "It might be connection problems to internet "
+									+ "or something else. Please try again.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
+						atlasName, zoom }));
+				atlasFolder.mkdir();
+
+				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth,
+						tileSizeHeight, atlasName, zoom);
+				ota.convert(xMax, xMin, yMax, yMin);
+
+				ap.updateAtlasProgressBarLayerText(layer + 1);
+				downloadJobDispatcher.cancelOutstandingJobs();
 			}
-
-			if ((oziZoomDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
-				JOptionPane.showMessageDialog(null,
-						"Something is wrong with download of atlas tiles. "
-								+ "Actual amount of downoladed tiles is not the same as "
-								+ "the supposed amount of tiles downloaded.\n"
-								+ "It might be connection problems to internet "
-								+ "or something else. Please try again.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
-					atlasName, zoom }));
-			atlasFolder.mkdir();
-
-			OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth, tileSizeHeight,
-					atlasName, zoom);
-			ota.convert(xMax, xMin, yMax, yMin);
-
-			ap.updateAtlasProgressBarLayerText(layer + 1);
-
+		} finally {
+			downloadJobDispatcher.killAllWorkerThreads();
 		}
 
 		ap.atlasCreationFinished();
@@ -246,4 +247,56 @@ public class AtlasThread extends Thread implements ActionListener {
 		}
 	}
 
+	private void updateGUI() {
+		ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
+		ap.updateLayerProgressBar(jobsCompleted);
+		ap.updateViewNrOfDownloadedBytes();
+		ap.updateViewNrOfDownloadedBytesPerSecond();
+		ap.updateTotalDownloadTime();
+	}
+
+	protected synchronized void jobFinishedSuccessfully() {
+		jobsCompleted++;
+		updateGUI();
+	}
+
+	protected synchronized void jobFinishedWithError() {
+		jobsError++;
+	}
+
+	public class DownloadJob implements Job {
+
+		int errorCounter = 0;
+
+		TileSource tileSource;
+		int xValue;
+		int yValue;
+		int zoomValue;
+		File destinationFolder;
+
+		public DownloadJob(File destinationFolder, TileSource tileSource, int xValue, int yValue,
+				int zoomValue) {
+			this.destinationFolder = destinationFolder;
+			this.tileSource = tileSource;
+			this.xValue = xValue;
+			this.yValue = yValue;
+			this.zoomValue = zoomValue;
+		}
+
+		public void run() throws Exception {
+			try {
+				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
+						tileSource, true);
+				ap.addDownloadedBytes(bytes);
+				jobFinishedSuccessfully();
+			} catch (Exception e) {
+				errorCounter++;
+				jobFinishedWithError();
+				// Reschedule job to try it later again
+				if (errorCounter < 3)
+					downloadJobDispatcher.addJob(this);
+				throw e;
+			}
+		}
+	}
 }

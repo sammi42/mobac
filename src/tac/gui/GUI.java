@@ -324,10 +324,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		scrollPane.setBounds(5, 5, 264, 180);
 
 		saveAsProfileButton = new JButton("Save as profile");
-		saveAsProfileButton.setBounds(3, 195, 110, 25);
+		saveAsProfileButton.setBounds(4, 195, 125, 25);
 
 		deleteProfileButton = new JButton("Delete profile");
-		deleteProfileButton.setBounds(159, 195, 110, 25);
+		deleteProfileButton.setBounds(144, 195, 125, 25);
 
 		settingsGUIButton = new JButton("Settings");
 

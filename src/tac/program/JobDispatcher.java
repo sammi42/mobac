@@ -21,11 +21,12 @@ public class JobDispatcher {
 
 	@Override
 	protected void finalize() throws Throwable {
-		killAllWorkerThreads();
+		terminateAllWorkerThreads();
 		super.finalize();
 	}
 
-	public void killAllWorkerThreads() {
+	public void terminateAllWorkerThreads() {
+		cancelOutstandingJobs();
 		log.trace("Killing all worker threads");
 		for (int i = 0; i < workers.length; i++) {
 			try {

@@ -174,7 +174,7 @@ public class AtlasThread extends Thread implements ActionListener {
 					Thread.sleep(500);
 					if (jobsError > 10) {
 						downloadJobDispatcher.cancelOutstandingJobs();
-						downloadJobDispatcher.killAllWorkerThreads();
+						downloadJobDispatcher.terminateAllWorkerThreads();
 						JOptionPane
 								.showMessageDialog(
 										null,
@@ -208,7 +208,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				downloadJobDispatcher.cancelOutstandingJobs();
 			}
 		} finally {
-			downloadJobDispatcher.killAllWorkerThreads();
+			downloadJobDispatcher.terminateAllWorkerThreads();
 		}
 
 		ap.atlasCreationFinished();
@@ -243,6 +243,8 @@ public class AtlasThread extends Thread implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		try {
 			this.interrupt();
+			if (downloadJobDispatcher != null)
+				downloadJobDispatcher.terminateAllWorkerThreads();
 		} catch (Exception ex) {
 		}
 	}
@@ -285,6 +287,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		public void run() throws Exception {
 			try {
+				Thread.sleep(200);
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);
 				ap.addDownloadedBytes(bytes);

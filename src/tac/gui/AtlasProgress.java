@@ -364,12 +364,12 @@ public class AtlasProgress extends JFrame {
 	}
 
 	public void updateViewNrOfDownloadedBytesPerSecond() {
-		long rate = numberOfDownloadedBytes;
-		long time = (System.currentTimeMillis() - initiateTime) / 1000;
+		long rate = numberOfDownloadedBytes * 1000;
+		long time = System.currentTimeMillis() - initiateTime;
 		if (time == 0) {
 			nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
 		} else {
-			rate /= time;
+			rate = rate / time;
 			nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
 					+ " / Second");
 		}
@@ -396,6 +396,7 @@ public class AtlasProgress extends JFrame {
 			timeString = seconds + " second(s)";
 		}
 		totalDownloadTimeValue.setText(": " + timeString);
+		totalDownloadTimeValue.repaint();
 	}
 
 	public int getAtlasProgressValue() {

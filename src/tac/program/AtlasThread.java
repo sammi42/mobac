@@ -30,6 +30,8 @@ public class AtlasThread extends Thread implements ActionListener {
 	private SelectedZoomLevels sZL;
 	private int tileSizeWidth = 0;
 	private int tileSizeHeight = 0;
+
+	private int jobsProduced = 0;
 	private int jobsCompleted = 0;
 	private int jobsError = 0;
 
@@ -159,22 +161,16 @@ public class AtlasThread extends Thread implements ActionListener {
 
 				File oziZoomDir = new File(oziDir, Integer.toString(zoom));
 				oziZoomDir.mkdir();
-				int counter = 0;
-				for (int y = yMin; y <= yMax; y++) {
-					for (int x = xMin; x <= xMax; x++) {
-						if (t.isInterrupted())
-							throw new InterruptedException();
-						DownloadJob job = new DownloadJob(oziZoomDir, tileSource, x, y, zoom);
-						downloadJobDispatcher.addJob(job);
-						counter++;
-					}
-				}
+				jobsProduced = 0;
+				DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom,
+						oziZoomDir);
 
-				while (jobsCompleted < counter) {
+				while (djp.isAlive() || jobsCompleted < jobsProduced) {
 					Thread.sleep(500);
 					if (jobsError > 10) {
 						downloadJobDispatcher.cancelOutstandingJobs();
 						downloadJobDispatcher.terminateAllWorkerThreads();
+						djp.cancel();
 						JOptionPane
 								.showMessageDialog(
 										null,
@@ -266,6 +262,62 @@ public class AtlasThread extends Thread implements ActionListener {
 		jobsError++;
 	}
 
+	/**
+	 * 
+	 * Creates the jobs for downloading tiles. If the job queue is full it will
+	 * block on {@link JobDispatcher#addJob(Job)}
+	 * 
+	 */
+	public class DownloadJobProducer extends Thread {
+
+		private Logger log = Logger.getLogger(DownloadJobProducer.class);
+
+		Point topLeft;
+		Point bottomRight;
+
+		int zoom;
+		File oziZoomDir;
+
+		public DownloadJobProducer(Point topLeft, Point bottomRight, int zoom, File oziZoomDir) {
+			super();
+			this.bottomRight = bottomRight;
+			this.topLeft = topLeft;
+			this.zoom = zoom;
+			this.oziZoomDir = oziZoomDir;
+			start();
+		}
+
+		@Override
+		public void run() {
+
+			int xMin = topLeft.x;
+			int xMax = bottomRight.x;
+			int yMin = topLeft.y;
+			int yMax = bottomRight.y;
+			try {
+				for (int y = yMin; y <= yMax; y++) {
+					for (int x = xMin; x <= xMax; x++) {
+						DownloadJob job = new DownloadJob(oziZoomDir, tileSource, x, y, zoom);
+						downloadJobDispatcher.addJob(job);
+						log.trace("Job added: " + x + " " + y + " " + zoom);
+						jobsProduced++;
+					}
+				}
+				log.debug("All download jobs has been generated");
+			} catch (InterruptedException e) {
+				downloadJobDispatcher.cancelOutstandingJobs();
+				log.error("Download job generation interrupted");
+			}
+		}
+
+		public void cancel() {
+			try {
+				interrupt();
+			} catch (Exception e) {
+			}
+		}
+	}
+
 	public class DownloadJob implements Job {
 
 		int errorCounter = 0;
@@ -287,7 +339,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		public void run() throws Exception {
 			try {
-				//Thread.sleep(200);
+				//Thread.sleep(500);
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);
 				ap.addDownloadedBytes(bytes);
@@ -297,7 +349,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				jobFinishedWithError();
 				// Reschedule job to try it later again
 				if (errorCounter < 3)
-					downloadJobDispatcher.addJob(this);
+					downloadJobDispatcher.addErrorJob(this);
 				throw e;
 			}
 		}

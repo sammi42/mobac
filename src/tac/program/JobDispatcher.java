@@ -45,10 +45,29 @@ public class JobDispatcher {
 		jobQueue.clear();
 	}
 
-	public void addJob(Job job) {
+	/**
+	 * Blocks if more than 100 jobs are already scheduled.
+	 * 
+	 * @param job
+	 * @throws InterruptedException
+	 */
+	public void addJob(Job job) throws InterruptedException {
+		while (jobQueue.size() > 100) {
+			Thread.sleep(200);
+		}
+		jobQueue.put(job);
+	}
+
+	/**
+	 * Adds the job to the job-queue and returns. This method will never block!
+	 * 
+	 * @param job
+	 */
+	public void addErrorJob(Job job) {
 		try {
 			jobQueue.put(job);
 		} catch (InterruptedException e) {
+			// Can never happen with LinkedBlockingQueue
 		}
 	}
 

@@ -3,10 +3,8 @@ package tac.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +20,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -55,6 +54,7 @@ import tac.program.MapSelection;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
+import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
 import tac.utilities.Utilities;
 
@@ -87,8 +87,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JLabel coordinatesLabel;
 	private JLabel latMinLabel;
 	private JLabel latMaxLabel;
-	private JLabel longMinLabel;
-	private JLabel longMaxLabel;
+	private JLabel lonMinLabel;
+	private JLabel lonMaxLabel;
 	private JLabel zoomLevelLabel;
 	private JLabel tileSizeLabel;
 	private JLabel customTileSizeWidthLabel;
@@ -171,64 +171,72 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
-		// leftPanel.setMinimumSize(new Dimension(290, 800));
-		// leftPanel.setPreferredSize(leftPanel.getMinimumSize());
 
 		leftScrollPane = new JScrollPane(leftPanel);
 		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		leftScrollPane.setPreferredSize(new Dimension(315, 200));
+		leftScrollPane.setPreferredSize(new Dimension(280, 200));
 
 		coordinatesLabel = new JLabel("COORDINATES");
 
 		// Coordinates Panel
 
-		coordinatesPanel = new JPanel(null);
-		coordinatesPanel.setMinimumSize(new Dimension(270, 200));
-		coordinatesPanel.setPreferredSize(coordinatesPanel.getMinimumSize());
+		GridBagLayout gbl = new GridBagLayout();
+		gbl.columnWeights = new double[] { 4, 1, 2, 1, 4 };
+		coordinatesPanel = new JPanel(gbl);
+
 		coordinatesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-		latMaxLabel = new JLabel("Latitude Max");
-		latMaxLabel.setBounds(112, 20, 100, 20);
+		latMaxLabel = new JLabel("Latitude Max", JLabel.CENTER);
 
 		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
-		latMaxTextField.setBounds(88, 42, 100, 20);
 		latMaxTextField.setActionCommand("latMaxTextField");
 
-		longMinLabel = new JLabel("Longitude Min");
-		longMinLabel.setBounds(20, 70, 100, 20);
+		lonMinLabel = new JLabel("Longitude Min", JLabel.CENTER);
 
 		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
-		lonMinTextField.setBounds(5, 90, 100, 20);
 		lonMinTextField.setActionCommand("longMinTextField");
 
-		longMaxLabel = new JLabel("Longitude Max");
-		longMaxLabel.setBounds(185, 70, 100, 20);
+		lonMaxLabel = new JLabel("Longitude Max", JLabel.CENTER);
 
 		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
-		lonMaxTextField.setBounds(162, 90, 100, 20);
 		lonMaxTextField.setActionCommand("longMaxTextField");
 
-		latMinLabel = new JLabel("Latitude Min");
-		latMinLabel.setBounds(112, 120, 100, 20);
+		latMinLabel = new JLabel("Latitude Min", JLabel.CENTER);
 
 		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
-		latMinTextField.setBounds(88, 140, 100, 20);
 		latMinTextField.setActionCommand("latMinTextField");
 
 		previewSelectionButton = new JButton("Display selection");
-		previewSelectionButton.setBounds(78, 170, 120, 20);
+		// previewSelectionButton.setBounds(78, 170, 120, 20);
 
-		coordinatesPanel.add(latMinLabel);
-		coordinatesPanel.add(latMaxLabel);
-		coordinatesPanel.add(longMinLabel);
-		coordinatesPanel.add(longMaxLabel);
+		GBC gbc_eolcf = GBC.eol().fill(GBC.HORIZONTAL).anchor(GBC.CENTER);
+		GBC gbc_eolc = GBC.eol().anchor(GBC.CENTER).insets(2, 2, 2, 2);
 
-		coordinatesPanel.add(latMinTextField);
-		coordinatesPanel.add(latMaxTextField);
-		coordinatesPanel.add(lonMinTextField);
-		coordinatesPanel.add(lonMaxTextField);
+		JPanel latMaxPanel = new JPanel(new GridBagLayout());
+		latMaxPanel.add(latMaxLabel, gbc_eolc);
+		latMaxPanel.add(latMaxTextField, gbc_eolc);
+		coordinatesPanel.add(latMaxPanel, gbc_eolcf.insets(5, 5, 5, 1));
 
-		coordinatesPanel.add(previewSelectionButton);
+		JPanel lonMinPanel = new JPanel(new GridBagLayout());
+		lonMinPanel.add(lonMinLabel, gbc_eolc);
+		lonMinPanel.add(lonMinTextField, gbc_eolc);
+
+		JPanel lonMaxPanel = new JPanel(new GridBagLayout());
+		lonMaxPanel.add(lonMaxLabel, gbc_eolc);
+		lonMaxPanel.add(lonMaxTextField, gbc_eolc);
+
+		JPanel lonPanel = new JPanel(new BorderLayout());
+		lonPanel.add(lonMinPanel, BorderLayout.WEST);
+		lonPanel.add(lonMaxPanel, BorderLayout.EAST);
+		coordinatesPanel.add(lonPanel, gbc_eolcf);
+
+		JPanel latMinPanel = new JPanel(new GridBagLayout());
+		latMinPanel.add(latMinLabel, gbc_eolc);
+		latMinPanel.add(latMinTextField, gbc_eolc);
+
+		coordinatesPanel.add(latMinPanel, gbc_eolcf);
+
+		coordinatesPanel.add(previewSelectionButton, gbc_eolcf.fill(GBC.NONE).insets(20, 5, 20, 5));
 
 		mapSource = new JComboBox(MapSources.getMapSources());
 		mapSource.addActionListener(new ActionListener() {
@@ -237,8 +245,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 				mapSourceChanged();
 			}
 		});
-		// Zoom Panel
 
+		// Zoom Panel
 		zoomLevelLabel = new JLabel();
 		zoomLevelLabel.setAlignmentX(Component.BOTTOM_ALIGNMENT);
 
@@ -247,130 +255,107 @@ public class GUI extends JFrame implements MapSelectionListener {
 		amountOfTilesLabel.setToolTipText("Total amount of tiles to download");
 
 		zoomLevelPanel = new JPanel();
-		zoomLevelPanel.setPreferredSize(new Dimension(280, 44));
-		zoomLevelPanel.setMinimumSize(zoomLevelPanel.getPreferredSize());
 		zoomLevelPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		tileSizeLabel = new JLabel("TILE SIZE (Pixels)");
-		// tileSizeLabel.setBounds(5, 316, 100, 20);
 
-		tileSizePanel = new JPanel(null);
-		tileSizePanel.setMinimumSize(new Dimension(275, 55));
-		tileSizePanel.setPreferredSize(tileSizePanel.getMinimumSize());
+		tileSizePanel = new JPanel(new GridBagLayout());
 		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		tileSizeValues = new Vector<Integer>();
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 7; i++)
 			tileSizeValues.addElement((i + 1) * 256);
-		}
 
 		JLabel tileSizeWidth = new JLabel("Width:");
-		tileSizeWidth.setBounds(5, 5, 50, 20);
 
 		tileSizeWidthComboBox = new JComboBox(tileSizeValues);
-		tileSizeWidthComboBox.setBounds(45, 5, 70, 20);
 		tileSizeWidthComboBox.setToolTipText("Width");
 
 		customTileSizeWidthLabel = new JLabel("Custom size (W):");
-		customTileSizeWidthLabel.setBounds(130, 5, 100, 20);
 
 		tileSizeWidthTextField = new JTileSizeField();
-		tileSizeWidthTextField.setBounds(218, 5, 50, 20);
 		tileSizeWidthTextField.setToolTipText("Width");
 
 		JLabel tileSizeHeight = new JLabel("Height:");
-		tileSizeHeight.setBounds(5, 29, 50, 20);
 
 		tileSizeHeightComboBox = new JComboBox(tileSizeValues);
-		tileSizeHeightComboBox.setBounds(45, 29, 70, 20);
 		tileSizeHeightComboBox.setToolTipText("Height");
 
 		customTileSizeHeightLabel = new JLabel("Custom size (H):");
-		customTileSizeHeightLabel.setBounds(130, 29, 100, 20);
 
 		tileSizeHeightTextField = new JTileSizeField();
-		tileSizeHeightTextField.setBounds(218, 29, 50, 20);
 		tileSizeHeightTextField.setToolTipText("Height");
 
-		atlasNameLabel = new JLabel("ATLAS NAME");
-		atlasNameLabel.setBounds(5, 400, 100, 20);
+		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
+		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
+		GBC gbc_hspace = GBC.std().fill(GBC.HORIZONTAL);
 
-		atlasNamePanel = new JPanel(null);
-		atlasNamePanel.setMinimumSize(new Dimension(275, 30));
-		atlasNamePanel.setPreferredSize(atlasNamePanel.getMinimumSize());
+		tileSizePanel.add(tileSizeWidth, gbc_std);
+		tileSizePanel.add(tileSizeWidthComboBox, gbc_std);
+		tileSizePanel.add(Box.createHorizontalGlue(), gbc_hspace);
+		tileSizePanel.add(customTileSizeWidthLabel, gbc_std);
+		tileSizePanel.add(tileSizeWidthTextField, gbc_eol);
+		tileSizePanel.add(tileSizeHeight, gbc_std);
+		tileSizePanel.add(tileSizeHeightComboBox, gbc_std);
+		tileSizePanel.add(Box.createHorizontalGlue(), gbc_hspace);
+		tileSizePanel.add(customTileSizeHeightLabel, gbc_std);
+		tileSizePanel.add(tileSizeHeightTextField, gbc_eol);
+
+		atlasNameLabel = new JLabel("ATLAS NAME");
+
+		atlasNamePanel = new JPanel(new GridBagLayout());
 		atlasNamePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		atlasNameTextField = new JTextField();
-		atlasNameTextField.setBounds(5, 5, 264, 20);
 		atlasNameTextField.setActionCommand("atlasNameTextField");
+
+		atlasNamePanel.add(atlasNameTextField, GBC.std().insets(5, 5, 5, 5).fill());
 
 		profilesLabel = new JLabel("SAVED PROFILES");
 		profilesLabel.setBounds(5, 460, 100, 20);
 
 		chooseProfileButton = new JToggleButton("UNLOCK/LOCK");
 
-		profilesPanel = new JPanel(null);
-		profilesPanel.setMinimumSize(new Dimension(275, 231));
-		profilesPanel.setPreferredSize(profilesPanel.getMinimumSize());
+		profilesPanel = new JPanel(new GridBagLayout());
 		profilesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		profilesJList = new JList();
-		profilesJList.setBounds(1, 1, 264, 180);
 		profilesJList.setEnabled(false);
 
 		JScrollPane scrollPane = new JScrollPane(profilesJList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setBounds(5, 5, 264, 180);
 
 		saveAsProfileButton = new JButton("Save as profile");
-		saveAsProfileButton.setBounds(4, 195, 125, 25);
-
 		deleteProfileButton = new JButton("Delete profile");
-		deleteProfileButton.setBounds(144, 195, 125, 25);
+
+		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
+		profilesPanel.add(scrollPane, gbc);
+		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
+		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
 
 		settingsGUIButton = new JButton("Settings");
-
 		createAtlasButton = new JButton("Create Atlas");
 
-		tileSizePanel.add(tileSizeWidth);
-		tileSizePanel.add(tileSizeWidthComboBox);
-		tileSizePanel.add(tileSizeWidthTextField);
-		tileSizePanel.add(customTileSizeWidthLabel);
-		tileSizePanel.add(tileSizeHeight);
-		tileSizePanel.add(tileSizeHeightComboBox);
-		tileSizePanel.add(tileSizeHeightTextField);
-		tileSizePanel.add(customTileSizeHeightLabel);
+		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		atlasNamePanel.add(atlasNameTextField);
-
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(2, 5, 2, 2);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-
-		profilesPanel.add(scrollPane);
-		profilesPanel.add(saveAsProfileButton, gbc);
-		profilesPanel.add(deleteProfileButton, gbc);
-
-		leftPanel.add(coordinatesLabel, gbc);
-		leftPanel.add(coordinatesPanel, gbc);
-		leftPanel.add(new JLabel("Map Source"), gbc);
-		leftPanel.add(mapSource, gbc);
-		gbc.gridwidth = 1;
-		leftPanel.add(zoomLevelLabel, gbc);
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		leftPanel.add(amountOfTilesLabel, gbc);
-		leftPanel.add(zoomLevelPanel, gbc);
-		leftPanel.add(tileSizeLabel, gbc);
-		leftPanel.add(tileSizePanel, gbc);
-		leftPanel.add(atlasNameLabel, gbc);
-		leftPanel.add(atlasNamePanel, gbc);
-		leftPanel.add(profilesLabel, gbc);
-		leftPanel.add(chooseProfileButton, gbc);
-		leftPanel.add(profilesPanel, gbc);
-		leftPanel.add(settingsGUIButton, gbc);
-		leftPanel.add(createAtlasButton, gbc);
+		leftPanel.add(coordinatesLabel, gbc_eol);
+		leftPanel.add(coordinatesPanel, gbc_eol);
+		leftPanel.add(new JLabel("Map Source"), gbc_eol);
+		leftPanel.add(mapSource, gbc_eol);
+		leftPanel.add(zoomLevelLabel, gbc_std);
+		leftPanel.add(amountOfTilesLabel, gbc_eol);
+		leftPanel.add(zoomLevelPanel, gbc_eol);
+		leftPanel.add(tileSizeLabel, gbc_eol);
+		leftPanel.add(tileSizePanel, gbc_eol);
+		leftPanel.add(atlasNameLabel, gbc_eol);
+		leftPanel.add(atlasNamePanel, gbc_eol);
+		leftPanel.add(profilesLabel, gbc_eol);
+		leftPanel.add(chooseProfileButton, gbc_eol);
+		leftPanel.add(profilesPanel, gbc_eol);
+		leftPanel.add(settingsGUIButton, gbc_eol);
+		leftPanel.add(createAtlasButton, gbc_eol);
+		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 
 		add(leftScrollPane, BorderLayout.WEST);
 
@@ -387,7 +372,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// Allows to disable map painting and tile loading
 		// for debugging purposes
 		// TODO Enable map preview
-		// previewMap.setEnabled(false);
+		//previewMap.setEnabled(false);
 
 		rightPanel.add(previewMap, BorderLayout.CENTER);
 		add(rightPanel, BorderLayout.CENTER);
@@ -410,7 +395,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			JCheckBox cb = new JCheckBox();
 			if (i < oldCbZoom.length)
 				cb.setSelected(oldCbZoom[i].isSelected());
-			cb.setPreferredSize(new Dimension(17, 25));
+			cb.setPreferredSize(new Dimension(17, 20));
 			cb.setMinimumSize(cb.getPreferredSize());
 			s = "Zoom level " + i;
 			if (i == 0)

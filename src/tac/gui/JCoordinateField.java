@@ -1,6 +1,9 @@
 package tac.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 
 import javax.swing.JTextField;
@@ -25,13 +28,28 @@ public class JCoordinateField extends JTextField {
 	private double max;
 
 	public JCoordinateField(double min, double max) {
-		super();
+		super(10);
 		this.min = min;
 		this.max = max;
 		coordinateListener = new JCoordinateListener();
 		coordinateListener.checkCoordinate(null);
 	}
 
+	@Override
+	public Point getToolTipLocation(MouseEvent event) {
+		if (getToolTipText().length() > 0)
+			return super.getToolTipLocation(event);
+		else
+			// We don't want a tool tip but Java does not allow to disable it?
+			// -> show it at a point where no user will ever see it
+			return new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+	}
+
+	@Override
+	public Dimension getMaximumSize() {
+		return getPreferredSize();
+	}
+	
 	public synchronized void setCoordinate(double value) {
 		try {
 			// We know that the number is valid, therefore we can skip the check

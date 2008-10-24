@@ -1,6 +1,7 @@
 package tac.gui.preview;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -57,9 +58,10 @@ public class PreviewMap extends JMapViewer {
 		cacheTileLoader.setTileCacheDir("./tilestore");
 		setTileLoader(cacheTileLoader);
 		mapMarkersVisible = false;
-		gridSizeSelector = new JComboBox();
+		// Initialize the gridZozeSelector with a dummy element for getting the
+		// maximum required width and height
+		gridSizeSelector = new JComboBox(new GridZoom[] { new GridZoom(100) });
 		gridSizeSelector.setEditable(false);
-		gridSizeSelector.setBounds(40, 10, 100, 20);
 		gridSizeSelector.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -72,6 +74,8 @@ public class PreviewMap extends JMapViewer {
 			}
 
 		});
+		Dimension size = gridSizeSelector.getPreferredSize();
+		gridSizeSelector.setBounds(40, 10, size.width, size.height);
 		add(gridSizeSelector);
 		new PreviewMapController(this);
 		setTileSource(new MapSources.GoogleMaps());

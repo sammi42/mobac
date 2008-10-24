@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -35,6 +36,7 @@ import tac.StartTAC;
 import tac.gui.preview.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
+import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
 public class SettingsGUI extends JDialog {
@@ -64,17 +66,17 @@ public class SettingsGUI extends JDialog {
 		this.createJButtons();
 		this.loadSettings();
 		this.addListeners();
+		this.pack();
 	}
 
 	private void createJFrame() {
+		setLayout(new BorderLayout());
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension dContent = new Dimension(500, 342);
 
 		this.setLocation((dScreen.width - dContent.width) / 2,
 				(dScreen.height - dContent.height) / 2);
 		this.setSize(dContent);
-		this.setResizable(false);
-		this.getContentPane().setLayout(null);
 		this.setTitle("Settings");
 	}
 
@@ -86,7 +88,7 @@ public class SettingsGUI extends JDialog {
 		addMapSizePanel();
 		addNetworkPanel();
 
-		add(tabbedPane);
+		add(tabbedPane, BorderLayout.CENTER);
 	}
 
 	private JPanel createNewTab(String tabTitle) {
@@ -101,11 +103,10 @@ public class SettingsGUI extends JDialog {
 		JPanel backGround = createNewTab("Tile store");
 
 		tileStoreEnabled = new JCheckBox("Enable tile store");
-		tileStoreEnabled.setBounds(7, 40, 120, 15);
 
-		JPanel leftPanel = new JPanel(null);
+		JPanel leftPanel = new JPanel(new BorderLayout());
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
-		leftPanel.add(tileStoreEnabled);
+		leftPanel.add(tileStoreEnabled, BorderLayout.NORTH);
 
 		tileStoreInfoPanel = new JPanel(new GridBagLayout());
 		tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
@@ -177,7 +178,7 @@ public class SettingsGUI extends JDialog {
 	private void addMapSizePanel() {
 		JPanel backGround = createNewTab("Map size");
 
-		// Sizes from 512 to 32768
+		// Sizes from 1024 to 32768
 		mapSizes = new Vector<Integer>(10);
 		int size = 32768;
 		do {
@@ -186,19 +187,19 @@ public class SettingsGUI extends JDialog {
 		} while (size >= 1024);
 
 		mapSize = new JComboBox(mapSizes);
-		mapSize.setBounds(7, 40, 120, 20);
 
 		JLabel mapSizeLabel = new JLabel("<html>If the image of the selected region to download "
 				+ "is larger in height or width than the mapsize it will be splitted into "
 				+ "several maps that are no larger than the selected mapsize.</html>");
-		mapSizeLabel.setBounds(150, 5, 300, 100);
+		mapSizeLabel.setPreferredSize(new Dimension(250, 100));
 
-		JPanel leftPanel = new JPanel(null);
-		leftPanel.setBounds(5, 5, 475, 240);
+		JPanel leftPanel = new JPanel(new GridBagLayout());
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Map size settings"));
 
-		leftPanel.add(mapSize);
-		leftPanel.add(mapSizeLabel);
+		GBC gbc = GBC.std().insets(10, 5, 5, 5);
+		leftPanel.add(mapSize, gbc);
+		leftPanel.add(mapSizeLabel, gbc);
+		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 
 		backGround.add(leftPanel);
 	}
@@ -219,14 +220,14 @@ public class SettingsGUI extends JDialog {
 	}
 
 	public void createJButtons() {
+		JPanel buttonPanel = new JPanel(new GridBagLayout());
 		okButton = new JButton("Ok");
-		okButton.setBounds(364, 280, 50, 25);
-
 		cancelButton = new JButton("Cancel");
-		cancelButton.setBounds(418, 280, 74, 25);
 
-		this.getContentPane().add(okButton);
-		this.getContentPane().add(cancelButton);
+		GBC gbc = GBC.std().insets(5, 5, 5, 5);
+		buttonPanel.add(okButton, gbc);
+		buttonPanel.add(cancelButton, gbc);
+		add(buttonPanel, BorderLayout.SOUTH);
 	}
 
 	private void loadSettings() {

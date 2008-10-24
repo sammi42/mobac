@@ -27,7 +27,7 @@ public class JTileSizeField extends JTextField {
 	private boolean hasInput = false;
 
 	public JTileSizeField() {
-		super();
+		super(5);
 		listener = new InputListener();
 		listener.checkInput(null);
 	}

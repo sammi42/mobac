@@ -147,6 +147,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			temp = temp.replaceAll("[MSP]", "");
 			tacRevision = " (rev " + temp + ")";
 		} catch (Exception e) {
+			tacRevision = "";
 		}
 
 		setTitle("TrekBuddy Atlas Creator v" + tacVersion + tacRevision);

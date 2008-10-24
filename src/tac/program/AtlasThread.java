@@ -299,7 +299,7 @@ public class AtlasThread extends Thread implements ActionListener {
 					for (int x = xMin; x <= xMax; x++) {
 						DownloadJob job = new DownloadJob(oziZoomDir, tileSource, x, y, zoom);
 						downloadJobDispatcher.addJob(job);
-						log.trace("Job added: " + x + " " + y + " " + zoom);
+						log.trace("Job added: z" + zoom + " x" + x + " y" + y);
 						jobsProduced++;
 					}
 				}
@@ -339,7 +339,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		public void run() throws Exception {
 			try {
-				//Thread.sleep(500);
+				// Thread.sleep(500);
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);
 				ap.addDownloadedBytes(bytes);

@@ -6,7 +6,7 @@
 	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${tac.version}.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
-	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />
+	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete failonerror="no" dir="ozi" />
@@ -38,7 +38,7 @@
 		</javac>
 		<copy todir="build" overwrite="true">
 			<fileset dir="src">
-				<include name="**/*.properties"/>
+				<include name="**/*.properties" />
 			</fileset>
 		</copy>
 	</target>
@@ -70,6 +70,31 @@
 			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
 		</java>
 		<delete file="build/temp.jar" />
+	</target>
+
+	<target name="create_svnversion_jar" description="helper function for creating a combined svnversion.jar out of the the different SVNKit jars">
+		<delete file="lib/svnversion.jar" />
+		<property name="svnkit.home" value="Enter path to SVNKit here" />
+		<java jar="lib/proguard.jar" fork="true">
+			<arg line=" -injars ${svnkit.home}/svnkit.jar;${svnkit.home}/svnkit-cli.jar;${svnkit.home}/svnkit-javahl.jar;${svnkit.home}/trilead.jar" />
+			<arg line=" -outjars lib/svnversion.jar " />
+			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
+			<arg line=" -keep public class org.tmatesoft.svn.cli.svnversion.SVNVersion { public static void main(java.lang.String[]); }" />
+			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
+		</java>
+		<jar destfile="lib/svnversion.jar" update="true">
+			<manifest>
+				<attribute name="Main-Class" value="org.tmatesoft.svn.cli.svnversion.SVNVersion" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="svnversion" description="Updates the revision information in src/tac/tac.properties">
+		<java jar="lib/svnversion.jar" fork="true" outputproperty="tac.revision.new" />
+		<echo message="${tac.revision.new}" />
+		<propertyfile file="src/tac/tac.properties">
+			<entry key="tac.revision" value="${tac.revision.new}" />
+		</propertyfile>
 	</target>
 
 	<target name="create_release">

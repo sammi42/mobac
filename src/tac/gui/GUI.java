@@ -121,17 +121,35 @@ public class GUI extends JFrame implements MapSelectionListener {
 	public GUI() {
 		super();
 		InputStream propIn = StartTAC.class.getResourceAsStream("tac.properties");
-		Properties props = new Properties();
+		String tacVersion;
+		String tacRevision;
 		try {
+			Properties props = new Properties();
 			props.load(propIn);
+			tacVersion = props.getProperty("tac.version");
+			tacRevision = props.getProperty("tac.revision");
 		} catch (IOException e) {
 			log.error("Can not find tac properties file");
-			props.setProperty("tac.version", "unknown");
+			tacVersion = "unknown";
+			tacRevision = "";
 		} finally {
 			Utilities.closeStream(propIn);
 		}
+		try {
+			String temp = tacRevision;
+			int index = temp.indexOf(':');
+			// if we have a revision range e.g.: "12:18" take only the higher
+			// (rightmost) value
+			if (index > 0)
+				temp = temp.substring(index + 1);
 
-		setTitle("TrekBuddy Atlas Creator v" + props.getProperty("tac.version"));
+			// We don't care about the flags M, S and P
+			temp = temp.replaceAll("[MSP]", "");
+			tacRevision = " (rev " + temp + ")";
+		} catch (Exception e) {
+		}
+
+		setTitle("TrekBuddy Atlas Creator v" + tacVersion + tacRevision);
 		log.trace("Creating main dialog - " + getTitle());
 		createMainFrame();
 		createLeftPanel();

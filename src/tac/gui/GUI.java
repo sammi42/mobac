@@ -145,7 +145,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		dScreen.width = Math.min(1024, dScreen.width);
 		dScreen.height = Math.min(768, dScreen.height);
 		setSize(dScreen);
-		setMinimumSize(new Dimension(800, 600));
+		setMinimumSize(new Dimension(800, 550));
 		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -172,16 +172,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
 
-		leftScrollPane = new JScrollPane(leftPanel);
-		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		leftScrollPane.setPreferredSize(new Dimension(280, 200));
-
 		coordinatesLabel = new JLabel("COORDINATES");
 
 		// Coordinates Panel
 
 		GridBagLayout gbl = new GridBagLayout();
-		gbl.columnWeights = new double[] { 4, 1, 2, 1, 4 };
 		coordinatesPanel = new JPanel(gbl);
 
 		coordinatesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -207,7 +202,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		latMinTextField.setActionCommand("latMinTextField");
 
 		previewSelectionButton = new JButton("Display selection");
-		// previewSelectionButton.setBounds(78, 170, 120, 20);
 
 		GBC gbc_eolcf = GBC.eol().fill(GBC.HORIZONTAL).anchor(GBC.CENTER);
 		GBC gbc_eolc = GBC.eol().anchor(GBC.CENTER).insets(2, 2, 2, 2);
@@ -357,6 +351,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(createAtlasButton, gbc_eol);
 		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 
+		leftScrollPane = new JScrollPane(leftPanel);
+		Dimension d = leftPanel.getPreferredSize();
+		// Set the scroll pane width large enough so that the
+		// scroll bar has enough space to appear right to it
+		d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
+		leftScrollPane.setPreferredSize(d);
+		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		add(leftScrollPane, BorderLayout.WEST);
 
 	}
@@ -372,7 +373,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// Allows to disable map painting and tile loading
 		// for debugging purposes
 		// TODO Enable map preview
-		//previewMap.setEnabled(false);
+		// previewMap.setEnabled(false);
 
 		rightPanel.add(previewMap, BorderLayout.CENTER);
 		add(rightPanel, BorderLayout.CENTER);
@@ -938,4 +939,5 @@ public class GUI extends JFrame implements MapSelectionListener {
 	public void setCreateAtlasButtonEnabled(boolean enabled) {
 		createAtlasButton.setEnabled(enabled);
 	}
+
 }

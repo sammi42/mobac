@@ -36,13 +36,14 @@ public class Settings {
 	private static final String SELECTION_LON_MAX = "selection.max.lon";
 	private static final String SELECTION_LAT_MIN = "selection.min.lat";
 	private static final String SELECTION_LON_MIN = "selection.min.lon";
-	
+	private static final String THREAD_COUNT = "download.thread.count";
+
 	private int maxMapSize = 32768;
 
 	private boolean tileStoreEnabled = true;
 
 	private int previewDefaultZoom = 3;
-	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(50,9);
+	private EastNorthCoordinate previewDefaultCoordinate = new EastNorthCoordinate(50, 9);
 
 	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
 	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
@@ -50,6 +51,10 @@ public class Settings {
 	private String defaultMapSource = MapSources.getDefaultMapSourceName();
 
 	private String atlasName = "";
+
+	private String userAgent = UserAgent.FF2_XP;
+	
+	private int threadCount = 4;
 
 	private Settings() {
 	}
@@ -87,6 +92,7 @@ public class Settings {
 			SettingsProperties p = new SettingsProperties();
 			is = new FileInputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.loadFromXML(is);
+			threadCount = p.getIntProperty(THREAD_COUNT, threadCount);
 			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
 			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
 			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
@@ -94,14 +100,10 @@ public class Settings {
 					previewDefaultCoordinate.lat);
 			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
 					previewDefaultCoordinate.lon);
-			selectionMax.lat = p.getDouble6Property(SELECTION_LAT_MAX,
-					selectionMax.lat);
-			selectionMax.lon = p.getDouble6Property(SELECTION_LON_MAX,
-					selectionMax.lon);
-			selectionMin.lat = p.getDouble6Property(SELECTION_LAT_MIN,
-					selectionMin.lat);
-			selectionMin.lon = p.getDouble6Property(SELECTION_LON_MIN,
-					selectionMin.lon);
+			selectionMax.lat = p.getDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
+			selectionMax.lon = p.getDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
+			selectionMin.lat = p.getDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
+			selectionMin.lon = p.getDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
 			defaultMapSource = p.getProperty(MAPSOURCE);
 			atlasName = p.getProperty(ATLAS_NAME, atlasName);
 			String proxyHost = p.getProperty(PROXY_HOST);
@@ -124,6 +126,7 @@ public class Settings {
 		OutputStream os = null;
 		try {
 			SettingsProperties p = new SettingsProperties();
+			p.setIntProperty(THREAD_COUNT, threadCount);
 			p.setIntProperty(MAPS_MAXSIZE, maxMapSize);
 			p.setIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
@@ -133,12 +136,12 @@ public class Settings {
 			p.setProperty(ATLAS_NAME, atlasName);
 			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
 			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
-			
+
 			p.setDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
 			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
 			p.setDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
 			p.setDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
-			
+
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
 			result = true;
@@ -214,5 +217,20 @@ public class Settings {
 		this.selectionMin = selectionMin;
 	}
 
-	
+	public int getThreadCount() {
+		return threadCount;
+	}
+
+	public void setThreadCount(int threadCount) {
+		this.threadCount = threadCount;
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
 }

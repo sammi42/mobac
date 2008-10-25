@@ -10,8 +10,12 @@ V E R S I O N  I N F O R M A T I O N
  + Detailed log files can be created by providing a configuration file log4j.xml
      (see README.txt for details).
  + HTTP Proxy (host & port) can be specified via GUI
- + Added information about amount of tiles and total size for each tile source store in Settings window.
- + Multithreaded download of tiles implemented 
+ + Added information about amount of tiles and total size for each tile source store 
+    in Settings window.
+ + Multithreaded download of tiles implemented (number of parallel download threads
+    changeable via settings dialog
+ ~ Tile download system now reuses HTTP connections for HTTP 1.1 servers instead of 
+    opening a new TCP connection for each tile  
  ! Selection of whole world resulted in a wrong max longitude (-180 instead of 180)
  ! Tile number and index calculations near to the border of the world corrected 
  ! Saving profiles works now (including map source, zoom levels and tile size) 

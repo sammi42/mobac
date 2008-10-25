@@ -128,7 +128,7 @@ public class AtlasThread extends Thread implements ActionListener {
 		Settings s = Settings.getInstance();
 
 		Thread t = Thread.currentThread();
-		downloadJobDispatcher = new JobDispatcher(6);
+		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
 			for (int layer = 0; layer < nrOfLayers; layer++) {
 				jobsCompleted = 0;
@@ -279,7 +279,7 @@ public class AtlasThread extends Thread implements ActionListener {
 		File oziZoomDir;
 
 		public DownloadJobProducer(Point topLeft, Point bottomRight, int zoom, File oziZoomDir) {
-			super();
+			super("JobProducerThread_" + atlasName);
 			this.bottomRight = bottomRight;
 			this.topLeft = topLeft;
 			this.zoom = zoom;

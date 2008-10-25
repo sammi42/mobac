@@ -16,8 +16,6 @@ public class TileDownLoader {
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
-	public static final String SECURESTRING = "Galileo";
-
 	public static int getImage(int x, int y, int zoom, File destinationDirectory,
 			TileSource tileSource, boolean isAtlasDownload) throws IOException,
 			InterruptedException {
@@ -60,6 +58,7 @@ public class TileDownLoader {
 		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 
 		huc.setRequestMethod("GET");
+		huc.addRequestProperty("User-agent", s.getUserAgent());
 		huc.connect();
 
 		InputStream is = huc.getInputStream();
@@ -80,8 +79,14 @@ public class TileDownLoader {
 			sumBytes += bytesRead;
 			outputStream.write(buffer, 0, bytesRead);
 		}
+
 		outputStream.close();
-		huc.disconnect();
+
+		// Disabled because HTTP 1.1 allows reusing connections which increases
+		// download speed. If we disconnect the connection pooling in Java will
+		// not work!
+		// huc.disconnect();
+
 		int downloadedBytes = sumBytes;
 
 		if (s.isTileStoreEnabled()) {

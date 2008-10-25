@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -42,11 +41,16 @@ import tac.utilities.Utilities;
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
 
+	private static Vector<Integer> mapSizes;
+	private static Vector<Integer> threadNumbers;
+
 	private JPanel tileStoreInfoPanel;
 
 	private JCheckBox tileStoreEnabled;
 
 	private JComboBox mapSize;
+
+	private JComboBox threadCount;
 
 	private JTextField proxyHost;
 	private JTextField proxyPort;
@@ -56,28 +60,37 @@ public class SettingsGUI extends JDialog {
 
 	private JTabbedPane tabbedPane;
 
-	private Vector<Integer> mapSizes;
+	static {
+		// Sizes from 1024 to 32768
+		mapSizes = new Vector<Integer>(20);
+		int size = 32768;
+		do {
+			mapSizes.addElement(new Integer(size));
+			size -= 1024;
+		} while (size >= 1024);
+		threadNumbers = new Vector<Integer>(10);
+		for (int i = 1; i <= 10; i++)
+			threadNumbers.add(new Integer(i));
+	}
 
 	public SettingsGUI(JFrame owner) {
 		super(owner);
 		setModal(true);
-		this.createJFrame();
-		this.createTabbedPane();
-		this.createJButtons();
-		this.loadSettings();
-		this.addListeners();
-		this.pack();
+		createJFrame();
+		createTabbedPane();
+		createJButtons();
+		loadSettings();
+		addListeners();
+		pack();
+		// don't allow shrinking, but allow enlarging
+		setMinimumSize(getSize());
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
 	}
 
 	private void createJFrame() {
 		setLayout(new BorderLayout());
-		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension dContent = new Dimension(500, 342);
-
-		this.setLocation((dScreen.width - dContent.width) / 2,
-				(dScreen.height - dContent.height) / 2);
-		this.setSize(dContent);
-		this.setTitle("Settings");
+		setTitle("Settings");
 	}
 
 	// Create tabbed pane
@@ -92,7 +105,7 @@ public class SettingsGUI extends JDialog {
 	}
 
 	private JPanel createNewTab(String tabTitle) {
-		JPanel tabPanel = new JPanel(new BorderLayout());
+		JPanel tabPanel = new JPanel();
 		tabPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		tabbedPane.add(tabPanel, tabTitle);
 		return tabPanel;
@@ -101,6 +114,7 @@ public class SettingsGUI extends JDialog {
 	private void addTileStorePanel() {
 
 		JPanel backGround = createNewTab("Tile store");
+		backGround.setLayout(new BorderLayout());
 
 		tileStoreEnabled = new JCheckBox("Enable tile store");
 
@@ -177,46 +191,57 @@ public class SettingsGUI extends JDialog {
 
 	private void addMapSizePanel() {
 		JPanel backGround = createNewTab("Map size");
-
-		// Sizes from 1024 to 32768
-		mapSizes = new Vector<Integer>(10);
-		int size = 32768;
-		do {
-			mapSizes.addElement(new Integer(size));
-			size -= 1024;
-		} while (size >= 1024);
-
+		backGround.setLayout(new GridBagLayout());
 		mapSize = new JComboBox(mapSizes);
 
 		JLabel mapSizeLabel = new JLabel("<html>If the image of the selected region to download "
-				+ "is larger in height or width than the mapsize it will be splitted into "
-				+ "several maps that are no larger than the selected mapsize.</html>");
-		mapSizeLabel.setPreferredSize(new Dimension(250, 100));
+				+ "is larger in <br> height or width than the mapsize it will be splitted into "
+				+ "several <br> maps that are no larger than the selected mapsize.</html>");
+		mapSizeLabel.setVerticalAlignment(JLabel.TOP);
+		// mapSizeLabel.setPreferredSize(new Dimension(300, 100));
 
 		JPanel leftPanel = new JPanel(new GridBagLayout());
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Map size settings"));
 
-		GBC gbc = GBC.std().insets(10, 5, 5, 5);
+		GBC gbc = GBC.std().insets(10, 5, 5, 5).anchor(GBC.EAST);
 		leftPanel.add(mapSize, gbc);
-		leftPanel.add(mapSizeLabel, gbc);
+		leftPanel.add(mapSizeLabel, gbc.toggleEol());
 		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 
-		backGround.add(leftPanel);
+		backGround.add(leftPanel, GBC.std().fill(GBC.HORIZONTAL).anchor(GBC.NORTHEAST));
+		backGround.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 	}
 
 	private void addNetworkPanel() {
 		JPanel backGround = createNewTab("Network");
-		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
+		backGround.setLayout(new GridBagLayout());
+		GBC gbc_eolh = GBC.eol().fill(GBC.HORIZONTAL);
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setBorder(BorderFactory.createTitledBorder("Network connections"));
+		threadCount = new JComboBox(threadNumbers);
+		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.std()
+				.fill(GBC.HORIZONTAL));
+
+		backGround.add(panel, gbc_eolh);
+
+//		panel = new JPanel(new GridBagLayout());
+//		panel.setBorder(BorderFactory.createTitledBorder("HTTP User-Agent"));
+//		backGround.add(panel, gbc_eolh);
+
+		panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
 		JLabel proxyHostLabel = new JLabel("Proxy host name: ");
 		proxyHost = new JTextField(System.getProperty("http.proxyHost"));
 		JLabel proxyPortLabel = new JLabel("Proxy port: ");
 		proxyPort = new JTextField(System.getProperty("http.proxyPort"));
-		panel.add(proxyHostLabel);
-		panel.add(proxyHost);
-		panel.add(proxyPortLabel);
-		panel.add(proxyPort);
-		backGround.add(panel, BorderLayout.NORTH);
+		panel.add(proxyHostLabel, GBC.std());
+		panel.add(proxyHost, gbc_eolh);
+		panel.add(proxyPortLabel, GBC.std());
+		panel.add(proxyPort, gbc_eolh);
+		backGround.add(panel, gbc_eolh);
+
+		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
 
 	public void createJButtons() {
@@ -240,8 +265,16 @@ public class SettingsGUI extends JDialog {
 		if (index < 0)
 			index = 0;
 		mapSize.setSelectedIndex(index);
+		index = threadNumbers.indexOf(s.getThreadCount());
+		if (index < 0)
+			index = 0;
+		threadCount.setSelectedIndex(index);
 	}
 
+	/**
+	 * Reads the user defined settings from the gui and updates the
+	 * {@link Settings} values according to the read gui settings.
+	 */
 	private void applySettings() {
 		Settings s = Settings.getInstance();
 
@@ -249,6 +282,9 @@ public class SettingsGUI extends JDialog {
 
 		int size = ((Integer) mapSize.getSelectedItem()).intValue();
 		s.setMaxMapSize(size);
+
+		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
+		s.setThreadCount(threads);
 
 		System.setProperty("http.proxyHost", proxyHost.getText());
 		System.setProperty("http.proxyPort", proxyPort.getText());

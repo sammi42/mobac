@@ -284,7 +284,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		tileSizeWidthComboBox = new JComboBox(tileSizeValues);
 		tileSizeWidthComboBox.setToolTipText("Width");
 
-		customTileSizeWidthLabel = new JLabel("Custom size (W):");
+		customTileSizeWidthLabel = new JLabel("Custom width:");
 
 		tileSizeWidthTextField = new JTileSizeField();
 		tileSizeWidthTextField.setToolTipText("Width");
@@ -294,7 +294,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		tileSizeHeightComboBox = new JComboBox(tileSizeValues);
 		tileSizeHeightComboBox.setToolTipText("Height");
 
-		customTileSizeHeightLabel = new JLabel("Custom size (H):");
+		customTileSizeHeightLabel = new JLabel("Custom height:");
 
 		tileSizeHeightTextField = new JTileSizeField();
 		tileSizeHeightTextField.setToolTipText("Height");

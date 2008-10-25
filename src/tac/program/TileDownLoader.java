@@ -14,6 +14,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class TileDownLoader {
 
+	static {
+		System.setProperty("http.maxConnections", "10");
+	}
+
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
 	public static int getImage(int x, int y, int zoom, File destinationDirectory,

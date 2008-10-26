@@ -124,6 +124,7 @@ public class PreviewMap extends JMapViewer {
 
 	protected void zoomChanged(int oldZoom) {
 		log.trace("Preview map zoom changed from " + oldZoom + " to " + zoom);
+		super.zoomChanged(oldZoom);
 		updateGridValues();
 	}
 

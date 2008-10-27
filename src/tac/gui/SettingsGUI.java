@@ -170,7 +170,7 @@ public class SettingsGUI extends JDialog {
 			long size = tileStore.getStoreSize(ts);
 			totalTileCount += count;
 			totalTileSize += size;
-			tileStoreInfoPanel.add(new JLabel(ts.getName()), gbc_mapSource);
+			tileStoreInfoPanel.add(new JLabel(ts.toString()), gbc_mapSource);
 			tileStoreInfoPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
 			tileStoreInfoPanel.add(new JLabel(Utilities.formatBytes(size)), gbc_mapTiles);
 			JButton deleteButton = new JButton(trash);

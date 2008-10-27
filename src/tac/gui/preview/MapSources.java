@@ -27,7 +27,7 @@ public class MapSources {
 
 	public static class GoogleMaps implements TileSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.com/mt/v=w2.83&hl=%s&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.86&hl=%s&x=%d&y=%d&z=%d";
 
 		private static int SERVER_NUM = 0;
 

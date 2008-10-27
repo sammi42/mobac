@@ -16,7 +16,7 @@ public class MapSources {
 	public static String getDefaultMapSourceName() {
 		return getMapSources()[0].getName();
 	}
-	
+
 	public static TileSource getSourceByName(String name) {
 		for (TileSource t : MAP_SOURCES) {
 			if (t.getName().equals(name))
@@ -27,7 +27,7 @@ public class MapSources {
 
 	public static class GoogleMaps implements TileSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.86&hl=%s&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.86&hl=%s&x=%d&y=%d&z=%d&s=%s";
 
 		private static int SERVER_NUM = 0;
 
@@ -50,7 +50,8 @@ public class MapSources {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), "de", x, y, zoom });
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), "en", x, y, zoom,
+					"Galileo" });
 		}
 
 		@Override
@@ -66,7 +67,7 @@ public class MapSources {
 
 	public static class GoogleEarth implements TileSource {
 
-		public static final String SERVER_URL = "http://khm%d.google.com/kh/v=32&hl=%s&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://khm%d.google.com/kh/v=33&hl=%s&x=%d&y=%d&z=%d&s=%s";
 
 		private static int SERVER_NUM = 0;
 
@@ -89,7 +90,8 @@ public class MapSources {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), "de", x, y, zoom });
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), "en", x, y, zoom,
+					"Galileo" });
 		}
 
 		@Override

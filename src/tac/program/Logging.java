@@ -14,7 +14,7 @@ public class Logging {
 
 	public static void configureLogging() {
 		File f = new File(CONFIG_FILE);
-		// We test for the cifiguration file, if it exists we use it, otherwise
+		// We test for the configuration file, if it exists we use it, otherwise
 		// we perform simple logging to the console
 		if (f.exists() && f.isFile()) {
 			DOMConfigurator.configure(f.getAbsolutePath());

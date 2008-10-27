@@ -39,6 +39,7 @@
 		<copy todir="build" overwrite="true">
 			<fileset dir="src">
 				<include name="**/*.properties" />
+				<include name="**/*.png" />
 			</fileset>
 		</copy>
 	</target>
@@ -65,8 +66,14 @@
 			<arg line=" -injars build/temp.jar " />
 			<arg line=" -outjars ${jar.name} " />
 			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
+			<arg line=" -keep public class org.apache.log4j.Layout { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.Level { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.Category { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.Priority { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.spi.LoggingEvent { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.PatternLayout { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.FileAppender { public *; }" />
 			<arg line=" -keep public class ${main.class} { public static void main(java.lang.String[]); }" />
-
 			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
 		</java>
 		<delete file="build/temp.jar" />
@@ -80,6 +87,8 @@
 			<arg line=" -outjars lib/svnversion.jar " />
 			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
 			<arg line=" -keep public class org.tmatesoft.svn.cli.svnversion.SVNVersion { public static void main(java.lang.String[]); }" />
+			<arg line=" -keep public class org.apache.log4j.PatternLayout { public *; } " />
+			<arg line=" -keep public class org.apache.log4j.FileAppender { public *; } " />
 			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
 		</java>
 		<jar destfile="lib/svnversion.jar" update="true">

@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
@@ -29,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.StartTAC;
@@ -40,6 +40,8 @@ import tac.utilities.Utilities;
 
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
+
+	private static Logger log = Logger.getLogger(SettingsGUI.class);
 
 	private static Vector<Integer> mapSizes;
 	private static Vector<Integer> threadNumbers;
@@ -150,11 +152,13 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
 		tileStoreInfoPanel.add(new JLabel("<html><b>Size</b></html>"), gbc_eol);
 
-		InputStream imageStream = StartTAC.class.getResourceAsStream("images/trash.png");
+		InputStream imageStream = null;
 		ImageIcon trash = new ImageIcon();
 		try {
+			imageStream = StartTAC.class.getResourceAsStream("images/trash.png");
 			trash.setImage(ImageIO.read(imageStream));
-		} catch (IOException e) {
+		} catch (Exception e) {
+			log.error("An error occured while loading trash icon:", e);
 		} finally {
 			Utilities.closeStream(imageStream);
 		}
@@ -220,14 +224,14 @@ public class SettingsGUI extends JDialog {
 		panel.setBorder(BorderFactory.createTitledBorder("Network connections"));
 		threadCount = new JComboBox(threadNumbers);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.std()
-				.fill(GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC
+				.std().fill(GBC.HORIZONTAL));
 
 		backGround.add(panel, gbc_eolh);
 
-//		panel = new JPanel(new GridBagLayout());
-//		panel.setBorder(BorderFactory.createTitledBorder("HTTP User-Agent"));
-//		backGround.add(panel, gbc_eolh);
+		// panel = new JPanel(new GridBagLayout());
+		// panel.setBorder(BorderFactory.createTitledBorder("HTTP User-Agent"));
+		// backGround.add(panel, gbc_eolh);
 
 		panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
@@ -323,10 +327,14 @@ public class SettingsGUI extends JDialog {
 
 				@Override
 				public void run() {
-					TileStore ts = TileStore.getInstance();
-					ts.clearStore(source);
-					SettingsGUI.this.updateTileStoreInfoPanel();
-					SettingsGUI.this.repaint();
+					try {
+						TileStore ts = TileStore.getInstance();
+						ts.clearStore(source);
+						SettingsGUI.this.updateTileStoreInfoPanel();
+						SettingsGUI.this.repaint();
+					} catch (Exception e) {
+						log.error("An error occured while cleaning tile cache: ", e);
+					}
 				}
 			};
 			t.start();

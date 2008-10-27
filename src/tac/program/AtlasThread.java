@@ -53,7 +53,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 	public void run() {
 		log.info("Starting altas creation");
-		log.trace("Atlas to doanload:\n\t" + "MapSource: " + tileSource + "\n\tAtlas name: "
+		log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource + "\n\tAtlas name: "
 				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
 				+ sZL + "\n\tTile size width: " + tileSizeWidth + "\n\tTile size height: "
 				+ tileSizeHeight);

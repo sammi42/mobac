@@ -5,6 +5,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Controls the worker threads that are downloading the map tiles in parallel.
+ * Additionally the job queue containing the unprocessed tile download jobs can
+ * be accessed via this class.
+ */
 public class JobDispatcher {
 
 	private static Logger log = Logger.getLogger(JobDispatcher.class);
@@ -79,6 +84,11 @@ public class JobDispatcher {
 		public void run() throws Exception;
 	}
 
+	/**
+	 * Each worker thread takes the first job from the job queue and executes
+	 * it. If the queue is empty the worker blocks, waiting for the next
+	 * job.
+	 */
 	protected class WorkerThread extends Thread {
 
 		Job job;

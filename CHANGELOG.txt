@@ -5,7 +5,7 @@ V E R S I O N  I N F O R M A T I O N
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 0.9.5: (2008-??-??)
+ 0.9.5: (2008-10-27)
 
  + Detailed log files can be created by providing a configuration file log4j.xml
      (see README.txt for details).

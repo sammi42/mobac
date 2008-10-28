@@ -168,7 +168,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		setLayout(new BorderLayout());
+		setLayout(new GridBagLayout());
 
 		// Try to set the Windows look and feel...
 		try {
@@ -270,7 +270,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		zoomLevelPanel = new JPanel();
 		zoomLevelPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-		tileSizeLabel = new JLabel("TILE SIZE (Pixels)");
+		tileSizeLabel = new JLabel("Tile size (pixels)");
 
 		tileSizePanel = new JPanel(new GridBagLayout());
 		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -376,9 +376,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// scroll bar has enough space to appear right to it
 		d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
 		leftScrollPane.setPreferredSize(d);
+		leftScrollPane.setMinimumSize(d);
 		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		add(leftScrollPane, BorderLayout.WEST);
-
+		add(leftScrollPane, GBC.std().fill(GBC.VERTICAL));
 	}
 
 	public void createRightPanel() {
@@ -395,7 +395,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// previewMap.setEnabled(false);
 
 		rightPanel.add(previewMap, BorderLayout.CENTER);
-		add(rightPanel, BorderLayout.CENTER);
+		add(rightPanel, GBC.std().fill());
 		createZoomLevelCheckBoxes();
 	}
 
@@ -405,7 +405,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		cbZoom = new JCheckBox[zoomLevels];
 		int x = cbZoom.length - 1;
 		Object[] o = new Object[] { x--, x--, x-- };
-		zoomLevelLabel.setText(String.format("ZOOM LEVELS (%d, %d, %d ... 2, 1, 0)", o));
+		zoomLevelLabel.setText(String.format("Zoom levels (%d, %d, %d ... 2, 1, 0)", o));
 		zoomLevelPanel.removeAll();
 		zoomLevelPanel.setLayout(new GridLayout(2, cbZoom.length + 2 / 2, 0, 0));
 		CheckBoxListener cbl = new CheckBoxListener();

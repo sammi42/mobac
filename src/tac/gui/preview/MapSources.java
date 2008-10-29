@@ -104,6 +104,66 @@ public class MapSources {
 		}
 	}
 
+	/**
+	 * Custom tile store provider, configurable via constructor.
+	 */
+	public static class Custom implements TileSource {
+
+		int maxZoom;
+		String name;
+		String fileExt;
+		TileUpdate tileUpdate;
+		String url;
+
+		/**
+		 * 
+		 * @param name
+		 *            Map name
+		 * @param url
+		 *            with variables $y, $y and $zoom (will be replaced on
+		 *            request) <code>http://server/path-$x-$y-$zoom</code>
+		 * @param maxZoom
+		 * @param fileExt
+		 *            specifie the image type of the tiles: usually "png" or
+		 *            "jpg"
+		 * @param tileUpdate
+		 *            on of the {@link TileUpdate} values. If you don't know,
+		 *            use {@link TileUpdate#None}
+		 */
+		public Custom(String name, String url, int maxZoom, String fileExt, TileUpdate tileUpdate) {
+			super();
+			this.name = name;
+			this.url = url;
+			this.maxZoom = maxZoom;
+			this.fileExt = fileExt;
+			this.tileUpdate = tileUpdate;
+		}
+
+		public int getMaxZoom() {
+			return maxZoom;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getTileType() {
+			return null;
+		}
+
+		public TileUpdate getTileUpdate() {
+			return tileUpdate;
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String tmp = url;
+			tmp = tmp.replace("$x", Integer.toString(tilex));
+			tmp = tmp.replace("$y", Integer.toString(tiley));
+			tmp = tmp.replace("$zoom", Integer.toString(zoom));
+			return tmp;
+		}
+	}
+
 	public static class Mapnik extends OsmTileSource.Mapnik {
 
 		@Override

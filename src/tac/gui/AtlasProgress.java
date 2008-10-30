@@ -100,15 +100,15 @@ public class AtlasProgress extends JFrame {
 
 		title = new JLabel("Downloading layers for atlas:");
 
-		atlasElementsDone = new JLabel("20 of 20 done");
-		atlasPercent = new JLabel("Percent done: 100%");
+		atlasElementsDone = new JLabel("000 of 000 done");
+		atlasPercent = new JLabel("Percent done: 100% ");
 		atlasTimeLeft = new JLabel("Time remaining: 00 minutes 00 seconds", JLabel.RIGHT);
 		atlasProgress = new JProgressBar();
 
-		layerTitle = new JLabel("Downloading tiles for ZOOM LEVEL = 00");
+		layerTitle = new JLabel("Downloading tiles for ZOOM LEVEL = 000");
 		layerElementsDone = new JLabel("1000000 of 1000000 tiles done");
-		layerPercent = new JLabel("Percent done: 100%");
-		layerTimeLeft = new JLabel("Time remaining: 00 minutes 00 seconds", JLabel.RIGHT);
+		layerPercent = new JLabel("Percent done: 100% ");
+		layerTimeLeft = new JLabel("Time remaining: 0000 minutes 00 seconds", JLabel.RIGHT);
 		layerProgress = new JProgressBar();
 
 		tarCreation = new JLabel("TAR Creation");

@@ -32,8 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
@@ -169,21 +167,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		setLayout(new GridBagLayout());
-
-		// Try to set the Windows look and feel...
-		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		}
-		// ... if that is not possible, try to set the look and feel associated
-		// to the system
-		catch (Exception e) {
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (UnsupportedLookAndFeelException e1) {
-				log.error("The selection of look and feel was not possible!", e1);
-			} catch (Exception e1) {
-			}
-		}
 	}
 
 	public void createLeftPanel() {
@@ -369,15 +352,16 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(settingsGUIButton, gbc_eol);
 		leftPanel.add(createAtlasButton, gbc_eol);
 		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
-
+		leftPanel.setMaximumSize(leftPanel.getPreferredSize());
+		
 		leftScrollPane = new JScrollPane(leftPanel);
+		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		Dimension d = leftPanel.getPreferredSize();
 		// Set the scroll pane width large enough so that the
 		// scroll bar has enough space to appear right to it
-		d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
-		leftScrollPane.setPreferredSize(d);
+		//d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
+//		leftScrollPane.setPreferredSize(d);
 		leftScrollPane.setMinimumSize(d);
-		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		add(leftScrollPane, GBC.std().fill(GBC.VERTICAL));
 	}
 

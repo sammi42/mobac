@@ -122,6 +122,7 @@ public class AtlasThread extends Thread implements ActionListener {
 		}
 
 		ap.init((int) totalNrOfTiles, nrOfLayers);
+		updateGUI();
 		ap.setVisible(true);
 
 		TileStore ts = TileStore.getInstance();
@@ -339,7 +340,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		public void run() throws Exception {
 			try {
-				// Thread.sleep(500);
+				// Thread.sleep(1500);
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);
 				ap.addDownloadedBytes(bytes);

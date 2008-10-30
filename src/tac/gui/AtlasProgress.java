@@ -13,6 +13,7 @@ package tac.gui;
 // Importeringar
 
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,13 +22,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
 
 import tac.program.AtlasThread;
+import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
 /**
@@ -60,13 +64,12 @@ public class AtlasProgress extends JFrame {
 
 	private JLabel title;
 	private JLabel layerTitle;
-	private JLabel layerZoomLevel;
-	private JLabel percent;
+	private JLabel atlasPercent;
 	private JLabel layerPercent;
 	private JLabel atlasElementsDone;
 	private JLabel layerElementsDone;
-	private JLabel timeLeft;
-	private JLabel timeLayerLeft;
+	private JLabel atlasTimeLeft;
+	private JLabel layerTimeLeft;
 	private JLabel tarCreation;
 	private JLabel nrOfDownloadedBytes;
 	private JLabel nrOfDownloadedBytesValue;
@@ -86,125 +89,117 @@ public class AtlasProgress extends JFrame {
 	public AtlasProgress() {
 
 		super("Downloading tiles...");
+		setLayout(new GridBagLayout());
 		updateDisplay = new UpdateTask();
 		tarProgressValue = 0;
 
-		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension dContent = new Dimension(700, 285);
-
-		this.setLocation((dScreen.width - dContent.width) / 2,
-				(dScreen.height - dContent.height) / 2);
-		this.setSize(dContent);
-
-		background = new JPanel(null);
-		background.setBorder(BorderFactory.createRaisedBevelBorder());
+		background = new JPanel(new GridBagLayout());
 
 		windowTitle = new JLabel("ATLAS DOWNLOAD INFORMATION");
 		windowTitle.setBounds(10, 5, 180, 15);
 
 		title = new JLabel("Downloading layers for atlas:");
-		title.setBounds(10, 40, 180, 15);
 
-		atlasElementsDone = new JLabel();
-		atlasElementsDone.setBounds(230, 40, 135, 15);
-
-		percent = new JLabel();
-		percent.setBounds(370, 40, 120, 15);
-
-		timeLeft = new JLabel();
-		timeLeft.setBounds(500, 40, 200, 15);
-
+		atlasElementsDone = new JLabel("20 of 20 done");
+		atlasPercent = new JLabel("Percent done: 100%");
+		atlasTimeLeft = new JLabel("Time remaining: 00 minutes 00 seconds", JLabel.RIGHT);
 		atlasProgress = new JProgressBar();
-		atlasProgress.setBounds(10, 62, 680, 20);
 
-		layerTitle = new JLabel("Downloading tiles for ZOOM LEVEL = ");
-		layerTitle.setBounds(10, 105, 180, 15);
-
-		layerZoomLevel = new JLabel("");
-		layerZoomLevel.setBounds(190, 105, 20, 15);
-
-		layerElementsDone = new JLabel();
-		layerElementsDone.setBounds(230, 105, 135, 15);
-
-		layerPercent = new JLabel();
-		layerPercent.setBounds(370, 105, 120, 15);
-
-		timeLayerLeft = new JLabel();
-		timeLayerLeft.setBounds(500, 105, 200, 15);
-
+		layerTitle = new JLabel("Downloading tiles for ZOOM LEVEL = 00");
+		layerElementsDone = new JLabel("1000000 of 1000000 tiles done");
+		layerPercent = new JLabel("Percent done: 100%");
+		layerTimeLeft = new JLabel("Time remaining: 00 minutes 00 seconds", JLabel.RIGHT);
 		layerProgress = new JProgressBar();
-		layerProgress.setBounds(10, 127, 680, 20);
 
 		tarCreation = new JLabel("TAR Creation");
-		tarCreation.setBounds(10, 170, 180, 15);
-
 		tarProgress = new JProgressBar();
-		tarProgress.setBounds(10, 192, 680, 20);
 
 		nrOfDownloadedBytesPerSecond = new JLabel("Average download speed");
-		nrOfDownloadedBytesPerSecond.setBounds(10, 220, 140, 15);
-
 		nrOfDownloadedBytesPerSecondValue = new JLabel();
-		nrOfDownloadedBytesPerSecondValue.setBounds(150, 220, 240, 15);
-
 		nrOfDownloadedBytes = new JLabel("Total download size");
-		nrOfDownloadedBytes.setBounds(10, 240, 140, 15);
-
 		nrOfDownloadedBytesValue = new JLabel();
-		nrOfDownloadedBytesValue.setBounds(150, 240, 200, 15);
-
 		totalDownloadTime = new JLabel("Total download time");
-		totalDownloadTime.setBounds(10, 260, 140, 15);
-
 		totalDownloadTimeValue = new JLabel();
-		totalDownloadTimeValue.setBounds(150, 260, 200, 15);
 
 		abortAtlasDownloadButton = new JButton("Abort");
 		abortAtlasDownloadButton.setToolTipText("Abort current Atlas download");
-		abortAtlasDownloadButton.setBounds(500, 255, 60, 20);
 		abortAtlasDownloadButton.setEnabled(true);
-
 		dismissWindowButton = new JButton("wait..");
 		dismissWindowButton.setToolTipText("Download in progress...");
-		dismissWindowButton.setBounds(565, 255, 60, 20);
 		dismissWindowButton.setEnabled(false);
-
 		openProgramFolderButton = new JButton("wait..");
 		openProgramFolderButton.setToolTipText("Download in progress...");
-		openProgramFolderButton.setBounds(630, 255, 60, 20);
 		openProgramFolderButton.setEnabled(false);
 
-		background.add(windowTitle);
-		background.add(atlasProgress);
-		background.add(layerTitle);
-		background.add(layerZoomLevel);
-		background.add(layerElementsDone);
-		background.add(layerPercent);
-		background.add(timeLayerLeft);
-		background.add(layerProgress);
-		background.add(title);
-		background.add(percent);
-		background.add(atlasElementsDone);
-		background.add(timeLeft);
-		background.add(tarCreation);
-		background.add(tarProgress);
-		background.add(nrOfDownloadedBytes);
-		background.add(nrOfDownloadedBytesValue);
-		background.add(nrOfDownloadedBytesPerSecond);
-		background.add(nrOfDownloadedBytesPerSecondValue);
-		background.add(totalDownloadTime);
-		background.add(totalDownloadTimeValue);
-		background.add(abortAtlasDownloadButton);
-		background.add(dismissWindowButton);
-		background.add(openProgramFolderButton);
+		GBC gbcStd = GBC.std();
+		GBC gbcRIF = GBC.std().insets(0, 0, 20, 0).fill(GBC.HORIZONTAL);
+		GBC gbcEol = GBC.eol();
+		GBC gbcEolFill = GBC.eol().fill(GBC.HORIZONTAL);
+		GBC gbcEolFillI = GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 0);
 
-		getContentPane().add(background);
+		background.add(windowTitle, gbcEol);
+		background.add(Box.createVerticalStrut(20), gbcEol);
 
-		this.setUndecorated(true);
+		background.add(title, gbcRIF);
+		background.add(atlasElementsDone, gbcRIF);
+		background.add(atlasPercent, gbcRIF);
+		background.add(atlasTimeLeft, gbcEolFill);
+		background.add(atlasProgress, gbcEolFillI);
+		background.add(Box.createVerticalStrut(20), gbcEol);
+
+		background.add(layerTitle, gbcRIF);
+		background.add(layerElementsDone, gbcRIF);
+		background.add(layerPercent, gbcRIF);
+		background.add(layerTimeLeft, gbcEolFill);
+		background.add(layerProgress, gbcEolFillI);
+		background.add(Box.createVerticalStrut(20), gbcEol);
+
+		background.add(tarCreation, gbcEol);
+		background.add(tarProgress, gbcEolFillI);
+		background.add(Box.createVerticalStrut(10), gbcEol);
+
+		JPanel infoPanel = new JPanel(new GridBagLayout());
+		GBC gbci = GBC.std().insets(0, 3, 3, 3);
+		infoPanel.add(nrOfDownloadedBytes, gbci);
+		infoPanel.add(nrOfDownloadedBytesValue, gbci.toggleEol());
+		infoPanel.add(nrOfDownloadedBytesPerSecond, gbci.toggleEol());
+		infoPanel.add(nrOfDownloadedBytesPerSecondValue, gbci.toggleEol());
+		infoPanel.add(totalDownloadTime, gbci.toggleEol());
+		infoPanel.add(totalDownloadTimeValue, gbci.toggleEol());
+
+		JPanel bottomPanel = new JPanel(new GridBagLayout());
+
+		bottomPanel.add(infoPanel, gbcStd);
+
+		GBC gbcRight = GBC.std().anchor(GBC.SOUTHEAST).insets(5, 0, 0, 0);
+		bottomPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		bottomPanel.add(abortAtlasDownloadButton, gbcRight);
+		bottomPanel.add(dismissWindowButton, gbcRight);
+		bottomPanel.add(openProgramFolderButton, gbcRight);
+
+		background.add(bottomPanel, gbcEolFillI);
+
+		JPanel borderPanel = new JPanel(new GridBagLayout());
+		borderPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+		borderPanel.add(background, GBC.std().insets(10, 10, 10, 10).fill());
+
+		add(borderPanel, GBC.std().fill());
+		setUndecorated(true);
 
 		abortAtlasDownloadButton.addActionListener(new JButtonListener());
 		dismissWindowButton.addActionListener(new JButtonListener());
 		openProgramFolderButton.addActionListener(new JButtonListener());
+
+		// Initialize the layout in respect to the layout (font size ...)
+		pack();
+
+		// The layout is now initialized - we disable it because we don't want
+		// want to the labels to jump around if the content changes.
+		background.setLayout(null);
+
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension dContent = getSize();
+		setLocation((dScreen.width - dContent.width) / 2, (dScreen.height - dContent.height) / 2);
 	}
 
 	public void init(int totalNrOfTiles, int theNrOfLayers) {
@@ -263,7 +258,7 @@ public class AtlasProgress extends JFrame {
 
 		String stringPercent = Integer.toString(((int) (atlasProgress.getPercentComplete() * 100)));
 
-		percent.setText("Percent done: " + stringPercent + " %");
+		atlasPercent.setText("Percent done: " + stringPercent + " %");
 	}
 
 	private void setLayerCurrent(int theElementsDone) {
@@ -290,21 +285,27 @@ public class AtlasProgress extends JFrame {
 		long timePerElement = (System.currentTimeMillis() - initiateTime) / progress;
 
 		long seconds = (timePerElement * (atlasProgress.getMaximum() - progress) / 1000);
-		timeLeft.setText(formatRemainingTime(seconds));
+		atlasTimeLeft.setText(formatRemainingTime(seconds));
 	}
 
 	private void setLayerTimeLeft(int theElementsDoneInt) {
-
-		long timePerElement = (System.currentTimeMillis() - initiateLayerTime) / theElementsDoneInt;
-		long seconds = (timePerElement * (layerProgress.getMaximum() - theElementsDoneInt) / 1000);
-		timeLayerLeft.setText(formatRemainingTime(seconds));
+		if (theElementsDoneInt == 0) {
+			layerTimeLeft.setText(formatRemainingTime(-1));
+		} else {
+			long timePerElement = (System.currentTimeMillis() - initiateLayerTime)
+					/ theElementsDoneInt;
+			long seconds = (timePerElement * (layerProgress.getMaximum() - theElementsDoneInt) / 1000);
+			layerTimeLeft.setText(formatRemainingTime(seconds));
+		}
 	}
 
 	private String formatRemainingTime(long seconds) {
 		int minutesLeft = 0;
 		String timeLeftString;
 
-		if (seconds > 60) {
+		if (seconds < 0) {
+			timeLeftString = "unknown";
+		} else if (seconds > 60) {
 			minutesLeft = (int) (seconds / 60);
 			int secondsLeft = (int) (seconds % 60);
 			if (secondsLeft > 119) {
@@ -325,7 +326,7 @@ public class AtlasProgress extends JFrame {
 	}
 
 	public void setZoomLevel(int theZoomLevel) {
-		layerZoomLevel.setText(Integer.toString(theZoomLevel));
+		layerTitle.setText("Downloading tiles for ZOOM LEVEL = " + Integer.toString(theZoomLevel));
 	}
 
 	public void atlasCreationFinished() {
@@ -451,5 +452,22 @@ public class AtlasProgress extends JFrame {
 			if (!AtlasProgress.this.isVisible())
 				stopUpdateTask();
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		AtlasProgress ap = new AtlasProgress();
+		ap.init(100, 3);
+		ap.setVisible(true);
+
+		ap.setMinMaxForCurrentLayer(0, 100);
+		ap.setZoomLevel(1);
+		ap.setInitiateTimeForLayer();
+		ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
+		ap.updateLayerProgressBar(10);
+		ap.updateViewNrOfDownloadedBytes();
+		ap.updateViewNrOfDownloadedBytesPerSecond();
+		ap.updateTotalDownloadTime();
+
 	}
 }

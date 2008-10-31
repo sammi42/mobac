@@ -44,8 +44,9 @@ directory where the jar file of TrekBuddy Atlas Creator is installed to.
 
 https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/log4j.xml
 
-The next start TrekBuddy Atlas Creator will create a log file in the installation
-directory which contains further informations about errors that occur.
+The next start TrekBuddy Atlas Creator will create a log file in the current directory
+(on Windows this is usually the directory where the JAR file is located on Linux usually
+the profile directory). Please note that the log file is erased on each program start.
 
 If you think you have found a bug please file it in the bug tracker at SourceForge:
  

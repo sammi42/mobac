@@ -353,14 +353,14 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(createAtlasButton, gbc_eol);
 		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 		leftPanel.setMaximumSize(leftPanel.getPreferredSize());
-		
+
 		leftScrollPane = new JScrollPane(leftPanel);
 		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		Dimension d = leftPanel.getPreferredSize();
 		// Set the scroll pane width large enough so that the
 		// scroll bar has enough space to appear right to it
-		//d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
-//		leftScrollPane.setPreferredSize(d);
+		// d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
+		// leftScrollPane.setPreferredSize(d);
 		leftScrollPane.setMinimumSize(d);
 		add(leftScrollPane, GBC.std().fill(GBC.VERTICAL));
 	}
@@ -581,6 +581,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			longMax = lonMaxTextField.getCoordinate();
 			longMin = lonMinTextField.getCoordinate();
 		} catch (ParseException e) {
+			log.error("Error retrieving coordinates:", e);
 			return false;
 		}
 
@@ -639,10 +640,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 				s.store();
 			} catch (IOException iox) {
 				JOptionPane.showMessageDialog(null,
-						"Could not create file settings.xml program will exit.", "Error",
+						"Error on writing program settings to \"settings.xml\"", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				log.error("Error saving settings", iox);
 			}
-			System.exit(0);
 		}
 	}
 

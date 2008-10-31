@@ -221,22 +221,9 @@ public class AtlasThread extends Thread implements ActionListener {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	protected boolean retryDownloadAtlasTile(int xValue, int yValue, int zoomValue,
-			File destinationFolder, TileSource tileSource) throws InterruptedException {
-
-		for (int i = 0; i < 10; i++) {
-			try {
-				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
-						tileSource, true);
-				ap.addDownloadedBytes(bytes);
-				return true;
-			} catch (IOException e) {
-				Thread.sleep(1000);
-			}
-		}
-		return false;
-	}
-
+	/**
+	 * Abort listener from {@link AtlasProgress}
+	 */
 	public void actionPerformed(ActionEvent e) {
 		try {
 			this.interrupt();
@@ -349,8 +336,15 @@ public class AtlasThread extends Thread implements ActionListener {
 				errorCounter++;
 				jobFinishedWithError();
 				// Reschedule job to try it later again
-				if (errorCounter < 3)
+				if (errorCounter < 3) {
+					log.debug("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
+							+ " failed (times: " + errorCounter + ") - rescheduling download job");
 					downloadJobDispatcher.addErrorJob(this);
+				} else {
+					log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
+							+ "failed again. Retry limit reached, "
+							+ "job will not be rescheduled (no further try)");
+				}
 				throw e;
 			}
 		}

@@ -26,6 +26,8 @@ public class MapSources {
 
 	public static class OutdooractiveCom implements TileSource {
 
+		private static int SERVER_NUM = 0;
+
 		public int getMaxZoom() {
 			return 16;
 		}
@@ -44,13 +46,15 @@ public class MapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 
-			return "http://t1.outdooractive.com/portal/map/" + zoom + "/" + tilex + "/" + tiley
-					+ ".png";
+			String s = "http://t" + SERVER_NUM + ".outdooractive.com/portal/map/" + zoom + "/"
+					+ tilex + "/" + tiley + ".png";
+			SERVER_NUM = (SERVER_NUM + 1) % 4;
+			return s;
 		}
 
 		@Override
 		public String toString() {
-			return getName();
+			return getName() + " (Germany only)";
 		}
 
 	}

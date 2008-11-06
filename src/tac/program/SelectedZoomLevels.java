@@ -6,11 +6,11 @@ public class SelectedZoomLevels {
 	private boolean[] zoomLevels;
 	private int nrOfLayers;
 
-	public SelectedZoomLevels(JCheckBox[] zoomCheckboxes) {
-		this(zoomCheckboxes.length);
+	public SelectedZoomLevels(int minZoom, JCheckBox[] zoomCheckboxes) {
+		this(minZoom + zoomCheckboxes.length);
 		for (int i = 0; i < zoomCheckboxes.length; i++) {
 			if (zoomCheckboxes[i].isSelected())
-				setZoomLevelSelected(i);
+				setZoomLevelSelected(minZoom + i);
 		}
 	}
 

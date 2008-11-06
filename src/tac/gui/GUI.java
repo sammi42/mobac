@@ -165,7 +165,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		setMinimumSize(new Dimension(800, 550));
 		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridBagLayout());
 	}
 
@@ -384,12 +384,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	protected void createZoomLevelCheckBoxes() {
-		int zoomLevels = ((TileSource) mapSource.getSelectedItem()).getMaxZoom();
-		JCheckBox[] oldCbZoom = cbZoom;
+		TileSource tileSource = previewMap.getTileSource();
+		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
 		cbZoom = new JCheckBox[zoomLevels];
-		int x = cbZoom.length - 1;
-		Object[] o = new Object[] { x--, x--, x-- };
-		zoomLevelLabel.setText(String.format("Zoom levels (%d, %d, %d ... 2, 1, 0)", o));
+		int x = tileSource.getMaxZoom();
+		int y = tileSource.getMinZoom() + 2;
+		Object[] o = new Object[] { x--, x--, x, y--, y--, y };
+		zoomLevelLabel.setText(String.format("Zoom levels (%d, %d, %d ... %d, %d, %d)", o));
 		zoomLevelPanel.removeAll();
 		zoomLevelPanel.setLayout(new GridLayout(2, cbZoom.length + 2 / 2, 0, 0));
 		CheckBoxListener cbl = new CheckBoxListener();
@@ -397,14 +398,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 		String s = "";
 		for (int i = cbZoom.length - 1; i >= 0; i--) {
 			JCheckBox cb = new JCheckBox();
-			if (i < oldCbZoom.length)
-				cb.setSelected(oldCbZoom[i].isSelected());
+			int cbz = i + tileSource.getMinZoom();
 			cb.setPreferredSize(new Dimension(17, 20));
 			cb.setMinimumSize(cb.getPreferredSize());
-			s = "Zoom level " + i;
-			if (i == 0)
+			s = "Zoom level " + cbz;
+			if (cbz == tileSource.getMinZoom())
 				s += " (Minimum zoom)";
-			if (i == cbZoom.length - 1)
+			if (cbz == tileSource.getMaxZoom())
 				s += " (Maximum zoom)";
 			cb.setToolTipText(s);
 			cb.addActionListener(cbl);
@@ -607,7 +607,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 	public void calculateNrOfTilesToDownload() {
 
 		try {
-			SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
+			SelectedZoomLevels sZL = new SelectedZoomLevels(
+					previewMap.getTileSource().getMinZoom(), cbZoom);
 
 			int[] zoomLevels = sZL.getZoomLevels();
 
@@ -730,7 +731,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 							.intValue();
 
 				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
-				SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
+				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
+						.getMinZoom(), cbZoom);
 				Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
 						getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
 				atlasThread.start();

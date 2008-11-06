@@ -32,6 +32,10 @@ public class MapSources {
 			return 16;
 		}
 
+		public int getMinZoom() {
+			return 8;
+		}
+
 		public String getName() {
 			return "Outdooractive.com";
 		}
@@ -45,7 +49,8 @@ public class MapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-
+			if (zoom < 8)
+				throw new RuntimeException("Zoom level not suported");
 			String s = "http://t" + SERVER_NUM + ".outdooractive.com/portal/map/" + zoom + "/"
 					+ tilex + "/" + tiley + ".png";
 			SERVER_NUM = (SERVER_NUM + 1) % 4;
@@ -67,6 +72,10 @@ public class MapSources {
 
 		public int getMaxZoom() {
 			return 17;
+		}
+
+		public int getMinZoom() {
+			return 0;
 		}
 
 		public String getName() {
@@ -107,6 +116,10 @@ public class MapSources {
 
 		public int getMaxZoom() {
 			return 20;
+		}
+
+		public int getMinZoom() {
+			return 0;
 		}
 
 		public String getName() {
@@ -175,6 +188,10 @@ public class MapSources {
 
 		public int getMaxZoom() {
 			return maxZoom;
+		}
+
+		public int getMinZoom() {
+			return 0;
 		}
 
 		public String getName() {

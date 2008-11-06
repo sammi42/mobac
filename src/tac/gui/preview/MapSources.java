@@ -5,9 +5,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class MapSources {
 
-	private static TileSource[] MAP_SOURCES = { new MapSources.GoogleMaps(),
-			new MapSources.GoogleEarth(), new MapSources.Mapnik(), new MapSources.TilesAtHome(),
-			new MapSources.CycleMap() };
+	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleEarth(), new Mapnik(),
+			new TilesAtHome(), new CycleMap(), new OutdooractiveCom() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -23,6 +22,37 @@ public class MapSources {
 				return t;
 		}
 		return MAP_SOURCES[0];
+	}
+
+	public static class OutdooractiveCom implements TileSource {
+
+		public int getMaxZoom() {
+			return 16;
+		}
+
+		public String getName() {
+			return "Outdooractive.com";
+		}
+
+		public String getTileType() {
+			return "png";
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.None;
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+
+			return "http://t1.outdooractive.com/portal/map/" + zoom + "/" + tilex + "/" + tiley
+					+ ".png";
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+
 	}
 
 	public static class GoogleMaps implements TileSource {

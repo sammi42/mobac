@@ -58,6 +58,8 @@ public class MapCreator {
 		tilesInFileFormat = new HashMap<String, File>();
 		setFiles = new LinkedList<String>();
 		atlasLayerFolder = new File(atlasFolder, layerName);
+		log.debug("Creating map \"" + layerName + "\" (" + smp + ") tileSize (" + tileSizeWidth
+				+ "/" + tileSizeHeight + ")");
 	}
 
 	public void createMap() {
@@ -92,6 +94,7 @@ public class MapCreator {
 	}
 
 	private void writeMapFile() {
+		log.trace("Writing map file");
 		File mapFile = new File(atlasLayerFolder, layerName + ".map");
 
 		FileWriter fw = null;
@@ -110,7 +113,7 @@ public class MapCreator {
 					latitudeMin, latitudeMax, width, height));
 			fw.close();
 		} catch (IOException e) {
-			log.error("",e);
+			log.error("", e);
 		} finally {
 			Utilities.closeWriter(fw);
 		}
@@ -141,7 +144,7 @@ public class MapCreator {
 					setFiles.add(fDest.getName());
 					Utilities.fileCopy(fSource, fDest);
 				} catch (IOException e) {
-					log.error("",e);
+					log.error("", e);
 				}
 				pixelValueY++;
 			}
@@ -150,10 +153,6 @@ public class MapCreator {
 	}
 
 	private void createCustomSizedTiles(File setFolder) throws InterruptedException {
-
-		// TODO XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
-		// if (1 == 1)
-		// throw new RuntimeException("Not working!");
 
 		int mergedWidth = (xMax - xMin + 1) * 256;
 		int mergedHeight = (yMax - yMin + 1) * 256;
@@ -191,7 +190,7 @@ public class MapCreator {
 						graphics.drawImage(ImageIO.read(tileToMerge), null, offsetX * 256,
 								offsetY * 256);
 					} catch (IOException e) {
-						log.error("Image loading failed!",e);
+						log.error("Image loading failed!", e);
 					}
 				}
 				offsetX++;
@@ -309,7 +308,7 @@ public class MapCreator {
 				ImageIO.write(buf, "png", fos);
 				fos.close();
 			} catch (IOException e) {
-				log.error("",e);
+				log.error("Error saveing custom tile:", e);
 			}
 			buf = null;
 		}
@@ -320,6 +319,7 @@ public class MapCreator {
 	private void writeSetFile() {
 		// Create the set file for this map
 		File setFile = new File(atlasLayerFolder, layerName + ".set");
+		log.trace("Writing map .set file: " + setFile.getAbsolutePath());
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(setFile);
@@ -327,7 +327,7 @@ public class MapCreator {
 				fw.write(file + "\r\n");
 			}
 		} catch (IOException e) {
-			log.error("",e);
+			log.error("", e);
 		} finally {
 			Utilities.closeWriter(fw);
 		}

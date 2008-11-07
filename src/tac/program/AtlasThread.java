@@ -197,6 +197,8 @@ public class AtlasThread extends Thread implements ActionListener {
 						atlasName, zoom }));
 				atlasFolder.mkdir();
 
+				log.debug("Starting to create atlas from downloaded tiles");
+				
 				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth,
 						tileSizeHeight, atlasName, zoom);
 				ota.convert(xMax, xMin, yMax, yMin);

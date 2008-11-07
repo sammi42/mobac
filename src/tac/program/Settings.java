@@ -37,6 +37,8 @@ public class Settings {
 	private static final String SELECTION_LAT_MIN = "selection.min.lat";
 	private static final String SELECTION_LON_MIN = "selection.min.lon";
 	private static final String THREAD_COUNT = "download.thread.count";
+	private static final String GOOGLE_MAPS_URL = "google.maps.url";
+	private static final String GOOGLE_EARTH_URL = "google.earth.url";
 
 	private int maxMapSize = 32768;
 
@@ -53,8 +55,11 @@ public class Settings {
 	private String atlasName = "";
 
 	private String userAgent = UserAgent.FF2_XP;
-	
+
 	private int threadCount = 4;
+
+	private String googleMapsUrl = "";
+	private String googleEarthUrl = "";
 
 	private Settings() {
 	}
@@ -106,6 +111,8 @@ public class Settings {
 			selectionMin.lon = p.getDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
 			defaultMapSource = p.getProperty(MAPSOURCE);
 			atlasName = p.getProperty(ATLAS_NAME, atlasName);
+			googleEarthUrl = p.getProperty(GOOGLE_EARTH_URL, googleEarthUrl);
+			googleMapsUrl = p.getProperty(GOOGLE_MAPS_URL, googleMapsUrl);
 			String proxyHost = p.getProperty(PROXY_HOST);
 			String proxyPort = p.getProperty(PROXY_PORT);
 			if (proxyHost != null)
@@ -136,6 +143,9 @@ public class Settings {
 			p.setProperty(ATLAS_NAME, atlasName);
 			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
 			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
+
+			p.setStringProperty(GOOGLE_MAPS_URL, googleMapsUrl);
+			p.setStringProperty(GOOGLE_EARTH_URL, googleEarthUrl);
 
 			p.setDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
 			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
@@ -231,6 +241,22 @@ public class Settings {
 
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
+	}
+
+	public String getGoogleMapsUrl() {
+		return googleMapsUrl;
+	}
+
+	public void setGoogleMapsUrl(String googleMapsUrl) {
+		this.googleMapsUrl = googleMapsUrl;
+	}
+
+	public String getGoogleEarthUrl() {
+		return googleEarthUrl;
+	}
+
+	public void setGoogleEarthUrl(String googleEarthUrl) {
+		this.googleEarthUrl = googleEarthUrl;
 	}
 
 }

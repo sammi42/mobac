@@ -13,7 +13,11 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class OziToAtlas {
+
+	private static Logger log = Logger.getLogger(OziToAtlas.class);
 
 	private File oziFolder;
 	private File atlasFolder;
@@ -39,6 +43,9 @@ public class OziToAtlas {
 		int mapSize = s.getMaxMapsSize();
 
 		List<SubMapProperties> subMaps = this.calculateMapSections(mapSize, xMin, xMax, yMin, yMax);
+
+		log.trace("Map will been splitted into " + subMaps.size()
+				+ " sections because of TrekBuddy maximum map limitation");
 
 		int mapNumber = 1;
 

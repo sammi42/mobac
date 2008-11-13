@@ -75,6 +75,8 @@ public class AtlasProgress extends JFrame {
 	private JLabel nrOfDownloadedBytesValue;
 	private JLabel nrOfDownloadedBytesPerSecond;
 	private JLabel nrOfDownloadedBytesPerSecondValue;
+	private JLabel activeDownloads;
+	private JLabel activeDownloadsValue;
 	private JLabel totalDownloadTime;
 	private JLabel totalDownloadTimeValue;
 
@@ -86,9 +88,11 @@ public class AtlasProgress extends JFrame {
 
 	private UpdateTask updateDisplay = null;
 
-	public AtlasProgress() {
+	private AtlasThread atlasThread;
 
+	public AtlasProgress(AtlasThread atlasThread) {
 		super("Downloading tiles...");
+		this.atlasThread = atlasThread;
 		setLayout(new GridBagLayout());
 		updateDisplay = new UpdateTask();
 		tarProgressValue = 0;
@@ -118,6 +122,8 @@ public class AtlasProgress extends JFrame {
 		nrOfDownloadedBytesPerSecondValue = new JLabel();
 		nrOfDownloadedBytes = new JLabel("Total download size");
 		nrOfDownloadedBytesValue = new JLabel();
+		activeDownloads = new JLabel("Active Downloads");
+		activeDownloadsValue = new JLabel();
 		totalDownloadTime = new JLabel("Total download time");
 		totalDownloadTimeValue = new JLabel();
 
@@ -164,6 +170,8 @@ public class AtlasProgress extends JFrame {
 		infoPanel.add(nrOfDownloadedBytesValue, gbci.toggleEol());
 		infoPanel.add(nrOfDownloadedBytesPerSecond, gbci.toggleEol());
 		infoPanel.add(nrOfDownloadedBytesPerSecondValue, gbci.toggleEol());
+		infoPanel.add(activeDownloads, gbci.toggleEol());
+		infoPanel.add(activeDownloadsValue, gbci.toggleEol());
 		infoPanel.add(totalDownloadTime, gbci.toggleEol());
 		infoPanel.add(totalDownloadTimeValue, gbci.toggleEol());
 
@@ -388,7 +396,6 @@ public class AtlasProgress extends JFrame {
 		totalMilliseconds = System.currentTimeMillis() - initiateTime;
 
 		if (totalMilliseconds > 60000) {
-
 			minutes = totalMilliseconds / 60000;
 			seconds = (totalMilliseconds - (minutes * 60000)) / 1000;
 			timeString = minutes + " minute(s) and " + seconds + " second(s)";
@@ -398,6 +405,11 @@ public class AtlasProgress extends JFrame {
 		}
 		totalDownloadTimeValue.setText(": " + timeString);
 		totalDownloadTimeValue.repaint();
+	}
+
+	public void updateActiveDownloads() {
+		activeDownloadsValue.setText(": " + atlasThread.getActiveDownloads());
+		activeDownloadsValue.repaint();
 	}
 
 	public int getAtlasProgressValue() {
@@ -448,18 +460,24 @@ public class AtlasProgress extends JFrame {
 
 		@Override
 		public void run() {
-			updateTotalDownloadTime();
-			if (!AtlasProgress.this.isVisible())
-				stopUpdateTask();
+			try {
+				updateTotalDownloadTime();
+				updateActiveDownloads();
+			} catch (Exception e) {
+			}
 		}
 	}
 
+	/**
+	 * For debugging purposes: Shows the atlas download/progress dialog without
+	 * having to start TAC or download anything
+	 */
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		AtlasProgress ap = new AtlasProgress();
+		AtlasProgress ap = new AtlasProgress(null);
 		ap.init(100, 3);
 		ap.setVisible(true);
-
+		ap.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		ap.setMinMaxForCurrentLayer(0, 100);
 		ap.setZoomLevel(1);
 		ap.setInitiateTimeForLayer();

@@ -84,21 +84,32 @@ public class JobDispatcher {
 		public void run() throws Exception;
 	}
 
+	public boolean isAtLeastOneWorkerActive() {
+		for (int i = 0; i < workers.length; i++) {
+			WorkerThread w = workers[i];
+			if (w != null) {
+				if ((!w.idle) && (w.getState() != Thread.State.WAITING))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Each worker thread takes the first job from the job queue and executes
-	 * it. If the queue is empty the worker blocks, waiting for the next
-	 * job.
+	 * it. If the queue is empty the worker blocks, waiting for the next job.
 	 */
 	protected class WorkerThread extends Thread {
 
-		Job job;
+		Job job = null;
+
+		boolean idle = true;
 
 		private Logger log = Logger.getLogger(WorkerThread.class);
 
 		public WorkerThread(int threadNum) {
 			super("WorkerThread " + threadNum);
 			setDaemon(true);
-			job = null;
 			start();
 		}
 
@@ -111,7 +122,9 @@ public class JobDispatcher {
 		protected void executeJobs() {
 			while (!isInterrupted()) {
 				try {
+					idle = true;
 					job = jobQueue.take();
+					idle = false;
 				} catch (InterruptedException e1) {
 					return;
 				}

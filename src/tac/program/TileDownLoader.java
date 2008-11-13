@@ -62,6 +62,8 @@ public class TileDownLoader {
 		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 
 		huc.setRequestMethod("GET");
+		
+		huc.setConnectTimeout(1000 * s.getConnectionTimeout());
 		huc.addRequestProperty("User-agent", s.getUserAgent());
 		huc.connect();
 

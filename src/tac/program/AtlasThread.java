@@ -31,6 +31,7 @@ public class AtlasThread extends Thread implements ActionListener {
 	private int tileSizeWidth = 0;
 	private int tileSizeHeight = 0;
 
+	private int activeDownloads = 0;
 	private int jobsProduced = 0;
 	private int jobsCompleted = 0;
 	private int jobsError = 0;
@@ -57,7 +58,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
 				+ sZL + "\n\tTile size width: " + tileSizeWidth + "\n\tTile size height: "
 				+ tileSizeHeight);
-		ap = new AtlasProgress();
+		ap = new AtlasProgress(this);
 		ap.setAbortListener(this);
 		try {
 			createAtlas();
@@ -166,7 +167,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom,
 						oziZoomDir);
 
-				while (djp.isAlive() || jobsCompleted < jobsProduced) {
+				while (djp.isAlive() || downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 					Thread.sleep(500);
 					if (jobsError > 10) {
 						downloadJobDispatcher.cancelOutstandingJobs();
@@ -185,7 +186,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				if ((oziZoomDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
 					JOptionPane.showMessageDialog(null,
 							"Something is wrong with download of atlas tiles. "
-									+ "Actual amount of downoladed tiles is not the same as "
+									+ "Actual amount of downladed tiles is not the same as "
 									+ "the supposed amount of tiles downloaded.\n"
 									+ "It might be connection problems to internet "
 									+ "or something else. Please try again.", "Error",
@@ -240,15 +241,24 @@ public class AtlasThread extends Thread implements ActionListener {
 		ap.updateLayerProgressBar(jobsCompleted);
 		ap.updateViewNrOfDownloadedBytes();
 		ap.updateViewNrOfDownloadedBytesPerSecond();
-		ap.updateTotalDownloadTime();
 	}
 
+	public int getActiveDownloads() {
+		return activeDownloads;
+	}
+
+	protected synchronized void jobStart() {
+		activeDownloads++;
+	}
+	
 	protected synchronized void jobFinishedSuccessfully() {
+		activeDownloads--;
 		jobsCompleted++;
 		updateGUI();
 	}
 
 	protected synchronized void jobFinishedWithError() {
+		activeDownloads--;
 		jobsError++;
 	}
 
@@ -329,7 +339,8 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		public void run() throws Exception {
 			try {
-				// Thread.sleep(1500);
+				//Thread.sleep(1500);
+				jobStart();
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);
 				ap.addDownloadedBytes(bytes);

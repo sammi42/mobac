@@ -37,6 +37,7 @@ public class Settings {
 	private static final String SELECTION_LAT_MIN = "selection.min.lat";
 	private static final String SELECTION_LON_MIN = "selection.min.lon";
 	private static final String THREAD_COUNT = "download.thread.count";
+	private static final String CONNECTION_TIMEOUT = "download.timeout";
 	private static final String GOOGLE_MAPS_URL = "google.maps.url";
 	private static final String GOOGLE_EARTH_URL = "google.earth.url";
 
@@ -58,6 +59,9 @@ public class Settings {
 
 	private int threadCount = 4;
 
+	// Timeout in seconds (default 10 seconds)
+	private int connectionTimeout = 10;
+	
 	private String googleMapsUrl = "";
 	private String googleEarthUrl = "";
 
@@ -98,6 +102,7 @@ public class Settings {
 			is = new FileInputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.loadFromXML(is);
 			threadCount = p.getIntProperty(THREAD_COUNT, threadCount);
+			connectionTimeout = p.getIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
 			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
 			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
 			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
@@ -134,6 +139,7 @@ public class Settings {
 		try {
 			SettingsProperties p = new SettingsProperties();
 			p.setIntProperty(THREAD_COUNT, threadCount);
+			p.setIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
 			p.setIntProperty(MAPS_MAXSIZE, maxMapSize);
 			p.setIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
@@ -257,6 +263,14 @@ public class Settings {
 
 	public void setGoogleEarthUrl(String googleEarthUrl) {
 		this.googleEarthUrl = googleEarthUrl;
+	}
+
+	public int getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	public void setConnectionTimeout(int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
 	}
 
 }

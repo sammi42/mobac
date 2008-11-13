@@ -167,7 +167,8 @@ public class AtlasThread extends Thread implements ActionListener {
 				DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom,
 						oziZoomDir);
 
-				while (djp.isAlive() || downloadJobDispatcher.isAtLeastOneWorkerActive()) {
+				while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
+						|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 					Thread.sleep(500);
 					if (jobsError > 10) {
 						downloadJobDispatcher.cancelOutstandingJobs();
@@ -199,7 +200,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				atlasFolder.mkdir();
 
 				log.debug("Starting to create atlas from downloaded tiles");
-				
+
 				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth,
 						tileSizeHeight, atlasName, zoom);
 				ota.convert(xMax, xMin, yMax, yMin);
@@ -250,7 +251,7 @@ public class AtlasThread extends Thread implements ActionListener {
 	protected synchronized void jobStart() {
 		activeDownloads++;
 	}
-	
+
 	protected synchronized void jobFinishedSuccessfully() {
 		activeDownloads--;
 		jobsCompleted++;
@@ -339,7 +340,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		public void run() throws Exception {
 			try {
-				//Thread.sleep(1500);
+				// Thread.sleep(1500);
 				jobStart();
 				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
 						tileSource, true);

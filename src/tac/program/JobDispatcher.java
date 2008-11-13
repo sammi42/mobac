@@ -92,6 +92,7 @@ public class JobDispatcher {
 					return true;
 			}
 		}
+		log.debug("All worker threads are idle");
 		return false;
 	}
 

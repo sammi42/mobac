@@ -174,25 +174,28 @@ public class AtlasThread extends Thread implements ActionListener {
 						downloadJobDispatcher.cancelOutstandingJobs();
 						downloadJobDispatcher.terminateAllWorkerThreads();
 						djp.cancel();
-						JOptionPane
-								.showMessageDialog(
-										null,
-										"Something is wrong with connection to download server. Please check connection to internet and try again",
-										"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(ap, "Multiple tile downloads have failed. "
+								+ "Something may be wrong with your connection to the "
+								+ "download server.\nPlease check internet connection "
+								+ "or try a different map region and try again",
+								"Download of more than 10 tiles failed", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 				log.debug("All download jobs has been completed!");
 
 				if ((oziZoomDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
-					JOptionPane.showMessageDialog(null,
-							"Something is wrong with download of atlas tiles. "
-									+ "Actual amount of downladed tiles is not the same as "
-									+ "the supposed amount of tiles downloaded.\n"
-									+ "It might be connection problems to internet "
-									+ "or something else. Please try again.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
+					int answer = JOptionPane.showConfirmDialog(ap,
+							"Something is wrong with download of atlas tiles.\n"
+									+ "The amount of downladed tiles is not as "
+									+ "high as it was calculated.\nTherfore tiles "
+									+ "will be missing in the created atlas.\n\n"
+									+ "Are you sure you want to continue "
+									+ "and create the atlas anyway?",
+							"Error - tiles are missing - do you want to continue anyway?",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+					if (answer != JOptionPane.YES_OPTION)
+						return;
 				}
 
 				File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {

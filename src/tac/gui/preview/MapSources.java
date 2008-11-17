@@ -232,10 +232,13 @@ public class MapSources {
 	}
 
 	public static class CycleMap extends OsmTileSource.CycleMap {
+
 		@Override
 		public String toString() {
 			return "OpenStreetMap Cyclemap";
 		}
 	}
+
+	
 
 }

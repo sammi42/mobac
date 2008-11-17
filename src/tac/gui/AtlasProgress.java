@@ -362,10 +362,13 @@ public class AtlasProgress extends JFrame {
 	}
 
 	public void closeWindow() {
-		stopUpdateTask();
-		abortListener = null;
-		setVisible(false);
-		dispose();
+		try {
+			stopUpdateTask();
+			abortListener = null;
+			setVisible(false);
+		} finally {
+			dispose();
+		}
 	}
 
 	public void updateViewNrOfDownloadedBytes() {

@@ -211,6 +211,14 @@ public class AtlasThread extends Thread implements ActionListener {
 				ap.updateAtlasProgressBarLayerText(layer + 1);
 				downloadJobDispatcher.cancelOutstandingJobs();
 			}
+		} catch (OutOfMemoryError e) {
+			JOptionPane.showMessageDialog(ap, "TrekBuddy Atlas Creator has run out of memory.\n"
+					+ "Please make sure you have started it via the "
+					+ "provided startup scripts 'start.cmd' (Windows) / 'start.sh' (Linux).\n"
+					+ "Those scripts are increasing the maximum memory usable by TAC to 512 MB.",
+					"Out of memory", JOptionPane.ERROR_MESSAGE);
+			ap.closeWindow();
+			throw e;
 		} finally {
 			downloadJobDispatcher.terminateAllWorkerThreads();
 		}

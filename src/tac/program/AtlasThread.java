@@ -16,6 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.JobDispatcher.Job;
+import tac.utilities.TACExceptionHandler;
 
 public class AtlasThread extends Thread implements ActionListener {
 
@@ -53,6 +54,7 @@ public class AtlasThread extends Thread implements ActionListener {
 	}
 
 	public void run() {
+		Thread.setDefaultUncaughtExceptionHandler(new TACExceptionHandler());
 		log.info("Starting altas creation");
 		log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource + "\n\tAtlas name: "
 				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
@@ -79,6 +81,7 @@ public class AtlasThread extends Thread implements ActionListener {
 			log.info("Altas creation was interrupted by user");
 		} catch (Exception e) {
 			log.error("Altas creation aborted because of an error: ", e);
+			TACExceptionHandler.showExceptionDialog(Thread.currentThread(), e);
 		}
 	}
 

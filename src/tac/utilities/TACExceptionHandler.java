@@ -20,6 +20,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
+import tac.program.TACInfo;
+
 public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 	public void uncaughtException(Thread t, Throwable e) {
@@ -27,17 +29,29 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 		showExceptionDialog(t, e);
 	}
 
+	private static String prop(String key) {
+		String s = System.getProperty(key);
+		if (s != null)
+			return s;
+		else
+			return "";
+	}
+
 	public static void showExceptionDialog(Thread t, Throwable e) {
 		String exceptionName = e.getClass().getSimpleName();
 		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append("\nVersion: " + TACInfo.getCompleteTitle());
+			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
+			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.version") + ")");
+
 			StringWriter stack = new StringWriter();
 			e.printStackTrace(new PrintWriter(stack));
-			StringBuilder sb = new StringBuilder();
-			sb.append("\n" + stack.getBuffer().toString());
+			sb.append("\n\n" + stack.getBuffer().toString());
 
 			JPanel p = new JPanel(new GridBagLayout());
 			String url = "https://sourceforge.net/tracker/?group_id=238075&atid=1105494";
-			String guiText = "" + "<p>An unexpected exception occurred (" + exceptionName + ")</p>"
+			String guiText = "" + "An unexpected exception occurred (" + exceptionName + ")<br>"
 					+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + url
 					+ "\">SourceForge.net</a><br>"
 					+ "Include your steps to get to the error (as detailed as possible)!</p>"
@@ -78,6 +92,14 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e1) {
 			e1.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		try {
+			throw new RuntimeException("Test");
+		} catch (Exception e) {
+			showExceptionDialog(Thread.currentThread(), e);
 		}
 	}
 }

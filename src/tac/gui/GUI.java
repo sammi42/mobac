@@ -14,9 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -42,7 +40,6 @@ import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-import tac.StartTAC;
 import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.MapSources;
 import tac.gui.preview.PreviewMap;
@@ -52,6 +49,7 @@ import tac.program.MapSelection;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
+import tac.program.TACInfo;
 import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
 import tac.utilities.Utilities;
@@ -118,37 +116,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public GUI() {
 		super();
-		InputStream propIn = StartTAC.class.getResourceAsStream("tac.properties");
-		String tacVersion;
-		String tacRevision;
-		try {
-			Properties props = new Properties();
-			props.load(propIn);
-			tacVersion = props.getProperty("tac.version");
-			tacRevision = props.getProperty("tac.revision");
-		} catch (IOException e) {
-			log.error("Can not find tac properties file");
-			tacVersion = "unknown";
-			tacRevision = "";
-		} finally {
-			Utilities.closeStream(propIn);
-		}
-		try {
-			String temp = tacRevision;
-			int index = temp.indexOf(':');
-			// if we have a revision range e.g.: "12:18" take only the higher
-			// (rightmost) value
-			if (index > 0)
-				temp = temp.substring(index + 1);
-
-			// We don't care about the flags M, S and P
-			temp = temp.replaceAll("[MSP]", "");
-			tacRevision = " (rev " + temp + ")";
-		} catch (Exception e) {
-			tacRevision = "";
-		}
-
-		setTitle("TrekBuddy Atlas Creator v" + tacVersion + tacRevision);
+		setTitle(TACInfo.getCompleteTitle());
 		log.trace("Creating main dialog - " + getTitle());
 		createMainFrame();
 		createLeftPanel();

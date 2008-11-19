@@ -19,6 +19,7 @@ public class TACInfo {
 			props.load(propIn);
 			version = props.getProperty("tac.version");
 			revision = props.getProperty("tac.revision");
+			revision = "(" + revision + ")";
 		} catch (IOException e) {
 			version = "unknown";
 			revision = "";
@@ -36,7 +37,7 @@ public class TACInfo {
 	}
 
 	public static String getCompleteTitle() {
-		return "TrekBuddy Atlas Creator v" + version + revision;
+		return "TrekBuddy Atlas Creator v" + version + " " + revision;
 	}
 
 }

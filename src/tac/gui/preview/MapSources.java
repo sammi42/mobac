@@ -5,8 +5,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class MapSources {
 
-	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleEarth(), new Mapnik(),
-			new TilesAtHome(), new CycleMap(), new OutdooractiveCom(), new YahooMaps() };
+	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleEarth(),
+			new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
+			new OutdooractiveCom()};
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;

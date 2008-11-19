@@ -6,7 +6,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 public class MapSources {
 
 	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleEarth(), new Mapnik(),
-			new TilesAtHome(), new CycleMap(), new OutdooractiveCom() };
+			new TilesAtHome(), new CycleMap(), new OutdooractiveCom(), new YahooMaps() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -22,6 +22,42 @@ public class MapSources {
 				return t;
 		}
 		return MAP_SOURCES[0];
+	}
+
+	public static class YahooMaps implements TileSource {
+
+		public int getMaxZoom() {
+			return 16;
+		}
+
+		public int getMinZoom() {
+			return 1;
+		}
+
+		public String getName() {
+			return "Yahoo Maps";
+		}
+
+		public String getTileType() {
+			return "png";
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.None;
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			int yahooTiley = (((1 << zoom) - 2) / 2) - tiley;
+			int yahooZoom = getMaxZoom() - zoom + 2;
+			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex
+					+ "&y=" + yahooTiley + "+6163&z=" + yahooZoom;
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+
 	}
 
 	public static class OutdooractiveCom implements TileSource {
@@ -238,7 +274,5 @@ public class MapSources {
 			return "OpenStreetMap Cyclemap";
 		}
 	}
-
-	
 
 }

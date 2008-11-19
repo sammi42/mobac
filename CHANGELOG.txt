@@ -5,6 +5,13 @@ V E R S I O N  I N F O R M A T I O N
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 0.9.6: (2008-??-??)
+ 
+ + New map source: Yahoo Maps
+ + New map source (Germany only): Outdooractive.com
+ ~ Exceptions that occur while downloading/creating an atlas are now displayed
+    in an dialog showing detailed information about the system and the exception 
+
  0.9.5: (2008-10-27)
 
  + Detailed log files can be created by providing a configuration file log4j.xml

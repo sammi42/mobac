@@ -143,8 +143,14 @@ public class MapCreator {
 					File fSource = (File) tilesInFileFormat.get("y" + y + "x" + x + ".png");
 					if (fSource != null) {
 						Utilities.fileCopy(fSource, fDest);
-						setFiles.add(fDest.getName());
+					} else {
+						FileOutputStream fos = new FileOutputStream(fDest);
+						BufferedImage emptyImage = new BufferedImage(256, 256,
+								BufferedImage.TYPE_INT_ARGB);
+						ImageIO.write(emptyImage, "png", fos);
+						fos.close();
 					}
+					setFiles.add(fDest.getName());
 				} catch (IOException e) {
 					log.error("", e);
 				}

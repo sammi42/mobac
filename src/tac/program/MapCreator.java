@@ -141,8 +141,10 @@ public class MapCreator {
 					File fDest = new File(setFolder, layerName + "_" + pixelValueX * 256 + "_"
 							+ pixelValueY * 256 + ".png");
 					File fSource = (File) tilesInFileFormat.get("y" + y + "x" + x + ".png");
-					setFiles.add(fDest.getName());
-					Utilities.fileCopy(fSource, fDest);
+					if (fSource != null) {
+						Utilities.fileCopy(fSource, fDest);
+						setFiles.add(fDest.getName());
+					}
 				} catch (IOException e) {
 					log.error("", e);
 				}

@@ -47,6 +47,18 @@ environment or the "start.sh" under an Linux / Unix environment. At the first
 application start all necessary files and folders are automatically created by 
 the application.
 
+*******************************************************************************
+**          U S I N G   A T L A S   W I T H   T R E K B U D D Y              **
+*******************************************************************************
+
+After having downloaded and created an atlas the files belonging to the 
+atlas can be found in the directory "atlasestared\[Current date and time]".
+
+The atlas itself consists of the file "cr.tar" - the atlas startup file
+and the subdirectories containing the different maps of the atlas. 
+
+For using the atlas with TrekBuddy copy the whole directory onto your J2ME 
+device and open "cr.tar" (in the atlas root directory) in TrekBuddy as atlas.    
 
 *******************************************************************************
 **                       K N O W N   P R O B L E M S                         **

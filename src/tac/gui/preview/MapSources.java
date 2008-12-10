@@ -7,7 +7,7 @@ public class MapSources {
 
 	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleEarth(),
 			new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
-			new OutdooractiveCom()};
+			new OutdooractiveCom() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -101,18 +101,39 @@ public class MapSources {
 
 	}
 
-	public static class GoogleMaps implements TileSource {
-
-		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.86&hl=%s&x=%d&y=%d&z=%d&s=%s";
+	public static abstract class GoogleSource implements TileSource {
 
 		private static int SERVER_NUM = 0;
 
-		public int getMaxZoom() {
-			return 17;
-		}
+		public static String LANG = "en";
+
+		public static String SERVER_TLD = "com";
 
 		public int getMinZoom() {
 			return 0;
+		}
+
+		protected int getNextServerNum() {
+			int x = SERVER_NUM;
+			SERVER_NUM = (SERVER_NUM + 1) % 4;
+			return x;
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
+
+	public static class GoogleMaps extends GoogleSource {
+
+		public static final String SERVER_URL = "http://mt%d.google.%s/mt?v=w2.86&hl=%s&x=%d&y=%d&z=%d&s=%s";
+
+		
+		private static int GALILEO_NUM = 0;
+
+		public int getMaxZoom() {
+			return 17;
 		}
 
 		public String getName() {
@@ -123,20 +144,11 @@ public class MapSources {
 			return TileUpdate.IfModifiedSince;
 		}
 
-		private int getNextServerNum() {
-			int x = SERVER_NUM;
-			SERVER_NUM = (SERVER_NUM + 1) % 4;
-			return x;
-		}
-
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), "en", x, y, zoom,
-					"Galileo" });
-		}
-
-		@Override
-		public String toString() {
-			return getName();
+			String g = "Galileo".substring(0, GALILEO_NUM);
+			GALILEO_NUM = (GALILEO_NUM + 1) % 6;
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), SERVER_TLD, LANG,
+					x, y, zoom, g });
 		}
 
 		public String getTileType() {
@@ -145,18 +157,12 @@ public class MapSources {
 
 	}
 
-	public static class GoogleEarth implements TileSource {
+	public static class GoogleEarth extends GoogleSource {
 
-		public static final String SERVER_URL = "http://khm%d.google.com/kh/v=33&hl=%s&x=%d&y=%d&z=%d&s=%s";
-
-		private static int SERVER_NUM = 0;
+		public static final String SERVER_URL = "http://khm%d.google.%s/kh/v=33&hl=%s&x=%d&y=%d&z=%d&s=%s";
 
 		public int getMaxZoom() {
 			return 20;
-		}
-
-		public int getMinZoom() {
-			return 0;
 		}
 
 		public String getName() {
@@ -167,20 +173,9 @@ public class MapSources {
 			return TileUpdate.IfModifiedSince;
 		}
 
-		private int getNextServerNum() {
-			int x = SERVER_NUM;
-			SERVER_NUM = (SERVER_NUM + 1) % 4;
-			return x;
-		}
-
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), "en", x, y, zoom,
-					"Galileo" });
-		}
-
-		@Override
-		public String toString() {
-			return getName();
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), SERVER_TLD, LANG,
+					x, y, zoom, "Galileo" });
 		}
 
 		public String getTileType() {

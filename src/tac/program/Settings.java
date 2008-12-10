@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import tac.gui.preview.MapSources;
+import tac.gui.preview.MapSources.GoogleSource;
 import tac.utilities.Utilities;
 
 public class Settings {
@@ -38,9 +39,9 @@ public class Settings {
 	private static final String SELECTION_LON_MIN = "selection.min.lon";
 	private static final String THREAD_COUNT = "download.thread.count";
 	private static final String CONNECTION_TIMEOUT = "download.timeout";
-	private static final String GOOGLE_MAPS_URL = "google.maps.url";
-	private static final String GOOGLE_EARTH_URL = "google.earth.url";
-
+	private static final String GOOGLE_LANGUAGE = "google.lang";
+	private static final String GOOGLE_TLD = "google.tld";
+	
 	private int maxMapSize = 32768;
 
 	private boolean tileStoreEnabled = true;
@@ -62,8 +63,8 @@ public class Settings {
 	// Timeout in seconds (default 10 seconds)
 	private int connectionTimeout = 10;
 	
-	private String googleMapsUrl = "";
-	private String googleEarthUrl = "";
+	private String googleLanguage = "en";
+	private String googleTld = "com";
 
 	private Settings() {
 	}
@@ -116,8 +117,8 @@ public class Settings {
 			selectionMin.lon = p.getDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
 			defaultMapSource = p.getProperty(MAPSOURCE);
 			atlasName = p.getProperty(ATLAS_NAME, atlasName);
-			googleEarthUrl = p.getProperty(GOOGLE_EARTH_URL, googleEarthUrl);
-			googleMapsUrl = p.getProperty(GOOGLE_MAPS_URL, googleMapsUrl);
+			setGoogleLanguage(p.getProperty(GOOGLE_LANGUAGE, googleLanguage));
+			setGoogleTld(p.getProperty(GOOGLE_TLD, googleTld));
 			String proxyHost = p.getProperty(PROXY_HOST);
 			String proxyPort = p.getProperty(PROXY_PORT);
 			if (proxyHost != null)
@@ -150,9 +151,9 @@ public class Settings {
 			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
 			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
 
-			p.setStringProperty(GOOGLE_MAPS_URL, googleMapsUrl);
-			p.setStringProperty(GOOGLE_EARTH_URL, googleEarthUrl);
-
+			p.setStringProperty(GOOGLE_LANGUAGE, googleLanguage);
+			p.setStringProperty(GOOGLE_TLD, googleTld);
+			
 			p.setDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
 			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
 			p.setDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
@@ -249,20 +250,22 @@ public class Settings {
 		this.userAgent = userAgent;
 	}
 
-	public String getGoogleMapsUrl() {
-		return googleMapsUrl;
+	public String getGoogleLanguage() {
+		return googleLanguage;
 	}
 
-	public void setGoogleMapsUrl(String googleMapsUrl) {
-		this.googleMapsUrl = googleMapsUrl;
+	public String getGoogleTld() {
+		return googleTld;
 	}
 
-	public String getGoogleEarthUrl() {
-		return googleEarthUrl;
+	public void setGoogleTld(String googleTld) {
+		this.googleTld = googleTld;
+		GoogleSource.SERVER_TLD = googleTld;
 	}
 
-	public void setGoogleEarthUrl(String googleEarthUrl) {
-		this.googleEarthUrl = googleEarthUrl;
+	public void setGoogleLanguage(String googleLanguage) {
+		this.googleLanguage = googleLanguage;
+		MapSources.GoogleSource.LANG = googleLanguage;
 	}
 
 	public int getConnectionTimeout() {

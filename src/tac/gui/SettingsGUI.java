@@ -46,6 +46,9 @@ public class SettingsGUI extends JDialog {
 	private static Vector<Integer> mapSizes;
 	private static Vector<Integer> threadNumbers;
 
+	private JComboBox googleLang;
+	private JComboBox googleTld;
+
 	private JPanel tileStoreInfoPanel;
 
 	private JCheckBox tileStoreEnabled;
@@ -88,6 +91,7 @@ public class SettingsGUI extends JDialog {
 		setMinimumSize(getSize());
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
+		updateTileStoreInfoPanelAnsynchronously();
 	}
 
 	private void createJFrame() {
@@ -99,6 +103,7 @@ public class SettingsGUI extends JDialog {
 	public void createTabbedPane() {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
+		addMapSourceSettingsPanel();
 		addTileStorePanel();
 		addMapSizePanel();
 		addNetworkPanel();
@@ -111,6 +116,33 @@ public class SettingsGUI extends JDialog {
 		tabPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		tabbedPane.add(tabPanel, tabTitle);
 		return tabPanel;
+	}
+
+	private void addMapSourceSettingsPanel() {
+
+		JPanel tab = createNewTab("Map sources");
+		tab.setLayout(new BorderLayout());
+
+		JPanel googlePanel = new JPanel(new GridBagLayout());
+		googlePanel.setBorder(BorderFactory.createTitledBorder("Google"));
+
+		String[] languages = new String[] { "en", "de", "cn" };
+		googleLang = new JComboBox(languages);
+		googleLang.setEditable(true);
+		//googleLang.setMaximumSize(googleLang.getPreferredSize());
+
+		googlePanel.add(new JLabel("Language (two chars short form): "), GBC.std());
+		googlePanel.add(googleLang, GBC.eol());
+
+		GoogleTld[] tlds = new GoogleTld[] { new GoogleTld("com", "Default"),
+				new GoogleTld("cn", "Ditu / Google Cina") };
+		googleTld = new JComboBox(tlds);
+		//googleTld.setMaximumSize(googleTld.getPreferredSize());
+
+		googlePanel.add(new JLabel("Server: "), GBC.std());
+		googlePanel.add(googleTld, GBC.eol());
+
+		tab.add(googlePanel, BorderLayout.NORTH);
 	}
 
 	private void addTileStorePanel() {
@@ -127,13 +159,23 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel = new JPanel(new GridBagLayout());
 		tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
-		updateTileStoreInfoPanel();
+		updateTileStoreInfoPanel(true);
 
 		backGround.add(leftPanel, BorderLayout.CENTER);
 		backGround.add(tileStoreInfoPanel, BorderLayout.EAST);
 	}
 
-	private void updateTileStoreInfoPanel() {
+	private void updateTileStoreInfoPanelAnsynchronously() {
+		new Thread() {
+
+			@Override
+			public void run() {
+				updateTileStoreInfoPanel(false);
+			}
+		}.start();
+	}
+
+	private synchronized void updateTileStoreInfoPanel(boolean fakeContent) {
 		tileStoreInfoPanel.removeAll();
 		GridBagConstraints gbc_mapSource = new GridBagConstraints();
 		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
@@ -166,13 +208,19 @@ public class SettingsGUI extends JDialog {
 		long totalTileCount = 0;
 		long totalTileSize = 0;
 		for (TileSource ts : MapSources.getMapSources()) {
-			int count = tileStore.getNrOfTiles(ts);
-			long size = tileStore.getStoreSize(ts);
-			totalTileCount += count;
-			totalTileSize += size;
+			String mapTileCountText = "?";
+			String mapTileSizeText = "?";
+			if (!fakeContent) {
+				int count = tileStore.getNrOfTiles(ts);
+				long size = tileStore.getStoreSize(ts);
+				totalTileCount += count;
+				totalTileSize += size;
+				mapTileCountText = Integer.toString(count);
+				mapTileSizeText = Utilities.formatBytes(size);
+			}
 			tileStoreInfoPanel.add(new JLabel(ts.toString()), gbc_mapSource);
-			tileStoreInfoPanel.add(new JLabel(Integer.toString(count)), gbc_mapTiles);
-			tileStoreInfoPanel.add(new JLabel(Utilities.formatBytes(size)), gbc_mapTiles);
+			tileStoreInfoPanel.add(new JLabel(mapTileCountText), gbc_mapTiles);
+			tileStoreInfoPanel.add(new JLabel(mapTileSizeText), gbc_mapTiles);
 			JButton deleteButton = new JButton(trash);
 			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 			deleteButton.setToolTipText("Delete all stored " + ts.getName() + " tiles.");
@@ -273,6 +321,10 @@ public class SettingsGUI extends JDialog {
 		if (index < 0)
 			index = 0;
 		threadCount.setSelectedIndex(index);
+
+		String lang = s.getGoogleLanguage();
+		googleLang.setSelectedItem(lang);
+
 	}
 
 	/**
@@ -293,6 +345,14 @@ public class SettingsGUI extends JDialog {
 		System.setProperty("http.proxyHost", proxyHost.getText());
 		System.setProperty("http.proxyPort", proxyPort.getText());
 
+		if (googleLang.getSelectedIndex() < 0) {
+			s.setGoogleLanguage(googleLang.getEditor().getItem().toString());
+		} else {
+			s.setGoogleLanguage(googleLang.getSelectedItem().toString());
+		}
+
+		s.setGoogleTld(((GoogleTld)googleTld.getSelectedItem()).getTld());
+		
 		// Close the dialog window
 		SettingsGUI.this.dispose();
 	}
@@ -309,6 +369,27 @@ public class SettingsGUI extends JDialog {
 				SettingsGUI.this.dispose();
 			}
 		});
+	}
+
+	private class GoogleTld {
+		private String tld;
+		private String name;
+
+		public GoogleTld(String tld, String name) {
+			super();
+			this.name = name;
+			this.tld = tld;
+		}
+
+		public String getTld() {
+			return tld;
+		}
+
+		@Override
+		public String toString() {
+			return name + " (maps.google." + tld + ")";
+		}
+
 	}
 
 	private class ClearTileCacheAction implements ActionListener {
@@ -330,7 +411,7 @@ public class SettingsGUI extends JDialog {
 					try {
 						TileStore ts = TileStore.getInstance();
 						ts.clearStore(source);
-						SettingsGUI.this.updateTileStoreInfoPanel();
+						SettingsGUI.this.updateTileStoreInfoPanel(false);
 						SettingsGUI.this.repaint();
 					} catch (Exception e) {
 						log.error("An error occured while cleaning tile cache: ", e);

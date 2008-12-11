@@ -8,9 +8,11 @@ V E R S I O N  I N F O R M A T I O N
  0.9.6: (2008-??-??)
  
  + New map source: Yahoo Maps
+ + New map source: Google Maps China (Ditu)
  + New map source (Germany only): Outdooractive.com
  ~ Exceptions that occur while downloading/creating an atlas are now displayed
-    in an dialog showing detailed information about the system and the exception 
+    in an dialog showing detailed information about the system and the exception
+ ~ Updated Google Maps url & removed "Galileo" appendix  
 
  0.9.5: (2008-10-27)
 

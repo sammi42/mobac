@@ -47,7 +47,6 @@ public class SettingsGUI extends JDialog {
 	private static Vector<Integer> threadNumbers;
 
 	private JComboBox googleLang;
-	private JComboBox googleTld;
 
 	private JPanel tileStoreInfoPanel;
 
@@ -124,25 +123,26 @@ public class SettingsGUI extends JDialog {
 		tab.setLayout(new BorderLayout());
 
 		JPanel googlePanel = new JPanel(new GridBagLayout());
-		googlePanel.setBorder(BorderFactory.createTitledBorder("Google"));
+		googlePanel.setBorder(BorderFactory.createTitledBorder("Google Maps"));
 
-		String[] languages = new String[] { "en", "de", "cn" };
+		String[] languages = new String[] { "en", "de" };
 		googleLang = new JComboBox(languages);
 		googleLang.setEditable(true);
-		//googleLang.setMaximumSize(googleLang.getPreferredSize());
 
-		googlePanel.add(new JLabel("Language (two chars short form): "), GBC.std());
+		googlePanel.add(new JLabel("Language (hl parameter): "), GBC.std());
 		googlePanel.add(googleLang, GBC.eol());
 
-		GoogleTld[] tlds = new GoogleTld[] { new GoogleTld("com", "Default"),
-				new GoogleTld("cn", "Ditu / Google Cina") };
-		googleTld = new JComboBox(tlds);
-		//googleTld.setMaximumSize(googleTld.getPreferredSize());
-
-		googlePanel.add(new JLabel("Server: "), GBC.std());
-		googlePanel.add(googleTld, GBC.eol());
+		// JPanel mapSourcesPanel = new JPanel(new GridBagLayout());
+		// mapSourcesPanel.setBorder(BorderFactory.createTitledBorder(
+		// "Enabled Map Sources"));
+		//
+		// for (TileSource ts : MapSources.getMapSources()) {
+		// JCheckBox mapSource = new JCheckBox(ts.toString());
+		// mapSourcesPanel.add(mapSource, GBC.eol());
+		// }
 
 		tab.add(googlePanel, BorderLayout.NORTH);
+		// tab.add(mapSourcesPanel, BorderLayout.CENTER);
 	}
 
 	private void addTileStorePanel() {
@@ -152,17 +152,17 @@ public class SettingsGUI extends JDialog {
 
 		tileStoreEnabled = new JCheckBox("Enable tile store");
 
-		JPanel leftPanel = new JPanel(new BorderLayout());
-		leftPanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
-		leftPanel.add(tileStoreEnabled, BorderLayout.NORTH);
+		JPanel tileStorePanel = new JPanel(new BorderLayout());
+		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
+		tileStorePanel.add(tileStoreEnabled, BorderLayout.NORTH);
 
 		tileStoreInfoPanel = new JPanel(new GridBagLayout());
 		tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
 		updateTileStoreInfoPanel(true);
 
-		backGround.add(leftPanel, BorderLayout.CENTER);
-		backGround.add(tileStoreInfoPanel, BorderLayout.EAST);
+		backGround.add(tileStorePanel, BorderLayout.NORTH);
+		backGround.add(tileStoreInfoPanel, BorderLayout.CENTER);
 	}
 
 	private void updateTileStoreInfoPanelAnsynchronously() {
@@ -351,8 +351,6 @@ public class SettingsGUI extends JDialog {
 			s.setGoogleLanguage(googleLang.getSelectedItem().toString());
 		}
 
-		s.setGoogleTld(((GoogleTld)googleTld.getSelectedItem()).getTld());
-		
 		// Close the dialog window
 		SettingsGUI.this.dispose();
 	}
@@ -369,27 +367,6 @@ public class SettingsGUI extends JDialog {
 				SettingsGUI.this.dispose();
 			}
 		});
-	}
-
-	private class GoogleTld {
-		private String tld;
-		private String name;
-
-		public GoogleTld(String tld, String name) {
-			super();
-			this.name = name;
-			this.tld = tld;
-		}
-
-		public String getTld() {
-			return tld;
-		}
-
-		@Override
-		public String toString() {
-			return name + " (maps.google." + tld + ")";
-		}
-
 	}
 
 	private class ClearTileCacheAction implements ActionListener {

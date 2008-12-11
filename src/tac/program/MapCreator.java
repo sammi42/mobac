@@ -160,7 +160,113 @@ public class MapCreator {
 		}
 	}
 
+	/**
+	 * New experimental custom tile size algorithm implementation.
+	 * 
+	 * It creates each custom sized tile separately. Therefore each original
+	 * tile (256x256) will be loaded and painted multiple times. Therefore this
+	 * implementation needs much more CPU power as each original tile is loaded
+	 * up to 4-6 times.
+	 * 
+	 * @param setFolder
+	 * @throws InterruptedException
+	 */
 	private void createCustomSizedTiles(File setFolder) throws InterruptedException {
+		Thread t = Thread.currentThread();
+
+		// left upper point on the map in pixels
+		// regarding the current zoom level
+		int xStart = xMin * Tile.SIZE;
+		int yStart = yMin * Tile.SIZE;
+
+		// lower right point on the map in pixels
+		// regarding the current zoom level
+		int xEnd = xMax * Tile.SIZE + (Tile.SIZE - 1);
+		int yEnd = yMax * Tile.SIZE + (Tile.SIZE - 1);
+
+		int mergedWidth = xEnd - xStart;
+		int mergedHeight = yEnd - yStart;
+
+		if (tileSizeWidth > mergedWidth || tileSizeHeight > mergedHeight) {
+			if (!tileSizeErrorNotified) {
+				JOptionPane.showMessageDialog(null,
+						"Tile size settings is too large: default of 256 will be used instead, ",
+						"Information", JOptionPane.INFORMATION_MESSAGE);
+				tileSizeErrorNotified = true;
+			}
+			createDefaultSizedTiles(setFolder);
+			return;
+		}
+
+		// Absolute positions
+		int xAbsPos = xStart;
+		int yAbsPos = yStart;
+
+		log.trace("tile size: " + tileSizeWidth + " * " + tileSizeHeight);
+		log.trace("X: from " + xStart + " to " + xEnd);
+		log.trace("Y: from " + yStart + " to " + yEnd);
+
+		int yRelPos = 0;
+		while (yAbsPos < yEnd) {
+			int xRelPos = 0;
+			xAbsPos = xStart;
+			while (xAbsPos < xEnd) {
+				if (t.isInterrupted())
+					throw new InterruptedException();
+				BufferedImage tileImage = new BufferedImage(tileSizeWidth, tileSizeHeight,
+						BufferedImage.TYPE_3BYTE_BGR);
+				Graphics2D graphics = tileImage.createGraphics();
+				File fDest = new File(setFolder, layerName + "_" + xRelPos + "_" + yRelPos + ".png");
+				log.trace("Creating tile " + fDest.getName());
+				int xTile = xAbsPos / Tile.SIZE;
+				int xTileOffset = -(xAbsPos % Tile.SIZE);
+
+				for (int x = xTileOffset; x < tileSizeWidth; x += Tile.SIZE) {
+					int yTile = yAbsPos / Tile.SIZE;
+					int yTileOffset = -(yAbsPos % Tile.SIZE);
+					for (int y = yTileOffset; y < tileSizeHeight; y += Tile.SIZE) {
+						String tileFileName = "y" + yTile + "x" + xTile + ".png";
+						log.trace("\t" + tileFileName + " x:" + xTileOffset + " y:" + yTileOffset);
+						File fSource = (File) tilesInFileFormat.get(tileFileName);
+						if (fSource != null) {
+							try {
+								BufferedImage orgTileImage = ImageIO.read(fSource);
+								graphics.drawImage(orgTileImage, xTileOffset, yTileOffset,
+										orgTileImage.getWidth(), orgTileImage.getHeight(), null);
+							} catch (IOException e) {
+								log.error("", e);
+							}
+						}
+						yTile++;
+						yTileOffset += Tile.SIZE;
+					}
+					xTile++;
+					xTileOffset += Tile.SIZE;
+				}
+				try {
+					graphics.dispose();
+					ImageIO.write(tileImage, "png", fDest);
+					setFiles.add(fDest.getName());
+				} catch (IOException e) {
+					log.error("Error writing tile image: ", e);
+				}
+
+				xRelPos += tileSizeWidth;
+				xAbsPos += tileSizeWidth;
+			}
+			yRelPos += tileSizeHeight;
+			yAbsPos += tileSizeHeight;
+		}
+	}
+
+	/**
+	 * Old algorithm - currently unused
+	 * 
+	 * @param setFolder
+	 * @throws InterruptedException
+	 */
+	@SuppressWarnings("unused")
+	private void createCustomSizedTilesOld(File setFolder) throws InterruptedException {
 
 		int mergedWidth = (xMax - xMin + 1) * 256;
 		int mergedHeight = (yMax - yMin + 1) * 256;

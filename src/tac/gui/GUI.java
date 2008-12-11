@@ -469,6 +469,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
+		int i = 0;
+		i = tileSizeValues.indexOf(settings.getTileHeight());
+		if (i >= 0) {
+			tileSizeHeightComboBox.setSelectedIndex(i);
+		} else {
+			tileSizeHeightTextField.setTileSize(settings.getTileHeight());
+		}
+		i = tileSizeValues.indexOf(settings.getTileWidth());
+		if (i >= 0) {
+			tileSizeWidthComboBox.setSelectedIndex(i);
+		} else {
+			tileSizeWidthTextField.setTileSize(settings.getTileWidth());
+		}
 		fileSeparator = System.getProperty("file.separator");
 		updateProfilesList();
 		UpdateGUI.updateAllUIs();
@@ -593,9 +606,29 @@ public class GUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
+	private int getTileSizeHeight() {
+		if (tileSizeHeightTextField.isInputValid())
+			try {
+				return tileSizeHeightTextField.getTileSize();
+			} catch (ParseException e) {
+				return 256;
+			}
+		return ((Integer) tileSizeHeightComboBox.getSelectedItem()).intValue();
+	}
+
+	private int getTileSizeWidth() {
+		if (tileSizeWidthTextField.isInputValid())
+			try {
+				return tileSizeWidthTextField.getTileSize();
+			} catch (ParseException e) {
+				return 256;
+			}
+		return ((Integer) tileSizeWidthComboBox.getSelectedItem()).intValue();
+	}
+
 	// WindowDestroyer
 	private class WindowDestroyer extends WindowAdapter {
-		public void windowClosing(WindowEvent e) {
+		public void windowClosing(WindowEvent event) {
 
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
@@ -605,6 +638,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 					lonMaxTextField.getCoordinateOrNaN()));
 			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
 					lonMinTextField.getCoordinateOrNaN()));
+
+			s.setTileWidth(getTileSizeWidth());
+			s.setTileHeight(getTileSizeHeight());
+
 			try {
 				s.store();
 			} catch (IOException iox) {
@@ -683,21 +720,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		if (maxIsBiggerThanMin) {
 
-			int tileSizeWidth = 256;
-			int tileSizeHeight = 256;
+			int tileSizeWidth = getTileSizeWidth();
+			int tileSizeHeight = getTileSizeHeight();
 
 			try {
-				if (tileSizeWidthTextField.isInputValid())
-					tileSizeWidth = tileSizeWidthTextField.getTileSize();
-				else
-					tileSizeWidth = ((Integer) tileSizeWidthComboBox.getSelectedItem()).intValue();
-
-				if (tileSizeHeightTextField.isInputValid())
-					tileSizeHeight = tileSizeHeightTextField.getTileSize();
-				else
-					tileSizeHeight = ((Integer) tileSizeHeightComboBox.getSelectedItem())
-							.intValue();
-
 				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
 				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
 						.getMinZoom(), cbZoom);

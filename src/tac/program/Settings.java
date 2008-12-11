@@ -29,6 +29,8 @@ public class Settings {
 	private static final String PREVIEW_LAT = "preview.lat";
 	private static final String PREVIEW_LON = "preview.lon";
 	private static final String MAPSOURCE = "mapsource";
+	private static final String TILE_HEIGHT = "tile.height";
+	private static final String TILE_WIDTH = "tile.width";
 	private static final String ATLAS_NAME = "atlas.name";
 	private static final String PROXY_HOST = "proxy.http.host";
 	private static final String PROXY_PORT = "proxy.http.port";
@@ -57,6 +59,9 @@ public class Settings {
 	private String userAgent = UserAgent.FF2_XP;
 
 	private int threadCount = 4;
+	
+	private int tileHeight = 256;
+	private int tileWidth = 256;
 
 	// Timeout in seconds (default 10 seconds)
 	private int connectionTimeout = 10;
@@ -101,6 +106,8 @@ public class Settings {
 			p.loadFromXML(is);
 			threadCount = p.getIntProperty(THREAD_COUNT, threadCount);
 			connectionTimeout = p.getIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
+			tileHeight = p.getIntProperty(TILE_HEIGHT, tileHeight);
+			tileWidth = p.getIntProperty(TILE_WIDTH, tileWidth);
 			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
 			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
 			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
@@ -139,6 +146,8 @@ public class Settings {
 			p.setIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
 			p.setIntProperty(MAPS_MAXSIZE, maxMapSize);
 			p.setIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
+			p.setIntProperty(TILE_HEIGHT, tileHeight);
+			p.setIntProperty(TILE_WIDTH, tileWidth);
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
@@ -260,6 +269,22 @@ public class Settings {
 
 	public void setConnectionTimeout(int connectionTimeout) {
 		this.connectionTimeout = connectionTimeout;
+	}
+
+	public int getTileHeight() {
+		return tileHeight;
+	}
+
+	public void setTileHeight(int tileHeight) {
+		this.tileHeight = tileHeight;
+	}
+
+	public int getTileWidth() {
+		return tileWidth;
+	}
+
+	public void setTileWidth(int tileWidth) {
+		this.tileWidth = tileWidth;
 	}
 
 }

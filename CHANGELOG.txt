@@ -12,7 +12,11 @@ V E R S I O N  I N F O R M A T I O N
  + New map source (Germany only): Outdooractive.com
  ~ Exceptions that occur while downloading/creating an atlas are now displayed
     in an dialog showing detailed information about the system and the exception
- ~ Updated Google Maps url & removed "Galileo" appendix  
+ ~ Updated Google Maps url & removed "Galileo" appendix
+ + Selected/entered tile size is now saved/restored in/from settings.xml  
+ ~ New experimental implementation for creating tile of custom size. 
+    Disdvantage: Much slower that the algorithm before
+    Advantage: Only constant memory needed (approx. less than 10 MB)   
 
  0.9.5: (2008-10-27)
 

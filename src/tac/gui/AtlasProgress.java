@@ -95,7 +95,6 @@ public class AtlasProgress extends JFrame {
 		this.atlasThread = atlasThread;
 		setLayout(new GridBagLayout());
 		updateDisplay = new UpdateTask();
-		tarProgress.setValue(0);
 
 		background = new JPanel(new GridBagLayout());
 

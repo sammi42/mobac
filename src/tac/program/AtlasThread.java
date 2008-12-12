@@ -226,7 +226,7 @@ public class AtlasThread extends Thread implements ActionListener {
 				log.debug("Starting to create atlas from downloaded tiles");
 
 				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth,
-						tileSizeHeight, atlasName, zoom);
+						tileSizeHeight, atlasName, tileSource, zoom);
 				ota.convert(xMax, xMin, yMax, yMin);
 
 				ap.updateAtlasProgressBarLayerText(layer + 1);

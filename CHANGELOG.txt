@@ -17,6 +17,8 @@ V E R S I O N  I N F O R M A T I O N
  ~ New experimental implementation for creating tile of custom size. 
     Disdvantage: Much slower that the algorithm before
     Advantage: Only constant memory needed (approx. less than 10 MB)   
+ ~ Using custom tile size now does not concert the tiles to png format. 
+    Instead the format used by the maps source is used.
 
  0.9.5: (2008-10-27)
 

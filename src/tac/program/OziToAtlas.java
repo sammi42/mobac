@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public class OziToAtlas {
 
@@ -24,16 +25,18 @@ public class OziToAtlas {
 	private int tileSizeWidth;
 	private int tileSizeHeight;
 	private String mapName;
+	private TileSource tileSource;
 	private int zoom;
 
 	public OziToAtlas(File oziFolder, File atlasFolder, int tileSizeWidth, int tileSizeHeight,
-			String mapName, int zoom) {
+			String mapName, TileSource tileSource, int zoom) {
 
 		this.oziFolder = oziFolder;
 		this.atlasFolder = atlasFolder;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
 		this.mapName = mapName;
+		this.tileSource = tileSource;
 		this.zoom = zoom;
 	}
 
@@ -50,8 +53,13 @@ public class OziToAtlas {
 		int mapNumber = 1;
 
 		for (SubMapProperties smp : subMaps) {
-			MapCreator mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, zoom, mapNumber,
-					tileSizeWidth, tileSizeHeight);
+			MapCreator mc;
+			if (tileSizeWidth == 256 && tileSizeHeight == 256)
+				mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, tileSource, zoom,
+						mapNumber, tileSizeWidth, tileSizeHeight);
+			else
+				mc = new MapCreatorCustomTileSize(smp, oziFolder, atlasFolder, mapName, tileSource,
+						zoom, mapNumber, tileSizeWidth, tileSizeHeight);
 			mc.createMap();
 			mapNumber++;
 		}

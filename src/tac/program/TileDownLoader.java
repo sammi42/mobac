@@ -39,7 +39,7 @@ public class TileDownLoader {
 		 * settings is to use the tile store
 		 */
 		Settings s = Settings.getInstance();
-		String tileFileName = "y" + y + "x" + x + ".png";
+		String tileFileName = "y" + y + "x" + x + "." + tileSource.getTileType();
 		File destFile = new File(destinationDirectory, tileFileName);
 
 		if (s.isTileStoreEnabled()) {
@@ -62,7 +62,7 @@ public class TileDownLoader {
 		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 
 		huc.setRequestMethod("GET");
-		
+
 		huc.setConnectTimeout(1000 * s.getConnectionTimeout());
 		huc.addRequestProperty("User-agent", s.getUserAgent());
 		huc.connect();

@@ -233,8 +233,8 @@ public class MapCreator {
 								BufferedImage orgTileImage = ImageIO.read(fSource);
 								graphics.drawImage(orgTileImage, xTileOffset, yTileOffset,
 										orgTileImage.getWidth(), orgTileImage.getHeight(), null);
-							} catch (IOException e) {
-								log.error("", e);
+							} catch (Exception e) {
+								log.error("Error while painting sub-tile of " + fDest.getName(), e);
 							}
 						}
 						yTile++;

@@ -47,6 +47,7 @@ public class AtlasProgress extends JFrame {
 
 	private JProgressBar atlasProgress;
 	private JProgressBar layerProgress;
+	private JProgressBar mapProgress;
 	private JProgressBar tarProgress;
 
 	private JPanel background;
@@ -55,8 +56,6 @@ public class AtlasProgress extends JFrame {
 	private long initiateLayerTime;
 
 	private long numberOfDownloadedBytes = 0;
-
-	private int tarProgressValue;
 
 	int nrOfLayers = 0;
 
@@ -70,6 +69,7 @@ public class AtlasProgress extends JFrame {
 	private JLabel layerElementsDone;
 	private JLabel atlasTimeLeft;
 	private JLabel layerTimeLeft;
+	private JLabel mapCreation;
 	private JLabel tarCreation;
 	private JLabel nrOfDownloadedBytes;
 	private JLabel nrOfDownloadedBytesValue;
@@ -95,7 +95,7 @@ public class AtlasProgress extends JFrame {
 		this.atlasThread = atlasThread;
 		setLayout(new GridBagLayout());
 		updateDisplay = new UpdateTask();
-		tarProgressValue = 0;
+		tarProgress.setValue(0);
 
 		background = new JPanel(new GridBagLayout());
 
@@ -115,7 +115,10 @@ public class AtlasProgress extends JFrame {
 		layerTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
 		layerProgress = new JProgressBar();
 
-		tarCreation = new JLabel("TAR Creation");
+		mapCreation = new JLabel("Map Creation");
+		mapProgress = new JProgressBar();
+
+		tarCreation = new JLabel("Tar Creation");
 		tarProgress = new JProgressBar();
 
 		nrOfDownloadedBytesPerSecond = new JLabel("Average download speed");
@@ -159,6 +162,10 @@ public class AtlasProgress extends JFrame {
 		background.add(layerTimeLeft, gbcEolFill);
 		background.add(layerProgress, gbcEolFillI);
 		background.add(Box.createVerticalStrut(20), gbcEol);
+
+		background.add(mapCreation, gbcEol);
+		background.add(mapProgress, gbcEolFillI);
+		background.add(Box.createVerticalStrut(10), gbcEol);
 
 		background.add(tarCreation, gbcEol);
 		background.add(tarProgress, gbcEolFillI);
@@ -255,9 +262,16 @@ public class AtlasProgress extends JFrame {
 		this.setLayerTimeLeft(theElementsDone);
 	}
 
-	public void updateTarPrograssBar() {
-		tarProgressValue++;
-		this.tarProgress.setValue(tarProgressValue);
+	public void initMapProgressBar(int maxElements) {
+		mapProgress.setMaximum(maxElements);
+	}
+
+	public void incMapProgressBar() {
+		mapProgress.setValue(mapProgress.getValue() + 1);
+	}
+
+	public void incTarPrograssBar() {
+		tarProgress.setValue(tarProgress.getValue() + 1);
 	}
 
 	private void setAtlasCurrent(int theElementsDone) {

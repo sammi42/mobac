@@ -18,6 +18,8 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 
+import tac.gui.AtlasProgress;
+import tac.utilities.MyMath;
 import tac.utilities.Utilities;
 
 /**
@@ -132,11 +134,19 @@ public class MapCreator {
 		int pixelValueY = 0;
 
 		Thread t = Thread.currentThread();
+		AtlasProgress ap = null;
+		if (t instanceof AtlasThread) {
+			ap = ((AtlasThread) t).getAtlasProgress();
+			int tileCount = (xMax - xMin + 1) * (yMax - yMin + 1);
+			ap.initMapProgressBar(tileCount);
+		}
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y <= yMax; y++) {
 				if (t.isInterrupted())
 					throw new InterruptedException();
+				if (ap != null)
+					ap.incMapProgressBar();
 				try {
 					File fDest = new File(setFolder, layerName + "_" + pixelValueX * 256 + "_"
 							+ pixelValueY * 256 + ".png");
@@ -198,6 +208,14 @@ public class MapCreator {
 			return;
 		}
 
+		AtlasProgress ap = null;
+		if (t instanceof AtlasThread) {
+			ap = ((AtlasThread) t).getAtlasProgress();
+			int customTileCount = MyMath.divCeil(mergedWidth, tileSizeWidth)
+					* MyMath.divCeil(mergedHeight, tileSizeHeight);
+			ap.initMapProgressBar(customTileCount);
+		}
+
 		// Absolute positions
 		int xAbsPos = xStart;
 		int yAbsPos = yStart;
@@ -213,6 +231,8 @@ public class MapCreator {
 			while (xAbsPos < xEnd) {
 				if (t.isInterrupted())
 					throw new InterruptedException();
+				if (ap != null)
+					ap.incMapProgressBar();
 				BufferedImage tileImage = new BufferedImage(tileSizeWidth, tileSizeHeight,
 						BufferedImage.TYPE_3BYTE_BGR);
 				Graphics2D graphics = tileImage.createGraphics();

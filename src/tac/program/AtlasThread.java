@@ -30,6 +30,7 @@ public class AtlasThread extends Thread implements ActionListener {
 
 	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap;
+
 	private MapSelection mapSelection;
 	private TileSource tileSource;
 	private String atlasName;
@@ -239,10 +240,10 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		AtlasTarCreator atc = new AtlasTarCreator(atlasDir, atlasTarDir);
 		atc.createAtlasCrTarArchive();
-		ap.updateTarPrograssBar();
+		ap.incTarPrograssBar();
 
 		atc.createMapTars();
-		ap.updateTarPrograssBar();
+		ap.incTarPrograssBar();
 
 		JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
 				JOptionPane.INFORMATION_MESSAGE);
@@ -284,6 +285,10 @@ public class AtlasThread extends Thread implements ActionListener {
 	protected synchronized void jobFinishedWithError() {
 		activeDownloads--;
 		jobsError++;
+	}
+
+	public AtlasProgress getAtlasProgress() {
+		return ap;
 	}
 
 	/**

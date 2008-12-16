@@ -132,17 +132,13 @@ public class MapCreatorCustomTileSize extends MapCreator {
 			int yTile = yAbsPos / Tile.SIZE;
 			int yTileOffset = -(yAbsPos % Tile.SIZE);
 			for (int y = yTileOffset; y < tileSizeHeight; y += Tile.SIZE) {
-				String tileFileName = "y" + yTile + "x" + xTile + "." + tileSource.getTileType();
-				log.trace("\t" + tileFileName + " x:" + xTileOffset + " y:" + yTileOffset);
-				File fSource = (File) tilesInFileFormat.get(tileFileName);
-				if (fSource != null) {
-					try {
-						BufferedImage orgTileImage = ImageIO.read(fSource);
+				try {
+					BufferedImage orgTileImage = loadOriginalMapTile(xTile, yTile);
+					if (orgTileImage != null)
 						graphics.drawImage(orgTileImage, xTileOffset, yTileOffset, orgTileImage
 								.getWidth(), orgTileImage.getHeight(), null);
-					} catch (Exception e) {
-						log.error("Error while painting sub-tile", e);
-					}
+				} catch (Exception e) {
+					log.error("Error while painting sub-tile", e);
 				}
 				yTile++;
 				yTileOffset += Tile.SIZE;
@@ -152,4 +148,45 @@ public class MapCreatorCustomTileSize extends MapCreator {
 		}
 	}
 
+	/**
+	 * A simple local cache holding the last 10 loaded original tiles. If the
+	 * custom zile size is smaller than 256x256 the efficiency of this cache is
+	 * very high (~ 75% hit rate).
+	 */
+	private CachedTile[] cache = new CachedTile[10];
+	private int cachePos = 0;
+
+	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
+		String tileFileName = "y" + yTile + "x" + xTile + "." + tileSource.getTileType();
+		File fSource = (File) tilesInFileFormat.get(tileFileName);
+		if (fSource == null)
+			return null;
+		for (CachedTile ct : cache) {
+			if (ct == null)
+				continue;
+			if (ct.xTile == xTile && ct.yTile == yTile) {
+				//log.trace("cache hit");
+				return ct.image;
+			}
+		}
+		//log.trace("cache miss");
+		BufferedImage image = ImageIO.read(fSource);
+		cache[cachePos] = new CachedTile(image, xTile, yTile);
+		cachePos = (cachePos + 1) % cache.length;
+		return image;
+	}
+
+	private static class CachedTile {
+		BufferedImage image;
+		int xTile;
+		int yTile;
+
+		public CachedTile(BufferedImage image, int tile, int tile2) {
+			super();
+			this.image = image;
+			xTile = tile;
+			yTile = tile2;
+		}
+
+	}
 }

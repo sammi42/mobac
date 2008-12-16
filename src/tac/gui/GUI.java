@@ -227,12 +227,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		tileSizeValues = new Vector<Integer>();
+		tileSizeValues.addElement(64);
+		tileSizeValues.addElement(128);
 		for (int i = 0; i < 7; i++)
 			tileSizeValues.addElement((i + 1) * 256);
 
 		JLabel tileSizeWidth = new JLabel("Width:");
 
 		tileSizeWidthComboBox = new JComboBox(tileSizeValues);
+		tileSizeWidthComboBox.setMaximumRowCount(tileSizeValues.size());
 		tileSizeWidthComboBox.setToolTipText("Width");
 
 		customTileSizeWidthLabel = new JLabel("Custom width:");
@@ -243,6 +246,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		JLabel tileSizeHeight = new JLabel("Height:");
 
 		tileSizeHeightComboBox = new JComboBox(tileSizeValues);
+		tileSizeHeightComboBox.setMaximumRowCount(tileSizeValues.size());
 		tileSizeHeightComboBox.setToolTipText("Height");
 
 		customTileSizeHeightLabel = new JLabel("Custom height:");
@@ -595,11 +599,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			long totalNrOfTiles = 0;
 
+			String hint = "Total amount of tiles to download:";
 			for (int i = 0; i < zoomLevels.length; i++) {
 				MapSelection ms = getMapSelectionCoordinates();
-				totalNrOfTiles += ms.calculateNrOfTiles(zoomLevels[i]);
+				int zoom = zoomLevels[i];
+				long[] info = ms.calculateNrOfTilesEx(zoom);
+				totalNrOfTiles += info[0];
+				hint += " -- Level " + zoomLevels[i] + ": " + info[0] + "(" + info[1] + "*" + info[2]
+						+ ")";
 			}
 			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
+			amountOfTilesLabel.setToolTipText(hint);
 		} catch (Exception e) {
 			amountOfTilesLabel.setText("( ? )");
 			log.error("", e);

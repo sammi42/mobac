@@ -115,6 +115,14 @@ public class MapSelection {
 		return width * height;
 	}
 
+	public long[] calculateNrOfTilesEx(int zoom) {
+		Point max = getBottomRightTileNumber(zoom);
+		Point min = getTopLeftTileNumber(zoom);
+		long width = max.x - min.x + 1;
+		long height = max.y - min.y + 1;
+		return new long[] { width * height, width, height };
+	}
+
 	@Override
 	public String toString() {
 		return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[] { lat_max, lon_max,

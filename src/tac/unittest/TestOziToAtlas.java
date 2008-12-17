@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import tac.gui.preview.MapSources;
 import tac.program.OziToAtlas;
-import tac.program.SubMapProperties;
+import tac.program.model.SubMapProperties;
 
 public class TestOziToAtlas {
 

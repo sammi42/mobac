@@ -240,6 +240,7 @@ public class AtlasProgress extends JFrame {
 	public void setMinMaxForCurrentLayer(int theMinimumValue, int theMaximumValue) {
 		layerProgress.setMinimum(theMinimumValue);
 		layerProgress.setMaximum(theMaximumValue);
+		mapProgress.setValue(0);
 	}
 
 	public void setInitiateTimeForLayer() {

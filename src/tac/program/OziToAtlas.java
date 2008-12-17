@@ -16,6 +16,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.program.model.SubMapProperties;
+
 public class OziToAtlas {
 
 	private static Logger log = Logger.getLogger(OziToAtlas.class);

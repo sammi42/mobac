@@ -68,6 +68,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JPanel atlasNamePanel;
 	private JPanel profilesPanel;
 
+	private AtlasTree atlasContent;
 	private JScrollPane leftScrollPane;
 
 	private PreviewMap previewMap;
@@ -279,6 +280,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		atlasNamePanel.add(atlasNameTextField, GBC.std().insets(5, 5, 5, 5).fill());
 
+		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
+		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
+		atlasContent = new AtlasTree();
+		JScrollPane treeScrollPane = new JScrollPane(atlasContent,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		treeScrollPane.setPreferredSize(new Dimension(100, 100));
+		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
+
 		profilesLabel = new JLabel("SAVED PROFILES");
 		profilesLabel.setBounds(5, 460, 100, 20);
 
@@ -318,6 +328,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(tileSizePanel, gbc_eol);
 		leftPanel.add(atlasNameLabel, gbc_eol);
 		leftPanel.add(atlasNamePanel, gbc_eol);
+
+		// TODO Comment out the next line
+		leftPanel.add(atlasContentPanel, gbc_eol);
+
 		leftPanel.add(profilesLabel, gbc_eol);
 		leftPanel.add(chooseProfileButton, gbc_eol);
 		leftPanel.add(profilesPanel, gbc_eol);
@@ -605,9 +619,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 				int zoom = zoomLevels[i];
 				long[] info = ms.calculateNrOfTilesEx(zoom);
 				totalNrOfTiles += info[0];
-				hint += " -- Level " + zoomLevels[i] + ": " + info[0] + "(" + info[1] + "*" + info[2]
-						+ ")";
+				hint += "<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] + "*"
+						+ info[2] + ")";
 			}
+			hint = "<html>" + hint + "</html>";
 			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
 			amountOfTilesLabel.setToolTipText(hint);
 		} catch (Exception e) {

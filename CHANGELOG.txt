@@ -19,6 +19,9 @@ V E R S I O N  I N F O R M A T I O N
     Advantage: Only constant memory needed (approx. less than 10 MB)   
  ~ Using custom tile size now does not concert the tiles to png format. 
     Instead the format used by the maps source is used.
+ + Tooltip of "tiles-to-download-counter-label" (located right to the label 
+    "Zoom levels (..)") now shows the breakdown of the number of tiles
+    to the different zoom levels including the area calculation   
 
  0.9.5: (2008-10-27)
 

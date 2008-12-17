@@ -16,6 +16,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
+import tac.program.model.SubMapProperties;
 import tac.utilities.Utilities;
 
 /**

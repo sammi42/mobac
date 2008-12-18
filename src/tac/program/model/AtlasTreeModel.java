@@ -2,7 +2,10 @@ package tac.program.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -16,11 +19,13 @@ public class AtlasTreeModel implements TreeModel {
 
 	protected Atlas atlas;
 
+	protected Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
+
 	public AtlasTreeModel() {
 		super();
 		atlas = new Atlas();
-		
-		//TODO remove test date when finished
+
+		// TODO remove test date when finished
 		// Some test data
 		SimpleLayer l1 = new SimpleLayer(atlas, "Test1");
 		l1.addMap("Map1", MapSources.getMapSources()[0], new Point(1, 1), new Point(2, 2), 2,
@@ -34,9 +39,20 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public void addTreeModelListener(TreeModelListener l) {
+		listeners.add(l);
 	}
 
 	public void removeTreeModelListener(TreeModelListener l) {
+		listeners.remove(l);
+	}
+
+	public void notifyStructureChanged() {
+		notifyStructureChanged(new TreeModelEvent(this, new Object[] { atlas }));
+	}
+
+	protected void notifyStructureChanged(TreeModelEvent event) {
+		for (TreeModelListener l : listeners)
+			l.treeStructureChanged(event);
 	}
 
 	public Object getChild(Object parent, int index) {
@@ -71,6 +87,15 @@ public class AtlasTreeModel implements TreeModel {
 
 	public void valueForPathChanged(TreePath path, Object newValue) {
 
+	}
+
+	public Atlas getAtlas() {
+		return atlas;
+	}
+
+	public void setAtlas(Atlas atlas) {
+		this.atlas = atlas;
+		notifyStructureChanged();
 	}
 
 }

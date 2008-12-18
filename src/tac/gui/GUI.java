@@ -50,6 +50,8 @@ import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
+import tac.program.model.Atlas;
+import tac.program.model.AutoCutMultiMapLayer;
 import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
 import tac.utilities.Utilities;
@@ -68,7 +70,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JPanel atlasNamePanel;
 	private JPanel profilesPanel;
 
-	private AtlasTree atlasContent;
+	private AtlasTree atlasTree;
 	private JScrollPane leftScrollPane;
 
 	private PreviewMap previewMap;
@@ -282,12 +284,28 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
-		atlasContent = new AtlasTree();
-		JScrollPane treeScrollPane = new JScrollPane(atlasContent,
+		atlasTree = new AtlasTree();
+		JScrollPane treeScrollPane = new JScrollPane(atlasTree,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treeScrollPane.setPreferredSize(new Dimension(100, 100));
 		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
+		JButton clearAtlas = new JButton("Clear");
+		atlasContentPanel.add(clearAtlas, GBC.std());
+		clearAtlas.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				atlasTree.clearAtlas();
+			}
+		});
+		JButton addLayers = new JButton("Add selection");
+		atlasContentPanel.add(addLayers, GBC.std());
+		addLayers.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				addSelectedAutoCutMultiMapLayers();
+			}
+		});
 
 		profilesLabel = new JLabel("SAVED PROFILES");
 		profilesLabel.setBounds(5, 460, 100, 20);
@@ -349,6 +367,24 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// leftScrollPane.setPreferredSize(d);
 		leftScrollPane.setMinimumSize(d);
 		add(leftScrollPane, GBC.std().fill(GBC.VERTICAL));
+	}
+
+	protected void addSelectedAutoCutMultiMapLayers() {
+		Atlas atlas = atlasTree.getAtlas();
+		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
+		TileSource tileSource = (TileSource) mapSource.getSelectedItem();
+		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource().getMinZoom(),
+				cbZoom);
+		MapSelection ms = getMapSelectionCoordinates();
+		Settings settings = Settings.getInstance();
+		Dimension tileSize = new Dimension(getTileSizeWidth(), getTileSizeHeight());
+		int[] zoomLevels = sZL.getZoomLevels();
+		for (int zoom : zoomLevels) {
+			String name = String.format(atlasNameFmt, new Object[] { zoom });
+			new AutoCutMultiMapLayer(atlas, name, tileSource, ms.getTopLeftTileCoordinate(zoom), ms
+					.getBottomRightTileCoordinate(zoom), zoom, tileSize, settings.getMaxMapsSize());
+		}
+		atlasTree.getTreeModel().notifyStructureChanged();
 	}
 
 	public void createRightPanel() {

@@ -2,6 +2,7 @@ package tac.program.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.StringWriter;
 import java.util.LinkedList;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -32,8 +33,9 @@ public class AutoCutMultiMapLayer implements LayerInterface, ToolTipProvider {
 
 	private LinkedList<SubMap> maps = new LinkedList<SubMap>();
 
-	public AutoCutMultiMapLayer(Atlas atlas, String name, TileSource mapSource, Point minTileCoordinate,
-			Point maxTileCoordinate, int zoom, Dimension tileSize, int maxMapSize) {
+	public AutoCutMultiMapLayer(Atlas atlas, String name, TileSource mapSource,
+			Point minTileCoordinate, Point maxTileCoordinate, int zoom, Dimension tileSize,
+			int maxMapSize) {
 		this.atlas = atlas;
 		this.name = name;
 		this.mapSource = mapSource;
@@ -94,8 +96,17 @@ public class AutoCutMultiMapLayer implements LayerInterface, ToolTipProvider {
 	}
 
 	public String getToolTip() {
-		return "<html>" + "Map source: " + mapSource.getName() + "<br>" + "Zoom level: " + zoom
-				+ "<br>" + "</html>";
+		StringWriter sw = new StringWriter(1024);
+		sw.write("<html>");
+		sw.write("<b>Layer</b><br>");
+		sw.write("Map count: " + maps.size() + "<br>");
+		sw.write("Map source: " + mapSource.getName() + "<br>");
+		sw.write("Area: " + "<br>");
+		sw.write("Zoom level: " + zoom + "<br>");
+		sw.write("Tile size: " + tileSize.width + "x" + tileSize.height + "<br>");
+		sw.write("Max map size: " + maxMapDimension.width + "x" + maxMapDimension.height + "<br>");
+		sw.write("</html>");
+		return sw.toString();
 	}
 
 	protected class SubMap implements MapInterface, ToolTipProvider {
@@ -146,8 +157,9 @@ public class AutoCutMultiMapLayer implements LayerInterface, ToolTipProvider {
 		}
 
 		public String getToolTip() {
-			return "<html>Area start:<br>" + minTileCoordinate + "<br>" + maxTileCoordinate
-					+ "</html>";
+			return "<html><b>Map area</b><br>Area start: " + minTileCoordinate.x + " / "
+					+ minTileCoordinate.y + "<br>Area end:" + maxTileCoordinate.x + " / "
+					+ maxTileCoordinate.y + "</html>";
 		}
 
 	}

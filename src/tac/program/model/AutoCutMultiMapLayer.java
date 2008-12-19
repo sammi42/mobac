@@ -2,15 +2,23 @@ package tac.program.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 import java.io.StringWriter;
+import java.util.Enumeration;
 import java.util.LinkedList;
 
+import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.program.DownloadJobEnumerator;
+import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.DownloadJobListener;
+import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
+import tac.utilities.MyMath;
 
 /**
  * A layer holding one or multiple maps of the same map source and the same zoom
@@ -19,7 +27,7 @@ import tac.program.interfaces.ToolTipProvider;
  * one map.
  * 
  */
-public class AutoCutMultiMapLayer implements LayerInterface, ToolTipProvider {
+public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement, ToolTipProvider {
 
 	private AtlasInterface atlas;
 
@@ -63,15 +71,32 @@ public class AutoCutMultiMapLayer implements LayerInterface, ToolTipProvider {
 			maps.add(s);
 			return;
 		}
+		int mapCountX = MyMath.divCeil(maxTileCoordinate.x - minTileCoordinate.x,
+				maxMapDimension.width);
+		int mapCountY = MyMath.divCeil(maxTileCoordinate.y - minTileCoordinate.y,
+				maxMapDimension.height);
+		
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
 			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {
 				Point min = new Point(mapX, mapY);
-				Point max = new Point(mapX + maxMapDimension.width, mapY + maxMapDimension.height);
+				int maxX = Math.min(mapX + maxMapDimension.width, maxTileCoordinate.x);
+				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
+				Point max = new Point(maxX, maxY);
 				SubMap s = new SubMap(mapCounter++, min, max);
 				maps.add(s);
 			}
 		}
+	}
+
+	public Enumeration<Job> getDownloadJobs(File downloadDestinationDir,
+			DownloadJobListener listener) {
+		int xMin = minTileCoordinate.x / Tile.SIZE;
+		int xMax = maxTileCoordinate.x / Tile.SIZE;
+		int yMin = minTileCoordinate.y / Tile.SIZE;
+		int yMax = maxTileCoordinate.y / Tile.SIZE;
+		return new DownloadJobEnumerator(xMin, xMax, yMin, yMax, zoom, mapSource,
+				downloadDestinationDir, listener);
 	}
 
 	public AtlasInterface getAtlas() {
@@ -163,4 +188,5 @@ public class AutoCutMultiMapLayer implements LayerInterface, ToolTipProvider {
 		}
 
 	}
+
 }

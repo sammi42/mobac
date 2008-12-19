@@ -251,7 +251,7 @@ public class PreviewMap extends JMapViewer {
 			return;
 		Point pStart = ms.getTopLeftTileCoordinate(zoom);
 		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
-		setSelectionByTilePoint(pStart, pEnd, true);
+		setSelectionByTileCoordinate(pStart, pEnd, true);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
 		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
 		mml.add(new MapMarkerDot(ms.getLat_min(), ms.getLon_min()));
@@ -269,39 +269,56 @@ public class PreviewMap extends JMapViewer {
 
 		Point pEnd = new Point(p_max.x + tlc.x, p_max.y + tlc.y);
 		Point pStart = new Point(p_min.x + tlc.x, p_min.y + tlc.y);
-		setSelectionByTilePoint(pStart, pEnd, notifyListeners);
+		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
 	}
 
-	public void setSelectionByTilePoint(Point pStart, Point pEnd, boolean notifyListeners) {
+	/**
+	 * 
+	 * @param pStart
+	 *            x/y tile coordinate of the top left tile regarding the current
+	 *            zoom level
+	 * @param pEnd
+	 *            x/y tile coordinate of the bottom right tile regarding the
+	 *            current zoom level
+	 * @param notifyListeners
+	 */
+	public void setSelectionByTileCoordinate(Point pStart, Point pEnd, boolean notifyListeners) {
+		setSelectionByTileCoordinate(zoom, pStart, pEnd, notifyListeners);
 
-		pStart.x = Math.max(0, pStart.x);
-		pStart.y = Math.max(0, pStart.y);
-		pEnd.x = Math.min(Tile.SIZE << zoom, pEnd.x);
-		pEnd.y = Math.min(Tile.SIZE << zoom, pEnd.y);
+	}
 
-		int zoomDiff = MAX_ZOOM - zoom;
+	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd,
+			boolean notifyListeners) {
+		Point pNewStart = new Point();
+		Point pNewEnd = new Point();
+		pNewStart.x = Math.max(0, pStart.x);
+		pNewStart.y = Math.max(0, pStart.y);
+		pNewEnd.x = Math.min(Tile.SIZE << cZoom, pEnd.x);
+		pNewEnd.y = Math.min(Tile.SIZE << cZoom, pEnd.y);
 
-		pEnd.x <<= zoomDiff;
-		pEnd.y <<= zoomDiff;
-		pStart.x <<= zoomDiff;
-		pStart.y <<= zoomDiff;
+		int zoomDiff = MAX_ZOOM - cZoom;
+
+		pNewEnd.x <<= zoomDiff;
+		pNewEnd.y <<= zoomDiff;
+		pNewStart.x <<= zoomDiff;
+		pNewStart.y <<= zoomDiff;
 
 		if (gridZoom >= 0) {
 			int gridZoomDiff = MAX_ZOOM - gridZoom;
 			int gridFactor = Tile.SIZE << gridZoomDiff;
 
 			// Snap to the current grid
-			pStart.x = pStart.x - (pStart.x % gridFactor);
-			pStart.y = pStart.y - (pStart.y % gridFactor);
-			pEnd.x += gridFactor - 1;
-			pEnd.y += gridFactor - 1;
-			pEnd.x = pEnd.x - (pEnd.x % gridFactor);
-			pEnd.y = pEnd.y - (pEnd.y % gridFactor);
+			pNewStart.x = pNewStart.x - (pNewStart.x % gridFactor);
+			pNewStart.y = pNewStart.y - (pNewStart.y % gridFactor);
+			pNewEnd.x += gridFactor - 1;
+			pNewEnd.y += gridFactor - 1;
+			pNewEnd.x = pNewEnd.x - (pNewEnd.x % gridFactor);
+			pNewEnd.y = pNewEnd.y - (pNewEnd.y % gridFactor);
 		}
-		iSelectionRectStart = pStart;
-		iSelectionRectEnd = pEnd;
-		gridSelectionStart = pStart;
-		gridSelectionEnd = pEnd;
+		iSelectionRectStart = pNewStart;
+		iSelectionRectEnd = pNewEnd;
+		gridSelectionStart = pNewStart;
+		gridSelectionEnd = pNewEnd;
 		if (notifyListeners) {
 			updateMapSelection();
 		}

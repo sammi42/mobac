@@ -25,7 +25,7 @@ public class AtlasTreeModel implements TreeModel {
 		super();
 		atlas = new Atlas();
 
-		// TODO remove test date when finished
+		// TODO remove test data when finished
 		// Some test data
 		SimpleLayer l1 = new SimpleLayer(atlas, "Test1");
 		l1.addMap("Map1", MapSources.getMapSources()[0], new Point(1, 1), new Point(2, 2), 2,

@@ -1,5 +1,6 @@
 package tac.gui;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.InputStream;
 
@@ -10,6 +11,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import tac.StartTAC;
+import tac.gui.preview.PreviewMap;
+import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
@@ -20,13 +23,19 @@ public class AtlasTree extends JTree {
 
 	private AtlasTreeModel treeModel;
 
-	public AtlasTree() {
+	private PreviewMap mapView;
+
+	public AtlasTree(PreviewMap mapView) {
 		super(new AtlasTreeModel());
+		if (mapView == null)
+			throw new NullPointerException("mapView is null");
+		this.mapView = mapView;
 		treeModel = (AtlasTreeModel) getModel();
 		setRootVisible(false);
 		setShowsRootHandles(true);
 		setCellRenderer(new AtlasTreeCellRenderer());
 		setToolTipText("");
+		addMouseListener(new MouseListener());
 	}
 
 	@Override
@@ -52,7 +61,25 @@ public class AtlasTree extends JTree {
 	public Atlas getAtlas() {
 		return treeModel.getAtlas();
 	}
-	
+
+	protected class MouseListener extends MouseAdapter {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
+				return;
+			TreePath selPath = getPathForLocation(e.getX(), e.getY());
+			System.out.println(selPath);
+			if (selPath == null)
+				return; // clicked on empty area
+			Object o = selPath.getLastPathComponent();
+			if (o instanceof MapInterface) {
+				MapInterface map = (MapInterface) o;
+				mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
+						.getMaxTileCoordinate(), true);
+			}
+		}
+	}
 
 	protected static class AtlasTreeCellRenderer extends DefaultTreeCellRenderer {
 

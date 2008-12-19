@@ -80,8 +80,8 @@ public class JobDispatcher {
 		return jobQueue.size();
 	}
 
-	protected static interface Job {
-		public void run() throws Exception;
+	public static interface Job {
+		public void run(JobDispatcher dispatcher) throws Exception;
 	}
 
 	public boolean isAtLeastOneWorkerActive() {
@@ -132,7 +132,7 @@ public class JobDispatcher {
 				if (job == null)
 					return;
 				try {
-					job.run();
+					job.run(JobDispatcher.this);
 					job = null;
 				} catch (Exception e) {
 					if (e instanceof InterruptedException)

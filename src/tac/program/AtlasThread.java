@@ -16,9 +16,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.JobDispatcher.Job;
+import tac.program.interfaces.DownloadJobListener;
 import tac.utilities.TACExceptionHandler;
 
-public class AtlasThread extends Thread implements ActionListener {
+public class AtlasThread extends Thread implements DownloadJobListener, ActionListener {
 
 	/**
 	 * Allows to skip the download part for debugging reasons
@@ -272,17 +273,18 @@ public class AtlasThread extends Thread implements ActionListener {
 		return activeDownloads;
 	}
 
-	protected synchronized void jobStart() {
+	public synchronized void jobStarted() {
 		activeDownloads++;
 	}
 
-	protected synchronized void jobFinishedSuccessfully() {
+	public synchronized void jobFinishedSuccessfully(int bytesDownloaded) {
+		ap.addDownloadedBytes(bytesDownloaded);
 		activeDownloads--;
 		jobsCompleted++;
 		updateGUI();
 	}
 
-	protected synchronized void jobFinishedWithError() {
+	public synchronized void jobFinishedWithError() {
 		activeDownloads--;
 		jobsError++;
 	}
@@ -318,19 +320,14 @@ public class AtlasThread extends Thread implements ActionListener {
 
 		@Override
 		public void run() {
-
-			int xMin = topLeft.x;
-			int xMax = bottomRight.x;
-			int yMin = topLeft.y;
-			int yMax = bottomRight.y;
+			DownloadJobEnumerator djEnum = new DownloadJobEnumerator(topLeft.x, bottomRight.x,
+					topLeft.y, bottomRight.y, zoom, tileSource, oziZoomDir, AtlasThread.this);
 			try {
-				for (int y = yMin; y <= yMax; y++) {
-					for (int x = xMin; x <= xMax; x++) {
-						DownloadJob job = new DownloadJob(oziZoomDir, tileSource, x, y, zoom);
-						downloadJobDispatcher.addJob(job);
-						log.trace("Job added: z" + zoom + " x" + x + " y" + y);
-						jobsProduced++;
-					}
+				while (djEnum.hasMoreElements()) {
+					Job job = djEnum.nextElement();
+					downloadJobDispatcher.addJob(job);
+					log.trace("Job added: " + job);
+					jobsProduced++;
 				}
 				log.debug("All download jobs has been generated");
 			} catch (InterruptedException e) {
@@ -347,48 +344,4 @@ public class AtlasThread extends Thread implements ActionListener {
 		}
 	}
 
-	public class DownloadJob implements Job {
-
-		int errorCounter = 0;
-
-		TileSource tileSource;
-		int xValue;
-		int yValue;
-		int zoomValue;
-		File destinationFolder;
-
-		public DownloadJob(File destinationFolder, TileSource tileSource, int xValue, int yValue,
-				int zoomValue) {
-			this.destinationFolder = destinationFolder;
-			this.tileSource = tileSource;
-			this.xValue = xValue;
-			this.yValue = yValue;
-			this.zoomValue = zoomValue;
-		}
-
-		public void run() throws Exception {
-			try {
-				// Thread.sleep(1500);
-				jobStart();
-				int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, destinationFolder,
-						tileSource, true);
-				ap.addDownloadedBytes(bytes);
-				jobFinishedSuccessfully();
-			} catch (Exception e) {
-				errorCounter++;
-				jobFinishedWithError();
-				// Reschedule job to try it later again
-				if (errorCounter < 3) {
-					log.debug("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-							+ " failed (times: " + errorCounter + ") - rescheduling download job");
-					downloadJobDispatcher.addErrorJob(this);
-				} else {
-					log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-							+ "failed again. Retry limit reached, "
-							+ "job will not be rescheduled (no further try)");
-				}
-				throw e;
-			}
-		}
-	}
 }

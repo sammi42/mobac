@@ -121,6 +121,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		super();
 		setTitle(TACInfo.getCompleteTitle());
 		log.trace("Creating main dialog - " + getTitle());
+		previewMap = new PreviewMap();
 		createMainFrame();
 		createLeftPanel();
 		createRightPanel();
@@ -284,7 +285,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
-		atlasTree = new AtlasTree();
+		atlasTree = new AtlasTree(previewMap);
 		JScrollPane treeScrollPane = new JScrollPane(atlasTree,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -392,7 +393,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 		rightPanel = new JPanel(new BorderLayout());
 		rightPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
-		previewMap = new PreviewMap();
 		previewMap.addMapSelectionListener(this);
 
 		// Allows to disable map painting and tile loading

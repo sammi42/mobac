@@ -117,7 +117,7 @@ public class JobDispatcher {
 		@Override
 		public void run() {
 			executeJobs();
-			log.debug("Thread is terminating");
+			log.trace("Thread is terminating");
 		}
 
 		protected void executeJobs() {

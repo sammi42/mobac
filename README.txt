@@ -61,23 +61,7 @@ For using the atlas with TrekBuddy copy the whole directory onto your J2ME
 device and open "cr.tar" (in the atlas root directory) in TrekBuddy as atlas.    
 
 *******************************************************************************
-**                       K N O W N   P R O B L E M S                         **
-*******************************************************************************
-
-*********************************************
- java.lang.OutOfMemoryError: Java heap space
-*********************************************
-
-If you are using a custom tile size height and/or width the maximum size of a 
-map is limited by the maximum memory available to TAC. By default each Java 
-program can access in maximum 64 MB - independently of your system free memory 
-status. For extending this limit please start TAC via the provided startup 
-scripts 'start.cmd' (Windows) or 'startup.sh' (Linux/Mac OS X). Those scripts 
-extend the maximum memory usable by TAC to 512 MB.
- 
-
-*******************************************************************************
-**                     F U R T H E R   P R O B L E M S                       **
+**                P R O B L E M S  &  E R R O R S                            **
 *******************************************************************************
 
 If you encounter problems please download the following file and save it in the

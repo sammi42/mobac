@@ -57,7 +57,7 @@ public class TileDownLoader {
 
 		String url = tileSource.getTileUrl(zoom, x, y);
 
-		log.info("Downloading " + url);
+		log.trace("Downloading " + url);
 		URL u = new URL(url);
 		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 

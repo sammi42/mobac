@@ -284,30 +284,31 @@ public class GUI extends JFrame implements MapSelectionListener {
 		atlasNamePanel.add(atlasNameTextField, GBC.std().insets(5, 5, 5, 5).fill());
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
-		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
-		atlasTree = new AtlasTree(previewMap);
-		JScrollPane treeScrollPane = new JScrollPane(atlasTree,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		treeScrollPane.setPreferredSize(new Dimension(100, 100));
-		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
-		JButton clearAtlas = new JButton("Clear");
-		atlasContentPanel.add(clearAtlas, GBC.std());
-		clearAtlas.addActionListener(new ActionListener() {
+		if (Settings.getInstance().isDevModeEnabled()) {
+			atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
+			atlasTree = new AtlasTree(previewMap);
+			JScrollPane treeScrollPane = new JScrollPane(atlasTree,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			treeScrollPane.setPreferredSize(new Dimension(100, 100));
+			atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
+			JButton clearAtlas = new JButton("Clear");
+			atlasContentPanel.add(clearAtlas, GBC.std());
+			clearAtlas.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				atlasTree.clearAtlas();
-			}
-		});
-		JButton addLayers = new JButton("Add selection");
-		atlasContentPanel.add(addLayers, GBC.std());
-		addLayers.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					atlasTree.clearAtlas();
+				}
+			});
+			JButton addLayers = new JButton("Add selection");
+			atlasContentPanel.add(addLayers, GBC.std());
+			addLayers.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				addSelectedAutoCutMultiMapLayers();
-			}
-		});
-
+				public void actionPerformed(ActionEvent e) {
+					addSelectedAutoCutMultiMapLayers();
+				}
+			});
+		}
 		profilesLabel = new JLabel("SAVED PROFILES");
 		profilesLabel.setBounds(5, 460, 100, 20);
 
@@ -349,7 +350,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel.add(atlasNamePanel, gbc_eol);
 
 		// TODO Comment out the next line
-		leftPanel.add(atlasContentPanel, gbc_eol);
+		if (Settings.getInstance().isDevModeEnabled())
+			leftPanel.add(atlasContentPanel, gbc_eol);
 
 		leftPanel.add(profilesLabel, gbc_eol);
 		leftPanel.add(chooseProfileButton, gbc_eol);

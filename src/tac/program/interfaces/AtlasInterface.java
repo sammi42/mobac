@@ -7,4 +7,8 @@ public interface AtlasInterface {
 	public int getLayerCount();
 
 	public LayerInterface getLayer(int index);
+	
+	public void addLayer(LayerInterface l);
+	
+	public void deleteLayer(LayerInterface l);
 }

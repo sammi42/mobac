@@ -8,10 +8,11 @@ import java.util.List;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 
-public class SimpleLayer implements LayerInterface {
+public class SimpleLayer implements LayerInterface, CapabilityDeletable {
 
 	private String name;
 	private Atlas atlas;
@@ -33,6 +34,10 @@ public class SimpleLayer implements LayerInterface {
 		return maps.size();
 	}
 
+	public void delete() {
+		atlas.deleteLayer(this);
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -51,6 +56,10 @@ public class SimpleLayer implements LayerInterface {
 		SimpleMap m = new SimpleMap(this, name, mapSource, maxTileNum, minTileNum, zoom, tileSize);
 		maps.add(m);
 		return m;
+	}
+
+	public void deleteMap(SimpleMap map) {
+		maps.remove(map);
 	}
 
 }

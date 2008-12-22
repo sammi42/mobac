@@ -5,10 +5,11 @@ import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 
-public class SimpleMap implements MapInterface {
+public class SimpleMap implements MapInterface, CapabilityDeletable {
 
 	private SimpleLayer layer;
 
@@ -29,6 +30,10 @@ public class SimpleMap implements MapInterface {
 		this.name = name;
 		this.tileSize = tileSize;
 		this.zoom = zoom;
+	}
+
+	public void delete() {
+		layer.deleteMap(this);
 	}
 
 	public LayerInterface getLayer() {

@@ -11,8 +11,12 @@ public class Atlas implements AtlasInterface {
 	private String name = "Atlas";
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
 
-	protected void addLayer(LayerInterface l) {
+	public void addLayer(LayerInterface l) {
 		layers.add(l);
+	}
+
+	public void deleteLayer(LayerInterface l) {
+		layers.remove(l);
 	}
 
 	public LayerInterface getLayer(int index) {

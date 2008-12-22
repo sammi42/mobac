@@ -13,6 +13,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import tac.program.DownloadJobEnumerator;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
@@ -27,7 +28,8 @@ import tac.utilities.MyMath;
  * one map.
  * 
  */
-public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement, ToolTipProvider {
+public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement, ToolTipProvider,
+		CapabilityDeletable {
 
 	private AtlasInterface atlas;
 
@@ -75,7 +77,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 				maxMapDimension.width);
 		int mapCountY = MyMath.divCeil(maxTileCoordinate.y - minTileCoordinate.y,
 				maxMapDimension.height);
-		
+
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
 			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {
@@ -99,6 +101,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 				downloadDestinationDir, listener);
 	}
 
+	public void delete() {
+		atlas.deleteLayer(this);
+	}
+
 	public AtlasInterface getAtlas() {
 		return atlas;
 	}
@@ -113,6 +119,18 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 
 	public String getName() {
 		return name;
+	}
+
+	public Point getMaxTileCoordinate() {
+		return maxTileCoordinate;
+	}
+
+	public Point getMinTileCoordinate() {
+		return minTileCoordinate;
+	}
+
+	public int getZoom() {
+		return zoom;
 	}
 
 	@Override

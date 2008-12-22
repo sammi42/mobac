@@ -1,23 +1,29 @@
 package tac.gui;
 
-import java.awt.event.MouseAdapter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import tac.StartTAC;
 import tac.gui.preview.PreviewMap;
+import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
+import tac.program.model.AutoCutMultiMapLayer;
 
-public class AtlasTree extends JTree {
+public class AtlasTree extends JTree implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -35,7 +41,7 @@ public class AtlasTree extends JTree {
 		setShowsRootHandles(true);
 		setCellRenderer(new AtlasTreeCellRenderer());
 		setToolTipText("");
-		addMouseListener(new MouseListener());
+		addMouseListener(this);
 	}
 
 	@Override
@@ -62,22 +68,61 @@ public class AtlasTree extends JTree {
 		return treeModel.getAtlas();
 	}
 
-	protected class MouseListener extends MouseAdapter {
+	protected void showNodePopupMenu(MouseEvent event) {
+		JPopupMenu pm = new JPopupMenu();
+		TreePath selPath = getPathForLocation(event.getX(), event.getY());
+		if (selPath == null)
+			return; // clicked on empty area
+		final Object o = selPath.getLastPathComponent();
+		if (o == null)
+			return;
+		if (o instanceof CapabilityDeletable) {
+			JMenuItem mi = new JMenuItem("Delete");
+			mi.addActionListener(new ActionListener() {
 
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
-				return;
-			TreePath selPath = getPathForLocation(e.getX(), e.getY());
-			System.out.println(selPath);
-			if (selPath == null)
-				return; // clicked on empty area
-			Object o = selPath.getLastPathComponent();
-			if (o instanceof MapInterface) {
-				MapInterface map = (MapInterface) o;
-				mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
-						.getMaxTileCoordinate(), true);
-			}
+				public void actionPerformed(ActionEvent e) {
+					((CapabilityDeletable) o).delete();
+					treeModel.notifyStructureChanged();
+				}
+			});
+			pm.add(mi);
+		}
+		pm.show(this, event.getX(), event.getY());
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
+			return;
+		TreePath selPath = getPathForLocation(e.getX(), e.getY());
+		if (selPath == null)
+			return; // clicked on empty area
+		Object o = selPath.getLastPathComponent();
+		if (o instanceof MapInterface) {
+			MapInterface map = (MapInterface) o;
+			mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
+					.getMaxTileCoordinate(), true);
+		} else if (o instanceof AutoCutMultiMapLayer) {
+			AutoCutMultiMapLayer layer = (AutoCutMultiMapLayer) o;
+			mapView.setSelectionByTileCoordinate(layer.getZoom(), layer.getMinTileCoordinate(), layer
+					.getMaxTileCoordinate(), true);
+		}
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			showNodePopupMenu(e);
+		}
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			showNodePopupMenu(e);
 		}
 	}
 
@@ -106,4 +151,5 @@ public class AtlasTree extends JTree {
 		}
 
 	}
+
 }

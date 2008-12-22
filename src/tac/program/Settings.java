@@ -23,6 +23,7 @@ public class Settings {
 	private static Settings instance;
 
 	private static final String SETTINGS_FILE = "settings.xml";
+	private static final String DEVMODE = "devmode";
 	private static final String MAPS_MAXSIZE = "maps.maxsize";
 	private static final String TILE_STORE = "tile.store.enabled";
 	private static final String PREVIEW_ZOOM = "preview.zoom";
@@ -68,6 +69,8 @@ public class Settings {
 
 	private String googleLanguage = "en";
 
+	private boolean devMode = false;
+	
 	private Settings() {
 	}
 
@@ -115,6 +118,7 @@ public class Settings {
 					previewDefaultCoordinate.lat);
 			previewDefaultCoordinate.lon = p.getDouble6Property(PREVIEW_LON,
 					previewDefaultCoordinate.lon);
+			devMode = p.getBooleanProperty(DEVMODE, devMode);
 			selectionMax.lat = p.getDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
 			selectionMax.lon = p.getDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
 			selectionMin.lat = p.getDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
@@ -158,6 +162,9 @@ public class Settings {
 
 			p.setStringProperty(GOOGLE_LANGUAGE, googleLanguage);
 
+			if (devMode)
+				p.setBooleanProperty(DEVMODE, devMode);
+			
 			p.setDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
 			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
 			p.setDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
@@ -285,6 +292,10 @@ public class Settings {
 
 	public void setTileWidth(int tileWidth) {
 		this.tileWidth = tileWidth;
+	}
+
+	public boolean isDevModeEnabled() {
+		return devMode;
 	}
 
 }

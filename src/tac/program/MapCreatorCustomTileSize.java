@@ -3,7 +3,6 @@ package tac.program;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -95,16 +94,16 @@ public class MapCreatorCustomTileSize extends MapCreator {
 					ap.incMapProgressBar();
 				BufferedImage tileImage = new BufferedImage(tileSizeWidth, tileSizeHeight,
 						BufferedImage.TYPE_3BYTE_BGR);
-				Graphics2D graphics = tileImage.createGraphics();
-				File fDest = new File(setFolder, layerName + "_" + xRelPos + "_" + yRelPos + "."
-						+ tileSource.getTileType());
-				log.trace("Creating tile " + fDest.getName());
-				paintCustomTile(graphics, xAbsPos, yAbsPos);
 				try {
+					Graphics2D graphics = tileImage.createGraphics();
+					File fDest = new File(setFolder, layerName + "_" + xRelPos + "_" + yRelPos
+							+ "." + tileSource.getTileType());
+					log.trace("Creating tile " + fDest.getName());
+					paintCustomTile(graphics, xAbsPos, yAbsPos);
 					graphics.dispose();
 					ImageIO.write(tileImage, tileSource.getTileType(), fDest);
 					setFiles.add(fDest.getName());
-				} catch (IOException e) {
+				} catch (Exception e) {
 					log.error("Error writing tile image: ", e);
 				}
 
@@ -166,11 +165,11 @@ public class MapCreatorCustomTileSize extends MapCreator {
 			if (ct == null)
 				continue;
 			if (ct.xTile == xTile && ct.yTile == yTile) {
-				//log.trace("cache hit");
+				// log.trace("cache hit");
 				return ct.image;
 			}
 		}
-		//log.trace("cache miss");
+		// log.trace("cache miss");
 		BufferedImage image = ImageIO.read(fSource);
 		cache[cachePos] = new CachedTile(image, xTile, yTile);
 		cachePos = (cachePos + 1) % cache.length;

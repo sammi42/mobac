@@ -93,7 +93,7 @@ public class AtlasTree extends JTree implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
 			return;
-		TreePath selPath = getPathForLocation(e.getX(), e.getY());
+		TreePath selPath = getSelectionPath();
 		if (selPath == null)
 			return; // clicked on empty area
 		Object o = selPath.getLastPathComponent();

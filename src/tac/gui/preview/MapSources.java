@@ -6,8 +6,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 public class MapSources {
 
 	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapsChina(),
-			new GoogleEarth(), new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
-			new OutdooractiveCom() };
+			new GoogleEarth(), new GoogleTerrain(), new YahooMaps(), new Mapnik(),
+			new TilesAtHome(), new CycleMap(), new OutdooractiveCom() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -144,6 +144,32 @@ public class MapSources {
 		public String getTileUrl(int zoom, int x, int y) {
 			// String g = "Galileo".substring(0, GALILEO_NUM);
 			// GALILEO_NUM = (GALILEO_NUM + 1) % 5;
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
+		}
+
+		public String getTileType() {
+			return "png";
+		}
+
+	}
+
+	public static class GoogleTerrain extends GoogleSource {
+
+		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2p.87&hl=%s&x=%d&y=%d&z=%d";
+
+		public int getMaxZoom() {
+			return 17;
+		}
+
+		public String getName() {
+			return "Google Terrain";
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.IfModifiedSince;
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
 			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
 		}
 

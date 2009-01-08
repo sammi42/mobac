@@ -158,7 +158,7 @@ public class MapSources {
 		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2p.87&hl=%s&x=%d&y=%d&z=%d";
 
 		public int getMaxZoom() {
-			return 17;
+			return 15;
 		}
 
 		public String getName() {

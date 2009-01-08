@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -207,6 +208,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		coordinatesPanel.add(previewSelectionButton, gbc_eolcf.fill(GBC.NONE).insets(20, 5, 20, 5));
 
 		mapSource = new JComboBox(MapSources.getMapSources());
+		mapSource.setMaximumRowCount(15);
 		mapSource.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -384,8 +386,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		int[] zoomLevels = sZL.getZoomLevels();
 		for (int zoom : zoomLevels) {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
-			new AutoCutMultiMapLayer(atlas, name, tileSource, ms.getTopLeftTileCoordinate(zoom), ms
-					.getBottomRightTileCoordinate(zoom), zoom, tileSize, settings.getMaxMapsSize());
+			Point tl = ms.getTopLeftTileCoordinate(zoom);
+			Point br = ms.getBottomRightTileCoordinate(zoom);
+			log.debug(tl+" "+br);
+			new AutoCutMultiMapLayer(atlas, name, tileSource, tl, br, zoom, tileSize, settings
+					.getMaxMapsSize());
 		}
 		atlasTree.getTreeModel().notifyStructureChanged();
 	}

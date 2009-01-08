@@ -6,6 +6,6 @@ public interface DownloadJobListener {
 
 	public void jobFinishedSuccessfully(int bytesDownloaded);
 
-	public void jobFinishedWithError();
+	public void jobFinishedWithError(boolean retry);
 
 }

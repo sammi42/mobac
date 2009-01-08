@@ -34,6 +34,9 @@ public class TileDownLoader {
 
 		// Thread.sleep(2000);
 
+		// Test code for creating random download failures
+		// if (Math.random()>0.7) throw new IOException("intentionally download error");
+		
 		/**
 		 * If the desired tile already exist in the persistent tilestore and
 		 * settings is to use the tile store

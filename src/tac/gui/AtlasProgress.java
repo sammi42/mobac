@@ -77,6 +77,8 @@ public class AtlasProgress extends JFrame {
 	private JLabel nrOfDownloadedBytesPerSecondValue;
 	private JLabel activeDownloads;
 	private JLabel activeDownloadsValue;
+	private JLabel downloadErrors;
+	private JLabel downloadErrorsValue;
 	private JLabel totalDownloadTime;
 	private JLabel totalDownloadTimeValue;
 
@@ -126,6 +128,14 @@ public class AtlasProgress extends JFrame {
 		nrOfDownloadedBytesValue = new JLabel();
 		activeDownloads = new JLabel("Active Downloads");
 		activeDownloadsValue = new JLabel();
+		downloadErrors = new JLabel("Download errors");
+		downloadErrors.setToolTipText("<html>Download errors for the current layer (retryable/permanent):<br>"
+				+ "TAC tries to retry failed tile downloads up to three times.<br>"
+				+ "For each failed try the retryable counter increases by one.<br>"
+				+ "If the tile downloads fails the third time the tile will be counted as "
+				+ "permanent error.</html>");
+		downloadErrorsValue = new JLabel();
+		downloadErrorsValue.setToolTipText(downloadErrors.getToolTipText());
 		totalDownloadTime = new JLabel("Total download time");
 		totalDownloadTimeValue = new JLabel();
 
@@ -178,6 +188,8 @@ public class AtlasProgress extends JFrame {
 		infoPanel.add(nrOfDownloadedBytesPerSecondValue, gbci.toggleEol());
 		infoPanel.add(activeDownloads, gbci.toggleEol());
 		infoPanel.add(activeDownloadsValue, gbci.toggleEol());
+		infoPanel.add(downloadErrors, gbci.toggleEol());
+		infoPanel.add(downloadErrorsValue, gbci.toggleEol());
 		infoPanel.add(totalDownloadTime, gbci.toggleEol());
 		infoPanel.add(totalDownloadTimeValue, gbci.toggleEol());
 
@@ -231,6 +243,8 @@ public class AtlasProgress extends JFrame {
 
 		nrOfLayers = theNrOfLayers;
 		atlasElementsDone.setText("0 of " + nrOfLayers + " done");
+		activeDownloadsValue.setText(": 0");
+		downloadErrorsValue.setText(": 0 / 0");
 
 		initiateTime = System.currentTimeMillis();
 		initiateLayerTime = System.currentTimeMillis();
@@ -260,6 +274,10 @@ public class AtlasProgress extends JFrame {
 		this.setLayerCurrent(theElementsDone);
 		this.setLayerElementsDone(theElementsDone);
 		this.setLayerTimeLeft(theElementsDone);
+	}
+
+	public void setErrorCounter(int retryErrors, int permanentErrors) {
+		downloadErrorsValue.setText(": " + retryErrors + " / " + permanentErrors);
 	}
 
 	public void initMapProgressBar(int maxElements) {

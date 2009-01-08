@@ -42,7 +42,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private int activeDownloads = 0;
 	private int jobsProduced = 0;
 	private int jobsCompleted = 0;
-	private int jobsError = 0;
+	private int jobsRetryError = 0;
+	private int jobsPermanentError = 0;
 
 	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
 			SelectedZoomLevels sZL, int tileSizeWidth, int tileSizeHeight) {
@@ -150,7 +151,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		try {
 			for (int layer = 0; layer < nrOfLayers; layer++) {
 				jobsCompleted = 0;
-				jobsError = 0;
+				jobsRetryError = 0;
+				jobsPermanentError = 0;
 				if (t.isInterrupted())
 					throw new InterruptedException();
 
@@ -187,7 +189,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
 							|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 						Thread.sleep(500);
-						if (jobsError > 100) {
+						if (jobsRetryError > 100) {
 							int answer = JOptionPane.showConfirmDialog(ap,
 									"Multiple tile downloads have failed. "
 											+ "Something may be wrong with your connection to the "
@@ -284,9 +286,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		updateGUI();
 	}
 
-	public synchronized void jobFinishedWithError() {
+	public synchronized void jobFinishedWithError(boolean retry) {
 		activeDownloads--;
-		jobsError++;
+		if (retry)
+			jobsRetryError++;
+		else
+			jobsPermanentError++;
+		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
 	}
 
 	public AtlasProgress getAtlasProgress() {

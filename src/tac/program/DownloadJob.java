@@ -40,13 +40,14 @@ public class DownloadJob implements Job {
 			listener.jobFinishedSuccessfully(bytes);
 		} catch (Exception e) {
 			errorCounter++;
-			listener.jobFinishedWithError();
 			// Reschedule job to try it later again
 			if (errorCounter < 3) {
+				listener.jobFinishedWithError(true);
 				log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
 						+ " failed (times: " + errorCounter + ") - rescheduling download job");
 				dispatcher.addErrorJob(this);
 			} else {
+				listener.jobFinishedWithError(false);
 				log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
 						+ "failed again. Retry limit reached, "
 						+ "job will not be rescheduled (no further try)");

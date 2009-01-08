@@ -1,6 +1,7 @@
 package tac.program;
 
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -286,12 +287,15 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		updateGUI();
 	}
 
-	public synchronized void jobFinishedWithError(boolean retry) {
-		activeDownloads--;
-		if (retry)
-			jobsRetryError++;
-		else
-			jobsPermanentError++;
+	public void jobFinishedWithError(boolean retry) {
+		synchronized (this) {
+			activeDownloads--;
+			if (retry)
+				jobsRetryError++;
+			else
+				jobsPermanentError++;
+		}
+		Toolkit.getDefaultToolkit().beep();
 		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
 	}
 

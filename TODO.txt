@@ -1,46 +1,50 @@
 T O D O
 =======
 
-Importance order: 
+1) "history" of atlas names (drop down oft last 7-20 names), useful when creating 
+   updates or multiple atlases that shall be related to each other
+   
+   -> May be in a future release. Currently atlas names can be saved via profiles.
+    
+2) Option "do not create TAR" saving processing time (no need for TAR here)
+  
+   -> Possible - may be in form of a preferences entry that allows to specify the 
+      desired map/atlas output format (tared atlas / untared atlas / only download)  
+   
+3) Option "reload tiles older than x days" for each map source - google earth 
+   is seldomly updated, tiles of 1 week are often same as tiles of 4 months age. 
+   More advanced solution: get some few tiles, test whether they differ to tile in cache, 
+   and only get other tiles if difference detected.
+   
+   -> JMapViewer (preview component) already has such a function but it is not 
+      possible to reuse that function for TAC - therefore  
 
-1:
+4) Settings for tile store. Not just enable or disable, maybe a possibility to configure the amount of tiles
+   per map source and / or tile store size in bytes. And to have this store as working as a LRU.
+   -> JMapViewer does implement a nice caching algo including tests if a tile on the server is newer than
+      the one in the cache. May be we can reuse some of JMapViewer's functionality?  
+	  Real LRU is difficult only with the attributes provided by file system. From my point of view this 
+	  would require a embeddable database like H2 <http://www.h2database.com/html/main.html> 
 
-* Settings for tile store. Not just enable or disable, maybe a possibility to configure the amount of tiles
-  per map source and / or tile store size in bytes. And to have this store as working as a LRU.
-  -> JMapViewer does implement a nice caching algo including tests if a tile on the server is newer than
-     the one in the cache. May be we can reuse some of JMapViewer's functionality?  
-	 Real LRU is difficult only with the attributes provided by file system. From my point of view this 
-	 would require a embeddable database like H2 <http://www.h2database.com/html/main.html> 
+5) Would it be possible to add ability to switch some layers to photo maps? 
+   I think it would be useful addition
 
-2:
+   -> Not planned
 
-* Would it be possible to add ability to switch some layers to photo maps? I think it would be useful 
-  addition
+6) Add possibility to enter download string for tile repository. Useful for creating 
+   atlases from a  local tile map server (e.g. Kosmos) 
+   
+   -> implementation: MapSources.Custom(..)
 
-3:
+7) But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color
+   depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
+   
+   -> That is not that simple in Java. I did not found a library that allows "save as 4bpp PNG", 
+      therefore we first need a color reducing component (aka "color quantizer") that merges similar 
+      colors into one (in difference to a ditherer). For saving a reduced image the default java 
+      PNG writer may be usable.   
 
-* Add possibility to enter download string for tile repository. Useful for creating atlases from
-  a  local tile map server (e.g. Kosmos) 
-  -> implementation: MapSources.Custom(..)
+8) Open folder in AtlasProgress is platform specific (Windows only)
 
-4:
-
-* But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color
-  depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
-  -> That is not that simple in Java. I did not found a library that allows "save as 4bpp PNG", 
-     therefore we first need a color reducing component (aka "color quantizer") that merges similar 
-     colors into one (in difference to a ditherer). For saving a reduced image the default java 
-     PNG writer may be usable.   
-
-5:
-
-* Open folder in AtlasProgress is platform specific (Windows only)
-  -> Requires platform detection - Windows, Linux (KDE), Linux (Gnome), ...
-     System.getProperty("os.name"); 
-
-
-
-
-
-
- 
+   -> Requires platform detection - Windows, Linux (KDE), Linux (Gnome), ...
+      System.getProperty("os.name"); 

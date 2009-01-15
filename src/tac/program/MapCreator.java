@@ -3,8 +3,8 @@ package tac.program;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -23,6 +23,9 @@ import tac.utilities.Utilities;
  * @author Fredrik
  */
 public class MapCreator {
+
+	private static final String TEXT_FILE_CHARSET = "ISO-8859-1";
+
 	protected Logger log;
 
 	protected static boolean tileSizeErrorNotified = false;
@@ -96,9 +99,9 @@ public class MapCreator {
 		log.trace("Writing map file");
 		File mapFile = new File(atlasLayerFolder, layerName + ".map");
 
-		FileWriter fw = null;
+		OutputStreamWriter mapWriter = null;
 		try {
-			fw = new FileWriter(mapFile);
+			mapWriter = new OutputStreamWriter(new FileOutputStream(mapFile), TEXT_FILE_CHARSET);
 
 			double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
 			double longitudeMax = OsmMercator.XToLon((xMax + 1) * Tile.SIZE, zoom);
@@ -108,13 +111,13 @@ public class MapCreator {
 			int width = (xMax - xMin + 1) * Tile.SIZE;
 			int height = (yMax - yMin + 1) * Tile.SIZE;
 
-			fw.write(Utilities.prepareMapString(layerName + "." + tileSource.getTileType(),
+			mapWriter.write(Utilities.prepareMapString(layerName + "." + tileSource.getTileType(),
 					longitudeMin, longitudeMax, latitudeMin, latitudeMax, width, height));
-			fw.close();
+			mapWriter.close();
 		} catch (IOException e) {
 			log.error("", e);
 		} finally {
-			Utilities.closeWriter(fw);
+			Utilities.closeWriter(mapWriter);
 		}
 	}
 
@@ -172,16 +175,16 @@ public class MapCreator {
 		// Create the set file for this map
 		File setFile = new File(atlasLayerFolder, layerName + ".set");
 		log.trace("Writing map .set file: " + setFile.getAbsolutePath());
-		FileWriter fw = null;
+		OutputStreamWriter setWriter = null;
 		try {
-			fw = new FileWriter(setFile);
+			setWriter = new OutputStreamWriter(new FileOutputStream(setFile), TEXT_FILE_CHARSET);
 			for (String file : setFiles) {
-				fw.write(file + "\r\n");
+				setWriter.write(file + "\r\n");
 			}
 		} catch (IOException e) {
 			log.error("", e);
 		} finally {
-			Utilities.closeWriter(fw);
+			Utilities.closeWriter(setWriter);
 		}
 	}
 }

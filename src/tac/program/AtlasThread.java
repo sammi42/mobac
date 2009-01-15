@@ -280,10 +280,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		activeDownloads++;
 	}
 
-	public synchronized void jobFinishedSuccessfully(int bytesDownloaded) {
-		ap.addDownloadedBytes(bytesDownloaded);
-		activeDownloads--;
-		jobsCompleted++;
+	public void jobFinishedSuccessfully(int bytesDownloaded) {
+		synchronized (this) {
+			ap.addDownloadedBytes(bytesDownloaded);
+			activeDownloads--;
+			jobsCompleted++;
+		}
 		updateGUI();
 	}
 

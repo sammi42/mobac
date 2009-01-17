@@ -1,6 +1,5 @@
 package tac.program;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -9,8 +8,8 @@ import tac.utilities.Utilities;
 
 public class TACInfo {
 
-	private static String version;
-	private static String revision;
+	private static String version = "unknown";
+	private static String revision = "";
 
 	static {
 		InputStream propIn = StartTAC.class.getResourceAsStream("tac.properties");
@@ -18,11 +17,17 @@ public class TACInfo {
 			Properties props = new Properties();
 			props.load(propIn);
 			version = props.getProperty("tac.version");
-			revision = props.getProperty("tac.revision");
-			revision = "(" + revision + ")";
-		} catch (IOException e) {
-			version = "unknown";
-			revision = "";
+		} catch (Exception e) {
+		} finally {
+			Utilities.closeStream(propIn);
+		}
+		propIn = StartTAC.class.getResourceAsStream("tac-rev.properties");
+		try {
+			Properties props = new Properties();
+			props.load(propIn);
+			String rev = props.getProperty("tac.revision");
+			revision = "(" + rev + ")";
+		} catch (Exception e) {
 		} finally {
 			Utilities.closeStream(propIn);
 		}

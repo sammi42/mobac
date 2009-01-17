@@ -100,8 +100,8 @@
 
 	<target name="svnversion" description="Updates the revision information in src/tac/tac.properties">
 		<java jar="lib/svnversion.jar" fork="true" outputproperty="tac.revision.new" />
-		<echo message="${tac.revision.new}" />
-		<propertyfile file="src/tac/tac.properties">
+		<echo message="TAC revision: ${tac.revision.new}" />
+		<propertyfile file="src/tac/tac-rev.properties">
 			<entry key="tac.revision" value="${tac.revision.new}" />
 		</propertyfile>
 	</target>

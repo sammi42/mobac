@@ -7,6 +7,11 @@ import java.io.IOException;
 
 import tac.utilities.Utilities;
 
+/**
+ * A tar record contains the data of the file to be stored. The data size has to
+ * be dividable by 512 (internal tar block length).
+ * 
+ */
 public class TarRecord {
 
 	private byte[] fileData;

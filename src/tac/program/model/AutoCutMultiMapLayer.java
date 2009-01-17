@@ -53,6 +53,13 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		this.maxTileCoordinate = maxTileCoordinate;
 		this.zoom = zoom;
 		this.tileSize = tileSize;
+
+		minTileCoordinate.x = minTileCoordinate.x - (minTileCoordinate.x % Tile.SIZE);
+		minTileCoordinate.y = minTileCoordinate.y - (minTileCoordinate.y % Tile.SIZE);
+
+		maxTileCoordinate.x = maxTileCoordinate.x + 255 - (maxTileCoordinate.x % Tile.SIZE);
+		maxTileCoordinate.y = maxTileCoordinate.y + 255 - (maxTileCoordinate.y % Tile.SIZE);
+
 		maxMapDimension = new Dimension(maxMapSize, maxMapSize);
 
 		// We adapt the max map size to the tile size so that we do

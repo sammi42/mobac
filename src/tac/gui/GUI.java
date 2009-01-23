@@ -536,6 +536,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		if (!tileSizeHeightComboBox.isTileSizeValid())
 			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeField.MIN
 					+ " and " + JTileSizeField.MAX + " \n";
+		
+		if (!tileSizeWidthComboBox.isTileSizeValid())
+			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeField.MIN
+					+ " and " + JTileSizeField.MAX + " \n";
 
 		if (isCreateAtlasValidate) {
 

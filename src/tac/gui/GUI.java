@@ -91,8 +91,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JLabel lonMaxLabel;
 	private JLabel zoomLevelLabel;
 	private JLabel tileSizeLabel;
-	private JLabel customTileSizeWidthLabel;
-	private JLabel customTileSizeHeightLabel;
 	private JLabel atlasNameLabel;
 	private JLabel profilesLabel;
 	private JLabel amountOfTilesLabel;
@@ -101,22 +99,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
 	private JCoordinateField lonMaxTextField;
-	private JTileSizeField tileSizeWidthTextField;
-	private JTileSizeField tileSizeHeightTextField;
 	private JTextField atlasNameTextField;
 
 	private JCheckBox[] cbZoom = new JCheckBox[0];
 
-	private JComboBox tileSizeWidthComboBox;
-	private JComboBox tileSizeHeightComboBox;
+	private JTileSizeCombo tileSizeWidthComboBox;
+	private JTileSizeCombo tileSizeHeightComboBox;
 	private JComboBox mapSource;
 
-	private Vector<Integer> tileSizeValues;
 	private Vector<Profile> profilesVector = new Vector<Profile>();
 	private Vector<String> profileNamesVector = new Vector<String>();
 
 	private JList profilesJList;
-	private String fileSeparator;
+	private static final String fileSeparator = System.getProperty("file.separator");
 
 	public GUI() {
 		super();
@@ -232,48 +227,24 @@ public class GUI extends JFrame implements MapSelectionListener {
 		tileSizePanel = new JPanel(new GridBagLayout());
 		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-		tileSizeValues = new Vector<Integer>();
-		tileSizeValues.addElement(64);
-		tileSizeValues.addElement(128);
-		for (int i = 0; i < 7; i++)
-			tileSizeValues.addElement((i + 1) * 256);
-
 		JLabel tileSizeWidth = new JLabel("Width:");
 
-		tileSizeWidthComboBox = new JComboBox(tileSizeValues);
-		tileSizeWidthComboBox.setMaximumRowCount(tileSizeValues.size());
+		tileSizeWidthComboBox = new JTileSizeCombo();
 		tileSizeWidthComboBox.setToolTipText("Width");
-
-		customTileSizeWidthLabel = new JLabel("Custom width:");
-
-		tileSizeWidthTextField = new JTileSizeField();
-		tileSizeWidthTextField.setToolTipText("Width");
 
 		JLabel tileSizeHeight = new JLabel("Height:");
 
-		tileSizeHeightComboBox = new JComboBox(tileSizeValues);
-		tileSizeHeightComboBox.setMaximumRowCount(tileSizeValues.size());
+		tileSizeHeightComboBox = new JTileSizeCombo();
 		tileSizeHeightComboBox.setToolTipText("Height");
-
-		customTileSizeHeightLabel = new JLabel("Custom height:");
-
-		tileSizeHeightTextField = new JTileSizeField();
-		tileSizeHeightTextField.setToolTipText("Height");
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
-		GBC gbc_hspace = GBC.std().fill(GBC.HORIZONTAL);
+		// GBC gbc_hspace = GBC.std().fill(GBC.HORIZONTAL);
 
 		tileSizePanel.add(tileSizeWidth, gbc_std);
 		tileSizePanel.add(tileSizeWidthComboBox, gbc_std);
-		tileSizePanel.add(Box.createHorizontalGlue(), gbc_hspace);
-		tileSizePanel.add(customTileSizeWidthLabel, gbc_std);
-		tileSizePanel.add(tileSizeWidthTextField, gbc_eol);
 		tileSizePanel.add(tileSizeHeight, gbc_std);
-		tileSizePanel.add(tileSizeHeightComboBox, gbc_std);
-		tileSizePanel.add(Box.createHorizontalGlue(), gbc_hspace);
-		tileSizePanel.add(customTileSizeHeightLabel, gbc_std);
-		tileSizePanel.add(tileSizeHeightTextField, gbc_eol);
+		tileSizePanel.add(tileSizeHeightComboBox, gbc_eol);
 
 		atlasNameLabel = new JLabel("ATLAS NAME");
 
@@ -388,7 +359,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftTileCoordinate(zoom);
 			Point br = ms.getBottomRightTileCoordinate(zoom);
-			log.debug(tl+" "+br);
+			log.debug(tl + " " + br);
 			new AutoCutMultiMapLayer(atlas, name, tileSource, tl, br, zoom, tileSize, settings
 					.getMaxMapsSize());
 		}
@@ -462,8 +433,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 			}
 		});
 		JTextFieldListener jtfl = new JTextFieldListener();
-		tileSizeWidthTextField.getDocument().addDocumentListener(jtfl);
-		tileSizeHeightTextField.getDocument().addDocumentListener(jtfl);
 		atlasNameTextField.getDocument().addDocumentListener(jtfl);
 
 		chooseProfileButton.addActionListener(new JToggleButtonListener());
@@ -530,20 +499,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
-		int i = 0;
-		i = tileSizeValues.indexOf(settings.getTileHeight());
-		if (i >= 0) {
-			tileSizeHeightComboBox.setSelectedIndex(i);
-		} else {
-			tileSizeHeightTextField.setTileSize(settings.getTileHeight());
-		}
-		i = tileSizeValues.indexOf(settings.getTileWidth());
-		if (i >= 0) {
-			tileSizeWidthComboBox.setSelectedIndex(i);
-		} else {
-			tileSizeWidthTextField.setTileSize(settings.getTileWidth());
-		}
-		fileSeparator = System.getProperty("file.separator");
+		tileSizeHeightComboBox.setTileSize(settings.getTileHeight());
+		tileSizeWidthComboBox.setTileSize(settings.getTileWidth());
 		updateProfilesList();
 		UpdateGUI.updateAllUIs();
 	}
@@ -575,6 +532,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		if (!latMinTextField.isInputValid())
 			errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
+
+		if (!tileSizeHeightComboBox.isTileSizeValid())
+			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeField.MIN
+					+ " and " + JTileSizeField.MAX + " \n";
 
 		if (isCreateAtlasValidate) {
 
@@ -675,23 +636,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private int getTileSizeHeight() {
-		if (tileSizeHeightTextField.isInputValid())
-			try {
-				return tileSizeHeightTextField.getTileSize();
-			} catch (ParseException e) {
-				return 256;
-			}
-		return ((Integer) tileSizeHeightComboBox.getSelectedItem()).intValue();
+		return tileSizeHeightComboBox.getTileSize();
 	}
 
 	private int getTileSizeWidth() {
-		if (tileSizeWidthTextField.isInputValid())
-			try {
-				return tileSizeWidthTextField.getTileSize();
-			} catch (ParseException e) {
-				return 256;
-			}
-		return ((Integer) tileSizeWidthComboBox.getSelectedItem()).intValue();
+		return tileSizeWidthComboBox.getTileSize();
 	}
 
 	// WindowDestroyer
@@ -725,8 +674,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		public void insertUpdate(DocumentEvent e) {
 
-			tileSizeWidthComboBox.setEnabled(!tileSizeWidthTextField.isInputValid());
-			tileSizeHeightComboBox.setEnabled(!tileSizeHeightTextField.isInputValid());
 			if (handleInputInRealTime()) {
 				calculateNrOfTilesToDownload();
 			}
@@ -734,8 +681,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		public void removeUpdate(DocumentEvent e) {
 
-			tileSizeWidthComboBox.setEnabled(!tileSizeWidthTextField.isInputValid());
-			tileSizeHeightComboBox.setEnabled(!tileSizeHeightTextField.isInputValid());
 			if (handleInputInRealTime()) {
 				calculateNrOfTilesToDownload();
 			}
@@ -827,11 +772,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 			if (!ms.coordinatesAreValid())
 				errorDescription += "Coordinates are not all valid - please check";
 
-			if (!tileSizeWidthComboBox.isEnabled() && !tileSizeWidthTextField.isInputValid())
-				errorDescription += "Invalid format of \"Custom size\" (TILE SIZE) value\n";
-
-			if (!tileSizeHeightComboBox.isEnabled() && !tileSizeHeightTextField.isValid())
-				errorDescription += "Invalid format of \"Custom size\" (TILE SIZE) value\n";
+			if (!tileSizeWidthComboBox.isTileSizeValid())
+				errorDescription += "Invalid tile size width - please check\n";
+			if (!tileSizeHeightComboBox.isTileSizeValid())
+				errorDescription += "Invalid tile size height - please check\n";
 
 			if (errorDescription.length() > 0) {
 				JOptionPane.showMessageDialog(null, errorDescription, "Errors",
@@ -853,20 +797,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 				}
 
 				profile.setZoomLevels(zoomLevels);
-
-				if (tileSizeWidthTextField.isInputValid()) {
-					profile.setTileSizeWidth(tileSizeWidthTextField.getTileSize());
-				} else {
-					profile.setTileSizeWidth(((Integer) tileSizeWidthComboBox.getSelectedItem())
-							.intValue());
-				}
-
-				if (tileSizeHeightTextField.isInputValid()) {
-					profile.setTileSizeHeight(tileSizeHeightTextField.getTileSize());
-				} else {
-					profile.setTileSizeHeight(((Integer) tileSizeHeightComboBox.getSelectedItem())
-							.intValue());
-				}
+				profile.setTileSizeWidth(tileSizeWidthComboBox.getTileSize());
+				profile.setTileSizeHeight(tileSizeHeightComboBox.getTileSize());
 
 				profilesVector.addElement(profile);
 				PersistentProfiles.store(profilesVector);
@@ -887,23 +819,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		lonMinTextField.setCoordinate(profile.getLongitudeMin());
 		lonMaxTextField.setCoordinate(profile.getLongitudeMax());
 
-		int tileSizeWidth = profile.getTileSizeWidth();
-		int tileSizeHeight = profile.getTileSizeHeight();
-		int index;
-		index = tileSizeValues.indexOf(new Integer(tileSizeWidth));
-		if (index >= 0) {
-			tileSizeWidthComboBox.setSelectedIndex(index);
-			tileSizeWidthTextField.setTileSize(0);
-		} else {
-			tileSizeWidthTextField.setTileSize(tileSizeWidth);
-		}
-		index = tileSizeValues.indexOf(new Integer(tileSizeHeight));
-		if (index >= 0) {
-			tileSizeHeightComboBox.setSelectedIndex(index);
-			tileSizeHeightTextField.setTileSize(0);
-		} else {
-			tileSizeHeightTextField.setTileSize(tileSizeHeight);
-		}
+		tileSizeWidthComboBox.setTileSize(profile.getTileSizeWidth());
+		tileSizeHeightComboBox.setTileSize(profile.getTileSizeHeight());
 
 		atlasNameTextField.setText(profile.getAtlasName());
 

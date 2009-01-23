@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.text.ParseException;
 
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -19,9 +20,9 @@ public class JTileSizeField extends JTextField {
 
 	private static final Color ERROR_COLOR = new Color(255, 100, 100);
 
-	private static final int MIN = 50;
+	public static final int MIN = 50;
 
-	private static final int MAX = 1792;
+	public static final int MAX = 1792;
 
 	private static final String INVALID_TEXT = "<html>Invalid tile size!<br>"
 			+ "Please enter a number between %d and %d</html>";
@@ -32,10 +33,10 @@ public class JTileSizeField extends JTextField {
 
 	public JTileSizeField() {
 		super(4);
-		setBorder(null);
 		setDocument(new NumericDocument());
 		listener = new InputListener();
 		listener.checkInput(null);
+		setBorder(new EmptyBorder(2, 2, 2, 0));
 	}
 
 	public int getTileSize() throws ParseException {
@@ -71,7 +72,7 @@ public class JTileSizeField extends JTextField {
 
 		public void insertString(int offset, String str, AttributeSet attr)
 				throws BadLocationException {
-			
+
 			if (str == null)
 				return;
 
@@ -83,8 +84,7 @@ public class JTileSizeField extends JTextField {
 			}
 
 			super.insertString(offset, str, attr);
-			
-			
+
 		}
 	}
 

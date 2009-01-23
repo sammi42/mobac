@@ -1,11 +1,15 @@
 package tac.gui;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.text.ParseException;
 
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import tac.utilities.Utilities;
 
@@ -27,25 +31,11 @@ public class JTileSizeField extends JTextField {
 	private boolean hasInput = false;
 
 	public JTileSizeField() {
-		super(5);
+		super(4);
+		setBorder(null);
+		setDocument(new NumericDocument());
 		listener = new InputListener();
 		listener.checkInput(null);
-	}
-
-	public synchronized void setCoordinate(double value) {
-		try {
-			// We know that the number is valid, therefore we can skip the check
-			// -> saves CPU power while selecting via preview map
-			if (!inputIsValid)
-				listener.setDisplayedValidMode(true);
-			listener.setEnabled(false);
-			if (Double.isNaN(value))
-				super.setText("");
-			else
-				super.setText(Utilities.FORMAT_6_DEC.format(value));
-		} finally {
-			listener.setEnabled(true);
-		}
 	}
 
 	public int getTileSize() throws ParseException {
@@ -73,6 +63,28 @@ public class JTileSizeField extends JTextField {
 			return (i >= MIN) && (i <= MAX);
 		} catch (NumberFormatException e) {
 			return false;
+		}
+	}
+
+	public class NumericDocument extends PlainDocument {
+		public static final String NUMERIC = "0123456789";
+
+		public void insertString(int offset, String str, AttributeSet attr)
+				throws BadLocationException {
+			
+			if (str == null)
+				return;
+
+			for (char c : str.toCharArray()) {
+				if (NUMERIC.indexOf(c) == -1) {
+					Toolkit.getDefaultToolkit().beep();
+					return;
+				}
+			}
+
+			super.insertString(offset, str, attr);
+			
+			
 		}
 	}
 

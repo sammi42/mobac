@@ -24,9 +24,23 @@ import tac.program.TACInfo;
 
 public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
+	private static final TACExceptionHandler instance = new TACExceptionHandler();
+
+	public static void registerForCurrentThread() {
+		Thread.setDefaultUncaughtExceptionHandler(instance);
+	}
+
+	public static TACExceptionHandler getInstance() {
+		return instance;
+	}
+
+	private TACExceptionHandler() {
+		super();
+	}
+
 	public void uncaughtException(Thread t, Throwable e) {
 		e.printStackTrace();
-		showExceptionDialog(t, e);
+		showExceptionDialog(e);
 	}
 
 	private static String prop(String key) {
@@ -37,7 +51,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			return "";
 	}
 
-	public static void showExceptionDialog(Thread t, Throwable e) {
+	public static void showExceptionDialog(Throwable e) {
 		String exceptionName = e.getClass().getSimpleName();
 		try {
 			StringBuilder sb = new StringBuilder();
@@ -99,7 +113,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 		try {
 			throw new RuntimeException("Test");
 		} catch (Exception e) {
-			showExceptionDialog(Thread.currentThread(), e);
+			showExceptionDialog(e);
 		}
 	}
 }

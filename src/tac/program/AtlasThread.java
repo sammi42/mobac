@@ -63,7 +63,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	}
 
 	public void run() {
-		Thread.setDefaultUncaughtExceptionHandler(new TACExceptionHandler());
+		TACExceptionHandler.registerForCurrentThread();
 		log.info("Starting altas creation");
 		log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource + "\n\tAtlas name: "
 				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
@@ -90,7 +90,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			log.info("Altas creation was interrupted by user");
 		} catch (Exception e) {
 			log.error("Altas creation aborted because of an error: ", e);
-			TACExceptionHandler.showExceptionDialog(Thread.currentThread(), e);
+			TACExceptionHandler.showExceptionDialog(e);
 		}
 	}
 

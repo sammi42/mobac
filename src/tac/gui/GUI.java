@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Vector;
 
@@ -29,12 +28,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -55,6 +51,7 @@ import tac.program.model.Atlas;
 import tac.program.model.AutoCutMultiMapLayer;
 import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
+import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
 public class GUI extends JFrame implements MapSelectionListener {
@@ -99,7 +96,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
 	private JCoordinateField lonMaxTextField;
-	private JTextField atlasNameTextField;
+	private JAtlasNameField atlasNameTextField;
 
 	private JCheckBox[] cbZoom = new JCheckBox[0];
 
@@ -115,6 +112,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	public GUI() {
 		super();
+		TACExceptionHandler.registerForCurrentThread();
 		setTitle(TACInfo.getCompleteTitle());
 		log.trace("Creating main dialog - " + getTitle());
 		previewMap = new PreviewMap();
@@ -251,7 +249,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		atlasNamePanel = new JPanel(new GridBagLayout());
 		atlasNamePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-		atlasNameTextField = new JTextField();
+		atlasNameTextField = new JAtlasNameField();
 		atlasNameTextField.setActionCommand("atlasNameTextField");
 
 		atlasNamePanel.add(atlasNameTextField, GBC.std().insets(5, 5, 5, 5).fill());
@@ -432,8 +430,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 				previewSelection();
 			}
 		});
-		JTextFieldListener jtfl = new JTextFieldListener();
-		atlasNameTextField.getDocument().addDocumentListener(jtfl);
 
 		chooseProfileButton.addActionListener(new JToggleButtonListener());
 		JListListener jll = new JListListener();
@@ -536,7 +532,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		if (!tileSizeHeightComboBox.isTileSizeValid())
 			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeField.MIN
 					+ " and " + JTileSizeField.MAX + " \n";
-		
+
 		if (!tileSizeWidthComboBox.isTileSizeValid())
 			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeField.MIN
 					+ " and " + JTileSizeField.MAX + " \n";
@@ -650,72 +646,27 @@ public class GUI extends JFrame implements MapSelectionListener {
 	// WindowDestroyer
 	private class WindowDestroyer extends WindowAdapter {
 		public void windowClosing(WindowEvent event) {
-
-			Settings s = Settings.getInstance();
-			previewMap.settingsSavePosition();
-			s.setDefaultMapSource(((TileSource) mapSource.getSelectedItem()).getName());
-			s.setAtlasName(atlasNameTextField.getText());
-			s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
-					lonMaxTextField.getCoordinateOrNaN()));
-			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
-					lonMinTextField.getCoordinateOrNaN()));
-
-			s.setTileWidth(getTileSizeWidth());
-			s.setTileHeight(getTileSizeHeight());
-
 			try {
+				Settings s = Settings.getInstance();
+				previewMap.settingsSavePosition();
+				s.setDefaultMapSource(((TileSource) mapSource.getSelectedItem()).getName());
+				s.setAtlasName(atlasNameTextField.getText());
+				s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
+						lonMaxTextField.getCoordinateOrNaN()));
+				s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
+						lonMinTextField.getCoordinateOrNaN()));
+
+				s.setTileWidth(getTileSizeWidth());
+				s.setTileHeight(getTileSizeHeight());
+
 				s.store();
-			} catch (IOException iox) {
+			} catch (Exception e) {
+				TACExceptionHandler.showExceptionDialog(e);
 				JOptionPane.showMessageDialog(null,
 						"Error on writing program settings to \"settings.xml\"", "Error",
 						JOptionPane.ERROR_MESSAGE);
-				log.error("Error saving settings", iox);
 			}
 		}
-	}
-
-	private class JTextFieldListener implements DocumentListener {
-
-		public void insertUpdate(DocumentEvent e) {
-
-			if (handleInputInRealTime()) {
-				calculateNrOfTilesToDownload();
-			}
-		}
-
-		public void removeUpdate(DocumentEvent e) {
-
-			if (handleInputInRealTime()) {
-				calculateNrOfTilesToDownload();
-			}
-		}
-
-		public void changedUpdate(DocumentEvent e) {
-		}
-	}
-
-	private boolean handleInputInRealTime() {
-
-		if (!(getFocusOwner() instanceof JTextField))
-			return false;
-		String input = "";
-
-		JTextField textField = (JTextField) getFocusOwner();
-		input = textField.getText();
-
-		if (input.length() == 0)
-			return false;
-
-		if (atlasNameTextField.equals(textField)) {
-			int result = -1;
-			result = Utilities.validateString(input);
-			if (result > -1) {
-				JOptionPane.showMessageDialog(null, "\"" + (char) result + "\" is not valid input",
-						"Error", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public void mapSourceChanged() {

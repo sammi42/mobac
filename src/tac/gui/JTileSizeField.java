@@ -2,7 +2,6 @@ package tac.gui;
 
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.text.ParseException;
 
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -29,7 +28,6 @@ public class JTileSizeField extends JTextField {
 
 	private InputListener listener;
 	private boolean inputIsValid = true;
-	private boolean hasInput = false;
 
 	public JTileSizeField() {
 		super(4);
@@ -39,15 +37,17 @@ public class JTileSizeField extends JTextField {
 		setBorder(new EmptyBorder(2, 2, 2, 0));
 	}
 
-	public int getTileSize() throws ParseException {
+	public int getTileSize() throws NumberFormatException {
 		return Integer.parseInt(getText());
 	}
 
-	public void setTileSize(int newTileSize) {
+	public void setTileSize(int newTileSize, boolean check) {
 		if (newTileSize <= 0)
 			super.setText("");
 		else
 			super.setText(Integer.toString(newTileSize));
+		if (check)
+			listener.checkInput(null);
 	}
 
 	public void setText(String t) {
@@ -92,34 +92,21 @@ public class JTileSizeField extends JTextField {
 
 		private Color defaultColor;
 
-		private boolean enabled;
-
 		private InputListener() {
-			enabled = true;
 			defaultColor = JTileSizeField.this.getBackground();
 			JTileSizeField.this.getDocument().addDocumentListener(this);
 		}
 
 		private void checkInput(DocumentEvent de) {
-			if (!enabled)
-				return;
 			boolean valid = false;
 			try {
-				String text = JTileSizeField.this.getText();
-				if (text.length() == 0) {
-					hasInput = false;
-					inputIsValid = false;
-					setDisplayedValidMode(true);
-					return;
-				}
 				valid = testInputValid();
 			} catch (Exception e) {
 				valid = false;
 			}
-			if (valid != inputIsValid || !hasInput)
+			if (valid != inputIsValid)
 				setDisplayedValidMode(valid);
 			inputIsValid = valid;
-			hasInput = true;
 		}
 
 		private void setDisplayedValidMode(boolean valid) {
@@ -143,12 +130,5 @@ public class JTileSizeField extends JTextField {
 			checkInput(e);
 		}
 
-		public boolean isEnabled() {
-			return enabled;
-		}
-
-		public void setEnabled(boolean enabled) {
-			this.enabled = enabled;
-		}
 	}
 }

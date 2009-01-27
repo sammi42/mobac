@@ -2,7 +2,6 @@ package tac.gui;
 
 import java.awt.Component;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
 import java.util.Vector;
 
 import javax.swing.ComboBoxEditor;
@@ -11,25 +10,26 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.Tile;
 
 import tac.program.Logging;
 
 public class JTileSizeCombo extends JComboBox {
 
-	static Vector<SizeEntry> TILE_SIZE_VALUES;
+	static Vector<Integer> TILE_SIZE_VALUES;
 
-	static SizeEntry DEFAULT;
+	static Integer DEFAULT;
 
 	static Logger log = Logger.getLogger(JTileSizeCombo.class);
 
 	static {
-		DEFAULT = new SizeEntry(256);
-		TILE_SIZE_VALUES = new Vector<SizeEntry>();
-		TILE_SIZE_VALUES.addElement(new SizeEntry(64));
-		TILE_SIZE_VALUES.addElement(new SizeEntry(128));
+		DEFAULT = new Integer(256);
+		TILE_SIZE_VALUES = new Vector<Integer>();
+		TILE_SIZE_VALUES.addElement(new Integer(64));
+		TILE_SIZE_VALUES.addElement(new Integer(128));
 		TILE_SIZE_VALUES.addElement(DEFAULT);
 		for (int i = 2; i < 8; i++)
-			TILE_SIZE_VALUES.addElement(new SizeEntry(i * 256));
+			TILE_SIZE_VALUES.addElement(new Integer(i * 256));
 	}
 
 	protected JTileSizeField editorComponent;
@@ -46,38 +46,18 @@ public class JTileSizeCombo extends JComboBox {
 	public int getTileSize() {
 		try {
 			return editorComponent.getTileSize();
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
+		} catch (NumberFormatException e) {
+			return Tile.SIZE;
 		}
 	}
 
 	public void setTileSize(int newTileSize) {
 		setSelectedIndex(-1);
-		editorComponent.setTileSize(newTileSize);
-		log.debug("tile size set: " + newTileSize + " get = " + getTileSize());
+		editorComponent.setTileSize(newTileSize, true);
 	}
-	
+
 	public boolean isTileSizeValid() {
 		return editorComponent.isInputValid();
-	}
-
-	public static class SizeEntry {
-
-		private int size;
-
-		protected SizeEntry(int size) {
-			this.size = size;
-		}
-
-		public int getSize() {
-			return size;
-		}
-
-		@Override
-		public String toString() {
-			return Integer.toString(size);
-		}
-
 	}
 
 	public class Editor implements ComboBoxEditor {
@@ -95,7 +75,7 @@ public class JTileSizeCombo extends JComboBox {
 		}
 
 		public Object getItem() {
-			return null;
+			return editorComponent.getTileSize();
 		}
 
 		public void removeActionListener(ActionListener l) {
@@ -109,7 +89,7 @@ public class JTileSizeCombo extends JComboBox {
 		public void setItem(Object entry) {
 			if (entry == null)
 				return;
-			editorComponent.setTileSize(((SizeEntry) entry).size);
+			editorComponent.setTileSize(((Integer) entry).intValue(), true);
 		}
 
 	}

@@ -271,6 +271,7 @@ public class SettingsGUI extends JDialog {
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("Network connections"));
 		threadCount = new JComboBox(threadNumbers);
+		threadCount.setMaximumRowCount(threadNumbers.size());
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
 		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC
 				.std().fill(GBC.HORIZONTAL));

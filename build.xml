@@ -9,7 +9,7 @@
 	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" failonerror="false">
 			<fileset dir="ozi" includes="**/*" /> 
 			<fileset dir="atlases" includes="**/*" /> 
 			<fileset dir="atlasestared" includes="**/*" /> 

@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -44,7 +45,7 @@ public class SettingsGUI extends JDialog {
 	private static Logger log = Logger.getLogger(SettingsGUI.class);
 
 	private static Vector<Integer> mapSizes;
-	private static Vector<Integer> threadNumbers;
+	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
 
 	private JComboBox googleLang;
 
@@ -72,9 +73,6 @@ public class SettingsGUI extends JDialog {
 			mapSizes.addElement(new Integer(size));
 			size -= 1024;
 		} while (size >= 1024);
-		threadNumbers = new Vector<Integer>(10);
-		for (int i = 1; i <= 10; i++)
-			threadNumbers.add(new Integer(i));
 	}
 
 	public SettingsGUI(JFrame owner) {
@@ -270,8 +268,8 @@ public class SettingsGUI extends JDialog {
 		GBC gbc_eolh = GBC.eol().fill(GBC.HORIZONTAL);
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("Network connections"));
-		threadCount = new JComboBox(threadNumbers);
-		threadCount.setMaximumRowCount(threadNumbers.size());
+		threadCount = new JComboBox(THREADCOUNT_LIST);
+		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
 		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC
 				.std().fill(GBC.HORIZONTAL));
@@ -318,7 +316,7 @@ public class SettingsGUI extends JDialog {
 		if (index < 0)
 			index = 0;
 		mapSize.setSelectedIndex(index);
-		index = threadNumbers.indexOf(s.getThreadCount());
+		index = Arrays.binarySearch(THREADCOUNT_LIST, s.getThreadCount());
 		if (index < 0)
 			index = 0;
 		threadCount.setSelectedIndex(index);

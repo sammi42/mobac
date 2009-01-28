@@ -7,7 +7,8 @@ public class MapSources {
 
 	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapsChina(),
 			new GoogleEarth(), new GoogleTerrain(), new YahooMaps(), new Mapnik(),
-			new TilesAtHome(), new CycleMap(), new OutdooractiveCom() };
+			new TilesAtHome(), new CycleMap(), new MicrosoftMaps(), new MicrosoftVirtualEarth(),
+			new MicrosoftHybrid(), new OutdooractiveCom() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -48,15 +49,101 @@ public class MapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			int yahooTiley = (((1 << zoom) - 2) / 2) - tiley;
+			int yahooTileY = (((1 << zoom) - 2) / 2) - tiley;
 			int yahooZoom = getMaxZoom() - zoom + 2;
 			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex
-					+ "&y=" + yahooTiley + "+6163&z=" + yahooZoom;
+					+ "&y=" + yahooTileY + "+6163&z=" + yahooZoom;
 		}
 
 		@Override
 		public String toString() {
 			return getName();
+		}
+
+	}
+
+	public static abstract class Microsoft implements TileSource {
+
+		protected int serverNum = 0;
+		protected int serverNumMax = 4;
+		protected char mapTypeChar;
+		protected String tileType = "png";
+
+		public int getMaxZoom() {
+			return 19;
+		}
+
+		public int getMinZoom() {
+			return 1;
+		}
+
+		public String getTileType() {
+			return tileType;
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.None;
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String t = "";
+			for (int i = 0; i < zoom; i++) {
+				int num = (tilex % 2) | ((tiley % 2) << 1);
+				t = num + t;
+				tilex >>= 1;
+				tiley >>= 1;
+			}
+			t = "http://" + mapTypeChar + serverNum + ".ortho.tiles.virtualearth.net/tiles/"
+					+ mapTypeChar + t + "." + tileType + "?g=45";
+			return t;
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
+
+	public static class MicrosoftMaps extends Microsoft {
+
+		public MicrosoftMaps() {
+			super();
+			mapTypeChar = 'r';
+		}
+
+		public String getName() {
+			return "Microsoft Maps";
+		}
+	}
+
+	public static class MicrosoftVirtualEarth extends Microsoft {
+
+		public MicrosoftVirtualEarth() {
+			super();
+			mapTypeChar = 'a';
+			tileType = "jpeg";
+		}
+
+		public String getName() {
+			return "Microsoft Virtual Earth";
+		}
+	}
+
+	public static class MicrosoftHybrid extends Microsoft {
+
+		public MicrosoftHybrid() {
+			super();
+			mapTypeChar = 'h';
+			tileType = "jpeg";
+		}
+
+		public String getName() {
+			return "Microsoft Hybrid";
+		}
+
+		@Override
+		public String toString() {
+			return "Microsoft Maps/Earth Hybrid";
 		}
 
 	}
@@ -151,6 +238,36 @@ public class MapSources {
 			return "png";
 		}
 
+	}
+
+	public static class GoogleHybrid extends GoogleSource {
+
+		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2t.87&hl=%s&x=%d&y=%d&z=%d";
+
+		public int getMaxZoom() {
+			return 17;
+		}
+
+		public String getName() {
+			return "Google Hybrid";
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.IfModifiedSince;
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
+		}
+
+		public String getTileType() {
+			return "jpg";
+		}
+
+		@Override
+		public String toString() {
+			return "Google Maps/Earth Hybrid";
+		}
 	}
 
 	public static class GoogleTerrain extends GoogleSource {

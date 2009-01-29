@@ -24,6 +24,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.mapsources.Google.GoogleMaps;
 import tac.program.EastNorthCoordinate;
 import tac.program.MapSelection;
 import tac.program.Settings;
@@ -80,7 +81,7 @@ public class PreviewMap extends JMapViewer {
 		gridSizeSelector.setBounds(40, 10, size.width, size.height);
 		add(gridSizeSelector);
 		new PreviewMapController(this);
-		setTileSource(new MapSources.GoogleMaps());
+		setTileSource(new GoogleMaps());
 	}
 
 	public void setDisplayPositionByLatLon(EastNorthCoordinate c, int zoom) {

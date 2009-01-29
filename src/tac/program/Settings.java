@@ -13,7 +13,8 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
-import tac.gui.preview.MapSources;
+import tac.mapsources.MapSources;
+import tac.mapsources.Google.GoogleSource;
 import tac.utilities.Utilities;
 
 public class Settings {
@@ -60,7 +61,7 @@ public class Settings {
 	private String userAgent = UserAgent.FF2_XP;
 
 	private int threadCount = 4;
-	
+
 	private int tileHeight = 256;
 	private int tileWidth = 256;
 
@@ -70,7 +71,7 @@ public class Settings {
 	private String googleLanguage = "en";
 
 	private boolean devMode = false;
-	
+
 	private Settings() {
 	}
 
@@ -164,7 +165,7 @@ public class Settings {
 
 			if (devMode)
 				p.setBooleanProperty(DEVMODE, devMode);
-			
+
 			p.setDouble6Property(SELECTION_LAT_MAX, selectionMax.lat);
 			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
 			p.setDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
@@ -267,7 +268,7 @@ public class Settings {
 
 	public void setGoogleLanguage(String googleLanguage) {
 		this.googleLanguage = googleLanguage;
-		MapSources.GoogleSource.LANG = googleLanguage;
+		GoogleSource.LANG = googleLanguage;
 	}
 
 	public int getConnectionTimeout() {

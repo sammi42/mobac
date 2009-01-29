@@ -38,8 +38,8 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.preview.MapSelectionListener;
-import tac.gui.preview.MapSources;
 import tac.gui.preview.PreviewMap;
+import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
 import tac.program.EastNorthCoordinate;
 import tac.program.MapSelection;

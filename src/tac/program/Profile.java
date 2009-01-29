@@ -1,6 +1,6 @@
 package tac.program;
 
-import tac.gui.preview.MapSources;
+import tac.mapsources.MapSources;
 
 public class Profile {
 

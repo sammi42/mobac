@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.StartTAC;
-import tac.gui.preview.MapSources;
+import tac.mapsources.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
 import tac.utilities.GBC;

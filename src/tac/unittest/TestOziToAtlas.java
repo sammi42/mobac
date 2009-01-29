@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import tac.gui.preview.MapSources;
+import tac.mapsources.MapSources;
 import tac.program.OziToAtlas;
 import tac.program.model.SubMapProperties;
 

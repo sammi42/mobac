@@ -67,7 +67,7 @@ public class MapSources {
 		protected int serverNum = 0;
 		protected int serverNumMax = 4;
 		protected char mapTypeChar;
-		protected String tileType = "png";
+		protected String tileType = "jpeg";
 
 		public int getMaxZoom() {
 			return 19;
@@ -78,7 +78,7 @@ public class MapSources {
 		}
 
 		public String getTileType() {
-			return tileType;
+			return "jpg";
 		}
 
 		public TileUpdate getTileUpdate() {
@@ -109,11 +109,18 @@ public class MapSources {
 		public MicrosoftMaps() {
 			super();
 			mapTypeChar = 'r';
+			tileType = "png";
 		}
 
 		public String getName() {
 			return "Microsoft Maps";
 		}
+
+		@Override
+		public String getTileType() {
+			return "png";
+		}
+		
 	}
 
 	public static class MicrosoftVirtualEarth extends Microsoft {

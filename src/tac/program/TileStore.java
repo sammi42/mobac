@@ -72,13 +72,13 @@ public class TileStore {
 		File f = getTileFile(x, y, zoom, tileSource);
 		return f.exists();
 	}
-	
+
 	public long getStoreSize(TileSource tileSource) {
 		long size = 0;
-		
-		File tileStore = new File(tileStorePath + tileSource.getName());
-				
-		if(tileStore.exists()) {
+
+		File tileStore = new File(tileStorePath, tileSource.getName());
+
+		if (tileStore.exists()) {
 			for (File f : tileStore.listFiles()) {
 				size += f.length();
 			}
@@ -87,19 +87,19 @@ public class TileStore {
 			return size;
 		}
 	}
-	
+
 	public void clearStore(TileSource tileSource) {
-		File tileStore = new File(tileStorePath + tileSource.getName());
-				
-		if(tileStore.exists()) {
-			
-			File [] files = tileStore.listFiles(); 
+		File tileStore = new File(tileStorePath, tileSource.getName());
+
+		if (tileStore.exists()) {
+
+			File[] files = tileStore.listFiles();
 			if (files.length > 0) {
-	
+
 				boolean deleted = false;
-	
-				for (int i = 0; i < files.length; i++ ) {
-					while(!deleted) {
+
+				for (int i = 0; i < files.length; i++) {
+					while (!deleted) {
 						deleted = files[i].delete();
 					}
 					deleted = false;
@@ -141,7 +141,7 @@ public class TileStore {
 
 		public boolean accept(File dir, String name) {
 			Matcher m = p.matcher(name);
-			return m.find();
+			return m.matches();
 		}
 	}
 }

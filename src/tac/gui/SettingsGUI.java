@@ -8,11 +8,9 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -32,7 +30,6 @@ import javax.swing.border.EmptyBorder;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-import tac.StartTAC;
 import tac.mapsources.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
@@ -148,7 +145,7 @@ public class SettingsGUI extends JDialog {
 		JPanel backGround = createNewTab("Tile store");
 		backGround.setLayout(new BorderLayout());
 
-		tileStoreEnabled = new JCheckBox("Enable tile store");
+		tileStoreEnabled = new JCheckBox("Enable tile store for atlas download");
 
 		JPanel tileStorePanel = new JPanel(new BorderLayout());
 		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
@@ -192,16 +189,7 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
 		tileStoreInfoPanel.add(new JLabel("<html><b>Size</b></html>"), gbc_eol);
 
-		InputStream imageStream = null;
-		ImageIcon trash = new ImageIcon();
-		try {
-			imageStream = StartTAC.class.getResourceAsStream("images/trash.png");
-			trash.setImage(ImageIO.read(imageStream));
-		} catch (Exception e) {
-			log.error("An error occured while loading trash icon:", e);
-		} finally {
-			Utilities.closeStream(imageStream);
-		}
+		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
 		long totalTileCount = 0;
 		long totalTileSize = 0;

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -24,9 +25,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
+import tac.StartTAC;
 import tac.program.Profile;
 import tac.program.Settings;
 
@@ -52,6 +55,17 @@ public class Utilities {
 		}
 		regex = "[" + regex + "]";
 		return Pattern.compile(regex);
+	}
+
+	/**
+	 * 
+	 * @param imagePath
+	 *            imagePath resource path relative to the class {@link StartTAC}
+	 * @return
+	 */
+	public static ImageIcon loadResourceImageIcon(String imagePath) {
+		URL url = StartTAC.class.getResource("images/" + imagePath);
+		return new ImageIcon(url);
 	}
 
 	public static void closeStream(InputStream in) {

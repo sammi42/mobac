@@ -96,7 +96,7 @@ public class MapCreatorCustomTileSize extends MapCreator {
 						BufferedImage.TYPE_3BYTE_BGR);
 				try {
 					Graphics2D graphics = tileImage.createGraphics();
-					File fDest = new File(setFolder, layerName + "_" + xRelPos + "_" + yRelPos
+					File fDest = new File(setFolder, "t_" + xRelPos + "_" + yRelPos
 							+ "." + tileSource.getTileType());
 					log.trace("Creating tile " + fDest.getName());
 					paintCustomTile(graphics, xAbsPos, yAbsPos);

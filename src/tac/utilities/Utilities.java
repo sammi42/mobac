@@ -20,9 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -35,27 +32,10 @@ import tac.program.Settings;
 
 public class Utilities {
 
-	public static final int COORD_KIND_LATTITUDE = 1;
-	public static final int COORD_KIND_LONGITUDE = 2;
-	private static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
+	public static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
 	public static final NumberFormat FORMAT_2_DEC = new DecimalFormat("0.00");
-
-	public static final Pattern VALID_FILENAME_PATTERN = buildDisallowedCharatersPattern();
-
-	private static Pattern buildDisallowedCharatersPattern() {
-		char[] disallowedChars = new char[] { '/', '\\', ':', '<', '>', '|', '*', '?', '\"', ',',
-				'.' };
-		String regex = "";
-		for (int i = 0; i < disallowedChars.length; i++) {
-			// We are dealing with special characters
-			// better we escape each disallowed character...
-			regex += "\\" + disallowedChars[i];
-		}
-		regex = "[" + regex + "]";
-		return Pattern.compile(regex);
-	}
 
 	/**
 	 * 
@@ -131,20 +111,6 @@ public class Utilities {
 		return FORMAT_2_DEC.format(bytes / 1073741824d) + " GiByte";
 	}
 
-	public static int validateString(String theStringToValidate) {
-
-		int isValid = -1;
-
-		Matcher m = VALID_FILENAME_PATTERN.matcher(theStringToValidate);
-		if (m.find()) {
-			MatchResult mr = m.toMatchResult();
-			char match = theStringToValidate.charAt(mr.start());
-			return match;
-		}
-
-		return isValid;
-	}
-
 	public static void fileCopy(File sourceFile, File destFile) throws IOException {
 
 		FileChannel source = null;
@@ -171,89 +137,6 @@ public class Utilities {
 				destination.close();
 			}
 		}
-	}
-
-	public static String prepareMapString(String fileName, double longitudeMin,
-			double longitudeMax, double latitudeMin, double latitudeMax, int width, int height) {
-
-		StringBuffer sbMap = new StringBuffer();
-
-		sbMap.append("OziExplorer Map Data File Version 2.2\r\n");
-		sbMap.append(fileName + "\r\n");
-		sbMap.append(fileName + "\r\n");
-		sbMap.append("1 ,Map Code,\r\n");
-		sbMap.append("WGS 84,WGS 84,   0.0000,   0.0000,WGS 84\r\n");
-		sbMap.append("Reserved 1\r\n");
-		sbMap.append("Reserved 2\r\n");
-		sbMap.append("Magnetic Variation,,,E\r\n");
-		sbMap.append("Map Projection,Mercator,PolyCal,No," + "AutoCalOnly,No,BSBUseWPX,No\r\n");
-
-		sbMap.append("Point01,xy,    0,    0,in, deg,"
-				+ getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point02,xy," + (width - 1) + ",0,in, deg,"
-				+ getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point03,xy,    0," + (height - 1) + ",in, deg,"
-				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point04,xy," + (width - 1) + "," + (height - 1) + ",in, deg,"
-				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		String emptyPointLine = "Point%02d,xy,     ,     ,"
-				+ "in, deg,    ,        ,N,    ,        ,W, "
-				+ "grid,   ,           ,           ,N\r\n";
-		for (int i = 5; i <= 30; i++) {
-			String s = String.format(emptyPointLine, new Object[] { i });
-			sbMap.append(s);
-		}
-		sbMap.append("Projection Setup,,,,,,,,,,\r\n");
-		sbMap.append("Map Feature = MF ; Map Comment = MC     " + "These follow if they exist\r\n");
-		sbMap.append("Track File = TF      These follow if they exist\r\n");
-		sbMap.append("Moving Map Parameters = MM?    " + "These follow if they exist\r\n");
-
-		sbMap.append("MM0,Yes\r\n");
-		sbMap.append("MMPNUM,4\r\n");
-		sbMap.append("MMPXY,1,0,0\r\n");
-		sbMap.append("MMPXY,2," + (width - 1) + ",0\r\n");
-		sbMap.append("MMPXY,3,0," + (height - 1) + "\r\n");
-		sbMap.append("MMPXY,4," + (width - 1) + "," + (height - 1) + "\r\n");
-		sbMap.append("MMPLL,1,  " + FORMAT_6_DEC_ENG.format(longitudeMin) + ","
-				+ FORMAT_6_DEC_ENG.format(latitudeMax) + "\r\n");
-		sbMap.append("MMPLL,2,  " + FORMAT_6_DEC_ENG.format(longitudeMax) + ","
-				+ FORMAT_6_DEC_ENG.format(latitudeMax) + "\r\n");
-		sbMap.append("MMPLL,3,  " + FORMAT_6_DEC_ENG.format(longitudeMin) + ","
-				+ FORMAT_6_DEC_ENG.format(latitudeMin) + "\r\n");
-		sbMap.append("MMPLL,4,  " + FORMAT_6_DEC_ENG.format(longitudeMax) + ","
-				+ FORMAT_6_DEC_ENG.format(latitudeMin) + "\r\n");
-
-		sbMap.append("IWH,Map Image Width/Height," + width + "," + height + "\r\n");
-
-		return sbMap.toString();
-	}
-
-	private static String getDegMinFormat(double coord, int COORD_KIND) {
-
-		boolean neg = coord < 0.0 ? true : false;
-		int deg = (int) coord;
-		double min = (coord - deg) * 60;
-
-		StringBuffer sbOut = new StringBuffer();
-		sbOut.append((int) Math.abs(deg));
-		sbOut.append(",");
-		sbOut.append(FORMAT_6_DEC_ENG.format(Math.abs(min)));
-		sbOut.append(",");
-
-		if (COORD_KIND == COORD_KIND_LATTITUDE) {
-			sbOut.append(neg ? "S" : "N");
-		} else {
-			sbOut.append(neg ? "W" : "E");
-		}
-		return sbOut.toString();
 	}
 
 	public static boolean deleteDirectory(File path) {

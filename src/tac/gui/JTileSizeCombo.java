@@ -16,6 +16,8 @@ import tac.program.Logging;
 
 public class JTileSizeCombo extends JComboBox {
 
+	private static final long serialVersionUID = 1L;
+
 	static Vector<Integer> TILE_SIZE_VALUES;
 
 	static Integer DEFAULT;

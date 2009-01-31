@@ -222,7 +222,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 							return;
 					}
 				}
-
+				ap.updateLayerProgressBar(apMax);
+				
 				File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
 						atlasName, zoom }));
 				atlasFolder.mkdir();

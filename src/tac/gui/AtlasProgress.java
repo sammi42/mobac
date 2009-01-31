@@ -17,7 +17,6 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,7 +38,7 @@ import tac.utilities.Utilities;
  * processes the map tiles.
  * 
  */
-public class AtlasProgress extends JFrame {
+public class AtlasProgress extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 3159146939361532653L;
 
@@ -129,17 +128,18 @@ public class AtlasProgress extends JFrame {
 		activeDownloads = new JLabel("Active Downloads");
 		activeDownloadsValue = new JLabel();
 		downloadErrors = new JLabel("Download errors");
-		downloadErrors.setToolTipText("<html>Download errors for the current layer (retryable/permanent):<br>"
-				+ "TAC tries to retry failed tile downloads up to three times.<br>"
-				+ "For each failed try the retryable counter increases by one.<br>"
-				+ "If the tile downloads fails the third time the tile will be counted as "
-				+ "permanent error.</html>");
+		downloadErrors
+				.setToolTipText("<html>Download errors for the current layer (retryable/permanent):<br>"
+						+ "TAC tries to retry failed tile downloads up to three times.<br>"
+						+ "For each failed try the retryable counter increases by one.<br>"
+						+ "If the tile downloads fails the third time the tile will be counted as "
+						+ "permanent error.</html>");
 		downloadErrorsValue = new JLabel();
 		downloadErrorsValue.setToolTipText(downloadErrors.getToolTipText());
 		totalDownloadTime = new JLabel("Total download time");
 		totalDownloadTimeValue = new JLabel();
 
-		abortAtlasDownloadButton = new JButton("Abort");
+		abortAtlasDownloadButton = new JButton("Abort Download");
 		abortAtlasDownloadButton.setToolTipText("Abort current Atlas download");
 		abortAtlasDownloadButton.setEnabled(true);
 		dismissWindowButton = new JButton("wait..");
@@ -212,9 +212,9 @@ public class AtlasProgress extends JFrame {
 		add(borderPanel, GBC.std().fill());
 		setUndecorated(true);
 
-		abortAtlasDownloadButton.addActionListener(new JButtonListener());
-		dismissWindowButton.addActionListener(new JButtonListener());
-		openProgramFolderButton.addActionListener(new JButtonListener());
+		abortAtlasDownloadButton.addActionListener(this);
+		dismissWindowButton.addActionListener(this);
+		openProgramFolderButton.addActionListener(this);
 
 		// Initialize the layout in respect to the layout (font size ...)
 		pack();
@@ -376,11 +376,11 @@ public class AtlasProgress extends JFrame {
 
 		setTitle("Download finished");
 
-		dismissWindowButton.setText("Close");
-		dismissWindowButton.setToolTipText("Close ATLAS DOWNLOAD INFORMATION window");
+		dismissWindowButton.setText("Close Window");
+		dismissWindowButton.setToolTipText("Close atlas download progress window");
 		dismissWindowButton.setEnabled(true);
 
-		openProgramFolderButton.setText("Open");
+		openProgramFolderButton.setText("Open Atlas Folder");
 		openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
 		openProgramFolderButton.setEnabled(true);
 	}
@@ -463,31 +463,21 @@ public class AtlasProgress extends JFrame {
 		numberOfDownloadedBytes += bytes;
 	}
 
-	private class JButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			String actionCommand = e.getActionCommand();
-
-			if (actionCommand.equals("Open")) {
-
-				try {
-					String strCmd = "rundll32 url.dll,FileProtocolHandler" + " "
-							+ System.getProperty("user.dir");
-					Runtime.getRuntime().exec(strCmd);
-				}
-
-				catch (IOException ioe) {
-				}
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if (openProgramFolderButton.equals(source)) {
+			try {
+				String strCmd = "rundll32 url.dll,FileProtocolHandler" + " "
+						+ System.getProperty("user.dir");
+				Runtime.getRuntime().exec(strCmd);
+			} catch (Exception ex) {
 			}
-
-			else if (actionCommand.equals("Close")) {
-				abortListener = null;
-				closeWindow();
-			}
-
-			else if (actionCommand.equals("Abort")) {
-				if (abortListener != null)
-					abortListener.actionPerformed(null);
-			}
+		} else if (dismissWindowButton.equals(source)) {
+			abortListener = null;
+			closeWindow();
+		} else if (abortAtlasDownloadButton.equals(source)) {
+			if (abortListener != null)
+				abortListener.actionPerformed(null);
 		}
 	}
 

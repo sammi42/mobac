@@ -14,6 +14,8 @@ import javax.swing.text.PlainDocument;
  */
 public class JAtlasNameField extends JTextField {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final Pattern NAME_PATTERN = Pattern.compile("[\\w ]*");
 
 	public JAtlasNameField() {
@@ -22,6 +24,8 @@ public class JAtlasNameField extends JTextField {
 	}
 
 	public class AtlasNameDocument extends PlainDocument {
+
+		private static final long serialVersionUID = 1L;
 
 		public void insertString(int offset, String str, AttributeSet attr)
 				throws BadLocationException {

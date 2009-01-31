@@ -538,18 +538,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 					+ " and " + JTileSizeField.MAX + " \n";
 
 		if (isCreateAtlasValidate) {
-
 			if (atlasNameTextField.getText().length() < 1) {
 				errorText += "A value of \"Atlas name\" must be entered \n";
-			} else {
-
-				int result = -1;
-
-				result = Utilities.validateString(atlasNameTextField.getText());
-
-				if (result > -1) {
-					errorText += "Atlas name contains illegal characters (" + (char) result + ")\n";
-				}
 			}
 		}
 

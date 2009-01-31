@@ -68,6 +68,7 @@ public class JTileSizeField extends JTextField {
 	}
 
 	public class NumericDocument extends PlainDocument {
+		private static final long serialVersionUID = 1L;
 		public static final String NUMERIC = "0123456789";
 
 		public void insertString(int offset, String str, AttributeSet attr)

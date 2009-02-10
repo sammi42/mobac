@@ -21,11 +21,15 @@ import tac.utilities.MyMath;
  */
 public class MapCreatorCustomTileSize extends MapCreator {
 
+	private int tileSizeWidth;
+	private int tileSizeHeight;
+
 	public MapCreatorCustomTileSize(SubMapProperties smp, File oziFolder, File atlasFolder,
 			String mapName, TileSource tileSource, int zoom, int mapNumber, int tileSizeWidth,
 			int tileSizeHeight) {
-		super(smp, oziFolder, atlasFolder, mapName, tileSource, zoom, mapNumber, tileSizeWidth,
-				tileSizeHeight);
+		super(smp, oziFolder, atlasFolder, mapName, tileSource, zoom, mapNumber);
+		this.tileSizeWidth = tileSizeWidth;
+		this.tileSizeHeight = tileSizeHeight;
 	}
 
 	/**
@@ -96,8 +100,8 @@ public class MapCreatorCustomTileSize extends MapCreator {
 						BufferedImage.TYPE_3BYTE_BGR);
 				try {
 					Graphics2D graphics = tileImage.createGraphics();
-					File fDest = new File(setFolder, "t_" + xRelPos + "_" + yRelPos
-							+ "." + tileSource.getTileType());
+					File fDest = new File(setFolder, "t_" + xRelPos + "_" + yRelPos + "."
+							+ tileSource.getTileType());
 					log.trace("Creating tile " + fDest.getName());
 					paintCustomTile(graphics, xAbsPos, yAbsPos);
 					graphics.dispose();

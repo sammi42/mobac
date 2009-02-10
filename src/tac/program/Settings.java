@@ -31,6 +31,7 @@ public class Settings {
 	private static final String PREVIEW_LAT = "preview.lat";
 	private static final String PREVIEW_LON = "preview.lon";
 	private static final String MAPSOURCE = "mapsource";
+	private static final String TILE_CUSTOM = "tile.custom";
 	private static final String TILE_HEIGHT = "tile.height";
 	private static final String TILE_WIDTH = "tile.width";
 	private static final String ATLAS_NAME = "atlas.name";
@@ -62,6 +63,7 @@ public class Settings {
 
 	private int threadCount = 4;
 
+	private boolean customTileSize = false;
 	private int tileHeight = 256;
 	private int tileWidth = 256;
 
@@ -110,6 +112,7 @@ public class Settings {
 			p.loadFromXML(is);
 			threadCount = p.getIntProperty(THREAD_COUNT, threadCount);
 			connectionTimeout = p.getIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
+			customTileSize = p.getBooleanProperty(TILE_CUSTOM, false);
 			tileHeight = p.getIntProperty(TILE_HEIGHT, tileHeight);
 			tileWidth = p.getIntProperty(TILE_WIDTH, tileWidth);
 			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
@@ -151,6 +154,7 @@ public class Settings {
 			p.setIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
 			p.setIntProperty(MAPS_MAXSIZE, maxMapSize);
 			p.setIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
+			p.setBooleanProperty(TILE_CUSTOM, customTileSize);
 			p.setIntProperty(TILE_HEIGHT, tileHeight);
 			p.setIntProperty(TILE_WIDTH, tileWidth);
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
@@ -277,6 +281,15 @@ public class Settings {
 
 	public void setConnectionTimeout(int connectionTimeout) {
 		this.connectionTimeout = connectionTimeout;
+	}
+
+	
+	public boolean isCustomTileSize() {
+		return customTileSize;
+	}
+
+	public void setCustomTileSize(boolean customTileSize) {
+		this.customTileSize = customTileSize;
 	}
 
 	public int getTileHeight() {

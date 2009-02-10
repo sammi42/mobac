@@ -37,6 +37,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private TileSource tileSource;
 	private String atlasName;
 	private SelectedZoomLevels sZL;
+	private boolean customTileSize;
 	private int tileSizeWidth = 0;
 	private int tileSizeHeight = 0;
 
@@ -47,12 +48,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private int jobsPermanentError = 0;
 
 	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
-			SelectedZoomLevels sZL, int tileSizeWidth, int tileSizeHeight) {
+			SelectedZoomLevels sZL, boolean customTileSize, int tileSizeWidth, int tileSizeHeight) {
 		super("AtlasThread " + getNextThreadNum());
 		this.tileSource = tileSource;
 		this.atlasName = atlasName;
 		this.mapSelection = mapSelection;
 		this.sZL = sZL;
+		this.customTileSize = customTileSize;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
 	}
@@ -223,15 +225,15 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					}
 				}
 				ap.updateLayerProgressBar(apMax);
-				
+
 				File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
 						atlasName, zoom }));
 				atlasFolder.mkdir();
 
 				log.debug("Starting to create atlas from downloaded tiles");
 
-				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, tileSizeWidth,
-						tileSizeHeight, atlasName, tileSource, zoom);
+				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, customTileSize,
+						tileSizeWidth, tileSizeHeight, atlasName, tileSource, zoom);
 				ota.convert(xMax, xMin, yMax, yMin);
 
 				ap.updateAtlasProgressBarLayerText(layer + 1);

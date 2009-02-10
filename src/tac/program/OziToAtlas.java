@@ -24,17 +24,19 @@ public class OziToAtlas {
 
 	private File oziFolder;
 	private File atlasFolder;
+	private boolean customTileSize;
 	private int tileSizeWidth;
 	private int tileSizeHeight;
 	private String mapName;
 	private TileSource tileSource;
 	private int zoom;
 
-	public OziToAtlas(File oziFolder, File atlasFolder, int tileSizeWidth, int tileSizeHeight,
-			String mapName, TileSource tileSource, int zoom) {
+	public OziToAtlas(File oziFolder, File atlasFolder, boolean customTileSize, int tileSizeWidth,
+			int tileSizeHeight, String mapName, TileSource tileSource, int zoom) {
 
 		this.oziFolder = oziFolder;
 		this.atlasFolder = atlasFolder;
+		this.customTileSize = customTileSize;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
 		this.mapName = mapName;
@@ -56,9 +58,9 @@ public class OziToAtlas {
 
 		for (SubMapProperties smp : subMaps) {
 			MapCreator mc;
-			if (tileSizeWidth == 256 && tileSizeHeight == 256)
+			if (!customTileSize)
 				mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, tileSource, zoom,
-						mapNumber, tileSizeWidth, tileSizeHeight);
+						mapNumber);
 			else
 				mc = new MapCreatorCustomTileSize(smp, oziFolder, atlasFolder, mapName, tileSource,
 						zoom, mapNumber, tileSizeWidth, tileSizeHeight);

@@ -41,8 +41,6 @@ public class MapCreator {
 	protected File oziFolder;
 	protected File atlasLayerFolder;
 	protected int zoom;
-	protected int tileSizeWidth;
-	protected int tileSizeHeight;
 	protected TileSource tileSource;
 
 	protected HashMap<String, File> tilesInFileFormat;
@@ -51,7 +49,7 @@ public class MapCreator {
 	protected String layerName;
 
 	public MapCreator(SubMapProperties smp, File oziFolder, File atlasFolder, String mapName,
-			TileSource tileSource, int zoom, int mapNumber, int tileSizeWidth, int tileSizeHeight) {
+			TileSource tileSource, int zoom, int mapNumber) {
 		log = Logger.getLogger(this.getClass());
 		xMin = smp.getXMin();
 		xMax = smp.getXMax();
@@ -60,14 +58,10 @@ public class MapCreator {
 		this.tileSource = tileSource;
 		this.oziFolder = oziFolder;
 		this.zoom = zoom;
-		this.tileSizeWidth = tileSizeWidth;
-		this.tileSizeHeight = tileSizeHeight;
 		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
 		tilesInFileFormat = new HashMap<String, File>();
 		setFiles = new LinkedList<String>();
 		atlasLayerFolder = new File(atlasFolder, layerName);
-		log.debug("Creating map \"" + layerName + "\" (" + smp + ") tileSize (" + tileSizeWidth
-				+ "/" + tileSizeHeight + ")");
 	}
 
 	public void createMap() {

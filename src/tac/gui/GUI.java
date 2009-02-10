@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.preview.MapSelectionListener;
@@ -100,6 +101,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private JCheckBox[] cbZoom = new JCheckBox[0];
 
+	private JCheckBox cbEnableCustomTileSize;
 	private JTileSizeCombo tileSizeWidthComboBox;
 	private JTileSizeCombo tileSizeHeightComboBox;
 	private JComboBox mapSource;
@@ -227,6 +229,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		JLabel tileSizeWidth = new JLabel("Width:");
 
+		cbEnableCustomTileSize = new JCheckBox("Recreate/adjust map tiles (CPU intensive)");
+		cbEnableCustomTileSize.setToolTipText("<html>If this option is disabled each "
+				+ "map tile (size: 256x256) is used axactly as downloaded "
+				+ "from the server (faster).<br>"
+				+ "Otherwise each tile is newly created which allows to "
+				+ "use custom tile size (slower / CPU intensive).</html>");
+
 		tileSizeWidthComboBox = new JTileSizeCombo();
 		tileSizeWidthComboBox.setToolTipText("Width");
 
@@ -239,6 +248,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 		// GBC gbc_hspace = GBC.std().fill(GBC.HORIZONTAL);
 
+		tileSizePanel.add(cbEnableCustomTileSize, gbc_eol);
 		tileSizePanel.add(tileSizeWidth, gbc_std);
 		tileSizePanel.add(tileSizeWidthComboBox, gbc_std);
 		tileSizePanel.add(tileSizeHeight, gbc_std);
@@ -419,13 +429,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		deleteProfileButton.addActionListener(bl);
 		settingsGUIButton.addActionListener(bl);
 		createAtlasButton.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				createAtlas();
 			}
 		});
 		previewSelectionButton.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				previewSelection();
 			}
@@ -435,6 +443,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 		JListListener jll = new JListListener();
 		profilesJList.addListSelectionListener(jll);
 		profilesJList.addMouseListener(jll);
+		cbEnableCustomTileSize.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateCustomTileSizeControlsState();
+			}
+		});
+	}
+
+	protected void updateCustomTileSizeControlsState() {
+		boolean b = cbEnableCustomTileSize.isSelected();
+		tileSizeHeightComboBox.setEnabled(b);
+		tileSizeWidthComboBox.setEnabled(b);
 	}
 
 	/**
@@ -495,9 +514,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
+		cbEnableCustomTileSize.setSelected(settings.isCustomTileSize());
 		tileSizeHeightComboBox.setTileSize(settings.getTileHeight());
 		tileSizeWidthComboBox.setTileSize(settings.getTileWidth());
 		updateProfilesList();
+		updateCustomTileSizeControlsState();
 		UpdateGUI.updateAllUIs();
 	}
 
@@ -646,6 +667,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 				s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
 						lonMinTextField.getCoordinateOrNaN()));
 
+				s.setCustomTileSize(cbEnableCustomTileSize.isSelected());
 				s.setTileWidth(getTileSizeWidth());
 				s.setTileHeight(getTileSizeHeight());
 
@@ -678,15 +700,23 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		if (maxIsBiggerThanMin) {
 
-			int tileSizeWidth = getTileSizeWidth();
-			int tileSizeHeight = getTileSizeHeight();
+			// by default width & height are zero = do not process tiles with
+			// tile size 256x256
+			int tileSizeWidth = Tile.SIZE;
+			int tileSizeHeight = Tile.SIZE;
+			boolean customTileSize = cbEnableCustomTileSize.isSelected();
+			if (customTileSize) {
+				tileSizeWidth = getTileSizeWidth();
+				tileSizeHeight = getTileSizeHeight();
+			}
 
 			try {
 				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
 				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
 						.getMinZoom(), cbZoom);
 				Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
-						getMapSelectionCoordinates(), sZL, tileSizeWidth, tileSizeHeight);
+						getMapSelectionCoordinates(), sZL, customTileSize, tileSizeWidth,
+						tileSizeHeight);
 				atlasThread.start();
 			} catch (Exception e) {
 				log.error("", e);

@@ -80,17 +80,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JButton previewSelectionButton;
 	private JButton settingsGUIButton;
 
-	private JToggleButton chooseProfileButton;
+	private JToggleButton toggleLockProfile;
 
-	private JLabel coordinatesLabel;
 	private JLabel latMinLabel;
 	private JLabel latMaxLabel;
 	private JLabel lonMinLabel;
 	private JLabel lonMaxLabel;
 	private JLabel zoomLevelLabel;
-	private JLabel tileSizeLabel;
-	private JLabel atlasNameLabel;
-	private JLabel profilesLabel;
 	private JLabel amountOfTilesLabel;
 
 	private JCoordinateField latMinTextField;
@@ -102,8 +98,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JCheckBox[] cbZoom = new JCheckBox[0];
 
 	private JCheckBox cbEnableCustomTileSize;
-	private JTileSizeCombo tileSizeWidthComboBox;
-	private JTileSizeCombo tileSizeHeightComboBox;
+	private JLabel tileSizeWidthLabel;
+	private JLabel tileSizeHeightLabel;
+	private JTileSizeCombo tileSizeWidth;
+	private JTileSizeCombo tileSizeHeight;
 	private JComboBox mapSource;
 
 	private Vector<Profile> profilesVector = new Vector<Profile>();
@@ -142,14 +140,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
 
-		coordinatesLabel = new JLabel("COORDINATES");
-
 		// Coordinates Panel
-
 		GridBagLayout gbl = new GridBagLayout();
 		coordinatesPanel = new JPanel(gbl);
 
-		coordinatesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		coordinatesPanel.setBorder(BorderFactory.createTitledBorder("Coordinates"));
 
 		latMaxLabel = new JLabel("Latitude Max", JLabel.CENTER);
 
@@ -175,6 +170,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		GBC gbc_eolcf = GBC.eol().fill(GBC.HORIZONTAL).anchor(GBC.CENTER);
 		GBC gbc_eolc = GBC.eol().anchor(GBC.CENTER).insets(2, 2, 2, 2);
+		GBC gbc_fill = GBC.std().insets(2, 2, 2, 2).fill();
 
 		JPanel latMaxPanel = new JPanel(new GridBagLayout());
 		latMaxPanel.add(latMaxLabel, gbc_eolc);
@@ -202,7 +198,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		coordinatesPanel.add(previewSelectionButton, gbc_eolcf.fill(GBC.NONE).insets(20, 5, 20, 5));
 
+		JPanel mapSourcePanel = new JPanel(new GridBagLayout());
+		mapSourcePanel.setBorder(BorderFactory.createTitledBorder("Map source"));
+
 		mapSource = new JComboBox(MapSources.getMapSources());
+		mapSourcePanel.add(mapSource, gbc_fill);
 		mapSource.setMaximumRowCount(15);
 		mapSource.addActionListener(new ActionListener() {
 
@@ -222,12 +222,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		zoomLevelPanel = new JPanel();
 		zoomLevelPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-		tileSizeLabel = new JLabel("Tile size (pixels)");
-
 		tileSizePanel = new JPanel(new GridBagLayout());
-		tileSizePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		tileSizePanel.setBorder(BorderFactory.createTitledBorder("Tile size (pixels)"));
 
-		JLabel tileSizeWidth = new JLabel("Width:");
+		tileSizeWidthLabel = new JLabel("Width:");
 
 		cbEnableCustomTileSize = new JCheckBox("Recreate/adjust map tiles (CPU intensive)");
 		cbEnableCustomTileSize.setToolTipText("<html>If this option is disabled each "
@@ -236,33 +234,30 @@ public class GUI extends JFrame implements MapSelectionListener {
 				+ "Otherwise each tile is newly created which allows to "
 				+ "use custom tile size (slower / CPU intensive).</html>");
 
-		tileSizeWidthComboBox = new JTileSizeCombo();
-		tileSizeWidthComboBox.setToolTipText("Width");
+		tileSizeWidth = new JTileSizeCombo();
+		tileSizeWidth.setToolTipText("Width");
 
-		JLabel tileSizeHeight = new JLabel("Height:");
+		tileSizeHeightLabel = new JLabel("Height:");
 
-		tileSizeHeightComboBox = new JTileSizeCombo();
-		tileSizeHeightComboBox.setToolTipText("Height");
+		tileSizeHeight = new JTileSizeCombo();
+		tileSizeHeight.setToolTipText("Height");
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
-		// GBC gbc_hspace = GBC.std().fill(GBC.HORIZONTAL);
 
 		tileSizePanel.add(cbEnableCustomTileSize, gbc_eol);
+		tileSizePanel.add(tileSizeWidthLabel, gbc_std);
 		tileSizePanel.add(tileSizeWidth, gbc_std);
-		tileSizePanel.add(tileSizeWidthComboBox, gbc_std);
-		tileSizePanel.add(tileSizeHeight, gbc_std);
-		tileSizePanel.add(tileSizeHeightComboBox, gbc_eol);
-
-		atlasNameLabel = new JLabel("ATLAS NAME");
+		tileSizePanel.add(tileSizeHeightLabel, gbc_std);
+		tileSizePanel.add(tileSizeHeight, gbc_eol);
 
 		atlasNamePanel = new JPanel(new GridBagLayout());
-		atlasNamePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas name"));
 
 		atlasNameTextField = new JAtlasNameField();
 		atlasNameTextField.setActionCommand("atlasNameTextField");
 
-		atlasNamePanel.add(atlasNameTextField, GBC.std().insets(5, 5, 5, 5).fill());
+		atlasNamePanel.add(atlasNameTextField, gbc_fill);
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		if (Settings.getInstance().isDevModeEnabled()) {
@@ -290,13 +285,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 				}
 			});
 		}
-		profilesLabel = new JLabel("SAVED PROFILES");
-		profilesLabel.setBounds(5, 460, 100, 20);
-
-		chooseProfileButton = new JToggleButton("UNLOCK/LOCK");
+		toggleLockProfile = new JToggleButton("unlock / lock");
 
 		profilesPanel = new JPanel(new GridBagLayout());
-		profilesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		profilesPanel.setBorder(BorderFactory.createTitledBorder("Saved profiles"));
 
 		profilesJList = new JList();
 		profilesJList.setEnabled(false);
@@ -309,6 +301,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		deleteProfileButton = new JButton("Delete profile");
 
 		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
+		profilesPanel.add(toggleLockProfile, gbc);
 		profilesPanel.add(scrollPane, gbc);
 		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
 		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
@@ -318,24 +311,18 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		leftPanel.add(coordinatesLabel, gbc_eol);
 		leftPanel.add(coordinatesPanel, gbc_eol);
-		leftPanel.add(new JLabel("Map Source"), gbc_eol);
-		leftPanel.add(mapSource, gbc_eol);
+		leftPanel.add(mapSourcePanel, gbc_eol);
 		leftPanel.add(zoomLevelLabel, gbc_std);
 		leftPanel.add(amountOfTilesLabel, gbc_eol);
 		leftPanel.add(zoomLevelPanel, gbc_eol);
-		leftPanel.add(tileSizeLabel, gbc_eol);
 		leftPanel.add(tileSizePanel, gbc_eol);
-		leftPanel.add(atlasNameLabel, gbc_eol);
 		leftPanel.add(atlasNamePanel, gbc_eol);
 
 		// TODO Comment out the next line
 		if (Settings.getInstance().isDevModeEnabled())
 			leftPanel.add(atlasContentPanel, gbc_eol);
 
-		leftPanel.add(profilesLabel, gbc_eol);
-		leftPanel.add(chooseProfileButton, gbc_eol);
 		leftPanel.add(profilesPanel, gbc_eol);
 		leftPanel.add(settingsGUIButton, gbc_eol);
 		leftPanel.add(createAtlasButton, gbc_eol);
@@ -439,7 +426,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			}
 		});
 
-		chooseProfileButton.addActionListener(new JToggleButtonListener());
+		toggleLockProfile.addActionListener(new JToggleButtonListener());
 		JListListener jll = new JListListener();
 		profilesJList.addListSelectionListener(jll);
 		profilesJList.addMouseListener(jll);
@@ -452,8 +439,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	protected void updateCustomTileSizeControlsState() {
 		boolean b = cbEnableCustomTileSize.isSelected();
-		tileSizeHeightComboBox.setEnabled(b);
-		tileSizeWidthComboBox.setEnabled(b);
+		tileSizeWidthLabel.setEnabled(b);
+		tileSizeHeightLabel.setEnabled(b);
+		tileSizeHeight.setEnabled(b);
+		tileSizeWidth.setEnabled(b);
 	}
 
 	/**
@@ -515,8 +504,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
 		cbEnableCustomTileSize.setSelected(settings.isCustomTileSize());
-		tileSizeHeightComboBox.setTileSize(settings.getTileHeight());
-		tileSizeWidthComboBox.setTileSize(settings.getTileWidth());
+		tileSizeHeight.setTileSize(settings.getTileHeight());
+		tileSizeWidth.setTileSize(settings.getTileWidth());
 		updateProfilesList();
 		updateCustomTileSizeControlsState();
 		UpdateGUI.updateAllUIs();
@@ -550,11 +539,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		if (!latMinTextField.isInputValid())
 			errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
 
-		if (!tileSizeHeightComboBox.isTileSizeValid())
+		if (!tileSizeHeight.isTileSizeValid())
 			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeField.MIN
 					+ " and " + JTileSizeField.MAX + " \n";
 
-		if (!tileSizeWidthComboBox.isTileSizeValid())
+		if (!tileSizeWidth.isTileSizeValid())
 			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeField.MIN
 					+ " and " + JTileSizeField.MAX + " \n";
 
@@ -647,11 +636,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private int getTileSizeHeight() {
-		return tileSizeHeightComboBox.getTileSize();
+		return tileSizeHeight.getTileSize();
 	}
 
 	private int getTileSizeWidth() {
-		return tileSizeWidthComboBox.getTileSize();
+		return tileSizeWidth.getTileSize();
 	}
 
 	// WindowDestroyer
@@ -747,9 +736,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 			if (!ms.coordinatesAreValid())
 				errorDescription += "Coordinates are not all valid - please check";
 
-			if (!tileSizeWidthComboBox.isTileSizeValid())
+			if (!tileSizeWidth.isTileSizeValid())
 				errorDescription += "Invalid tile size width - please check\n";
-			if (!tileSizeHeightComboBox.isTileSizeValid())
+			if (!tileSizeHeight.isTileSizeValid())
 				errorDescription += "Invalid tile size height - please check\n";
 
 			if (errorDescription.length() > 0) {
@@ -772,8 +761,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 				}
 
 				profile.setZoomLevels(zoomLevels);
-				profile.setTileSizeWidth(tileSizeWidthComboBox.getTileSize());
-				profile.setTileSizeHeight(tileSizeHeightComboBox.getTileSize());
+				profile.setTileSizeWidth(tileSizeWidth.getTileSize());
+				profile.setTileSizeHeight(tileSizeHeight.getTileSize());
 
 				profilesVector.addElement(profile);
 				PersistentProfiles.store(profilesVector);
@@ -794,8 +783,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		lonMinTextField.setCoordinate(profile.getLongitudeMin());
 		lonMaxTextField.setCoordinate(profile.getLongitudeMax());
 
-		tileSizeWidthComboBox.setTileSize(profile.getTileSizeWidth());
-		tileSizeHeightComboBox.setTileSize(profile.getTileSizeHeight());
+		tileSizeWidth.setTileSize(profile.getTileSizeWidth());
+		tileSizeHeight.setTileSize(profile.getTileSizeHeight());
 
 		atlasNameTextField.setText(profile.getAtlasName());
 
@@ -843,10 +832,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private class JToggleButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String actionCommand = e.getActionCommand();
-
-			if (actionCommand.equals("UNLOCK/LOCK")) {
-				if (chooseProfileButton.isSelected()) {
+			if (toggleLockProfile.equals(e.getSource())) {
+				if (toggleLockProfile.isSelected()) {
 					profilesJList.setEnabled(true);
 				} else {
 					profilesJList.setEnabled(false);

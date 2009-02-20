@@ -4,6 +4,7 @@ import org.openstreetmap.gui.jmapviewer.OsmTileSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.mapsources.Google.GoogleEarth;
+import tac.mapsources.Google.GoogleMapMaker;
 import tac.mapsources.Google.GoogleMaps;
 import tac.mapsources.Google.GoogleMapsChina;
 import tac.mapsources.Google.GoogleTerrain;
@@ -13,7 +14,7 @@ import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
 
 public class MapSources {
 
-	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapsChina(),
+	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
 			new GoogleEarth(), new GoogleTerrain(), new YahooMaps(), new Mapnik(),
 			new TilesAtHome(), new CycleMap(), new MicrosoftMaps(), new MicrosoftVirtualEarth(),
 			new MicrosoftHybrid(), new OutdooractiveCom() };

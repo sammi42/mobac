@@ -38,6 +38,27 @@ public class Google {
 
 	}
 
+	/**
+	 * "Google Map Maker" Source Class
+	 */
+	public static class GoogleMapMaker extends GoogleSource {
+
+		public static final String SERVER_URL = "http://gt%d.google.com/mt?n=404&hl=%s&v=gwm.burma&x=%d&y=%d&z=%d";
+
+		public GoogleMapMaker() {
+			super("Google Map Maker", 17, "png");
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.IfModifiedSince;
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
+		}
+
+	}
+
 	public static class GoogleTerrain extends GoogleSource {
 
 		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2p.87&hl=%s&x=%d&y=%d&z=%d";

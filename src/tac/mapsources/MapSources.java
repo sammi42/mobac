@@ -14,10 +14,11 @@ import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
 
 public class MapSources {
 
-	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
-			new GoogleEarth(), new GoogleTerrain(), new YahooMaps(), new Mapnik(),
-			new TilesAtHome(), new CycleMap(), new MicrosoftMaps(), new MicrosoftVirtualEarth(),
-			new MicrosoftHybrid(), new OutdooractiveCom() };
+	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapMaker(),
+			new GoogleMapsChina(), new GoogleEarth(), new GoogleTerrain(), new YahooMaps(),
+			new Mapnik(), new TilesAtHome(), new CycleMap(), new MicrosoftMaps(),
+			new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
+			new MultimapCom() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -33,6 +34,43 @@ public class MapSources {
 				return t;
 		}
 		return MAP_SOURCES[0];
+	}
+
+	/**
+	 * Map from Multimap.com - incomplete for high zoom levels 
+	 */
+	public static class MultimapCom extends AbstractMapSource {
+
+		public MultimapCom() {
+			// zoom level supported:
+			// 0 (fixed url) world.png
+			// 1-5 "mergend binary encoding"
+			// 6-? different url - unknown encoding - uses token?
+			super("Multimap.com", 1, 5, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+
+			int z = zoom + 1;
+			// binary encoding using ones for tilex and twos for tiley.
+			// if a bit is set in tilex and tiley we get a three
+			char[] num = new char[zoom];
+			for (int i = zoom - 1; i >= 0; i--) {
+				int n = 0;
+				if ((tilex & 1) == 1)
+					n += 1;
+				if ((tiley & 1) == 1)
+					n += 2;
+				num[i] = Integer.toString(n).charAt(0);
+				tilex >>= 1;
+				tiley >>= 1;
+			}
+
+			String s = "http://mc0.tiles-cdn.multimap.com/ptiles/map/mi915/" + z + "/"
+					+ new String(num) + ".png?client=public_api&service_seq=14458";
+			//System.out.println(s);
+			return s;
+		}
 	}
 
 	public static class YahooMaps extends AbstractMapSource {

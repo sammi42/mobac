@@ -37,7 +37,7 @@ public class MapSources {
 	}
 
 	/**
-	 * Map from Multimap.com - incomplete for high zoom levels 
+	 * Map from Multimap.com - incomplete for high zoom levels
 	 */
 	public static class MultimapCom extends AbstractMapSource {
 
@@ -45,8 +45,8 @@ public class MapSources {
 			// zoom level supported:
 			// 0 (fixed url) world.png
 			// 1-5 "mergend binary encoding"
-			// 6-? different url - unknown encoding - uses token?
-			super("Multimap.com", 1, 5, "png");
+			// 6-? uses MS MAP tiles at some parts of the world
+			super("Multimap.com", 1, 17, "png");
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -65,9 +65,20 @@ public class MapSources {
 				tilex >>= 1;
 				tiley >>= 1;
 			}
+			String s = new String(num);
+			if (s.length() > 12)
+				s = s.substring(0, 6) + "/" + s.substring(6, 12) + "/" + s.substring(12);
+			else if (s.length() > 6)
+				s = s.substring(0, 6) + "/" + s.substring(6);
 
-			String s = "http://mc0.tiles-cdn.multimap.com/ptiles/map/mi915/" + z + "/"
-					+ new String(num) + ".png?client=public_api&service_seq=14458";
+			String base;
+			if (zoom < 6)
+				base = "http://mc1.tiles-cdn.multimap.com/ptiles/map/mi915/";
+			else if (zoom < 14)
+				base = "http://mc2.tiles-cdn.multimap.com/ptiles/map/mi917/";
+			else
+				base = "http://mc3.tiles-cdn.multimap.com/ptiles/map/mi931/";
+			s = base + z + "/" + s + ".png?client=public_api&service_seq=14458";
 			//System.out.println(s);
 			return s;
 		}

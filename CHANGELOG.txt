@@ -7,8 +7,14 @@ V E R S I O N  I N F O R M A T I O N
 
  0.9.7: (2009-??-??)
  
- + New map sources: Microsoft Maps, Earth, Hybrid
+ + New map sources (full support): Microsoft Maps, Earth, Hybrid
+ + New map sources (partial support): Multimap.com
  ~ Custom tile size selection controls combined  
+ + Window position, size and state (maximized or not) is saved
+ + Preview map allows zoom move/zoom via keyboard controls (patch by Martin Loetzsch)
+ + Fullscreen mode hides left panel and places control inside the preview map 
+    (patch by Martin Loetzsch)
+ ~ Fixed several Swing thread safety problems (patch by Martin Loetzsch)  
 
  0.9.6: (2009-01-08)
  

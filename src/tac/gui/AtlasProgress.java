@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.UIManager;
+import javax.swing.SwingUtilities;
 
 import tac.program.AtlasThread;
 import tac.utilities.GBC;
@@ -44,19 +44,28 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	private static final Timer TIMER = new Timer(true);
 
-	private JProgressBar atlasProgress;
-	private JProgressBar layerProgress;
-	private JProgressBar mapProgress;
-	private JProgressBar tarProgress;
+	private JProgressBar atlasProgressBar;
+	private JProgressBar layerProgressBar;
+	private JProgressBar mapProgressBar;
+	private JProgressBar tarProgressBar;
 
 	private JPanel background;
 
-	private long initiateTime;
-	private long initiateLayerTime;
+	private long initialTotalTime;
+	private long initialLayerTime;
 
 	private long numberOfDownloadedBytes = 0;
 
-	int nrOfLayers = 0;
+	private int totalNumberOfTiles;
+	private int numberOfLayers;
+
+	private int atlasProgress = 0;
+	private int layerProgress = 0;
+	private int layerProgressMax = 0;
+	private int mapProgress = 0;
+	private int mapProgressMax = 0;
+	private int tarProgress = 0;
+	private int currentLayer = 0;
 
 	private JLabel windowTitle;
 
@@ -87,7 +96,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	private ActionListener abortListener = null;
 
-	private UpdateTask updateDisplay = null;
+	private UpdateTask updateTask = null;
+	private GUIUpdater guiUpdater = null;
 
 	private AtlasThread atlasThread;
 
@@ -95,7 +105,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		super("Downloading tiles...");
 		this.atlasThread = atlasThread;
 		setLayout(new GridBagLayout());
-		updateDisplay = new UpdateTask();
+		updateTask = new UpdateTask();
+		guiUpdater = new GUIUpdater();
 
 		background = new JPanel(new GridBagLayout());
 
@@ -107,19 +118,19 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		atlasElementsDone = new JLabel("000 of 000 done");
 		atlasPercent = new JLabel("Percent done: 100% ");
 		atlasTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
-		atlasProgress = new JProgressBar();
+		atlasProgressBar = new JProgressBar();
 
 		layerTitle = new JLabel("Downloading tiles for ZOOM LEVEL = 000");
 		layerElementsDone = new JLabel("1000000 of 1000000 tiles done");
 		layerPercent = new JLabel("Percent done: 100% ");
 		layerTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
-		layerProgress = new JProgressBar();
+		layerProgressBar = new JProgressBar();
 
 		mapCreation = new JLabel("Map Creation");
-		mapProgress = new JProgressBar();
+		mapProgressBar = new JProgressBar();
 
 		tarCreation = new JLabel("Tar Creation");
-		tarProgress = new JProgressBar();
+		tarProgressBar = new JProgressBar();
 
 		nrOfDownloadedBytesPerSecond = new JLabel("Average download speed");
 		nrOfDownloadedBytesPerSecondValue = new JLabel();
@@ -162,22 +173,22 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		background.add(atlasElementsDone, gbcRIF);
 		background.add(atlasPercent, gbcRIF);
 		background.add(atlasTimeLeft, gbcEolFill);
-		background.add(atlasProgress, gbcEolFillI);
+		background.add(atlasProgressBar, gbcEolFillI);
 		background.add(Box.createVerticalStrut(20), gbcEol);
 
 		background.add(layerTitle, gbcRIF);
 		background.add(layerElementsDone, gbcRIF);
 		background.add(layerPercent, gbcRIF);
 		background.add(layerTimeLeft, gbcEolFill);
-		background.add(layerProgress, gbcEolFillI);
+		background.add(layerProgressBar, gbcEolFillI);
 		background.add(Box.createVerticalStrut(20), gbcEol);
 
 		background.add(mapCreation, gbcEol);
-		background.add(mapProgress, gbcEolFillI);
+		background.add(mapProgressBar, gbcEolFillI);
 		background.add(Box.createVerticalStrut(10), gbcEol);
 
 		background.add(tarCreation, gbcEol);
-		background.add(tarProgress, gbcEolFillI);
+		background.add(tarProgressBar, gbcEolFillI);
 		background.add(Box.createVerticalStrut(10), gbcEol);
 
 		JPanel infoPanel = new JPanel(new GridBagLayout());
@@ -226,117 +237,73 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension dContent = getSize();
 		setLocation((dScreen.width - dContent.width) / 2, (dScreen.height - dContent.height) / 2);
-	}
 
-	public void init(int totalNrOfTiles, int theNrOfLayers) {
-		tarProgress.setMinimum(0);
-		tarProgress.setMaximum(2);
-		tarProgress.setValue(0);
+		tarProgressBar.setMinimum(0);
+		tarProgressBar.setMaximum(2);
+		tarProgressBar.setValue(0);
 
-		atlasProgress.setMinimum(0);
-		atlasProgress.setMaximum(totalNrOfTiles);
-		atlasProgress.setValue(0);
+		atlasProgressBar.setMinimum(0);
+		atlasProgressBar.setValue(0);
 
-		layerProgress.setMinimum(0);
-		layerProgress.setMaximum(theNrOfLayers);
-		layerProgress.setValue(0);
+		layerProgressBar.setMinimum(0);
+		layerProgressBar.setValue(0);
 
-		nrOfLayers = theNrOfLayers;
-		atlasElementsDone.setText("0 of " + nrOfLayers + " done");
 		activeDownloadsValue.setText(": 0");
 		downloadErrorsValue.setText(": 0 / 0");
-
-		initiateTime = System.currentTimeMillis();
-		initiateLayerTime = System.currentTimeMillis();
-		TIMER.schedule(updateDisplay, 0, 500);
 	}
 
-	public void setMinMaxForCurrentLayer(int theMinimumValue, int theMaximumValue) {
-		layerProgress.setMinimum(theMinimumValue);
-		layerProgress.setMaximum(theMaximumValue);
-		mapProgress.setValue(0);
+	public void init(int totalNumberOfTiles, int numberOfLayers) {
+		this.totalNumberOfTiles = totalNumberOfTiles;
+		this.numberOfLayers = numberOfLayers;
+
+		initialTotalTime = System.currentTimeMillis();
+		initialLayerTime = System.currentTimeMillis();
+		updateGUI();
+		TIMER.schedule(updateTask, 0, 500);
 	}
 
-	public void setInitiateTimeForLayer() {
-		initiateLayerTime = System.currentTimeMillis();
+	public void initLayer(int numberOfTiles) {
+		layerProgressMax = numberOfTiles;
+		initialLayerTime = System.currentTimeMillis();
+		mapProgress = 0;
+		updateGUI();
 	}
 
-	public void updateAtlasProgressBar(int theElementsDone) {
-		this.setAtlasCurrent(theElementsDone);
-		this.setAtlasTimeLeft();
+	public void incAtlasProgress() {
+		atlasProgress++;
+		updateGUI();
 	}
 
-	public void updateAtlasProgressBarLayerText(int theElementsDone) {
-		this.setAtlasElementsDone(theElementsDone);
+	public void initMap(int numberOfTiles) {
+		mapProgressMax = numberOfTiles;
+		updateGUI();
 	}
 
-	public void updateLayerProgressBar(int theElementsDone) {
-		this.setLayerCurrent(theElementsDone);
-		this.setLayerElementsDone(theElementsDone);
-		this.setLayerTimeLeft(theElementsDone);
+	public void setLayer(int layer) {
+		this.currentLayer = layer;
+		updateGUI();
+	}
+
+	public void setLayerProgress(int progress) {
+		this.layerProgress = progress;
 	}
 
 	public void setErrorCounter(int retryErrors, int permanentErrors) {
 		downloadErrorsValue.setText(": " + retryErrors + " / " + permanentErrors);
 	}
 
-	public void initMapProgressBar(int maxElements) {
-		mapProgress.setMaximum(maxElements);
+	public void incMapProgress() {
+		mapProgress += 1;
+		updateGUI();
 	}
 
-	public void incMapProgressBar() {
-		mapProgress.setValue(mapProgress.getValue() + 1);
+	public void incTarProgress() {
+		tarProgress += 1;
+		updateGUI();
 	}
 
-	public void incTarPrograssBar() {
-		tarProgress.setValue(tarProgress.getValue() + 1);
-	}
-
-	private void setAtlasCurrent(int theElementsDone) {
-		atlasProgress.invalidate();
-		atlasProgress.setValue(theElementsDone);
-
-		String stringPercent = Integer.toString(((int) (atlasProgress.getPercentComplete() * 100)));
-
-		atlasPercent.setText("Percent done: " + stringPercent + " %");
-	}
-
-	private void setLayerCurrent(int theElementsDone) {
-		layerProgress.invalidate();
-		layerProgress.setValue(theElementsDone);
-
-		String stringPercent = Integer.toString(((int) (layerProgress.getPercentComplete() * 100)));
-
-		layerPercent.setText("Percent done: " + stringPercent + " %");
-	}
-
-	private void setAtlasElementsDone(int theElementsDone) {
-		atlasElementsDone.setText(Integer.toString(theElementsDone) + " of " + nrOfLayers
-				+ " layers done");
-	}
-
-	private void setLayerElementsDone(int theElementsDone) {
-		layerElementsDone.setText(Integer.toString(theElementsDone) + " of "
-				+ layerProgress.getMaximum() + " tiles done");
-	}
-
-	private void setAtlasTimeLeft() {
-		int progress = getAtlasProgressValue();
-		long timePerElement = (System.currentTimeMillis() - initiateTime) / progress;
-
-		long seconds = (timePerElement * (atlasProgress.getMaximum() - progress) / 1000);
-		atlasTimeLeft.setText(formatRemainingTime(seconds));
-	}
-
-	private void setLayerTimeLeft(int theElementsDoneInt) {
-		if (theElementsDoneInt == 0) {
-			layerTimeLeft.setText(formatRemainingTime(-1));
-		} else {
-			long timePerElement = (System.currentTimeMillis() - initiateLayerTime)
-					/ theElementsDoneInt;
-			long seconds = (timePerElement * (layerProgress.getMaximum() - theElementsDoneInt) / 1000);
-			layerTimeLeft.setText(formatRemainingTime(seconds));
-		}
+	public void addDownloadedBytes(int bytes) {
+		numberOfDownloadedBytes += bytes;
 	}
 
 	private String formatRemainingTime(long seconds) {
@@ -372,23 +339,27 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public void atlasCreationFinished() {
 		stopUpdateTask();
 		abortListener = null;
-		abortAtlasDownloadButton.setEnabled(false);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				abortAtlasDownloadButton.setEnabled(false);
 
-		setTitle("Download finished");
+				setTitle("Download finished");
 
-		dismissWindowButton.setText("Close Window");
-		dismissWindowButton.setToolTipText("Close atlas download progress window");
-		dismissWindowButton.setEnabled(true);
+				dismissWindowButton.setText("Close Window");
+				dismissWindowButton.setToolTipText("Close atlas download progress window");
+				dismissWindowButton.setEnabled(true);
 
-		openProgramFolderButton.setText("Open Atlas Folder");
-		openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
-		openProgramFolderButton.setEnabled(true);
+				openProgramFolderButton.setText("Open Atlas Folder");
+				openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
+				openProgramFolderButton.setEnabled(true);
+			}
+		});
 	}
 
 	private synchronized void stopUpdateTask() {
 		try {
-			updateDisplay.cancel();
-			updateDisplay = null;
+			updateTask.cancel();
+			updateTask = null;
 		} catch (Exception e) {
 		}
 	}
@@ -403,64 +374,12 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		}
 	}
 
-	public void updateViewNrOfDownloadedBytes() {
-		nrOfDownloadedBytesValue.setText(": " + Utilities.formatBytes(numberOfDownloadedBytes));
-	}
-
-	public void updateViewNrOfDownloadedBytesPerSecond() {
-		long rate = numberOfDownloadedBytes * 1000;
-		long time = System.currentTimeMillis() - initiateTime;
-		if (time == 0) {
-			nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
-		} else {
-			rate = rate / time;
-			nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
-					+ " / Second");
-		}
-	}
-
-	public void updateTotalDownloadTime() {
-
-		String timeString = "";
-
-		long seconds = 0;
-		long minutes = 0;
-
-		long totalMilliseconds = 0;
-
-		totalMilliseconds = System.currentTimeMillis() - initiateTime;
-
-		if (totalMilliseconds > 60000) {
-			minutes = totalMilliseconds / 60000;
-			seconds = (totalMilliseconds - (minutes * 60000)) / 1000;
-			timeString = minutes + " minute(s) and " + seconds + " second(s)";
-		} else {
-			seconds = totalMilliseconds / 1000;
-			timeString = seconds + " second(s)";
-		}
-		totalDownloadTimeValue.setText(": " + timeString);
-		totalDownloadTimeValue.repaint();
-	}
-
-	public void updateActiveDownloads() {
-		activeDownloadsValue.setText(": " + atlasThread.getActiveDownloads());
-		activeDownloadsValue.repaint();
-	}
-
-	public int getAtlasProgressValue() {
-		return atlasProgress.getValue();
-	}
-
 	public ActionListener getAbortListener() {
 		return abortListener;
 	}
 
 	public void setAbortListener(ActionListener abortListener) {
 		this.abortListener = abortListener;
-	}
-
-	public void addDownloadedBytes(int bytes) {
-		numberOfDownloadedBytes += bytes;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -481,36 +400,102 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		}
 	}
 
+	private class GUIUpdater implements Runnable {
+
+		public void run() {
+			// atlas progress
+			atlasProgressBar.setMaximum(totalNumberOfTiles);
+			atlasProgressBar.setValue(atlasProgress);
+
+			String stringPercent = Integer
+					.toString(((int) (atlasProgressBar.getPercentComplete() * 100)));
+
+			atlasPercent.setText("Percent done: " + stringPercent + " %");
+
+			long timePerElement = (System.currentTimeMillis() - initialTotalTime) / atlasProgress;
+
+			long seconds = (timePerElement * (atlasProgressBar.getMaximum() - atlasProgress) / 1000);
+			atlasTimeLeft.setText(formatRemainingTime(seconds));
+
+			// layer progress
+			layerProgressBar.setMaximum(layerProgressMax);
+			layerProgressBar.setValue(layerProgress);
+
+			stringPercent = Integer.toString(((int) (layerProgressBar.getPercentComplete() * 100)));
+
+			layerPercent.setText("Percent done: " + stringPercent + " %");
+
+			layerElementsDone.setText(Integer.toString(layerProgress) + " of "
+					+ layerProgressBar.getMaximum() + " tiles done");
+
+			if (layerProgress == 0) {
+				layerTimeLeft.setText(formatRemainingTime(-1));
+			} else {
+				timePerElement = (System.currentTimeMillis() - initialLayerTime) / layerProgress;
+				seconds = (timePerElement * (layerProgressBar.getMaximum() - layerProgress) / 1000);
+				layerTimeLeft.setText(formatRemainingTime(seconds));
+			}
+
+			// map progress
+			mapProgressBar.setValue(mapProgress);
+			mapProgressBar.setMaximum(mapProgressMax);
+			atlasElementsDone.setText(currentLayer + " of " + numberOfLayers + " done");
+
+			// tar progress
+			tarProgressBar.setValue(tarProgress);
+
+			// bytes per second
+			long rate = numberOfDownloadedBytes * 1000;
+			long time = System.currentTimeMillis() - initialTotalTime;
+			if (time == 0) {
+				nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
+			} else {
+				rate = rate / time;
+				nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
+						+ " / Second");
+			}
+
+			// downloaded bytes
+			nrOfDownloadedBytesValue.setText(": " + Utilities.formatBytes(numberOfDownloadedBytes));
+
+			// total download time
+			String timeString = "";
+
+			seconds = 0;
+			long minutes = 0;
+
+			long totalMilliseconds = 0;
+
+			totalMilliseconds = System.currentTimeMillis() - initialTotalTime;
+
+			if (totalMilliseconds > 60000) {
+				minutes = totalMilliseconds / 60000;
+				seconds = (totalMilliseconds - (minutes * 60000)) / 1000;
+				timeString = minutes + " minute(s) and " + seconds + " second(s)";
+			} else {
+				seconds = totalMilliseconds / 1000;
+				timeString = seconds + " second(s)";
+			}
+			totalDownloadTimeValue.setText(": " + timeString);
+			totalDownloadTimeValue.repaint();
+
+			// active downloads
+			activeDownloadsValue.setText(": " + atlasThread.getActiveDownloads());
+			activeDownloadsValue.repaint();
+		}
+
+	}
+
+	private void updateGUI() {
+		SwingUtilities.invokeLater(guiUpdater);
+	}
+
 	private class UpdateTask extends TimerTask {
 
 		@Override
 		public void run() {
-			try {
-				updateTotalDownloadTime();
-				updateActiveDownloads();
-			} catch (Exception e) {
-			}
+			updateGUI();
 		}
 	}
 
-	/**
-	 * For debugging purposes: Shows the atlas download/progress dialog without
-	 * having to start TAC or download anything
-	 */
-	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		AtlasProgress ap = new AtlasProgress(null);
-		ap.init(100, 3);
-		ap.setVisible(true);
-		ap.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		ap.setMinMaxForCurrentLayer(0, 100);
-		ap.setZoomLevel(1);
-		ap.setInitiateTimeForLayer();
-		ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
-		ap.updateLayerProgressBar(10);
-		ap.updateViewNrOfDownloadedBytes();
-		ap.updateViewNrOfDownloadedBytesPerSecond();
-		ap.updateTotalDownloadTime();
-
-	}
 }

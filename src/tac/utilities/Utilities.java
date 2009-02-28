@@ -155,6 +155,25 @@ public class Utilities {
 		return (path.delete());
 	}
 
+	public static Profile createExampleProfile (String profileName, String mapSource, double latitudeMax,
+			double latitudeMin, double longitudeMax, double longitudeMin, boolean[] zoomValues,
+			int tileSizeWidth, int tileSizeHeight, String atlasName) {
+		Profile profile = new Profile();
+
+		profile.setProfileName(profileName);
+		profile.setMapSource(mapSource);
+		profile.setLatitudeMax(latitudeMax);
+		profile.setLatitudeMin(latitudeMin);
+		profile.setLongitudeMax(longitudeMax);
+		profile.setLongitudeMin(longitudeMin);
+		profile.setZoomLevels(zoomValues);
+		profile.setTileSizeWidth(tileSizeWidth);
+		profile.setTileSizeHeight(tileSizeHeight);
+		profile.setAtlasName(atlasName);
+
+		return profile;
+	}
+
 	public static void checkFileSetup() {
 
 		File userDir = new File(System.getProperty("user.dir"));
@@ -195,23 +214,18 @@ public class Utilities {
 
 				Vector<Profile> defaultProfiles = new Vector<Profile>();
 
-				Profile defaultProfile = new Profile();
-
-				defaultProfile.setProfileName("Default");
-				defaultProfile.setLatitudeMax(85.000000);
-				defaultProfile.setLatitudeMin(-85.000000);
-				defaultProfile.setLongitudeMax(179.000000);
-				defaultProfile.setLongitudeMin(-179.000000);
-
-				boolean[] zoomValues = { false, false, false, false, false, false, false, false,
-						false, true };
-
-				defaultProfile.setZoomLevels(zoomValues);
-				defaultProfile.setTileSizeWidth(256);
-				defaultProfile.setTileSizeHeight(256);
-				defaultProfile.setAtlasName("Default");
-
-				defaultProfiles.addElement(defaultProfile);
+				defaultProfiles.addElement(createExampleProfile("Google Maps New York", "Google Maps",
+						40.97264, 40.541982, -73.699036, -74.142609,
+						new boolean[] { false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true },
+						256, 256, "gm nyc"));
+				defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin", "Outdooractive.com",
+						53.079178, 52.020388, 14.276733, 12.356873, 
+						new boolean[] { false, false, true, false, true, false, true, false, true, false },
+						256, 256, "oa berlin"));
+				defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria", "Mapnik", 
+						50.611132, 47.189712, 13.996582, 8.811035, 
+						new boolean [] { false, false, false, false, false, false, false, false, false, false, true, false, true, false, true, false, true, false, true },
+						256, 256, "osm bavaria"));
 
 				PersistentProfiles.store(defaultProfiles);
 			} catch (IOException iox) {

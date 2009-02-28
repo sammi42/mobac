@@ -1,5 +1,8 @@
 package tac.program;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -44,6 +47,12 @@ public class Settings {
 	private static final String THREAD_COUNT = "download.thread.count";
 	private static final String CONNECTION_TIMEOUT = "download.timeout";
 	private static final String GOOGLE_LANGUAGE = "google.maps.lang";
+	private static final String WINDOW_WIDTH = "window.width";
+	private static final String WINDOW_HEIGHT = "window.height";
+	private static final String WINDOW_POS_X = "window.pos.x";
+	private static final String WINDOW_POS_Y = "window.pos.y";
+	private static final String WINDOW_MAXIMIZED = "window.maximized";
+	private static final String FULL_SCREEN_ENABLED = "full-screen-enabled";
 
 	private int maxMapSize = 32768;
 
@@ -74,7 +83,16 @@ public class Settings {
 
 	private boolean devMode = false;
 
+	private Dimension windowDimension = new Dimension();
+	private Point windowLocation = new Point(-1, -1);
+	private Boolean windowMaximized = true;
+
+	private Boolean fullScreenEnabled = false;
+
 	private Settings() {
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		windowDimension.width = (int) (0.9f * dScreen.width);
+		windowDimension.height = (int) (0.9f * dScreen.height);
 	}
 
 	public static Settings getInstance() {
@@ -136,6 +154,13 @@ public class Settings {
 				System.setProperty("http.proxyHost", proxyHost);
 			if (proxyPort != null)
 				System.setProperty("http.proxyPort", proxyPort);
+			windowDimension.width = p.getIntProperty(WINDOW_WIDTH, windowDimension.width);
+			windowDimension.height = p.getIntProperty(WINDOW_HEIGHT, windowDimension.height);
+			windowLocation.x = p.getIntProperty(WINDOW_POS_X, windowLocation.x);
+			windowLocation.y = p.getIntProperty(WINDOW_POS_Y, windowLocation.y);
+			windowMaximized = p.getBooleanProperty(WINDOW_MAXIMIZED, windowMaximized);
+
+			fullScreenEnabled = p.getBooleanProperty(FULL_SCREEN_ENABLED, fullScreenEnabled);
 
 		} catch (FileNotFoundException e) {
 		} catch (InvalidPropertiesFormatException e) {
@@ -174,6 +199,14 @@ public class Settings {
 			p.setDouble6Property(SELECTION_LON_MAX, selectionMax.lon);
 			p.setDouble6Property(SELECTION_LAT_MIN, selectionMin.lat);
 			p.setDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
+
+			p.setIntProperty(WINDOW_WIDTH, windowDimension.width);
+			p.setIntProperty(WINDOW_HEIGHT, windowDimension.height);
+			p.setIntProperty(WINDOW_POS_X, windowLocation.x);
+			p.setIntProperty(WINDOW_POS_Y, windowLocation.y);
+
+			p.setBooleanProperty(WINDOW_MAXIMIZED, windowMaximized);
+			p.setBooleanProperty(FULL_SCREEN_ENABLED, fullScreenEnabled);
 
 			os = new FileOutputStream(new File(getUserDir(), SETTINGS_FILE));
 			p.storeToXML(os, null);
@@ -283,7 +316,6 @@ public class Settings {
 		this.connectionTimeout = connectionTimeout;
 	}
 
-	
 	public boolean isCustomTileSize() {
 		return customTileSize;
 	}
@@ -310,6 +342,38 @@ public class Settings {
 
 	public boolean isDevModeEnabled() {
 		return devMode;
+	}
+
+	public Dimension getWindowDimension() {
+		return windowDimension;
+	}
+
+	public void setWindowDimension(Dimension windowDimension) {
+		this.windowDimension = windowDimension;
+	}
+
+	public Point getWindowLocation() {
+		return windowLocation;
+	}
+
+	public void setWindowLocation(Point windowLocation) {
+		this.windowLocation = windowLocation;
+	}
+
+	public Boolean getWindowMaximized() {
+		return windowMaximized;
+	}
+
+	public void setWindowMaximized(Boolean windowMaximized) {
+		this.windowMaximized = windowMaximized;
+	}
+
+	public Boolean getFullScreenEnabled() {
+		return fullScreenEnabled;
+	}
+
+	public void setFullScreenEnabled(Boolean fullScreenEnabled) {
+		this.fullScreenEnabled = fullScreenEnabled;
 	}
 
 }

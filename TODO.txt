@@ -48,3 +48,5 @@ T O D O
 
    -> Requires platform detection - Windows, Linux (KDE), Linux (Gnome), ...
       System.getProperty("os.name"); 
+      
+9) Allow to "reload" missing tiles in the map preview window

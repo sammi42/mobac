@@ -1,16 +1,18 @@
 package tac.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -24,20 +26,20 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.gui.preview.GridZoom;
 import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.PreviewMap;
 import tac.mapsources.MapSources;
@@ -60,204 +62,245 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private static final long serialVersionUID = -8444942802691874960L;
 
 	private static Logger log = Logger.getLogger(GUI.class);
+	private static Color labelBackgroundColor = new Color(0, 0, 0, 127);
+	private static Color labelForegroundColor = Color.white;
 
-	private JPanel leftPanel;
-	private JPanel rightPanel;
-	private JPanel coordinatesPanel;
-	private JPanel zoomLevelPanel;
-	private JPanel tileSizePanel;
-	private JPanel atlasNamePanel;
-	private JPanel profilesPanel;
+	private Vector<Profile> profilesVector = new Vector<Profile>();
 
 	private AtlasTree atlasTree;
-	private JScrollPane leftScrollPane;
-
 	private PreviewMap previewMap;
 
-	private JButton createAtlasButton;
+	private JLabel zoomLevelText;
+	private JComboBox gridZoomCombo;
+	private JSlider zoomSlider;
+	private JComboBox mapSourceCombo;
+	private JButton helpButton;
+	private JButton fullScreenButton;
+	private JButton settingsButton;
+	private JComboBox profilesCombo;
 	private JButton deleteProfileButton;
 	private JButton saveAsProfileButton;
-	private JButton previewSelectionButton;
-	private JButton settingsGUIButton;
-
-	private JToggleButton toggleLockProfile;
-
-	private JLabel latMinLabel;
-	private JLabel latMaxLabel;
-	private JLabel lonMinLabel;
-	private JLabel lonMaxLabel;
-	private JLabel zoomLevelLabel;
+	private JAtlasNameField atlasNameTextField;
+	private JButton createAtlasButton;
+	private JPanel zoomLevelPanel;
+	private JCheckBox[] cbZoom = new JCheckBox[0];
 	private JLabel amountOfTilesLabel;
 
 	private JCoordinateField latMinTextField;
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
 	private JCoordinateField lonMaxTextField;
-	private JAtlasNameField atlasNameTextField;
-
-	private JCheckBox[] cbZoom = new JCheckBox[0];
-
-	private JCheckBox cbEnableCustomTileSize;
+	private JCheckBox enableCustomTileSizeCheckButton;
 	private JLabel tileSizeWidthLabel;
 	private JLabel tileSizeHeightLabel;
 	private JTileSizeCombo tileSizeWidth;
 	private JTileSizeCombo tileSizeHeight;
-	private JComboBox mapSource;
 
-	private Vector<Profile> profilesVector = new Vector<Profile>();
-	private Vector<String> profileNamesVector = new Vector<String>();
-
-	private JList profilesJList;
-	private static final String fileSeparator = System.getProperty("file.separator");
+	private JPanel mapControlPanel = new JPanel(new BorderLayout());
+	private JPanel leftPanel = new JPanel(new GridBagLayout());
 
 	public GUI() {
 		super();
 		TACExceptionHandler.registerForCurrentThread();
 		setTitle(TACInfo.getCompleteTitle());
+
 		log.trace("Creating main dialog - " + getTitle());
-		previewMap = new PreviewMap();
-		createMainFrame();
-		createLeftPanel();
-		createRightPanel();
-		addListeners();
-		initiateProgram();
-	}
-
-	private void createMainFrame() {
-		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		dScreen.width = Math.min(1024, dScreen.width);
-		dScreen.height = Math.min(768, dScreen.height);
-		setSize(dScreen);
-		setMinimumSize(new Dimension(800, 550));
 		setResizable(true);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		setMinimumSize(new Dimension(Math.min(800, dScreen.width), Math.min(590, dScreen.height)));
+		setSize(getMinimumSize());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(new WindowDestroyer());
+		addComponentListener(new MainWindowListener());
+
+		previewMap = new PreviewMap();
+		previewMap.addMapSelectionListener(this);
+
+		createControls();
+		calculateNrOfTilesToDownload();
 		setLayout(new GridBagLayout());
+		add(leftPanel, GBC.std().fill(GBC.VERTICAL).anchor(GBC.WEST));
+		JLayeredPane layeredPane = new FilledLayeredPane();
+		layeredPane.add(previewMap, new Integer(0));
+		layeredPane.add(mapControlPanel, new Integer(1));
+		add(layeredPane, GBC.std().fill());
+
+		Utilities.checkFileSetup();
+		loadSettings();
+		updatePanels();
+		initializeProfilesCombo();
+		updateZoomLevelCheckBoxes();
+		updateGridSizeCombo();
+		updateCustomTileSizeControlsState();
 	}
 
-	public void createLeftPanel() {
+	private void createControls() {
+		// zoom slider
+		zoomSlider = new JSlider(JMapViewer.MIN_ZOOM, previewMap.getTileSource().getMaxZoom());
+		zoomSlider.setOrientation(JSlider.HORIZONTAL);
+		zoomSlider.setSize(20, zoomSlider.getPreferredSize().height);
+		zoomSlider.addChangeListener(new ZoomSliderListener());
+		zoomSlider.setOpaque(false);
 
-		leftPanel = new JPanel();
-		leftPanel.setLayout(new GridBagLayout());
+		// zoom level text
+		zoomLevelText = new JLabel(" 00 ");
+		zoomLevelText.setOpaque(true);
+		zoomLevelText.setBackground(labelBackgroundColor);
+		zoomLevelText.setForeground(labelForegroundColor);
+		zoomLevelText.setToolTipText("The current zoom level");
 
-		// Coordinates Panel
-		GridBagLayout gbl = new GridBagLayout();
-		coordinatesPanel = new JPanel(gbl);
+		// grid zoom combo
+		gridZoomCombo = new JComboBox();
+		gridZoomCombo.setEditable(false);
+		gridZoomCombo.addActionListener(new GridZoomComboListener());
+		gridZoomCombo.setToolTipText("Add a grid of the spefified zoom level to the map");
 
-		coordinatesPanel.setBorder(BorderFactory.createTitledBorder("Coordinates"));
+		// map source combo
+		mapSourceCombo = new JComboBox(MapSources.getMapSources());
+		mapSourceCombo.setMaximumRowCount(12);
+		mapSourceCombo.addActionListener(new MapSourceComboListener());
+		mapSourceCombo.setToolTipText("Select map source");
 
-		latMaxLabel = new JLabel("Latitude Max", JLabel.CENTER);
+		// help button
+		helpButton = new JButton("Help");
+		helpButton.addActionListener(new HelpButtonListener());
+		helpButton.setToolTipText("Display some help information");
 
+		// settings button
+		settingsButton = new JButton("Settings");
+		settingsButton.addActionListener(new SettingsButtonListener());
+		settingsButton.setToolTipText("Open the preferences dialogue panel.");
+
+		// full screen
+		fullScreenButton = new JButton("Full screen off");
+		fullScreenButton.addActionListener(new FullScreenButtonListener());
+		fullScreenButton.setToolTipText("Toggle full screen.");
+
+		// profiles combo box
+		profilesCombo = new JComboBox();
+		profilesCombo.setEditable(true);
+		profilesCombo
+				.setToolTipText("Select an atlas creation profile\n or enter a name for a new profile");
+
+		// delete profile button
+		deleteProfileButton = new JButton("Delete profile");
+		deleteProfileButton.addActionListener(new DeleteProfileListener());
+		deleteProfileButton.setToolTipText("Delete atlas profile from list");
+
+		// save as profile button
+		saveAsProfileButton = new JButton("Save as profile");
+		saveAsProfileButton.addActionListener(new SaveAsProfileListener());
+		saveAsProfileButton.setToolTipText("Save atlas profile");
+
+		// atlas name text field
+		atlasNameTextField = new JAtlasNameField();
+		atlasNameTextField.setColumns(12);
+		atlasNameTextField.setActionCommand("atlasNameTextField");
+		atlasNameTextField.setToolTipText("Enter a name for the atlas here");
+
+		// create atlas button
+		createAtlasButton = new JButton("Create atlas");
+		createAtlasButton.addActionListener(new CreateAtlasButtonListener());
+		createAtlasButton.setToolTipText("Create the atlas");
+
+		// zoom level check boxes
+		zoomLevelPanel = new JPanel();
+		zoomLevelPanel.setBorder(BorderFactory.createEmptyBorder());
+		zoomLevelPanel.setOpaque(false);
+
+		// amount of tiles to download
+		amountOfTilesLabel = new JLabel();
+		amountOfTilesLabel.setToolTipText("Total amount of tiles to download");
+		amountOfTilesLabel.setOpaque(true);
+		amountOfTilesLabel.setBackground(labelBackgroundColor);
+		amountOfTilesLabel.setForeground(labelForegroundColor);
+
+		// coordinates panel
 		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
 		latMaxTextField.setActionCommand("latMaxTextField");
-
-		lonMinLabel = new JLabel("Longitude Min", JLabel.CENTER);
-
 		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
 		lonMinTextField.setActionCommand("longMinTextField");
-
-		lonMaxLabel = new JLabel("Longitude Max", JLabel.CENTER);
-
 		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
 		lonMaxTextField.setActionCommand("longMaxTextField");
-
-		latMinLabel = new JLabel("Latitude Min", JLabel.CENTER);
-
 		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
 		latMinTextField.setActionCommand("latMinTextField");
 
-		previewSelectionButton = new JButton("Display selection");
-
-		GBC gbc_eolcf = GBC.eol().fill(GBC.HORIZONTAL).anchor(GBC.CENTER);
-		GBC gbc_eolc = GBC.eol().anchor(GBC.CENTER).insets(2, 2, 2, 2);
-		GBC gbc_fill = GBC.std().insets(2, 2, 2, 2).fill();
-
-		JPanel latMaxPanel = new JPanel(new GridBagLayout());
-		latMaxPanel.add(latMaxLabel, gbc_eolc);
-		latMaxPanel.add(latMaxTextField, gbc_eolc);
-		coordinatesPanel.add(latMaxPanel, gbc_eolcf.insets(5, 5, 5, 1));
-
-		JPanel lonMinPanel = new JPanel(new GridBagLayout());
-		lonMinPanel.add(lonMinLabel, gbc_eolc);
-		lonMinPanel.add(lonMinTextField, gbc_eolc);
-
-		JPanel lonMaxPanel = new JPanel(new GridBagLayout());
-		lonMaxPanel.add(lonMaxLabel, gbc_eolc);
-		lonMaxPanel.add(lonMaxTextField, gbc_eolc);
-
-		JPanel lonPanel = new JPanel(new BorderLayout());
-		lonPanel.add(lonMinPanel, BorderLayout.WEST);
-		lonPanel.add(lonMaxPanel, BorderLayout.EAST);
-		coordinatesPanel.add(lonPanel, gbc_eolcf);
-
-		JPanel latMinPanel = new JPanel(new GridBagLayout());
-		latMinPanel.add(latMinLabel, gbc_eolc);
-		latMinPanel.add(latMinTextField, gbc_eolc);
-
-		coordinatesPanel.add(latMinPanel, gbc_eolcf);
-
-		coordinatesPanel.add(previewSelectionButton, gbc_eolcf.fill(GBC.NONE).insets(20, 5, 20, 5));
-
-		JPanel mapSourcePanel = new JPanel(new GridBagLayout());
-		mapSourcePanel.setBorder(BorderFactory.createTitledBorder("Map source"));
-
-		mapSource = new JComboBox(MapSources.getMapSources());
-		mapSourcePanel.add(mapSource, gbc_fill);
-		mapSource.setMaximumRowCount(15);
-		mapSource.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				mapSourceChanged();
-			}
-		});
-
-		// Zoom Panel
-		zoomLevelLabel = new JLabel();
-		zoomLevelLabel.setAlignmentX(Component.BOTTOM_ALIGNMENT);
-
-		amountOfTilesLabel = new JLabel();
-		amountOfTilesLabel.setHorizontalAlignment(JLabel.RIGHT);
-		amountOfTilesLabel.setToolTipText("Total amount of tiles to download");
-
-		zoomLevelPanel = new JPanel();
-		zoomLevelPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-
-		tileSizePanel = new JPanel(new GridBagLayout());
-		tileSizePanel.setBorder(BorderFactory.createTitledBorder("Tile size (pixels)"));
-
-		tileSizeWidthLabel = new JLabel("Width:");
-
-		cbEnableCustomTileSize = new JCheckBox("Recreate/adjust map tiles (CPU intensive)");
-		cbEnableCustomTileSize.setToolTipText("<html>If this option is disabled each "
+		// custom tile size
+		enableCustomTileSizeCheckButton = new JCheckBox("Recreate/adjust map tiles (CPU intensive)");
+		enableCustomTileSizeCheckButton
+				.addActionListener(new EnableCustomTileSizeCheckButtonListener());
+		enableCustomTileSizeCheckButton.setToolTipText("<html>If this option is disabled each "
 				+ "map tile (size: 256x256) is used axactly as downloaded "
 				+ "from the server (faster).<br>"
 				+ "Otherwise each tile is newly created which allows to "
 				+ "use custom tile size (slower / CPU intensive).</html>");
 
+		tileSizeWidthLabel = new JLabel("Width:");
 		tileSizeWidth = new JTileSizeCombo();
 		tileSizeWidth.setToolTipText("Width");
 
 		tileSizeHeightLabel = new JLabel("Height:");
-
 		tileSizeHeight = new JTileSizeCombo();
 		tileSizeHeight.setToolTipText("Height");
+
+	}
+
+	private void createLeftPanel() {
+		leftPanel.removeAll();
+
+		// Coordinates Panel
+		JPanel coordinatesPanel = new JPanel(new GridBagLayout());
+		coordinatesPanel.setBorder(BorderFactory
+				.createTitledBorder("Selection coordinates (min/max)"));
+
+		JLabel latMaxLabel = new JLabel("N", JLabel.CENTER);
+		JLabel lonMinLabel = new JLabel("W", JLabel.CENTER);
+		JLabel lonMaxLabel = new JLabel("E", JLabel.CENTER);
+		JLabel latMinLabel = new JLabel("S", JLabel.CENTER);
+
+		JButton displaySelectionButton = new JButton("Display selection");
+		displaySelectionButton.addActionListener(new DisplaySelectionButtonListener());
+
+		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		coordinatesPanel.add(latMaxLabel);
+		coordinatesPanel.add(latMaxTextField);
+		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+
+		JPanel eastWestPanel = new JPanel(new GridBagLayout());
+		eastWestPanel.add(lonMinLabel);
+		eastWestPanel.add(lonMinTextField);
+		eastWestPanel.add(lonMaxLabel, GBC.std().insets(10, 0, 0, 0));
+		eastWestPanel.add(lonMaxTextField);
+		coordinatesPanel.add(eastWestPanel, GBC.eol().fill().insets(0, 5, 0, 5));
+
+		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		coordinatesPanel.add(latMinLabel);
+		coordinatesPanel.add(latMinTextField);
+		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+
+		coordinatesPanel.add(displaySelectionButton, GBC.eol().anchor(GBC.CENTER)
+				.insets(0, 5, 0, 0));
+
+		JPanel mapSourcePanel = new JPanel(new GridBagLayout());
+		mapSourcePanel.setBorder(BorderFactory.createTitledBorder("Map source"));
+		mapSourcePanel.add(mapSourceCombo, GBC.std().insets(2, 2, 2, 2).fill());
+
+		JPanel zoomLevelsFrame = new JPanel(new GridBagLayout());
+		zoomLevelsFrame.setBorder(BorderFactory.createTitledBorder("Zoom Levels"));
+		zoomLevelsFrame.add(zoomLevelPanel, GBC.eol());
+		zoomLevelsFrame.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
+
+		JPanel tileSizePanel = new JPanel(new GridBagLayout());
+		tileSizePanel.setBorder(BorderFactory.createTitledBorder("Tile size (pixels)"));
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
-		tileSizePanel.add(cbEnableCustomTileSize, gbc_eol);
+		tileSizePanel.add(enableCustomTileSizeCheckButton, gbc_eol);
 		tileSizePanel.add(tileSizeWidthLabel, gbc_std);
 		tileSizePanel.add(tileSizeWidth, gbc_std);
 		tileSizePanel.add(tileSizeHeightLabel, gbc_std);
 		tileSizePanel.add(tileSizeHeight, gbc_eol);
-
-		atlasNamePanel = new JPanel(new GridBagLayout());
-		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas name"));
-
-		atlasNameTextField = new JAtlasNameField();
-		atlasNameTextField.setActionCommand("atlasNameTextField");
-
-		atlasNamePanel.add(atlasNameTextField, gbc_fill);
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		if (Settings.getInstance().isDevModeEnabled()) {
@@ -285,70 +328,535 @@ public class GUI extends JFrame implements MapSelectionListener {
 				}
 			});
 		}
-		toggleLockProfile = new JToggleButton("unlock / lock");
-
-		profilesPanel = new JPanel(new GridBagLayout());
+		JPanel profilesPanel = new JPanel(new GridBagLayout());
 		profilesPanel.setBorder(BorderFactory.createTitledBorder("Saved profiles"));
 
-		profilesJList = new JList();
-		profilesJList.setEnabled(false);
-
-		JScrollPane scrollPane = new JScrollPane(profilesJList,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		saveAsProfileButton = new JButton("Save as profile");
-		deleteProfileButton = new JButton("Delete profile");
-
 		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
-		profilesPanel.add(toggleLockProfile, gbc);
-		profilesPanel.add(scrollPane, gbc);
+		profilesPanel.add(profilesCombo, gbc);
 		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
 		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
 
-		settingsGUIButton = new JButton("Settings");
-		createAtlasButton = new JButton("Create Atlas");
+		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
+		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas name"));
+		atlasNamePanel.add(atlasNameTextField, gbc_eol.fill());
+		atlasNamePanel.add(createAtlasButton, gbc_eol.fill());
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		leftPanel.add(coordinatesPanel, gbc_eol);
-		leftPanel.add(mapSourcePanel, gbc_eol);
-		leftPanel.add(zoomLevelLabel, gbc_std);
-		leftPanel.add(amountOfTilesLabel, gbc_eol);
-		leftPanel.add(zoomLevelPanel, gbc_eol);
-		leftPanel.add(tileSizePanel, gbc_eol);
-		leftPanel.add(atlasNamePanel, gbc_eol);
-
-		// TODO Comment out the next line
+		JPanel leftPanelContent = new JPanel(new GridBagLayout());
+		leftPanelContent.add(coordinatesPanel, gbc_eol);
+		leftPanelContent.add(mapSourcePanel, gbc_eol);
+		leftPanelContent.add(zoomLevelsFrame, gbc_eol);
+		leftPanelContent.add(tileSizePanel, gbc_eol);
 		if (Settings.getInstance().isDevModeEnabled())
-			leftPanel.add(atlasContentPanel, gbc_eol);
+			leftPanelContent.add(atlasContentPanel, gbc_eol);
 
-		leftPanel.add(profilesPanel, gbc_eol);
-		leftPanel.add(settingsGUIButton, gbc_eol);
-		leftPanel.add(createAtlasButton, gbc_eol);
-		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
-		leftPanel.setMaximumSize(leftPanel.getPreferredSize());
+		leftPanelContent.add(atlasNamePanel, gbc_eol);
+		leftPanelContent.add(profilesPanel, gbc_eol);
+		leftPanelContent.add(settingsButton, gbc_eol);
+		leftPanelContent.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
+		// leftPanelContent.setMaximumSize(leftPanelContent.getPreferredSize());
 
-		leftScrollPane = new JScrollPane(leftPanel);
-		leftScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		Dimension d = leftPanel.getPreferredSize();
+		JScrollPane scrollPane = new JScrollPane(leftPanelContent);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		Dimension d = leftPanelContent.getPreferredSize();
 		// Set the scroll pane width large enough so that the
 		// scroll bar has enough space to appear right to it
-		// d.width += 2 + leftScrollPane.getVerticalScrollBar().getWidth();
-		// leftScrollPane.setPreferredSize(d);
-		leftScrollPane.setMinimumSize(d);
-		add(leftScrollPane, GBC.std().fill(GBC.VERTICAL));
+		d.width += 5 + scrollPane.getVerticalScrollBar().getWidth();
+		scrollPane.setPreferredSize(d);
+		scrollPane.setMinimumSize(d);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		leftPanel.add(scrollPane, GBC.std().fill(GBC.BOTH));
 	}
 
-	protected void addSelectedAutoCutMultiMapLayers() {
+	/**
+	 * Initializes the panel that holds all controls which are placed
+	 * "inside"/"over" the preview map.
+	 */
+	private JPanel createMapControlsPanel(boolean fullScreenEnabled) {
+		mapControlPanel.removeAll();
+		mapControlPanel.setOpaque(false);
+
+		// zoom label
+		JLabel zoomLabel = new JLabel(" Zoom: ");
+		zoomLabel.setOpaque(true);
+		zoomLabel.setBackground(labelBackgroundColor);
+		zoomLabel.setForeground(labelForegroundColor);
+
+		// top panel
+		JPanel topControls = new JPanel(new GridBagLayout());
+		topControls.setOpaque(false);
+		topControls.add(zoomLabel, GBC.std().insets(5, 5, 0, 0));
+		topControls.add(zoomSlider, GBC.std().insets(0, 5, 0, 0));
+		topControls.add(zoomLevelText, GBC.std().insets(0, 5, 0, 0));
+		topControls.add(gridZoomCombo, GBC.std().insets(10, 5, 0, 0));
+		topControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		if (fullScreenEnabled)
+			topControls.add(mapSourceCombo, GBC.std().insets(20, 5, 20, 0));
+		topControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		if (fullScreenEnabled)
+			topControls.add(settingsButton, GBC.std().insets(20, 5, 0, 0));
+		topControls.add(helpButton, GBC.std().insets(10, 5, 5, 0));
+		mapControlPanel.add(topControls, BorderLayout.NORTH);
+
+		// bottom panel
+		JPanel bottomControls = new JPanel(new GridBagLayout());
+		bottomControls.setOpaque(false);
+		bottomControls.add(fullScreenButton, GBC.std().insets(5, 0, 0, 5));
+		bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		if (fullScreenEnabled) {
+			// atlas name label
+			JLabel atlasNameLabel = new JLabel(" Atlas name ");
+			atlasNameLabel.setOpaque(true);
+			atlasNameLabel.setBackground(labelBackgroundColor);
+			atlasNameLabel.setForeground(labelForegroundColor);
+
+			bottomControls.add(profilesCombo, GBC.std().insets(5, 0, 0, 5));
+			bottomControls.add(deleteProfileButton, GBC.std().insets(10, 0, 0, 5));
+			bottomControls.add(saveAsProfileButton, GBC.std().insets(10, 0, 0, 5));
+			bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+			bottomControls.add(atlasNameLabel, GBC.std().insets(0, 0, 0, 5));
+			bottomControls.add(atlasNameTextField, GBC.std().insets(0, 0, 0, 5));
+			bottomControls.add(createAtlasButton, GBC.std().insets(10, 0, 5, 5));
+		}
+		mapControlPanel.add(bottomControls, BorderLayout.SOUTH);
+
+		// left controls panel
+		if (fullScreenEnabled) {
+			// zoom levels label
+			JLabel label = new JLabel(" Zoom levels ");
+			label.setOpaque(true);
+			label.setBackground(labelBackgroundColor);
+			label.setForeground(labelForegroundColor);
+			label.setToolTipText("Select the zoom levels to include in the atlas");
+
+			JPanel leftControls = new JPanel(new GridBagLayout());
+			leftControls.add(label, GBC.eol().insets(5, 20, 0, 0));
+			leftControls.add(zoomLevelPanel, GBC.eol().insets(0, 5, 0, 0));
+			leftControls.add(amountOfTilesLabel, GBC.eol().insets(5, 10, 0, 10));
+			leftControls.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
+			leftControls.setOpaque(false);
+			mapControlPanel.add(leftControls, BorderLayout.WEST);
+		}
+		return mapControlPanel;
+	}
+
+	private void updatePanels() {
+		boolean fullScreenEnabled = Settings.getInstance().getFullScreenEnabled();
+
+		createMapControlsPanel(fullScreenEnabled);
+
+		if (fullScreenEnabled) {
+			leftPanel.setVisible(false);
+			fullScreenButton.setText("Full screen off");
+		} else {
+			createLeftPanel();
+			leftPanel.setVisible(true);
+			fullScreenButton.setText("Full screen");
+		}
+		updateZoomLevelCheckBoxes();
+		previewMap.grabFocus();
+	}
+
+	private void loadSettings() {
+		Settings settings = Settings.getInstance();
+		atlasNameTextField.setText(settings.getAtlasName());
+		previewMap.settingsLoadPosition();
+		latMaxTextField.setCoordinate(settings.getSelectionMax().lat);
+		lonMaxTextField.setCoordinate(settings.getSelectionMax().lon);
+		latMinTextField.setCoordinate(settings.getSelectionMin().lat);
+		lonMinTextField.setCoordinate(settings.getSelectionMin().lon);
+
+		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
+
+		enableCustomTileSizeCheckButton.setSelected(settings.isCustomTileSize());
+		tileSizeHeight.setTileSize(settings.getTileHeight());
+		tileSizeWidth.setTileSize(settings.getTileWidth());
+
+		setSize(settings.getWindowDimension());
+		Point windowLocation = settings.getWindowLocation();
+		if (windowLocation.x == -1 && windowLocation.y == -1) {
+			setLocationRelativeTo(null);
+		} else {
+			setLocation(windowLocation);
+		}
+		if (settings.getWindowMaximized())
+			setExtendedState(Frame.MAXIMIZED_BOTH);
+	}
+
+	private void saveSettings() {
+		try {
+			Settings s = Settings.getInstance();
+			previewMap.settingsSavePosition();
+			s.setDefaultMapSource(((TileSource) mapSourceCombo.getSelectedItem()).getName());
+			s.setAtlasName(atlasNameTextField.getText());
+			s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
+					lonMaxTextField.getCoordinateOrNaN()));
+			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
+					lonMinTextField.getCoordinateOrNaN()));
+
+			s.setCustomTileSize(enableCustomTileSizeCheckButton.isSelected());
+			s.setTileWidth(tileSizeWidth.getTileSize());
+			s.setTileHeight(tileSizeHeight.getTileSize());
+			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
+			s.setWindowMaximized(maximized);
+			if (!maximized) {
+				s.setWindowDimension(getSize());
+				s.setWindowLocation(getLocation());
+			}
+			s.store();
+		} catch (Exception e) {
+			TACExceptionHandler.showExceptionDialog(e);
+			JOptionPane.showMessageDialog(null,
+					"Error on writing program settings to \"settings.xml\"", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private class ZoomSliderListener implements ChangeListener {
+		public void stateChanged(ChangeEvent e) {
+			previewMap.setZoom(zoomSlider.getValue());
+		}
+	}
+
+	private class GridZoomComboListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			GridZoom g = (GridZoom) gridZoomCombo.getSelectedItem();
+			if (g == null)
+				return;
+			previewMap.setGridZoom(g.getZoom());
+			repaint();
+			previewMap.updateMapSelection();
+		}
+	}
+
+	private void updateGridSizeCombo() {
+		int maxZoom = previewMap.getTileSource().getMaxZoom();
+		int minZoom = previewMap.getTileSource().getMinZoom();
+		gridZoomCombo.removeAllItems();
+		gridZoomCombo.setMaximumRowCount(maxZoom + 1);
+		gridZoomCombo.addItem(new GridZoom(-1) {
+
+			@Override
+			public String toString() {
+				return "Grid disabled";
+			}
+
+		});
+		for (int i = maxZoom; i >= minZoom; i--) {
+			gridZoomCombo.addItem(new GridZoom(i));
+		}
+	}
+
+	private class DisplaySelectionButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			previewSelection();
+		}
+	}
+
+	private class EnableCustomTileSizeCheckButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			updateCustomTileSizeControlsState();
+		}
+	}
+
+	private class MapSourceComboListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			previewMap.setTileSource((TileSource) mapSourceCombo.getSelectedItem());
+			zoomSlider.setMinimum(previewMap.getTileSource().getMinZoom());
+			zoomSlider.setMaximum(previewMap.getTileSource().getMaxZoom());
+			updateGridSizeCombo();
+			updateZoomLevelCheckBoxes();
+		}
+	}
+
+	private class HelpButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(null, helpMessage);
+		}
+	}
+
+	private class FullScreenButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Settings settings = Settings.getInstance();
+			settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
+			updatePanels();
+		}
+	}
+
+	private Profile getProfile(String profileName) {
+		for (Profile profile : profilesVector) {
+			if (profile.getProfileName().equals(profileName))
+				return profile;
+		}
+		return null;
+	}
+
+	private void initializeProfilesCombo() {
+		// Load all profiles from the profiles file from disk
+		profilesVector = PersistentProfiles.load(new File(System.getProperty("user.dir"),
+				"profiles.xml"));
+
+		for (Profile p : profilesVector) {
+			profilesCombo.addItem(p.getProfileName());
+		}
+		profilesCombo.setSelectedIndex(-1);
+		ProfilesComboListener pcl = new ProfilesComboListener();
+		profilesCombo.addActionListener(pcl);
+
+		deleteProfileButton.setEnabled(false);
+	}
+
+	private class ProfilesComboListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Profile profile = getProfile((String) profilesCombo.getEditor().getItem());
+			if (profile != null) {
+				TileSource map = MapSources.getSourceByName(profile.getMapSource());
+				mapSourceCombo.setSelectedItem(map);
+
+				latMinTextField.setCoordinate(profile.getLatitudeMin());
+				latMaxTextField.setCoordinate(profile.getLatitudeMax());
+				lonMinTextField.setCoordinate(profile.getLongitudeMin());
+				lonMaxTextField.setCoordinate(profile.getLongitudeMax());
+
+				tileSizeWidth.setTileSize(profile.getTileSizeWidth());
+				tileSizeHeight.setTileSize(profile.getTileSizeHeight());
+
+				atlasNameTextField.setText(profile.getAtlasName());
+
+				boolean[] zoomValues = new boolean[cbZoom.length];
+
+				zoomValues = profile.getZoomLevels();
+
+				int min = Math.min(cbZoom.length, zoomValues.length);
+				for (int i = 0; i < min; i++) {
+					cbZoom[i].setSelected(zoomValues[i]);
+				}
+
+				calculateNrOfTilesToDownload();
+				previewSelection();
+				deleteProfileButton.setEnabled(true);
+			} else {
+				deleteProfileButton.setEnabled(false);
+			}
+		}
+	}
+
+	private class DeleteProfileListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			profilesVector.removeElementAt(profilesCombo.getSelectedIndex());
+			PersistentProfiles.store(profilesVector);
+			int index = profilesCombo.getSelectedIndex();
+			profilesCombo.setSelectedIndex(-1);
+			profilesCombo.removeItemAt(index);
+		}
+
+	}
+
+	private class SaveAsProfileListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			String errorText = validateInput(true);
+
+			if (errorText.length() > 0) {
+				JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			String profileName = (String) profilesCombo.getEditor().getItem();
+
+			if (profileName.length() == 0) {
+				JOptionPane.showMessageDialog(null, "Please enter a profile name", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+
+			Profile previousProfile = getProfile(profileName);
+
+			if (previousProfile != null) {
+				int response = JOptionPane.showConfirmDialog(null, "Profile \"" + profileName
+						+ "\" already exists. Overwrite?", "Please confirm",
+						JOptionPane.YES_NO_OPTION);
+				if (response == JOptionPane.NO_OPTION)
+					return;
+			}
+
+			Profile profile;
+			if (previousProfile != null)
+				profile = previousProfile;
+			else
+				profile = new Profile();
+
+			try {
+				profile.setProfileName(profileName);
+				profile.setAtlasName(atlasNameTextField.getText());
+				profile.setMapSource(((TileSource) mapSourceCombo.getSelectedItem()).getName());
+				profile.setLatitudeMax(latMaxTextField.getCoordinate());
+				profile.setLatitudeMin(latMinTextField.getCoordinate());
+				profile.setLongitudeMax(lonMaxTextField.getCoordinate());
+				profile.setLongitudeMin(lonMinTextField.getCoordinate());
+
+				boolean[] zoomLevels = new boolean[cbZoom.length];
+				for (int i = 0; i < cbZoom.length; i++) {
+					zoomLevels[i] = cbZoom[i].isSelected();
+				}
+
+				profile.setZoomLevels(zoomLevels);
+				profile.setTileSizeWidth(tileSizeWidth.getTileSize());
+				profile.setTileSizeHeight(tileSizeHeight.getTileSize());
+
+				if (previousProfile == null) {
+					profilesVector.addElement(profile);
+					profilesCombo.addItem(profileName);
+				}
+				PersistentProfiles.store(profilesVector);
+				deleteProfileButton.setEnabled(true);
+				JOptionPane.showMessageDialog(null, "Saved profile " + profileName, "",
+						JOptionPane.PLAIN_MESSAGE);
+
+			} catch (ParseException exception) {
+				log.error("", exception);
+			}
+		}
+	}
+
+	private class SettingsButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			SettingsGUI.showSettingsDialog(GUI.this);
+		}
+	}
+
+	private class CreateAtlasButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			String errorText = validateInput(true);
+			if (errorText.length() > 0) {
+				JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			boolean maxIsBiggerThanMin = true;
+
+			maxIsBiggerThanMin = validateLatLongMinMax();
+
+			if (maxIsBiggerThanMin) {
+
+				// by default width & height are zero = do not process tiles
+				// with
+				// tile size 256x256
+				int tzw = Tile.SIZE;
+				int tzh = Tile.SIZE;
+				boolean customTileSize = enableCustomTileSizeCheckButton.isSelected();
+				if (customTileSize) {
+					tzw = tileSizeWidth.getTileSize();
+					tzh = tileSizeHeight.getTileSize();
+				}
+
+				try {
+					TileSource tileSource = (TileSource) mapSourceCombo.getSelectedItem();
+					SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
+							.getMinZoom(), cbZoom);
+					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
+							getMapSelectionCoordinates(), sZL, customTileSize, tzw, tzh);
+					atlasThread.start();
+				} catch (Exception exception) {
+					log.error("", exception);
+				}
+			}
+			System.gc();
+		}
+	}
+
+	private void updateZoomLevelCheckBoxes() {
+		TileSource tileSource = previewMap.getTileSource();
+		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
+		JCheckBox oldZoomLevelCheckBoxes[] = cbZoom;
+		cbZoom = new JCheckBox[zoomLevels];
+		zoomLevelPanel.removeAll();
+
+		boolean fullScreenEnabled = Settings.getInstance().getFullScreenEnabled();
+		if (fullScreenEnabled) {
+			zoomLevelPanel.setLayout(new GridLayout(0, 2, 5, 3));
+		} else {
+			zoomLevelPanel.setLayout(new GridLayout(0, 12, 2, 3));
+		}
+		ZoomLevelCheckBoxListener cbl = new ZoomLevelCheckBoxListener();
+
+		for (int i = cbZoom.length - 1; i >= 0; i--) {
+			int cbz = i + tileSource.getMinZoom();
+			JCheckBox cb = new JCheckBox();
+			cb.setPreferredSize(new Dimension(22, 11));
+			cb.setMinimumSize(cb.getPreferredSize());
+			cb.setOpaque(false);
+			cb.setFocusable(false);
+			if (i < oldZoomLevelCheckBoxes.length)
+				cb.setSelected(oldZoomLevelCheckBoxes[i].isSelected());
+			cb.addActionListener(cbl);
+			cb.setToolTipText("Select zoom level " + cbz + " for atlas");
+			zoomLevelPanel.add(cb);
+			cbZoom[i] = cb;
+
+			JLabel l = new JLabel("" + cbz);
+			if (fullScreenEnabled) {
+				l.setOpaque(true);
+				l.setBackground(labelBackgroundColor);
+				l.setForeground(labelForegroundColor);
+			}
+			zoomLevelPanel.add(l);
+		}
+		if (fullScreenEnabled) {
+			amountOfTilesLabel.setOpaque(true);
+			amountOfTilesLabel.setBackground(labelBackgroundColor);
+			amountOfTilesLabel.setForeground(labelForegroundColor);
+		} else {
+			amountOfTilesLabel.setOpaque(false);
+			amountOfTilesLabel.setForeground(Color.black);
+		}
+
+	}
+
+	private class ZoomLevelCheckBoxListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			calculateNrOfTilesToDownload();
+		}
+	}
+
+	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min) {
+		lonMaxTextField.setCoordinate(max.lon);
+		lonMinTextField.setCoordinate(min.lon);
+		latMaxTextField.setCoordinate(max.lat);
+		latMinTextField.setCoordinate(min.lat);
+		calculateNrOfTilesToDownload();
+	}
+
+	public void zoomChanged(int zoomLevel) {
+		zoomLevelText.setText(" " + zoomLevel + " ");
+		zoomSlider.setValue(zoomLevel);
+	}
+
+	public void selectNextMapSource() {
+		if (mapSourceCombo.getSelectedIndex() == mapSourceCombo.getItemCount() - 1) {
+			Toolkit.getDefaultToolkit().beep();
+		} else {
+			mapSourceCombo.setSelectedIndex(mapSourceCombo.getSelectedIndex() + 1);
+		}
+	}
+
+	public void selectPreviousMapSource() {
+		if (mapSourceCombo.getSelectedIndex() == 0) {
+			Toolkit.getDefaultToolkit().beep();
+		} else {
+			mapSourceCombo.setSelectedIndex(mapSourceCombo.getSelectedIndex() - 1);
+		}
+	}
+
+	private void addSelectedAutoCutMultiMapLayers() {
 		Atlas atlas = atlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
-		TileSource tileSource = (TileSource) mapSource.getSelectedItem();
+		TileSource tileSource = (TileSource) mapSourceCombo.getSelectedItem();
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource().getMinZoom(),
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		Settings settings = Settings.getInstance();
-		Dimension tileSize = new Dimension(getTileSizeWidth(), getTileSizeHeight());
+		Dimension tileSize = new Dimension(tileSizeWidth.getTileSize(), tileSizeHeight
+				.getTileSize());
 		int[] zoomLevels = sZL.getZoomLevels();
 		for (int zoom : zoomLevels) {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
@@ -361,100 +869,20 @@ public class GUI extends JFrame implements MapSelectionListener {
 		atlasTree.getTreeModel().notifyStructureChanged();
 	}
 
-	public void createRightPanel() {
-
-		rightPanel = new JPanel(new BorderLayout());
-		rightPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-
-		previewMap.addMapSelectionListener(this);
-
-		// Allows to disable map painting and tile loading
-		// for debugging purposes
-		// TODO Enable map preview
-		// previewMap.setEnabled(false);
-
-		rightPanel.add(previewMap, BorderLayout.CENTER);
-		add(rightPanel, GBC.std().fill());
-		createZoomLevelCheckBoxes();
-	}
-
-	protected void createZoomLevelCheckBoxes() {
-		TileSource tileSource = previewMap.getTileSource();
-		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
-		cbZoom = new JCheckBox[zoomLevels];
-		int x = tileSource.getMaxZoom();
-		int y = tileSource.getMinZoom() + 2;
-		Object[] o = new Object[] { x--, x--, x, y--, y--, y };
-		zoomLevelLabel.setText(String.format("Zoom levels (%d, %d, %d ... %d, %d, %d)", o));
-		zoomLevelPanel.removeAll();
-		zoomLevelPanel.setLayout(new GridLayout(2, cbZoom.length + 2 / 2, 0, 0));
-		CheckBoxListener cbl = new CheckBoxListener();
-
-		String s = "";
-		for (int i = cbZoom.length - 1; i >= 0; i--) {
-			JCheckBox cb = new JCheckBox();
-			int cbz = i + tileSource.getMinZoom();
-			cb.setPreferredSize(new Dimension(17, 20));
-			cb.setMinimumSize(cb.getPreferredSize());
-			s = "Zoom level " + cbz;
-			if (cbz == tileSource.getMinZoom())
-				s += " (Minimum zoom)";
-			if (cbz == tileSource.getMaxZoom())
-				s += " (Maximum zoom)";
-			cb.setToolTipText(s);
-			cb.addActionListener(cbl);
-			zoomLevelPanel.add(cb);
-			cbZoom[i] = cb;
-		}
-
-	}
-
-	public void addListeners() {
-		addWindowListener(new WindowDestroyer());
-		ButtonListener bl = new ButtonListener();
-		saveAsProfileButton.addActionListener(bl);
-		deleteProfileButton.addActionListener(bl);
-		settingsGUIButton.addActionListener(bl);
-		createAtlasButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				createAtlas();
-			}
-		});
-		previewSelectionButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				previewSelection();
-			}
-		});
-
-		toggleLockProfile.addActionListener(new JToggleButtonListener());
-		JListListener jll = new JListListener();
-		profilesJList.addListSelectionListener(jll);
-		profilesJList.addMouseListener(jll);
-		cbEnableCustomTileSize.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				updateCustomTileSizeControlsState();
-			}
-		});
-	}
-
-	protected void updateCustomTileSizeControlsState() {
-		boolean b = cbEnableCustomTileSize.isSelected();
+	private void updateCustomTileSizeControlsState() {
+		boolean b = enableCustomTileSizeCheckButton.isSelected();
 		tileSizeWidthLabel.setEnabled(b);
 		tileSizeHeightLabel.setEnabled(b);
 		tileSizeHeight.setEnabled(b);
 		tileSizeWidth.setEnabled(b);
 	}
 
-	/**
-	 * Reads the entered coordinates and marks the selection on the preview map
-	 * (zooms automatically to the selected area.
-	 */
-	protected void previewSelection() {
+	private void previewSelection() {
 		MapSelection ms = checkCoordinates();
 		previewMap.setSelection(ms);
 	}
 
-	protected MapSelection checkCoordinates() {
+	private MapSelection checkCoordinates() {
 		MapSelection ms = getMapSelectionCoordinates();
 		latMaxTextField.setCoordinate(ms.getLat_max());
 		latMinTextField.setCoordinate(ms.getLat_min());
@@ -463,7 +891,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		return ms;
 	}
 
-	protected MapSelection getMapSelectionCoordinates() {
+	private MapSelection getMapSelectionCoordinates() {
 		double lat_max, lat_min, lon_max, lon_min;
 		try {
 			lat_max = latMaxTextField.getCoordinate();
@@ -488,72 +916,37 @@ public class GUI extends JFrame implements MapSelectionListener {
 		return new MapSelection(lat_max, lat_min, lon_max, lon_min);
 	}
 
-	public void initiateProgram() {
-
-		// Check if all necessary files and folder exists
-		Utilities.checkFileSetup();
-
-		Settings settings = Settings.getInstance();
-		atlasNameTextField.setText(settings.getAtlasName());
-		previewMap.settingsLoadPosition();
-		latMaxTextField.setCoordinate(settings.getSelectionMax().lat);
-		lonMaxTextField.setCoordinate(settings.getSelectionMax().lon);
-		latMinTextField.setCoordinate(settings.getSelectionMin().lat);
-		lonMinTextField.setCoordinate(settings.getSelectionMin().lon);
-
-		mapSource.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
-
-		cbEnableCustomTileSize.setSelected(settings.isCustomTileSize());
-		tileSizeHeight.setTileSize(settings.getTileHeight());
-		tileSizeWidth.setTileSize(settings.getTileWidth());
-		updateProfilesList();
-		updateCustomTileSizeControlsState();
-		UpdateGUI.updateAllUIs();
-	}
-
-	protected void updateProfilesList() {
-		// Load all profiles from the profiles file from disk
-		profilesVector = PersistentProfiles.load(new File(System.getProperty("user.dir")
-				+ fileSeparator + "profiles.xml"));
-		profileNamesVector.clear();
-
-		for (Profile p : profilesVector) {
-			profileNamesVector.add(p.getProfileName());
-		}
-		profilesJList.setListData(profileNamesVector);
-	}
-
-	public String validateInput(boolean isCreateAtlasValidate) {
+	private String validateInput(boolean checkCreateAtlas) {
 
 		String errorText = "";
 
 		if (!lonMinTextField.isInputValid())
-			errorText += "Value of \"Longitude Min\" must be between -179 and 179 \n";
+			errorText += "Value of \"Longitude Min\" must be between -179 and 179. \n";
 
 		if (!lonMaxTextField.isInputValid())
-			errorText += "Value of \"Longitude Max\" must be between -179 and 179 \n";
+			errorText += "Value of \"Longitude Max\" must be between -179 and 179. \n";
 
 		if (!latMaxTextField.isInputValid())
-			errorText += "Value of \"Latitude Max\" must be between -85 and 85 \n";
+			errorText += "Value of \"Latitude Max\" must be between -85 and 85. \n";
 
 		if (!latMinTextField.isInputValid())
-			errorText += "Value of \"Latitude Min\" must be between -85 and 85 \n";
+			errorText += "Value of \"Latitude Min\" must be between -85 and 85. \n";
 
 		if (!tileSizeHeight.isTileSizeValid())
 			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeField.MIN
-					+ " and " + JTileSizeField.MAX + " \n";
+					+ " and " + JTileSizeField.MAX + ". \n";
 
 		if (!tileSizeWidth.isTileSizeValid())
 			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeField.MIN
-					+ " and " + JTileSizeField.MAX + " \n";
+					+ " and " + JTileSizeField.MAX + ". \n";
 
-		if (isCreateAtlasValidate) {
+		if (checkCreateAtlas) {
 			if (atlasNameTextField.getText().length() < 1) {
-				errorText += "A value of \"Atlas name\" must be entered \n";
+				errorText += "Please specify an \"Atlas name\". \n";
 			}
 		}
 
-		if (isCreateAtlasValidate) {
+		if (checkCreateAtlas) {
 
 			boolean zoomLevelChosen = false;
 
@@ -565,14 +958,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 			}
 
 			if (zoomLevelChosen == false) {
-				errorText += "A zoom level must be selected\n";
+				errorText += "Please select at least one zoom level. \n";
+			}
+
+			MapSelection ms = checkCoordinates();
+			if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
+				errorText += "Please select a map area for download. \n";
 			}
 
 		}
 		return errorText;
 	}
 
-	public boolean validateLatLongMinMax() {
+	private boolean validateLatLongMinMax() {
 
 		Double latMax;
 		Double latMin;
@@ -607,284 +1005,110 @@ public class GUI extends JFrame implements MapSelectionListener {
 		return maxIsBiggerThanMin;
 	}
 
-	public void calculateNrOfTilesToDownload() {
-
-		try {
-			SelectedZoomLevels sZL = new SelectedZoomLevels(
-					previewMap.getTileSource().getMinZoom(), cbZoom);
-
-			int[] zoomLevels = sZL.getZoomLevels();
-
-			long totalNrOfTiles = 0;
-
-			String hint = "Total amount of tiles to download:";
-			for (int i = 0; i < zoomLevels.length; i++) {
-				MapSelection ms = getMapSelectionCoordinates();
-				int zoom = zoomLevels[i];
-				long[] info = ms.calculateNrOfTilesEx(zoom);
-				totalNrOfTiles += info[0];
-				hint += "<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] + "*"
-						+ info[2] + ")";
-			}
-			hint = "<html>" + hint + "</html>";
-			amountOfTilesLabel.setText("( " + Long.toString(totalNrOfTiles) + " )");
-			amountOfTilesLabel.setToolTipText(hint);
-		} catch (Exception e) {
-			amountOfTilesLabel.setText("( ? )");
-			log.error("", e);
-		}
-	}
-
-	private int getTileSizeHeight() {
-		return tileSizeHeight.getTileSize();
-	}
-
-	private int getTileSizeWidth() {
-		return tileSizeWidth.getTileSize();
-	}
-
-	// WindowDestroyer
-	private class WindowDestroyer extends WindowAdapter {
-		public void windowClosing(WindowEvent event) {
+	private void calculateNrOfTilesToDownload() {
+		MapSelection ms = getMapSelectionCoordinates();
+		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
+			amountOfTilesLabel.setText(" Amount of tiles in atlas: 0 ");
+			amountOfTilesLabel.setToolTipText("");
+		} else {
 			try {
-				Settings s = Settings.getInstance();
-				previewMap.settingsSavePosition();
-				s.setDefaultMapSource(((TileSource) mapSource.getSelectedItem()).getName());
-				s.setAtlasName(atlasNameTextField.getText());
-				s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
-						lonMaxTextField.getCoordinateOrNaN()));
-				s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
-						lonMinTextField.getCoordinateOrNaN()));
-
-				s.setCustomTileSize(cbEnableCustomTileSize.isSelected());
-				s.setTileWidth(getTileSizeWidth());
-				s.setTileHeight(getTileSizeHeight());
-
-				s.store();
-			} catch (Exception e) {
-				TACExceptionHandler.showExceptionDialog(e);
-				JOptionPane.showMessageDialog(null,
-						"Error on writing program settings to \"settings.xml\"", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-
-	public void mapSourceChanged() {
-		previewMap.setTileSource((TileSource) mapSource.getSelectedItem());
-		createZoomLevelCheckBoxes();
-	}
-
-	private void createAtlas() {
-
-		String errorText = validateInput(true);
-		if (errorText.length() > 0) {
-			JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		boolean maxIsBiggerThanMin = true;
-
-		maxIsBiggerThanMin = validateLatLongMinMax();
-
-		if (maxIsBiggerThanMin) {
-
-			// by default width & height are zero = do not process tiles with
-			// tile size 256x256
-			int tileSizeWidth = Tile.SIZE;
-			int tileSizeHeight = Tile.SIZE;
-			boolean customTileSize = cbEnableCustomTileSize.isSelected();
-			if (customTileSize) {
-				tileSizeWidth = getTileSizeWidth();
-				tileSizeHeight = getTileSizeHeight();
-			}
-
-			try {
-				TileSource tileSource = (TileSource) mapSource.getSelectedItem();
 				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
 						.getMinZoom(), cbZoom);
-				Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
-						getMapSelectionCoordinates(), sZL, customTileSize, tileSizeWidth,
-						tileSizeHeight);
-				atlasThread.start();
+
+				int[] zoomLevels = sZL.getZoomLevels();
+
+				long totalNrOfTiles = 0;
+
+				String hint = "Total amount of tiles to download:";
+				for (int i = 0; i < zoomLevels.length; i++) {
+					int zoom = zoomLevels[i];
+					long[] info = ms.calculateNrOfTilesEx(zoom);
+					totalNrOfTiles += info[0];
+					hint += "<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] + "*"
+							+ info[2] + ")";
+				}
+				hint = "<html>" + hint + "</html>";
+				amountOfTilesLabel.setText(" Amount of tiles in atlas: "
+						+ Long.toString(totalNrOfTiles));
+				amountOfTilesLabel.setToolTipText(hint);
 			} catch (Exception e) {
+				amountOfTilesLabel.setText(" Amount of tiles in atlas: ? ");
 				log.error("", e);
 			}
 		}
-		System.gc();
 	}
 
-	private void profileSaveAs() {
+	private class WindowDestroyer extends WindowAdapter {
+		public void windowClosing(WindowEvent event) {
+			saveSettings();
+		}
+	}
 
-		String inputValue = JOptionPane.showInputDialog("Profile Name");
+	/**
+	 * Saves the window position and size when window is moved or resized. This
+	 * is necessary because of the maximized state. If a window is maximized it
+	 * is impossible to retrieve the window size & position of the non-maximized
+	 * window - therefore we have to collect the information every time they
+	 * change.
+	 */
+	private class MainWindowListener extends ComponentAdapter {
+		public void componentResized(ComponentEvent event) {
+			// log.debug(event.paramString());
+			updateValues();
+		}
 
-		if (inputValue != null) {
+		public void componentMoved(ComponentEvent event) {
+			// log.debug(event.paramString());
+			updateValues();
+		}
 
-			Profile profile = new Profile();
-
-			for (int i = 0; i < profileNamesVector.size(); i++) {
-				if (inputValue.equals(profileNamesVector.elementAt(i))) {
-					JOptionPane.showMessageDialog(null,
-							"Profile name already exists, choose a different name", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-			}
-			String errorDescription = "";
-			MapSelection ms = checkCoordinates();
-
-			if (!ms.coordinatesAreValid())
-				errorDescription += "Coordinates are not all valid - please check";
-
-			if (!tileSizeWidth.isTileSizeValid())
-				errorDescription += "Invalid tile size width - please check\n";
-			if (!tileSizeHeight.isTileSizeValid())
-				errorDescription += "Invalid tile size height - please check\n";
-
-			if (errorDescription.length() > 0) {
-				JOptionPane.showMessageDialog(null, errorDescription, "Errors",
-						JOptionPane.ERROR_MESSAGE);
+		private void updateValues() {
+			// only update old values while window is in NORMAL state
+			// Note(Java bug): Sometimes getExtendedState() says the window is
+			// not maximized but maximizing is already in progress and therefore
+			// the window bounds are already changed.
+			if ((getExtendedState() & MAXIMIZED_BOTH) != 0)
 				return;
-			}
-			try {
-				profile.setProfileName(inputValue);
-				profile.setAtlasName(atlasNameTextField.getText());
-				profile.setMapSource(((TileSource) mapSource.getSelectedItem()).getName());
-				profile.setLatitudeMax(latMaxTextField.getCoordinate());
-				profile.setLatitudeMin(latMinTextField.getCoordinate());
-				profile.setLongitudeMax(lonMaxTextField.getCoordinate());
-				profile.setLongitudeMin(lonMinTextField.getCoordinate());
-
-				boolean[] zoomLevels = new boolean[cbZoom.length];
-				for (int i = 0; i < cbZoom.length; i++) {
-					zoomLevels[i] = cbZoom[i].isSelected();
-				}
-
-				profile.setZoomLevels(zoomLevels);
-				profile.setTileSizeWidth(tileSizeWidth.getTileSize());
-				profile.setTileSizeHeight(tileSizeHeight.getTileSize());
-
-				profilesVector.addElement(profile);
-				PersistentProfiles.store(profilesVector);
-				updateProfilesList();
-			} catch (ParseException e) {
-				log.error("", e);
-			}
+			Settings s = Settings.getInstance();
+			s.setWindowDimension(getSize());
+			s.setWindowLocation(getLocation());
 		}
 	}
 
-	private void profileLoad(Profile profile) {
-		TileSource map = MapSources.getSourceByName(profile.getMapSource());
-		mapSource.setSelectedItem(map);
-		mapSourceChanged();
+	protected static String helpMessage = new String("<html><h1>Help</h1>" + "<table>"
+			+ "<tr><td>&lt;any cursor key></td><td>move map</td></tr>"
+			+ "<tr><td>[right mouse drag]</td><td>move map</td></tr>"
+			+ "<tr><td>&lt;ctrl> + &lt;cursor up></td><td>zoom in</td></tr>"
+			+ "<tr><td>[left mouse double click]</td><td>zoom in</td></tr>"
+			+ "<tr><td>[mouse scroll up]</td><td>zoom in</td></tr>"
+			+ "<tr><td>&lt;ctrl> + &lt;cursor down></td><td>zoom out</td></tr>"
+			+ "<tr><td>[mouse scroll down]</td><td>zoom out</td></tr>"
+			+ "<tr><td>&lt;ctrl> + &lt;cursor left></td><td>previous map source</td></tr>"
+			+ "<tr><td>&lt;ctrl> + &lt;cursor right></td><td>next map source</td></tr>"
+			+ "<tr><td>[left mouse drag]</td><td>select area for download</td></tr>"
+			+ "</table></html>");
 
-		latMinTextField.setCoordinate(profile.getLatitudeMin());
-		latMaxTextField.setCoordinate(profile.getLatitudeMax());
-		lonMinTextField.setCoordinate(profile.getLongitudeMin());
-		lonMaxTextField.setCoordinate(profile.getLongitudeMax());
+	private class FilledLayeredPane extends JLayeredPane {
 
-		tileSizeWidth.setTileSize(profile.getTileSizeWidth());
-		tileSizeHeight.setTileSize(profile.getTileSizeHeight());
-
-		atlasNameTextField.setText(profile.getAtlasName());
-
-		boolean[] zoomValues = new boolean[cbZoom.length];
-
-		zoomValues = profile.getZoomLevels();
-
-		int min = Math.min(cbZoom.length, zoomValues.length);
-		for (int i = 0; i < min; i++) {
-			cbZoom[i].setSelected(zoomValues[i]);
-		}
+		private static final long serialVersionUID = -756648362160847296L;
 
 		/**
-		 * Calculate amount of tiles to download
+		 * Layout each of the components in this JLayeredPane so that they all
+		 * fill the entire extents of the layered pane -- from (0,0) to
+		 * (getWidth(), getHeight())
 		 */
-		calculateNrOfTilesToDownload();
-		previewSelection();
-	}
-
-	private void profileDeleteSelected() {
-		if (profilesJList.isEnabled() && profilesJList.getSelectedIndex() > -1) {
-
-			profilesVector.removeElementAt(profilesJList.getSelectedIndex());
-			PersistentProfiles.store(profilesVector);
-			updateProfilesList();
-		}
-	}
-
-	private class ButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			String actionCommand = e.getActionCommand();
-
-			if (actionCommand.equals("Create Atlas"))
-				createAtlas();
-			else if (actionCommand.equals("Save as profile"))
-				profileSaveAs();
-			else if (actionCommand.equals("Delete profile"))
-				profileDeleteSelected();
-			else if (actionCommand.equals("Settings")) {
-				SettingsGUI sgui = new SettingsGUI(GUI.this);
-				sgui.setVisible(true);
-			}
-		}
-	}
-
-	private class JToggleButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			if (toggleLockProfile.equals(e.getSource())) {
-				if (toggleLockProfile.isSelected()) {
-					profilesJList.setEnabled(true);
-				} else {
-					profilesJList.setEnabled(false);
+		@Override
+		public void doLayout() {
+			// Synchronizing on getTreeLock, because I see other layouts doing
+			// that.
+			// see BorderLayout::layoutContainer(Container)
+			synchronized (getTreeLock()) {
+				int w = getWidth();
+				int h = getHeight();
+				for (Component c : getComponents()) {
+					c.setBounds(0, 0, w, h);
 				}
 			}
 		}
 	}
-
-	private class JListListener extends MouseAdapter implements ListSelectionListener {
-
-		public void valueChanged(ListSelectionEvent e) {
-			loadSelectedProfile();
-		}
-
-		protected void loadSelectedProfile() {
-			int selectedIndex = profilesJList.getSelectedIndex();
-
-			if (selectedIndex != -1) {
-				Profile profile = new Profile();
-
-				profile = profilesVector.elementAt(selectedIndex);
-				profileLoad(profile);
-			}
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
-				return;
-			loadSelectedProfile();
-		}
-
-	}
-
-	private class CheckBoxListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			calculateNrOfTilesToDownload();
-		}
-	}
-
-	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min) {
-		lonMaxTextField.setCoordinate(max.lon);
-		lonMinTextField.setCoordinate(min.lon);
-		latMaxTextField.setCoordinate(max.lat);
-		latMinTextField.setCoordinate(min.lat);
-		calculateNrOfTilesToDownload();
-	}
-
-	public void setCreateAtlasButtonEnabled(boolean enabled) {
-		createAtlasButton.setEnabled(enabled);
-	}
-
 }

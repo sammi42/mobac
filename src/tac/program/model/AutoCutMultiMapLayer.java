@@ -19,7 +19,7 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
-import tac.utilities.MyMath;
+//import tac.utilities.MyMath;
 
 /**
  * A layer holding one or multiple maps of the same map source and the same zoom
@@ -80,11 +80,12 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 			maps.add(s);
 			return;
 		}
+		/*
 		int mapCountX = MyMath.divCeil(maxTileCoordinate.x - minTileCoordinate.x,
 				maxMapDimension.width);
 		int mapCountY = MyMath.divCeil(maxTileCoordinate.y - minTileCoordinate.y,
 				maxMapDimension.height);
-
+		 */
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
 			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {

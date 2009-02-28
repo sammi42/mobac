@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -57,6 +58,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		this.customTileSize = customTileSize;
 		this.tileSizeWidth = tileSizeWidth;
 		this.tileSizeHeight = tileSizeHeight;
+		ap = new AtlasProgress(this);
 	}
 
 	private static synchronized int getNextThreadNum() {
@@ -71,24 +73,34 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
 				+ sZL + "\n\tTile size width: " + tileSizeWidth + "\n\tTile size height: "
 				+ tileSizeHeight);
-		ap = new AtlasProgress(this);
 		ap.setAbortListener(this);
 		try {
 			createAtlas();
 			ap.atlasCreationFinished();
 			log.info("Altas creation finished");
 		} catch (OutOfMemoryError e) {
-			JOptionPane.showMessageDialog(null, "TrekBuddy Atlas Creator has run out of memory.\n"
-					+ "Please make sure you have started it via the "
-					+ "provided startup scripts 'start.cmd' (Windows) / 'start.sh' (Linux).\n"
-					+ "Those scripts are increasing the maximum memory usable by TAC to 512 MB.",
-					"Out of memory", JOptionPane.ERROR_MESSAGE);
-			ap.closeWindow();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null,
+							"TrekBuddy Atlas Creator has run out of memory.\n"
+									+ "Please make sure you have started it via the "
+									+ "provided startup scripts 'start.cmd' (Windows) "
+									+ "/ 'start.sh' (Linux).\n"
+									+ "Those scripts are increasing the maximum memory "
+									+ "usable by TAC to 512 MB.", "Out of memory",
+							JOptionPane.ERROR_MESSAGE);
+					ap.closeWindow();
+				}
+			});
 			log.error("Out of memory: ", e);
 		} catch (InterruptedException e) {
-			JOptionPane.showMessageDialog(null, "Atlas download aborted", "Information",
-					JOptionPane.INFORMATION_MESSAGE);
-			ap.closeWindow();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Atlas download aborted", "Information",
+							JOptionPane.INFORMATION_MESSAGE);
+					ap.closeWindow();
+				}
+			});
 			log.info("Altas creation was interrupted by user");
 		} catch (Exception e) {
 			log.error("Altas creation aborted because of an error: ", e);
@@ -178,9 +190,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				int xMax = bottomRight.x;
 				int yMin = topLeft.y;
 				int yMax = bottomRight.y;
-				ap.setMinMaxForCurrentLayer(0, apMax);
+				ap.initLayer(apMax);
 				ap.setZoomLevel(zoom);
-				ap.setInitiateTimeForLayer();
 
 				File oziZoomDir = new File(oziDir, Integer.toString(zoom));
 				oziZoomDir.mkdir();
@@ -224,7 +235,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 							return;
 					}
 				}
-				ap.updateLayerProgressBar(apMax);
+				ap.setLayerProgress(apMax);
 
 				File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
 						atlasName, zoom }));
@@ -236,7 +247,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 						tileSizeWidth, tileSizeHeight, atlasName, tileSource, zoom);
 				ota.convert(xMax, xMin, yMax, yMin);
 
-				ap.updateAtlasProgressBarLayerText(layer + 1);
+				ap.setLayer(layer + 1);
 				downloadJobDispatcher.cancelOutstandingJobs();
 			}
 		} finally {
@@ -247,13 +258,17 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 		AtlasTarCreator atc = new AtlasTarCreator(atlasDir, atlasTarDir);
 		atc.createAtlasCrTarArchive();
-		ap.incTarPrograssBar();
+		ap.incTarProgress();
 
 		atc.createMapTars();
-		ap.incTarPrograssBar();
+		ap.incTarProgress();
 
-		JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
-				JOptionPane.INFORMATION_MESSAGE);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 	}
 
 	/**
@@ -269,10 +284,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	}
 
 	private void updateGUI() {
-		ap.updateAtlasProgressBar(ap.getAtlasProgressValue() + 1);
-		ap.updateLayerProgressBar(jobsCompleted);
-		ap.updateViewNrOfDownloadedBytes();
-		ap.updateViewNrOfDownloadedBytesPerSecond();
+		ap.incAtlasProgress();
+		ap.setLayerProgress(jobsCompleted);
 	}
 
 	public int getActiveDownloads() {

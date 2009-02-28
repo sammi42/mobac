@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
@@ -72,7 +73,15 @@ public class SettingsGUI extends JDialog {
 		} while (size >= 1024);
 	}
 
-	public SettingsGUI(JFrame owner) {
+	static void showSettingsDialog(final JFrame owner) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new SettingsGUI(owner);
+			}
+		});
+	}
+
+	private SettingsGUI(JFrame owner) {
 		super(owner);
 		setModal(true);
 		createJFrame();
@@ -85,7 +94,8 @@ public class SettingsGUI extends JDialog {
 		setMinimumSize(getSize());
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
-		updateTileStoreInfoPanelAnsynchronously();
+		updateTileStoreInfoPanel(false);
+		setVisible(true);
 	}
 
 	private void createJFrame() {
@@ -158,16 +168,6 @@ public class SettingsGUI extends JDialog {
 
 		backGround.add(tileStorePanel, BorderLayout.NORTH);
 		backGround.add(tileStoreInfoPanel, BorderLayout.CENTER);
-	}
-
-	private void updateTileStoreInfoPanelAnsynchronously() {
-		new Thread() {
-
-			@Override
-			public void run() {
-				updateTileStoreInfoPanel(false);
-			}
-		}.start();
 	}
 
 	private synchronized void updateTileStoreInfoPanel(boolean fakeContent) {

@@ -1,25 +1,16 @@
 package tac.gui.preview;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
@@ -36,7 +27,6 @@ import tac.mapsources.Google.GoogleMaps;
 import tac.program.EastNorthCoordinate;
 import tac.program.MapSelection;
 import tac.program.Settings;
-import tac.utilities.Utilities;
 
 public class PreviewMap extends JMapViewer implements ComponentListener {
 
@@ -56,10 +46,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	private int gridFactor;
 	private int gridSize;
 
-	private JComboBox gridSizeSelector;
-	private JButton helpButton;
-
-	private LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
+	public LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
 
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
@@ -67,50 +54,21 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		OsmTileLoader.USER_AGENT = Settings.getInstance().getUserAgent();
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
-		cacheTileLoader.setCacheMaxFileAge(OsmFileCacheTileLoader.FILE_AGE_ONE_DAY);
+		cacheTileLoader.setCacheMaxFileAge(OsmFileCacheTileLoader.FILE_AGE_ONE_WEEK);
 		cacheTileLoader.setTileCacheDir("./tilestore");
 		setTileLoader(cacheTileLoader);
 		mapMarkersVisible = false;
-		// Initialize the gridZozeSelector with a dummy element for getting the
-		// maximum required width and height
-		gridSizeSelector = new JComboBox(new GridZoom[] { new GridZoom(100) });
-		gridSizeSelector.setEditable(false);
-		gridSizeSelector.addActionListener(new ActionListener() {
+		setZoomContolsVisible(false);
 
-			public void actionPerformed(ActionEvent e) {
-				GridZoom g = (GridZoom) gridSizeSelector.getSelectedItem();
-				if (g == null)
-					return;
-				setGridZoom(g.getZoom());
-				repaint();
-				updateMapSelection();
-			}
-
-		});
-		Dimension size = gridSizeSelector.getPreferredSize();
-		gridSizeSelector.setBounds(40, 10, size.width, size.height);
-		add(gridSizeSelector);
-
-		ImageIcon helpIcon = Utilities.loadResourceImageIcon("help1.png");
-		helpButton = new JButton(helpIcon);
-		helpButton.setBounds(10, 10, helpIcon.getIconWidth(), helpIcon.getIconHeight());
-		helpButton.setRolloverIcon(Utilities.loadResourceImageIcon("help2.png"));
-		helpButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null,
-						"<html><h1>HELP</h1><p>Under construction</p></html>");
-			}
-		});
-		helpButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-		helpButton.setMargin(new Insets(0, 0, 0, 0));
-		helpButton.setBorderPainted(false);
-		helpButton.setFocusable(false);
-		helpButton.setContentAreaFilled(false);
-		add(helpButton);
 		new PreviewMapController(this);
 		setTileSource(new GoogleMaps());
 		addComponentListener(this);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				grabFocus();
+			}
+		});
 	}
 
 	public void setDisplayPositionByLatLon(EastNorthCoordinate c, int zoom) {
@@ -139,28 +97,20 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public void setTileSource(TileSource newTileSource) {
 		log.trace("Preview map source changed from " + tileSource + " to " + newTileSource);
 		super.setTileSource(newTileSource);
-		gridSizeSelector.removeAllItems();
-		gridSizeSelector.setMaximumRowCount(tileSource.getMaxZoom() + 1);
-		gridSizeSelector.addItem(new GridZoom(-1) {
-
-			@Override
-			public String toString() {
-				return "Grid disabled";
-			}
-
-		});
-		for (int i = tileSource.getMaxZoom(); i >= 0; i--) {
-			gridSizeSelector.addItem(new GridZoom(i));
-		}
 	}
 
 	protected void zoomChanged(int oldZoom) {
 		log.trace("Preview map zoom changed from " + oldZoom + " to " + zoom);
-		super.zoomChanged(oldZoom);
+		if (mapSelectionListeners != null) { // can be null during
+												// initialization
+			for (MapSelectionListener msp : mapSelectionListeners) {
+				msp.zoomChanged(zoom);
+			}
+		}
 		updateGridValues();
 	}
 
-	protected void setGridZoom(int gridZoom) {
+	public void setGridZoom(int gridZoom) {
 		if (gridZoom == this.gridZoom)
 			return;
 		this.gridZoom = gridZoom;
@@ -354,7 +304,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		repaint();
 	}
 
-	protected void updateMapSelection() {
+	public void updateMapSelection() {
 
 		if (iSelectionRectStart == null || iSelectionRectEnd == null)
 			return;
@@ -398,12 +348,21 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	public void componentResized(ComponentEvent e) {
-		Rectangle r = helpButton.getBounds();
-		r.x = getWidth() - r.width - 10;
-		helpButton.setBounds(r);
 	}
 
 	public void componentShown(ComponentEvent e) {
+	}
+
+	public void selectPreviousMap() {
+		for (MapSelectionListener msp : mapSelectionListeners) {
+			msp.selectPreviousMapSource();
+		}
+	}
+
+	public void selectNextMap() {
+		for (MapSelectionListener msp : mapSelectionListeners) {
+			msp.selectNextMapSource();
+		}
 	}
 
 }

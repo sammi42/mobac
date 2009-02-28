@@ -135,7 +135,7 @@ public class MapCreator {
 		if (t instanceof AtlasThread) {
 			ap = ((AtlasThread) t).getAtlasProgress();
 			int tileCount = (xMax - xMin + 1) * (yMax - yMin + 1);
-			ap.initMapProgressBar(tileCount);
+			ap.initMap(tileCount);
 		}
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
@@ -143,7 +143,7 @@ public class MapCreator {
 				if (t.isInterrupted())
 					throw new InterruptedException();
 				if (ap != null)
-					ap.incMapProgressBar();
+					ap.incMapProgress();
 				try {
 					File fDest = new File(setFolder, "t_" + (pixelValueX * 256) + "_"
 							+ (pixelValueY * 256) + "." + tileSource.getTileType());

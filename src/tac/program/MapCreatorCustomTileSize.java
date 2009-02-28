@@ -76,7 +76,7 @@ public class MapCreatorCustomTileSize extends MapCreator {
 			ap = ((AtlasThread) t).getAtlasProgress();
 			int customTileCount = MyMath.divCeil(mergedWidth, tileSizeWidth)
 					* MyMath.divCeil(mergedHeight, tileSizeHeight);
-			ap.initMapProgressBar(customTileCount);
+			ap.initMap(customTileCount);
 		}
 
 		// Absolute positions
@@ -95,7 +95,7 @@ public class MapCreatorCustomTileSize extends MapCreator {
 				if (t.isInterrupted())
 					throw new InterruptedException();
 				if (ap != null)
-					ap.incMapProgressBar();
+					ap.incMapProgress();
 				BufferedImage tileImage = new BufferedImage(tileSizeWidth, tileSizeHeight,
 						BufferedImage.TYPE_3BYTE_BGR);
 				try {

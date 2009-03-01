@@ -118,12 +118,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		createControls();
 		calculateNrOfTilesToDownload();
-		setLayout(new GridBagLayout());
-		add(leftPanel, GBC.std().fill(GBC.VERTICAL).anchor(GBC.WEST));
+		setLayout(new BorderLayout());
+		add(leftPanel, BorderLayout.WEST);
 		JLayeredPane layeredPane = new FilledLayeredPane();
 		layeredPane.add(previewMap, new Integer(0));
 		layeredPane.add(mapControlPanel, new Integer(1));
-		add(layeredPane, GBC.std().fill());
+		add(layeredPane, BorderLayout.CENTER);
 
 		Utilities.checkFileSetup();
 		loadSettings();
@@ -179,8 +179,8 @@ public class GUI extends JFrame implements MapSelectionListener {
 		// profiles combo box
 		profilesCombo = new JComboBox();
 		profilesCombo.setEditable(true);
-		profilesCombo
-				.setToolTipText("Select an atlas creation profile\n or enter a name for a new profile");
+		profilesCombo.setToolTipText("Select an atlas creation profile\n "
+				+ "or enter a name for a new profile");
 
 		// delete profile button
 		deleteProfileButton = new JButton("Delete profile");
@@ -245,7 +245,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	}
 
-	private void createLeftPanel() {
+	private void updateLeftPanel() {
 		leftPanel.removeAll();
 
 		// Coordinates Panel
@@ -253,10 +253,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		coordinatesPanel.setBorder(BorderFactory
 				.createTitledBorder("Selection coordinates (min/max)"));
 
-		JLabel latMaxLabel = new JLabel("N", JLabel.CENTER);
-		JLabel lonMinLabel = new JLabel("W", JLabel.CENTER);
-		JLabel lonMaxLabel = new JLabel("E", JLabel.CENTER);
-		JLabel latMinLabel = new JLabel("S", JLabel.CENTER);
+		JLabel latMaxLabel = new JLabel("N ", JLabel.CENTER);
+		JLabel lonMinLabel = new JLabel("W ", JLabel.CENTER);
+		JLabel lonMaxLabel = new JLabel("E ", JLabel.CENTER);
+		JLabel latMinLabel = new JLabel("S ", JLabel.CENTER);
 
 		JButton displaySelectionButton = new JButton("Display selection");
 		displaySelectionButton.addActionListener(new DisplaySelectionButtonListener());
@@ -285,10 +285,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 		mapSourcePanel.setBorder(BorderFactory.createTitledBorder("Map source"));
 		mapSourcePanel.add(mapSourceCombo, GBC.std().insets(2, 2, 2, 2).fill());
 
-		JPanel zoomLevelsFrame = new JPanel(new GridBagLayout());
-		zoomLevelsFrame.setBorder(BorderFactory.createTitledBorder("Zoom Levels"));
-		zoomLevelsFrame.add(zoomLevelPanel, GBC.eol());
-		zoomLevelsFrame.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
+		JPanel zoomLevelsPanel = new JPanel(new GridBagLayout());
+		zoomLevelsPanel.setBorder(BorderFactory.createTitledBorder("Zoom Levels"));
+		zoomLevelsPanel.add(zoomLevelPanel, GBC.eol());
+		zoomLevelsPanel.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
 
 		JPanel tileSizePanel = new JPanel(new GridBagLayout());
 		tileSizePanel.setBorder(BorderFactory.createTitledBorder("Tile size (pixels)"));
@@ -346,7 +346,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		JPanel leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
-		leftPanelContent.add(zoomLevelsFrame, gbc_eol);
+		leftPanelContent.add(zoomLevelsPanel, gbc_eol);
 		leftPanelContent.add(tileSizePanel, gbc_eol);
 		if (Settings.getInstance().isDevModeEnabled())
 			leftPanelContent.add(atlasContentPanel, gbc_eol);
@@ -355,25 +355,24 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanelContent.add(profilesPanel, gbc_eol);
 		leftPanelContent.add(settingsButton, gbc_eol);
 		leftPanelContent.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
-		// leftPanelContent.setMaximumSize(leftPanelContent.getPreferredSize());
 
 		JScrollPane scrollPane = new JScrollPane(leftPanelContent);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		Dimension d = leftPanelContent.getPreferredSize();
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		// Set the scroll pane width large enough so that the
 		// scroll bar has enough space to appear right to it
-		d.width += 5 + scrollPane.getVerticalScrollBar().getWidth();
-		scrollPane.setPreferredSize(d);
-		scrollPane.setMinimumSize(d);
-		scrollPane.setBorder(BorderFactory.createEmptyBorder());
-		leftPanel.add(scrollPane, GBC.std().fill(GBC.BOTH));
+		// Dimension d = scrollPane.getPreferredSize();
+		// d.width += 5 + scrollPane.getVerticalScrollBar().getWidth();
+		// scrollPane.setPreferredSize(d);
+		// scrollPane.setMinimumSize(d);
+		leftPanel.add(scrollPane, GBC.std().fill());
 	}
 
 	/**
-	 * Initializes the panel that holds all controls which are placed
+	 * Updates the panel that holds all controls which are placed
 	 * "inside"/"over" the preview map.
 	 */
-	private JPanel createMapControlsPanel(boolean fullScreenEnabled) {
+	private JPanel updateMapControlsPanel(boolean fullScreenEnabled) {
 		mapControlPanel.removeAll();
 		mapControlPanel.setOpaque(false);
 
@@ -444,13 +443,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private void updatePanels() {
 		boolean fullScreenEnabled = Settings.getInstance().getFullScreenEnabled();
 
-		createMapControlsPanel(fullScreenEnabled);
+		updateMapControlsPanel(fullScreenEnabled);
 
 		if (fullScreenEnabled) {
 			leftPanel.setVisible(false);
 			fullScreenButton.setText("Full screen off");
 		} else {
-			createLeftPanel();
+			updateLeftPanel();
 			leftPanel.setVisible(true);
 			fullScreenButton.setText("Full screen");
 		}
@@ -775,7 +774,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		if (fullScreenEnabled) {
 			zoomLevelPanel.setLayout(new GridLayout(0, 2, 5, 3));
 		} else {
-			zoomLevelPanel.setLayout(new GridLayout(0, 12, 2, 3));
+			zoomLevelPanel.setLayout(new GridLayout(0, 10, 1, 2));
 		}
 		ZoomLevelCheckBoxListener cbl = new ZoomLevelCheckBoxListener();
 
@@ -793,7 +792,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			zoomLevelPanel.add(cb);
 			cbZoom[i] = cb;
 
-			JLabel l = new JLabel("" + cbz);
+			JLabel l = new JLabel(Integer.toString(cbz));
 			if (fullScreenEnabled) {
 				l.setOpaque(true);
 				l.setBackground(labelBackgroundColor);

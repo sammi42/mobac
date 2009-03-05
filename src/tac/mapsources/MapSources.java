@@ -18,7 +18,7 @@ public class MapSources {
 			new GoogleMapsChina(), new GoogleEarth(), new GoogleTerrain(), new YahooMaps(),
 			new Mapnik(), new TilesAtHome(), new CycleMap(), new MicrosoftMaps(),
 			new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
-			new MultimapCom() };
+			new MultimapCom(), new Cycloatlas() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -79,7 +79,7 @@ public class MapSources {
 			else
 				base = "http://mc3.tiles-cdn.multimap.com/ptiles/map/mi931/";
 			s = base + z + "/" + s + ".png?client=public_api&service_seq=14458";
-			//System.out.println(s);
+			// System.out.println(s);
 			return s;
 		}
 	}
@@ -95,6 +95,27 @@ public class MapSources {
 			int yahooZoom = getMaxZoom() - zoom + 2;
 			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex
 					+ "&y=" + yahooTileY + "+6163&z=" + yahooZoom;
+		}
+
+	}
+
+	public static class Cycloatlas extends AbstractMapSource {
+
+		public Cycloatlas() {
+			super("Cycloatlas", 7, 14, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String z = Integer.toString(zoom);
+			if (zoom >= 13)
+				z += "c";
+			return "http://services.ezekiel-ngx.tmapserver.cz/tiles/gm/shc/" + zoom + "/" + tilex
+					+ "/" + tiley + ".png";
+		}
+
+		@Override
+		public String toString() {
+			return getName() + " (Czech Republic only)";
 		}
 
 	}
@@ -121,70 +142,6 @@ public class MapSources {
 			return getName() + " (Germany only)";
 		}
 
-	}
-
-	/**
-	 * Custom tile store provider, configurable via constructor.
-	 */
-	public static class Custom implements TileSource {
-
-		int maxZoom;
-		String name;
-		String fileExt;
-		TileUpdate tileUpdate;
-		String url;
-
-		/**
-		 * 
-		 * @param name
-		 *            Map name
-		 * @param url
-		 *            with variables $y, $y and $zoom (will be replaced on
-		 *            request) <code>http://server/path-$x-$y-$zoom</code>
-		 * @param maxZoom
-		 * @param fileExt
-		 *            specifie the image type of the tiles: usually "png" or
-		 *            "jpg"
-		 * @param tileUpdate
-		 *            on of the {@link TileUpdate} values. If you don't know,
-		 *            use {@link TileUpdate#None}
-		 */
-		public Custom(String name, String url, int maxZoom, String fileExt, TileUpdate tileUpdate) {
-			super();
-			this.name = name;
-			this.url = url;
-			this.maxZoom = maxZoom;
-			this.fileExt = fileExt;
-			this.tileUpdate = tileUpdate;
-		}
-
-		public int getMaxZoom() {
-			return maxZoom;
-		}
-
-		public int getMinZoom() {
-			return 0;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getTileType() {
-			return null;
-		}
-
-		public TileUpdate getTileUpdate() {
-			return tileUpdate;
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String tmp = url;
-			tmp = tmp.replace("$x", Integer.toString(tilex));
-			tmp = tmp.replace("$y", Integer.toString(tiley));
-			tmp = tmp.replace("$zoom", Integer.toString(zoom));
-			return tmp;
-		}
 	}
 
 	public static class Mapnik extends OsmTileSource.Mapnik {

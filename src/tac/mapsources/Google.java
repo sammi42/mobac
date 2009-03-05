@@ -22,7 +22,7 @@ public class Google {
 
 	public static class GoogleMaps extends GoogleSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.88&hl=%s&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.92&hl=%s&x=%d&y=%d&z=%d";
 
 		public GoogleMaps() {
 			super("Google Maps", 17, "png");
@@ -102,7 +102,7 @@ public class Google {
 
 	public static class GoogleEarth extends GoogleSource {
 
-		public static final String SERVER_URL = "http://khm%d.google.com/kh/v=33&hl=%s&x=%d&y=%d&z=%d&s=%s";
+		public static final String SERVER_URL = "http://khm%d.google.com/kh/v=36&hl=%s&x=%d&y=%d&z=%d&s=%s";
 
 		public GoogleEarth() {
 			super("Google Earth", 20, "jpg");

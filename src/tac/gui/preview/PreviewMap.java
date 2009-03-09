@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
@@ -102,7 +103,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	protected void zoomChanged(int oldZoom) {
 		log.trace("Preview map zoom changed from " + oldZoom + " to " + zoom);
 		if (mapSelectionListeners != null) { // can be null during
-												// initialization
+			// initialization
 			for (MapSelectionListener msp : mapSelectionListeners) {
 				msp.zoomChanged(zoom);
 			}
@@ -363,6 +364,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		for (MapSelectionListener msp : mapSelectionListeners) {
 			msp.selectNextMapSource();
 		}
+	}
+
+	public void RefreshMap() {
+		((MemoryTileCache) tileCache).clear();
+		repaint();
 	}
 
 }

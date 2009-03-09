@@ -102,6 +102,8 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
 				"NEXT_MAP");
 
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true),"REFRESH");
+		
 		// action mapping
 		actionMap.put("MOVE_RIGHT", new MoveRightAction());
 		actionMap.put("MOVE_LEFT", new MoveLeftAction());
@@ -113,6 +115,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		actionMap.put("ZOOM_OUT", new ZoomOutAction());
 		actionMap.put("NEXT_MAP", new NextMapAction());
 		actionMap.put("PREVIOUS_MAP", new PreviousMapAction());
+		actionMap.put("REFRESH", new RefreshAction());
 
 		timer.schedule(moveTask, 0, timerInterval);
 	}
@@ -310,4 +313,13 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		}
 	}
 
+	private class RefreshAction extends AbstractAction {
+
+		private static final long serialVersionUID = -7235666079485033823L;
+
+		public void actionPerformed(ActionEvent e) {
+			((PreviewMap) map).RefreshMap();
+		}
+	}
+	
 }

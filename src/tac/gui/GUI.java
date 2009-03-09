@@ -15,7 +15,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Vector;
 
@@ -39,6 +41,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.StartTAC;
 import tac.gui.preview.GridZoom;
 import tac.gui.preview.MapSelectionListener;
 import tac.gui.preview.PreviewMap;
@@ -570,8 +573,23 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private class HelpButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(null, helpMessage);
+		public void actionPerformed(ActionEvent event) {
+			DataInputStream in = new DataInputStream(StartTAC.class
+					.getResourceAsStream("resources/text/help_dialog.html"));
+			byte[] buf;
+			try {
+				buf = new byte[in.available()];
+				in.readFully(buf);
+				in.close();
+				String helpMessage = new String(buf, "UTF-8");
+				// Strip out all line breaks because JOptionPane shows
+				// the raw HTML code otherwise
+				helpMessage = helpMessage.replaceAll("\n", "");
+				JOptionPane.showMessageDialog(null, helpMessage, "Help",
+						JOptionPane.INFORMATION_MESSAGE);
+			} catch (IOException e) {
+				log.error("", e);
+			}
 		}
 	}
 
@@ -1073,19 +1091,6 @@ public class GUI extends JFrame implements MapSelectionListener {
 			s.setWindowLocation(getLocation());
 		}
 	}
-
-	protected static String helpMessage = new String("<html><h1>Help</h1>" + "<table>"
-			+ "<tr><td>&lt;any cursor key></td><td>move map</td></tr>"
-			+ "<tr><td>[right mouse drag]</td><td>move map</td></tr>"
-			+ "<tr><td>&lt;ctrl> + &lt;cursor up></td><td>zoom in</td></tr>"
-			+ "<tr><td>[left mouse double click]</td><td>zoom in</td></tr>"
-			+ "<tr><td>[mouse scroll up]</td><td>zoom in</td></tr>"
-			+ "<tr><td>&lt;ctrl> + &lt;cursor down></td><td>zoom out</td></tr>"
-			+ "<tr><td>[mouse scroll down]</td><td>zoom out</td></tr>"
-			+ "<tr><td>&lt;ctrl> + &lt;cursor left></td><td>previous map source</td></tr>"
-			+ "<tr><td>&lt;ctrl> + &lt;cursor right></td><td>next map source</td></tr>"
-			+ "<tr><td>[left mouse drag]</td><td>select area for download</td></tr>"
-			+ "</table></html>");
 
 	private class FilledLayeredPane extends JLayeredPane {
 

@@ -44,7 +44,7 @@ public class Utilities {
 	 * @return
 	 */
 	public static ImageIcon loadResourceImageIcon(String imagePath) {
-		URL url = StartTAC.class.getResource("images/" + imagePath);
+		URL url = StartTAC.class.getResource("resources/images/" + imagePath);
 		return new ImageIcon(url);
 	}
 

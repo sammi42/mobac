@@ -38,7 +38,6 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.StartTAC;
@@ -48,11 +47,14 @@ import tac.gui.preview.PreviewMap;
 import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
 import tac.program.EastNorthCoordinate;
+import tac.program.MapCreatorCustom;
 import tac.program.MapSelection;
 import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
+import tac.program.MapCreatorCustom.TileImageColorDepth;
+import tac.program.MapCreatorCustom.TileImageFormat;
 import tac.program.model.Atlas;
 import tac.program.model.AutoCutMultiMapLayer;
 import tac.utilities.GBC;
@@ -93,11 +95,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
 	private JCoordinateField lonMaxTextField;
-	private JCheckBox enableCustomTileSizeCheckButton;
+	private JCheckBox enableCustomTileProcessingCheckButton;
 	private JLabel tileSizeWidthLabel;
 	private JLabel tileSizeHeightLabel;
+	private JLabel tileColorDepthLabel;
 	private JTileSizeCombo tileSizeWidth;
 	private JTileSizeCombo tileSizeHeight;
+	private JComboBox tileColorDepth;
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -229,14 +233,16 @@ public class GUI extends JFrame implements MapSelectionListener {
 		latMinTextField.setActionCommand("latMinTextField");
 
 		// custom tile size
-		enableCustomTileSizeCheckButton = new JCheckBox("Recreate/adjust map tiles (CPU intensive)");
-		enableCustomTileSizeCheckButton
+		enableCustomTileProcessingCheckButton = new JCheckBox(
+				"Recreate/adjust map tiles (CPU intensive)");
+		enableCustomTileProcessingCheckButton
 				.addActionListener(new EnableCustomTileSizeCheckButtonListener());
-		enableCustomTileSizeCheckButton.setToolTipText("<html>If this option is disabled each "
-				+ "map tile (size: 256x256) is used axactly as downloaded "
-				+ "from the server (faster).<br>"
-				+ "Otherwise each tile is newly created which allows to "
-				+ "use custom tile size (slower / CPU intensive).</html>");
+		enableCustomTileProcessingCheckButton
+				.setToolTipText("<html>If this option is disabled each "
+						+ "map tile (size: 256x256) is used axactly as downloaded "
+						+ "from the server (faster).<br>"
+						+ "Otherwise each tile is newly created which allows to "
+						+ "use custom tile size (slower / CPU intensive).</html>");
 
 		tileSizeWidthLabel = new JLabel("Width:");
 		tileSizeWidth = new JTileSizeCombo();
@@ -246,6 +252,17 @@ public class GUI extends JFrame implements MapSelectionListener {
 		tileSizeHeight = new JTileSizeCombo();
 		tileSizeHeight.setToolTipText("Height");
 
+		tileColorDepthLabel = new JLabel("Color depth:");
+		Object[] cd = { MapCreatorCustom.TileImageColorDepth.Unchanged,
+				MapCreatorCustom.TileImageColorDepth.EightBit,
+				MapCreatorCustom.TileImageColorDepth.FourBit };
+		tileColorDepth = new JComboBox(cd);
+		if (!Utilities.testJaiColorQuantizerAvailable()) {
+			tileColorDepth.setEnabled(false);
+			tileColorDepth.setToolTipText("<html>This feature is deactivated because <br>"
+					+ "Java Advanced Image library was not found <br>"
+					+ "(jai_core.jar & jai_codec.jar)</html>");
+		}
 	}
 
 	private void updateLeftPanel() {
@@ -293,17 +310,19 @@ public class GUI extends JFrame implements MapSelectionListener {
 		zoomLevelsPanel.add(zoomLevelPanel, GBC.eol());
 		zoomLevelsPanel.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
 
-		JPanel tileSizePanel = new JPanel(new GridBagLayout());
-		tileSizePanel.setBorder(BorderFactory.createTitledBorder("Tile size (pixels)"));
+		JPanel tileProcessingPanel = new JPanel(new GridBagLayout());
+		tileProcessingPanel.setBorder(BorderFactory.createTitledBorder("Custom tile processing"));
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
-		tileSizePanel.add(enableCustomTileSizeCheckButton, gbc_eol);
-		tileSizePanel.add(tileSizeWidthLabel, gbc_std);
-		tileSizePanel.add(tileSizeWidth, gbc_std);
-		tileSizePanel.add(tileSizeHeightLabel, gbc_std);
-		tileSizePanel.add(tileSizeHeight, gbc_eol);
+		tileProcessingPanel.add(enableCustomTileProcessingCheckButton, gbc_eol);
+		tileProcessingPanel.add(tileSizeWidthLabel, gbc_std);
+		tileProcessingPanel.add(tileSizeWidth, gbc_std);
+		tileProcessingPanel.add(tileSizeHeightLabel, gbc_std);
+		tileProcessingPanel.add(tileSizeHeight, gbc_eol);
+		tileProcessingPanel.add(tileColorDepthLabel, gbc_std);
+		tileProcessingPanel.add(tileColorDepth, gbc_eol);
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		if (Settings.getInstance().isDevModeEnabled()) {
@@ -350,7 +369,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
 		leftPanelContent.add(zoomLevelsPanel, gbc_eol);
-		leftPanelContent.add(tileSizePanel, gbc_eol);
+		leftPanelContent.add(tileProcessingPanel, gbc_eol);
 		if (Settings.getInstance().isDevModeEnabled())
 			leftPanelContent.add(atlasContentPanel, gbc_eol);
 
@@ -471,7 +490,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
-		enableCustomTileSizeCheckButton.setSelected(settings.isCustomTileSize());
+		enableCustomTileProcessingCheckButton.setSelected(settings.isCustomTileSize());
 		tileSizeHeight.setTileSize(settings.getTileHeight());
 		tileSizeWidth.setTileSize(settings.getTileWidth());
 
@@ -497,7 +516,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
 					lonMinTextField.getCoordinateOrNaN()));
 
-			s.setCustomTileSize(enableCustomTileSizeCheckButton.isSelected());
+			s.setCustomTileSize(enableCustomTileProcessingCheckButton.isSelected());
 			s.setTileWidth(tileSizeWidth.getTileSize());
 			s.setTileHeight(tileSizeHeight.getTileSize());
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
@@ -755,15 +774,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 			if (maxIsBiggerThanMin) {
 
-				// by default width & height are zero = do not process tiles
-				// with
-				// tile size 256x256
-				int tzw = Tile.SIZE;
-				int tzh = Tile.SIZE;
-				boolean customTileSize = enableCustomTileSizeCheckButton.isSelected();
+				boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
+				MapCreatorCustom.TileImageParameters customTileParameters = null;
 				if (customTileSize) {
-					tzw = tileSizeWidth.getTileSize();
-					tzh = tileSizeHeight.getTileSize();
+					customTileParameters = new MapCreatorCustom.TileImageParameters();
+					customTileParameters.width = tileSizeWidth.getTileSize();
+					customTileParameters.height = tileSizeHeight.getTileSize();
+					customTileParameters.colorDepth = (TileImageColorDepth) tileColorDepth
+							.getSelectedItem();
+					customTileParameters.format = TileImageFormat.Unchanged;
 				}
 
 				try {
@@ -771,7 +790,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 					SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
 							.getMinZoom(), cbZoom);
 					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
-							getMapSelectionCoordinates(), sZL, customTileSize, tzw, tzh);
+							getMapSelectionCoordinates(), sZL, customTileParameters);
 					atlasThread.start();
 				} catch (Exception exception) {
 					log.error("", exception);
@@ -887,7 +906,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void updateCustomTileSizeControlsState() {
-		boolean b = enableCustomTileSizeCheckButton.isSelected();
+		boolean b = enableCustomTileProcessingCheckButton.isSelected();
 		tileSizeWidthLabel.setEnabled(b);
 		tileSizeHeightLabel.setEnabled(b);
 		tileSizeHeight.setEnabled(b);

@@ -24,24 +24,20 @@ public class OziToAtlas {
 
 	private File oziFolder;
 	private File atlasFolder;
-	private boolean customTileSize;
-	private int tileSizeWidth;
-	private int tileSizeHeight;
+	private MapCreatorCustom.TileImageParameters customParam;
 	private String mapName;
 	private TileSource tileSource;
 	private int zoom;
 
-	public OziToAtlas(File oziFolder, File atlasFolder, boolean customTileSize, int tileSizeWidth,
-			int tileSizeHeight, String mapName, TileSource tileSource, int zoom) {
+	public OziToAtlas(File oziFolder, File atlasFolder, String mapName, TileSource tileSource,
+			int zoom, MapCreatorCustom.TileImageParameters customParam) {
 
 		this.oziFolder = oziFolder;
 		this.atlasFolder = atlasFolder;
-		this.customTileSize = customTileSize;
-		this.tileSizeWidth = tileSizeWidth;
-		this.tileSizeHeight = tileSizeHeight;
 		this.mapName = mapName;
 		this.tileSource = tileSource;
 		this.zoom = zoom;
+		this.customParam = customParam;
 	}
 
 	public void convert(int xMax, int xMin, int yMax, int yMin) {
@@ -58,12 +54,12 @@ public class OziToAtlas {
 
 		for (SubMapProperties smp : subMaps) {
 			MapCreator mc;
-			if (!customTileSize)
+			if (customParam == null)
 				mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, tileSource, zoom,
 						mapNumber);
 			else
-				mc = new MapCreatorCustomTileSize(smp, oziFolder, atlasFolder, mapName, tileSource,
-						zoom, mapNumber, tileSizeWidth, tileSizeHeight);
+				mc = new MapCreatorCustom(smp, oziFolder, atlasFolder, mapName, tileSource, zoom,
+						mapNumber, customParam);
 			mc.createMap();
 			mapNumber++;
 		}

@@ -1,6 +1,7 @@
 package tac.utilities;
 
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.media.jai.RenderedOp;
+import javax.media.jai.operator.ColorQuantizerDescriptor;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -36,6 +39,20 @@ public class Utilities {
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
 	public static final NumberFormat FORMAT_2_DEC = new DecimalFormat("0.00");
+
+	public static boolean testJaiColorQuantizerAvailable() {
+		try {
+			BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_3BYTE_BGR);
+			RenderedOp ro = ColorQuantizerDescriptor.create(image,
+					ColorQuantizerDescriptor.MEDIANCUT, // 
+					new Integer(256), // Max number of colors
+					null, null, new Integer(1), new Integer(1), null);
+			image = ro.getAsBufferedImage();
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * 
@@ -155,9 +172,9 @@ public class Utilities {
 		return (path.delete());
 	}
 
-	public static Profile createExampleProfile (String profileName, String mapSource, double latitudeMax,
-			double latitudeMin, double longitudeMax, double longitudeMin, boolean[] zoomValues,
-			int tileSizeWidth, int tileSizeHeight, String atlasName) {
+	public static Profile createExampleProfile(String profileName, String mapSource,
+			double latitudeMax, double latitudeMin, double longitudeMax, double longitudeMin,
+			boolean[] zoomValues, int tileSizeWidth, int tileSizeHeight, String atlasName) {
 		Profile profile = new Profile();
 
 		profile.setProfileName(profileName);
@@ -214,18 +231,20 @@ public class Utilities {
 
 				Vector<Profile> defaultProfiles = new Vector<Profile>();
 
-				defaultProfiles.addElement(createExampleProfile("Google Maps New York", "Google Maps",
-						40.97264, 40.541982, -73.699036, -74.142609,
-						new boolean[] { false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true },
-						256, 256, "gm nyc"));
-				defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin", "Outdooractive.com",
-						53.079178, 52.020388, 14.276733, 12.356873, 
-						new boolean[] { false, false, true, false, true, false, true, false, true, false },
-						256, 256, "oa berlin"));
-				defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria", "Mapnik", 
-						50.611132, 47.189712, 13.996582, 8.811035, 
-						new boolean [] { false, false, false, false, false, false, false, false, false, false, true, false, true, false, true, false, true, false, true },
-						256, 256, "osm bavaria"));
+				defaultProfiles.addElement(createExampleProfile("Google Maps New York",
+						"Google Maps", 40.97264, 40.541982, -73.699036, -74.142609, new boolean[] {
+								false, false, false, false, false, false, false, false, false,
+								false, false, false, true, true, true, true, true, true }, 256,
+						256, "gm nyc"));
+				defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin",
+						"Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
+						new boolean[] { false, false, true, false, true, false, true, false, true,
+								false }, 256, 256, "oa berlin"));
+				defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria", "Mapnik",
+						50.611132, 47.189712, 13.996582, 8.811035, new boolean[] { false, false,
+								false, false, false, false, false, false, false, false, true,
+								false, true, false, true, false, true, false, true }, 256, 256,
+						"osm bavaria"));
 
 				PersistentProfiles.store(defaultProfiles);
 			} catch (IOException iox) {

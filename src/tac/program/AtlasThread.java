@@ -38,9 +38,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private TileSource tileSource;
 	private String atlasName;
 	private SelectedZoomLevels sZL;
-	private boolean customTileSize;
-	private int tileSizeWidth = 0;
-	private int tileSizeHeight = 0;
+	private MapCreatorCustom.TileImageParameters customTileParameters;
 
 	private int activeDownloads = 0;
 	private int jobsProduced = 0;
@@ -49,15 +47,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private int jobsPermanentError = 0;
 
 	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
-			SelectedZoomLevels sZL, boolean customTileSize, int tileSizeWidth, int tileSizeHeight) {
+			SelectedZoomLevels sZL, MapCreatorCustom.TileImageParameters customTileParameters) {
 		super("AtlasThread " + getNextThreadNum());
 		this.tileSource = tileSource;
 		this.atlasName = atlasName;
 		this.mapSelection = mapSelection;
 		this.sZL = sZL;
-		this.customTileSize = customTileSize;
-		this.tileSizeWidth = tileSizeWidth;
-		this.tileSizeHeight = tileSizeHeight;
+		this.customTileParameters = customTileParameters;
 		ap = new AtlasProgress(this);
 	}
 
@@ -71,8 +67,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		log.info("Starting altas creation");
 		log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource + "\n\tAtlas name: "
 				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
-				+ sZL + "\n\tTile size width: " + tileSizeWidth + "\n\tTile size height: "
-				+ tileSizeHeight);
+				+ sZL);
 		ap.setAbortListener(this);
 		try {
 			createAtlas();
@@ -243,8 +238,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 				log.debug("Starting to create atlas from downloaded tiles");
 
-				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, customTileSize,
-						tileSizeWidth, tileSizeHeight, atlasName, tileSource, zoom);
+				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, atlasName, tileSource,
+						zoom, customTileParameters);
 				ota.convert(xMax, xMin, yMax, yMin);
 
 				ap.setLayer(layer + 1);

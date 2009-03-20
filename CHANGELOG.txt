@@ -18,6 +18,9 @@ V E R S I O N  I N F O R M A T I O N
     (patch by Martin Loetzsch)
  ~ Fixed several Swing thread safety problems (patch by Martin Loetzsch)  
  + Reload current map view by pressing "F5"
+ + First experimental implementation of color reducing implemented (requires
+    additional library "Java Advanced Imaging": https://jai.dev.java.net/binary-builds.html
+    Download the library and place the Jar[s] in the same directory as TrekBuddyAtlasCreator  
 
  0.9.6: (2009-01-08)
  

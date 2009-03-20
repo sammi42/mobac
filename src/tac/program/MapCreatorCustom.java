@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.media.jai.RenderedOp;
+import javax.media.jai.operator.ColorQuantizerDescriptor;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -15,21 +17,52 @@ import tac.program.model.SubMapProperties;
 import tac.utilities.MyMath;
 
 /**
- * Extends the {@link MapCreator} so that tiles of custom size are written.
+ * Extends the {@link MapCreator} so that custom tiles are written. Custom tiles
+ * can have a size different of 255x255 pixels), a different color depth and a
+ * different image type (jpg/png).
  * 
  * @author r_x
  */
-public class MapCreatorCustomTileSize extends MapCreator {
+public class MapCreatorCustom extends MapCreator {
 
-	private int tileSizeWidth;
-	private int tileSizeHeight;
+	public enum TileImageFormat {
+		Unchanged, Png, Jpg
+	};
 
-	public MapCreatorCustomTileSize(SubMapProperties smp, File oziFolder, File atlasFolder,
-			String mapName, TileSource tileSource, int zoom, int mapNumber, int tileSizeWidth,
-			int tileSizeHeight) {
+	public enum TileImageColorDepth {
+		Unchanged("Do not change"), EightBit("8 bit (256 colors)"), FourBit("4 bit (16 colors)");
+
+		private final String displayName;
+
+		private TileImageColorDepth(String displayName) {
+			this.displayName = displayName;
+		}
+
+		public String toString() {
+			return displayName;
+		}
+	};
+
+	private TileImageParameters param;
+
+	private String targetFileType;
+
+	public MapCreatorCustom(SubMapProperties smp, File oziFolder, File atlasFolder, String mapName,
+			TileSource tileSource, int zoom, int mapNumber, TileImageParameters parameters) {
 		super(smp, oziFolder, atlasFolder, mapName, tileSource, zoom, mapNumber);
-		this.tileSizeWidth = tileSizeWidth;
-		this.tileSizeHeight = tileSizeHeight;
+		this.param = parameters;
+		switch (param.format) {
+		case Unchanged: {
+			targetFileType = tileSource.getTileType();
+			break;
+		}
+		case Jpg: {
+			targetFileType = "jpg";
+			break;
+		}
+		default:
+			targetFileType = "png";
+		}
 	}
 
 	/**
@@ -60,7 +93,7 @@ public class MapCreatorCustomTileSize extends MapCreator {
 		int mergedWidth = xEnd - xStart;
 		int mergedHeight = yEnd - yStart;
 
-		if (tileSizeWidth > mergedWidth || tileSizeHeight > mergedHeight) {
+		if (param.width > mergedWidth || param.height > mergedHeight) {
 			if (!tileSizeErrorNotified) {
 				JOptionPane.showMessageDialog(null,
 						"Tile size settings is too large: default of 256 will be used instead, ",
@@ -74,8 +107,8 @@ public class MapCreatorCustomTileSize extends MapCreator {
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {
 			ap = ((AtlasThread) t).getAtlasProgress();
-			int customTileCount = MyMath.divCeil(mergedWidth, tileSizeWidth)
-					* MyMath.divCeil(mergedHeight, tileSizeHeight);
+			int customTileCount = MyMath.divCeil(mergedWidth, param.width)
+					* MyMath.divCeil(mergedHeight, param.height);
 			ap.initMap(customTileCount);
 		}
 
@@ -83,7 +116,7 @@ public class MapCreatorCustomTileSize extends MapCreator {
 		int xAbsPos = xStart;
 		int yAbsPos = yStart;
 
-		log.trace("tile size: " + tileSizeWidth + " * " + tileSizeHeight);
+		log.trace("tile size: " + param.width + " * " + param.height);
 		log.trace("X: from " + xStart + " to " + xEnd);
 		log.trace("Y: from " + yStart + " to " + yEnd);
 
@@ -96,26 +129,37 @@ public class MapCreatorCustomTileSize extends MapCreator {
 					throw new InterruptedException();
 				if (ap != null)
 					ap.incMapProgress();
-				BufferedImage tileImage = new BufferedImage(tileSizeWidth, tileSizeHeight,
+				BufferedImage tileImage = new BufferedImage(param.width, param.height,
 						BufferedImage.TYPE_3BYTE_BGR);
 				try {
 					Graphics2D graphics = tileImage.createGraphics();
 					File fDest = new File(setFolder, "t_" + xRelPos + "_" + yRelPos + "."
-							+ tileSource.getTileType());
+							+ targetFileType);
 					log.trace("Creating tile " + fDest.getName());
 					paintCustomTile(graphics, xAbsPos, yAbsPos);
 					graphics.dispose();
-					ImageIO.write(tileImage, tileSource.getTileType(), fDest);
+					if (param.colorDepth != TileImageColorDepth.Unchanged) {
+						int colors = 256;
+						if (param.colorDepth == TileImageColorDepth.FourBit)
+							colors = 16;
+
+						RenderedOp ro = ColorQuantizerDescriptor.create(tileImage,
+								ColorQuantizerDescriptor.MEDIANCUT, // 
+								new Integer(colors), // Max number of colors
+								null, null, new Integer(1), new Integer(1), null);
+						tileImage = ro.getAsBufferedImage();
+					}
+					ImageIO.write(tileImage, targetFileType, fDest);
 					setFiles.add(fDest.getName());
 				} catch (Exception e) {
 					log.error("Error writing tile image: ", e);
 				}
 
-				xRelPos += tileSizeWidth;
-				xAbsPos += tileSizeWidth;
+				xRelPos += param.width;
+				xAbsPos += param.width;
 			}
-			yRelPos += tileSizeHeight;
-			yAbsPos += tileSizeHeight;
+			yRelPos += param.height;
+			yAbsPos += param.height;
 		}
 	}
 
@@ -132,10 +176,10 @@ public class MapCreatorCustomTileSize extends MapCreator {
 		int xTile = xAbsPos / Tile.SIZE;
 		int xTileOffset = -(xAbsPos % Tile.SIZE);
 
-		for (int x = xTileOffset; x < tileSizeWidth; x += Tile.SIZE) {
+		for (int x = xTileOffset; x < param.width; x += Tile.SIZE) {
 			int yTile = yAbsPos / Tile.SIZE;
 			int yTileOffset = -(yAbsPos % Tile.SIZE);
-			for (int y = yTileOffset; y < tileSizeHeight; y += Tile.SIZE) {
+			for (int y = yTileOffset; y < param.height; y += Tile.SIZE) {
 				try {
 					BufferedImage orgTileImage = loadOriginalMapTile(xTile, yTile);
 					if (orgTileImage != null)
@@ -154,14 +198,14 @@ public class MapCreatorCustomTileSize extends MapCreator {
 
 	/**
 	 * A simple local cache holding the last 10 loaded original tiles. If the
-	 * custom zile size is smaller than 256x256 the efficiency of this cache is
+	 * custom tile size is smaller than 256x256 the efficiency of this cache is
 	 * very high (~ 75% hit rate).
 	 */
 	private CachedTile[] cache = new CachedTile[10];
 	private int cachePos = 0;
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		String tileFileName = "y" + yTile + "x" + xTile + "." + tileSource.getTileType();
+		String tileFileName = "y" + yTile + "x" + xTile + "." + targetFileType;
 		File fSource = (File) tilesInFileFormat.get(tileFileName);
 		if (fSource == null)
 			return null;
@@ -180,6 +224,13 @@ public class MapCreatorCustomTileSize extends MapCreator {
 		return image;
 	}
 
+	public static class TileImageParameters {
+		public int width;
+		public int height;
+		public TileImageFormat format;
+		public TileImageColorDepth colorDepth;
+	}
+
 	private static class CachedTile {
 		BufferedImage image;
 		int xTile;
@@ -191,6 +242,5 @@ public class MapCreatorCustomTileSize extends MapCreator {
 			xTile = tile;
 			yTile = tile2;
 		}
-
 	}
 }

@@ -54,7 +54,7 @@
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="${main.class}" />
-				<attribute name="Class-Path" value="." />
+				<attribute name="Class-Path" value=". jai_core.jar jai_codec.jar lib/jai_core.jar lib/jai_codec.jar jai_*.jar lib/jai_*.jar" />
 			</manifest>
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />

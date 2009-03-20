@@ -10,7 +10,7 @@ V E R S I O N  I N F O R M A T I O N
  + New map sources (full support): Microsoft Maps, Earth, Hybrid, 
     Cycloatlas (Czech Republic only)
  + New map sources (partial support): Multimap.com
- ~ Google Maps & Earth urls updated
+ ~ Google Maps, Earth & MapsChina urls updated
  ~ Custom tile size selection controls combined  
  + Window position, size and state (maximized or not) is saved
  + Preview map allows zoom move/zoom via keyboard controls (patch by Martin Loetzsch)

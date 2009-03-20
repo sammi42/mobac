@@ -79,7 +79,7 @@ public class Google {
 
 	public static class GoogleMapsChina extends GoogleSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.cn/mt?v=cn1.5&hl=zh-CN&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://mt%d.google.cn/mt?v=cn1.7&hl=zh-CN&x=%d&y=%d&z=%d";
 
 		public GoogleMapsChina() {
 			super("Google Maps China", 17, "png");

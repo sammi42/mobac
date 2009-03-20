@@ -446,13 +446,15 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 			// bytes per second
 			long rate = numberOfDownloadedBytes * 1000;
-			long time = System.currentTimeMillis() - initialTotalTime;
-			if (time == 0) {
-				nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
-			} else {
-				rate = rate / time;
-				nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
-						+ " / Second");
+			long time = System.currentTimeMillis() - initialLayerTime;
+			if (mapProgress == 0) {
+				if (time == 0) {
+					nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
+				} else {
+					rate = rate / time;
+					nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
+							+ " / Second");
+				}
 			}
 
 			// downloaded bytes

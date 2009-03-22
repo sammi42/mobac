@@ -14,11 +14,13 @@ import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
 
 public class MapSources {
 
-	private static TileSource[] MAP_SOURCES = { new GoogleMaps(), new GoogleMapMaker(),
-			new GoogleMapsChina(), new GoogleEarth(), new GoogleTerrain(), new YahooMaps(),
-			new Mapnik(), new TilesAtHome(), new CycleMap(), new MicrosoftMaps(),
-			new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
-			new MultimapCom(), new Cycloatlas() };
+	private static TileSource[] MAP_SOURCES = {
+			// For debugging purposes
+			// new tac.mapsources.LocalhostTestSource(), //
+			new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
+			new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
+			new MicrosoftMaps(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
+			new OutdooractiveCom(), new MultimapCom(), new Cycloatlas() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;

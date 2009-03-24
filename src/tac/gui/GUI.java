@@ -928,26 +928,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private MapSelection getMapSelectionCoordinates() {
 		double lat_max, lat_min, lon_max, lon_min;
-		try {
-			lat_max = latMaxTextField.getCoordinate();
-		} catch (ParseException e) {
-			lat_max = Double.NaN;
-		}
-		try {
-			lat_min = latMinTextField.getCoordinate();
-		} catch (ParseException e) {
-			lat_min = Double.NaN;
-		}
-		try {
-			lon_max = lonMaxTextField.getCoordinate();
-		} catch (ParseException e) {
-			lon_max = Double.NaN;
-		}
-		try {
-			lon_min = lonMinTextField.getCoordinate();
-		} catch (ParseException e) {
-			lon_min = Double.NaN;
-		}
+		lat_max = latMaxTextField.getCoordinateOrNaN();
+		lat_min = latMinTextField.getCoordinateOrNaN();
+		lon_max = lonMaxTextField.getCoordinateOrNaN();
+		lon_min = lonMinTextField.getCoordinateOrNaN();
 		return new MapSelection(lat_max, lat_min, lon_max, lon_min);
 	}
 
@@ -1024,14 +1008,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 		boolean maxIsBiggerThanMin = true;
 
 		if (latMax < latMin) {
-
 			JOptionPane.showMessageDialog(null, "Latitude Min is greater than Latitude Max",
 					"Errors", JOptionPane.ERROR_MESSAGE);
 			maxIsBiggerThanMin = false;
 		}
 
 		if (longMax < longMin) {
-
 			JOptionPane.showMessageDialog(null, "Longitude Min is greater than Longitude Max",
 					"Errors", JOptionPane.ERROR_MESSAGE);
 			maxIsBiggerThanMin = false;

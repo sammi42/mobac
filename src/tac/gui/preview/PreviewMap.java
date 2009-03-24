@@ -226,12 +226,12 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}
 
-	public void setSelection(MapSelection ms) {
+	public void setSelection(MapSelection ms, boolean notifyListeners) {
 		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min())
 			return;
 		Point pStart = ms.getTopLeftTileCoordinate(zoom);
 		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
-		setSelectionByTileCoordinate(pStart, pEnd, true);
+		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
 		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
 		mml.add(new MapMarkerDot(ms.getLat_min(), ms.getLon_min()));
@@ -264,7 +264,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	 */
 	public void setSelectionByTileCoordinate(Point pStart, Point pEnd, boolean notifyListeners) {
 		setSelectionByTileCoordinate(zoom, pStart, pEnd, notifyListeners);
-
 	}
 
 	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd,

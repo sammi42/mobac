@@ -17,12 +17,12 @@ public class MapSelection {
 	private double lon_max;
 	private double lon_min;
 
-	public MapSelection(double lat_max, double lat_min, double lon_max, double lon_min) {
+	public MapSelection(double lat1, double lat2, double lon1, double lon2) {
 		super();
-		this.lat_max = lat_max;
-		this.lat_min = lat_min;
-		this.lon_max = lon_max;
-		this.lon_min = lon_min;
+		this.lat_max = Math.max(lat1,lat2);
+		this.lat_min = Math.min(lat1,lat2);
+		this.lon_max = Math.max(lon1,lon2);
+		this.lon_min = Math.min(lon1,lon2);
 	}
 
 	public double getLat_max() {

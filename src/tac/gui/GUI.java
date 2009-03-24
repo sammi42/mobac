@@ -914,17 +914,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void previewSelection() {
-		MapSelection ms = checkCoordinates();
-		previewMap.setSelection(ms);
-	}
-
-	private MapSelection checkCoordinates() {
 		MapSelection ms = getMapSelectionCoordinates();
 		latMaxTextField.setCoordinate(ms.getLat_max());
 		latMinTextField.setCoordinate(ms.getLat_min());
 		lonMaxTextField.setCoordinate(ms.getLon_max());
 		lonMinTextField.setCoordinate(ms.getLon_min());
-		return ms;
+		previewMap.setSelection(ms, false);
 	}
 
 	private MapSelection getMapSelectionCoordinates() {
@@ -997,7 +992,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 				errorText += "Please select at least one zoom level. \n";
 			}
 
-			MapSelection ms = checkCoordinates();
+			MapSelection ms = getMapSelectionCoordinates();
 			if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
 				errorText += "Please select a map area for download. \n";
 			}

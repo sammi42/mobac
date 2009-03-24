@@ -270,10 +270,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			boolean notifyListeners) {
 		Point pNewStart = new Point();
 		Point pNewEnd = new Point();
-		pNewStart.x = Math.max(0, pStart.x);
-		pNewStart.y = Math.max(0, pStart.y);
-		pNewEnd.x = Math.min(Tile.SIZE << cZoom, pEnd.x);
-		pNewEnd.y = Math.min(Tile.SIZE << cZoom, pEnd.y);
+		int mapMaxCoordinate = Tile.SIZE << cZoom;
+		pNewStart.x = Math.max(0, Math.min(mapMaxCoordinate, pStart.x));
+		pNewStart.y = Math.max(0, Math.min(mapMaxCoordinate, pStart.y));
+		pNewEnd.x = Math.max(0, Math.min(mapMaxCoordinate, pEnd.x));
+		pNewEnd.y = Math.max(0, Math.min(mapMaxCoordinate, pEnd.y));
 
 		int zoomDiff = MAX_ZOOM - cZoom;
 

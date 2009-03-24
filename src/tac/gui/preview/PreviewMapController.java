@@ -18,6 +18,11 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.gui.jmapviewer.JMapController;
 
+/**
+ * Implements the GUI logic for the preview map panel that manages the map
+ * selection and actions triggered by key strokes.
+ * 
+ */
 public class PreviewMapController extends JMapController implements MouseMotionListener,
 		MouseListener {
 
@@ -102,8 +107,8 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
 				"NEXT_MAP");
 
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true),"REFRESH");
-		
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true), "REFRESH");
+
 		// action mapping
 		actionMap.put("MOVE_RIGHT", new MoveRightAction());
 		actionMap.put("MOVE_LEFT", new MoveLeftAction());
@@ -321,5 +326,5 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 			((PreviewMap) map).RefreshMap();
 		}
 	}
-	
+
 }

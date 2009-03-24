@@ -412,7 +412,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 			atlasPercent.setText("Percent done: " + stringPercent + " %");
 
-			long timePerElement = (System.currentTimeMillis() - initialTotalTime) / atlasProgress;
+			long timePerElement = 0;
+			if (atlasProgress != 0) // Check for a possible division by zero
+				timePerElement = (System.currentTimeMillis() - initialTotalTime) / atlasProgress;
 
 			long seconds = (timePerElement * (atlasProgressBar.getMaximum() - atlasProgress) / 1000);
 			atlasTimeLeft.setText(formatRemainingTime(seconds));

@@ -915,11 +915,15 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private void previewSelection() {
 		MapSelection ms = getMapSelectionCoordinates();
-		latMaxTextField.setCoordinate(ms.getLat_max());
-		latMinTextField.setCoordinate(ms.getLat_min());
-		lonMaxTextField.setCoordinate(ms.getLon_max());
-		lonMinTextField.setCoordinate(ms.getLon_min());
-		previewMap.setSelection(ms, false);
+		if (ms.coordinatesAreValid()) {
+			latMaxTextField.setCoordinate(ms.getLat_max());
+			latMinTextField.setCoordinate(ms.getLat_min());
+			lonMaxTextField.setCoordinate(ms.getLon_max());
+			lonMinTextField.setCoordinate(ms.getLon_min());
+			previewMap.setSelection(ms, false);
+		} else {
+			Toolkit.getDefaultToolkit().beep();
+		}
 	}
 
 	private MapSelection getMapSelectionCoordinates() {

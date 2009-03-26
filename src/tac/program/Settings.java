@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import tac.mapsources.MapSources;
 import tac.mapsources.Google.GoogleSource;
+import tac.program.model.TileImageColorDepth;
 import tac.utilities.Utilities;
 
 public class Settings {
@@ -37,6 +38,7 @@ public class Settings {
 	private static final String TILE_CUSTOM = "tile.custom";
 	private static final String TILE_HEIGHT = "tile.height";
 	private static final String TILE_WIDTH = "tile.width";
+	private static final String TILE_COLORS = "tile.colorcount";
 	private static final String ATLAS_NAME = "atlas.name";
 	private static final String PROXY_HOST = "proxy.http.host";
 	private static final String PROXY_PORT = "proxy.http.port";
@@ -75,6 +77,7 @@ public class Settings {
 	private boolean customTileSize = false;
 	private int tileHeight = 256;
 	private int tileWidth = 256;
+	private TileImageColorDepth tileColorDepth = TileImageColorDepth.Unchanged;
 
 	// Timeout in seconds (default 10 seconds)
 	private int connectionTimeout = 10;
@@ -133,6 +136,8 @@ public class Settings {
 			customTileSize = p.getBooleanProperty(TILE_CUSTOM, false);
 			tileHeight = p.getIntProperty(TILE_HEIGHT, tileHeight);
 			tileWidth = p.getIntProperty(TILE_WIDTH, tileWidth);
+			tileColorDepth = TileImageColorDepth.getByColorCountDefault(p.getIntProperty(
+					TILE_COLORS, -1));
 			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
 			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
 			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
@@ -182,6 +187,7 @@ public class Settings {
 			p.setBooleanProperty(TILE_CUSTOM, customTileSize);
 			p.setIntProperty(TILE_HEIGHT, tileHeight);
 			p.setIntProperty(TILE_WIDTH, tileWidth);
+			p.setIntProperty(TILE_COLORS, tileColorDepth.getColorCount());
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
@@ -374,6 +380,14 @@ public class Settings {
 
 	public void setFullScreenEnabled(Boolean fullScreenEnabled) {
 		this.fullScreenEnabled = fullScreenEnabled;
+	}
+
+	public TileImageColorDepth getTileColorDepth() {
+		return tileColorDepth;
+	}
+
+	public void setTileColorDepth(TileImageColorDepth tileColorDepth) {
+		this.tileColorDepth = tileColorDepth;
 	}
 
 }

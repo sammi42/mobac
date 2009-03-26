@@ -14,6 +14,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.model.SubMapProperties;
+import tac.program.model.TileImageColorDepth;
 import tac.utilities.MyMath;
 
 /**
@@ -27,20 +28,6 @@ public class MapCreatorCustom extends MapCreator {
 
 	public enum TileImageFormat {
 		Unchanged, Png, Jpg
-	};
-
-	public enum TileImageColorDepth {
-		Unchanged("Do not change"), EightBit("8 bit (256 colors)"), FourBit("4 bit (16 colors)");
-
-		private final String displayName;
-
-		private TileImageColorDepth(String displayName) {
-			this.displayName = displayName;
-		}
-
-		public String toString() {
-			return displayName;
-		}
 	};
 
 	private TileImageParameters param;

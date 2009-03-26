@@ -6,6 +6,8 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
@@ -38,6 +40,15 @@ public class Png4BitWriter {
 	public static final byte FILTER_NONE = 0;
 	public static final byte FILTER_PAETH = 4;
 
+	public static void writeImage(File file, BufferedImage image) throws IOException {
+		FileOutputStream out = new FileOutputStream(file);
+		try {
+			writeImage(out, image);
+		} finally {
+			out.close();
+		}
+	}
+
 	/**
 	 * 
 	 * @param out
@@ -61,9 +72,6 @@ public class Png4BitWriter {
 
 		IndexColorModel palette = (IndexColorModel) cm;
 
-		System.out.println(image.getWidth() + " x " + image.getHeight() + " = "
-				+ (image.getHeight() * image.getWidth()));
-		System.out.println(pixels.length);
 		dos.write(SIGNATURE);
 		Chunk cIHDR = new Chunk(IHDR);
 		cIHDR.writeInt(width);
@@ -83,7 +91,8 @@ public class Png4BitWriter {
 		palette.getReds(r);
 		palette.getGreens(g);
 		palette.getBlues(b);
-		for (int i = 0; i < 16; i++) {
+		int colorCount = Math.min(paletteEntries, 16);
+		for (int i = 0; i < colorCount; i++) {
 			cPLTE.writeByte(r[i]);
 			cPLTE.writeByte(g[i]);
 			cPLTE.writeByte(b[i]);
@@ -97,7 +106,7 @@ public class Png4BitWriter {
 		int lineLen = MyMath.divCeil(width, 2);
 		byte[] lineOut = new byte[lineLen];
 		int[] samples = null;
-		
+
 		for (int line = 0; line < height; line++) {
 			dfos.write(FILTER_NONE);
 

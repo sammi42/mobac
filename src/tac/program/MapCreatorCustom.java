@@ -16,6 +16,7 @@ import tac.gui.AtlasProgress;
 import tac.program.model.SubMapProperties;
 import tac.program.model.TileImageColorDepth;
 import tac.utilities.MyMath;
+import tac.utilities.Png4BitWriter;
 
 /**
  * Extends the {@link MapCreator} so that custom tiles are written. Custom tiles
@@ -136,7 +137,11 @@ public class MapCreatorCustom extends MapCreator {
 								null, null, new Integer(1), new Integer(1), null);
 						tileImage = ro.getAsBufferedImage();
 					}
-					ImageIO.write(tileImage, targetFileType, fDest);
+					if ((param.colorDepth == TileImageColorDepth.FourBit)
+							&& (targetFileType == "png"))
+						Png4BitWriter.writeImage(fDest, tileImage);
+					else
+						ImageIO.write(tileImage, targetFileType, fDest);
 					setFiles.add(fDest.getName());
 				} catch (Exception e) {
 					log.error("Error writing tile image: ", e);

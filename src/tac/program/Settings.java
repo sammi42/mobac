@@ -30,7 +30,7 @@ public class Settings {
 	private static final String SETTINGS_FILE = "settings.xml";
 	private static final String DEVMODE = "devmode";
 	private static final String MAPS_MAXSIZE = "maps.maxsize";
-	private static final String TILE_STORE = "tile.store.enabled";
+	private static final String TILE_STORE = "tilestore.enabled";
 	private static final String PREVIEW_ZOOM = "preview.zoom";
 	private static final String PREVIEW_LAT = "preview.lat";
 	private static final String PREVIEW_LON = "preview.lon";

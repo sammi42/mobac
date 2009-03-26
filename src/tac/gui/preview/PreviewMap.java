@@ -229,14 +229,15 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public void setSelection(MapSelection ms, boolean notifyListeners) {
 		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min())
 			return;
-		Point pStart = ms.getTopLeftTileCoordinate(zoom);
-		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
-		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
+		log.trace("Setting selection to: " + ms);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
 		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
 		mml.add(new MapMarkerDot(ms.getLat_min(), ms.getLon_min()));
 		setMapMarkerList(mml);
 		setDisplayToFitMapMarkers();
+		Point pStart = ms.getTopLeftTileCoordinate(zoom);
+		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
+		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
 	}
 
 	public void setSelectionByScreenPoint(Point aStart, Point aEnd, boolean notifyListeners) {

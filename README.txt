@@ -29,6 +29,12 @@ This application creates atlases for the J2ME application TrekBuddy
 This application requires that a Java Runtime Environment version 5 or higher 
 is installed on the computer. 
 
+For reducing the color depth of downloaded tiles the library files of the 
+"Java Advanced Imaging" (JAI) have to be present on the system respectively in the 
+same directory as TrekBuddy_Atlas_Creator.jar.
+
+Ready to use binary builds of the Java Advanced Imaging library can be obtained 
+at https://jai.dev.java.net/binary-builds.html
 
 *******************************************************************************
 **                        I N S T A L L A T I O N                            **

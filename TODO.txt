@@ -17,7 +17,7 @@ T O D O
    and only get other tiles if difference detected.
    
    -> JMapViewer (preview component) already has such a function but it is not 
-      possible to reuse that function for TAC - therefore  
+      possible to reuse that function for TAC  
 
 4) Settings for tile store. Not just enable or disable, maybe a possibility to configure the amount of tiles
    per map source and / or tile store size in bytes. And to have this store as working as a LRU.
@@ -36,17 +36,7 @@ T O D O
    
    -> implementation: MapSources.Custom(..)
 
-7) But there's one important feature I'm missing: Like with TB-Cutter I need to be able to select the color
-   depth (4 bpp is sufficient for maps). So tars would have only half of the current size!
-   
-   -> That is not that simple in Java. I did not found a library that allows "save as 4bpp PNG", 
-      therefore we first need a color reducing component (aka "color quantizer") that merges similar 
-      colors into one (in difference to a ditherer). For saving a reduced image the default java 
-      PNG writer may be usable.   
-
-8) Open folder in AtlasProgress is platform specific (Windows only)
+7) Open folder in AtlasProgress is platform specific (Windows only)
 
    -> Requires platform detection - Windows, Linux (KDE), Linux (Gnome), ...
       System.getProperty("os.name"); 
-      
-9) Allow to "reload" missing tiles in the map preview window

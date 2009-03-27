@@ -4,17 +4,18 @@
 	<property file="src/tac/tac.properties" />
 	<property name="jar.name" value="TrekBuddy_Atlas_Creator.jar" />
 	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${tac.version}.zip" />
+	<property name="zip_src.name" value="TrekBuddy_Atlas_Creator_v${tac.version}_src.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
-	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release" />
+	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release,create_release_src" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete includeemptydirs="true" failonerror="false">
-			<fileset dir="ozi" includes="**/*" /> 
-			<fileset dir="atlases" includes="**/*" /> 
-			<fileset dir="atlasestared" includes="**/*" /> 
-			<fileset dir="build" includes="**/*" /> 
-			<fileset dir="tilestore" includes="**/*" /> 
+			<fileset dir="ozi" includes="**/*" />
+			<fileset dir="atlases" includes="**/*" />
+			<fileset dir="atlasestared" includes="**/*" />
+			<fileset dir="build" includes="**/*" />
+			<fileset dir="tilestore" includes="**/*" />
 		</delete>
 	</target>
 
@@ -109,14 +110,31 @@
 		</propertyfile>
 	</target>
 
-	<target name="create_release">
-		<zip destfile="${zip.name}">
+	<target name="create_release" description="Packs all necessary files for the binary release into one zip archive">
+		<zip destfile="${zip.name}" update="false">
 			<fileset dir="./">
 				<include name="${jar.name}" />
 				<include name="gpl.txt" />
 				<include name="README.txt" />
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="create_release_src" description="Packs all necessary files for the source code release into one zip archive">
+		<zip destfile="${zip_src.name}" update="false">
+			<fileset dir="./">
+				<include name="src/**" />
+				<include name="log4j.xml" />
+				<include name="build.xml" />
+				<include name="gpl.txt" />
+				<include name="README.txt" />
+				<include name="CHANGELOG.txt" />
+				<include name="TODO.txt" />
+				<include name="start.*" />
+				<include name="lib/JMapViewer.jar" />
+				<include name="lib/log4j-1.2.15.jar" />
 			</fileset>
 		</zip>
 	</target>

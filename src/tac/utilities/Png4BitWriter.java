@@ -80,6 +80,23 @@ public class Png4BitWriter {
 	 * @throws IOException
 	 */
 	public static void writeImage(OutputStream out, BufferedImage image) throws IOException {
+		writeImage(out, image, Deflater.BEST_COMPRESSION);
+	}
+
+	/**
+	 * 
+	 * @param out
+	 * @param image
+	 *            Must be an image with {@link ColorModel}
+	 *            {@link IndexColorModel}
+	 * @param compression
+	 *            deflater method used for compression - possible values are for
+	 *            example {@link Deflater#BEST_COMPRESSION},
+	 *            {@link Deflater#BEST_SPEED},{@link Deflater#NO_COMPRESSION}
+	 * @throws IOException
+	 */
+	public static void writeImage(OutputStream out, BufferedImage image, int compression)
+			throws IOException {
 		int[] pixels = null;
 		pixels = image.getData().getPixels(0, 0, image.getWidth(), image.getHeight(), pixels);
 		DataOutputStream dos = new DataOutputStream(out);
@@ -122,8 +139,7 @@ public class Png4BitWriter {
 		cPLTE.writeTo(dos);
 
 		Chunk cIDAT = new Chunk(IDAT);
-		DeflaterOutputStream dfos = new DeflaterOutputStream(cIDAT, new Deflater(
-				Deflater.BEST_COMPRESSION));
+		DeflaterOutputStream dfos = new DeflaterOutputStream(cIDAT, new Deflater(compression));
 
 		int lineLen = MyMath.divCeil(width, 2);
 		byte[] lineOut = new byte[lineLen];

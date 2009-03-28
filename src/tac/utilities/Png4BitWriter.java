@@ -137,7 +137,13 @@ public class Png4BitWriter {
 			int sx = 0;
 			for (int i = 0; i < samples.length; i += 2) {
 				// Now we are packing two samples of 4 bit into one byte
-				lineOut[sx++] = (byte) (((samples[i] & 0x0F) << 4) | (samples[i + 1] & 0x0F));
+				int sample1 = samples[i];
+				int sample2 = samples[i + 1];
+				int s1 = sample1 & 0x0F;
+				int s2 = sample2 & 0x0F;
+				if ((s1 != sample1) || (s2 != sample2))
+					throw new RuntimeException("sample has more than 4 bit!");
+				lineOut[sx++] = (byte) ((s1 << 4) | s2);
 			}
 			dfos.write(lineOut);
 		}

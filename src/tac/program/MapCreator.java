@@ -22,6 +22,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import tac.gui.AtlasProgress;
 import tac.program.model.SubMapProperties;
 import tac.tar.TarArchive;
+import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
 
 /**
@@ -29,7 +30,7 @@ import tac.utilities.Utilities;
  */
 public class MapCreator {
 
-	private static final String TEXT_FILE_CHARSET = "ISO-8859-1";
+	public static final String TEXT_FILE_CHARSET = "ISO-8859-1";
 	protected static final int COORD_KIND_LATTITUDE = 1;
 	protected static final int COORD_KIND_LONGITUDE = 2;
 
@@ -88,8 +89,8 @@ public class MapCreator {
 
 		// This means there should not be any resizing of the tiles.
 		try {
-			// tileWriter = new TarTileWriter();
-			tileWriter = new FileTileWriter(setFolder);
+			tileWriter = new TarTileWriter();
+			// tileWriter = new FileTileWriter(setFolder);
 			createTiles(setFolder);
 			tileWriter.finalizeMap();
 		} catch (InterruptedException e) {
@@ -187,7 +188,7 @@ public class MapCreator {
 			super();
 			File mapTarFile = new File(atlasLayerFolder, layerName + ".tar");
 			try {
-				ta = new TarArchive(mapTarFile, null);
+				ta = new TarTmiArchive(mapTarFile, null);
 				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
 				writeMapFile(buf);
 				ta.writeFileFromData(layerName + ".map", buf.toByteArray());
@@ -197,7 +198,7 @@ public class MapCreator {
 		}
 
 		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
-			ta.writeFileFromData(tileFileName, tileData);
+			ta.writeFileFromData("set/" + tileFileName, tileData);
 		}
 
 		public void finalizeMap() {

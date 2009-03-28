@@ -10,8 +10,8 @@ import java.util.Arrays;
 
 public class TarArchive {
 
-	private OutputStream tarFileStream;
-	private File baseDir;
+	protected OutputStream tarFileStream;
+	protected File baseDir;
 
 	public TarArchive(File tarFile, File baseDir) throws FileNotFoundException {
 		this.tarFileStream = new BufferedOutputStream(new FileOutputStream(tarFile));
@@ -52,6 +52,11 @@ public class TarArchive {
 			TarRecord tr = new TarRecord(fileOrDirToAdd);
 			tarFileStream.write(tr.getRecordContent());
 		}
+	}
+
+	public void writeDirectory(String dirName) throws IOException {
+		TarHeader th = new TarHeader(dirName, 0);
+		tarFileStream.write(th.getBytes());
 	}
 
 	/**

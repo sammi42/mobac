@@ -48,7 +48,7 @@ public class Utilities {
 					new Integer(256), // Max number of colors
 					null, null, new Integer(1), new Integer(1), null);
 			image = ro.getAsBufferedImage();
-		} catch (Exception e) {
+		} catch (NoClassDefFoundError e) {
 			return false;
 		}
 		return true;

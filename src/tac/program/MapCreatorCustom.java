@@ -2,6 +2,7 @@ package tac.program;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.imageio.ImageIO;
@@ -121,9 +122,8 @@ public class MapCreatorCustom extends MapCreator {
 						BufferedImage.TYPE_3BYTE_BGR);
 				try {
 					Graphics2D graphics = tileImage.createGraphics();
-					File fDest = new File(setFolder, "t_" + xRelPos + "_" + yRelPos + "."
-							+ targetFileType);
-					log.trace("Creating tile " + fDest.getName());
+					String tileFileName = "t_" + xRelPos + "_" + yRelPos + "." + targetFileType;
+					log.trace("Creating tile " + tileFileName);
 					paintCustomTile(graphics, xAbsPos, yAbsPos);
 					graphics.dispose();
 					if (param.colorDepth != TileImageColorDepth.Unchanged) {
@@ -137,12 +137,13 @@ public class MapCreatorCustom extends MapCreator {
 								null, null, new Integer(1), new Integer(1), null);
 						tileImage = ro.getAsBufferedImage();
 					}
+					ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
 					if ((param.colorDepth == TileImageColorDepth.FourBit)
 							&& (targetFileType == "png"))
-						Png4BitWriter.writeImage(fDest, tileImage);
+						Png4BitWriter.writeImage(buf, tileImage);
 					else
-						ImageIO.write(tileImage, targetFileType, fDest);
-					setFiles.add(fDest.getName());
+						ImageIO.write(tileImage, targetFileType, buf);
+					tileWriter.writeTile(tileFileName, buf.toByteArray());
 				} catch (Exception e) {
 					log.error("Error writing tile image: ", e);
 				}

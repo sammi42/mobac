@@ -77,7 +77,7 @@ public class TileDownLoader {
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invaild HTTP response: " + code);
 
-		byte[] buffer = new byte[4096];
+		byte[] buffer = new byte[8192];
 		output = new File(destinationDirectory, tileFileName);
 		FileOutputStream outputStream = new FileOutputStream(output);
 

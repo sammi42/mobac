@@ -1,13 +1,16 @@
 package tac.program;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
@@ -18,6 +21,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.model.SubMapProperties;
+import tac.tar.TarArchive;
 import tac.utilities.Utilities;
 
 /**
@@ -44,9 +48,10 @@ public class MapCreator {
 	protected TileSource tileSource;
 
 	protected HashMap<String, File> tilesInFileFormat;
-	protected LinkedList<String> setFiles;
 
 	protected String layerName;
+
+	protected TileWriter tileWriter;
 
 	public MapCreator(SubMapProperties smp, File oziFolder, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, int mapNumber) {
@@ -60,7 +65,6 @@ public class MapCreator {
 		this.zoom = zoom;
 		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
 		tilesInFileFormat = new HashMap<String, File>();
-		setFiles = new LinkedList<String>();
 		atlasLayerFolder = new File(atlasFolder, layerName);
 	}
 
@@ -84,38 +88,44 @@ public class MapCreator {
 
 		// This means there should not be any resizing of the tiles.
 		try {
+			// tileWriter = new TarTileWriter();
+			tileWriter = new FileTileWriter(setFolder);
 			createTiles(setFolder);
+			tileWriter.finalizeMap();
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
 		}
-		writeSetFile();
 	}
 
 	private void writeMapFile() {
-		log.trace("Writing map file");
 		File mapFile = new File(atlasLayerFolder, layerName + ".map");
-
-		OutputStreamWriter mapWriter = null;
+		FileOutputStream mapFileStream = null;
 		try {
-			mapWriter = new OutputStreamWriter(new FileOutputStream(mapFile), TEXT_FILE_CHARSET);
-
-			double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
-			double longitudeMax = OsmMercator.XToLon((xMax + 1) * Tile.SIZE, zoom);
-			double latitudeMin = OsmMercator.YToLat((yMax + 1) * Tile.SIZE, zoom);
-			double latitudeMax = OsmMercator.YToLat(yMin * Tile.SIZE, zoom);
-
-			int width = (xMax - xMin + 1) * Tile.SIZE;
-			int height = (yMax - yMin + 1) * Tile.SIZE;
-
-			mapWriter.write(prepareMapString("t_." + tileSource.getTileType(), longitudeMin,
-					longitudeMax, latitudeMin, latitudeMax, width, height));
-			mapWriter.close();
+			mapFileStream = new FileOutputStream(mapFile);
+			writeMapFile(mapFileStream);
 		} catch (IOException e) {
 			log.error("", e);
 		} finally {
-			Utilities.closeWriter(mapWriter);
+			Utilities.closeStream(mapFileStream);
 		}
+	}
+
+	private void writeMapFile(OutputStream stream) throws IOException {
+		log.trace("Writing map file");
+		OutputStreamWriter mapWriter = new OutputStreamWriter(stream, TEXT_FILE_CHARSET);
+
+		double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
+		double longitudeMax = OsmMercator.XToLon((xMax + 1) * Tile.SIZE, zoom);
+		double latitudeMin = OsmMercator.YToLat((yMax + 1) * Tile.SIZE, zoom);
+		double latitudeMax = OsmMercator.YToLat(yMin * Tile.SIZE, zoom);
+
+		int width = (xMax - xMin + 1) * Tile.SIZE;
+		int height = (yMax - yMin + 1) * Tile.SIZE;
+
+		mapWriter.write(prepareMapString("t_." + tileSource.getTileType(), longitudeMin,
+				longitudeMax, latitudeMin, latitudeMax, width, height));
+		mapWriter.flush();
 	}
 
 	/**
@@ -137,6 +147,7 @@ public class MapCreator {
 			int tileCount = (xMax - xMin + 1) * (yMax - yMin + 1);
 			ap.initMap(tileCount);
 		}
+
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y <= yMax; y++) {
@@ -145,20 +156,20 @@ public class MapCreator {
 				if (ap != null)
 					ap.incMapProgress();
 				try {
-					File fDest = new File(setFolder, "t_" + (pixelValueX * 256) + "_"
-							+ (pixelValueY * 256) + "." + tileSource.getTileType());
+					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
+							+ "." + tileSource.getTileType();
 					File fSource = (File) tilesInFileFormat.get("y" + y + "x" + x + "."
 							+ tileSource.getTileType());
 					if (fSource != null) {
-						Utilities.fileCopy(fSource, fDest);
+						byte[] sourceTileData = Utilities.getFileBytes(fSource);
+						tileWriter.writeTile(tileFileName, sourceTileData);
 					} else {
-						FileOutputStream fos = new FileOutputStream(fDest);
 						BufferedImage emptyImage = new BufferedImage(256, 256,
 								BufferedImage.TYPE_INT_ARGB);
-						ImageIO.write(emptyImage, tileSource.getTileType(), fos);
-						fos.close();
+						ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
+						ImageIO.write(emptyImage, tileSource.getTileType(), buf);
+						tileWriter.writeTile(tileFileName, buf.toByteArray());
 					}
-					setFiles.add(fDest.getName());
 				} catch (IOException e) {
 					log.error("", e);
 				}
@@ -168,21 +179,81 @@ public class MapCreator {
 		}
 	}
 
-	private void writeSetFile() {
-		// Create the set file for this map
-		File setFile = new File(atlasLayerFolder, layerName + ".set");
-		log.trace("Writing map .set file: " + setFile.getAbsolutePath());
-		OutputStreamWriter setWriter = null;
-		try {
-			setWriter = new OutputStreamWriter(new FileOutputStream(setFile), TEXT_FILE_CHARSET);
-			for (String file : setFiles) {
-				setWriter.write(file + "\r\n");
+	public class TarTileWriter implements TileWriter {
+
+		TarArchive ta = null;
+
+		public TarTileWriter() {
+			super();
+			File mapTarFile = new File(atlasLayerFolder, layerName + ".tar");
+			try {
+				ta = new TarArchive(mapTarFile, null);
+				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
+				writeMapFile(buf);
+				ta.writeFileFromData(layerName + ".map", buf.toByteArray());
+			} catch (IOException e) {
+				log.error("", e);
 			}
-		} catch (IOException e) {
-			log.error("", e);
-		} finally {
-			Utilities.closeWriter(setWriter);
 		}
+
+		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
+			ta.writeFileFromData(tileFileName, tileData);
+		}
+
+		public void finalizeMap() {
+			try {
+				ta.writeEndofArchive();
+			} catch (IOException e) {
+				log.error("", e);
+			}
+			ta.close();
+		}
+
+	}
+
+	public class FileTileWriter implements TileWriter {
+
+		File setFolder;
+		Writer setFileWriter;
+
+		public FileTileWriter(File setFolder) {
+			super();
+			this.setFolder = setFolder;
+			File setFile = new File(atlasLayerFolder, layerName + ".set");
+			try {
+				setFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+						setFile), TEXT_FILE_CHARSET));
+			} catch (IOException e) {
+				log.error("", e);
+			}
+		}
+
+		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
+			File f = new File(setFolder, tileFileName);
+			FileOutputStream out = new FileOutputStream(f);
+			setFileWriter.write(tileFileName + "\r\n");
+			try {
+				out.write(tileData);
+			} finally {
+				Utilities.closeStream(out);
+			}
+		}
+
+		public void finalizeMap() {
+			try {
+				setFileWriter.flush();
+			} catch (IOException e) {
+				log.error("", e);
+			}
+			Utilities.closeWriter(setFileWriter);
+		}
+	}
+
+	public abstract interface TileWriter {
+
+		public void writeTile(String tileFileName, byte[] tileData) throws IOException;
+
+		public void finalizeMap();
 	}
 
 	protected String prepareMapString(String fileName, double longitudeMin, double longitudeMax,

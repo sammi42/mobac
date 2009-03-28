@@ -172,6 +172,21 @@ public class Utilities {
 		return (path.delete());
 	}
 
+	public static byte[] getFileBytes(File file) throws IOException {
+		int size = (int) file.length();
+		byte[] buffer = new byte[size];
+		FileInputStream in = new FileInputStream(file);
+		try {
+			int pos = 0;
+			do {
+				pos += in.read(buffer, pos, size - pos);
+			} while (pos < size);
+			return buffer;
+		} finally {
+			closeStream(in);
+		}
+	}
+
 	public static Profile createExampleProfile(String profileName, String mapSource,
 			double latitudeMax, double latitudeMin, double longitudeMax, double longitudeMin,
 			boolean[] zoomValues, int tileSizeWidth, int tileSizeHeight, String atlasName) {

@@ -89,8 +89,8 @@ public class MapCreator {
 
 		// This means there should not be any resizing of the tiles.
 		try {
-			tileWriter = new TarTileWriter();
-			// tileWriter = new FileTileWriter(setFolder);
+			// tileWriter = new TarTileWriter();
+			tileWriter = new FileTileWriter(setFolder);
 			createTiles(setFolder);
 			tileWriter.finalizeMap();
 		} catch (InterruptedException e) {

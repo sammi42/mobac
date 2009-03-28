@@ -23,7 +23,8 @@ V E R S I O N  I N F O R M A T I O N
     Download the library and place the Jar[s] in the same directory as TrekBuddyAtlasCreator
  + Experimental: Color reduced (<16) png files are saved using an own implementation
     that writes real 4 bit PNG files (instead to the default Java one that only creates
-    8 bit or truecolor files)         
+    8 bit or truecolor files)    
+ ~ Maximum map size reduced to 32767 (1 pixel less)        
 
  0.9.6: (2009-01-08)
  

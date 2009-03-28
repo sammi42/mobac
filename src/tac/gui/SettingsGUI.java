@@ -65,12 +65,13 @@ public class SettingsGUI extends JDialog {
 
 	static {
 		// Sizes from 1024 to 32768
-		mapSizes = new Vector<Integer>(20);
-		int size = 32768;
-		do {
-			mapSizes.addElement(new Integer(size));
-			size -= 1024;
-		} while (size >= 1024);
+		mapSizes = new Vector<Integer>(10);
+		mapSizes.addElement(new Integer(32767));
+		mapSizes.addElement(new Integer(30000));
+		mapSizes.addElement(new Integer(25000));
+		mapSizes.addElement(new Integer(20000));
+		mapSizes.addElement(new Integer(15000));
+		mapSizes.addElement(new Integer(10000));
 	}
 
 	static void showSettingsDialog(final JFrame owner) {

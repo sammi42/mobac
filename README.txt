@@ -43,7 +43,6 @@ at https://jai.dev.java.net/binary-builds.html
 Copy or move the unzipped files to a folder where you would like to have TAC 
 installed.
 
-
 *******************************************************************************
 **                    A P P L I C A T I O N  S T A R T                       **
 *******************************************************************************
@@ -58,13 +57,15 @@ the application.
 *******************************************************************************
 
 After having downloaded and created an atlas the files belonging to the 
-atlas can be found in the directory "atlasestared\[Current date and time]".
+atlas can be found in the directory "atlases\[Current date and time]".
 
-The atlas itself consists of the file "cr.tar" - the atlas startup file
-and the subdirectories containing the different maps of the atlas. 
+The atlas itself consists of the the atlas startup file "cr.tar" (tar format) 
+or "rb.tba" (regular/untared format) and the subdirectories containing the 
+different maps of the atlas. 
 
 For using the atlas with TrekBuddy copy the whole directory onto your J2ME 
-device and open "cr.tar" (in the atlas root directory) in TrekBuddy as atlas.    
+device and open "cr.tar"/"cr.tba" (in the atlas root directory) in TrekBuddy as 
+atlas.    
 
 *******************************************************************************
 **                P R O B L E M S  &  E R R O R S                            **

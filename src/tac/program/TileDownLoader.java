@@ -1,22 +1,26 @@
 package tac.program;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+
+import tac.utilities.Utilities;
 
 public class TileDownLoader {
 
 	static {
 		System.setProperty("http.maxConnections", "10");
 	}
+
+	private static int MAX_BUFFER_SIZE = 64 * 1024; // 64 KB receive & copy
+	// buffer
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
@@ -35,8 +39,9 @@ public class TileDownLoader {
 		// Thread.sleep(2000);
 
 		// Test code for creating random download failures
-		// if (Math.random()>0.7) throw new IOException("intentionally download error");
-		
+		// if (Math.random()>0.7) throw new
+		// IOException("intentionally download error");
+
 		/**
 		 * If the desired tile already exist in the persistent tilestore and
 		 * settings is to use the tile store
@@ -73,55 +78,51 @@ public class TileDownLoader {
 		InputStream is = huc.getInputStream();
 		int code = huc.getResponseCode();
 
-		File output;
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invaild HTTP response: " + code);
 
-		byte[] buffer = new byte[8192];
-		output = new File(destinationDirectory, tileFileName);
-		FileOutputStream outputStream = new FileOutputStream(output);
+		File tileFile = new File(destinationDirectory, tileFileName);
+		File tilestoreFile = null;
+		OutputStream tileFileStream = new FileOutputStream(tileFile);
+		OutputStream tilestoreFileStream = null;
+		if (s.isTileStoreEnabled()) {
+			// We are writing simultaneously to the target file
+			// and the file in the tile store
+			tilestoreFile = ts.getTileFile(x, y, zoom, tileSource);
+			tilestoreFileStream = new FileOutputStream(tilestoreFile, false);
+		}
 
 		int bytesRead = 0;
 		int sumBytes = 0;
 
-		while ((bytesRead = is.read(buffer)) > 0) {
-			sumBytes += bytesRead;
-			outputStream.write(buffer, 0, bytesRead);
-		}
-
-		outputStream.close();
-
-		// Disabled because HTTP 1.1 allows reusing connections which increases
-		// download speed. If we disconnect the connection pooling in Java will
-		// not work!
-		// huc.disconnect();
-
-		int downloadedBytes = sumBytes;
-
-		if (s.isTileStoreEnabled()) {
-
-			// Copy the file from the download folder to the persistent
-			// tilestore folder
-			File tileStoreFile = ts.getTileFile(x, y, zoom, tileSource);
-
-			FileChannel source = null;
-			FileChannel destination = null;
-			try {
-				source = new FileInputStream(destFile).getChannel();
-				destination = new FileOutputStream(tileStoreFile).getChannel();
-				destination.transferFrom(source, 0, source.size());
-			} catch (IOException e) {
-				log.error("Error while copying tile from tilestore!", e);
-			} finally {
-				if (source != null) {
-					source.close();
-				}
-				if (destination != null) {
-					destination.close();
-				}
+		boolean success = false;
+		try {
+			int bufferSize = huc.getContentLength();
+			if (bufferSize <= 1024)
+				// Content length returned by server is invalid or very short
+				bufferSize = MAX_BUFFER_SIZE;
+			else
+				bufferSize = Math.min(bufferSize, MAX_BUFFER_SIZE);
+			byte[] buffer = new byte[bufferSize];
+			while ((bytesRead = is.read(buffer)) > 0) {
+				sumBytes += bytesRead;
+				tileFileStream.write(buffer, 0, bytesRead);
+				if (tilestoreFileStream != null)
+					tilestoreFileStream.write(buffer, 0, bytesRead);
+			}
+			success = true;
+		} finally {
+			Utilities.closeStream(tileFileStream);
+			Utilities.closeStream(tilestoreFileStream);
+			if ((!success) || (sumBytes == 0)) {
+				// In case of an error while download or an empty file we have
+				// an invalid tile image we don't want -> delete it
+				tileFile.delete();
+				if (tilestoreFile != null)
+					tilestoreFile.delete();
 			}
 		}
-		return downloadedBytes;
-	}
 
+		return sumBytes;
+	}
 }

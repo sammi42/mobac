@@ -26,7 +26,8 @@ V E R S I O N  I N F O R M A T I O N
     8 bit or true color files)    
  ~ Maximum map size reduced to 32767 (1 pixel less)
  ~ Atlas output format can now be specified: Tared or untared atlas. The created atlas 
-    is always created in the folder "atlases" - the folder "atlasestared" is no longer used. 
+    is always created in the folder "atlases" - the folder "atlasestared" is no longer used.
+ ~ "ozi" directory renamed to "tac_tmp" (catches the purpose much better)
 
  0.9.6: (2009-01-08)
  

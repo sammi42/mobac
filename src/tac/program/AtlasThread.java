@@ -118,9 +118,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String formattedDateString = sdf.format(date);
 
-		File oziDir = new File(workingDir + "/ozi/" + formattedDateString);
+		File tmpDir = new File(workingDir + "/tac_tmp/" + formattedDateString);
 
-		oziDir.mkdirs();
+		tmpDir.mkdirs();
 
 		/***
 		 * In this section of code below, atlas is created.
@@ -166,7 +166,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 				/***
 				 * In this section of code below, tiles for Atlas is being
-				 * downloaded and put into folder "ozi"
+				 * downloaded and put into folder "tac_tmp"
 				 **/
 				int zoom = zoomLevels[layer];
 
@@ -182,12 +182,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				ap.initLayer(apMax);
 				ap.setZoomLevel(zoom);
 
-				File oziZoomDir = new File(oziDir, Integer.toString(zoom));
-				oziZoomDir.mkdir();
+				File tmpMapDir = new File(tmpDir, Integer.toString(zoom));
+				tmpMapDir.mkdir();
 				jobsProduced = 0;
 				if (!SKIP_DOWNLOAD) {
 					DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom,
-							oziZoomDir);
+							tmpMapDir);
 
 					while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
 							|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
@@ -210,7 +210,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 						}
 					}
 					log.debug("All download jobs has been completed!");
-					if ((oziZoomDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
+					if ((tmpMapDir.list().length) != (mapSelection.calculateNrOfTiles(zoom))) {
 						int answer = JOptionPane.showConfirmDialog(ap,
 								"Something is wrong with download of atlas tiles.\n"
 										+ "The amount of downladed tiles is not as "
@@ -245,10 +245,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				for (MapSlice smp : subMaps) {
 					MapCreator mc;
 					if (customTileParameters == null)
-						mc = new MapCreator(smp, oziZoomDir, atlasFolder, atlasName, tileSource,
+						mc = new MapCreator(smp, tmpMapDir, atlasFolder, atlasName, tileSource,
 								zoom, atlasOutputFormat, mapNumber);
 					else
-						mc = new MapCreatorCustom(smp, oziZoomDir, atlasFolder, atlasName,
+						mc = new MapCreatorCustom(smp, tmpMapDir, atlasFolder, atlasName,
 								tileSource, zoom, atlasOutputFormat, mapNumber,
 								customTileParameters);
 					mc.createMap();
@@ -352,21 +352,21 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		Point bottomRight;
 
 		int zoom;
-		File oziZoomDir;
+		File tmpMapDir;
 
-		public DownloadJobProducer(Point topLeft, Point bottomRight, int zoom, File oziZoomDir) {
+		public DownloadJobProducer(Point topLeft, Point bottomRight, int zoom, File tmpMapDir) {
 			super("JobProducerThread_" + atlasName);
 			this.bottomRight = bottomRight;
 			this.topLeft = topLeft;
 			this.zoom = zoom;
-			this.oziZoomDir = oziZoomDir;
+			this.tmpMapDir = tmpMapDir;
 			start();
 		}
 
 		@Override
 		public void run() {
 			DownloadJobEnumerator djEnum = new DownloadJobEnumerator(topLeft.x, bottomRight.x,
-					topLeft.y, bottomRight.y, zoom, tileSource, oziZoomDir, AtlasThread.this);
+					topLeft.y, bottomRight.y, zoom, tileSource, tmpMapDir, AtlasThread.this);
 			try {
 				while (djEnum.hasMoreElements()) {
 					Job job = djEnum.nextElement();

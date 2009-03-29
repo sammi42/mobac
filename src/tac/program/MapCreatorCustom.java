@@ -37,10 +37,10 @@ public class MapCreatorCustom extends MapCreator {
 
 	private String targetFileType;
 
-	public MapCreatorCustom(MapSlice smp, File oziFolder, File atlasFolder, String mapName,
+	public MapCreatorCustom(MapSlice smp, File tmpFolder, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
 			TileImageParameters parameters) {
-		super(smp, oziFolder, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
+		super(smp, tmpFolder, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
 		this.param = parameters;
 		switch (param.format) {
 		case Unchanged: {

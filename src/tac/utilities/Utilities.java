@@ -213,8 +213,8 @@ public class Utilities {
 		File atlasFolder = new File(userDir, "atlases");
 		atlasFolder.mkdir();
 
-		File oziFolder = new File(userDir, "ozi");
-		oziFolder.mkdir();
+		File tmpFolder = new File(userDir, "tac_tmp");
+		tmpFolder.mkdir();
 
 		File tileStoreFolder = new File(userDir, "tilestore");
 		tileStoreFolder.mkdir();

@@ -44,7 +44,7 @@ public class MapCreator {
 	protected int yMin;
 	protected int yMax;
 
-	protected File oziFolder;
+	protected File tmpFolder;
 	protected File atlasLayerFolder;
 	protected int zoom;
 	protected AtlasOutputFormat atlasOutputFormat;
@@ -56,7 +56,7 @@ public class MapCreator {
 
 	protected TileWriter tileWriter;
 
-	public MapCreator(MapSlice smp, File oziFolder, File atlasFolder, String mapName,
+	public MapCreator(MapSlice smp, File tmpFolder, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
 		log = Logger.getLogger(this.getClass());
 		xMin = smp.getXMin();
@@ -64,7 +64,7 @@ public class MapCreator {
 		yMin = smp.getYMin();
 		yMax = smp.getYMax();
 		this.tileSource = tileSource;
-		this.oziFolder = oziFolder;
+		this.tmpFolder = tmpFolder;
 		this.zoom = zoom;
 		this.atlasOutputFormat = atlasOutputFormat;
 		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
@@ -78,8 +78,8 @@ public class MapCreator {
 		// write the .map file containing the calibration points
 		writeMapFile();
 
-		// List all tiles in the ozi folder.
-		File[] tiles = oziFolder.listFiles();
+		// List all tiles in the tmp folder.
+		File[] tiles = tmpFolder.listFiles();
 
 		// Put all tiles in a Hash Map so the will be easy to access later on.
 		for (int i = 0; i < tiles.length; i++) {

@@ -125,7 +125,7 @@
 	<target name="create_release_src" description="Packs all necessary files for the source code release into one zip archive">
 		<zip destfile="${zip_src.name}" update="false">
 			<fileset dir="./">
-				<include name="src/**" />
+				<include name="src/tac/**" />
 				<include name="log4j.xml" />
 				<include name="build.xml" />
 				<include name="gpl.txt" />

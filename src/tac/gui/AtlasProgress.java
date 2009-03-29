@@ -17,6 +17,7 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,7 +48,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JProgressBar atlasProgressBar;
 	private JProgressBar layerProgressBar;
 	private JProgressBar mapProgressBar;
-	private JProgressBar tarProgressBar;
 
 	private JPanel background;
 
@@ -64,7 +64,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private int layerProgressMax = 0;
 	private int mapProgress = 0;
 	private int mapProgressMax = 0;
-	private int tarProgress = 0;
 	private int currentLayer = 0;
 
 	private JLabel windowTitle;
@@ -78,7 +77,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JLabel atlasTimeLeft;
 	private JLabel layerTimeLeft;
 	private JLabel mapCreation;
-	private JLabel tarCreation;
 	private JLabel nrOfDownloadedBytes;
 	private JLabel nrOfDownloadedBytesValue;
 	private JLabel nrOfDownloadedBytesPerSecond;
@@ -128,9 +126,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		mapCreation = new JLabel("Map Creation");
 		mapProgressBar = new JProgressBar();
-
-		tarCreation = new JLabel("Tar Creation");
-		tarProgressBar = new JProgressBar();
 
 		nrOfDownloadedBytesPerSecond = new JLabel("Average download speed");
 		nrOfDownloadedBytesPerSecondValue = new JLabel();
@@ -187,10 +182,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		background.add(mapProgressBar, gbcEolFillI);
 		background.add(Box.createVerticalStrut(10), gbcEol);
 
-		background.add(tarCreation, gbcEol);
-		background.add(tarProgressBar, gbcEolFillI);
-		background.add(Box.createVerticalStrut(10), gbcEol);
-
 		JPanel infoPanel = new JPanel(new GridBagLayout());
 		GBC gbci = GBC.std().insets(0, 3, 3, 3);
 		infoPanel.add(nrOfDownloadedBytes, gbci);
@@ -237,10 +228,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension dContent = getSize();
 		setLocation((dScreen.width - dContent.width) / 2, (dScreen.height - dContent.height) / 2);
-
-		tarProgressBar.setMinimum(0);
-		tarProgressBar.setMaximum(2);
-		tarProgressBar.setValue(0);
 
 		atlasProgressBar.setMinimum(0);
 		atlasProgressBar.setValue(0);
@@ -294,11 +281,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public void incMapProgress() {
 		mapProgress += 1;
-		updateGUI();
-	}
-
-	public void incTarProgress() {
-		tarProgress += 1;
 		updateGUI();
 	}
 
@@ -384,10 +366,12 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+		String workingDir = System.getProperty("user.dir");
+		File atlasFolder = new File(workingDir, "atlases");
 		if (openProgramFolderButton.equals(source)) {
 			try {
-				String strCmd = "rundll32 url.dll,FileProtocolHandler" + " "
-						+ System.getProperty("user.dir");
+				String strCmd = "rundll32 url.dll,FileProtocolHandler" + " \""
+						+ atlasFolder.getCanonicalPath() + "\"";
 				Runtime.getRuntime().exec(strCmd);
 			} catch (Exception ex) {
 			}
@@ -442,9 +426,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			mapProgressBar.setValue(mapProgress);
 			mapProgressBar.setMaximum(mapProgressMax);
 			atlasElementsDone.setText(currentLayer + " of " + numberOfLayers + " done");
-
-			// tar progress
-			tarProgressBar.setValue(tarProgress);
 
 			// bytes per second
 			long rate = numberOfDownloadedBytes * 1000;

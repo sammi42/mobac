@@ -34,16 +34,6 @@ public class TarArchive {
 		return true;
 	}
 
-	public void writePreparedEntry(PreparedTarEntry entry) throws IOException {
-		TarHeader th = entry.getTarHeader();
-		tarFileStream.write(th.getBytes());
-
-		if (!entry.getFileToBeTared().isDirectory()) {
-			TarRecord tr = entry.getTarRecord();
-			tarFileStream.write(tr.getRecordContent());
-		}
-	}
-
 	public void writeFile(File fileOrDirToAdd) throws IOException {
 		TarHeader th = new TarHeader(fileOrDirToAdd, baseDir);
 		tarFileStream.write(th.getBytes());

@@ -18,6 +18,8 @@ import tac.utilities.Utilities;
  * 
  * @author r_x
  * 
+ * @see <a href="http://www.linuxtechs.net/kruch/tb/forum/viewtopic.php?t=897">
+ *      TrekBuddy tmi map tar index file description< /a>
  */
 public class TarTmiArchive extends TarArchive {
 

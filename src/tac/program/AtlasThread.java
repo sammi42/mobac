@@ -7,8 +7,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -19,6 +21,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import tac.gui.AtlasProgress;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
+import tac.program.model.AtlasOutputFormat;
+import tac.program.model.MapSlice;
 import tac.utilities.TACExceptionHandler;
 
 public class AtlasThread extends Thread implements DownloadJobListener, ActionListener {
@@ -38,6 +42,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private TileSource tileSource;
 	private String atlasName;
 	private SelectedZoomLevels sZL;
+	private AtlasOutputFormat atlasOutputFormat;
 	private MapCreatorCustom.TileImageParameters customTileParameters;
 
 	private int activeDownloads = 0;
@@ -47,12 +52,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private int jobsPermanentError = 0;
 
 	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
-			SelectedZoomLevels sZL, MapCreatorCustom.TileImageParameters customTileParameters) {
+			SelectedZoomLevels sZL, AtlasOutputFormat atlasOutputFormat,
+			MapCreatorCustom.TileImageParameters customTileParameters) {
 		super("AtlasThread " + getNextThreadNum());
 		this.tileSource = tileSource;
 		this.atlasName = atlasName;
 		this.mapSelection = mapSelection;
 		this.sZL = sZL;
+		this.atlasOutputFormat = atlasOutputFormat;
 		this.customTileParameters = customTileParameters;
 		ap = new AtlasProgress(this);
 	}
@@ -121,19 +128,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 		File atlasDir = new File(workingDir + "/atlases/" + formattedDateString);
 		atlasDir.mkdirs();
-
-		File atlasTarDir = new File(workingDir + "/atlasestared/" + formattedDateString);
-		atlasTarDir.mkdirs();
-
-		File crtba = new File(atlasDir.getAbsolutePath(), "cr.tba");
-
-		try {
-			FileWriter fw = new FileWriter(crtba);
-			fw.write("Atlas 1.0\r\n");
-			fw.close();
-		} catch (IOException e) {
-			log.error("", e);
-		}
 
 		int nrOfLayers = sZL.getNrOfLayers();
 		int[] zoomLevels = sZL.getZoomLevels();
@@ -238,9 +232,28 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 				log.debug("Starting to create atlas from downloaded tiles");
 
-				OziToAtlas ota = new OziToAtlas(oziZoomDir, atlasFolder, atlasName, tileSource,
-						zoom, customTileParameters);
-				ota.convert(xMax, xMin, yMax, yMin);
+				int mapSize = s.getMaxMapSize();
+
+				List<MapSlice> subMaps = MapSlicer.calculateMapSlices(mapSize, xMin, xMax, yMin,
+						yMax);
+
+				log.trace("Map will been splitted into " + subMaps.size()
+						+ " sections because of TrekBuddy maximum map limitation");
+
+				int mapNumber = 1;
+
+				for (MapSlice smp : subMaps) {
+					MapCreator mc;
+					if (customTileParameters == null)
+						mc = new MapCreator(smp, oziZoomDir, atlasFolder, atlasName, tileSource,
+								zoom, atlasOutputFormat, mapNumber);
+					else
+						mc = new MapCreatorCustom(smp, oziZoomDir, atlasFolder, atlasName,
+								tileSource, zoom, atlasOutputFormat, mapNumber,
+								customTileParameters);
+					mc.createMap();
+					mapNumber++;
+				}
 
 				ap.setLayer(layer + 1);
 				downloadJobDispatcher.cancelOutstandingJobs();
@@ -249,21 +262,30 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			downloadJobDispatcher.terminateAllWorkerThreads();
 		}
 
+		if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
+			AtlasTarCreator.createAtlasCrTarArchive(atlasDir);
+		else if (atlasOutputFormat == AtlasOutputFormat.UntaredAtlas) {
+			File crtba = new File(atlasDir.getAbsolutePath(), "cr.tba");
+			try {
+				FileWriter fw = new FileWriter(crtba);
+				fw.write("Atlas 1.0\r\n");
+				fw.close();
+			} catch (IOException e) {
+				log.error("", e);
+			}
+		}
+
 		ap.atlasCreationFinished();
 
-		AtlasTarCreator atc = new AtlasTarCreator(atlasDir, atlasTarDir);
-		atc.createAtlasCrTarArchive();
-		ap.incTarProgress();
-
-		atc.createMapTars();
-		ap.incTarProgress();
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
+		} catch (InvocationTargetException e) {
+		}
 	}
 
 	/**

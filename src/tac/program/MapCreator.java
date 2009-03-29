@@ -20,7 +20,8 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
-import tac.program.model.SubMapProperties;
+import tac.program.model.AtlasOutputFormat;
+import tac.program.model.MapSlice;
 import tac.tar.TarArchive;
 import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
@@ -46,6 +47,7 @@ public class MapCreator {
 	protected File oziFolder;
 	protected File atlasLayerFolder;
 	protected int zoom;
+	protected AtlasOutputFormat atlasOutputFormat;
 	protected TileSource tileSource;
 
 	protected HashMap<String, File> tilesInFileFormat;
@@ -54,8 +56,8 @@ public class MapCreator {
 
 	protected TileWriter tileWriter;
 
-	public MapCreator(SubMapProperties smp, File oziFolder, File atlasFolder, String mapName,
-			TileSource tileSource, int zoom, int mapNumber) {
+	public MapCreator(MapSlice smp, File oziFolder, File atlasFolder, String mapName,
+			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
 		log = Logger.getLogger(this.getClass());
 		xMin = smp.getXMin();
 		xMax = smp.getXMax();
@@ -64,6 +66,7 @@ public class MapCreator {
 		this.tileSource = tileSource;
 		this.oziFolder = oziFolder;
 		this.zoom = zoom;
+		this.atlasOutputFormat = atlasOutputFormat;
 		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
 		tilesInFileFormat = new HashMap<String, File>();
 		atlasLayerFolder = new File(atlasFolder, layerName);
@@ -75,10 +78,6 @@ public class MapCreator {
 		// write the .map file containing the calibration points
 		writeMapFile();
 
-		// Create the set folder where all the tiles shall be stored.
-		File setFolder = new File(atlasLayerFolder, "set");
-		setFolder.mkdir();
-
 		// List all tiles in the ozi folder.
 		File[] tiles = oziFolder.listFiles();
 
@@ -89,9 +88,11 @@ public class MapCreator {
 
 		// This means there should not be any resizing of the tiles.
 		try {
-			// tileWriter = new TarTileWriter();
-			tileWriter = new FileTileWriter(setFolder);
-			createTiles(setFolder);
+			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
+				tileWriter = new TarTileWriter();
+			else
+				tileWriter = new FileTileWriter();
+			createTiles();
 			tileWriter.finalizeMap();
 		} catch (InterruptedException e) {
 			// User has aborted process
@@ -129,15 +130,7 @@ public class MapCreator {
 		mapWriter.flush();
 	}
 
-	/**
-	 * Copies the tile files (without any modification) from the ozi directory
-	 * into the set directory of the map. While copying the filename is adapted
-	 * to the tile naming schema.
-	 * 
-	 * @param setFolder
-	 * @throws InterruptedException
-	 */
-	protected void createTiles(File setFolder) throws InterruptedException {
+	protected void createTiles() throws InterruptedException {
 		int pixelValueX = 0;
 		int pixelValueY = 0;
 
@@ -217,9 +210,10 @@ public class MapCreator {
 		File setFolder;
 		Writer setFileWriter;
 
-		public FileTileWriter(File setFolder) {
+		public FileTileWriter() {
 			super();
-			this.setFolder = setFolder;
+			setFolder = new File(atlasLayerFolder, "set");
+			setFolder.mkdir();
 			File setFile = new File(atlasLayerFolder, layerName + ".set");
 			try {
 				setFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(

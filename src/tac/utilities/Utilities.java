@@ -213,9 +213,6 @@ public class Utilities {
 		File atlasFolder = new File(userDir, "atlases");
 		atlasFolder.mkdir();
 
-		File atlasTaredFolder = new File(userDir, "atlasestared");
-		atlasTaredFolder.mkdir();
-
 		File oziFolder = new File(userDir, "ozi");
 		oziFolder.mkdir();
 

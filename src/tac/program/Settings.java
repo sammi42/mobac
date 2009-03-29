@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import tac.mapsources.MapSources;
 import tac.mapsources.Google.GoogleSource;
+import tac.program.model.AtlasOutputFormat;
 import tac.program.model.TileImageColorDepth;
 import tac.utilities.Utilities;
 
@@ -40,6 +41,7 @@ public class Settings {
 	private static final String TILE_WIDTH = "tile.width";
 	private static final String TILE_COLORS = "tile.colorcount";
 	private static final String ATLAS_NAME = "atlas.name";
+	private static final String ATLAS_FORMAT = "atlas.format";
 	private static final String PROXY_HOST = "proxy.http.host";
 	private static final String PROXY_PORT = "proxy.http.port";
 	private static final String SELECTION_LAT_MAX = "selection.max.lat";
@@ -78,6 +80,7 @@ public class Settings {
 	private int tileHeight = 256;
 	private int tileWidth = 256;
 	private TileImageColorDepth tileColorDepth = TileImageColorDepth.Unchanged;
+	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
 	// Timeout in seconds (default 10 seconds)
 	private int connectionTimeout = 10;
@@ -152,6 +155,8 @@ public class Settings {
 			selectionMin.lon = p.getDouble6Property(SELECTION_LON_MIN, selectionMin.lon);
 			defaultMapSource = p.getProperty(MAPSOURCE);
 			atlasName = p.getProperty(ATLAS_NAME, atlasName);
+			atlasOutputFormat = AtlasOutputFormat.valueOf(p.getProperty(ATLAS_FORMAT,
+					atlasOutputFormat.name()));
 			setGoogleLanguage(p.getProperty(GOOGLE_LANGUAGE, googleLanguage));
 			String proxyHost = p.getProperty(PROXY_HOST);
 			String proxyPort = p.getProperty(PROXY_PORT);
@@ -193,6 +198,7 @@ public class Settings {
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
 			p.setProperty(MAPSOURCE, defaultMapSource);
 			p.setProperty(ATLAS_NAME, atlasName);
+			p.setProperty(ATLAS_FORMAT, atlasOutputFormat.name());
 			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
 			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
 
@@ -225,7 +231,7 @@ public class Settings {
 		return result;
 	}
 
-	public int getMaxMapsSize() {
+	public int getMaxMapSize() {
 		return maxMapSize;
 	}
 
@@ -388,6 +394,14 @@ public class Settings {
 
 	public void setTileColorDepth(TileImageColorDepth tileColorDepth) {
 		this.tileColorDepth = tileColorDepth;
+	}
+
+	public AtlasOutputFormat getAtlasOutputFormat() {
+		return atlasOutputFormat;
+	}
+
+	public void setAtlasOutputFormat(AtlasOutputFormat atlasOutputFormat) {
+		this.atlasOutputFormat = atlasOutputFormat;
 	}
 
 }

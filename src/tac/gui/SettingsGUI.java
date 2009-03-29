@@ -300,7 +300,7 @@ public class SettingsGUI extends JDialog {
 
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
-		int size = s.getMaxMapsSize();
+		int size = s.getMaxMapSize();
 		int index = mapSizes.indexOf(new Integer(size));
 		if (index < 0)
 			index = 0;

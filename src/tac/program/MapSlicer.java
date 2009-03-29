@@ -1,69 +1,15 @@
-/**
- * OzitoAtlas is a class that converts a folder with tiles in OZI format to the atlas format for tiles.
- * For instance a tile name of y5015x8755.png will be converted to test13000001_0_0.png. It also resizes
- * the tiles if necessary.
- * 
- * @author      Fredrik M�ller
- * @version	    1.0	
- */
-
 package tac.program;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import tac.program.model.MapSlice;
 
-import tac.program.model.SubMapProperties;
-
-public class OziToAtlas {
-
-	private static Logger log = Logger.getLogger(OziToAtlas.class);
-
-	private File oziFolder;
-	private File atlasFolder;
-	private MapCreatorCustom.TileImageParameters customParam;
-	private String mapName;
-	private TileSource tileSource;
-	private int zoom;
-
-	public OziToAtlas(File oziFolder, File atlasFolder, String mapName, TileSource tileSource,
-			int zoom, MapCreatorCustom.TileImageParameters customParam) {
-
-		this.oziFolder = oziFolder;
-		this.atlasFolder = atlasFolder;
-		this.mapName = mapName;
-		this.tileSource = tileSource;
-		this.zoom = zoom;
-		this.customParam = customParam;
-	}
-
-	public void convert(int xMax, int xMin, int yMax, int yMin) {
-
-		Settings s = Settings.getInstance();
-		int mapSize = s.getMaxMapsSize();
-
-		List<SubMapProperties> subMaps = this.calculateMapSections(mapSize, xMin, xMax, yMin, yMax);
-
-		log.trace("Map will been splitted into " + subMaps.size()
-				+ " sections because of TrekBuddy maximum map limitation");
-
-		int mapNumber = 1;
-
-		for (SubMapProperties smp : subMaps) {
-			MapCreator mc;
-			if (customParam == null)
-				mc = new MapCreator(smp, oziFolder, atlasFolder, mapName, tileSource, zoom,
-						mapNumber);
-			else
-				mc = new MapCreatorCustom(smp, oziFolder, atlasFolder, mapName, tileSource, zoom,
-						mapNumber, customParam);
-			mc.createMap();
-			mapNumber++;
-		}
-	}
+/**
+ * Slices a large map into smaller pieces if the large map exceeds the
+ * <code>mapSize</code> limit.
+ */
+public class MapSlicer {
 
 	/**
 	 * 
@@ -76,9 +22,9 @@ public class OziToAtlas {
 	 * @param yMax
 	 * @return map selections
 	 */
-	public List<SubMapProperties> calculateMapSections(int mapSize, int xMin, int xMax, int yMin,
+	public static List<MapSlice> calculateMapSlices(int mapSize, int xMin, int xMax, int yMin,
 			int yMax) {
-		List<SubMapProperties> subMaps = new LinkedList<SubMapProperties>();
+		List<MapSlice> subMaps = new LinkedList<MapSlice>();
 
 		int mapWidth = (xMax - xMin + 1) * 256;
 		int mapHeight = (yMax - yMin + 1) * 256;
@@ -89,7 +35,7 @@ public class OziToAtlas {
 			 * allowed map size it means that there is no need to calculate any
 			 * sub maps.
 			 */
-			subMaps.add(new SubMapProperties(xMin, xMax, yMin, yMax));
+			subMaps.add(new MapSlice(xMin, xMax, yMin, yMax));
 			return subMaps;
 		}
 
@@ -126,13 +72,13 @@ public class OziToAtlas {
 		if ((mapWidth > mapSize) && (mapHeight <= mapSize)) {
 			while (xIndex < xMax) {
 				if (xIndex + stepSize - 1 <= xMax) {
-					subMaps.add(new SubMapProperties(xIndex, xIndex + stepSize - 1, yMin, yMax));
+					subMaps.add(new MapSlice(xIndex, xIndex + stepSize - 1, yMin, yMax));
 					xIndex += stepSize;
 				} else
 					break;
 			}
 			if (mapWidth % mapSize != 0)
-				subMaps.add(new SubMapProperties(xIndex, xMax, yMin, yMax));
+				subMaps.add(new MapSlice(xIndex, xMax, yMin, yMax));
 		}
 		/**
 		 * If the desired map area has a Width that is smaller or equal to the
@@ -158,13 +104,13 @@ public class OziToAtlas {
 		else if ((mapHeight > mapSize) && (mapWidth <= mapSize)) {
 			while (yIndex < yMax) {
 				if (yIndex + stepSize - 1 <= yMax) {
-					subMaps.add(new SubMapProperties(xMin, xMax, yIndex, yIndex + stepSize - 1));
+					subMaps.add(new MapSlice(xMin, xMax, yIndex, yIndex + stepSize - 1));
 					yIndex += stepSize;
 				} else
 					break;
 			}
 			if (mapHeight % mapSize != 0)
-				subMaps.add(new SubMapProperties(xMin, xMax, yIndex, yMax));
+				subMaps.add(new MapSlice(xMin, xMax, yIndex, yMax));
 		}
 		/**
 		 * If the desired map area has a Width and Height that is larger than
@@ -192,15 +138,14 @@ public class OziToAtlas {
 				if (xIndex + stepSize - 1 <= xMax) {
 					while (yIndex < yMax) {
 						if (yIndex + stepSize - 1 <= yMax) {
-							subMaps.add(new SubMapProperties(xIndex, xIndex + stepSize - 1, yIndex,
-									yIndex + stepSize - 1));
+							subMaps.add(new MapSlice(xIndex, xIndex + stepSize - 1, yIndex, yIndex
+									+ stepSize - 1));
 							yIndex += stepSize;
 						} else
 							break;
 					}
 					if (mapHeight % mapSize != 0) {
-						subMaps.add(new SubMapProperties(xIndex, xIndex + stepSize - 1, yIndex,
-								yMax));
+						subMaps.add(new MapSlice(xIndex, xIndex + stepSize - 1, yIndex, yMax));
 					}
 					yIndex = yMin;
 					xIndex += stepSize;
@@ -211,15 +156,15 @@ public class OziToAtlas {
 			if (mapWidth % mapSize != 0) {
 				while (yIndex < yMax) {
 					if (yIndex + stepSize - 1 <= yMax) {
-						subMaps.add(new SubMapProperties(xMin + ((mapWidth / mapSize) * stepSize),
-								xMax, yIndex, yIndex + stepSize - 1));
+						subMaps.add(new MapSlice(xMin + ((mapWidth / mapSize) * stepSize), xMax,
+								yIndex, yIndex + stepSize - 1));
 						yIndex += stepSize;
 					} else
 						break;
 				}
 				if (mapHeight % mapSize != 0)
-					subMaps.add(new SubMapProperties(xMin + ((mapWidth / mapSize) * stepSize),
-							xMax, yIndex, yMax));
+					subMaps.add(new MapSlice(xMin + ((mapWidth / mapSize) * stepSize), xMax,
+							yIndex, yMax));
 			}
 		}
 		return subMaps;

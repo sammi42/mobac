@@ -55,6 +55,7 @@ import tac.program.Settings;
 import tac.program.TACInfo;
 import tac.program.MapCreatorCustom.TileImageFormat;
 import tac.program.model.Atlas;
+import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AutoCutMultiMapLayer;
 import tac.program.model.TileImageColorDepth;
 import tac.utilities.GBC;
@@ -86,6 +87,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JButton deleteProfileButton;
 	private JButton saveAsProfileButton;
 	private JAtlasNameField atlasNameTextField;
+	private JComboBox atlasOutputFormatCombo;
 	private JButton createAtlasButton;
 	private JPanel zoomLevelPanel;
 	private JCheckBox[] cbZoom = new JCheckBox[0];
@@ -198,6 +200,9 @@ public class GUI extends JFrame implements MapSelectionListener {
 		saveAsProfileButton = new JButton("Save as profile");
 		saveAsProfileButton.addActionListener(new SaveAsProfileListener());
 		saveAsProfileButton.setToolTipText("Save atlas profile");
+
+		// atlas output format
+		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
 
 		// atlas name text field
 		atlasNameTextField = new JAtlasNameField();
@@ -317,12 +322,16 @@ public class GUI extends JFrame implements MapSelectionListener {
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
 		tileProcessingPanel.add(enableCustomTileProcessingCheckButton, gbc_eol);
-		tileProcessingPanel.add(tileSizeWidthLabel, gbc_std);
-		tileProcessingPanel.add(tileSizeWidth, gbc_std);
-		tileProcessingPanel.add(tileSizeHeightLabel, gbc_std);
-		tileProcessingPanel.add(tileSizeHeight, gbc_eol);
-		tileProcessingPanel.add(tileColorDepthLabel, gbc_std);
-		tileProcessingPanel.add(tileColorDepth, gbc_eol);
+		JPanel tileSizePanel = new JPanel(new GridBagLayout());
+		tileSizePanel.add(tileSizeWidthLabel, gbc_std);
+		tileSizePanel.add(tileSizeWidth, gbc_std);
+		tileSizePanel.add(tileSizeHeightLabel, gbc_std);
+		tileSizePanel.add(tileSizeHeight, gbc_eol);
+		tileProcessingPanel.add(tileSizePanel, GBC.eol());
+		JPanel tileColorDepthPanel = new JPanel();
+		tileColorDepthPanel.add(tileColorDepthLabel);
+		tileColorDepthPanel.add(tileColorDepth);
+		tileProcessingPanel.add(tileColorDepthPanel, GBC.eol());
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		if (Settings.getInstance().isDevModeEnabled()) {
@@ -359,8 +368,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
 
 		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
-		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas name"));
+		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas settings"));
+		atlasNamePanel.add(new JLabel("Name: "), gbc_std);
 		atlasNamePanel.add(atlasNameTextField, gbc_eol.fill());
+		atlasNamePanel.add(new JLabel("Format: "), gbc_std);
+		atlasNamePanel.add(atlasOutputFormatCombo, gbc_eol);
 		atlasNamePanel.add(createAtlasButton, gbc_eol.fill());
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
@@ -482,6 +494,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private void loadSettings() {
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.getAtlasName());
+		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoadPosition();
 		latMaxTextField.setCoordinate(settings.getSelectionMax().lat);
 		lonMaxTextField.setCoordinate(settings.getSelectionMax().lon);
@@ -512,6 +525,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			previewMap.settingsSavePosition();
 			s.setDefaultMapSource(((TileSource) mapSourceCombo.getSelectedItem()).getName());
 			s.setAtlasName(atlasNameTextField.getText());
+			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 			s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
 					lonMaxTextField.getCoordinateOrNaN()));
 			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
@@ -791,8 +805,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 					TileSource tileSource = (TileSource) mapSourceCombo.getSelectedItem();
 					SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
 							.getMinZoom(), cbZoom);
+					AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
+							.getSelectedItem();
 					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
-							getMapSelectionCoordinates(), sZL, customTileParameters);
+							getMapSelectionCoordinates(), sZL, atlasOutputFormat,
+							customTileParameters);
 					atlasThread.start();
 				} catch (Exception exception) {
 					log.error("", exception);
@@ -902,7 +919,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			Point br = ms.getBottomRightTileCoordinate(zoom);
 			log.debug(tl + " " + br);
 			new AutoCutMultiMapLayer(atlas, name, tileSource, tl, br, zoom, tileSize, settings
-					.getMaxMapsSize());
+					.getMaxMapSize());
 		}
 		atlasTree.getTreeModel().notifyStructureChanged();
 	}

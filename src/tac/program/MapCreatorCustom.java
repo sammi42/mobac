@@ -14,7 +14,8 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
-import tac.program.model.SubMapProperties;
+import tac.program.model.AtlasOutputFormat;
+import tac.program.model.MapSlice;
 import tac.program.model.TileImageColorDepth;
 import tac.utilities.MyMath;
 import tac.utilities.Png4BitWriter;
@@ -36,9 +37,10 @@ public class MapCreatorCustom extends MapCreator {
 
 	private String targetFileType;
 
-	public MapCreatorCustom(SubMapProperties smp, File oziFolder, File atlasFolder, String mapName,
-			TileSource tileSource, int zoom, int mapNumber, TileImageParameters parameters) {
-		super(smp, oziFolder, atlasFolder, mapName, tileSource, zoom, mapNumber);
+	public MapCreatorCustom(MapSlice smp, File oziFolder, File atlasFolder, String mapName,
+			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
+			TileImageParameters parameters) {
+		super(smp, oziFolder, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
 		this.param = parameters;
 		switch (param.format) {
 		case Unchanged: {
@@ -60,13 +62,10 @@ public class MapCreatorCustom extends MapCreator {
 	 * It creates each custom sized tile separately. Therefore each original
 	 * tile (256x256) will be loaded and painted multiple times. Therefore this
 	 * implementation needs much more CPU power as each original tile is loaded
-	 * up to 4-6 times.
-	 * 
-	 * @param setFolder
-	 * @throws InterruptedException
+	 * at least once and each generated tile has to be saved.
 	 */
 	@Override
-	protected void createTiles(File setFolder) throws InterruptedException {
+	protected void createTiles() throws InterruptedException {
 		Thread t = Thread.currentThread();
 
 		// left upper point on the map in pixels
@@ -89,7 +88,7 @@ public class MapCreatorCustom extends MapCreator {
 						"Information", JOptionPane.INFORMATION_MESSAGE);
 				tileSizeErrorNotified = true;
 			}
-			super.createTiles(setFolder);
+			super.createTiles();
 			return;
 		}
 

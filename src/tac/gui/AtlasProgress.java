@@ -386,7 +386,20 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	private class GUIUpdater implements Runnable {
 
+		int scheduledCounter = 0;
+
+		public int getScheduledCounter() {
+			return scheduledCounter;
+		}
+
+		public synchronized void intScheduledCounter() {
+			scheduledCounter++;
+		}
+
 		public void run() {
+			synchronized (this) {
+				scheduledCounter--;
+			}
 			// atlas progress
 			atlasProgressBar.setMaximum(totalNumberOfTiles);
 			atlasProgressBar.setValue(atlasProgress);
@@ -472,6 +485,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	}
 
 	private void updateGUI() {
+		if (guiUpdater.getScheduledCounter() > 0)
+			// There is still at least one scheduled update which will be
+			// executed, therefore we don't have to overload the swing thread.
+			return;
+		guiUpdater.intScheduledCounter();
 		SwingUtilities.invokeLater(guiUpdater);
 	}
 

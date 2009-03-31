@@ -1,16 +1,18 @@
 package tac.program;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.utilities.DeleteFileFilter;
 import tac.utilities.Utilities;
 
 public class TileStore {
@@ -19,7 +21,10 @@ public class TileStore {
 
 	private String tileStorePath;
 
+	private Logger log;
+
 	private TileStore() {
+		log = Logger.getLogger(this.getClass());
 		tileStorePath = System.getProperty("user.dir") + File.separator + "tilestore"
 				+ File.separator;
 	}
@@ -73,38 +78,13 @@ public class TileStore {
 		return f.exists();
 	}
 
-	public long getStoreSize(TileSource tileSource) {
-		long size = 0;
-
-		File tileStore = new File(tileStorePath, tileSource.getName());
-
-		if (tileStore.exists()) {
-			for (File f : tileStore.listFiles()) {
-				size += f.length();
-			}
-			return size;
-		} else {
-			return size;
-		}
-	}
-
 	public void clearStore(TileSource tileSource) {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 
 		if (tileStore.exists()) {
-
-			File[] files = tileStore.listFiles();
-			if (files.length > 0) {
-
-				boolean deleted = false;
-
-				for (int i = 0; i < files.length; i++) {
-					while (!deleted) {
-						deleted = files[i].delete();
-					}
-					deleted = false;
-				}
-			}
+			DeleteFileFilter dff = new DeleteFileFilter();
+			tileStore.listFiles(dff);
+			log.debug("Tilestore " + tileSource.getName() + " cleared: " + dff);
 		}
 	}
 
@@ -119,29 +99,93 @@ public class TileStore {
 	public int getNrOfTiles(TileSource tileSource) {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
-			return tileStore.list(new TileFilter(tileSource)).length;
+			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
+			tileStore.listFiles(tsif);
+			return tsif.getCount();
 		} else {
 			return 0;
 		}
 	}
 
+	public long getStoreSize(TileSource tileSource) {
+		File tileStore = new File(tileStorePath, tileSource.getName());
+		if (tileStore.exists()) {
+			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
+			tileStore.listFiles(tsif);
+			return tsif.getSize();
+		} else {
+			return 0;
+		}
+	}
+
+	public TileStoreInfo getStoreInfo(TileSource tileSource) {
+		File tileStore = new File(tileStorePath, tileSource.getName());
+		if (tileStore.exists()) {
+			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
+			tileStore.listFiles(tsif);
+			return new TileStoreInfo(tsif.getSize(), tsif.getCount());
+		} else {
+			return new TileStoreInfo(0, 0);
+		}
+	}
+
+	public static class TileStoreInfo {
+
+		int tileCount;
+		long storeSize;
+
+		public TileStoreInfo(long storeSize, int tileCount) {
+			super();
+			this.storeSize = storeSize;
+			this.tileCount = tileCount;
+		}
+
+		public int getTileCount() {
+			return tileCount;
+		}
+
+		public long getStoreSize() {
+			return storeSize;
+		}
+
+	}
+
 	/**
-	 * Filters out all files stored in the tile cache that does not represent a
-	 * tile. Filtering is based on file name pattern
-	 * <code>[number]_[number]_[number].[file extension]</code>
+	 * Counts all tiles stored in the specified tile cache. Files in the
+	 * directory that are not tiles are ignored. Filtering is based on file name
+	 * pattern <code>[number]_[number]_[number].[file extension]</code>
 	 */
-	protected static class TileFilter implements FilenameFilter {
+	protected static class TileStoreInfoFilter implements FileFilter {
 
 		private Pattern p;
 
-		public TileFilter(TileSource tileSource) {
+		long size = 0;
+		int count = 0;
+
+		TileStoreInfoFilter(TileSource tileSource) {
 			String fileExt = tileSource.getTileType();
 			p = Pattern.compile("\\d+_\\d+_\\d+." + fileExt);
 		}
 
-		public boolean accept(File dir, String name) {
+		public boolean accept(File f) {
+			if (f.isDirectory())
+				return false;
+			String name = f.getName();
 			Matcher m = p.matcher(name);
-			return m.matches();
+			if (!m.matches())
+				return false;
+			size += f.length();
+			count++;
+			return false;
 		}
+
+		public long getSize() {
+			return size;
+		}
+
+		public int getCount() {
+			return count;
+		}
+
 	}
 }

@@ -34,6 +34,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import tac.mapsources.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
+import tac.program.TileStore.TileStoreInfo;
 import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
@@ -198,8 +199,9 @@ public class SettingsGUI extends JDialog {
 			String mapTileCountText = "?";
 			String mapTileSizeText = "?";
 			if (!fakeContent) {
-				int count = tileStore.getNrOfTiles(ts);
-				long size = tileStore.getStoreSize(ts);
+				TileStoreInfo tsi = tileStore.getStoreInfo(ts);
+				int count = tsi.getTileCount();
+				long size = tsi.getStoreSize();
 				totalTileCount += count;
 				totalTileSize += size;
 				mapTileCountText = Integer.toString(count);

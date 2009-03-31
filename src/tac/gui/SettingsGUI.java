@@ -96,7 +96,7 @@ public class SettingsGUI extends JDialog {
 		setMinimumSize(getSize());
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
-		updateTileStoreInfoPanel(false);
+		updateTileStoreInfoPanelAsync();
 		setVisible(true);
 	}
 
@@ -172,24 +172,42 @@ public class SettingsGUI extends JDialog {
 		backGround.add(tileStoreInfoPanel, BorderLayout.CENTER);
 	}
 
+	private void updateTileStoreInfoPanelAsync() {
+		new Thread("TileStoreInfoRetriever") {
+
+			@Override
+			public void run() {
+				updateTileStoreInfoPanel(false);
+			}
+		}.start();
+	}
+
 	private synchronized void updateTileStoreInfoPanel(boolean fakeContent) {
 		tileStoreInfoPanel.removeAll();
-		GridBagConstraints gbc_mapSource = new GridBagConstraints();
+		final GridBagConstraints gbc_mapSource = new GridBagConstraints();
 		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
 		gbc_mapSource.anchor = GridBagConstraints.WEST;
-		GridBagConstraints gbc_mapTiles = new GridBagConstraints();
+		final GridBagConstraints gbc_mapTiles = new GridBagConstraints();
 		// gbc_mapTiles.gridwidth = GridBagConstraints.REMAINDER;
 		gbc_mapTiles.insets = gbc_mapSource.insets;
 		gbc_mapTiles.anchor = GridBagConstraints.EAST;
-		GridBagConstraints gbc_eol = new GridBagConstraints();
+		final GridBagConstraints gbc_eol = new GridBagConstraints();
 		gbc_eol.gridwidth = GridBagConstraints.REMAINDER;
 		// gbc_eol.insets = gbc_mapSource.insets;
 
 		TileStore tileStore = TileStore.getInstance();
 
-		tileStoreInfoPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
-		tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
-		tileStoreInfoPanel.add(new JLabel("<html><b>Size</b></html>"), gbc_eol);
+		Runnable r = new Runnable() {
+			public void run() {
+				tileStoreInfoPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
+				tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
+				tileStoreInfoPanel.add(new JLabel("<html><b>Size</b></html>"), gbc_eol);
+			}
+		};
+		if (fakeContent)
+			r.run();
+		else
+			SwingUtilities.invokeLater(r);
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
@@ -207,14 +225,26 @@ public class SettingsGUI extends JDialog {
 				mapTileCountText = Integer.toString(count);
 				mapTileSizeText = Utilities.formatBytes(size);
 			}
-			tileStoreInfoPanel.add(new JLabel(ts.toString()), gbc_mapSource);
-			tileStoreInfoPanel.add(new JLabel(mapTileCountText), gbc_mapTiles);
-			tileStoreInfoPanel.add(new JLabel(mapTileSizeText), gbc_mapTiles);
-			JButton deleteButton = new JButton(trash);
+			final JLabel mapSourceNameLabel = new JLabel(ts.toString());
+			final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
+			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
+			final JButton deleteButton = new JButton(trash);
 			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 			deleteButton.setToolTipText("Delete all stored " + ts.getName() + " tiles.");
 			deleteButton.addActionListener(new ClearTileCacheAction(ts));
-			tileStoreInfoPanel.add(deleteButton, gbc_eol);
+
+			r = new Runnable() {
+				public void run() {
+					tileStoreInfoPanel.add(mapSourceNameLabel, gbc_mapSource);
+					tileStoreInfoPanel.add(mapTileCountLabel, gbc_mapTiles);
+					tileStoreInfoPanel.add(mapTileSizeLabel, gbc_mapTiles);
+					tileStoreInfoPanel.add(deleteButton, gbc_eol);
+				}
+			};
+			if (fakeContent)
+				r.run();
+			else
+				SwingUtilities.invokeLater(r);
 		}
 		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
 		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
@@ -223,11 +253,22 @@ public class SettingsGUI extends JDialog {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		tileStoreInfoPanel.add(hr, gbc);
 
-		tileStoreInfoPanel.add(new JLabel("<html><b>Total</b></html>"), gbc_mapSource);
-		tileStoreInfoPanel.add(new JLabel("<html><b>" + Long.toString(totalTileCount)
-				+ "</b></html>"), gbc_mapTiles);
-		tileStoreInfoPanel.add(new JLabel("<html><b>" + Utilities.formatBytes(totalTileSize)
-				+ "</b></html>"), gbc_mapTiles);
+		final JLabel totalMapLabel = new JLabel("<html><b>Total</b></html>");
+		final JLabel totalTileCountLabel = new JLabel("<html><b>" + Long.toString(totalTileCount)
+				+ "</b></html>");
+		final JLabel totalTileSizeLabel = new JLabel("<html><b>"
+				+ Utilities.formatBytes(totalTileSize) + "</b></html>");
+		r = new Runnable() {
+			public void run() {
+				tileStoreInfoPanel.add(totalMapLabel, gbc_mapSource);
+				tileStoreInfoPanel.add(totalTileCountLabel, gbc_mapTiles);
+				tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
+			}
+		};
+		if (fakeContent)
+			r.run();
+		else
+			SwingUtilities.invokeLater(r);
 	}
 
 	private void addMapSizePanel() {
@@ -371,7 +412,7 @@ public class SettingsGUI extends JDialog {
 			final JButton b = (JButton) e.getSource();
 			b.setEnabled(false);
 			b.setToolTipText("Deleting in progress - please wait");
-			Thread t = new Thread() {
+			Thread t = new Thread("TileStore_" + source.getName() + "_DeleteThread") {
 
 				@Override
 				public void run() {

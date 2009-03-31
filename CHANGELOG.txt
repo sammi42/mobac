@@ -5,18 +5,8 @@ V E R S I O N  I N F O R M A T I O N
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 0.9.7: (2009-??-??)
+ 1.0: (2009-??-??)
  
- + New map sources (full support): Microsoft Maps, Earth, Hybrid, 
-    Cycloatlas (Czech Republic only)
- + New map sources (partial support): Multimap.com
- ~ Google Maps, Earth & MapsChina urls updated
- ~ Custom tile size selection controls combined  
- + Window position, size and state (maximized or not) is saved
- + Preview map allows zoom move/zoom via keyboard controls (patch by Martin Loetzsch)
- + Fullscreen mode hides left panel and places control inside the preview map 
-    (patch by Martin Loetzsch)
- ~ Fixed several Swing thread safety problems (patch by Martin Loetzsch)  
  + Reload current map view by pressing "F5"
  + First experimental implementation of color reducing implemented (requires
     additional library "Java Advanced Imaging": https://jai.dev.java.net/binary-builds.html
@@ -28,6 +18,19 @@ V E R S I O N  I N F O R M A T I O N
  ~ Atlas output format can now be specified: Tared or untared atlas. The created atlas 
     is always created in the folder "atlases" - the folder "atlasestared" is no longer used.
  ~ "ozi" directory renamed to "tac_tmp" (catches the purpose much better)
+
+ 0.9.7: (2009-03-05)
+ 
+ + New map sources (full support): Microsoft Maps, Earth, Hybrid, 
+    Cycloatlas (Czech Republic only)
+ + New map sources (partial support): Multimap.com
+ ~ Google Maps, Earth & MapsChina urls updated
+ ~ Custom tile size selection controls combined  
+ + Window position, size and state (maximized or not) is saved
+ + Preview map allows zoom move/zoom via keyboard controls (patch by Martin Loetzsch)
+ + Fullscreen mode hides left panel and places control inside the preview map 
+    (patch by Martin Loetzsch)
+ ~ Fixed several Swing thread safety problems (patch by Martin Loetzsch)  
 
  0.9.6: (2009-01-08)
  

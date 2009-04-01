@@ -57,8 +57,8 @@ public class JobDispatcher {
 	 * @throws InterruptedException
 	 */
 	public void addJob(Job job) throws InterruptedException {
-		while (jobQueue.size() > 100) {
-			Thread.sleep(200);
+		while (jobQueue.size() > 200) {
+			Thread.sleep(100);
 		}
 		jobQueue.put(job);
 	}

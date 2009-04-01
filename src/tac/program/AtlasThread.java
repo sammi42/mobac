@@ -149,6 +149,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		TileStore ts = TileStore.getInstance();
 		Settings s = Settings.getInstance();
 
+		File tileArchiveFile = null;
+		TarIndex tileIndex = null;
+
 		Thread t = Thread.currentThread();
 		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
@@ -184,10 +187,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 				jobsProduced = 0;
 				tileArchive = null;
-				TarIndex tileIndex = null;
 				if (!SKIP_DOWNLOAD) {
 					String tempSuffix = "TAC_" + atlasName + "_" + zoom + "_";
-					File tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
+					tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
 					// If something goes wrong the temp file only
 					// persists until the VM exits
 					tileArchiveFile.deleteOnExit();
@@ -195,10 +197,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					tileArchive = new TarIndexedArchive(tileArchiveFile, apMax);
 					DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom);
 
+					boolean failedMessageAnswered = false;
+
 					while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
 							|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 						Thread.sleep(500);
-						if (jobsRetryError > 100) {
+						if (!failedMessageAnswered && (jobsRetryError > 100)) {
 							int answer = JOptionPane.showConfirmDialog(ap,
 									"Multiple tile downloads have failed. "
 											+ "Something may be wrong with your connection to the "
@@ -207,6 +211,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 											+ "and create the atlas anyway?",
 									"Download of more than 100 tiles failed",
 									JOptionPane.ERROR_MESSAGE);
+							failedMessageAnswered = true;
 							if (answer != JOptionPane.YES_OPTION) {
 								downloadJobDispatcher.cancelOutstandingJobs();
 								downloadJobDispatcher.terminateAllWorkerThreads();
@@ -270,6 +275,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			}
 		} finally {
 			downloadJobDispatcher.terminateAllWorkerThreads();
+			if (tileArchive != null)
+				tileArchive.close();
+			if (tileIndex != null)
+				tileIndex.closeAndDelete();
+			if (tileArchiveFile != null)
+				tileArchiveFile.delete();
 		}
 
 		if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)

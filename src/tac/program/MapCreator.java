@@ -127,8 +127,7 @@ public class MapCreator {
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {
 			ap = ((AtlasThread) t).getAtlasProgress();
-			int tileCount = (xMax - xMin + 1) * (yMax - yMin + 1);
-			ap.initMap(tileCount);
+			ap.initMapSplice((xMax - xMin + 1) * (yMax - yMin + 1));
 		}
 		ImageIO.setUseCache(false);
 		for (int x = xMin; x <= xMax; x++) {

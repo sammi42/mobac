@@ -99,7 +99,7 @@ public class MapCreatorCustom extends MapCreator {
 			ap = ((AtlasThread) t).getAtlasProgress();
 			int customTileCount = MyMath.divCeil(mergedWidth, param.width)
 					* MyMath.divCeil(mergedHeight, param.height);
-			ap.initMap(customTileCount);
+			ap.initMapSplice(customTileCount);
 		}
 
 		// Absolute positions

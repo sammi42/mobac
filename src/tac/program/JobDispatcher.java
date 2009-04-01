@@ -14,6 +14,9 @@ public class JobDispatcher {
 
 	private static Logger log = Logger.getLogger(JobDispatcher.class);
 
+	protected int maxJobsInQueue = 100;
+	protected int minJobsInQueue = 50;
+
 	protected WorkerThread[] workers;
 
 	protected BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<Job>();
@@ -57,8 +60,14 @@ public class JobDispatcher {
 	 * @throws InterruptedException
 	 */
 	public void addJob(Job job) throws InterruptedException {
-		while (jobQueue.size() > 200) {
-			Thread.sleep(100);
+		while (jobQueue.size() > maxJobsInQueue) {
+			Thread.sleep(200);
+			if ((jobQueue.size() < minJobsInQueue) && (maxJobsInQueue < 2000)) {
+				// System and download connection is very fast - we have to
+				// increase the maximum job count in the queue
+				maxJobsInQueue *= 2;
+				minJobsInQueue *= 2;
+			}
 		}
 		jobQueue.put(job);
 	}

@@ -64,6 +64,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private int layerProgressMax = 0;
 	private int mapProgress = 0;
 	private int mapProgressMax = 0;
+	private int mapCount = 0;
+	private int mapCountMax = 0;
 	private int currentLayer = 0;
 
 	private JLabel windowTitle;
@@ -124,7 +126,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		layerTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
 		layerProgressBar = new JProgressBar();
 
-		mapCreation = new JLabel("Map Creation");
+		mapCreation = new JLabel("Map Creation (0000 of 00000) ");
 		mapProgressBar = new JProgressBar();
 
 		nrOfDownloadedBytesPerSecond = new JLabel("Average download speed");
@@ -261,7 +263,17 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		updateGUI();
 	}
 
-	public void initMap(int numberOfTiles) {
+	public void initMap(int numberOfMapSplices) {
+		mapCount = 0;
+		mapCountMax = numberOfMapSplices;
+	}
+
+	public void setMap(int currentMapSplices) {
+		mapCount = currentMapSplices;
+	}
+
+	public void initMapSplice(int numberOfTiles) {
+		mapProgress = 0;
 		mapProgressMax = numberOfTiles;
 		updateGUI();
 	}
@@ -437,6 +449,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			}
 
 			// map progress
+			mapCreation.setText("Map creation (" + mapCount + " of " + mapCountMax + ")");
 			mapProgressBar.setValue(mapProgress);
 			mapProgressBar.setMaximum(mapProgressMax);
 			atlasElementsDone.setText(currentLayer + " of " + numberOfLayers + " done");
@@ -482,7 +495,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			activeDownloadsValue.setText(": " + atlasThread.getActiveDownloads());
 			activeDownloadsValue.repaint();
 		}
-
 	}
 
 	private void updateGUI() {

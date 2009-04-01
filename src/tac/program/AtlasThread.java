@@ -36,6 +36,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private static int threadNum = 0;
 	private static Logger log = Logger.getLogger(AtlasThread.class);
 
+	private DownloadJobProducer djp = null;
 	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap;
 
@@ -152,8 +153,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		File tileArchiveFile = null;
 		TarIndex tileIndex = null;
 
-		DownloadJobProducer djp = null;
-
 		Thread t = Thread.currentThread();
 		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
@@ -257,8 +256,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				log.trace("Map will been splitted into " + subMaps.size()
 						+ " sections because of TrekBuddy maximum map limitation");
 
+				ap.initMap(subMaps.size());
 				int mapNumber = 1;
-
 				for (MapSlice smp : subMaps) {
 					MapCreator mc;
 					if (customTileParameters == null)
@@ -269,9 +268,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 								tileSource, zoom, atlasOutputFormat, mapNumber,
 								customTileParameters);
 					mc.createMap();
+					ap.setMap(mapNumber);
 					mapNumber++;
 				}
-
+				ap.initMap(0);
 				ap.setLayer(layer + 1);
 				downloadJobDispatcher.cancelOutstandingJobs();
 				tileIndex.closeAndDelete();
@@ -317,9 +317,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	 */
 	public void actionPerformed(ActionEvent e) {
 		try {
-			this.interrupt();
+			DownloadJobProducer djp_ = djp;
+			if (djp_ != null)
+				djp_.cancel();
 			if (downloadJobDispatcher != null)
 				downloadJobDispatcher.terminateAllWorkerThreads();
+			this.interrupt();
 		} catch (Exception ex) {
 		}
 	}

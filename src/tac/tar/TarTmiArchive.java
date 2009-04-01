@@ -8,7 +8,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import tac.program.MapCreator;
-import tac.utilities.CountingOutputStream;
 import tac.utilities.Utilities;
 
 /**
@@ -27,7 +26,6 @@ public class TarTmiArchive extends TarArchive {
 
 	public TarTmiArchive(File tarFile, File baseDir) throws IOException {
 		super(tarFile, baseDir);
-		tarFileStream = new CountingOutputStream(tarFileStream);
 		String tmiFilename = tarFile.getAbsolutePath();
 		if (tmiFilename.toLowerCase().endsWith(".tar"))
 			tmiFilename = tmiFilename.substring(0, tmiFilename.length() - 4);
@@ -48,38 +46,13 @@ public class TarTmiArchive extends TarArchive {
 		Utilities.closeWriter(tmiWriter);
 	}
 
-	protected void addTmiEntry(TarHeader th) throws IOException {
-		int streamPos = ((CountingOutputStream) tarFileStream).getBytesWritten();
+	@Override
+	protected void writeTarHeader(TarHeader th) throws IOException {
+		int streamPos = getTarFilePos();
 		int block = streamPos / 512;
 		String line = String.format("block %10d: %s\n", new Object[] { block, th.getFileName() });
 		tmiWriter.write(line);
-	}
-
-	@Override
-	public void writeFile(File fileOrDirToAdd) throws IOException {
-		TarHeader th = new TarHeader(fileOrDirToAdd, baseDir);
-		addTmiEntry(th);
-		tarFileStream.write(th.getBytes());
-
-		if (!fileOrDirToAdd.isDirectory()) {
-			TarRecord tr = new TarRecord(fileOrDirToAdd);
-			tarFileStream.write(tr.getRecordContent());
-		}
-	}
-
-	@Override
-	public void writeDirectory(String dirName) throws IOException {
-		TarHeader th = new TarHeader(dirName, 0);
-		tarFileStream.write(th.getBytes());
-	}
-
-	@Override
-	public void writeFileFromData(String fileName, byte[] data) throws IOException {
-		TarHeader th = new TarHeader(fileName, data.length);
-		addTmiEntry(th);
-		tarFileStream.write(th.getBytes());
-		TarRecord tr = new TarRecord(data);
-		tarFileStream.write(tr.getRecordContent());
+		super.writeTarHeader(th);
 	}
 
 }

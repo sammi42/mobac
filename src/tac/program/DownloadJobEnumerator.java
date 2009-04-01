@@ -1,22 +1,22 @@
 package tac.program;
 
-import java.io.File;
 import java.util.Enumeration;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
+import tac.tar.TarIndexedArchive;
 
 public class DownloadJobEnumerator implements Enumeration<Job> {
 
-	private File downloadDestinationDir;
 	private DownloadJobListener listener;
 	private int xMin;
 	private int xMax;
 	private int yMax;
 	private int zoom;
 	private TileSource tileSource;
+	private TarIndexedArchive tileArchive;
 
 	private int x, y;
 	private DownloadJob nextJob;
@@ -34,19 +34,19 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 * </pre>
 	 */
 	public DownloadJobEnumerator(int xMin, int xMax, int yMin, int yMax, int zoom,
-			TileSource tileSource, File downloadDestinationDir, DownloadJobListener listener) {
+			TileSource tileSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		super();
-		this.downloadDestinationDir = downloadDestinationDir;
 		this.listener = listener;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMax = yMax;
 		this.zoom = zoom;
+		this.tileArchive = tileArchive;
 		this.tileSource = tileSource;
 		y = yMin;
 		x = xMin;
 
-		nextJob = new DownloadJob(downloadDestinationDir, tileSource, x, y, zoom, listener);
+		nextJob = new DownloadJob(tileSource, x, y, zoom, tileArchive, listener);
 	}
 
 	public boolean hasMoreElements() {
@@ -64,7 +64,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 				return job;
 			}
 		}
-		nextJob = new DownloadJob(downloadDestinationDir, tileSource, x, y, zoom, listener);
+		nextJob = new DownloadJob(tileSource, x, y, zoom, tileArchive, listener);
 		return job;
 	}
 }

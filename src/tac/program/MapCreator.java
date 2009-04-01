@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
-import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -23,6 +22,7 @@ import tac.gui.AtlasProgress;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.MapSlice;
 import tac.tar.TarArchive;
+import tac.tar.TarIndex;
 import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
 
@@ -44,19 +44,17 @@ public class MapCreator {
 	protected int yMin;
 	protected int yMax;
 
-	protected File tmpFolder;
+	protected TarIndex tileIndex;
 	protected File atlasLayerFolder;
 	protected int zoom;
 	protected AtlasOutputFormat atlasOutputFormat;
 	protected TileSource tileSource;
 
-	protected HashMap<String, File> tilesInFileFormat;
-
 	protected String layerName;
 
 	protected TileWriter tileWriter;
 
-	public MapCreator(MapSlice smp, File tmpFolder, File atlasFolder, String mapName,
+	public MapCreator(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
 		log = Logger.getLogger(this.getClass());
 		xMin = smp.getXMin();
@@ -64,11 +62,10 @@ public class MapCreator {
 		yMin = smp.getYMin();
 		yMax = smp.getYMax();
 		this.tileSource = tileSource;
-		this.tmpFolder = tmpFolder;
+		this.tileIndex = tileIndex;
 		this.zoom = zoom;
 		this.atlasOutputFormat = atlasOutputFormat;
 		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
-		tilesInFileFormat = new HashMap<String, File>();
 		atlasLayerFolder = new File(atlasFolder, layerName);
 	}
 
@@ -77,14 +74,6 @@ public class MapCreator {
 
 		// write the .map file containing the calibration points
 		writeMapFile();
-
-		// List all tiles in the tmp folder.
-		File[] tiles = tmpFolder.listFiles();
-
-		// Put all tiles in a Hash Map so the will be easy to access later on.
-		for (int i = 0; i < tiles.length; i++) {
-			tilesInFileFormat.put(tiles[i].getName(), tiles[i]);
-		}
 
 		// This means there should not be any resizing of the tiles.
 		try {
@@ -152,10 +141,9 @@ public class MapCreator {
 				try {
 					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
 							+ "." + tileSource.getTileType();
-					File fSource = (File) tilesInFileFormat.get("y" + y + "x" + x + "."
+					byte[] sourceTileData = tileIndex.getEntryContent("y" + y + "x" + x + "."
 							+ tileSource.getTileType());
-					if (fSource != null) {
-						byte[] sourceTileData = Utilities.getFileBytes(fSource);
+					if (sourceTileData != null) {
 						tileWriter.writeTile(tileFileName, sourceTileData);
 					} else {
 						BufferedImage emptyImage = new BufferedImage(256, 256,

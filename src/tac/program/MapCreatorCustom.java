@@ -2,6 +2,7 @@ package tac.program;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -17,6 +18,7 @@ import tac.gui.AtlasProgress;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.MapSlice;
 import tac.program.model.TileImageColorDepth;
+import tac.tar.TarIndex;
 import tac.utilities.MyMath;
 import tac.utilities.Png4BitWriter;
 
@@ -37,10 +39,10 @@ public class MapCreatorCustom extends MapCreator {
 
 	private String targetFileType;
 
-	public MapCreatorCustom(MapSlice smp, File tmpFolder, File atlasFolder, String mapName,
+	public MapCreatorCustom(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
 			TileImageParameters parameters) {
-		super(smp, tmpFolder, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
+		super(smp, tileIndex, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
 		this.param = parameters;
 		switch (param.format) {
 		case Unchanged: {
@@ -198,8 +200,8 @@ public class MapCreatorCustom extends MapCreator {
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
 		String tileFileName = "y" + yTile + "x" + xTile + "." + targetFileType;
-		File fSource = (File) tilesInFileFormat.get(tileFileName);
-		if (fSource == null)
+		byte[] sourceTileData = tileIndex.getEntryContent(tileFileName);
+		if (sourceTileData == null)
 			return null;
 		for (CachedTile ct : cache) {
 			if (ct == null)
@@ -210,7 +212,7 @@ public class MapCreatorCustom extends MapCreator {
 			}
 		}
 		// log.trace("cache miss");
-		BufferedImage image = ImageIO.read(fSource);
+		BufferedImage image = ImageIO.read(new ByteArrayInputStream(sourceTileData));
 		cache[cachePos] = new CachedTile(image, xTile, yTile);
 		cachePos = (cachePos + 1) % cache.length;
 		return image;

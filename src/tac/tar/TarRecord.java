@@ -22,8 +22,12 @@ public class TarRecord {
 	}
 
 	public TarRecord(byte[] data) throws IOException {
-		fileData = new byte[calculateFileSizeInTar(data.length)];
-		System.arraycopy(data, 0, fileData, 0, data.length);
+		this(data, 0, data.length);
+	}
+
+	public TarRecord(byte[] data, int off, int len) throws IOException {
+		fileData = new byte[calculateFileSizeInTar(len)];
+		System.arraycopy(data, off, fileData, 0, len);
 	}
 
 	public static int calculateFileSizeInTar(File theFile) {

@@ -5,24 +5,32 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
+
+import tac.utilities.CountingOutputStream;
 
 public class TarArchive {
 
-	protected OutputStream tarFileStream;
+	protected CountingOutputStream tarFileStream;
+	protected File tarFile;
 	protected File baseDir;
 
 	public TarArchive(File tarFile, File baseDir) throws FileNotFoundException {
-		this.tarFileStream = new BufferedOutputStream(new FileOutputStream(tarFile));
+		this.tarFile = tarFile;
+		this.tarFileStream = new CountingOutputStream(new BufferedOutputStream(
+				new FileOutputStream(tarFile)));
 		this.baseDir = baseDir;
+	}
+
+	public int getTarFilePos() {
+		return tarFileStream.getBytesWritten();
 	}
 
 	public boolean writeContentFromDir(File dirToAdd) throws IOException {
 		if (!dirToAdd.isDirectory())
 			return false;
 		TarHeader th = new TarHeader(dirToAdd, baseDir);
-		tarFileStream.write(th.getBytes());
+		writeTarHeader(th);
 		File[] files = dirToAdd.listFiles();
 		Arrays.sort(files);
 		for (File f : files) {
@@ -36,7 +44,7 @@ public class TarArchive {
 
 	public void writeFile(File fileOrDirToAdd) throws IOException {
 		TarHeader th = new TarHeader(fileOrDirToAdd, baseDir);
-		tarFileStream.write(th.getBytes());
+		writeTarHeader(th);
 
 		if (!fileOrDirToAdd.isDirectory()) {
 			TarRecord tr = new TarRecord(fileOrDirToAdd);
@@ -45,8 +53,8 @@ public class TarArchive {
 	}
 
 	public void writeDirectory(String dirName) throws IOException {
-		TarHeader th = new TarHeader(dirName, 0);
-		tarFileStream.write(th.getBytes());
+		TarHeader th = new TarHeader(dirName, 0, true);
+		writeTarHeader(th);
 	}
 
 	/**
@@ -57,10 +65,28 @@ public class TarArchive {
 	 * @throws IOException
 	 */
 	public void writeFileFromData(String fileName, byte[] data) throws IOException {
-		TarHeader th = new TarHeader(fileName, data.length);
-		tarFileStream.write(th.getBytes());
-		TarRecord tr = new TarRecord(data);
+		writeFileFromData(fileName, data, 0, data.length);
+	}
+
+	/**
+	 * Writes a "file" into tar archive that does only exists in memory
+	 * 
+	 * @param fileName
+	 * @param data
+	 * @param off
+	 * @param len
+	 * @throws IOException
+	 */
+	public void writeFileFromData(String fileName, byte[] data, int off, int len)
+			throws IOException {
+		TarHeader th = new TarHeader(fileName, len, false);
+		writeTarHeader(th);
+		TarRecord tr = new TarRecord(data, off, len);
 		tarFileStream.write(tr.getRecordContent());
+	}
+
+	protected void writeTarHeader(TarHeader th) throws IOException {
+		tarFileStream.write(th.getBytes());
 	}
 
 	public void writeEndofArchive() throws IOException {

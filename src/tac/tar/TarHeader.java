@@ -47,7 +47,7 @@ public class TarHeader {
 		this.setChecksum();
 	}
 
-	public TarHeader(String fileName, int fileSize) {
+	public TarHeader(String fileName, int fileSize, boolean isDirectory) {
 		this();
 		this.setFileName(fileName);
 		this.setFileMode();
@@ -55,10 +55,24 @@ public class TarHeader {
 		this.setFileOwnerGroupID();
 		this.setFileSize(fileSize);
 		this.setLastModificationTime(System.currentTimeMillis());
-		this.setLinkIndicator(false);
+		this.setLinkIndicator(isDirectory);
 		this.setNameOfLinkedFile();
 		this.setPadding();
 		this.setChecksum();
+	}
+
+	public void read(byte[] buffer) {
+		String fn = new String(buffer, 0, 100);
+		fileName = fn.toCharArray();
+		fileNameLength = fn.indexOf('\0');
+		fileMode = new String(buffer, 100, 8).toCharArray();
+		fileOwnerUserID = new String(buffer, 108, 8).toCharArray();
+		fileOwnerGroupID = new String(buffer, 116, 8).toCharArray();
+		fileSize = new String(buffer, 124, 12).toCharArray();
+		lastModificationTime = new String(buffer, 136, 12).toCharArray();
+		checksum = new String(buffer, 148, 8).toCharArray();
+		linkIndicator = new String(buffer, 156, 1).toCharArray();
+		nameOfLinkedFile = new String(buffer, 157, 100).toCharArray();
 	}
 
 	// S E T - Methods
@@ -284,6 +298,10 @@ public class TarHeader {
 		return fileSize;
 	}
 
+	public int getFileSizeInt() {
+		return Integer.parseInt(new String(fileSize).trim(), 8);
+	}
+
 	public char[] getLastModificationTime() {
 		return lastModificationTime;
 	}
@@ -319,7 +337,10 @@ public class TarHeader {
 		sb.append(nameOfLinkedFile);
 		sb.append(padding);
 
-		return sb.toString().getBytes();
+		byte[] result = sb.toString().getBytes();
+		if (result.length != 512)
+			throw new RuntimeException("Invaliud tar header size: " + result.length);
+		return result;
 	}
 
 }

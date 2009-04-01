@@ -2,6 +2,7 @@ package tac.utilities;
 
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -175,12 +176,9 @@ public class Utilities {
 	public static byte[] getFileBytes(File file) throws IOException {
 		int size = (int) file.length();
 		byte[] buffer = new byte[size];
-		FileInputStream in = new FileInputStream(file);
+		DataInputStream in = new DataInputStream(new FileInputStream(file));
 		try {
-			int pos = 0;
-			do {
-				pos += in.read(buffer, pos, size - pos);
-			} while (pos < size);
+			in.readFully(buffer);
 			return buffer;
 		} finally {
 			closeStream(in);

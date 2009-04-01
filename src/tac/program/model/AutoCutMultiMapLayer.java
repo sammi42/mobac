@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-import tac.program.DownloadJobEnumerator;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
@@ -19,6 +18,7 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
+
 //import tac.utilities.MyMath;
 
 /**
@@ -81,10 +81,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 			return;
 		}
 		/*
-		int mapCountX = MyMath.divCeil(maxTileCoordinate.x - minTileCoordinate.x,
-				maxMapDimension.width);
-		int mapCountY = MyMath.divCeil(maxTileCoordinate.y - minTileCoordinate.y,
-				maxMapDimension.height);
+		 * int mapCountX = MyMath.divCeil(maxTileCoordinate.x -
+		 * minTileCoordinate.x, maxMapDimension.width); int mapCountY =
+		 * MyMath.divCeil(maxTileCoordinate.y - minTileCoordinate.y,
+		 * maxMapDimension.height);
 		 */
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
@@ -101,12 +101,13 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 
 	public Enumeration<Job> getDownloadJobs(File downloadDestinationDir,
 			DownloadJobListener listener) {
-		int xMin = minTileCoordinate.x / Tile.SIZE;
-		int xMax = maxTileCoordinate.x / Tile.SIZE;
-		int yMin = minTileCoordinate.y / Tile.SIZE;
-		int yMax = maxTileCoordinate.y / Tile.SIZE;
-		return new DownloadJobEnumerator(xMin, xMax, yMin, yMax, zoom, mapSource,
-				downloadDestinationDir, listener);
+		// int xMin = minTileCoordinate.x / Tile.SIZE;
+		// int xMax = maxTileCoordinate.x / Tile.SIZE;
+		// int yMin = minTileCoordinate.y / Tile.SIZE;
+		// int yMax = maxTileCoordinate.y / Tile.SIZE;
+		return null; // TODO FIX ME
+		// return new DownloadJobEnumerator(xMin, xMax, yMin, yMax, zoom,
+		// mapSource, downloadDestinationDir, listener);
 	}
 
 	public void delete() {

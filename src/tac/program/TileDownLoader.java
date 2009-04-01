@@ -1,5 +1,7 @@
 package tac.program;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +13,8 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.exceptions.UnrecoverableDownloadException;
+import tac.tar.TarIndexedArchive;
 import tac.utilities.Utilities;
 
 public class TileDownLoader {
@@ -19,14 +23,14 @@ public class TileDownLoader {
 		System.setProperty("http.maxConnections", "10");
 	}
 
-	private static int MAX_BUFFER_SIZE = 64 * 1024; // 64 KB receive & copy
-	// buffer
+	private static int MAX_DOWNLOAD_SIZE = 1024 * 1024; // 1 MB max tile size to
+	// download
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
-	public static int getImage(int x, int y, int zoom, File destinationDirectory,
-			TileSource tileSource, boolean isAtlasDownload) throws IOException,
-			InterruptedException {
+	public static int getImage(int x, int y, int zoom, TileSource tileSource,
+			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
+			UnrecoverableDownloadException {
 
 		int maxTileIndex = 2 << zoom;
 		if (x > maxTileIndex)
@@ -48,15 +52,19 @@ public class TileDownLoader {
 		 */
 		Settings s = Settings.getInstance();
 		String tileFileName = "y" + y + "x" + x + "." + tileSource.getTileType();
-		File destFile = new File(destinationDirectory, tileFileName);
 
 		if (s.isTileStoreEnabled()) {
 
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
 			try {
-				if (ts.copyStoredTileTo(destFile, x, y, zoom, tileSource)) {
-					log.trace("Tile used from tilestore");
+				File tsTileFile = ts.getTileFile(x, y, zoom, tileSource);
+				if (tsTileFile.exists()) {
+					byte[] data = Utilities.getFileBytes(tsTileFile);
+					synchronized (tileArchive) {
+						log.trace("Tile used from tilestore");
+						tileArchive.writeFileFromData(tileFileName, data);
+					}
 					return 0;
 				}
 			} catch (IOException e) {
@@ -64,6 +72,9 @@ public class TileDownLoader {
 		}
 
 		String url = tileSource.getTileUrl(zoom, x, y);
+		if (url == null)
+			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
+					+ " is not a valid tile in map source " + tileSource);
 
 		log.trace("Downloading " + url);
 		URL u = new URL(url);
@@ -81,43 +92,51 @@ public class TileDownLoader {
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invaild HTTP response: " + code);
 
-		File tileFile = new File(destinationDirectory, tileFileName);
+		int bytesRead = 0;
+		int sumBytes = 0;
+
+		boolean success = false;
+		int contentLen = huc.getContentLength();
+		if (contentLen > MAX_DOWNLOAD_SIZE)
+			throw new UnrecoverableDownloadException("Remote resource '" + url + "' of size "
+					+ contentLen + "bytes exceeds the maximum download size of "
+					+ MAX_DOWNLOAD_SIZE + " bytes.");
+		byte[] data = null;
+		if (contentLen < 0) {
+			byte[] b = new byte[8192];
+			ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
+			while ((bytesRead = is.read(b)) > 0) {
+				sumBytes += bytesRead;
+				buf.write(b, 0, bytesRead);
+			}
+			data = buf.toByteArray();
+		} else {
+			DataInputStream din = new DataInputStream(is);
+			data = new byte[contentLen];
+			din.readFully(data);
+			sumBytes = contentLen;
+			if (din.read() >= 0)
+				throw new IOException("Data after content end available!");
+		}
 		File tilestoreFile = null;
-		OutputStream tileFileStream = new FileOutputStream(tileFile);
 		OutputStream tilestoreFileStream = null;
 		if (s.isTileStoreEnabled()) {
 			// We are writing simultaneously to the target file
 			// and the file in the tile store
 			tilestoreFile = ts.getTileFile(x, y, zoom, tileSource);
 			tilestoreFileStream = new FileOutputStream(tilestoreFile, false);
+			tilestoreFileStream.write(data);
 		}
-
-		int bytesRead = 0;
-		int sumBytes = 0;
-
-		boolean success = false;
+		synchronized (tileArchive) {
+			tileArchive.writeFileFromData(tileFileName, data);
+		}
 		try {
-			int bufferSize = huc.getContentLength();
-			if (bufferSize <= 1024)
-				// Content length returned by server is invalid or very short
-				bufferSize = MAX_BUFFER_SIZE;
-			else
-				bufferSize = Math.min(bufferSize, MAX_BUFFER_SIZE);
-			byte[] buffer = new byte[bufferSize];
-			while ((bytesRead = is.read(buffer)) > 0) {
-				sumBytes += bytesRead;
-				tileFileStream.write(buffer, 0, bytesRead);
-				if (tilestoreFileStream != null)
-					tilestoreFileStream.write(buffer, 0, bytesRead);
-			}
 			success = true;
 		} finally {
-			Utilities.closeStream(tileFileStream);
 			Utilities.closeStream(tilestoreFileStream);
 			if ((!success) || (sumBytes == 0)) {
 				// In case of an error while download or an empty file we have
 				// an invalid tile image we don't want -> delete it
-				tileFile.delete();
 				if (tilestoreFile != null)
 					tilestoreFile.delete();
 			}
@@ -125,4 +144,5 @@ public class TileDownLoader {
 
 		return sumBytes;
 	}
+
 }

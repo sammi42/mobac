@@ -152,6 +152,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		File tileArchiveFile = null;
 		TarIndex tileIndex = null;
 
+		DownloadJobProducer djp = null;
+
 		Thread t = Thread.currentThread();
 		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
@@ -195,7 +197,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					tileArchiveFile.deleteOnExit();
 					log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
 					tileArchive = new TarIndexedArchive(tileArchiveFile, apMax);
-					DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom);
+					djp = new DownloadJobProducer(topLeft, bottomRight, zoom);
 
 					boolean failedMessageAnswered = false;
 
@@ -220,6 +222,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 							}
 						}
 					}
+					djp = null;
 					log.debug("All download jobs has been completed!");
 					tileArchive.writeEndofArchive();
 					tileArchive.close();
@@ -274,6 +277,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				tileIndex.closeAndDelete();
 			}
 		} finally {
+			// In case of an abort: Stop create new download jobs
+			if (djp != null)
+				djp.cancel();
 			downloadJobDispatcher.terminateAllWorkerThreads();
 			if (tileArchive != null)
 				tileArchive.close();

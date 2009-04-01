@@ -211,9 +211,6 @@ public class Utilities {
 		File atlasFolder = new File(userDir, "atlases");
 		atlasFolder.mkdir();
 
-		File tmpFolder = new File(userDir, "tac_tmp");
-		tmpFolder.mkdir();
-
 		File tileStoreFolder = new File(userDir, "tilestore");
 		tileStoreFolder.mkdir();
 

@@ -121,8 +121,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String formattedDateString = sdf.format(date);
 
-		File tmpDir = new File(workingDir, "tac_tmp");
-
 		File atlasDir = new File(workingDir + "/atlases/" + formattedDateString);
 		atlasDir.mkdirs();
 
@@ -167,7 +165,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 				/***
 				 * In this section of code below, tiles for Atlas is being
-				 * downloaded and put into folder "tac_tmp"
+				 * downloaded and saved in the temporary layer tar file in the
+				 * system temp directory.
 				 **/
 				int zoom = zoomLevels[layer];
 
@@ -187,8 +186,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				tileArchive = null;
 				TarIndex tileIndex = null;
 				if (!SKIP_DOWNLOAD) {
-					File tileArchiveFile = new File(tmpDir, formattedDateString + "_" + zoom
-							+ ".tar");
+					String tempSuffix = "TAC_" + atlasName + "_" + zoom + "_";
+					File tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
+					// If something goes wrong the temp file only
+					// persists until the VM exits
+					tileArchiveFile.deleteOnExit();
 					log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
 					tileArchive = new TarIndexedArchive(tileArchiveFile, apMax);
 					DownloadJobProducer djp = new DownloadJobProducer(topLeft, bottomRight, zoom);

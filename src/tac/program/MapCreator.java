@@ -130,7 +130,7 @@ public class MapCreator {
 			int tileCount = (xMax - xMin + 1) * (yMax - yMin + 1);
 			ap.initMap(tileCount);
 		}
-
+		ImageIO.setUseCache(false);
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y <= yMax; y++) {
@@ -146,7 +146,6 @@ public class MapCreator {
 					if (sourceTileData != null) {
 						tileWriter.writeTile(tileFileName, sourceTileData);
 					} else {
-						ImageIO.setUseCache(false);
 						BufferedImage emptyImage = new BufferedImage(256, 256,
 								BufferedImage.TYPE_INT_ARGB);
 						ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);

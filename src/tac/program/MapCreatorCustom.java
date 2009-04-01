@@ -110,6 +110,10 @@ public class MapCreatorCustom extends MapCreator {
 		log.trace("X: from " + xStart + " to " + xEnd);
 		log.trace("Y: from " + yStart + " to " + yEnd);
 
+		// We don't work with large images, therefore we can disable the (file)
+		// cache of ImageIO. This will speed up the creation process a bit
+		ImageIO.setUseCache(false);
+
 		int yRelPos = 0;
 		while (yAbsPos < yEnd) {
 			int xRelPos = 0;

@@ -146,6 +146,7 @@ public class MapCreator {
 					if (sourceTileData != null) {
 						tileWriter.writeTile(tileFileName, sourceTileData);
 					} else {
+						ImageIO.setUseCache(false);
 						BufferedImage emptyImage = new BufferedImage(256, 256,
 								BufferedImage.TYPE_INT_ARGB);
 						ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);

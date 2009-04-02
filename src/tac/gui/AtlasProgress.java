@@ -422,11 +422,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 			atlasPercent.setText("Percent done: " + stringPercent + " %");
 
-			long timePerElement = 0;
+			long seconds = 0;
 			if (atlasProgress != 0) // Check for a possible division by zero
-				timePerElement = (System.currentTimeMillis() - initialTotalTime) / atlasProgress;
+				seconds = ((System.currentTimeMillis() - initialTotalTime)
+						* (totalNumberOfTiles - atlasProgress) / (1000L * atlasProgress));
 
-			long seconds = (timePerElement * (atlasProgressBar.getMaximum() - atlasProgress) / 1000);
 			atlasTimeLeft.setText(formatRemainingTime(seconds));
 
 			// layer progress
@@ -437,14 +437,16 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 			layerPercent.setText("Percent done: " + stringPercent + " %");
 
-			layerElementsDone.setText(Integer.toString(layerProgress) + " of "
-					+ layerProgressBar.getMaximum() + " tiles done");
+			layerElementsDone.setText(Integer.toString(layerProgress) + " of " + layerProgressMax
+					+ " tiles done");
 
 			if (layerProgress == 0) {
 				layerTimeLeft.setText(formatRemainingTime(-1));
 			} else {
-				timePerElement = (System.currentTimeMillis() - initialLayerTime) / layerProgress;
-				seconds = (timePerElement * (layerProgressBar.getMaximum() - layerProgress) / 1000);
+				seconds = 0;
+				if (layerProgress != 0)
+					seconds = ((System.currentTimeMillis() - initialLayerTime)
+							* (layerProgressMax - layerProgress) / (1000L * layerProgress));
 				layerTimeLeft.setText(formatRemainingTime(seconds));
 			}
 

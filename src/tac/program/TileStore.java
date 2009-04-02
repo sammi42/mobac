@@ -84,6 +84,7 @@ public class TileStore {
 		if (tileStore.exists()) {
 			DeleteFileFilter dff = new DeleteFileFilter();
 			tileStore.listFiles(dff);
+			tileStore.delete();
 			log.debug("Tilestore " + tileSource.getName() + " cleared: " + dff);
 		}
 	}
@@ -116,6 +117,18 @@ public class TileStore {
 		} else {
 			return 0;
 		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the tile store directory of the specified
+	 * {@link TileSource} exists.
+	 * 
+	 * @param tileSource
+	 * @return
+	 */
+	public boolean storeExists(TileSource tileSource) {
+		File tileStore = new File(tileStorePath, tileSource.getName());
+		return (tileStore.isDirectory()) && (tileStore.exists());
 	}
 
 	public TileStoreInfo getStoreInfo(TileSource tileSource) {

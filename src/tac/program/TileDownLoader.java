@@ -118,6 +118,7 @@ public class TileDownLoader {
 			if (din.read() >= 0)
 				throw new IOException("Data after content end available!");
 		}
+		Utilities.checkForInterruption();
 		File tilestoreFile = null;
 		OutputStream tilestoreFileStream = null;
 		if (s.isTileStoreEnabled()) {
@@ -127,6 +128,7 @@ public class TileDownLoader {
 			tilestoreFileStream = new FileOutputStream(tilestoreFile, false);
 			tilestoreFileStream.write(data);
 		}
+		Utilities.checkForInterruption();
 		synchronized (tileArchive) {
 			tileArchive.writeFileFromData(tileFileName, data);
 		}

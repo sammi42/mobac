@@ -66,6 +66,11 @@ public class Utilities {
 		return new ImageIcon(url);
 	}
 
+	public static void checkForInterruption() throws InterruptedException {
+		if (Thread.currentThread().isInterrupted())
+			throw new InterruptedException();
+	}
+
 	public static void closeStream(InputStream in) {
 		try {
 			in.close();

@@ -184,6 +184,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				int yMin = topLeft.y;
 				int yMax = bottomRight.y;
 				ap.initLayer(apMax);
+				ap.initMap(0);
 				ap.setZoomLevel(zoom);
 
 				jobsProduced = 0;
@@ -271,7 +272,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					ap.setMap(mapNumber);
 					mapNumber++;
 				}
-				ap.initMap(0);
 				ap.setLayer(layer + 1);
 				downloadJobDispatcher.cancelOutstandingJobs();
 				tileIndex.closeAndDelete();

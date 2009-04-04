@@ -39,11 +39,11 @@ public class Google {
 	}
 
 	/**
-	 * "Google Map Maker" Source Class
+	 * "Google Map Maker" Source Class http://www.google.com/mapmaker
 	 */
 	public static class GoogleMapMaker extends GoogleSource {
 
-		public static final String SERVER_URL = "http://gt%d.google.com/mt?n=404&hl=%s&v=gwm.burma&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://gt%d.google.com/mt?n=404&v=gwm.988&x=%d&y=%d&z=%d";
 
 		public GoogleMapMaker() {
 			super("Google Map Maker", 17, "png");
@@ -54,7 +54,7 @@ public class Google {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
+			return String.format(SERVER_URL, new Object[] { getNextServerNum(), x, y, zoom });
 		}
 
 	}

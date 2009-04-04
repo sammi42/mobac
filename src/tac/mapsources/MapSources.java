@@ -19,8 +19,8 @@ public class MapSources {
 			// new tac.mapsources.LocalhostTestSource(), //
 			new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 			new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
-			new MicrosoftMaps(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-			new OutdooractiveCom(), new MultimapCom(), new Cycloatlas() };
+			new OsmHikingMap(), new MicrosoftMaps(), new MicrosoftVirtualEarth(),
+			new MicrosoftHybrid(), new OutdooractiveCom(), new MultimapCom(), new Cycloatlas() };
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -170,4 +170,21 @@ public class MapSources {
 		}
 	}
 
+	public static class OsmHikingMap extends AbstractMapSource {
+
+		public OsmHikingMap() {
+			super("OSM Hiking", 4, 15, "png");
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking (Germany only)";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://opentiles.com/nop/get.php?l=trails&z=" + zoom + "&x=" + tilex + "&y="
+					+ tiley;
+		}
+
+	}
 }

@@ -96,23 +96,32 @@ public class TileStore {
 	 * @param tileSource
 	 *            the store to calculate number of tiles in
 	 * @return the amount of tiles in the specified store.
+	 * @throws InterruptedException
 	 */
-	public int getNrOfTiles(TileSource tileSource) {
+	public int getNrOfTiles(TileSource tileSource) throws InterruptedException {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
 			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
-			tileStore.listFiles(tsif);
+			try {
+				tileStore.listFiles(tsif);
+			} catch (RuntimeException e) {
+				throw new InterruptedException();
+			}
 			return tsif.getCount();
 		} else {
 			return 0;
 		}
 	}
 
-	public long getStoreSize(TileSource tileSource) {
+	public long getStoreSize(TileSource tileSource) throws InterruptedException {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
 			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
-			tileStore.listFiles(tsif);
+			try {
+				tileStore.listFiles(tsif);
+			} catch (RuntimeException e) {
+				throw new InterruptedException();
+			}
 			return tsif.getSize();
 		} else {
 			return 0;
@@ -131,11 +140,15 @@ public class TileStore {
 		return (tileStore.isDirectory()) && (tileStore.exists());
 	}
 
-	public TileStoreInfo getStoreInfo(TileSource tileSource) {
+	public TileStoreInfo getStoreInfo(TileSource tileSource) throws InterruptedException {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
 			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
-			tileStore.listFiles(tsif);
+			try {
+				tileStore.listFiles(tsif);
+			} catch (RuntimeException e) {
+				throw new InterruptedException();
+			}
 			return new TileStoreInfo(tsif.getSize(), tsif.getCount());
 		} else {
 			return new TileStoreInfo(0, 0);
@@ -183,6 +196,7 @@ public class TileStore {
 		public boolean accept(File f) {
 			if (f.isDirectory())
 				return false;
+			Utilities.checkForInterruptionRt();
 			String name = f.getName();
 			Matcher m = p.matcher(name);
 			if (!m.matches())

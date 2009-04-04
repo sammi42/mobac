@@ -58,7 +58,7 @@ public class Settings {
 	private static final String WINDOW_MAXIMIZED = "window.maximized";
 	private static final String FULL_SCREEN_ENABLED = "full-screen-enabled";
 
-	private int maxMapSize = 32768;
+	private int maxMapSize = 32767;
 
 	private boolean tileStoreEnabled = true;
 

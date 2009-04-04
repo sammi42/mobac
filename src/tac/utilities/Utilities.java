@@ -66,9 +66,30 @@ public class Utilities {
 		return new ImageIcon(url);
 	}
 
+	/**
+	 * Checks if the current {@link Thread} has been interrupted and if so a
+	 * {@link InterruptedException}. Therefore it behaves similar to
+	 * {@link Thread#sleep(long)} without actually slowing down anything by
+	 * sleeping a certain amount of time.
+	 * 
+	 * @throws InterruptedException
+	 */
 	public static void checkForInterruption() throws InterruptedException {
 		if (Thread.currentThread().isInterrupted())
 			throw new InterruptedException();
+	}
+
+	/**
+	 * Checks if the current {@link Thread} has been interrupted and if so a
+	 * {@link RuntimeException} will be thrown. This method is useful for long
+	 * lasting operations that do not allow to throw an
+	 * {@link InterruptedException}.
+	 * 
+	 * @throws RuntimeException
+	 */
+	public static void checkForInterruptionRt() throws RuntimeException {
+		if (Thread.currentThread().isInterrupted())
+			throw new RuntimeException(new InterruptedException());
 	}
 
 	public static void closeStream(InputStream in) {

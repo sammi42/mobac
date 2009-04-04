@@ -166,7 +166,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 		// map source combo
 		mapSourceCombo = new JComboBox(MapSources.getMapSources());
-		mapSourceCombo.setMaximumRowCount(12);
+		mapSourceCombo.setMaximumRowCount(20);
 		mapSourceCombo.addActionListener(new MapSourceComboListener());
 		mapSourceCombo.setToolTipText("Select map source");
 

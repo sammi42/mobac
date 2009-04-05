@@ -68,6 +68,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private static final long serialVersionUID = -8444942802691874960L;
 
 	private static Logger log = Logger.getLogger(GUI.class);
+
 	private static Color labelBackgroundColor = new Color(0, 0, 0, 127);
 	private static Color labelForegroundColor = Color.white;
 
@@ -108,9 +109,12 @@ public class GUI extends JFrame implements MapSelectionListener {
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
 
+	private Settings settings;
+
 	public GUI() {
 		super();
 		TACExceptionHandler.registerForCurrentThread();
+		settings = Settings.getInstance();
 		setTitle(TACInfo.getCompleteTitle());
 
 		log.trace("Creating main dialog - " + getTitle());
@@ -334,7 +338,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		tileProcessingPanel.add(tileColorDepthPanel, GBC.eol());
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
-		if (Settings.getInstance().isDevModeEnabled()) {
+		if (settings.isDevModeEnabled()) {
 			atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
 			atlasTree = new AtlasTree(previewMap);
 			JScrollPane treeScrollPane = new JScrollPane(atlasTree,
@@ -382,7 +386,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
 		leftPanelContent.add(zoomLevelsPanel, gbc_eol);
 		leftPanelContent.add(tileProcessingPanel, gbc_eol);
-		if (Settings.getInstance().isDevModeEnabled())
+		if (settings.isDevModeEnabled())
 			leftPanelContent.add(atlasContentPanel, gbc_eol);
 
 		leftPanelContent.add(atlasNamePanel, gbc_eol);
@@ -475,7 +479,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void updatePanels() {
-		boolean fullScreenEnabled = Settings.getInstance().getFullScreenEnabled();
+		boolean fullScreenEnabled = settings.getFullScreenEnabled();
 
 		updateMapControlsPanel(fullScreenEnabled);
 
@@ -487,6 +491,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 			leftPanel.setVisible(true);
 			fullScreenButton.setText("Full screen");
 		}
+		calculateNrOfTilesToDownload();
 		updateZoomLevelCheckBoxes();
 		previewMap.grabFocus();
 	}
@@ -1047,8 +1052,13 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private void calculateNrOfTilesToDownload() {
 		MapSelection ms = getMapSelectionCoordinates();
+		String baseText;
+		if (settings.getFullScreenEnabled())
+			baseText = " %s tiles ";
+		else
+			baseText = " Amount of tiles in atlas: %s";
 		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
-			amountOfTilesLabel.setText(" Amount of tiles in atlas: 0 ");
+			amountOfTilesLabel.setText(String.format(baseText, new Object[] { "0" }));
 			amountOfTilesLabel.setToolTipText("");
 		} else {
 			try {
@@ -1068,11 +1078,11 @@ public class GUI extends JFrame implements MapSelectionListener {
 							+ info[2] + ")";
 				}
 				hint = "<html>" + hint + "</html>";
-				amountOfTilesLabel.setText(" Amount of tiles in atlas: "
-						+ Long.toString(totalNrOfTiles));
+				amountOfTilesLabel.setText(String.format(baseText, new Object[] { Long
+						.toString(totalNrOfTiles) }));
 				amountOfTilesLabel.setToolTipText(hint);
 			} catch (Exception e) {
-				amountOfTilesLabel.setText(" Amount of tiles in atlas: ? ");
+				amountOfTilesLabel.setText(String.format(baseText, new Object[] { "?" }));
 				log.error("", e);
 			}
 		}

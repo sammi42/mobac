@@ -9,16 +9,29 @@ import java.util.Arrays;
 
 import tac.utilities.CountingOutputStream;
 
+/**
+ * Creates a new tar file and allows to add files from the file system or
+ * "virtual files" that only exist in memory as <code>byte[]</code>.
+ */
 public class TarArchive {
 
 	protected CountingOutputStream tarFileStream;
 	protected File tarFile;
 	protected File baseDir;
 
+	/**
+	 * 
+	 * @param tarFile
+	 * @param baseDir
+	 *            root directory used for getting the relative path when adding
+	 *            a file from the file system. If only in memory files are added
+	 *            this parameter can be <code>null</code>
+	 * @throws FileNotFoundException
+	 */
 	public TarArchive(File tarFile, File baseDir) throws FileNotFoundException {
 		this.tarFile = tarFile;
 		this.tarFileStream = new CountingOutputStream(new BufferedOutputStream(
-				new FileOutputStream(tarFile)));
+				new FileOutputStream(tarFile, false)));
 		this.baseDir = baseDir;
 	}
 

@@ -19,8 +19,11 @@ public class MapSources {
 			// new tac.mapsources.LocalhostTestSource(), //
 			new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 			new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
-			new OsmHikingMap(), new MicrosoftMaps(), new MicrosoftVirtualEarth(),
-			new MicrosoftHybrid(), new OutdooractiveCom(), new MultimapCom(), new Cycloatlas() };
+			new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
+			new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
+			new MultimapCom(), new Cycloatlas(),
+	// new MapPlus() //does not work because of an unknown projection - cookie?
+	};
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -84,6 +87,20 @@ public class MapSources {
 			// System.out.println(s);
 			return s;
 		}
+	}
+
+	public static class MapPlus extends AbstractMapSource {
+
+		public MapPlus() {
+			super("Map+ (Swiss only)", 7, 16, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			int z = 17 - zoom;
+			return "http://mp1.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
+					+ "/t" + tiley + "l" + tilex + ".jpg";
+		}
+
 	}
 
 	public static class YahooMaps extends AbstractMapSource {
@@ -184,6 +201,19 @@ public class MapSources {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return "http://opentiles.com/nop/get.php?l=trails&z=" + zoom + "&x=" + tilex + "&y="
 					+ tiley;
+		}
+
+	}
+
+	public static class OpenArialMap extends AbstractMapSource {
+
+		public OpenArialMap() {
+			super("OpenArialMap", 0, 18, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/" + zoom + "/"
+					+ tilex + "/" + tiley + ".jpg";
 		}
 
 	}

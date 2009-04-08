@@ -21,6 +21,7 @@ V E R S I O N  I N F O R M A T I O N
     layer is created (and later deleted) in the default system temp directory
  ~ fixed GoogleMapMaker map source
  + added map source OSM hiking: http://opentiles.com/nop/    
+ + added map source OpenArialMap    
  ! Loading tile store information in settings dialog blocked GUI
 
  0.9.7: (2009-03-05)

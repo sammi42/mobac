@@ -11,12 +11,23 @@ public class TACInfo {
 	private static String version = "unknown";
 	private static String revision = "";
 
+	/**
+	 * Show or hide the detailed revision info in the main windows title
+	 */
+	private static boolean titleHideRevision = false;
+
 	static {
+		initialite();
+	}
+
+	private static void initialite() {
 		InputStream propIn = StartTAC.class.getResourceAsStream("tac.properties");
 		try {
 			Properties props = new Properties();
 			props.load(propIn);
 			version = props.getProperty("tac.version");
+			titleHideRevision = Boolean.parseBoolean(props
+					.getProperty("tac.revision.hide", "false"));
 		} catch (Exception e) {
 		} finally {
 			Utilities.closeStream(propIn);
@@ -42,7 +53,10 @@ public class TACInfo {
 	}
 
 	public static String getCompleteTitle() {
-		return "TrekBuddy Atlas Creator v" + version + " " + revision;
+		String title = "TrekBuddy Atlas Creator v" + version;
+		if (!titleHideRevision)
+			title += " " + revision;
+		return title;
 	}
 
 }

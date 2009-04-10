@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 public enum TileImageColorDepth {
 	Unchanged("Do not change", -1), EightBit("8 bit (256 colors)", 256), FourBit(
-			"4 bit (16 colors)", 26);
+			"4 bit (16 colors)", 16);
 
 	public static TileImageColorDepth getByColorCountDefault(int colorCount) {
 		try {

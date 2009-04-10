@@ -20,11 +20,15 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
+import org.apache.log4j.Logger;
+
 import tac.program.TACInfo;
 
 public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 	private static final TACExceptionHandler instance = new TACExceptionHandler();
+
+	private static final Logger log = Logger.getLogger(TACExceptionHandler.class);
 
 	public static void registerForCurrentThread() {
 		Thread.setDefaultUncaughtExceptionHandler(instance);
@@ -39,7 +43,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	}
 
 	public void uncaughtException(Thread t, Throwable e) {
-		e.printStackTrace();
+		log.error("Uncaught exception: ", e);
 		showExceptionDialog(e);
 	}
 

@@ -42,7 +42,7 @@
 		<copy todir="build" overwrite="true">
 			<fileset dir="src">
 				<include name="**/*.properties" />
-				<include name="**/*.png" />
+			    <include name="tac/resources/**" />
 			</fileset>
 		</copy>
 	</target>

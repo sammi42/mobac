@@ -145,6 +145,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 		updateZoomLevelCheckBoxes();
 		updateGridSizeCombo();
 		updateCustomTileProcessingControlsState();
+		zoomChanged(previewMap.getZoom());
 	}
 
 	private void createControls() {

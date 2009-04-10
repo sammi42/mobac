@@ -114,7 +114,7 @@
 			<fileset dir="./">
 				<include name="${jar.name}" />
 				<include name="gpl.txt" />
-				<include name="README.txt" />
+				<include name="README.HTM" />
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
 			</fileset>
@@ -128,7 +128,7 @@
 				<include name="log4j.xml" />
 				<include name="build.xml" />
 				<include name="gpl.txt" />
-				<include name="README.txt" />
+				<include name="README.HTM" />
 				<include name="CHANGELOG.txt" />
 				<include name="TODO.txt" />
 				<include name="start.*" />

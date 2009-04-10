@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>TrekBuddy Atlas Creator - Readme</title>
+</head>
+<body>
+<h1>TrekBuddy Atlas Creator - Readme</h1>
+<p>This is the readme file for the TrekBuddy Atlas Creator (TAC)
+application. <br>
+TAC is an open source project hosted on SourceForge.net: <br>
+<a href="http://sourceforge.net/projects/trekbuddyatlasc/">http://sourceforge.net/projects/trekbuddyatlasc/</a>
+</p>
+
+<h2>License</h2>
+<p>TrekBuddy Atlas Creator (TAC) is under GNU General Public License
+Version 2 (GPL). For details on the GPL see the license file <a
+	href="gpl.txt">gpl.txt</a></p>
+
+<h2>Description</h2>
+<p>This application creates atlases for the J2ME application <a
+	href="http://www.trekbuddy.net">TrekBuddy</a></p>
+
+<h2>Requirements</h2>
+<p>This application requires that a Java Runtime Environment version
+5 or higher is installed on the computer.</p>
+<p>For reducing the color depth of downloaded tiles the library
+files of the "Java Advanced Imaging" (JAI) have to be present on the
+system respectively in the same directory as
+TrekBuddy_Atlas_Creator.jar. Ready to use binary builds of the Java
+Advanced Imaging library can be obtained at <a
+	href="https://jai.dev.java.net/binary-builds.html">https://jai.dev.java.net/binary-builds.html</a>
+</p>
+
+<h2>Installation</h2>
+<p>Copy or move the unzipped files to a folder where you would like
+to have TAC installed.</p>
+
+<h2>Application start</h2>
+<p>The application is started by executing the <tt>start.cmd</tt> in
+a Windows environment or the <tt>start.sh</tt> under an Linux / Unix
+environment. At the first application start all necessary files and
+folders are automatically created by the application.</p>
+
+<h2>Using Atlases with TrekBuddy</h2>
+<p>After having downloaded and created an atlas the files belonging
+to the atlas can be found in the directory "atlases\[Current date and
+time]".</p>
+<p>The atlas itself consists of the the atlas startup file <tt>cr.tar</tt>
+(tar format) or <tt>cr.tba</tt> (regular/untared format) and the
+subdirectories containing the different maps of the atlas. For using the
+atlas with TrekBuddy copy the whole directory onto your J2ME device and
+open <tt>cr.tar</tt>/<tt>cr.tba</tt> (in the atlas root directory) in
+TrekBuddy as atlas.</p>
+
+<h2>Enhancement requests</h2>
+<p>If you are missing the map provider of your choice or have other
+enhancement ideas for TrekBuddy Atlas Creator feel free te open an <a
+	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105497">Feature
+Request Ticket</a> at SourceForge.</p>
+
+<h2>Problems, Bugs &amp; Errors</h2>
+
+<p>In case of unexpected errors while executing TrekBuddy Atlas
+Creator you may get presented a exception dialog containing detailed
+information about the problem. In such a case please create a new <a
+	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">ticket
+in the Bug Tracker</a> at Sourceforge. Please add the detailed exception
+information and a detailed description of your last performed actions.</p>
+
+<p>If you do not get such a exception dialog but have other general
+problems using TrekBuddy Atlas Creator you can activate the logging
+mechanism. To do so download the file <a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/log4j.xml">log4j.xml</a>
+and save it in the directory where the jar file of TrekBuddy Atlas
+Creator is installed to.</p>
+<p>The next start TrekBuddy Atlas Creator will create a log file in
+the current directory (on Windows this is usually the directory where
+the JAR file is located on Linux usually the profile directory). Please
+note that the log file is erased on each program start. If you think you
+have found a bug please file it in the <a
+	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">bug
+tracker at SourceForge</a>.</p>
+
+</body>
+</html>

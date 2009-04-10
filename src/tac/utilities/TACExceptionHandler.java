@@ -31,6 +31,9 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	private static final Logger log = Logger.getLogger(TACExceptionHandler.class);
 
 	public static void registerForCurrentThread() {
+		Thread t = Thread.currentThread();
+		log.trace("Registering TAC exception handler for thread \"" + t.getName() + "\" ["
+				+ t.getId() + "]");
 		Thread.setDefaultUncaughtExceptionHandler(instance);
 	}
 

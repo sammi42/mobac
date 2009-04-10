@@ -43,7 +43,7 @@ public class Google {
 	 */
 	public static class GoogleMapMaker extends GoogleSource {
 
-		public static final String SERVER_URL = "http://gt%d.google.com/mt?n=404&v=gwm.988&x=%d&y=%d&z=%d";
+		public static final String SERVER_URL = "http://gt%d.google.com/mt?n=404&v=gwm.992&x=%d&y=%d&z=%d";
 
 		public GoogleMapMaker() {
 			super("Google Map Maker", 17, "png");

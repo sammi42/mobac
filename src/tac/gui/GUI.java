@@ -268,10 +268,10 @@ public class GUI extends JFrame implements MapSelectionListener {
 			tileColorDepth.setEnabled(false);
 			tileColorDepthLabel.setEnabled(false);
 			tileColorDepth.setToolTipText("<html>This feature is deactivated because <br>"
-					+ "<b>Java Advanced Image library was not found</b>"
+					+ "<b>Java Advanced Image library was not found </b>"
 					+ "(jai_core.jar & jai_codec.jar)<br>"
-					+ "For more details please see the file <b>README.txt "
-					+ "in section requirements.</b></html>");
+					+ "For more details please see the file <b>README.HTM</b> "
+					+ "in section <b>Requirements</b>.</html>");
 		}
 	}
 

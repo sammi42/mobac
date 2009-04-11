@@ -37,6 +37,7 @@
 				<fileset dir="lib" includes="*.jar" />
 			</classpath>
 			<include name="tac/**" />
+			<include name="org/openstreetmap/**" />
 			<exclude name="**/unittest/**" />
 		</javac>
 		<copy todir="build" overwrite="true">
@@ -49,7 +50,6 @@
 
 	<target name="create_jar">
 		<delete file="${jar.name}" />
-		<unjar src="lib/JMapViewer.jar" dest="build" />
 		<unjar src="lib/log4j-1.2.15.jar" dest="build" />
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>

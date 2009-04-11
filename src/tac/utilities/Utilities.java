@@ -57,13 +57,17 @@ public class Utilities {
 
 	/**
 	 * 
-	 * @param imagePath
+	 * @param imageName
 	 *            imagePath resource path relative to the class {@link StartTAC}
 	 * @return
 	 */
-	public static ImageIcon loadResourceImageIcon(String imagePath) {
-		URL url = StartTAC.class.getResource("resources/images/" + imagePath);
+	public static ImageIcon loadResourceImageIcon(String imageName) {
+		URL url = StartTAC.class.getResource("resources/images/" + imageName);
 		return new ImageIcon(url);
+	}
+
+	public static URL getResourceImageUrl(String imageName) {
+		return StartTAC.class.getResource("resources/images/" + imageName);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package tac.gui.preview;
+package tac.gui.mapview;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;

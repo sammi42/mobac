@@ -1,4 +1,4 @@
-package tac.gui;
+package tac.gui.components;
 
 import java.awt.Color;
 import java.awt.Toolkit;

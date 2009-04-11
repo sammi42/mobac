@@ -1,4 +1,4 @@
-package tac.gui;
+package tac.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +12,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import tac.gui.preview.PreviewMap;
+import tac.gui.mapview.PreviewMap;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;

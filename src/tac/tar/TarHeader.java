@@ -7,28 +7,18 @@ public class TarHeader {
 	private File baseFilePath;
 
 	private int fileNameLength;
-	private char[] fileName;
-	private char[] fileMode;
-	private char[] fileOwnerUserID;
-	private char[] fileOwnerGroupID;
-	private char[] fileSize;
-	private char[] lastModificationTime;
-	private char[] checksum;
-	private char[] linkIndicator;
-	private char[] nameOfLinkedFile;
-	private char[] padding;
+	private final char[] fileName = new char[100];
+	private final char[] fileMode = new char[8];
+	private final char[] fileOwnerUserID = new char[8];
+	private final char[] fileOwnerGroupID = new char[8];
+	private final char[] fileSize = new char[12];
+	private final char[] lastModificationTime = new char[12];
+	private final char[] checksum = new char[8];
+	private final char[] linkIndicator = new char[1];
+	private final char[] nameOfLinkedFile = new char[100];
+	private static final char[] padding = new char[255];
 
 	public TarHeader() {
-		fileName = new char[100];
-		fileMode = new char[8];
-		fileOwnerUserID = new char[8];
-		fileOwnerGroupID = new char[8];
-		fileSize = new char[12];
-		lastModificationTime = new char[12];
-		checksum = new char[8];
-		linkIndicator = new char[1];
-		nameOfLinkedFile = new char[100];
-		padding = new char[255];
 	}
 
 	public TarHeader(File theFile, File theBaseFilePath) {
@@ -42,8 +32,6 @@ public class TarHeader {
 		this.setFileSize(theFile);
 		this.setLastModificationTime(theFile);
 		this.setLinkIndicator(theFile);
-		this.setNameOfLinkedFile();
-		this.setPadding();
 		this.setChecksum();
 	}
 
@@ -56,23 +44,21 @@ public class TarHeader {
 		this.setFileSize(fileSize);
 		this.setLastModificationTime(System.currentTimeMillis());
 		this.setLinkIndicator(isDirectory);
-		this.setNameOfLinkedFile();
-		this.setPadding();
 		this.setChecksum();
 	}
 
 	public void read(byte[] buffer) {
-		String fn = new String(buffer, 0, 100);
-		fileName = fn.toCharArray();
+		String fn = new String(buffer, 0, 512);
+		fn.getChars(0, 100, fileName, 0);
 		fileNameLength = fn.indexOf('\0');
-		fileMode = new String(buffer, 100, 8).toCharArray();
-		fileOwnerUserID = new String(buffer, 108, 8).toCharArray();
-		fileOwnerGroupID = new String(buffer, 116, 8).toCharArray();
-		fileSize = new String(buffer, 124, 12).toCharArray();
-		lastModificationTime = new String(buffer, 136, 12).toCharArray();
-		checksum = new String(buffer, 148, 8).toCharArray();
-		linkIndicator = new String(buffer, 156, 1).toCharArray();
-		nameOfLinkedFile = new String(buffer, 157, 100).toCharArray();
+		fn.getChars(100, 108, fileMode, 0);
+		fn.getChars(108, 116, fileOwnerUserID, 0);
+		fn.getChars(116, 124, fileOwnerGroupID, 0);
+		fn.getChars(124, 136, fileSize, 0);
+		fn.getChars(136, 148, lastModificationTime, 0);
+		fn.getChars(148, 156, checksum, 0);
+		fn.getChars(156, 157, linkIndicator, 0);
+		fn.getChars(157, 257, nameOfLinkedFile, 0);
 	}
 
 	// S E T - Methods
@@ -110,39 +96,15 @@ public class TarHeader {
 	}
 
 	public void setFileMode() {
-
-		fileMode[0] = ' ';
-		fileMode[1] = ' ';
-		fileMode[2] = ' ';
-		fileMode[3] = '7';
-		fileMode[4] = '7';
-		fileMode[5] = '7';
-		fileMode[6] = ' ';
-		fileMode[7] = 0;
+		"   777 \0".getChars(0, 8, fileMode, 0);
 	}
 
 	public void setFileOwnerUserID() {
-
-		fileOwnerUserID[0] = ' ';
-		fileOwnerUserID[1] = ' ';
-		fileOwnerUserID[2] = ' ';
-		fileOwnerUserID[3] = ' ';
-		fileOwnerUserID[4] = ' ';
-		fileOwnerUserID[5] = '0';
-		fileOwnerUserID[6] = ' ';
-		fileOwnerUserID[7] = 0;
+		"     0  \0".getChars(0, 8, fileOwnerUserID, 0);
 	}
 
 	public void setFileOwnerGroupID() {
-
-		fileOwnerGroupID[0] = ' ';
-		fileOwnerGroupID[1] = ' ';
-		fileOwnerGroupID[2] = ' ';
-		fileOwnerGroupID[3] = ' ';
-		fileOwnerGroupID[4] = ' ';
-		fileOwnerGroupID[5] = '0';
-		fileOwnerGroupID[6] = ' ';
-		fileOwnerGroupID[7] = 0;
+		"     0  \0".getChars(0, 8, fileOwnerGroupID, 0);
 	}
 
 	public void setFileSize(File theFile) {
@@ -258,18 +220,6 @@ public class TarHeader {
 			linkIndicator[0] = '5';
 		} else {
 			linkIndicator[0] = '0';
-		}
-	}
-
-	public void setNameOfLinkedFile() {
-		for (int i = 0; i < 100; i++) {
-			nameOfLinkedFile[i] = 0;
-		}
-	}
-
-	public void setPadding() {
-		for (int i = 0; i < 255; i++) {
-			padding[i] = 0;
 		}
 	}
 

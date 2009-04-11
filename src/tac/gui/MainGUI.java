@@ -41,9 +41,14 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.StartTAC;
-import tac.gui.preview.GridZoom;
-import tac.gui.preview.MapSelectionListener;
-import tac.gui.preview.PreviewMap;
+import tac.gui.components.AtlasTree;
+import tac.gui.components.JAtlasNameField;
+import tac.gui.components.JCoordinateField;
+import tac.gui.components.JTileSizeCombo;
+import tac.gui.components.JTileSizeField;
+import tac.gui.mapview.GridZoom;
+import tac.gui.mapview.MapSelectionListener;
+import tac.gui.mapview.PreviewMap;
 import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
 import tac.program.EastNorthCoordinate;
@@ -63,11 +68,11 @@ import tac.utilities.PersistentProfiles;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
-public class GUI extends JFrame implements MapSelectionListener {
+public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = -8444942802691874960L;
 
-	private static Logger log = Logger.getLogger(GUI.class);
+	private static Logger log = Logger.getLogger(MainGUI.class);
 
 	private static Color labelBackgroundColor = new Color(0, 0, 0, 127);
 	private static Color labelForegroundColor = Color.white;
@@ -111,7 +116,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private Settings settings;
 
-	public GUI() {
+	public MainGUI() {
 		super();
 		TACExceptionHandler.registerForCurrentThread();
 		settings = Settings.getInstance();
@@ -778,7 +783,7 @@ public class GUI extends JFrame implements MapSelectionListener {
 
 	private class SettingsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			SettingsGUI.showSettingsDialog(GUI.this);
+			SettingsGUI.showSettingsDialog(MainGUI.this);
 		}
 	}
 

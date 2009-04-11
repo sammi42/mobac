@@ -1,4 +1,4 @@
-package tac.gui.preview;
+package tac.gui.mapview;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;

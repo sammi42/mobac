@@ -5,7 +5,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
-import tac.gui.GUI;
+import tac.gui.MainGUI;
 import tac.program.Logging;
 import tac.program.Settings;
 
@@ -22,7 +22,7 @@ public class StartTAC {
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				GUI g = new GUI();
+				MainGUI g = new MainGUI();
 				g.setVisible(true);
 			}
 		});

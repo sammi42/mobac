@@ -1,4 +1,4 @@
-package tac.gui.preview;
+package tac.gui.mapview;
 
 public class GridZoom {
 

@@ -1,4 +1,4 @@
-package tac.gui;
+package tac.gui.components;
 
 import java.awt.Toolkit;
 import java.util.regex.Pattern;

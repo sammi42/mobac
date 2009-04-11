@@ -1,4 +1,4 @@
-package tac.gui.preview;
+package tac.gui.mapview;
 
 import tac.program.EastNorthCoordinate;
 

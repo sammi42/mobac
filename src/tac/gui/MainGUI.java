@@ -51,10 +51,8 @@ import tac.gui.mapview.MapSelectionListener;
 import tac.gui.mapview.PreviewMap;
 import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
-import tac.program.EastNorthCoordinate;
 import tac.program.MapCreatorCustom;
 import tac.program.MapSelection;
-import tac.program.Profile;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
@@ -62,6 +60,8 @@ import tac.program.MapCreatorCustom.TileImageFormat;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AutoCutMultiMapLayer;
+import tac.program.model.EastNorthCoordinate;
+import tac.program.model.Profile;
 import tac.program.model.TileImageColorDepth;
 import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
@@ -238,13 +238,13 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		amountOfTilesLabel.setForeground(labelForegroundColor);
 
 		// coordinates panel
-		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
+		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, true);
 		latMaxTextField.setActionCommand("latMaxTextField");
-		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
+		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX, false);
 		lonMinTextField.setActionCommand("longMinTextField");
-		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
+		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX, true);
 		lonMaxTextField.setActionCommand("longMaxTextField");
-		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
+		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, false);
 		latMinTextField.setActionCommand("latMinTextField");
 
 		// custom tile size

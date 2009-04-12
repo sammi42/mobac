@@ -31,8 +31,8 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import tac.StartTAC;
-import tac.program.Profile;
 import tac.program.Settings;
+import tac.program.model.Profile;
 
 public class Utilities {
 

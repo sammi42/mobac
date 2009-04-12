@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.model;
 
 import tac.mapsources.MapSources;
 

@@ -25,9 +25,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.mapsources.Google.GoogleMaps;
-import tac.program.EastNorthCoordinate;
 import tac.program.MapSelection;
 import tac.program.Settings;
+import tac.program.model.EastNorthCoordinate;
 
 public class PreviewMap extends JMapViewer implements ComponentListener {
 
@@ -172,8 +172,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		Point tlc = getTopLeftCoordinate();
 		if (gridZoom >= 0) {
 			// Only paint grid if it is enabled (gridZoom not -1)
-			int w = getWidth();
-			int h = getHeight();
+			int max = (256 << zoom);
+			int w = Math.min(getWidth(), max - tlc.x);
+			int h = Math.min(getHeight(), max - tlc.y);
 			g.setColor(GRID_COLOR);
 			int off_x = (tlc.x % Tile.SIZE);
 			int off_y = (tlc.y % Tile.SIZE);

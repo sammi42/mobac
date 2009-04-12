@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import tac.program.Profile;
+import tac.program.model.Profile;
 
 public class PersistentProfiles {
 

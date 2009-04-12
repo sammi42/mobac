@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import tac.mapsources.MapSources;
 import tac.mapsources.Google.GoogleSource;
 import tac.program.model.AtlasOutputFormat;
+import tac.program.model.EastNorthCoordinate;
 import tac.program.model.TileImageColorDepth;
 import tac.utilities.Utilities;
 

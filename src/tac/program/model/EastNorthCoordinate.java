@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.model;
 
 import java.awt.geom.Point2D;
 

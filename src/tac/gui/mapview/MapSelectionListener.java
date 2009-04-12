@@ -1,6 +1,6 @@
 package tac.gui.mapview;
 
-import tac.program.EastNorthCoordinate;
+import tac.program.model.EastNorthCoordinate;
 
 public interface MapSelectionListener {
 

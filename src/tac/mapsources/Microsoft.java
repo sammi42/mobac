@@ -2,6 +2,11 @@ package tac.mapsources;
 
 public class Microsoft {
 
+	/**
+	 * Uses QuadTree coordinate system for addressing a tile. See <a
+	 * href="http://msdn.microsoft.com/en-us/library/bb259689.aspx">Virtual
+	 * Earth Tile System</a> for details.
+	 */
 	public static abstract class AbstractMicrosoft extends AbstractMapSource {
 
 		protected static final char[] NUM_CHAR = { '0', '1', '2', '3' };

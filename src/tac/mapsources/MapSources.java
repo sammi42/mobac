@@ -58,6 +58,7 @@ public class MapSources {
 
 	/**
 	 * Map from Multimap.com - incomplete for high zoom levels
+	 * Uses Quad-Tree coordinate notation?
 	 */
 	public static class MultimapCom extends AbstractMapSource {
 

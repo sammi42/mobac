@@ -1,6 +1,10 @@
 package tac.mapsources;
 
+import org.apache.log4j.Logger;
+
 public class Google {
+
+	private static final Logger log = Logger.getLogger(MapSources.class);
 
 	public static abstract class GoogleSource extends AbstractMapSource {
 
@@ -10,6 +14,13 @@ public class Google {
 
 		public GoogleSource(String name, int maxZoom, String tileType) {
 			super(name, 0, maxZoom, tileType);
+		}
+
+		protected String loadUrl() {
+			String url = System.getProperty(this.getClass().getSimpleName() + ".url");
+			if (url == null)
+				log.error("Unable to load url for " + this.getClass().getSimpleName());
+			return url;
 		}
 
 		protected int getNextServerNum() {
@@ -22,10 +33,11 @@ public class Google {
 
 	public static class GoogleMaps extends GoogleSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2.92&hl=%s&x=%d&y=%d&z=%d";
+		public static String SERVER_URL;
 
 		public GoogleMaps() {
 			super("Google Maps", 17, "png");
+			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
@@ -43,10 +55,11 @@ public class Google {
 	 */
 	public static class GoogleMapMaker extends GoogleSource {
 
-		public static final String SERVER_URL = "http://gt%d.google.com/mt?n=404&v=gwm.992&x=%d&y=%d&z=%d";
+		public static String SERVER_URL;
 
 		public GoogleMapMaker() {
 			super("Google Map Maker", 17, "png");
+			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
@@ -61,10 +74,11 @@ public class Google {
 
 	public static class GoogleTerrain extends GoogleSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.com/mt?v=w2p.87&hl=%s&x=%d&y=%d&z=%d";
+		public static String SERVER_URL;
 
 		public GoogleTerrain() {
 			super("Google Terrain", 15, "jpg");
+			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
@@ -77,12 +91,16 @@ public class Google {
 
 	}
 
+	/**
+	 * Google Maps China (Ditu) http://ditu.google.com/
+	 */
 	public static class GoogleMapsChina extends GoogleSource {
 
-		public static final String SERVER_URL = "http://mt%d.google.cn/mt?v=cn1.7&hl=zh-CN&x=%d&y=%d&z=%d";
+		public static String SERVER_URL;
 
 		public GoogleMapsChina() {
 			super("Google Maps China", 17, "png");
+			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
@@ -102,10 +120,11 @@ public class Google {
 
 	public static class GoogleEarth extends GoogleSource {
 
-		public static final String SERVER_URL = "http://khm%d.google.com/kh/v=36&hl=%s&x=%d&y=%d&z=%d&s=%s";
+		public static String SERVER_URL;
 
 		public GoogleEarth() {
 			super("Google Earth", 20, "jpg");
+			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {

@@ -21,9 +21,9 @@ public class CustomMapSource extends AbstractMapSource {
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		String tmp = url;
-		tmp = tmp.replace("$x", Integer.toString(tilex));
-		tmp = tmp.replace("$y", Integer.toString(tiley));
-		tmp = tmp.replace("$zoom", Integer.toString(zoom));
+		tmp = tmp.replace("{$x}", Integer.toString(tilex));
+		tmp = tmp.replace("{$y}", Integer.toString(tiley));
+		tmp = tmp.replace("{$z}", Integer.toString(zoom));
 		return tmp;
 	}
 }

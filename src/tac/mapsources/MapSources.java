@@ -1,8 +1,14 @@
 package tac.mapsources;
 
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.StartTAC;
 import tac.mapsources.Google.GoogleEarth;
 import tac.mapsources.Google.GoogleMapMaker;
 import tac.mapsources.Google.GoogleMaps;
@@ -11,19 +17,28 @@ import tac.mapsources.Google.GoogleTerrain;
 import tac.mapsources.Microsoft.MicrosoftHybrid;
 import tac.mapsources.Microsoft.MicrosoftMaps;
 import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
+import tac.utilities.Utilities;
 
 public class MapSources {
 
-	private static TileSource[] MAP_SOURCES = {
-			// For debugging purposes
-			// new tac.mapsources.LocalhostTestSource(), //
-			new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
-			new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
-			new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
-			new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
-			new MultimapCom(), new Cykloatlas(),
-	// new MapPlus() //does not work because of an unknown projection - cookie?
-	};
+	private static final Logger log = Logger.getLogger(MapSources.class);
+
+	private static TileSource[] MAP_SOURCES;
+
+	static {
+		loadMapSourceProperties();
+		MAP_SOURCES = new TileSource[] {
+				// For debugging purposes
+				// new tac.mapsources.LocalhostTestSource(), //
+				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
+				new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(),
+				new CycleMap(), new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
+				new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
+				new MultimapCom(), new Cykloatlas(),
+		// new MapPlus() //does not work because of an unknown projection -
+		// cookie?
+		};
+	}
 
 	public static TileSource[] getMapSources() {
 		return MAP_SOURCES;
@@ -219,5 +234,29 @@ public class MapSources {
 					+ tilex + "/" + tiley + ".jpg";
 		}
 
+	}
+
+	/**
+	 * Merges the mapsources property into the system property bundle
+	 */
+	public static void loadMapSourceProperties() {
+		InputStream propIn = StartTAC.class.getResourceAsStream("mapsources.properties");
+		try {
+			Properties systemProps = System.getProperties();
+			Properties props = new Properties();
+			props.load(propIn);
+			for (Map.Entry<Object, Object> entry : props.entrySet()) {
+				String key = (String) entry.getKey();
+				Object o = systemProps.getProperty(key);
+				if (o == null) {
+					String value = (String) entry.getValue();
+					systemProps.setProperty(key, value);
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error while reading mapsources.properties: ", e);
+		} finally {
+			Utilities.closeStream(propIn);
+		}
 	}
 }

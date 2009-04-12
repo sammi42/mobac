@@ -21,7 +21,7 @@ public class MapSources {
 			new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(), new CycleMap(),
 			new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
 			new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
-			new MultimapCom(), new Cycloatlas(),
+			new MultimapCom(), new Cykloatlas(),
 	// new MapPlus() //does not work because of an unknown projection - cookie?
 	};
 
@@ -118,18 +118,21 @@ public class MapSources {
 
 	}
 
-	public static class Cycloatlas extends AbstractMapSource {
+	/**
+	 * CykloServer http://www.cykloserver.cz/cykloatlas/index.php
+	 */
+	public static class Cykloatlas extends AbstractMapSource {
 
-		public Cycloatlas() {
-			super("Cycloatlas", 7, 14, "png");
+		public Cykloatlas() {
+			super("Cykloatlas", 7, 14, "png");
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			String z = Integer.toString(zoom);
 			if (zoom >= 13)
 				z += "c";
-			return "http://services.ezekiel-ngx.tmapserver.cz/tiles/gm/shc/" + zoom + "/" + tilex
-					+ "/" + tiley + ".png";
+			return "http://services.tmapserver.cz/tiles/gm/shc/" + z + "/" + tilex + "/" + tiley
+					+ ".png";
 		}
 
 		@Override

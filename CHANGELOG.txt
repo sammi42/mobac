@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 1.1: (2009-??-??)
+ ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)
+
  1.0: (2009-04-10)
  
  + Reload current map view by pressing "F5"

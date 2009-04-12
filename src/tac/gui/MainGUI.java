@@ -581,6 +581,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private void updateGridSizeCombo() {
 		int maxZoom = previewMap.getTileSource().getMaxZoom();
 		int minZoom = previewMap.getTileSource().getMinZoom();
+		GridZoom lastGridZoom = (GridZoom) gridZoomCombo.getSelectedItem();
 		gridZoomCombo.removeAllItems();
 		gridZoomCombo.setMaximumRowCount(maxZoom + 1);
 		gridZoomCombo.addItem(new GridZoom(-1) {
@@ -594,6 +595,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		for (int i = maxZoom; i >= minZoom; i--) {
 			gridZoomCombo.addItem(new GridZoom(i));
 		}
+		if (lastGridZoom != null)
+			gridZoomCombo.setSelectedItem(lastGridZoom);
 	}
 
 	private class DisplaySelectionButtonListener implements ActionListener {

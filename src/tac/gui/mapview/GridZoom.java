@@ -17,4 +17,10 @@ public class GridZoom {
 		return "Grid zoom " + zoom;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof GridZoom))
+			return false;
+		return ((GridZoom) obj).zoom == zoom;
+	}
 }

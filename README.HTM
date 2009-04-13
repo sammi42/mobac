@@ -60,7 +60,6 @@ enhancement ideas for TrekBuddy Atlas Creator feel free te open an <a
 Request Ticket</a> at SourceForge.</p>
 
 <h2>Problems, Bugs &amp; Errors</h2>
-
 <p>In case of unexpected errors while executing TrekBuddy Atlas
 Creator you may get presented a exception dialog containing detailed
 information about the problem. In such a case please create a new <a
@@ -81,6 +80,17 @@ note that the log file is erased on each program start. If you think you
 have found a bug please file it in the <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">bug
 tracker at SourceForge</a>.</p>
+
+<h2>Details for advanced users</h2>
+<p>Google often changes the url that is used to access the map
+tiles. Therefore it may happen that Trekbuddy Atlas Creator is unable to
+load tiles from Google and there is no new release that fixes this
+problem. In such a case advanced users can open the file <tt>TrekBuddy_Atlas_Creator.jar</tt>
+with an archive program like WinZip/WinRAR/7Zip... and select the file <tt>tac\mapsources.properties</tt>.
+This text file contains the map url templates for different map sources.
+Each url template contains a specific number of placeholders in form of
+<b>%d</b> and <b>%s</b>. Do not remove those parameters or change their
+order within the url. All other parts of the url can be modified.</p>
 
 </body>
 </html>

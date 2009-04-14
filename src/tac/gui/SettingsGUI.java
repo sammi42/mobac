@@ -15,7 +15,6 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
+import tac.gui.components.JMapSizeCombo;
 import tac.mapsources.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
@@ -49,7 +49,6 @@ public class SettingsGUI extends JDialog {
 
 	private static Logger log = Logger.getLogger(SettingsGUI.class);
 
-	private static Vector<Integer> mapSizes;
 	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
 
 	private JComboBox googleLang;
@@ -60,7 +59,7 @@ public class SettingsGUI extends JDialog {
 	private JLabel totalTileCountLabel;
 	private JLabel totalTileSizeLabel;
 
-	private JComboBox mapSize;
+	private JMapSizeCombo mapSize;
 
 	private JComboBox threadCount;
 
@@ -75,17 +74,6 @@ public class SettingsGUI extends JDialog {
 	private Thread tileStoreAsyncThread = null;
 
 	private List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<TileSourceInfoComponents>();
-
-	static {
-		// Sizes from 1024 to 32768
-		mapSizes = new Vector<Integer>(10);
-		mapSizes.addElement(new Integer(32767));
-		mapSizes.addElement(new Integer(30000));
-		mapSizes.addElement(new Integer(25000));
-		mapSizes.addElement(new Integer(20000));
-		mapSizes.addElement(new Integer(15000));
-		mapSizes.addElement(new Integer(10000));
-	}
 
 	static void showSettingsDialog(final JFrame owner) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -298,7 +286,7 @@ public class SettingsGUI extends JDialog {
 	private void addMapSizePanel() {
 		JPanel backGround = createNewTab("Map size");
 		backGround.setLayout(new GridBagLayout());
-		mapSize = new JComboBox(mapSizes);
+		mapSize = new JMapSizeCombo();
 
 		JLabel mapSizeLabel = new JLabel("<html>If the image of the selected region to download "
 				+ "is larger in <br> height or width than the mapsize it will be splitted into "
@@ -368,11 +356,9 @@ public class SettingsGUI extends JDialog {
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
 		int size = s.getMaxMapSize();
-		int index = mapSizes.indexOf(new Integer(size));
-		if (index < 0)
-			index = 0;
-		mapSize.setSelectedIndex(index);
-		index = Arrays.binarySearch(THREADCOUNT_LIST, s.getThreadCount());
+		mapSize.setValue(size);
+
+		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.getThreadCount());
 		if (index < 0)
 			index = 0;
 		threadCount.setSelectedIndex(index);

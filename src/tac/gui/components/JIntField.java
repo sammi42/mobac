@@ -1,51 +1,50 @@
 package tac.gui.components;
 
 import java.awt.Color;
-import java.awt.Toolkit;
 
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 
+import tac.gui.model.NumericDocument;
 import tac.utilities.Utilities;
 
-public class JTileSizeField extends JTextField {
+public class JIntField extends JTextField {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final Color ERROR_COLOR = new Color(255, 100, 100);
 
-	public static final int MIN = 50;
+	public int min = 0;
 
-	public static final int MAX = 1792;
+	public int max = 0;
 
-	private static final String INVALID_TEXT = "<html>Invalid tile size!<br>"
-			+ "Please enter a number between %d and %d</html>";
+	private String errorText;
 
 	private InputListener listener;
 	private boolean inputIsValid = true;
 
-	public JTileSizeField() {
-		super(4);
+	public JIntField(int min, int max, int columns, String errorText) {
+		super(columns);
+		this.min = min;
+		this.max = max;
+		this.errorText = errorText;
 		setDocument(new NumericDocument());
 		listener = new InputListener();
 		listener.checkInput(null);
 		setBorder(new EmptyBorder(2, 2, 2, 0));
 	}
 
-	public int getTileSize() throws NumberFormatException {
+	public int getValue() throws NumberFormatException {
 		return Integer.parseInt(getText());
 	}
 
-	public void setTileSize(int newTileSize, boolean check) {
-		if (newTileSize <= 0)
+	public void setValue(int newValue, boolean check) {
+		if (newValue <= 0)
 			super.setText("");
 		else
-			super.setText(Integer.toString(newTileSize));
+			super.setText(Integer.toString(newValue));
 		if (check)
 			listener.checkInput(null);
 	}
@@ -61,31 +60,9 @@ public class JTileSizeField extends JTextField {
 	private boolean testInputValid() {
 		try {
 			int i = Integer.parseInt(getText());
-			return (i >= MIN) && (i <= MAX);
+			return (i >= min) && (i <= max);
 		} catch (NumberFormatException e) {
 			return false;
-		}
-	}
-
-	public class NumericDocument extends PlainDocument {
-		private static final long serialVersionUID = 1L;
-		public static final String NUMERIC = "0123456789";
-
-		public void insertString(int offset, String str, AttributeSet attr)
-				throws BadLocationException {
-
-			if (str == null)
-				return;
-
-			for (char c : str.toCharArray()) {
-				if (NUMERIC.indexOf(c) == -1) {
-					Toolkit.getDefaultToolkit().beep();
-					return;
-				}
-			}
-
-			super.insertString(offset, str, attr);
-
 		}
 	}
 
@@ -94,8 +71,8 @@ public class JTileSizeField extends JTextField {
 		private Color defaultColor;
 
 		private InputListener() {
-			defaultColor = JTileSizeField.this.getBackground();
-			JTileSizeField.this.getDocument().addDocumentListener(this);
+			defaultColor = JIntField.this.getBackground();
+			JIntField.this.getDocument().addDocumentListener(this);
 		}
 
 		private void checkInput(DocumentEvent de) {
@@ -112,11 +89,11 @@ public class JTileSizeField extends JTextField {
 
 		private void setDisplayedValidMode(boolean valid) {
 			Color newC = valid ? defaultColor : ERROR_COLOR;
-			JTileSizeField.this.setBackground(newC);
-			String toolTip = valid ? "" : String.format(INVALID_TEXT, new Object[] { MIN, MAX });
-			JTileSizeField.this.setToolTipText(toolTip);
+			JIntField.this.setBackground(newC);
+			String toolTip = valid ? "" : String.format(errorText, new Object[] { min, max });
+			JIntField.this.setToolTipText(toolTip);
 			if (toolTip.length() > 0)
-				Utilities.showTooltipNow(JTileSizeField.this);
+				Utilities.showTooltipNow(JIntField.this);
 		}
 
 		public void changedUpdate(DocumentEvent e) {

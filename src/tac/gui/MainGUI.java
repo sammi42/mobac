@@ -45,7 +45,6 @@ import tac.gui.components.AtlasTree;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JCoordinateField;
 import tac.gui.components.JTileSizeCombo;
-import tac.gui.components.JTileSizeField;
 import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapSelectionListener;
 import tac.gui.mapview.PreviewMap;
@@ -516,8 +515,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
 		enableCustomTileProcessingCheckButton.setSelected(settings.isCustomTileSize());
-		tileSizeHeight.setTileSize(settings.getTileHeight());
-		tileSizeWidth.setTileSize(settings.getTileWidth());
+		tileSizeHeight.setValue(settings.getTileHeight());
+		tileSizeWidth.setValue(settings.getTileWidth());
 
 		setSize(settings.getWindowDimension());
 		Point windowLocation = settings.getWindowLocation();
@@ -543,8 +542,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 					lonMinTextField.getCoordinateOrNaN()));
 
 			s.setCustomTileSize(enableCustomTileProcessingCheckButton.isSelected());
-			s.setTileWidth(tileSizeWidth.getTileSize());
-			s.setTileHeight(tileSizeHeight.getTileSize());
+			s.setTileWidth(tileSizeWidth.getValue());
+			s.setTileHeight(tileSizeHeight.getValue());
 			s.setTileColorDepth((TileImageColorDepth) tileColorDepth.getSelectedItem());
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 			s.setWindowMaximized(maximized);
@@ -685,8 +684,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				lonMinTextField.setCoordinate(profile.getLongitudeMin());
 				lonMaxTextField.setCoordinate(profile.getLongitudeMax());
 
-				tileSizeWidth.setTileSize(profile.getTileSizeWidth());
-				tileSizeHeight.setTileSize(profile.getTileSizeHeight());
+				tileSizeWidth.setValue(profile.getTileSizeWidth());
+				tileSizeHeight.setValue(profile.getTileSizeHeight());
 
 				atlasNameTextField.setText(profile.getAtlasName());
 
@@ -766,8 +765,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				}
 
 				profile.setZoomLevels(zoomLevels);
-				profile.setTileSizeWidth(tileSizeWidth.getTileSize());
-				profile.setTileSizeHeight(tileSizeHeight.getTileSize());
+				profile.setTileSizeWidth(tileSizeWidth.getValue());
+				profile.setTileSizeHeight(tileSizeHeight.getValue());
 
 				if (previousProfile == null) {
 					profilesVector.addElement(profile);
@@ -808,8 +807,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				MapCreatorCustom.TileImageParameters customTileParameters = null;
 				if (customTileSize) {
 					customTileParameters = new MapCreatorCustom.TileImageParameters();
-					customTileParameters.width = tileSizeWidth.getTileSize();
-					customTileParameters.height = tileSizeHeight.getTileSize();
+					customTileParameters.width = tileSizeWidth.getValue();
+					customTileParameters.height = tileSizeHeight.getValue();
 					customTileParameters.colorDepth = (TileImageColorDepth) tileColorDepth
 							.getSelectedItem();
 					customTileParameters.format = TileImageFormat.Unchanged;
@@ -924,8 +923,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		Settings settings = Settings.getInstance();
-		Dimension tileSize = new Dimension(tileSizeWidth.getTileSize(), tileSizeHeight
-				.getTileSize());
+		Dimension tileSize = new Dimension(tileSizeWidth.getValue(), tileSizeHeight.getValue());
 		int[] zoomLevels = sZL.getZoomLevels();
 		for (int zoom : zoomLevels) {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
@@ -988,13 +986,13 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		if (!latMinTextField.isInputValid())
 			errorText += "Value of \"Latitude Min\" must be between -85 and 85. \n";
 
-		if (!tileSizeHeight.isTileSizeValid())
-			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeField.MIN
-					+ " and " + JTileSizeField.MAX + ". \n";
+		if (!tileSizeHeight.isValueValid())
+			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeCombo.MIN
+					+ " and " + JTileSizeCombo.MAX + ". \n";
 
-		if (!tileSizeWidth.isTileSizeValid())
-			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeField.MIN
-					+ " and " + JTileSizeField.MAX + ". \n";
+		if (!tileSizeWidth.isValueValid())
+			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeCombo.MIN
+					+ " and " + JTileSizeCombo.MAX + ". \n";
 
 		if (checkCreateAtlas) {
 			if (atlasNameTextField.getText().length() < 1) {

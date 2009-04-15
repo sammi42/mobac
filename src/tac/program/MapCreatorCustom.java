@@ -7,14 +7,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.imageio.ImageIO;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.ColorQuantizerDescriptor;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
+import tac.optional.JavaAdvancedImaging;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.MapSlice;
 import tac.program.model.TileImageColorDepth;
@@ -135,12 +134,7 @@ public class MapCreatorCustom extends MapCreator {
 						int colors = 256;
 						if (param.colorDepth == TileImageColorDepth.FourBit)
 							colors = 16;
-
-						RenderedOp ro = ColorQuantizerDescriptor.create(tileImage,
-								ColorQuantizerDescriptor.MEDIANCUT, // 
-								new Integer(colors), // Max number of colors
-								null, null, new Integer(1), new Integer(1), null);
-						tileImage = ro.getAsBufferedImage();
+						tileImage = JavaAdvancedImaging.colorReduceMedianCut(tileImage, colors);
 					}
 					ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
 					if ((param.colorDepth == TileImageColorDepth.FourBit)

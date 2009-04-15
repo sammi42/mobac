@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.ColorQuantizerDescriptor;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import tac.StartTAC;
+import tac.optional.JavaAdvancedImaging;
 import tac.program.Settings;
 import tac.program.model.Profile;
 
@@ -44,11 +43,9 @@ public class Utilities {
 	public static boolean testJaiColorQuantizerAvailable() {
 		try {
 			BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_3BYTE_BGR);
-			RenderedOp ro = ColorQuantizerDescriptor.create(image,
-					ColorQuantizerDescriptor.MEDIANCUT, // 
-					new Integer(256), // Max number of colors
-					null, null, new Integer(1), new Integer(1), null);
-			image = ro.getAsBufferedImage();
+			image = JavaAdvancedImaging.colorReduceMedianCut(image, 256);
+		} catch (Exception e) {
+			return false;
 		} catch (NoClassDefFoundError e) {
 			return false;
 		}
@@ -324,4 +321,5 @@ public class Utilities {
 			return f.isDirectory();
 		}
 	}
+
 }

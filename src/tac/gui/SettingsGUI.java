@@ -42,6 +42,7 @@ import tac.program.Settings;
 import tac.program.TileStore;
 import tac.program.TileStore.TileStoreInfo;
 import tac.utilities.GBC;
+import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
 public class SettingsGUI extends JDialog {
@@ -85,6 +86,7 @@ public class SettingsGUI extends JDialog {
 
 	private SettingsGUI(JFrame owner) {
 		super(owner);
+		TACExceptionHandler.registerForCurrentThread();
 		setModal(true);
 		createJFrame();
 		createTabbedPane();
@@ -377,7 +379,7 @@ public class SettingsGUI extends JDialog {
 
 		s.setTileStoreEnabled(tileStoreEnabled.isSelected());
 
-		int size = ((Integer) mapSize.getSelectedItem()).intValue();
+		int size = mapSize.getValue();
 		s.setMaxMapSize(size);
 
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();

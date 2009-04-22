@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import tac.gui.MainGUI;
 import tac.program.Logging;
 import tac.program.Settings;
+import tac.utilities.TACExceptionHandler;
 
 public class StartTAC {
 	private static Logger log = Logger.getLogger(StartTAC.class);
@@ -15,6 +16,7 @@ public class StartTAC {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		Settings.getInstance().loadOrQuit();
+		TACExceptionHandler.installToolkitEventQueueProxy();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {

@@ -1,5 +1,7 @@
 package tac.utilities;
 
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -30,11 +32,15 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(TACExceptionHandler.class);
 
+	static {
+		Thread.setDefaultUncaughtExceptionHandler(instance);
+	}
+
 	public static void registerForCurrentThread() {
 		Thread t = Thread.currentThread();
 		log.trace("Registering TAC exception handler for thread \"" + t.getName() + "\" ["
 				+ t.getId() + "]");
-		Thread.setDefaultUncaughtExceptionHandler(instance);
+		t.setUncaughtExceptionHandler(instance);
 	}
 
 	public static TACExceptionHandler getInstance() {
@@ -46,6 +52,10 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	}
 
 	public void uncaughtException(Thread t, Throwable e) {
+		processException(t, e);
+	}
+
+	public static void processException(Thread t, Throwable e) {
 		log.error("Uncaught exception: ", e);
 		showExceptionDialog(e);
 	}
@@ -114,6 +124,29 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	public static void installToolkitEventQueueProxy() {
+		EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+		queue.push(new EventQueueProxy());
+	}
+
+	/**
+	 * Catching all Runtime Exceptions in Swing
+	 * 
+	 * http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions-
+	 * in-swing/
+	 */
+	protected static class EventQueueProxy extends EventQueue {
+
+		protected void dispatchEvent(AWTEvent newEvent) {
+			try {
+				super.dispatchEvent(newEvent);
+			} catch (Throwable e) {
+				TACExceptionHandler.processException(Thread.currentThread(), e);
+			}
+		}
+
 	}
 
 	public static void main(String[] args) {

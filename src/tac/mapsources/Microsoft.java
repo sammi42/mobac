@@ -11,6 +11,8 @@ public class Microsoft {
 
 		protected static final char[] NUM_CHAR = { '0', '1', '2', '3' };
 
+		protected String urlBase = ".ortho.tiles.virtualearth.net/tiles/";
+		protected String urlAppend = "?g=45";
 		protected int serverNum = 0;
 		protected int serverNumMax = 4;
 		protected char mapTypeChar;
@@ -33,8 +35,8 @@ public class Microsoft {
 				tiley >>= 1;
 			}
 			serverNum = (serverNum + 1) % serverNumMax;
-			return "http://" + mapTypeChar + serverNum + ".ortho.tiles.virtualearth.net/tiles/"
-					+ mapTypeChar + new String(tileNum) + "." + tileType + "?g=45";
+			return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar
+					+ new String(tileNum) + "." + tileType + urlAppend;
 		}
 
 		@Override
@@ -47,6 +49,17 @@ public class Microsoft {
 
 		public MicrosoftMaps() {
 			super("Microsoft Maps", "png", 'r');
+		}
+
+	}
+
+	public static class MicrosoftMapsChina extends AbstractMicrosoft {
+
+		public MicrosoftMapsChina() {
+			super("Microsoft Maps China", "png", 'r');
+			urlBase = ".tiles.ditu.live.com/tiles/";
+			urlAppend = "?g=1";
+			maxZoom = 18;
 		}
 
 	}

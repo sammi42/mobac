@@ -16,6 +16,7 @@ import tac.mapsources.Google.GoogleMapsChina;
 import tac.mapsources.Google.GoogleTerrain;
 import tac.mapsources.Microsoft.MicrosoftHybrid;
 import tac.mapsources.Microsoft.MicrosoftMaps;
+import tac.mapsources.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
 import tac.utilities.Utilities;
 
@@ -33,8 +34,8 @@ public class MapSources {
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 				new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(),
 				new CycleMap(), new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
-				new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OutdooractiveCom(),
-				new MultimapCom(), new Cykloatlas(),
+				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
+				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(),
 		// new MapPlus() //does not work because of an unknown projection -
 		// cookie?
 		};
@@ -57,8 +58,8 @@ public class MapSources {
 	}
 
 	/**
-	 * Map from Multimap.com - incomplete for high zoom levels
-	 * Uses Quad-Tree coordinate notation?
+	 * Map from Multimap.com - incomplete for high zoom levels Uses Quad-Tree
+	 * coordinate notation?
 	 */
 	public static class MultimapCom extends AbstractMapSource {
 
@@ -115,6 +116,20 @@ public class MapSources {
 			int z = 17 - zoom;
 			return "http://mp1.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
 					+ "/t" + tiley + "l" + tilex + ".jpg";
+		}
+
+	}
+
+	public static class Doculeo extends AbstractMapSource {
+
+		public Doculeo() {
+			super("Doculeo (Poland)", 7, 16, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+
+			// http://ed-pl-maps.osl.basefarm.net/tiles/maps/en_FI/6/35/21.png"
+			return "http://i.wp.pl/m/tiles004/c/%d/%d/00/00/00/zcx00089dy000558.png";
 		}
 
 	}

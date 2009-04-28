@@ -99,7 +99,7 @@ public class Google {
 		public static String SERVER_URL;
 
 		public GoogleMapsChina() {
-			super("Google Maps China", 17, "png");
+			super("Google Maps China", 19, "png");
 			SERVER_URL = loadUrl();
 		}
 

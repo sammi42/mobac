@@ -1,6 +1,7 @@
 package tac.tar;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 
 public class TarHeader {
 
@@ -287,9 +288,14 @@ public class TarHeader {
 		sb.append(nameOfLinkedFile);
 		sb.append(padding);
 
-		byte[] result = sb.toString().getBytes();
+		byte[] result;
+		try {
+			result = sb.toString().getBytes("US-ASCII");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e); // should never happen
+		}
 		if (result.length != 512)
-			throw new RuntimeException("Invaliud tar header size: " + result.length);
+			throw new RuntimeException("Invalid tar header size: " + result.length);
 		return result;
 	}
 

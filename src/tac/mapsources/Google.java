@@ -12,8 +12,8 @@ public class Google {
 
 		public static String LANG = "en";
 
-		public GoogleSource(String name, int maxZoom, String tileType) {
-			super(name, 0, maxZoom, tileType);
+		public GoogleSource(String name, int minZoom, int maxZoom, String tileType) {
+			super(name, minZoom, maxZoom, tileType);
 		}
 
 		protected String loadUrl() {
@@ -36,7 +36,7 @@ public class Google {
 		public static String SERVER_URL;
 
 		public GoogleMaps() {
-			super("Google Maps", 17, "png");
+			super("Google Maps", 0, 17, "png");
 			SERVER_URL = loadUrl();
 		}
 
@@ -58,7 +58,7 @@ public class Google {
 		public static String SERVER_URL;
 
 		public GoogleMapMaker() {
-			super("Google Map Maker", 17, "png");
+			super("Google Map Maker", 1, 17, "png");
 			SERVER_URL = loadUrl();
 		}
 
@@ -77,7 +77,7 @@ public class Google {
 		public static String SERVER_URL;
 
 		public GoogleTerrain() {
-			super("Google Terrain", 15, "jpg");
+			super("Google Terrain", 0, 15, "jpg");
 			SERVER_URL = loadUrl();
 		}
 
@@ -99,7 +99,7 @@ public class Google {
 		public static String SERVER_URL;
 
 		public GoogleMapsChina() {
-			super("Google Maps China", 19, "png");
+			super("Google Maps China", 0, 19, "png");
 			SERVER_URL = loadUrl();
 		}
 
@@ -123,7 +123,7 @@ public class Google {
 		public static String SERVER_URL;
 
 		public GoogleEarth() {
-			super("Google Earth", 20, "jpg");
+			super("Google Earth", 0, 20, "jpg");
 			SERVER_URL = loadUrl();
 		}
 

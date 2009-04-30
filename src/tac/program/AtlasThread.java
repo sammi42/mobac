@@ -122,7 +122,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String formattedDateString = sdf.format(date);
 
-		File atlasDir = new File(workingDir + "/atlases/" + formattedDateString);
+		File atlasDir = new File(workingDir + "/atlases/" + atlasName + "_" + formattedDateString);
 		atlasDir.mkdirs();
 
 		/***

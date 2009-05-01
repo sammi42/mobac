@@ -149,4 +149,25 @@ public class Google {
 		}
 
 	}
+
+	public static class GoogleEarthMapsOverlay extends GoogleSource {
+
+		public static String SERVER_URL;
+
+		public GoogleEarthMapsOverlay() {
+			super("Google Earth Maps Overlay", 0, 20, "png");
+			SERVER_URL = "http://mt{$servernum}.google.com/mt/v=w2t.92&hl=en&x={$x}&y={$y}&z={$z}";
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.IfModifiedSince;
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
+			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
+			return tileUrl;
+		}
+
+	}
+
 }

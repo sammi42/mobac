@@ -104,6 +104,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		setPreferredSize(new Dimension(400, 400));
 		setDisplayPositionByLatLon(50, 9, 3);
 		mapTileLayers.add(new DefaultMapTileLayer(this));
+		//mapTileLayers.add(new OverlayMapTileLayer(this, new Google.GoogleEarthMapsOverlay()));
 	}
 
 	protected void initializeZoomSlider() {

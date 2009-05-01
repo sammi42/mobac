@@ -35,23 +35,17 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	/** A Timer for smoothly moving the map area */
 	private static final Timer timer = new Timer(true);
 
-	/** How often to do the moving (milliseconds) */
-	private static long timerInterval = 10;
-
 	/** Does the moving */
 	private MoveTask moveTask = new MoveTask();
 
-	/** The horizontal direction of movement, -1:left, 0:stop, 1:right */
-	private int directionX = 0;
-
-	/** The vertical direction of movement, -1:up, 0:stop, 1:down */
-	private int directionY = 0;
+	/** How often to do the moving (milliseconds) */
+	private static long timerInterval = 20;
 
 	/** The maximum speed (pixels per timer interval) */
-	private static final double MAX_SPEED = 10;
+	private static final double MAX_SPEED = 20;
 
 	/** The speed increase per timer interval when a cursor button is clicked */
-	private static final double ACCELERATION = 0.05;
+	private static final double ACCELERATION = 0.10;
 
 	public PreviewMapController(PreviewMap map) {
 		super(map);
@@ -218,10 +212,16 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	/** Moves the map depending on which cursor keys are pressed (or not) */
 	private class MoveTask extends TimerTask {
 		/** The current x speed (pixels per timer interval) */
-		private double speedX = 0;
+		private double speedX = 1;
 
 		/** The current y speed (pixels per timer interval) */
-		private double speedY = 0;
+		private double speedY = 1;
+
+		/** The horizontal direction of movement, -1:left, 0:stop, 1:right */
+		private int directionX = 0;
+
+		/** The vertical direction of movement, -1:up, 0:stop, 1:down */
+		private int directionY = 0;
 
 		/**
 		 * Indicated if <code>moveTask</code> is currently enabled (periodically
@@ -230,12 +230,12 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		protected boolean scheduled = false;
 
 		protected void setDirectionX(int directionX) {
-			PreviewMapController.this.directionX = directionX;
+			this.directionX = directionX;
 			updateScheduleStatus();
 		}
 
 		protected void setDirectionY(int directionY) {
-			PreviewMapController.this.directionY = directionY;
+			this.directionY = directionY;
 			updateScheduleStatus();
 		}
 

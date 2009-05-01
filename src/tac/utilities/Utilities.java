@@ -1,7 +1,6 @@
 package tac.utilities;
 
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -29,7 +28,6 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import tac.StartTAC;
-import tac.optional.JavaAdvancedImaging;
 import tac.program.Settings;
 import tac.program.model.Profile;
 
@@ -42,8 +40,9 @@ public class Utilities {
 
 	public static boolean testJaiColorQuantizerAvailable() {
 		try {
-			BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_3BYTE_BGR);
-			image = JavaAdvancedImaging.colorReduceMedianCut(image, 256);
+			Class<?> c = Class.forName("javax.media.jai.operator.ColorQuantizerDescriptor");
+			if (c != null)
+				return true;
 		} catch (Exception e) {
 			return false;
 		} catch (NoClassDefFoundError e) {

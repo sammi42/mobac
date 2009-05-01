@@ -29,6 +29,14 @@ public class Google {
 			return x;
 		}
 
+		public String getTileUrl(final String serverUrl, int zoom, int x, int y) {
+			String tmp = serverUrl;
+			tmp = tmp.replace("{$servernum}", Integer.toString(getNextServerNum()));
+			tmp = tmp.replace("{$x}", Integer.toString(x));
+			tmp = tmp.replace("{$y}", Integer.toString(y));
+			tmp = tmp.replace("{$z}", Integer.toString(zoom));
+			return tmp;
+		}
 	}
 
 	public static class GoogleMaps extends GoogleSource {
@@ -45,7 +53,8 @@ public class Google {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
+			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
+			return tileUrl;
 		}
 
 	}
@@ -67,7 +76,8 @@ public class Google {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), x, y, zoom });
+			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
+			return tileUrl;
 		}
 
 	}
@@ -86,7 +96,8 @@ public class Google {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom });
+			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
+			return tileUrl;
 		}
 
 	}
@@ -108,7 +119,8 @@ public class Google {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), x, y, zoom });
+			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
+			return tileUrl;
 		}
 
 		@Override
@@ -132,8 +144,8 @@ public class Google {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return String.format(SERVER_URL, new Object[] { getNextServerNum(), LANG, x, y, zoom,
-					"Galileo" });
+			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
+			return tileUrl;
 		}
 
 	}

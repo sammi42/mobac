@@ -97,9 +97,10 @@ load tiles from Google and there is no new release that fixes this
 problem. In such a case advanced users can open the file <tt>TrekBuddy_Atlas_Creator.jar</tt>
 with an archive program like WinZip/WinRAR/7Zip... and select the file <tt>tac\mapsources.properties</tt>.
 This text file contains the map url templates for different map sources.
-Each url template contains a specific number of placeholders in form of
-<b>%d</b> and <b>%s</b>. Do not remove those parameters or change their
-order within the url. All other parts of the url can be modified.</p>
+Each url template contains a specific number of placeholders
+encapsulated by curly brace: <b>{$servernum}</b> for the server number
+(0-3), <b>{$x}</b> and <b>{$y}</b> for the tile coordinate and <b>{$z}</b>
+for the zoom level.</p>
 
 </body>
 </html>

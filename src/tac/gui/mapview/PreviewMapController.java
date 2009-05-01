@@ -35,7 +35,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	/** A Timer for smoothly moving the map area */
 	private static final Timer timer = new Timer(true);
 
-	/** How often to do the moving */
+	/** How often to do the moving (milliseconds) */
 	private static long timerInterval = 10;
 
 	/** Does the moving */
@@ -47,20 +47,11 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	/** The vertical direction of movement, -1:up, 0:stop, 1:down */
 	private int directionY = 0;
 
-	/** The current x speed (pixels per timer interval) */
-	private double speedX = 0;
-
-	/** The current y speed (pixels per timer interval) */
-	private double speedY = 0;
-
 	/** The maximum speed (pixels per timer interval) */
-	private static final double maxSpeed = 10;
+	private static final double MAX_SPEED = 10;
 
 	/** The speed increase per timer interval when a cursor button is clicked */
-	private static final double acceleration = 0.05;
-
-	/** The speed decrease per timer interval after a cursor button was released */
-	private static final double deceleration = 0.2;
+	private static final double ACCELERATION = 0.05;
 
 	public PreviewMapController(PreviewMap map) {
 		super(map);
@@ -121,8 +112,6 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		actionMap.put("NEXT_MAP", new NextMapAction());
 		actionMap.put("PREVIOUS_MAP", new PreviousMapAction());
 		actionMap.put("REFRESH", new RefreshAction());
-
-		timer.schedule(moveTask, 0, timerInterval);
 	}
 
 	/**
@@ -182,7 +171,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -6758721144600926744L;
 
 		public void actionPerformed(ActionEvent e) {
-			directionX = 1;
+			moveTask.setDirectionX(1);
 		}
 	}
 
@@ -190,7 +179,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = 2695221718338284951L;
 
 		public void actionPerformed(ActionEvent e) {
-			directionX = -1;
+			moveTask.setDirectionX(-1);
 		}
 	}
 
@@ -198,7 +187,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -8414310977137213707L;
 
 		public void actionPerformed(ActionEvent e) {
-			directionY = -1;
+			moveTask.setDirectionY(-1);
 		}
 	}
 
@@ -206,7 +195,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -5360890019457799681L;
 
 		public void actionPerformed(ActionEvent e) {
-			directionY = 1;
+			moveTask.setDirectionY(1);
 		}
 	}
 
@@ -214,7 +203,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -5360890019457799681L;
 
 		public void actionPerformed(ActionEvent e) {
-			directionX = 0;
+			moveTask.setDirectionX(0);
 		}
 	}
 
@@ -222,12 +211,49 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -5360890019457799681L;
 
 		public void actionPerformed(ActionEvent e) {
-			directionY = 0;
+			moveTask.setDirectionY(0);
 		}
 	}
 
 	/** Moves the map depending on which cursor keys are pressed (or not) */
 	private class MoveTask extends TimerTask {
+		/** The current x speed (pixels per timer interval) */
+		private double speedX = 0;
+
+		/** The current y speed (pixels per timer interval) */
+		private double speedY = 0;
+
+		/**
+		 * Indicated if <code>moveTask</code> is currently enabled (periodically
+		 * executed via timer) or disabled
+		 */
+		protected boolean scheduled = false;
+
+		protected void setDirectionX(int directionX) {
+			PreviewMapController.this.directionX = directionX;
+			updateScheduleStatus();
+		}
+
+		protected void setDirectionY(int directionY) {
+			PreviewMapController.this.directionY = directionY;
+			updateScheduleStatus();
+		}
+
+		private void updateScheduleStatus() {
+			boolean newMoveTaskState = !(directionX == 0 && directionY == 0);
+
+			if (newMoveTaskState != scheduled) {
+				scheduled = newMoveTaskState;
+				if (newMoveTaskState)
+					timer.schedule(this, 0, timerInterval);
+				else {
+					// We have to create a new instance because rescheduling a
+					// once canceled TimerTask is not possible
+					moveTask = new MoveTask();
+					cancel(); // Stop this TimerTask
+				}
+			}
+		}
 
 		@Override
 		public void run() {
@@ -236,20 +262,17 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 			case -1:
 				if (speedX > -1)
 					speedX = -1;
-				if (speedX > -1 * maxSpeed)
-					speedX -= acceleration;
+				if (speedX > -1 * MAX_SPEED)
+					speedX -= ACCELERATION;
 				break;
 			case 0:
-				if (speedX > 0)
-					speedX -= deceleration;
-				if (speedX < 0)
-					speedX += deceleration;
+				speedX = 0;
 				break;
 			case 1:
 				if (speedX < 1)
 					speedX = 1;
-				if (speedX < maxSpeed)
-					speedX += acceleration;
+				if (speedX < MAX_SPEED)
+					speedX += ACCELERATION;
 				break;
 			}
 
@@ -258,27 +281,25 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 			case -1:
 				if (speedY > -1)
 					speedY = -1;
-				if (speedY > -1 * maxSpeed)
-					speedY -= acceleration;
+				if (speedY > -1 * MAX_SPEED)
+					speedY -= ACCELERATION;
 				break;
 			case 0:
-				if (speedY > 0)
-					speedY -= deceleration;
-				if (speedY < 0)
-					speedY += deceleration;
+				speedY = 0;
 				break;
 			case 1:
 				if (speedY < 1)
 					speedY = 1;
-				if (speedY < maxSpeed)
-					speedY += acceleration;
+				if (speedY < MAX_SPEED)
+					speedY += ACCELERATION;
 				break;
 			}
 
 			// move the map
-			if (Math.floor(speedX) != 0 || Math.floor(speedY) != 0) {
-				map.moveMap((int) Math.floor(speedX), (int) Math.floor(speedY));
-			}
+			int moveX = (int) Math.floor(speedX);
+			int moveY = (int) Math.floor(speedY);
+			if (moveX != 0 || moveY != 0)
+				map.moveMap(moveX, moveY);
 		}
 	}
 

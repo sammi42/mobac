@@ -104,7 +104,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		setPreferredSize(new Dimension(400, 400));
 		setDisplayPositionByLatLon(50, 9, 3);
 		mapTileLayers.add(new DefaultMapTileLayer(this));
-		//mapTileLayers.add(new OverlayMapTileLayer(this, new Google.GoogleEarthMapsOverlay()));
+		// mapTileLayers.add(new OverlayMapTileLayer(this, new
+		// Google.GoogleEarthMapsOverlay()));
 	}
 
 	protected void initializeZoomSlider() {
@@ -292,6 +293,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		// if (mapIsMoving) {
+		// mapIsMoving = false;
+		// Doesn't look very pretty but is much more faster
+		// g.copyArea(0, 0, getWidth(), getHeight(), -mapMoveX, -mapMoveY);
+		// return;
+		// }
 		super.paintComponent(g);
 
 		int iMove = 0;

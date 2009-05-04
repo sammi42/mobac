@@ -10,5 +10,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jai_codec.jar"/>
+	<classpathentry kind="lib" path="lib/Tidy.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

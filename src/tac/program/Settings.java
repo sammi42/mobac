@@ -20,7 +20,7 @@ import tac.mapsources.MapSources;
 import tac.mapsources.Google.GoogleSource;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.EastNorthCoordinate;
-import tac.program.model.TileImageColorDepth;
+import tac.program.model.TileImageFormat;
 import tac.utilities.Utilities;
 
 public class Settings {
@@ -40,7 +40,7 @@ public class Settings {
 	private static final String TILE_CUSTOM = "tile.custom";
 	private static final String TILE_HEIGHT = "tile.height";
 	private static final String TILE_WIDTH = "tile.width";
-	private static final String TILE_COLORS = "tile.colorcount";
+	private static final String TILE_FORMAT = "tile.format";
 	private static final String ATLAS_NAME = "atlas.name";
 	private static final String ATLAS_FORMAT = "atlas.format";
 	private static final String PROXY_HOST = "proxy.http.host";
@@ -80,7 +80,7 @@ public class Settings {
 	private boolean customTileSize = false;
 	private int tileHeight = 256;
 	private int tileWidth = 256;
-	private TileImageColorDepth tileColorDepth = TileImageColorDepth.Unchanged;
+	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
 	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
 	// Timeout in seconds (default 10 seconds)
@@ -140,8 +140,8 @@ public class Settings {
 			customTileSize = p.getBooleanProperty(TILE_CUSTOM, false);
 			tileHeight = p.getIntProperty(TILE_HEIGHT, tileHeight);
 			tileWidth = p.getIntProperty(TILE_WIDTH, tileWidth);
-			tileColorDepth = TileImageColorDepth.getByColorCountDefault(p.getIntProperty(
-					TILE_COLORS, -1));
+			tileImageFormat = TileImageFormat.valueOf(p.getProperty(TILE_FORMAT, tileImageFormat
+					.name()));
 			maxMapSize = p.getIntProperty(MAPS_MAXSIZE, maxMapSize);
 			tileStoreEnabled = p.getBooleanProperty(TILE_STORE, tileStoreEnabled);
 			previewDefaultZoom = p.getIntProperty(PREVIEW_ZOOM, previewDefaultZoom);
@@ -193,7 +193,7 @@ public class Settings {
 			p.setBooleanProperty(TILE_CUSTOM, customTileSize);
 			p.setIntProperty(TILE_HEIGHT, tileHeight);
 			p.setIntProperty(TILE_WIDTH, tileWidth);
-			p.setIntProperty(TILE_COLORS, tileColorDepth.getColorCount());
+			p.setStringProperty(TILE_FORMAT, tileImageFormat.name());
 			p.setBooleanProperty(TILE_STORE, tileStoreEnabled);
 			p.setDouble6Property(PREVIEW_LAT, previewDefaultCoordinate.lat);
 			p.setDouble6Property(PREVIEW_LON, previewDefaultCoordinate.lon);
@@ -389,12 +389,12 @@ public class Settings {
 		this.fullScreenEnabled = fullScreenEnabled;
 	}
 
-	public TileImageColorDepth getTileColorDepth() {
-		return tileColorDepth;
+	public TileImageFormat getTileImageFormat() {
+		return tileImageFormat;
 	}
 
-	public void setTileColorDepth(TileImageColorDepth tileColorDepth) {
-		this.tileColorDepth = tileColorDepth;
+	public void setTileImageFormat(TileImageFormat tileImageFormat) {
+		this.tileImageFormat = tileImageFormat;
 	}
 
 	public AtlasOutputFormat getAtlasOutputFormat() {

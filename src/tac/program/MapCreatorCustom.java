@@ -13,13 +13,12 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 import tac.gui.AtlasProgress;
-import tac.optional.JavaAdvancedImaging;
+import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.MapSlice;
-import tac.program.model.TileImageColorDepth;
+import tac.program.model.TileImageFormat;
 import tac.tar.TarIndex;
 import tac.utilities.MyMath;
-import tac.utilities.Png4BitWriter;
 
 /**
  * Extends the {@link MapCreator} so that custom tiles are written. Custom tiles
@@ -30,31 +29,13 @@ import tac.utilities.Png4BitWriter;
  */
 public class MapCreatorCustom extends MapCreator {
 
-	public enum TileImageFormat {
-		Unchanged, Png, Jpg
-	};
-
 	private TileImageParameters param;
-
-	private String targetFileType;
 
 	public MapCreatorCustom(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
 			TileImageParameters parameters) {
 		super(smp, tileIndex, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
 		this.param = parameters;
-		switch (param.format) {
-		case Unchanged: {
-			targetFileType = tileSource.getTileType();
-			break;
-		}
-		case Jpg: {
-			targetFileType = "jpg";
-			break;
-		}
-		default:
-			targetFileType = "png";
-		}
 	}
 
 	/**
@@ -112,46 +93,44 @@ public class MapCreatorCustom extends MapCreator {
 		// We don't work with large images, therefore we can disable the (file)
 		// cache of ImageIO. This will speed up the creation process a bit
 		ImageIO.setUseCache(false);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
+		TileImageDataWriter tileImageDataWriter = param.format.getDataWriter();
+		tileImageDataWriter.initialize();
+		try {
 
-		int yRelPos = 0;
-		while (yAbsPos < yEnd) {
-			int xRelPos = 0;
-			xAbsPos = xStart;
-			while (xAbsPos < xEnd) {
-				if (t.isInterrupted())
-					throw new InterruptedException();
-				if (ap != null)
-					ap.incMapProgress();
-				BufferedImage tileImage = new BufferedImage(param.width, param.height,
-						BufferedImage.TYPE_3BYTE_BGR);
-				try {
-					Graphics2D graphics = tileImage.createGraphics();
-					String tileFileName = "t_" + xRelPos + "_" + yRelPos + "." + targetFileType;
-					log.trace("Creating tile " + tileFileName);
-					paintCustomTile(graphics, xAbsPos, yAbsPos);
-					graphics.dispose();
-					if (param.colorDepth != TileImageColorDepth.Unchanged) {
-						int colors = 256;
-						if (param.colorDepth == TileImageColorDepth.FourBit)
-							colors = 16;
-						tileImage = JavaAdvancedImaging.colorReduceMedianCut(tileImage, colors);
+			int yRelPos = 0;
+			while (yAbsPos < yEnd) {
+				int xRelPos = 0;
+				xAbsPos = xStart;
+				while (xAbsPos < xEnd) {
+					if (t.isInterrupted())
+						throw new InterruptedException();
+					if (ap != null)
+						ap.incMapProgress();
+					BufferedImage tileImage = new BufferedImage(param.width, param.height,
+							BufferedImage.TYPE_3BYTE_BGR);
+					buf.reset();
+					try {
+						Graphics2D graphics = tileImage.createGraphics();
+						String tileFileName = "t_" + xRelPos + "_" + yRelPos + "."
+								+ tileImageDataWriter.getFileExt();
+						log.trace("Creating tile " + tileFileName);
+						paintCustomTile(graphics, xAbsPos, yAbsPos);
+						graphics.dispose();
+						tileImageDataWriter.processImage(tileImage, buf);
+						atlasTileWriter.writeTile(tileFileName, buf.toByteArray());
+					} catch (Exception e) {
+						log.error("Error writing tile image: ", e);
 					}
-					ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
-					if ((param.colorDepth == TileImageColorDepth.FourBit)
-							&& (targetFileType == "png"))
-						Png4BitWriter.writeImage(buf, tileImage);
-					else
-						ImageIO.write(tileImage, targetFileType, buf);
-					tileWriter.writeTile(tileFileName, buf.toByteArray());
-				} catch (Exception e) {
-					log.error("Error writing tile image: ", e);
-				}
 
-				xRelPos += param.width;
-				xAbsPos += param.width;
+					xRelPos += param.width;
+					xAbsPos += param.width;
+				}
+				yRelPos += param.height;
+				yAbsPos += param.height;
 			}
-			yRelPos += param.height;
-			yAbsPos += param.height;
+		} finally {
+			tileImageDataWriter.dispose();
 		}
 	}
 
@@ -197,7 +176,7 @@ public class MapCreatorCustom extends MapCreator {
 	private int cachePos = 0;
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		String tileFileName = "y" + yTile + "x" + xTile + "." + targetFileType;
+		String tileFileName = "y" + yTile + "x" + xTile + "." + tileSource.getTileType();
 		byte[] sourceTileData = tileIndex.getEntryContent(tileFileName);
 		if (sourceTileData == null)
 			return null;
@@ -220,7 +199,6 @@ public class MapCreatorCustom extends MapCreator {
 		public int width;
 		public int height;
 		public TileImageFormat format;
-		public TileImageColorDepth colorDepth;
 	}
 
 	private static class CachedTile {

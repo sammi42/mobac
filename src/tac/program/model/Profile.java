@@ -1,5 +1,8 @@
 package tac.program.model;
 
+import java.beans.XMLEncoder;
+import java.io.PrintStream;
+
 import tac.mapsources.MapSources;
 
 public class Profile {
@@ -7,10 +10,10 @@ public class Profile {
 	private String profileName;
 	private String atlasName;
 
-	private Double latitudeMax;
-	private Double latitudeMin;
-	private Double longitudeMax;
-	private Double longitudeMin;
+	private double latitudeMax;
+	private double latitudeMin;
+	private double longitudeMax;
+	private double longitudeMin;
 
 	private String mapSource;
 
@@ -39,8 +42,8 @@ public class Profile {
 
 	// Constructor
 	public Profile(String theProfileName, String theAtlasName, String mapSource,
-			Double theLatitudeMax, Double theLatitudeMin, Double theLongitudeMax,
-			Double theLongitudeMin, boolean[] theZoomLevels, int theTileSizeWidth,
+			double theLatitudeMax, double theLatitudeMin, double theLongitudeMax,
+			double theLongitudeMin, boolean[] theZoomLevels, int theTileSizeWidth,
 			int theTileSizeHeight, int theCustomTileSizeWidth, int theCustomTileSizeHeight) {
 
 		profileName = theProfileName;
@@ -137,4 +140,15 @@ public class Profile {
 		this.mapSource = mapSource;
 	}
 
+	/**
+	 * Test for a possible better implementation for saving Profiles
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		PrintStream ps = new PrintStream(System.out);
+		XMLEncoder out = new XMLEncoder(ps);
+		out.writeObject(new Profile("test", "a", "Google", 1.0, 1.0, 2.0, 2.0, new boolean[] {
+				true, true, false }, 10, 20, 30, 40));
+		out.flush();
+	}
 }

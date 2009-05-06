@@ -41,6 +41,8 @@ public class DownloadJob implements Job {
 			listener.jobFinishedWithError(false);
 			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
 					+ "failed with an unrecoverable error: " + e.getCause());
+		} catch (InterruptedException e) {
+			throw e;
 		} catch (Exception e) {
 			errorCounter++;
 			// Reschedule job to try it later again

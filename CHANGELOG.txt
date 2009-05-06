@@ -12,6 +12,8 @@
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)
  ~ Updated url of Google Map Maker & Earth
  + added map source Microsoft Maps China (Ditu)
+ ~ Changed the color depth selector to an output format selector 
+ + New output format: JPEG with different quality levels
 
  1.0: (2009-04-10)
  

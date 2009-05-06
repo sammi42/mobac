@@ -55,13 +55,12 @@ import tac.program.MapSelection;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
-import tac.program.MapCreatorCustom.TileImageFormat;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AutoCutMultiMapLayer;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Profile;
-import tac.program.model.TileImageColorDepth;
+import tac.program.model.TileImageFormat;
 import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
 import tac.utilities.TACExceptionHandler;
@@ -105,10 +104,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private JCheckBox enableCustomTileProcessingCheckButton;
 	private JLabel tileSizeWidthLabel;
 	private JLabel tileSizeHeightLabel;
-	private JLabel tileColorDepthLabel;
+	private JLabel tileImageFormatLabel;
 	private JTileSizeCombo tileSizeWidth;
 	private JTileSizeCombo tileSizeHeight;
-	private JComboBox tileColorDepth;
+	private JComboBox tileImageFormat;
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -266,17 +265,18 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		tileSizeHeight = new JTileSizeCombo();
 		tileSizeHeight.setToolTipText("Height");
 
-		tileColorDepthLabel = new JLabel("Color depth:");
-		tileColorDepth = new JComboBox(TileImageColorDepth.values());
-		if (!Utilities.testJaiColorQuantizerAvailable()) {
-			tileColorDepth.setEnabled(false);
-			tileColorDepthLabel.setEnabled(false);
-			tileColorDepth.setToolTipText("<html>This feature is deactivated because <br>"
-					+ "<b>Java Advanced Image library was not found </b>"
-					+ "(jai_core.jar & jai_codec.jar)<br>"
-					+ "For more details please see the file <b>README.HTM</b> "
-					+ "in section <b>Requirements</b>.</html>");
-		}
+		tileImageFormatLabel = new JLabel("Tile format:");
+		tileImageFormat = new JComboBox(tac.program.model.TileImageFormat.values());
+		// if (!Utilities.testJaiColorQuantizerAvailable()) {
+		// tileImageFormat.setEnabled(false);
+		// tileImageFormatLabel.setEnabled(false);
+		// tileImageFormat.setToolTipText(
+		// "<html>This feature is deactivated because <br>"
+		// + "<b>Java Advanced Image library was not found </b>"
+		// + "(jai_core.jar & jai_codec.jar)<br>"
+		// + "For more details please see the file <b>README.HTM</b> "
+		// + "in section <b>Requirements</b>.</html>");
+		// }
 	}
 
 	private void updateLeftPanel() {
@@ -338,8 +338,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		tileSizePanel.add(tileSizeHeight, gbc_eol);
 		tileProcessingPanel.add(tileSizePanel, GBC.eol());
 		JPanel tileColorDepthPanel = new JPanel();
-		tileColorDepthPanel.add(tileColorDepthLabel);
-		tileColorDepthPanel.add(tileColorDepth);
+		tileColorDepthPanel.add(tileImageFormatLabel);
+		tileColorDepthPanel.add(tileImageFormat);
 		tileProcessingPanel.add(tileColorDepthPanel, GBC.eol());
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
@@ -510,7 +510,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		lonMaxTextField.setCoordinate(settings.getSelectionMax().lon);
 		latMinTextField.setCoordinate(settings.getSelectionMin().lat);
 		lonMinTextField.setCoordinate(settings.getSelectionMin().lon);
-		tileColorDepth.setSelectedItem(settings.getTileColorDepth());
+		tileImageFormat.setSelectedItem(settings.getTileImageFormat());
 
 		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
 
@@ -544,7 +544,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			s.setCustomTileSize(enableCustomTileProcessingCheckButton.isSelected());
 			s.setTileWidth(tileSizeWidth.getValue());
 			s.setTileHeight(tileSizeHeight.getValue());
-			s.setTileColorDepth((TileImageColorDepth) tileColorDepth.getSelectedItem());
+			s.setTileImageFormat((TileImageFormat) tileImageFormat.getSelectedItem());
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 			s.setWindowMaximized(maximized);
 			if (!maximized) {
@@ -809,9 +809,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 					customTileParameters = new MapCreatorCustom.TileImageParameters();
 					customTileParameters.width = tileSizeWidth.getValue();
 					customTileParameters.height = tileSizeHeight.getValue();
-					customTileParameters.colorDepth = (TileImageColorDepth) tileColorDepth
+					customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
 							.getSelectedItem();
-					customTileParameters.format = TileImageFormat.Unchanged;
 				}
 
 				try {
@@ -943,8 +942,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		tileSizeHeight.setEnabled(b);
 		tileSizeWidth.setEnabled(b);
 		if (Utilities.testJaiColorQuantizerAvailable()) {
-			tileColorDepth.setEnabled(b);
-			tileColorDepthLabel.setEnabled(b);
+			tileImageFormat.setEnabled(b);
+			tileImageFormatLabel.setEnabled(b);
 		}
 	}
 

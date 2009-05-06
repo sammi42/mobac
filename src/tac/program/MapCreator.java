@@ -52,7 +52,7 @@ public class MapCreator {
 
 	protected String layerName;
 
-	protected TileWriter tileWriter;
+	protected AtlasTileWriter atlasTileWriter;
 
 	public MapCreator(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
 			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
@@ -78,11 +78,11 @@ public class MapCreator {
 		// This means there should not be any resizing of the tiles.
 		try {
 			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
-				tileWriter = new TarTileWriter();
+				atlasTileWriter = new TarTileWriter();
 			else
-				tileWriter = new FileTileWriter();
+				atlasTileWriter = new FileTileWriter();
 			createTiles();
-			tileWriter.finalizeMap();
+			atlasTileWriter.finalizeMap();
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
@@ -143,13 +143,13 @@ public class MapCreator {
 					byte[] sourceTileData = tileIndex.getEntryContent("y" + y + "x" + x + "."
 							+ tileSource.getTileType());
 					if (sourceTileData != null) {
-						tileWriter.writeTile(tileFileName, sourceTileData);
+						atlasTileWriter.writeTile(tileFileName, sourceTileData);
 					} else {
 						BufferedImage emptyImage = new BufferedImage(256, 256,
 								BufferedImage.TYPE_INT_ARGB);
 						ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
 						ImageIO.write(emptyImage, tileSource.getTileType(), buf);
-						tileWriter.writeTile(tileFileName, buf.toByteArray());
+						atlasTileWriter.writeTile(tileFileName, buf.toByteArray());
 					}
 				} catch (IOException e) {
 					log.error("", e);
@@ -160,7 +160,7 @@ public class MapCreator {
 		}
 	}
 
-	public class TarTileWriter implements TileWriter {
+	public class TarTileWriter implements AtlasTileWriter {
 
 		TarArchive ta = null;
 
@@ -192,7 +192,7 @@ public class MapCreator {
 
 	}
 
-	public class FileTileWriter implements TileWriter {
+	public class FileTileWriter implements AtlasTileWriter {
 
 		File setFolder;
 		Writer setFileWriter;
@@ -231,7 +231,7 @@ public class MapCreator {
 		}
 	}
 
-	public abstract interface TileWriter {
+	public abstract interface AtlasTileWriter {
 
 		public void writeTile(String tileFileName, byte[] tileData) throws IOException;
 

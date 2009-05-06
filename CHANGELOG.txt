@@ -11,6 +11,7 @@
  1.1: (2009-??-??)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)
  ~ Updated url of Google Map Maker & Earth
+ ~ Fixed tar creation which had problems with default charset on some systems  
  + added map source Microsoft Maps China (Ditu)
  ~ Changed the color depth selector to an output format selector 
  + New output format: JPEG with different quality levels

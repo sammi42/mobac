@@ -266,17 +266,27 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		tileSizeHeight.setToolTipText("Height");
 
 		tileImageFormatLabel = new JLabel("Tile format:");
-		tileImageFormat = new JComboBox(tac.program.model.TileImageFormat.values());
-		// if (!Utilities.testJaiColorQuantizerAvailable()) {
-		// tileImageFormat.setEnabled(false);
-		// tileImageFormatLabel.setEnabled(false);
-		// tileImageFormat.setToolTipText(
-		// "<html>This feature is deactivated because <br>"
-		// + "<b>Java Advanced Image library was not found </b>"
-		// + "(jai_core.jar & jai_codec.jar)<br>"
-		// + "For more details please see the file <b>README.HTM</b> "
-		// + "in section <b>Requirements</b>.</html>");
-		// }
+		tileImageFormat = new JComboBox(TileImageFormat.values());
+		tileImageFormat.setMaximumRowCount(tileImageFormat.getItemCount());
+		tileImageFormat.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				TileImageFormat tif = (TileImageFormat) tileImageFormat.getSelectedItem();
+				if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
+					if (Utilities.testJaiColorQuantizerAvailable())
+						return;
+					JOptionPane.showMessageDialog(null,
+							"<html>This image format is requires additional libraries to be installed:<br>"
+									+ "<b>Java Advanced Image library</b>"
+									+ "(jai_core.jar & jai_codec.jar)<br>"
+									+ "For more details please see the file <b>README.HTM</b> "
+									+ "in section <b>Requirements</b>.</html>",
+							"Image format not available - libraries missing",
+							JOptionPane.ERROR_MESSAGE);
+					tileImageFormat.setSelectedIndex(0);
+				}
+			}
+		});
 	}
 
 	private void updateLeftPanel() {

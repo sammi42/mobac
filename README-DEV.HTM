@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>TrekBuddy Atlas Creator - Readme for Developers</title>
+</head>
+<body>
+<h1>TrekBuddy Atlas Creator - Readme for Developers</h1>
+<p>Welcome to the develop documentation of TrekBuddy Atlas Creator
+(TAC). First please read the <a href="README.HTM">standard readme</a>
+for all users.</p>
+<h2>Code access</h2>
+<p>If you want do get your hands on the latest source code of
+TrekBuddy Atlas Creator you can checkout the code from the Subversion
+repository at SourceForge:</p>
+<p><tt><a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk">https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk</a></p>
+</tt>
+<p>There you will find the latest sources of TAC in form of an
+Eclipse (v3.4) project. All tools, libraries, sources and build files
+are included in this repository. The only exception is <a
+	href="http://ant.apache.org/">Apache Ant</a>) which is used for
+building the jar version of TAC and of course the Java Development Kit
+(JDK).</p>
+
+<h2>Building TAC</h2>
+<p>For building TAC please run Apache Ant on the provided file <tt><a
+	href="build.xml">build.xml</a></tt></p>
+<p>The default build target performs all necessary tasks for
+compiling the sources, packaging the classes to a jar and then
+minimizing the size of the jar using <a
+	href="http://proguard.sourceforge.net/">ProGuard</a> (<tt>lib/proguard.jar</tt>).<br>
+Additionally the build steps include a call to <tt>lib/svnversion.jar</tt>
+which is a Java only version of the command <a
+	href="http://svnbook.red-bean.com/en/1.1/re57.html">svnversion</a>
+(bases on <a href="http://svnkit.com">SVNKit</a>). This command updates
+the SVN revision information in file <tt>src/tac/tac-rev.properties</tt>
+which is included in the final jar of TAC.</p>
+
+<h2>Participation</h2>
+<p>If you are familiar with the programming language Java and you
+want to contribute or participate in the development process of TAC feel
+free to contact one of the other developers of TAC <a
+	href="https://sourceforge.net/project/memberlist.php?group_id=238075">listed
+at SourceForge</a>.</p>
+
+</body>
+</html>

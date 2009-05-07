@@ -74,6 +74,8 @@
 			<arg line=" -keep public class org.apache.log4j.Category { public *; }" />
 			<arg line=" -keep public class org.apache.log4j.Priority { public *; }" />
 			<arg line=" -keep public class org.apache.log4j.spi.LoggingEvent { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.spi.ThrowableInformation { public *; }" />
+			<arg line=" -keep public class org.apache.log4j.spi.LocationInfo { public *; }" />
 			<arg line=" -keep public class org.apache.log4j.PatternLayout { public *; }" />
 			<arg line=" -keep public class org.apache.log4j.FileAppender { public *; }" />
 			<arg line=" -keep public class ${main.class} { public static void main(java.lang.String[]); }" />
@@ -129,6 +131,7 @@
 				<include name="build.xml" />
 				<include name="gpl.txt" />
 				<include name="README.HTM" />
+				<include name="README-DEV.HTM" />
 				<include name="CHANGELOG.txt" />
 				<include name="TODO.txt" />
 				<include name="start.*" />

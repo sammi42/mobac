@@ -14,7 +14,6 @@ public class TarHeader {
 	private final char[] fileOwnerGroupID = new char[8];
 	private final char[] fileSize = new char[12];
 	private final char[] lastModificationTime = new char[12];
-	private final char[] checksum = new char[8];
 	private final char[] linkIndicator = new char[1];
 	private final char[] nameOfLinkedFile = new char[100];
 	private static final char[] padding = new char[255];
@@ -33,7 +32,6 @@ public class TarHeader {
 		this.setFileSize(theFile);
 		this.setLastModificationTime(theFile);
 		this.setLinkIndicator(theFile);
-		this.setChecksum();
 	}
 
 	public TarHeader(String fileName, int fileSize, boolean isDirectory) {
@@ -45,7 +43,6 @@ public class TarHeader {
 		this.setFileSize(fileSize);
 		this.setLastModificationTime(System.currentTimeMillis());
 		this.setLinkIndicator(isDirectory);
-		this.setChecksum();
 	}
 
 	public void read(byte[] buffer) {
@@ -57,7 +54,7 @@ public class TarHeader {
 		fn.getChars(116, 124, fileOwnerGroupID, 0);
 		fn.getChars(124, 136, fileSize, 0);
 		fn.getChars(136, 148, lastModificationTime, 0);
-		fn.getChars(148, 156, checksum, 0);
+		// fn.getChars(148, 156, checksum, 0); we ignore the checksum
 		fn.getChars(156, 157, linkIndicator, 0);
 		fn.getChars(157, 257, nameOfLinkedFile, 0);
 	}
@@ -153,65 +150,6 @@ public class TarHeader {
 		}
 	}
 
-	public void setChecksum() {
-
-		int checksumInt = 0;
-
-		for (int i = 0; i < 100; i++) {
-			checksumInt = checksumInt + (int) fileName[i];
-		}
-
-		for (int i = 0; i < 8; i++) {
-			checksumInt = checksumInt + (int) fileMode[i];
-		}
-
-		for (int i = 0; i < 8; i++) {
-			checksumInt = checksumInt + (int) fileOwnerUserID[i];
-		}
-
-		for (int i = 0; i < 8; i++) {
-			checksumInt = checksumInt + (int) fileOwnerGroupID[i];
-		}
-
-		for (int i = 0; i < 12; i++) {
-			checksumInt = checksumInt + (int) fileSize[i];
-		}
-
-		for (int i = 0; i < 12; i++) {
-			checksumInt = checksumInt + (int) lastModificationTime[i];
-		}
-
-		for (int i = 0; i < 1; i++) {
-			checksumInt = checksumInt + (int) linkIndicator[i];
-		}
-
-		checksumInt = checksumInt + (8 * 32);
-
-		char[] checkSumIntChar = Integer.toString(checksumInt, 8).toCharArray();
-
-		int offset = 8 - checkSumIntChar.length;
-
-		for (int i = checksum.length - 1; i >= 0; i--) {
-
-			if (i == checksum.length - 1) {
-				checksum[i] = 0;
-			}
-
-			if (i == checksum.length - 2) {
-				checksum[i] = ' ';
-			}
-
-			if (i < checksum.length - 2) {
-
-				if (i - (offset - 2) >= 0) {
-					checksum[i] = checkSumIntChar[i - (offset - 2)];
-				} else {
-					checksum[i] = ' ';
-				}
-			}
-		}
-	}
-
 	public void setLinkIndicator(File theFile) {
 		setLinkIndicator(theFile.isDirectory());
 	}
@@ -257,10 +195,6 @@ public class TarHeader {
 		return lastModificationTime;
 	}
 
-	public char[] getChecksum() {
-		return checksum;
-	}
-
 	public char[] getLinkIndicator() {
 		return linkIndicator;
 	}
@@ -273,6 +207,40 @@ public class TarHeader {
 		return padding;
 	}
 
+	/**
+	 * <p>
+	 * Checksum field content:<br>
+	 * Header checksum, stored as an octal number in ASCII. To compute the
+	 * checksum, set the checksum field to all spaces, then sum all bytes in the
+	 * header using unsigned arithmetic. This field should be stored as six
+	 * octal digits followed by a null and a space character. Note that many
+	 * early implementations of tar used signed arithmetic for the checksum
+	 * field, which can cause inter- operability problems when transferring
+	 * archives between systems. Modern robust readers compute the checksum both
+	 * ways and accept the header if either computation matches.<br>
+	 * <a href="http://www.freebsd.org/cgi/man.cgi?query=tar&sektion=5&manpath=FreeBSD+8-current"
+	 * >definition source</a>
+	 * </p>
+	 * 
+	 * @param header
+	 *            array containing a tar header at offset 0 (512 bytes of size)
+	 *            with prepared checksum field (filled with spaces)
+	 */
+	public void correctCheckSum(byte[] header) {
+		// Compute the checksum
+		// theoretical max = 512 bytes * 255 = 130560 = o377000
+		int checksum = 0;
+		for (int i = 0; i < 512; i++) {
+			// compute the checksum with unsigned arithmetic
+			checksum = checksum + (header[i] & 0xFF);
+		}
+		String s = Integer.toOctalString(checksum);
+		while (s.length() < 6)
+			s = '0' + s;
+		byte[] checksumBin = (s + "\0 ").getBytes();
+		System.arraycopy(checksumBin, 0, header, 148, 8);
+	}
+
 	public byte[] getBytes() {
 
 		StringBuffer sb = new StringBuffer(512);
@@ -283,7 +251,7 @@ public class TarHeader {
 		sb.append(fileOwnerGroupID);
 		sb.append(fileSize);
 		sb.append(lastModificationTime);
-		sb.append(checksum);
+		sb.append("        "); // empty/prepared checksum
 		sb.append(linkIndicator);
 		sb.append(nameOfLinkedFile);
 		sb.append(padding);
@@ -296,7 +264,8 @@ public class TarHeader {
 		}
 		if (result.length != 512)
 			throw new RuntimeException("Invalid tar header size: " + result.length);
+		correctCheckSum(result);
+
 		return result;
 	}
-
 }

@@ -30,8 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
+
 import tac.program.AtlasThread;
 import tac.utilities.GBC;
+import tac.utilities.OSUtilities;
 import tac.utilities.Utilities;
 
 /**
@@ -40,6 +43,8 @@ import tac.utilities.Utilities;
  * 
  */
 public class AtlasProgress extends JFrame implements ActionListener {
+
+	private static Logger log = Logger.getLogger(AtlasProgress.class);
 
 	private static final long serialVersionUID = 3159146939361532653L;
 
@@ -376,16 +381,15 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		this.abortListener = abortListener;
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();
+	public void actionPerformed(ActionEvent event) {
+		Object source = event.getSource();
 		String workingDir = System.getProperty("user.dir");
 		File atlasFolder = new File(workingDir, "atlases");
 		if (openProgramFolderButton.equals(source)) {
 			try {
-				String strCmd = "rundll32 url.dll,FileProtocolHandler" + " \""
-						+ atlasFolder.getCanonicalPath() + "\"";
-				Runtime.getRuntime().exec(strCmd);
-			} catch (Exception ex) {
+				OSUtilities.openFolderBrowser(atlasFolder);
+			} catch (Exception e) {
+				log.error("", e);
 			}
 		} else if (dismissWindowButton.equals(source)) {
 			abortListener = null;

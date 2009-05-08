@@ -47,6 +47,7 @@ public class MapCreatorCustom extends MapCreator {
 	 */
 	@Override
 	protected void createTiles() throws InterruptedException {
+		log.debug("Starting map creation using custom parameters: " + param);
 		Thread t = Thread.currentThread();
 
 		// left upper point on the map in pixels
@@ -193,6 +194,13 @@ public class MapCreatorCustom extends MapCreator {
 		public int width;
 		public int height;
 		public TileImageFormat format;
+
+		@Override
+		public String toString() {
+			return "Tile size: (" + width + "/" + height + ") " + format.toString() + "("
+					+ format.name() + ")";
+		}
+
 	}
 
 	private static class CachedTile {

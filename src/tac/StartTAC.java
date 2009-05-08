@@ -15,6 +15,7 @@ public class StartTAC {
 
 	public static void main(String[] args) {
 		Logging.configureLogging();
+		// Logging.logSystemProperties();
 		Settings.getInstance().loadOrQuit();
 		TACExceptionHandler.installToolkitEventQueueProxy();
 		try {

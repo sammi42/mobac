@@ -15,6 +15,7 @@
  + added map source Microsoft Maps China (Ditu)
  ~ Changed the color depth selector to an output format selector 
  + New output format: JPEG with different quality levels
+ ~ OSM Hiking map moved to new server - url adapted
 
  1.0: (2009-04-10)
  

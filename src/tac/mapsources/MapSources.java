@@ -233,8 +233,7 @@ public class MapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://opentiles.com/nop/get.php?l=trails&z=" + zoom + "&x=" + tilex + "&y="
-					+ tiley;
+			return "http://topo.geofabrik.de/trails/" + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 	}

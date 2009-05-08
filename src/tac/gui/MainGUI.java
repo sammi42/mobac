@@ -949,12 +949,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		boolean b = enableCustomTileProcessingCheckButton.isSelected();
 		tileSizeWidthLabel.setEnabled(b);
 		tileSizeHeightLabel.setEnabled(b);
+		tileImageFormatLabel.setEnabled(b);
 		tileSizeHeight.setEnabled(b);
 		tileSizeWidth.setEnabled(b);
-		if (Utilities.testJaiColorQuantizerAvailable()) {
-			tileImageFormat.setEnabled(b);
-			tileImageFormatLabel.setEnabled(b);
-		}
+		tileImageFormat.setEnabled(b);
 	}
 
 	private void previewSelection() {

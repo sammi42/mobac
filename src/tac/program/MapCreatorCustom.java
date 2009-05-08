@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -63,16 +62,11 @@ public class MapCreatorCustom extends MapCreator {
 		int mergedWidth = xEnd - xStart;
 		int mergedHeight = yEnd - yStart;
 
-		if (param.width > mergedWidth || param.height > mergedHeight) {
-			if (!tileSizeErrorNotified) {
-				JOptionPane.showMessageDialog(null,
-						"Tile size settings is too large: default of 256 will be used instead, ",
-						"Information", JOptionPane.INFORMATION_MESSAGE);
-				tileSizeErrorNotified = true;
-			}
-			super.createTiles();
-			return;
-		}
+		// Reduce tile size of overall map height/width is smaller that one tile
+		if (param.width > mergedWidth)
+			param.width = mergedWidth;
+		if (param.height > mergedHeight)
+			param.height = mergedHeight;
 
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {

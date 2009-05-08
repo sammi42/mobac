@@ -16,6 +16,7 @@
  ~ Changed the color depth selector to an output format selector 
  + New output format: JPEG with different quality levels
  ~ OSM Hiking map moved to new server - url adapted
+ ! "Open atlas folder" does now work on Linux (Gnome and may be Kde)
 
  1.0: (2009-04-10)
  

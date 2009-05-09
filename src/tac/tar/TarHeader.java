@@ -50,7 +50,7 @@ public class TarHeader {
 	public void read(byte[] buffer) {
 		String fn = new String(buffer, 0, 512);
 		fn.getChars(0, 100, fileName, 0);
-		fileNameLength = fn.indexOf('\0');
+		fileNameLength = fn.indexOf((char) 0);
 		fn.getChars(100, 108, fileMode, 0);
 		fn.getChars(108, 116, fileOwnerUserID, 0);
 		fn.getChars(116, 124, fileOwnerGroupID, 0);

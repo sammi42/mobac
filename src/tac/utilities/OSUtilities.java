@@ -42,7 +42,10 @@ public class OSUtilities {
 	}
 
 	public static DesktopType detectDesktopType() {
-		String desktopName = System.getProperty("sun.desktop").toLowerCase().trim();
+		String desktopName = System.getProperty("sun.desktop");
+		if (desktopName == null)
+			return DesktopType.Unknown;
+		desktopName = desktopName.toLowerCase().trim();
 		if (desktopName.startsWith("windows"))
 			return DesktopType.Windows;
 		if (desktopName.startsWith("gnome"))

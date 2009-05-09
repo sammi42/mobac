@@ -24,15 +24,17 @@ public class MapSources {
 
 	private static final Logger log = Logger.getLogger(MapSources.class);
 
+	private static TileSource DEFAULT;
 	private static TileSource[] MAP_SOURCES;
 
 	static {
 		loadMapSourceProperties();
+		DEFAULT = new Mapnik();
 		MAP_SOURCES = new TileSource[] {
 				// For debugging purposes
 				// new tac.mapsources.LocalhostTestSource(), //
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
-				new GoogleTerrain(), new YahooMaps(), new Mapnik(), new TilesAtHome(),
+				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(),
 				new CycleMap(), new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(),
@@ -46,7 +48,7 @@ public class MapSources {
 	}
 
 	public static String getDefaultMapSourceName() {
-		return getMapSources()[0].getName();
+		return DEFAULT.getName();
 	}
 
 	public static TileSource getSourceByName(String name) {

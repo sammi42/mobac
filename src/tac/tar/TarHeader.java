@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 
 public class TarHeader {
 
+	// private static Logger log = Logger.getLogger(TarHeader.class);
+
 	private File baseFilePath;
 
 	private int fileNameLength;
@@ -94,15 +96,15 @@ public class TarHeader {
 	}
 
 	public void setFileMode() {
-		"   777 \0".getChars(0, 8, fileMode, 0);
+		"   777 ".getChars(0, 7, fileMode, 0);
 	}
 
 	public void setFileOwnerUserID() {
-		"     0  \0".getChars(0, 8, fileOwnerUserID, 0);
+		"     0  ".getChars(0, 7, fileOwnerUserID, 0);
 	}
 
 	public void setFileOwnerGroupID() {
-		"     0  \0".getChars(0, 8, fileOwnerGroupID, 0);
+		"     0  ".getChars(0, 7, fileOwnerGroupID, 0);
 	}
 
 	public void setFileSize(File theFile) {
@@ -237,8 +239,9 @@ public class TarHeader {
 		String s = Integer.toOctalString(checksum);
 		while (s.length() < 6)
 			s = '0' + s;
-		byte[] checksumBin = (s + "\0 ").getBytes();
-		System.arraycopy(checksumBin, 0, header, 148, 8);
+		byte[] checksumBin = (s).getBytes();
+		System.arraycopy(checksumBin, 0, header, 148, 6);
+		header[154] = 0;
 	}
 
 	public byte[] getBytes() {

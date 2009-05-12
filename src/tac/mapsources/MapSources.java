@@ -34,7 +34,7 @@ public class MapSources {
 				// new tac.mapsources.LocalhostTestSource(), //
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(),
-				new CycleMap(), new OpenArialMap(), new OsmHikingMap(), new MicrosoftMaps(),
+				new CycleMap(), new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(),
 		// new MapPlus() //does not work because of an unknown projection -

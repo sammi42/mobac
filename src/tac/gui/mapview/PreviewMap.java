@@ -24,7 +24,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-import tac.mapsources.Google.GoogleMaps;
+import tac.mapsources.MapSources;
 import tac.program.MapSelection;
 import tac.program.Settings;
 import tac.program.model.EastNorthCoordinate;
@@ -52,6 +52,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
 		new DefaultMapController(this);
+		tileSource = MapSources.DEFAULT;
 		OsmTileLoader.USER_AGENT = Settings.getInstance().getUserAgent();
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
@@ -62,7 +63,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		setZoomContolsVisible(false);
 
 		new PreviewMapController(this);
-		setTileSource(new GoogleMaps());
 		addComponentListener(this);
 
 		SwingUtilities.invokeLater(new Runnable() {

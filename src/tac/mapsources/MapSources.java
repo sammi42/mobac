@@ -24,12 +24,11 @@ public class MapSources {
 
 	private static final Logger log = Logger.getLogger(MapSources.class);
 
-	private static TileSource DEFAULT;
+	public static final TileSource DEFAULT = new Mapnik();
 	private static TileSource[] MAP_SOURCES;
 
 	static {
 		loadMapSourceProperties();
-		DEFAULT = new Mapnik();
 		MAP_SOURCES = new TileSource[] {
 				// For debugging purposes
 				// new tac.mapsources.LocalhostTestSource(), //

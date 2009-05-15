@@ -18,6 +18,7 @@ import tac.mapsources.Microsoft.MicrosoftHybrid;
 import tac.mapsources.Microsoft.MicrosoftMaps;
 import tac.mapsources.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
+import tac.mapsources.WmsSources.TerraserverUSA;
 import tac.utilities.Utilities;
 
 public class MapSources {
@@ -33,10 +34,10 @@ public class MapSources {
 				// For debugging purposes
 				// new tac.mapsources.LocalhostTestSource(), //
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
-				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(),
-				new CycleMap(), new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
+				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
+				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(),
+				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA()
 		// new MapPlus() //does not work because of an unknown projection -
 		// cookie?
 		};

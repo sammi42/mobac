@@ -34,7 +34,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.components.JMapSizeCombo;
 import tac.mapsources.MapSources;
@@ -207,7 +207,7 @@ public class SettingsGUI extends JDialog {
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-		for (TileSource ts : MapSources.getMapSources()) {
+		for (MapSource ts : MapSources.getMapSources()) {
 			if (!tileStore.storeExists(ts))
 				continue;
 			String mapTileCountText = "?";
@@ -252,7 +252,7 @@ public class SettingsGUI extends JDialog {
 			long totalTileCount = 0;
 			long totalTileSize = 0;
 			for (final TileSourceInfoComponents info : tileStoreInfoList) {
-				TileSource ts = info.tileSource;
+				MapSource ts = info.tileSource;
 				Utilities.checkForInterruption();
 				TileStoreInfo tsi = tileStore.getStoreInfo(ts);
 				int count = tsi.getTileCount();
@@ -449,9 +449,9 @@ public class SettingsGUI extends JDialog {
 
 	private class ClearTileCacheAction implements ActionListener {
 
-		TileSource source;
+		MapSource source;
 
-		public ClearTileCacheAction(TileSource source) {
+		public ClearTileCacheAction(MapSource source) {
 			this.source = source;
 		}
 
@@ -480,6 +480,6 @@ public class SettingsGUI extends JDialog {
 	private static class TileSourceInfoComponents {
 		JLabel sizeLabel;
 		JLabel countLabel;
-		TileSource tileSource;
+		MapSource tileSource;
 	}
 }

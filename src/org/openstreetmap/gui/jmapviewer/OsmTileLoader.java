@@ -10,7 +10,7 @@ import java.net.URL;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * A {@link TileLoader} implementation that loads tiles from OSM via HTTP.
@@ -32,7 +32,7 @@ public class OsmTileLoader implements TileLoader {
         this.listener = listener;
     }
 
-    public Runnable createTileLoaderJob(final TileSource source, final int tilex, final int tiley, final int zoom) {
+    public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley, final int zoom) {
         return new Runnable() {
 
             InputStream input = null;

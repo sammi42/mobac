@@ -2,7 +2,7 @@ package tac.program;
 
 import java.util.Enumeration;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
@@ -15,7 +15,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	private int xMax;
 	private int yMax;
 	private int zoom;
-	private TileSource tileSource;
+	private MapSource tileSource;
 	private TarIndexedArchive tileArchive;
 
 	private int x, y;
@@ -34,7 +34,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 * </pre>
 	 */
 	public DownloadJobEnumerator(int xMin, int xMax, int yMin, int yMax, int zoom,
-			TileSource tileSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
+			MapSource tileSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		super();
 		this.listener = listener;
 		this.xMin = xMin;

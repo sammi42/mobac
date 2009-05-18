@@ -9,7 +9,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.interfaces.TileImageDataWriter;
@@ -31,7 +31,7 @@ public class MapCreatorCustom extends MapCreator {
 	private TileImageParameters param;
 
 	public MapCreatorCustom(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
-			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
+			MapSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
 			TileImageParameters parameters) {
 		super(smp, tileIndex, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
 		this.param = parameters;

@@ -1,11 +1,11 @@
 package tac.mapsources;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Abstract base class for map sources.
  */
-public abstract class AbstractMapSource implements TileSource {
+public abstract class AbstractMapSource implements MapSource {
 
 	protected String name;
 	protected int minZoom;

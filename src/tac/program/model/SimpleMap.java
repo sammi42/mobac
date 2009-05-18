@@ -3,7 +3,7 @@ package tac.program.model;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.LayerInterface;
@@ -14,13 +14,13 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 	private SimpleLayer layer;
 
 	private String name;
-	private TileSource mapSource;
+	private MapSource mapSource;
 	private Point maxTileNum;
 	private Point minTileNum;
 	private int zoom;
 	private Dimension tileSize;
 
-	public SimpleMap(SimpleLayer layer, String name, TileSource mapSource, Point maxTileNum, Point minTileNum,
+	public SimpleMap(SimpleLayer layer, String name, MapSource mapSource, Point maxTileNum, Point minTileNum,
 			int zoom, Dimension tileSize) {
 		super();
 		this.layer = layer;
@@ -40,7 +40,7 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 		return layer;
 	}
 
-	public TileSource getMapSource() {
+	public MapSource getMapSource() {
 		return mapSource;
 	}
 

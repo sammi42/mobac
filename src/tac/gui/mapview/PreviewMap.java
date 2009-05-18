@@ -22,7 +22,7 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSources;
 import tac.program.MapSelection;
@@ -95,7 +95,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	@Override
-	public void setTileSource(TileSource newTileSource) {
+	public void setTileSource(MapSource newTileSource) {
 		log.trace("Preview map source changed from " + tileSource + " to " + newTileSource);
 		super.setTileSource(newTileSource);
 	}

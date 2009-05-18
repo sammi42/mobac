@@ -6,10 +6,10 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 /**
- * Implement this interface for creating your custom tile cache for
- * {@link JMapViewer}.
- * 
- * @author Jan Peter Stotz
+ * Implement this interface for creating a synchronous tile cache for
+ * {@link JMapViewer}. Synchronous in this context means that {@link JMapViewer}
+ * expects the result of {@link #getTile(MapSource, int, int, int)} as fast as
+ * possible (only some milliseconds). Otherwise map painting will be delayed.
  */
 public interface TileCache {
 
@@ -27,7 +27,7 @@ public interface TileCache {
 	 * @return the requested tile or <code>null</code> if the tile is not
 	 *         present in the cache
 	 */
-	public Tile getTile(TileSource source, int x, int y, int z);
+	public Tile getTile(MapSource source, int x, int y, int z);
 
 	/**
 	 * Adds a tile to the cache. How long after adding a tile can be retrieved

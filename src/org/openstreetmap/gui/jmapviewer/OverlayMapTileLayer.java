@@ -4,14 +4,14 @@ import java.awt.Graphics;
 
 import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class OverlayMapTileLayer implements MapTileLayer {
 
 	protected JMapViewer mapViewer;
-	protected TileSource tileSource;
+	protected MapSource tileSource;
 
-	public OverlayMapTileLayer(JMapViewer mapViewer, TileSource tileSource) {
+	public OverlayMapTileLayer(JMapViewer mapViewer, MapSource tileSource) {
 		this.mapViewer = mapViewer;
 		this.tileSource = tileSource;
 	}

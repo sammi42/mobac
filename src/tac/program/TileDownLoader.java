@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.tar.TarIndexedArchive;
@@ -28,7 +28,7 @@ public class TileDownLoader {
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
-	public static int getImage(int x, int y, int zoom, TileSource tileSource,
+	public static int getImage(int x, int y, int zoom, MapSource tileSource,
 			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
 			UnrecoverableDownloadException {
 

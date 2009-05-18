@@ -3,7 +3,7 @@ package tac.program.interfaces;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public interface MapInterface {
 
@@ -15,7 +15,7 @@ public interface MapInterface {
 
 	public int getZoom();
 
-	public TileSource getMapSource();
+	public MapSource getMapSource();
 	
 	public Dimension getTileSize();
 	

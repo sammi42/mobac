@@ -8,7 +8,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  * 
  * @author Jan Peter Stotz
  */
-public interface TileSource {
+public interface MapSource {
 
 	/**
 	 * Specifies the different mechanisms for detecting updated tiles

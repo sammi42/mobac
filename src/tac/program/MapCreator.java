@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.model.AtlasOutputFormat;
@@ -48,14 +48,14 @@ public class MapCreator {
 	protected File atlasLayerFolder;
 	protected int zoom;
 	protected AtlasOutputFormat atlasOutputFormat;
-	protected TileSource tileSource;
+	protected MapSource tileSource;
 
 	protected String layerName;
 
 	protected AtlasTileWriter atlasTileWriter;
 
 	public MapCreator(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
-			TileSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
+			MapSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
 		log = Logger.getLogger(this.getClass());
 		xMin = smp.getXMin();
 		xMax = smp.getXMax();

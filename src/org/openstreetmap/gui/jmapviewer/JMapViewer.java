@@ -25,7 +25,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.utilities.Utilities;
 
@@ -52,7 +52,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	protected TileLoader tileLoader;
 	protected TileCache tileCache;
-	protected TileSource tileSource;
+	protected MapSource tileSource;
 
 	protected List<MapMarker> mapMarkerList;
 	protected boolean mapMarkersVisible;
@@ -183,7 +183,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 *            longitude of the specified coordinate
 	 * @param zoom
 	 *            {@link #MIN_ZOOM} <= zoom level <=
-	 *            {@link TileSource#getMaxZoom()}
+	 *            {@link MapSource#getMaxZoom()}
 	 */
 	public void setDisplayPositionByLatLon(Point mapPoint, double lat, double lon, int zoom) {
 		int x = OsmMercator.LonToX(lon, zoom);
@@ -523,15 +523,15 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		this.tileLoader = tileLoader;
 	}
 
-	public TileSource getTileLayerSource() {
+	public MapSource getTileLayerSource() {
 		return tileSource;
 	}
 
-	public TileSource getTileSource() {
+	public MapSource getTileSource() {
 		return tileSource;
 	}
 
-	public void setTileSource(TileSource tileSource) {
+	public void setTileSource(MapSource tileSource) {
 		if (tileSource.getMaxZoom() > MAX_ZOOM)
 			throw new RuntimeException("Maximum zoom level too high");
 		if (tileSource.getMinZoom() < MIN_ZOOM)

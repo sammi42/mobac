@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.JobDispatcher.Job;
@@ -41,7 +41,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private AtlasProgress ap;
 
 	private MapSelection mapSelection;
-	private TileSource tileSource;
+	private MapSource tileSource;
 	private String atlasName;
 	private SelectedZoomLevels sZL;
 	private AtlasOutputFormat atlasOutputFormat;
@@ -55,7 +55,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	public AtlasThread(String atlasName, TileSource tileSource, MapSelection mapSelection,
+	public AtlasThread(String atlasName, MapSource tileSource, MapSelection mapSelection,
 			SelectedZoomLevels sZL, AtlasOutputFormat atlasOutputFormat,
 			MapCreatorCustom.TileImageParameters customTileParameters) {
 		super("AtlasThread " + getNextThreadNum());

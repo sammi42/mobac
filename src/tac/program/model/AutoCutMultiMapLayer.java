@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.AtlasInterface;
@@ -34,7 +34,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 	private AtlasInterface atlas;
 
 	private String name;
-	private TileSource mapSource;
+	private MapSource mapSource;
 	private Point maxTileCoordinate;
 	private Point minTileCoordinate;
 	private int zoom;
@@ -43,7 +43,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 
 	private LinkedList<SubMap> maps = new LinkedList<SubMap>();
 
-	public AutoCutMultiMapLayer(Atlas atlas, String name, TileSource mapSource,
+	public AutoCutMultiMapLayer(Atlas atlas, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom, Dimension tileSize,
 			int maxMapSize) {
 		this.atlas = atlas;
@@ -179,7 +179,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 			return AutoCutMultiMapLayer.this;
 		}
 
-		public TileSource getMapSource() {
+		public MapSource getMapSource() {
 			return mapSource;
 		}
 

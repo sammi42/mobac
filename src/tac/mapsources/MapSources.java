@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.StartTAC;
 import tac.mapsources.Google.GoogleEarth;
@@ -25,12 +25,12 @@ public class MapSources {
 
 	private static final Logger log = Logger.getLogger(MapSources.class);
 
-	public static final TileSource DEFAULT = new Mapnik();
-	private static TileSource[] MAP_SOURCES;
+	public static final MapSource DEFAULT = new Mapnik();
+	private static MapSource[] MAP_SOURCES;
 
 	static {
 		loadMapSourceProperties();
-		MAP_SOURCES = new TileSource[] {
+		MAP_SOURCES = new MapSource[] {
 				// For debugging purposes
 				// new tac.mapsources.LocalhostTestSource(), //
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
@@ -43,7 +43,7 @@ public class MapSources {
 		};
 	}
 
-	public static TileSource[] getMapSources() {
+	public static MapSource[] getMapSources() {
 		return MAP_SOURCES;
 	}
 
@@ -51,8 +51,8 @@ public class MapSources {
 		return DEFAULT.getName();
 	}
 
-	public static TileSource getSourceByName(String name) {
-		for (TileSource t : MAP_SOURCES) {
+	public static MapSource getSourceByName(String name) {
+		for (MapSource t : MAP_SOURCES) {
 			if (t.getName().equals(name))
 				return t;
 		}

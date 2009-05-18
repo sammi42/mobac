@@ -1,7 +1,7 @@
 package tac.program;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.JobDispatcher.Job;
@@ -14,14 +14,14 @@ public class DownloadJob implements Job {
 
 	int errorCounter = 0;
 
-	TileSource tileSource;
+	MapSource tileSource;
 	int xValue;
 	int yValue;
 	int zoomValue;
 	TarIndexedArchive tileArchive;
 	DownloadJobListener listener;
 
-	public DownloadJob(TileSource tileSource, int xValue, int yValue, int zoomValue,
+	public DownloadJob(MapSource tileSource, int xValue, int yValue, int zoomValue,
 			TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		this.tileSource = tileSource;
 		this.xValue = xValue;

@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.utilities.DeleteFileFilter;
 import tac.utilities.Utilities;
@@ -39,17 +39,17 @@ public class TileStore {
 		}
 	}
 
-	private String getTilePath(int x, int y, int zoom, TileSource tileSource) {
+	private String getTilePath(int x, int y, int zoom, MapSource tileSource) {
 		return tileStorePath + tileSource.getName() + "/" + zoom + "_" + x + "_" + y + "."
 				+ tileSource.getTileType();
 	}
 
-	public File getTileFile(int x, int y, int zoom, TileSource tileSource) {
+	public File getTileFile(int x, int y, int zoom, MapSource tileSource) {
 		return new File(getTilePath(x, y, zoom, tileSource));
 	}
 
 	public boolean copyStoredTileTo(File targetFileName, int x, int y, int zoom,
-			TileSource tileSource) throws IOException {
+			MapSource tileSource) throws IOException {
 		File sourceFile = getTileFile(x, y, zoom, tileSource);
 		if (!sourceFile.exists())
 			return false;
@@ -73,12 +73,12 @@ public class TileStore {
 		return true;
 	}
 
-	public boolean contains(int x, int y, int zoom, TileSource tileSource) {
+	public boolean contains(int x, int y, int zoom, MapSource tileSource) {
 		File f = getTileFile(x, y, zoom, tileSource);
 		return f.exists();
 	}
 
-	public void clearStore(TileSource tileSource) {
+	public void clearStore(MapSource tileSource) {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 
 		if (tileStore.exists()) {
@@ -98,7 +98,7 @@ public class TileStore {
 	 * @return the amount of tiles in the specified store.
 	 * @throws InterruptedException
 	 */
-	public int getNrOfTiles(TileSource tileSource) throws InterruptedException {
+	public int getNrOfTiles(MapSource tileSource) throws InterruptedException {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
 			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
@@ -113,7 +113,7 @@ public class TileStore {
 		}
 	}
 
-	public long getStoreSize(TileSource tileSource) throws InterruptedException {
+	public long getStoreSize(MapSource tileSource) throws InterruptedException {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
 			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
@@ -130,17 +130,17 @@ public class TileStore {
 
 	/**
 	 * Returns <code>true</code> if the tile store directory of the specified
-	 * {@link TileSource} exists.
+	 * {@link MapSource} exists.
 	 * 
 	 * @param tileSource
 	 * @return
 	 */
-	public boolean storeExists(TileSource tileSource) {
+	public boolean storeExists(MapSource tileSource) {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		return (tileStore.isDirectory()) && (tileStore.exists());
 	}
 
-	public TileStoreInfo getStoreInfo(TileSource tileSource) throws InterruptedException {
+	public TileStoreInfo getStoreInfo(MapSource tileSource) throws InterruptedException {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 		if (tileStore.exists()) {
 			TileStoreInfoFilter tsif = new TileStoreInfoFilter(tileSource);
@@ -188,7 +188,7 @@ public class TileStore {
 		long size = 0;
 		int count = 0;
 
-		TileStoreInfoFilter(TileSource tileSource) {
+		TileStoreInfoFilter(MapSource tileSource) {
 			String fileExt = tileSource.getTileType();
 			p = Pattern.compile("\\d+_\\d+_\\d+." + fileExt);
 		}

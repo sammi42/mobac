@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource.TileUpdate;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
 /**
  * A {@link TileLoader} implementation that loads tiles from OSM via HTTP and
@@ -60,7 +60,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         }
     }
 
-    public Runnable createTileLoaderJob(final TileSource source, final int tilex, final int tiley, final int zoom) {
+    public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley, final int zoom) {
         return new FileLoadJob(source, tilex, tiley, zoom);
     }
 
@@ -69,13 +69,13 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
         int tilex, tiley, zoom;
         Tile tile;
-        TileSource source;
+        MapSource source;
         File tileCacheDir;
         File tileFile = null;
         long fileAge = 0;
         boolean fileTilePainted = false;
 
-        public FileLoadJob(TileSource source, int tilex, int tiley, int zoom) {
+        public FileLoadJob(MapSource source, int tilex, int tiley, int zoom) {
             super();
             this.source = source;
             this.tilex = tilex;
@@ -337,7 +337,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
      *            maximum age in milliseconds
      * @see #FILE_AGE_ONE_DAY
      * @see #FILE_AGE_ONE_WEEK
-     * @see TileSource#getTileUpdate()
+     * @see MapSource#getTileUpdate()
      */
     public void setCacheMaxFileAge(long maxFileAge) {
         this.maxCacheFileAge = maxFileAge;

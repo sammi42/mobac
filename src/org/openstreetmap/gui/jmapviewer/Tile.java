@@ -12,7 +12,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.utilities.Utilities;
 
@@ -40,7 +40,7 @@ public class Tile {
         }
     }
 
-    protected TileSource source;
+    protected MapSource source;
     protected int xtile;
     protected int ytile;
     protected int zoom;
@@ -58,7 +58,7 @@ public class Tile {
      * @param ytile
      * @param zoom
      */
-    public Tile(TileSource source, int xtile, int ytile, int zoom) {
+    public Tile(MapSource source, int xtile, int ytile, int zoom) {
         super();
         this.source = source;
         this.xtile = xtile;
@@ -68,7 +68,7 @@ public class Tile {
         this.key = getTileKey(source, xtile, ytile, zoom);
     }
 
-    public Tile(TileSource source, int xtile, int ytile, int zoom, BufferedImage image) {
+    public Tile(MapSource source, int xtile, int ytile, int zoom, BufferedImage image) {
         this(source, xtile, ytile, zoom);
         this.image = image;
     }
@@ -129,7 +129,7 @@ public class Tile {
         }
     }
 
-    public TileSource getSource() {
+    public MapSource getSource() {
         return source;
     }
 
@@ -218,7 +218,7 @@ public class Tile {
         return (xtile == tile.xtile) && (ytile == tile.ytile) && (zoom == tile.zoom);
     }
 
-    public static String getTileKey(TileSource source, int xtile, int ytile, int zoom) {
+    public static String getTileKey(MapSource source, int xtile, int ytile, int zoom) {
         return zoom + "/" + xtile + "/" + ytile + "@" + source.getName();
     }
 

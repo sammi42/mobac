@@ -3,8 +3,8 @@ package org.openstreetmap.gui.jmapviewer.interfaces;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 /**
- * Interface for implementing a tile loader. Tiles are usually loaded via HTTP
- * or from a file.
+ * Interface for implementing an asynchronous tile loader. Tiles are usually
+ * loaded via HTTP or from a file.
  * 
  * @author Jan Peter Stotz
  */
@@ -22,5 +22,5 @@ public interface TileLoader {
 	 * @returns {@link Runnable} implementation that performs the desired load
 	 *          action.
 	 */
-	public Runnable createTileLoaderJob(TileSource tileLayerSource, int tilex, int tiley, int zoom);
+	public Runnable createTileLoaderJob(MapSource tileLayerSource, int tilex, int tiley, int zoom);
 }

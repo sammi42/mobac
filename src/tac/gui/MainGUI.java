@@ -38,7 +38,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.StartTAC;
 import tac.gui.components.AtlasTree;
@@ -543,7 +543,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		try {
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
-			s.setDefaultMapSource(((TileSource) mapSourceCombo.getSelectedItem()).getName());
+			s.setDefaultMapSource(((MapSource) mapSourceCombo.getSelectedItem()).getName());
 			s.setAtlasName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 			s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
@@ -622,7 +622,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class MapSourceComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			previewMap.setTileSource((TileSource) mapSourceCombo.getSelectedItem());
+			previewMap.setTileSource((MapSource) mapSourceCombo.getSelectedItem());
 			zoomSlider.setMinimum(previewMap.getTileSource().getMinZoom());
 			zoomSlider.setMaximum(previewMap.getTileSource().getMaxZoom());
 			updateGridSizeCombo();
@@ -686,7 +686,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			Profile profile = getProfile((String) profilesCombo.getEditor().getItem());
 			if (profile != null) {
-				TileSource map = MapSources.getSourceByName(profile.getMapSource());
+				MapSource map = MapSources.getSourceByName(profile.getMapSource());
 				mapSourceCombo.setSelectedItem(map);
 
 				latMinTextField.setCoordinate(profile.getLatitudeMin());
@@ -763,7 +763,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			try {
 				profile.setProfileName(profileName);
 				profile.setAtlasName(atlasNameTextField.getText());
-				profile.setMapSource(((TileSource) mapSourceCombo.getSelectedItem()).getName());
+				profile.setMapSource(((MapSource) mapSourceCombo.getSelectedItem()).getName());
 				profile.setLatitudeMax(latMaxTextField.getCoordinate());
 				profile.setLatitudeMin(latMinTextField.getCoordinate());
 				profile.setLongitudeMax(lonMaxTextField.getCoordinate());
@@ -824,7 +824,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				}
 
 				try {
-					TileSource tileSource = (TileSource) mapSourceCombo.getSelectedItem();
+					MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
 					SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
 							.getMinZoom(), cbZoom);
 					AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
@@ -842,7 +842,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void updateZoomLevelCheckBoxes() {
-		TileSource tileSource = previewMap.getTileSource();
+		MapSource tileSource = previewMap.getTileSource();
 		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
 		JCheckBox oldZoomLevelCheckBoxes[] = cbZoom;
 		cbZoom = new JCheckBox[zoomLevels];
@@ -927,7 +927,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private void addSelectedAutoCutMultiMapLayers() {
 		Atlas atlas = atlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
-		TileSource tileSource = (TileSource) mapSourceCombo.getSelectedItem();
+		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource().getMinZoom(),
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();

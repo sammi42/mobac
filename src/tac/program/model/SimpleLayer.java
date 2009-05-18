@@ -5,7 +5,7 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
@@ -51,7 +51,7 @@ public class SimpleLayer implements LayerInterface, CapabilityDeletable {
 		return getName();
 	}
 
-	public SimpleMap addMap(String name, TileSource mapSource, Point maxTileNum, Point minTileNum,
+	public SimpleMap addMap(String name, MapSource mapSource, Point maxTileNum, Point minTileNum,
 			int zoom, Dimension tileSize) {
 		SimpleMap m = new SimpleMap(this, name, mapSource, maxTileNum, minTileNum, zoom, tileSize);
 		maps.add(m);

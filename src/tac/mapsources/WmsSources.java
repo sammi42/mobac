@@ -3,13 +3,13 @@ package tac.mapsources;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class WmsSources {
 
 	static Logger log = Logger.getLogger(WmsSources.class);
 
-	public static abstract class WmsMapSource implements TileSource {
+	public static abstract class WmsMapSource implements MapSource {
 
 		/**
 		 * 

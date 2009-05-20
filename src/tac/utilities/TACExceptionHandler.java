@@ -74,6 +74,10 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\nVersion: " + TACInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
+			String dist = OSUtilities.getLinuxDistributionName();
+			if (dist != null)
+				sb.append("\nDistribution name: " + dist);
+
 			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.version") + ")");
 
 			StringWriter stack = new StringWriter();

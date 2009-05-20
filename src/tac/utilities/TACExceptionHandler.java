@@ -74,6 +74,10 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\nVersion: " + TACInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
+			String windowManager = System.getProperty("sun.desktop");
+			if (windowManager != null)
+				sb.append(" (" + windowManager + ")");
+
 			String dist = OSUtilities.getLinuxDistributionName();
 			if (dist != null)
 				sb.append("\nDistribution name: " + dist);

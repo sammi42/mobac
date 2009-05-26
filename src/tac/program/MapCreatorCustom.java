@@ -113,7 +113,7 @@ public class MapCreatorCustom extends MapCreator {
 						paintCustomTile(graphics, xAbsPos, yAbsPos);
 						graphics.dispose();
 						tileImageDataWriter.processImage(tileImage, buf);
-						atlasTileWriter.writeTile(tileFileName, buf.toByteArray());
+						mapTileWriter.writeTile(tileFileName, buf.toByteArray());
 					} catch (Exception e) {
 						log.error("Error writing tile image: ", e);
 					}
@@ -171,8 +171,8 @@ public class MapCreatorCustom extends MapCreator {
 	private int cachePos = 0;
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		String tileFileName = "y" + yTile + "x" + xTile + "." + tileSource.getTileType();
-		byte[] sourceTileData = tileIndex.getEntryContent(tileFileName);
+		String tileFileName = "y" + yTile + "x" + xTile + "." + mapSource.getTileType();
+		byte[] sourceTileData = tarTileIndex.getEntryContent(tileFileName);
 		if (sourceTileData == null)
 			return null;
 		for (CachedTile ct : cache) {

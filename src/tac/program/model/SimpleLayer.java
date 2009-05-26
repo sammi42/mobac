@@ -62,4 +62,9 @@ public class SimpleLayer implements LayerInterface, CapabilityDeletable {
 		maps.remove(map);
 	}
 
+	public long calculateTilesToDownload() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

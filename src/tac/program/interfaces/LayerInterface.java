@@ -9,4 +9,6 @@ public interface LayerInterface {
 	public MapInterface getMap(int index);
 	
 	public AtlasInterface getAtlas();
+
+	public long calculateTilesToDownload();
 }

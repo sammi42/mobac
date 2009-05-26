@@ -19,8 +19,9 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
+import tac.program.interfaces.LayerInterface;
+import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
-import tac.program.model.MapSlice;
 import tac.tar.TarArchive;
 import tac.tar.TarIndex;
 import tac.tar.TarTmiArchive;
@@ -39,38 +40,37 @@ public class MapCreator {
 
 	protected static boolean tileSizeErrorNotified = false;
 
+	protected MapInterface map;
 	protected int xMin;
 	protected int xMax;
 	protected int yMin;
 	protected int yMax;
 
-	protected TarIndex tileIndex;
-	protected File atlasLayerFolder;
+	protected TarIndex tarTileIndex;
+	protected File mapFolder;
 	protected int zoom;
 	protected AtlasOutputFormat atlasOutputFormat;
-	protected MapSource tileSource;
+	protected MapSource mapSource;
 
-	protected String layerName;
+	protected MapTileWriter mapTileWriter;
 
-	protected AtlasTileWriter atlasTileWriter;
-
-	public MapCreator(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
-			MapSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber) {
+	public MapCreator(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		log = Logger.getLogger(this.getClass());
-		xMin = smp.getXMin();
-		xMax = smp.getXMax();
-		yMin = smp.getYMin();
-		yMax = smp.getYMax();
-		this.tileSource = tileSource;
-		this.tileIndex = tileIndex;
-		this.zoom = zoom;
-		this.atlasOutputFormat = atlasOutputFormat;
-		layerName = String.format("%s-%02d-%03d", new Object[] { mapName, zoom, mapNumber });
-		atlasLayerFolder = new File(atlasFolder, layerName);
+		LayerInterface layer = map.getLayer();
+		this.map = map;
+		xMin = map.getMinTileCoordinate().x / Tile.SIZE;
+		xMax = map.getMaxTileCoordinate().x / Tile.SIZE;
+		yMin = map.getMinTileCoordinate().y / Tile.SIZE;
+		yMax = map.getMaxTileCoordinate().y / Tile.SIZE;
+		this.mapSource = map.getMapSource();
+		this.tarTileIndex = tarTileIndex;
+		this.zoom = map.getZoom();
+		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
+		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
 	}
 
 	public void createMap() {
-		atlasLayerFolder.mkdir();
+		mapFolder.mkdir();
 
 		// write the .map file containing the calibration points
 		writeMapFile();
@@ -78,11 +78,11 @@ public class MapCreator {
 		// This means there should not be any resizing of the tiles.
 		try {
 			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
-				atlasTileWriter = new TarTileWriter();
+				mapTileWriter = new TarTileWriter();
 			else
-				atlasTileWriter = new FileTileWriter();
+				mapTileWriter = new FileTileWriter();
 			createTiles();
-			atlasTileWriter.finalizeMap();
+			mapTileWriter.finalizeMap();
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
@@ -90,7 +90,7 @@ public class MapCreator {
 	}
 
 	private void writeMapFile() {
-		File mapFile = new File(atlasLayerFolder, layerName + ".map");
+		File mapFile = new File(mapFolder, map.getName() + ".map");
 		FileOutputStream mapFileStream = null;
 		try {
 			mapFileStream = new FileOutputStream(mapFile);
@@ -114,7 +114,7 @@ public class MapCreator {
 		int width = (xMax - xMin + 1) * Tile.SIZE;
 		int height = (yMax - yMin + 1) * Tile.SIZE;
 
-		mapWriter.write(prepareMapString("t_." + tileSource.getTileType(), longitudeMin,
+		mapWriter.write(prepareMapString("t_." + mapSource.getTileType(), longitudeMin,
 				longitudeMax, latitudeMin, latitudeMax, width, height));
 		mapWriter.flush();
 	}
@@ -139,17 +139,19 @@ public class MapCreator {
 					ap.incMapProgress();
 				try {
 					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
-							+ "." + tileSource.getTileType();
-					byte[] sourceTileData = tileIndex.getEntryContent("y" + y + "x" + x + "."
-							+ tileSource.getTileType());
+							+ "." + mapSource.getTileType();
+					byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x + "."
+							+ mapSource.getTileType());
 					if (sourceTileData != null) {
-						atlasTileWriter.writeTile(tileFileName, sourceTileData);
+						mapTileWriter.writeTile(tileFileName, sourceTileData);
 					} else {
+						log.trace("Tile \"" + tileFileName
+								+ "\" not found in tile archive - creating default");
 						BufferedImage emptyImage = new BufferedImage(256, 256,
 								BufferedImage.TYPE_INT_ARGB);
 						ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
-						ImageIO.write(emptyImage, tileSource.getTileType(), buf);
-						atlasTileWriter.writeTile(tileFileName, buf.toByteArray());
+						ImageIO.write(emptyImage, mapSource.getTileType(), buf);
+						mapTileWriter.writeTile(tileFileName, buf.toByteArray());
 					}
 				} catch (IOException e) {
 					log.error("", e);
@@ -160,18 +162,19 @@ public class MapCreator {
 		}
 	}
 
-	public class TarTileWriter implements AtlasTileWriter {
+	public class TarTileWriter implements MapTileWriter {
 
 		TarArchive ta = null;
 
 		public TarTileWriter() {
 			super();
-			File mapTarFile = new File(atlasLayerFolder, layerName + ".tar");
+			File mapTarFile = new File(mapFolder, map.getName() + ".tar");
+			log.debug("Writing tiles to tared map: " + mapTarFile);
 			try {
 				ta = new TarTmiArchive(mapTarFile, null);
 				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
 				writeMapFile(buf);
-				ta.writeFileFromData(layerName + ".map", buf.toByteArray());
+				ta.writeFileFromData(map.getName() + ".map", buf.toByteArray());
 			} catch (IOException e) {
 				log.error("", e);
 			}
@@ -192,16 +195,17 @@ public class MapCreator {
 
 	}
 
-	public class FileTileWriter implements AtlasTileWriter {
+	public class FileTileWriter implements MapTileWriter {
 
 		File setFolder;
 		Writer setFileWriter;
 
 		public FileTileWriter() {
 			super();
-			setFolder = new File(atlasLayerFolder, "set");
+			setFolder = new File(mapFolder, "set");
 			setFolder.mkdir();
-			File setFile = new File(atlasLayerFolder, layerName + ".set");
+			log.debug("Writing tiles to set folder: " + setFolder);
+			File setFile = new File(mapFolder, map.getName() + ".set");
 			try {
 				setFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
 						setFile), TEXT_FILE_CHARSET));
@@ -231,7 +235,7 @@ public class MapCreator {
 		}
 	}
 
-	public abstract interface AtlasTileWriter {
+	public abstract interface MapTileWriter {
 
 		public void writeTile(String tileFileName, byte[] tileData) throws IOException;
 

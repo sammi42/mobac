@@ -1,5 +1,6 @@
 package tac.program.model;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,12 @@ public class Atlas implements AtlasInterface {
 
 	private String name = "Atlas";
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
+
+	private AtlasOutputFormat outputFormat = AtlasOutputFormat.TaredAtlas;
+
+	public Atlas() {
+		super();
+	}
 
 	public void addLayer(LayerInterface l) {
 		layers.add(l);
@@ -31,9 +38,32 @@ public class Atlas implements AtlasInterface {
 		return name;
 	}
 
+	public void setName(String newName) {
+		this.name = newName;
+	}
+
+	public AtlasOutputFormat getOutputFormat() {
+		return outputFormat;
+	}
+
+	public void setOutputFormat(AtlasOutputFormat atlasOutputFormat) {
+		this.outputFormat = atlasOutputFormat;
+	}
+
 	@Override
 	public String toString() {
-		return getName();
+		return "Atlas " + getName();
+	}
+
+	public Iterator<LayerInterface> iterator() {
+		return layers.iterator();
+	}
+
+	public long calculateTilesToDownload() {
+		long tiles = 0;
+		for (LayerInterface layer : layers)
+			tiles += layer.calculateTilesToDownload();
+		return tiles;
 	}
 
 }

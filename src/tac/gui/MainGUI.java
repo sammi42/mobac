@@ -55,6 +55,7 @@ import tac.program.MapSelection;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
+import tac.program.interfaces.AtlasInterface;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AutoCutMultiMapLayer;
@@ -353,31 +354,29 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		tileProcessingPanel.add(tileColorDepthPanel, GBC.eol());
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
-		if (settings.isDevModeEnabled()) {
-			atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
-			atlasTree = new AtlasTree(previewMap);
-			JScrollPane treeScrollPane = new JScrollPane(atlasTree,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			treeScrollPane.setPreferredSize(new Dimension(100, 100));
-			atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
-			JButton clearAtlas = new JButton("Clear");
-			atlasContentPanel.add(clearAtlas, GBC.std());
-			clearAtlas.addActionListener(new ActionListener() {
+		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
+		atlasTree = new AtlasTree(previewMap);
+		JScrollPane treeScrollPane = new JScrollPane(atlasTree,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		treeScrollPane.setPreferredSize(new Dimension(100, 100));
+		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
+		JButton clearAtlas = new JButton("Clear");
+		atlasContentPanel.add(clearAtlas, GBC.std());
+		clearAtlas.addActionListener(new ActionListener() {
 
-				public void actionPerformed(ActionEvent e) {
-					atlasTree.clearAtlas();
-				}
-			});
-			JButton addLayers = new JButton("Add selection");
-			atlasContentPanel.add(addLayers, GBC.std());
-			addLayers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				atlasTree.clearAtlas();
+			}
+		});
+		JButton addLayers = new JButton("Add selection");
+		atlasContentPanel.add(addLayers, GBC.std());
+		addLayers.addActionListener(new ActionListener() {
 
-				public void actionPerformed(ActionEvent e) {
-					addSelectedAutoCutMultiMapLayers();
-				}
-			});
-		}
+			public void actionPerformed(ActionEvent e) {
+				addSelectedAutoCutMultiMapLayers();
+			}
+		});
 		JPanel profilesPanel = new JPanel(new GridBagLayout());
 		profilesPanel.setBorder(BorderFactory.createTitledBorder("Saved profiles"));
 
@@ -813,25 +812,32 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 			if (maxIsBiggerThanMin) {
 
-				boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
-				MapCreatorCustom.TileImageParameters customTileParameters = null;
-				if (customTileSize) {
-					customTileParameters = new MapCreatorCustom.TileImageParameters();
-					customTileParameters.width = tileSizeWidth.getValue();
-					customTileParameters.height = tileSizeHeight.getValue();
-					customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
-							.getSelectedItem();
-				}
+				// boolean customTileSize =
+				// enableCustomTileProcessingCheckButton.isSelected();
+				// MapCreatorCustom.TileImageParameters customTileParameters =
+				// null;
+				// if (customTileSize) {
+				// customTileParameters = new
+				// MapCreatorCustom.TileImageParameters();
+				// customTileParameters.width = tileSizeWidth.getValue();
+				// customTileParameters.height = tileSizeHeight.getValue();
+				// customTileParameters.format =
+				// (tac.program.model.TileImageFormat) tileImageFormat
+				// .getSelectedItem();
+				// }
 
 				try {
-					MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
-					SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
-							.getMinZoom(), cbZoom);
+					// MapSource tileSource = (MapSource)
+					// mapSourceCombo.getSelectedItem();
+					// SelectedZoomLevels sZL = new
+					// SelectedZoomLevels(previewMap.getTileSource()
+					// .getMinZoom(), cbZoom);
 					AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
 							.getSelectedItem();
-					Thread atlasThread = new AtlasThread(atlasNameTextField.getText(), tileSource,
-							getMapSelectionCoordinates(), sZL, atlasOutputFormat,
-							customTileParameters);
+					AtlasInterface atlas = atlasTree.getAtlas();
+					atlas.setName(atlasNameTextField.getText());
+					atlas.setOutputFormat(atlasOutputFormat);
+					Thread atlasThread = new AtlasThread(atlas);
 					atlasThread.start();
 				} catch (Exception exception) {
 					log.error("", exception);
@@ -932,15 +938,28 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		Settings settings = Settings.getInstance();
-		Dimension tileSize = new Dimension(tileSizeWidth.getValue(), tileSizeHeight.getValue());
 		int[] zoomLevels = sZL.getZoomLevels();
+		if (zoomLevels.length == 0) {
+			JOptionPane.showMessageDialog(this, "Please select at least one zoom level");
+			return;
+		}
 		for (int zoom : zoomLevels) {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftTileCoordinate(zoom);
 			Point br = ms.getBottomRightTileCoordinate(zoom);
 			log.debug(tl + " " + br);
-			new AutoCutMultiMapLayer(atlas, name, tileSource, tl, br, zoom, tileSize, settings
-					.getMaxMapSize());
+			boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
+			MapCreatorCustom.TileImageParameters customTileParameters = null;
+			if (customTileSize) {
+				customTileParameters = new MapCreatorCustom.TileImageParameters();
+				customTileParameters.width = tileSizeWidth.getValue();
+				customTileParameters.height = tileSizeHeight.getValue();
+				customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
+						.getSelectedItem();
+			}
+
+			new AutoCutMultiMapLayer(atlas, name, tileSource, tl, br, zoom, customTileParameters,
+					settings.getMaxMapSize());
 		}
 		atlasTree.getTreeModel().notifyStructureChanged();
 	}
@@ -1008,25 +1027,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		}
 
 		if (checkCreateAtlas) {
-
-			boolean zoomLevelChosen = false;
-
-			for (int i = 0; i < cbZoom.length; i++) {
-				if (cbZoom[i].isSelected()) {
-					zoomLevelChosen = true;
-					break;
-				}
-			}
-
-			if (zoomLevelChosen == false) {
-				errorText += "Please select at least one zoom level. \n";
-			}
-
-			MapSelection ms = getMapSelectionCoordinates();
-			if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
-				errorText += "Please select a map area for download. \n";
-			}
-
+			if (atlasTree.getAtlas().calculateTilesToDownload() == 0)
+				errorText += "Atlas is empty - please add at least one selection to atlas content. \n";
 		}
 		return errorText;
 	}

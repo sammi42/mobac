@@ -15,7 +15,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	private int xMax;
 	private int yMax;
 	private int zoom;
-	private MapSource tileSource;
+	private MapSource mapSource;
 	private TarIndexedArchive tileArchive;
 
 	private int x, y;
@@ -34,7 +34,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 * </pre>
 	 */
 	public DownloadJobEnumerator(int xMin, int xMax, int yMin, int yMax, int zoom,
-			MapSource tileSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
+			MapSource mapSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		super();
 		this.listener = listener;
 		this.xMin = xMin;
@@ -42,11 +42,11 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		this.yMax = yMax;
 		this.zoom = zoom;
 		this.tileArchive = tileArchive;
-		this.tileSource = tileSource;
+		this.mapSource = mapSource;
 		y = yMin;
 		x = xMin;
 
-		nextJob = new DownloadJob(tileSource, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
 	}
 
 	public boolean hasMoreElements() {
@@ -64,7 +64,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 				return job;
 			}
 		}
-		nextJob = new DownloadJob(tileSource, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
 		return job;
 	}
 }

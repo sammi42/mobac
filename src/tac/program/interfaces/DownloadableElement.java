@@ -1,9 +1,9 @@
 package tac.program.interfaces;
 
-import java.io.File;
 import java.util.Enumeration;
 
 import tac.program.JobDispatcher.Job;
+import tac.tar.TarIndexedArchive;
 
 /**
  * Classes that implement this interface identify themselves as responsible for
@@ -17,12 +17,13 @@ public interface DownloadableElement {
 
 	/**
 	 * 
-	 * @param downloadDestinationDir
+	 * @param tileArchive
 	 * @param listener
 	 * @return An enumeration that returns {@link Job} objects. Each job should
 	 *         download one map tile from the providing web server (or from the
 	 *         tile cache).
 	 */
-	public Enumeration<Job> getDownloadJobs(File downloadDestinationDir,
+	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
 			DownloadJobListener listener);
+	
 }

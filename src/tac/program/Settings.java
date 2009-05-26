@@ -186,6 +186,8 @@ public class Settings {
 		OutputStream os = null;
 		try {
 			SettingsProperties p = new SettingsProperties();
+			if (devMode)
+				p.setBooleanProperty(DEVMODE, devMode);
 			p.setIntProperty(THREAD_COUNT, threadCount);
 			p.setIntProperty(CONNECTION_TIMEOUT, connectionTimeout);
 			p.setIntProperty(MAPS_MAXSIZE, maxMapSize);

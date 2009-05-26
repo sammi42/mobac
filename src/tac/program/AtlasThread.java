@@ -1,6 +1,5 @@
 package tac.program;
 
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,19 +8,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
 import tac.program.JobDispatcher.Job;
+import tac.program.MapCreatorCustom.TileImageParameters;
+import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.DownloadJobListener;
+import tac.program.interfaces.LayerInterface;
+import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
-import tac.program.model.MapSlice;
+import tac.program.model.AutoCutMultiMapLayer;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.TACExceptionHandler;
@@ -40,12 +42,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap;
 
-	private MapSelection mapSelection;
-	private MapSource tileSource;
-	private String atlasName;
-	private SelectedZoomLevels sZL;
-	private AtlasOutputFormat atlasOutputFormat;
-	private MapCreatorCustom.TileImageParameters customTileParameters;
+	private AtlasInterface atlas;
 
 	private TarIndexedArchive tileArchive;
 
@@ -55,17 +52,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	public AtlasThread(String atlasName, MapSource tileSource, MapSelection mapSelection,
-			SelectedZoomLevels sZL, AtlasOutputFormat atlasOutputFormat,
-			MapCreatorCustom.TileImageParameters customTileParameters) {
+	public AtlasThread(AtlasInterface atlas) {
 		super("AtlasThread " + getNextThreadNum());
-		this.tileSource = tileSource;
-		this.atlasName = atlasName;
-		this.mapSelection = mapSelection;
-		this.sZL = sZL;
-		this.atlasOutputFormat = atlasOutputFormat;
-		this.customTileParameters = customTileParameters;
 		ap = new AtlasProgress(this);
+		this.atlas = atlas;
 	}
 
 	private static synchronized int getNextThreadNum() {
@@ -76,9 +66,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	public void run() {
 		TACExceptionHandler.registerForCurrentThread();
 		log.info("Starting altas creation");
-		log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource + "\n\tAtlas name: "
-				+ atlasName + "\n\tMap selection: " + mapSelection + "\n\tSelectedZoomLevels: "
-				+ sZL);
+		// log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource +
+		// "\n\tAtlas name: "
+		// + atlasName + "\n\tMap selection: " + mapSelection +
+		// "\n\tSelectedZoomLevels: "
+		// + sZL);
 		ap.setAbortListener(this);
 		try {
 			createAtlas();
@@ -122,21 +114,19 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String formattedDateString = sdf.format(date);
 
-		File atlasDir = new File(workingDir + "/atlases/" + atlasName + "_" + formattedDateString);
+		File atlasDir = new File(workingDir + "/atlases/" + atlas.getName() + "_"
+				+ formattedDateString);
 		atlasDir.mkdirs();
 
 		/***
 		 * In this section of code below, atlas is created.
 		 **/
 
-		int nrOfLayers = sZL.getNrOfLayers();
-		int[] zoomLevels = sZL.getZoomLevels();
+		int nrOfLayers = atlas.getLayerCount();
+		// int[] zoomLevels = sZL.getZoomLevels();
 
-		long totalNrOfTiles = 0;
+		long totalNrOfTiles = atlas.calculateTilesToDownload();
 
-		for (int i = 0; i < nrOfLayers; i++) {
-			totalNrOfTiles += mapSelection.calculateNrOfTiles(zoomLevels[i]);
-		}
 		if (totalNrOfTiles > Integer.MAX_VALUE) {
 			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!",
 					"Error", JOptionPane.ERROR_MESSAGE);
@@ -156,7 +146,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		Thread t = Thread.currentThread();
 		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
-			for (int layer = 0; layer < nrOfLayers; layer++) {
+			int layerNum = 0;
+			for (LayerInterface layer : atlas) {
+				AutoCutMultiMapLayer acLayer = (AutoCutMultiMapLayer) layer;
 				jobsCompleted = 0;
 				jobsRetryError = 0;
 				jobsPermanentError = 0;
@@ -165,39 +157,40 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 				// Prepare the tile store directory
 				if (s.isTileStoreEnabled())
-					ts.getTileFile(0, 0, 0, tileSource).getParentFile().mkdirs();
+					ts.getTileFile(0, 0, 0, acLayer.getMapSource()).getParentFile().mkdirs();
 
 				/***
 				 * In this section of code below, tiles for Atlas is being
 				 * downloaded and saved in the temporary layer tar file in the
 				 * system temp directory.
 				 **/
-				int zoom = zoomLevels[layer];
+				int zoom = acLayer.getZoom();
 
-				Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
-				Point bottomRight = mapSelection.getBottomRightTileNumber(zoom);
-
-				int apMax = (int) mapSelection.calculateNrOfTiles(zoom);
-
-				int xMin = topLeft.x;
-				int xMax = bottomRight.x;
-				int yMin = topLeft.y;
-				int yMax = bottomRight.y;
+				// Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
+				// Point bottomRight =
+				// mapSelection.getBottomRightTileNumber(zoom);
+				//
+				int apMax = (int) layer.calculateTilesToDownload();
+				//
+				// int xMin = topLeft.x;
+				// int xMax = bottomRight.x;
+				// int yMin = topLeft.y;
+				// int yMax = bottomRight.y;
 				ap.initLayer(apMax);
-				ap.initMap(0);
+				ap.initMap(layer.getMapCount());
 				ap.setZoomLevel(zoom);
 
 				jobsProduced = 0;
 				tileArchive = null;
 				if (!SKIP_DOWNLOAD) {
-					String tempSuffix = "TAC_" + atlasName + "_" + zoom + "_";
+					String tempSuffix = "TAC_" + atlas.getName() + "_" + zoom + "_";
 					tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
 					// If something goes wrong the temp file only
 					// persists until the VM exits
 					tileArchiveFile.deleteOnExit();
 					log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
 					tileArchive = new TarIndexedArchive(tileArchiveFile, apMax);
-					djp = new DownloadJobProducer(topLeft, bottomRight, zoom);
+					djp = new DownloadJobProducer(acLayer);
 
 					boolean failedMessageAnswered = false;
 
@@ -227,7 +220,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					tileArchive.writeEndofArchive();
 					tileArchive.close();
 					tileIndex = tileArchive.getTarIndex();
-					if (tileIndex.size() != (mapSelection.calculateNrOfTiles(zoom))) {
+					if (tileIndex.size() != (layer.calculateTilesToDownload())) {
 						int answer = JOptionPane.showConfirmDialog(ap,
 								"Something is wrong with download of atlas tiles.\n"
 										+ "The amount of downladed tiles is not as "
@@ -243,36 +236,35 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 				}
 				ap.setLayerProgress(apMax);
 
-				File atlasFolder = new File(atlasDir, String.format("%s-%02d", new Object[] {
-						atlasName, zoom }));
-				atlasFolder.mkdir();
-
 				log.debug("Starting to create atlas from downloaded tiles");
 
-				int mapSize = s.getMaxMapSize();
+				// int mapSize = s.getMaxMapSize();
 
-				List<MapSlice> subMaps = MapSlicer.calculateMapSlices(mapSize, xMin, xMax, yMin,
-						yMax);
+				// List<MapSlice> subMaps =
+				// MapSlicer.calculateMapSlices(mapSize, xMin, xMax, yMin,
+				// yMax);
+				// log.trace("Map will been splitted into " + subMaps.size()
+				// + " sections because of TrekBuddy maximum map limitation");
 
-				log.trace("Map will been splitted into " + subMaps.size()
-						+ " sections because of TrekBuddy maximum map limitation");
-
-				ap.initMap(subMaps.size());
+				// ap.initMap(subMaps.size());
+				TileImageParameters parameters = acLayer.getParameters();
 				int mapNumber = 1;
-				for (MapSlice smp : subMaps) {
+				for (MapInterface map : acLayer) {
+
 					MapCreator mc;
-					if (customTileParameters == null)
-						mc = new MapCreator(smp, tileIndex, atlasFolder, atlasName, tileSource,
-								zoom, atlasOutputFormat, mapNumber);
+					if (parameters == null)
+						mc = new MapCreator(map, tileIndex, atlasDir);
 					else
-						mc = new MapCreatorCustom(smp, tileIndex, atlasFolder, atlasName,
-								tileSource, zoom, atlasOutputFormat, mapNumber,
-								customTileParameters);
+						mc = new MapCreator(map, tileIndex, atlasDir);
+					// mc = new MapCreatorCustom(smp, tileIndex, atlasFolder,
+					// atlasName,
+					// tileSource, zoom, atlasOutputFormat, mapNumber,
+					// customTileParameters);
 					mc.createMap();
 					ap.setMap(mapNumber);
 					mapNumber++;
 				}
-				ap.setLayer(layer + 1);
+				ap.setLayer(layerNum++);
 				downloadJobDispatcher.cancelOutstandingJobs();
 				tileIndex.closeAndDelete();
 			}
@@ -281,17 +273,17 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			if (djp != null)
 				djp.cancel();
 			downloadJobDispatcher.terminateAllWorkerThreads();
-			if (tileArchive != null)
-				tileArchive.close();
-			if (tileIndex != null)
-				tileIndex.closeAndDelete();
-			if (tileArchiveFile != null)
-				tileArchiveFile.delete();
+//			if (tileArchive != null)
+//				tileArchive.close();
+//			if (tileIndex != null)
+//				tileIndex.closeAndDelete();
+//			if (tileArchiveFile != null)
+//				tileArchiveFile.delete();
 		}
 
-		if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
+		if (atlas.getOutputFormat() == AtlasOutputFormat.TaredAtlas)
 			AtlasTarCreator.createAtlasCrTarArchive(atlasDir);
-		else if (atlasOutputFormat == AtlasOutputFormat.UntaredAtlas) {
+		else if (atlas.getOutputFormat() == AtlasOutputFormat.UntaredAtlas) {
 			File crtba = new File(atlasDir.getAbsolutePath(), "cr.tba");
 			try {
 				FileWriter fw = new FileWriter(crtba);
@@ -375,25 +367,30 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 		private Logger log = Logger.getLogger(DownloadJobProducer.class);
 
-		Point topLeft;
-		Point bottomRight;
-		int zoom;
+		// Point topLeft;
+		// Point bottomRight;
+		// int zoom;
 
-		public DownloadJobProducer(Point topLeft, Point bottomRight, int zoom) {
-			super("JobProducerThread_" + atlasName);
-			this.bottomRight = bottomRight;
-			this.topLeft = topLeft;
-			this.zoom = zoom;
+		// public DownloadJobProducer(Point topLeft, Point bottomRight, int
+		// zoom) {
+		// super("JobProducerThread_" + atlas.getName());
+		// this.bottomRight = bottomRight;
+		// this.topLeft = topLeft;
+		// this.zoom = zoom;
+		// start();
+		// }
+		Enumeration<Job> jobEnumerator;
+
+		public DownloadJobProducer(AutoCutMultiMapLayer acLayer) {
+			jobEnumerator = acLayer.getDownloadJobs(tileArchive, AtlasThread.this);
 			start();
 		}
 
 		@Override
 		public void run() {
-			DownloadJobEnumerator djEnum = new DownloadJobEnumerator(topLeft.x, bottomRight.x,
-					topLeft.y, bottomRight.y, zoom, tileSource, tileArchive, AtlasThread.this);
 			try {
-				while (djEnum.hasMoreElements()) {
-					Job job = djEnum.nextElement();
+				while (jobEnumerator.hasMoreElements()) {
+					Job job = jobEnumerator.nextElement();
 					downloadJobDispatcher.addJob(job);
 					log.trace("Job added: " + job);
 					jobsProduced++;

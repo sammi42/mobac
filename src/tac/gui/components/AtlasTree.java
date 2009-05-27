@@ -16,12 +16,15 @@ import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
 
+import tac.gui.MainGUI;
 import tac.gui.mapview.PreviewMap;
 import tac.program.MapSelection;
+import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.CapabilityRenameable;
@@ -136,18 +139,32 @@ public class AtlasTree extends JTree implements MouseListener {
 				});
 				pm.add(mi);
 			}
+			if (o instanceof AutoCutMultiMapLayer) {
+				mi = new JMenuItem("Apply tile processing options");
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						AutoCutMultiMapLayer acLayer = (AutoCutMultiMapLayer) o;
+						TileImageParameters p = MainGUI.getMainGUI()
+								.getSelectedTileImageParameters();
+						acLayer.setParameters(p);
+					}
+				});
+				pm.add(mi);
+			}
 			if (o instanceof CapabilityDeletable) {
+				pm.addSeparator();
 				mi = new JMenuItem("Delete");
 				mi.addActionListener(new ActionListener() {
 
 					public void actionPerformed(ActionEvent e) {
+						treeModel.notifyNodeDelete((TreeNode) o);
 						((CapabilityDeletable) o).delete();
-						treeModel.notifyStructureChanged();
 					}
 				});
 				pm.add(mi);
 			}
 		}
+		pm.addSeparator();
 		mi = new JMenuItem("Clear atlas");
 		mi.addActionListener(new ActionListener() {
 

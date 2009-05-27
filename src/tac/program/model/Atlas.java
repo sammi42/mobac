@@ -1,15 +1,19 @@
 package tac.program.model;
 
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.tree.TreeNode;
 
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.ToolTipProvider;
 
-public class Atlas implements AtlasInterface, ToolTipProvider {
+public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	private String name = "Atlas";
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
@@ -77,6 +81,34 @@ public class Atlas implements AtlasInterface, ToolTipProvider {
 		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
 		sw.write("</html>");
 		return sw.toString();
+	}
+
+	public Enumeration<?> children() {
+		return Collections.enumeration(layers);
+	}
+
+	public boolean getAllowsChildren() {
+		return true;
+	}
+
+	public TreeNode getChildAt(int childIndex) {
+		return (TreeNode) layers.get(childIndex);
+	}
+
+	public int getChildCount() {
+		return layers.size();
+	}
+
+	public int getIndex(TreeNode node) {
+		return layers.indexOf(node);
+	}
+
+	public TreeNode getParent() {
+		return null;
+	}
+
+	public boolean isLeaf() {
+		return false;
 	}
 
 }

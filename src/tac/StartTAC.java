@@ -25,8 +25,7 @@ public class StartTAC {
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				MainGUI g = new MainGUI();
-				g.setVisible(true);
+				MainGUI.createMainGui();
 			}
 		});
 	}

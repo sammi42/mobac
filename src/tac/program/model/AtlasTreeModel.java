@@ -2,12 +2,14 @@ package tac.program.model;
 
 import java.awt.Toolkit;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
@@ -41,6 +43,34 @@ public class AtlasTreeModel implements TreeModel {
 
 	public void notifyStructureChanged() {
 		notifyStructureChanged(new TreeModelEvent(this, new Object[] { atlas }));
+	}
+
+	/**
+	 * IMPORTANT: This method have to be called BEFORE deleting the element in
+	 * the data model!!! Otherwise the child index can not be retrieved anymore
+	 * which is important.
+	 * 
+	 * @param node
+	 */
+	public void notifyNodeDelete(TreeNode node) {
+		Object[] children = new Object[] { node };
+		int[] childrenIdx = new int[] { node.getParent().getIndex(node) };
+		if (childrenIdx[0] == -1) {
+			// A problem detected - use fall back solution
+			notifyStructureChanged();
+			return;
+		}
+
+		TreeNode n = node;
+		LinkedList<TreeNode> path = new LinkedList<TreeNode>();
+		n = n.getParent();
+		while (n != null) {
+			path.addFirst(n);
+			n = n.getParent();
+		}
+		TreeModelEvent event = new TreeModelEvent(this, path.toArray(), childrenIdx, children);
+		for (TreeModelListener l : listeners)
+			l.treeNodesRemoved(event);
 	}
 
 	protected void notifyStructureChanged(TreeModelEvent event) {

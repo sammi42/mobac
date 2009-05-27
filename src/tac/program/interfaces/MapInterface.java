@@ -16,8 +16,8 @@ public interface MapInterface {
 	public int getZoom();
 
 	public MapSource getMapSource();
-	
+
 	public Dimension getTileSize();
-	
+
 	public LayerInterface getLayer();
 }

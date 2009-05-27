@@ -56,6 +56,7 @@ import tac.program.MapSelection;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
+import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
@@ -76,6 +77,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private static Color labelBackgroundColor = new Color(0, 0, 0, 127);
 	private static Color labelForegroundColor = Color.white;
+
+	private static MainGUI mainGUI = null;
 
 	private Vector<Profile> profilesVector = new Vector<Profile>();
 
@@ -116,7 +119,18 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private Settings settings;
 
-	public MainGUI() {
+	public static void createMainGui() {
+		if (mainGUI != null)
+			return;
+		mainGUI = new MainGUI();
+		mainGUI.setVisible(true);
+	}
+
+	public static MainGUI getMainGUI() {
+		return mainGUI;
+	}
+
+	private MainGUI() {
 		super();
 		TACExceptionHandler.registerForCurrentThread();
 		settings = Settings.getInstance();
@@ -337,7 +351,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		zoomLevelsPanel.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
 
 		JPanel tileProcessingPanel = new JPanel(new GridBagLayout());
-		tileProcessingPanel.setBorder(BorderFactory.createTitledBorder("Custom tile processing"));
+		tileProcessingPanel.setBorder(BorderFactory
+				.createTitledBorder("Layer settings: custom tile processing"));
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
@@ -380,8 +395,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		});
 		atlasContentPanel.add(new JLabel("Name: "), gbc_std);
 		atlasContentPanel.add(atlasNameTextField, gbc_eol.fill());
-		
-		
+
 		JPanel profilesPanel = new JPanel(new GridBagLayout());
 		profilesPanel.setBorder(BorderFactory.createTitledBorder("Saved profiles"));
 
@@ -662,8 +676,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			Settings settings = Settings.getInstance();
 			settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
-			//TODO Reactivate 
-			//updatePanels();
+			// TODO Reactivate
+			// updatePanels();
 		}
 	}
 
@@ -919,6 +933,19 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
+	public TileImageParameters getSelectedTileImageParameters() {
+		MapCreatorCustom.TileImageParameters customTileParameters = null;
+		boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
+		if (customTileSize) {
+			customTileParameters = new MapCreatorCustom.TileImageParameters();
+			customTileParameters.width = tileSizeWidth.getValue();
+			customTileParameters.height = tileSizeHeight.getValue();
+			customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
+					.getSelectedItem();
+		}
+		return customTileParameters;
+	}
+
 	private void addSelectedAutoCutMultiMapLayers() {
 		Atlas atlas = atlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
@@ -936,15 +963,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftTileCoordinate(zoom);
 			Point br = ms.getBottomRightTileCoordinate(zoom);
-			boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
-			MapCreatorCustom.TileImageParameters customTileParameters = null;
-			if (customTileSize) {
-				customTileParameters = new MapCreatorCustom.TileImageParameters();
-				customTileParameters.width = tileSizeWidth.getValue();
-				customTileParameters.height = tileSizeHeight.getValue();
-				customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
-						.getSelectedItem();
-			}
+			MapCreatorCustom.TileImageParameters customTileParameters = getSelectedTileImageParameters();
+
 			String layerName = name;
 			boolean success = false;
 			int c = 1;
@@ -1066,10 +1086,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private void calculateNrOfTilesToDownload() {
 		MapSelection ms = getMapSelectionCoordinates();
 		String baseText;
-		if (settings.getFullScreenEnabled())
-			baseText = " %s tiles ";
-		else
-			baseText = " Amount of tiles in atlas: %s";
+		baseText = " %s tiles ";
 		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
 			amountOfTilesLabel.setText(String.format(baseText, new Object[] { "0" }));
 			amountOfTilesLabel.setToolTipText("");

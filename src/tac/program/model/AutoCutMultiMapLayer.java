@@ -3,9 +3,12 @@ package tac.program.model;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import javax.swing.tree.TreeNode;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -33,8 +36,8 @@ import tac.tar.TarIndexedArchive;
  * one map.
  * 
  */
-public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement, ToolTipProvider,
-		CapabilityDeletable, CapabilityRenameable, Iterable<MapInterface> {
+public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, DownloadableElement,
+		ToolTipProvider, CapabilityDeletable, CapabilityRenameable, Iterable<MapInterface> {
 
 	private AtlasInterface atlas;
 
@@ -169,6 +172,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		return parameters;
 	}
 
+	public void setParameters(TileImageParameters parameters) {
+		this.parameters = parameters;
+	}
+
 	@Override
 	public String toString() {
 		return name;
@@ -200,7 +207,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 	}
 
 	public class SubMap implements MapInterface, ToolTipProvider, CapabilityDeletable,
-			CapabilityRenameable {
+			CapabilityRenameable, TreeNode {
 
 		private String name;
 		private Point maxTileCoordinate;
@@ -279,10 +286,67 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 			}
 			this.name = newName;
 		}
+
+		public Enumeration<?> children() {
+			return null;
+		}
+
+		public boolean getAllowsChildren() {
+			return false;
+		}
+
+		public TreeNode getChildAt(int childIndex) {
+			return null;
+		}
+
+		public int getChildCount() {
+			return 0;
+		}
+
+		public int getIndex(TreeNode node) {
+			return 0;
+		}
+
+		public TreeNode getParent() {
+			return AutoCutMultiMapLayer.this;
+		}
+
+		public boolean isLeaf() {
+			return true;
+		}
+
 	}
 
 	public Iterator<MapInterface> iterator() {
 		return maps.iterator();
+	}
+
+	public Enumeration<?> children() {
+		return Collections.enumeration(maps);
+	}
+
+	public boolean getAllowsChildren() {
+		return true;
+	}
+
+	public TreeNode getChildAt(int childIndex) {
+		return (TreeNode) maps.get(childIndex);
+	}
+
+	public int getChildCount() {
+		return maps.size();
+	}
+
+	public int getIndex(TreeNode node) {
+		return maps.indexOf(node);
+	}
+
+	public TreeNode getParent() {
+		return (TreeNode) atlas;
+	}
+
+	public boolean isLeaf() {
+		return false;
 	}
 
 }

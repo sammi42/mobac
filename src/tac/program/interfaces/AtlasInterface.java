@@ -2,7 +2,7 @@ package tac.program.interfaces;
 
 import tac.program.model.AtlasOutputFormat;
 
-public interface AtlasInterface extends Iterable<LayerInterface> {
+public interface AtlasInterface extends CapabilityRenameable, Iterable<LayerInterface> {
 
 	public String getName();
 

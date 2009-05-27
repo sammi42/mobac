@@ -255,11 +255,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					if (parameters == null)
 						mc = new MapCreator(map, tileIndex, atlasDir);
 					else
-						mc = new MapCreator(map, tileIndex, atlasDir);
-					// mc = new MapCreatorCustom(smp, tileIndex, atlasFolder,
-					// atlasName,
-					// tileSource, zoom, atlasOutputFormat, mapNumber,
-					// customTileParameters);
+						mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
 					mc.createMap();
 					ap.setMap(mapNumber);
 					mapNumber++;
@@ -273,12 +269,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			if (djp != null)
 				djp.cancel();
 			downloadJobDispatcher.terminateAllWorkerThreads();
-//			if (tileArchive != null)
-//				tileArchive.close();
-//			if (tileIndex != null)
-//				tileIndex.closeAndDelete();
-//			if (tileArchiveFile != null)
-//				tileArchiveFile.delete();
+			if (tileArchive != null)
+				tileArchive.close();
+			if (tileIndex != null)
+				tileIndex.closeAndDelete();
+			if (tileArchiveFile != null)
+				tileArchiveFile.delete();
 		}
 
 		if (atlas.getOutputFormat() == AtlasOutputFormat.TaredAtlas)

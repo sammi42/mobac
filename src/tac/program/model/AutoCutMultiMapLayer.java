@@ -15,6 +15,7 @@ import tac.program.JobDispatcher.Job;
 import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
+import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
@@ -32,7 +33,7 @@ import tac.tar.TarIndexedArchive;
  * 
  */
 public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement, ToolTipProvider,
-		CapabilityDeletable, Iterable<MapInterface> {
+		CapabilityDeletable, CapabilityRenameable, Iterable<MapInterface> {
 
 	private AtlasInterface atlas;
 
@@ -136,6 +137,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Point getMaxTileCoordinate() {

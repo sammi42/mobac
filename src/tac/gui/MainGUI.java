@@ -384,7 +384,12 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		profilesPanel.add(profilesCombo, gbc);
 		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
 		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
-
+		
+		// TODO: Correct implementation and re-enable
+		profilesCombo.setEnabled(false);
+		saveAsProfileButton.setEnabled(false);
+		deleteProfileButton.setEnabled(false);
+		
 		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
 		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas settings"));
 		atlasNamePanel.add(new JLabel("Name: "), gbc_std);

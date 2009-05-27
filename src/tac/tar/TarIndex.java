@@ -51,7 +51,7 @@ public class TarIndex {
 
 	public void closeAndDelete() {
 		close();
-		//TODO: tarFile.deleteOnExit();
-		//TODO: tarFile.delete();
+		tarFile.deleteOnExit();
+		tarFile.delete();
 	}
 }

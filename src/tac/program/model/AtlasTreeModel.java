@@ -9,10 +9,13 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 
 public class AtlasTreeModel implements TreeModel {
+
+	// private static Logger log = Logger.getLogger(AtlasTreeModel.class);
 
 	protected Atlas atlas;
 
@@ -71,7 +74,10 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public void valueForPathChanged(TreePath path, Object newValue) {
-
+		Object sel = path.getLastPathComponent();
+		if (!(sel instanceof CapabilityRenameable) || !(newValue instanceof String))
+			return;
+		((CapabilityRenameable) sel).setName((String) newValue);
 	}
 
 	public Atlas getAtlas() {

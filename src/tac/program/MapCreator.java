@@ -70,7 +70,7 @@ public class MapCreator {
 	}
 
 	public void createMap() {
-		mapFolder.mkdir();
+		mapFolder.mkdirs();
 
 		// write the .map file containing the calibration points
 		writeMapFile();
@@ -130,6 +130,14 @@ public class MapCreator {
 			ap.initMapSplice((xMax - xMin + 1) * (yMax - yMin + 1));
 		}
 		ImageIO.setUseCache(false);
+		BufferedImage emptyImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
+		try {
+			ImageIO.write(emptyImage, mapSource.getTileType(), buf);
+		} catch (IOException e1) {
+		}
+		byte[] emptyTileData = buf.toByteArray();
+
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y <= yMax; y++) {
@@ -147,11 +155,7 @@ public class MapCreator {
 					} else {
 						log.trace("Tile \"" + tileFileName
 								+ "\" not found in tile archive - creating default");
-						BufferedImage emptyImage = new BufferedImage(256, 256,
-								BufferedImage.TYPE_INT_ARGB);
-						ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
-						ImageIO.write(emptyImage, mapSource.getTileType(), buf);
-						mapTileWriter.writeTile(tileFileName, buf.toByteArray());
+						mapTileWriter.writeTile(tileFileName, emptyTileData);
 					}
 				} catch (IOException e) {
 					log.error("", e);

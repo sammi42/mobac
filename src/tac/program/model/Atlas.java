@@ -52,7 +52,7 @@ public class Atlas implements AtlasInterface {
 
 	@Override
 	public String toString() {
-		return "Atlas " + getName();
+		return getName();
 	}
 
 	public Iterator<LayerInterface> iterator() {

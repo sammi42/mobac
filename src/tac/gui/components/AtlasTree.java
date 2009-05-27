@@ -14,6 +14,7 @@ import javax.swing.tree.TreePath;
 
 import tac.gui.mapview.PreviewMap;
 import tac.program.interfaces.CapabilityDeletable;
+import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
@@ -35,9 +36,10 @@ public class AtlasTree extends JTree implements MouseListener {
 			throw new NullPointerException("mapView is null");
 		this.mapView = mapView;
 		treeModel = (AtlasTreeModel) getModel();
-		setRootVisible(false);
+		// setRootVisible(false);
 		setShowsRootHandles(true);
 		setCellRenderer(new AtlasTreeCellRenderer());
+		setEditable(true);
 		setToolTipText("");
 		addMouseListener(this);
 	}
@@ -54,6 +56,12 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	}
 
+	@Override
+	public boolean isPathEditable(TreePath path) {
+		return super.isPathEditable(path)
+				&& (path.getLastPathComponent() instanceof CapabilityRenameable);
+	}
+
 	public AtlasTreeModel getTreeModel() {
 		return treeModel;
 	}
@@ -68,14 +76,24 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	protected void showNodePopupMenu(MouseEvent event) {
 		JPopupMenu pm = new JPopupMenu();
-		TreePath selPath = getPathForLocation(event.getX(), event.getY());
+		final TreePath selPath = getPathForLocation(event.getX(), event.getY());
 		if (selPath == null)
 			return; // clicked on empty area
 		final Object o = selPath.getLastPathComponent();
+		JMenuItem mi = null;
 		if (o == null)
 			return;
+		if (o instanceof CapabilityRenameable) {
+			mi = new JMenuItem("Rename");
+			mi.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					AtlasTree.this.startEditingAtPath(selPath);
+				}
+			});
+			pm.add(mi);
+		}
 		if (o instanceof CapabilityDeletable) {
-			JMenuItem mi = new JMenuItem("Delete");
+			mi = new JMenuItem("Delete");
 			mi.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {

@@ -5,10 +5,10 @@ import tac.program.model.AtlasTreeModel;
 
 /**
  * Identifies nodes in {@link AtlasTree} / {@link AtlasTreeModel} that can be
- * deleted (including sub-nodes). Nodes implementing this interface will show a
- * "delete" entry in it's context menu.
+ * renamed. Additionally nodes implementing this interface will show a "rename"
+ * entry in it's context menu.
  */
-public interface CapabilityDeletable {
+public interface CapabilityRenameable {
 
-	public void delete();
+	public void setName(String newName);
 }

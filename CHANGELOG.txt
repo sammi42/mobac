@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 1.2: (2009-??-??)
+ + Flexible atlases containing different areas of multiple map sources are possible
+ 
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)
  ~ Updated url of Google Map Maker & Earth

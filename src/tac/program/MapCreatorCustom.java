@@ -9,12 +9,10 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
+import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
-import tac.program.model.AtlasOutputFormat;
-import tac.program.model.MapSlice;
 import tac.program.model.TileImageFormat;
 import tac.tar.TarIndex;
 import tac.utilities.MyMath;
@@ -30,10 +28,9 @@ public class MapCreatorCustom extends MapCreator {
 
 	private TileImageParameters param;
 
-	public MapCreatorCustom(MapSlice smp, TarIndex tileIndex, File atlasFolder, String mapName,
-			MapSource tileSource, int zoom, AtlasOutputFormat atlasOutputFormat, int mapNumber,
+	public MapCreatorCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir,
 			TileImageParameters parameters) {
-		super(smp, tileIndex, atlasFolder, mapName, tileSource, zoom, atlasOutputFormat, mapNumber);
+		super(map, tarTileIndex, atlasDir);
 		this.param = parameters;
 	}
 

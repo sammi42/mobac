@@ -1,5 +1,6 @@
 package tac.program.interfaces;
 
+import tac.exceptions.InvalidNameException;
 import tac.gui.components.AtlasTree;
 import tac.program.model.AtlasTreeModel;
 
@@ -10,5 +11,5 @@ import tac.program.model.AtlasTreeModel;
  */
 public interface CapabilityRenameable {
 
-	public void setName(String newName);
+	public void setName(String newName) throws InvalidNameException;
 }

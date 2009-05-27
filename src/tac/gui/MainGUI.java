@@ -41,6 +41,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.StartTAC;
+import tac.exceptions.InvalidNameException;
 import tac.gui.components.AtlasTree;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JCoordinateField;
@@ -384,12 +385,12 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		profilesPanel.add(profilesCombo, gbc);
 		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
 		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
-		
+
 		// TODO: Correct implementation and re-enable
 		profilesCombo.setEnabled(false);
 		saveAsProfileButton.setEnabled(false);
 		deleteProfileButton.setEnabled(false);
-		
+
 		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
 		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas settings"));
 		atlasNamePanel.add(new JLabel("Name: "), gbc_std);
@@ -962,9 +963,18 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
 						.getSelectedItem();
 			}
-
-			new AutoCutMultiMapLayer(atlas, name, tileSource, tl, br, zoom, customTileParameters,
-					settings.getMaxMapSize());
+			String layerName = name;
+			boolean success = false;
+			int c = 1;
+			do {
+				try {
+					new AutoCutMultiMapLayer(atlas, layerName, tileSource, tl, br, zoom,
+							customTileParameters, settings.getMaxMapSize());
+					success = true;
+				} catch (InvalidNameException e) {
+					layerName = name + "_" + Integer.toString(c++);
+				}
+			} while (!success);
 		}
 		atlasTree.getTreeModel().notifyStructureChanged();
 	}

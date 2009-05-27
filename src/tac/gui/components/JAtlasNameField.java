@@ -16,7 +16,7 @@ public class JAtlasNameField extends JTextField {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final Pattern NAME_PATTERN = Pattern.compile("[\\w ]*");
+	public static final Pattern NAME_PATTERN = Pattern.compile("[\\w _-]*");
 
 	public JAtlasNameField() {
 		super();

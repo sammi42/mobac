@@ -1,13 +1,18 @@
 package tac.program.model;
 
+import java.awt.Toolkit;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.log4j.Logger;
+
+import tac.exceptions.InvalidNameException;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.LayerInterface;
@@ -15,7 +20,7 @@ import tac.program.interfaces.MapInterface;
 
 public class AtlasTreeModel implements TreeModel {
 
-	// private static Logger log = Logger.getLogger(AtlasTreeModel.class);
+	private static Logger log = Logger.getLogger(AtlasTreeModel.class);
 
 	protected Atlas atlas;
 
@@ -74,10 +79,26 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public void valueForPathChanged(TreePath path, Object newValue) {
-		Object sel = path.getLastPathComponent();
-		if (!(sel instanceof CapabilityRenameable) || !(newValue instanceof String))
-			return;
-		((CapabilityRenameable) sel).setName((String) newValue);
+		Object o = path.getLastPathComponent();
+		boolean success = false;
+		try {
+			CapabilityRenameable sel = (CapabilityRenameable) o;
+			String newName = (String) newValue;
+			if (newName.length() == 0)
+				return;
+			sel.setName(newName);
+			success = true;
+		} catch (ClassCastException e) {
+			log.error("", e);
+		} catch (InvalidNameException e) {
+			log.error(e.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), "Renaming failed",
+					JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (!success) {
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
 	}
 
 	public Atlas getAtlas() {

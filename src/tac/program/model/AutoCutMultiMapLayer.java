@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.InvalidNameException;
 import tac.program.DownloadJobEnumerator;
 import tac.program.JobDispatcher.Job;
 import tac.program.MapCreatorCustom.TileImageParameters;
@@ -52,9 +53,9 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 
 	public AutoCutMultiMapLayer(Atlas atlas, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
-			TileImageParameters parameters, int maxMapSize) {
+			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
 		this.atlas = atlas;
-		this.name = name;
+		setName(name);
 		this.mapSource = mapSource;
 		this.minTileCoordinate = minTileCoordinate;
 		this.maxTileCoordinate = maxTileCoordinate;
@@ -139,8 +140,13 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String newName) throws InvalidNameException {
+		for (LayerInterface layer : atlas) {
+			if ((layer != this) && newName.equals(layer.getName()))
+				throw new InvalidNameException("There is already a layer named \"" + newName
+						+ "\" in this atlas.\nLayer names have to unique within an atlas.");
+		}
+		this.name = newName;
 	}
 
 	public Point getMaxTileCoordinate() {
@@ -193,7 +199,8 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		return sw.toString();
 	}
 
-	public class SubMap implements MapInterface, ToolTipProvider {
+	public class SubMap implements MapInterface, ToolTipProvider, CapabilityDeletable,
+			CapabilityRenameable {
 
 		private String name;
 		private Point maxTileCoordinate;
@@ -244,6 +251,19 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 
 		public Dimension getTileSize() {
 			return tileDimension;
+		}
+
+		public void delete() {
+			maps.remove(this);
+		}
+
+		public void setName(String newName) throws InvalidNameException {
+			for (MapInterface map : AutoCutMultiMapLayer.this) {
+				if ((map != this) && (newName.equals(map.getName())))
+					throw new InvalidNameException("There is already a map named \"" + newName
+							+ "\" in this layer.\nMap names have to unique within an layer.");
+			}
+			this.name = newName;
 		}
 	}
 

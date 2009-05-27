@@ -4,12 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.EventObject;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
 import tac.gui.mapview.PreviewMap;
@@ -30,6 +34,8 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	private PreviewMap mapView;
 
+	protected AtlasTreeCellRenderer treeCellRenderer;
+
 	public AtlasTree(PreviewMap mapView) {
 		super(new AtlasTreeModel());
 		if (mapView == null)
@@ -38,7 +44,9 @@ public class AtlasTree extends JTree implements MouseListener {
 		treeModel = (AtlasTreeModel) getModel();
 		// setRootVisible(false);
 		setShowsRootHandles(true);
-		setCellRenderer(new AtlasTreeCellRenderer());
+		treeCellRenderer = new AtlasTreeCellRenderer();
+		setCellRenderer(treeCellRenderer);
+		setCellEditor(new AtlasTreeCellEditor());
 		setEditable(true);
 		setToolTipText("");
 		addMouseListener(this);
@@ -162,4 +170,25 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	}
 
+	protected class AtlasTreeCellEditor extends DefaultTreeCellEditor {
+
+		public AtlasTreeCellEditor() {
+			super(AtlasTree.this, AtlasTree.this.treeCellRenderer);
+		}
+
+		@Override
+		protected TreeCellEditor createTreeCellEditor() {
+			DefaultCellEditor editor = new DefaultCellEditor(new JAtlasNameField()) {
+				public boolean shouldSelectCell(EventObject event) {
+					boolean retValue = super.shouldSelectCell(event);
+					return retValue;
+				}
+			};
+
+			// One click to edit.
+			editor.setClickCountToStart(1);
+			return editor;
+		}
+
+	}
 }

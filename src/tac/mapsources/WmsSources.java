@@ -37,7 +37,7 @@ public class WmsSources {
 		}
 
 		public int getMinZoom() {
-			return 4;
+			return 3;
 		}
 
 		public String getName() {

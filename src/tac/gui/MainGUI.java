@@ -155,7 +155,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private void createControls() {
 		// zoom slider
-		zoomSlider = new JSlider(JMapViewer.MIN_ZOOM, previewMap.getTileSource().getMaxZoom());
+		zoomSlider = new JSlider(JMapViewer.MIN_ZOOM, previewMap.getMapSource().getMaxZoom());
 		zoomSlider.setOrientation(JSlider.HORIZONTAL);
 		zoomSlider.setSize(20, zoomSlider.getPreferredSize().height);
 		zoomSlider.addChangeListener(new ZoomSliderListener());
@@ -371,13 +371,17 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			}
 		});
 		JButton addLayers = new JButton("Add selection");
-		atlasContentPanel.add(addLayers, GBC.std());
+		atlasContentPanel.add(addLayers, GBC.eol());
 		addLayers.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				addSelectedAutoCutMultiMapLayers();
 			}
 		});
+		atlasContentPanel.add(new JLabel("Name: "), gbc_std);
+		atlasContentPanel.add(atlasNameTextField, gbc_eol.fill());
+		
+		
 		JPanel profilesPanel = new JPanel(new GridBagLayout());
 		profilesPanel.setBorder(BorderFactory.createTitledBorder("Saved profiles"));
 
@@ -393,8 +397,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
 		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas settings"));
-		atlasNamePanel.add(new JLabel("Name: "), gbc_std);
-		atlasNamePanel.add(atlasNameTextField, gbc_eol.fill());
 		atlasNamePanel.add(new JLabel("Format: "), gbc_std);
 		atlasNamePanel.add(atlasOutputFormatCombo, gbc_eol);
 		atlasNamePanel.add(createAtlasButton, gbc_eol.fill());
@@ -593,8 +595,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void updateGridSizeCombo() {
-		int maxZoom = previewMap.getTileSource().getMaxZoom();
-		int minZoom = previewMap.getTileSource().getMinZoom();
+		int maxZoom = previewMap.getMapSource().getMaxZoom();
+		int minZoom = previewMap.getMapSource().getMinZoom();
 		GridZoom lastGridZoom = (GridZoom) gridZoomCombo.getSelectedItem();
 		gridZoomCombo.removeAllItems();
 		gridZoomCombo.setMaximumRowCount(maxZoom + 1);
@@ -627,9 +629,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class MapSourceComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			previewMap.setTileSource((MapSource) mapSourceCombo.getSelectedItem());
-			zoomSlider.setMinimum(previewMap.getTileSource().getMinZoom());
-			zoomSlider.setMaximum(previewMap.getTileSource().getMaxZoom());
+			previewMap.setMapSource((MapSource) mapSourceCombo.getSelectedItem());
+			zoomSlider.setMinimum(previewMap.getMapSource().getMinZoom());
+			zoomSlider.setMaximum(previewMap.getMapSource().getMaxZoom());
 			updateGridSizeCombo();
 			updateZoomLevelCheckBoxes();
 		}
@@ -660,7 +662,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			Settings settings = Settings.getInstance();
 			settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
-			updatePanels();
+			//TODO Reactivate 
+			//updatePanels();
 		}
 	}
 
@@ -818,30 +821,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 			if (maxIsBiggerThanMin) {
 
-				// boolean customTileSize =
-				// enableCustomTileProcessingCheckButton.isSelected();
-				// MapCreatorCustom.TileImageParameters customTileParameters =
-				// null;
-				// if (customTileSize) {
-				// customTileParameters = new
-				// MapCreatorCustom.TileImageParameters();
-				// customTileParameters.width = tileSizeWidth.getValue();
-				// customTileParameters.height = tileSizeHeight.getValue();
-				// customTileParameters.format =
-				// (tac.program.model.TileImageFormat) tileImageFormat
-				// .getSelectedItem();
-				// }
-
 				try {
-					// MapSource tileSource = (MapSource)
-					// mapSourceCombo.getSelectedItem();
-					// SelectedZoomLevels sZL = new
-					// SelectedZoomLevels(previewMap.getTileSource()
-					// .getMinZoom(), cbZoom);
 					AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
 							.getSelectedItem();
 					AtlasInterface atlas = atlasTree.getAtlas();
-					atlas.setName(atlasNameTextField.getText());
 					atlas.setOutputFormat(atlasOutputFormat);
 					Thread atlasThread = new AtlasThread(atlas);
 					atlasThread.start();
@@ -854,7 +837,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void updateZoomLevelCheckBoxes() {
-		MapSource tileSource = previewMap.getTileSource();
+		MapSource tileSource = previewMap.getMapSource();
 		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
 		JCheckBox oldZoomLevelCheckBoxes[] = cbZoom;
 		cbZoom = new JCheckBox[zoomLevels];
@@ -940,7 +923,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		Atlas atlas = atlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
-		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource().getMinZoom(),
+		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		Settings settings = Settings.getInstance();
@@ -953,7 +936,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftTileCoordinate(zoom);
 			Point br = ms.getBottomRightTileCoordinate(zoom);
-			log.debug(tl + " " + br);
 			boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
 			MapCreatorCustom.TileImageParameters customTileParameters = null;
 			if (customTileSize) {
@@ -996,7 +978,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			latMinTextField.setCoordinate(ms.getLat_min());
 			lonMaxTextField.setCoordinate(ms.getLon_max());
 			lonMinTextField.setCoordinate(ms.getLon_min());
-			previewMap.setSelection(ms, false);
+			previewMap.zoomToSelection(ms, false);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}
@@ -1093,7 +1075,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			amountOfTilesLabel.setToolTipText("");
 		} else {
 			try {
-				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getTileSource()
+				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource()
 						.getMinZoom(), cbZoom);
 
 				int[] zoomLevels = sZL.getZoomLevels();

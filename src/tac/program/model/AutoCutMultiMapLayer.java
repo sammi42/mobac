@@ -186,7 +186,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		sw.write("<b>Layer</b><br>");
 		sw.write("Map count: " + maps.size() + "<br>");
 		sw.write("Map source: " + mapSource.getName() + "<br>");
-		sw.write("Area: " + "<br>");
 		sw.write("Zoom level: " + zoom + "<br>");
 		if (parameters != null) {
 			sw.write("Tile size: " + parameters.width + "x" + parameters.height + "<br>");
@@ -194,6 +193,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		} else
 			sw.write("Tile size: 256x256 (no processing)<br>");
 
+		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
 		sw.write("Max map size: " + maxMapDimension.width + "x" + maxMapDimension.height + "<br>");
 		sw.write("</html>");
 		return sw.toString();
@@ -244,9 +244,23 @@ public class AutoCutMultiMapLayer implements LayerInterface, DownloadableElement
 		}
 
 		public String getToolTip() {
-			return "<html><b>Map area</b><br>Area start: " + minTileCoordinate.x + " / "
-					+ minTileCoordinate.y + "<br>Area end:" + maxTileCoordinate.x + " / "
-					+ maxTileCoordinate.y + "</html>";
+			EastNorthCoordinate tl = new EastNorthCoordinate(zoom, minTileCoordinate.x,
+					minTileCoordinate.y);
+			EastNorthCoordinate br = new EastNorthCoordinate(zoom, maxTileCoordinate.x,
+					maxTileCoordinate.y);
+
+			StringWriter sw = new StringWriter(1024);
+			sw.write("<html>");
+			sw.write("<b>Map area</b><br>");
+			sw.write("Map source: " + mapSource.getName() + "<br>");
+			sw.write("Zoom level: " + zoom + "<br>");
+			sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y
+					+ ")<br>");
+			sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
+					+ ")<br>");
+			sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
+			sw.write("</html>");
+			return sw.toString();
 		}
 
 		public Dimension getTileSize() {

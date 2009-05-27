@@ -384,7 +384,9 @@ public class Settings {
 	}
 
 	public Boolean getFullScreenEnabled() {
-		return fullScreenEnabled;
+		//TODO Adapt fullscreen mose
+		//return fullScreenEnabled;
+		return false;
 	}
 
 	public void setFullScreenEnabled(Boolean fullScreenEnabled) {

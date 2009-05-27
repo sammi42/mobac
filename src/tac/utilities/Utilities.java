@@ -321,4 +321,15 @@ public class Utilities {
 		}
 	}
 
+	public static String prettyPrintLatLon(double coord, boolean isCoordKindLat) {
+		boolean neg = coord < 0.0 ? true : false;
+		char c;
+		if (isCoordKindLat) {
+			c = (neg ? 'S' : 'N');
+		} else {
+			c = (neg ? 'W' : 'E');
+		}
+		return c + FORMAT_2_DEC.format(Math.abs(coord));
+	}
+
 }

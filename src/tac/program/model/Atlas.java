@@ -1,13 +1,15 @@
 package tac.program.model;
 
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
+import tac.program.interfaces.ToolTipProvider;
 
-public class Atlas implements AtlasInterface {
+public class Atlas implements AtlasInterface, ToolTipProvider {
 
 	private String name = "Atlas";
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
@@ -64,6 +66,17 @@ public class Atlas implements AtlasInterface {
 		for (LayerInterface layer : layers)
 			tiles += layer.calculateTilesToDownload();
 		return tiles;
+	}
+
+	public String getToolTip() {
+		StringWriter sw = new StringWriter(1024);
+		sw.write("<html>");
+		sw.write("<b>Atlas</b><br>");
+		sw.write("Name: " + name + "<br>");
+		sw.write("Layer count: " + layers.size() + "<br>");
+		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
+		sw.write("</html>");
+		return sw.toString();
 	}
 
 }

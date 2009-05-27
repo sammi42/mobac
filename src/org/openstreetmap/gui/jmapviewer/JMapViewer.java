@@ -52,7 +52,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	protected TileLoader tileLoader;
 	protected TileCache tileCache;
-	protected MapSource tileSource;
+	protected MapSource mapSource;
 
 	protected List<MapMarker> mapMarkerList;
 	protected boolean mapMarkersVisible;
@@ -92,7 +92,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public JMapViewer(TileCache tileCache, int downloadThreadCount) {
 		super();
 		mapTileLayers = new LinkedList<MapTileLayer>();
-		tileSource = new OsmTileSource.Mapnik();
+		mapSource = new OsmTileSource.Mapnik();
 		tileLoader = new OsmTileLoader(this);
 		this.tileCache = tileCache;
 		jobDispatcher = JobDispatcher.getInstance();
@@ -109,7 +109,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	protected void initializeZoomSlider() {
-		zoomSlider = new JSlider(MIN_ZOOM, tileSource.getMaxZoom());
+		zoomSlider = new JSlider(MIN_ZOOM, mapSource.getMaxZoom());
 		zoomSlider.setOrientation(JSlider.VERTICAL);
 		zoomSlider.setBounds(10, 10, 30, 150);
 		zoomSlider.setOpaque(false);
@@ -196,7 +196,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public void setDisplayPosition(Point mapPoint, int x, int y, int zoom) {
-		if (zoom > tileSource.getMaxZoom() || zoom < MIN_ZOOM)
+		if (zoom > mapSource.getMaxZoom() || zoom < MIN_ZOOM)
 			return;
 
 		// Get the plain tile number
@@ -229,7 +229,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int y_min = Integer.MAX_VALUE;
 		int x_max = Integer.MIN_VALUE;
 		int y_max = Integer.MIN_VALUE;
-		int mapZoomMax = tileSource.getMaxZoom();
+		int mapZoomMax = mapSource.getMaxZoom();
 		for (MapMarker marker : mapMarkerList) {
 			int x = OsmMercator.LonToX(marker.getLon(), mapZoomMax);
 			int y = OsmMercator.LatToY(marker.getLat(), mapZoomMax);
@@ -427,7 +427,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public void setZoom(int zoom, Point mapPoint) {
-		if (zoom > tileSource.getMaxZoom() || zoom < tileSource.getMinZoom() || zoom == this.zoom)
+		if (zoom > mapSource.getMaxZoom() || zoom < mapSource.getMinZoom() || zoom == this.zoom)
 			return;
 		Point2D.Double zoomPos = getPosition(mapPoint);
 		jobDispatcher.cancelOutstandingJobs(); // Clearing outstanding load
@@ -451,8 +451,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		zoomSlider.setToolTipText("Zoom level " + zoom);
 		zoomInButton.setToolTipText("Zoom to level " + (zoom + 1));
 		zoomOutButton.setToolTipText("Zoom to level " + (zoom - 1));
-		zoomOutButton.setEnabled(zoom > tileSource.getMinZoom());
-		zoomInButton.setEnabled(zoom < tileSource.getMaxZoom());
+		zoomOutButton.setEnabled(zoom > mapSource.getMinZoom());
+		zoomInButton.setEnabled(zoom < mapSource.getMaxZoom());
 	}
 
 	public boolean isTileGridVisible() {
@@ -524,24 +524,24 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public MapSource getTileLayerSource() {
-		return tileSource;
+		return mapSource;
 	}
 
-	public MapSource getTileSource() {
-		return tileSource;
+	public MapSource getMapSource() {
+		return mapSource;
 	}
 
-	public void setTileSource(MapSource tileSource) {
-		if (tileSource.getMaxZoom() > MAX_ZOOM)
+	public void setMapSource(MapSource mapSource) {
+		if (mapSource.getMaxZoom() > MAX_ZOOM)
 			throw new RuntimeException("Maximum zoom level too high");
-		if (tileSource.getMinZoom() < MIN_ZOOM)
+		if (mapSource.getMinZoom() < MIN_ZOOM)
 			throw new RuntimeException("Minumim zoom level too low");
-		this.tileSource = tileSource;
-		zoomSlider.setMinimum(tileSource.getMinZoom());
-		zoomSlider.setMaximum(tileSource.getMaxZoom());
+		this.mapSource = mapSource;
+		zoomSlider.setMinimum(mapSource.getMinZoom());
+		zoomSlider.setMaximum(mapSource.getMaxZoom());
 		jobDispatcher.cancelOutstandingJobs();
-		if (zoom > tileSource.getMaxZoom())
-			setZoom(tileSource.getMaxZoom());
+		if (zoom > mapSource.getMaxZoom())
+			setZoom(mapSource.getMaxZoom());
 		repaint();
 	}
 

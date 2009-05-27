@@ -34,15 +34,15 @@ public class DefaultMapTileLayer implements MapTileLayer {
 		int max = (1 << zoom);
 		if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max)
 			return null;
-		Tile tile = mapViewer.tileCache.getTile(mapViewer.tileSource, tilex, tiley, zoom);
+		Tile tile = mapViewer.tileCache.getTile(mapViewer.mapSource, tilex, tiley, zoom);
 		if (tile == null) {
-			tile = new Tile(mapViewer.tileSource, tilex, tiley, zoom);
+			tile = new Tile(mapViewer.mapSource, tilex, tiley, zoom);
 			mapViewer.tileCache.addTile(tile);
 			tile.loadPlaceholderFromCache(mapViewer.tileCache);
 		}
 		if (!tile.isLoaded()) {
 			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(
-					mapViewer.tileSource, tilex, tiley, zoom));
+					mapViewer.mapSource, tilex, tiley, zoom));
 		}
 		return tile;
 	}

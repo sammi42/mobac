@@ -52,7 +52,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
 		new DefaultMapController(this);
-		tileSource = MapSources.DEFAULT;
+		mapSource = MapSources.DEFAULT;
 		OsmTileLoader.USER_AGENT = Settings.getInstance().getUserAgent();
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
@@ -95,9 +95,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	@Override
-	public void setTileSource(MapSource newTileSource) {
-		log.trace("Preview map source changed from " + tileSource + " to " + newTileSource);
-		super.setTileSource(newTileSource);
+	public void setMapSource(MapSource newMapSource) {
+		if (mapSource == newMapSource)
+			return;
+		super.setMapSource(newMapSource);
+		log.trace("Preview map source changed from " + mapSource + " to " + newMapSource);
 	}
 
 	protected void zoomChanged(int oldZoom) {
@@ -227,7 +229,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}
 
-	public void setSelection(MapSelection ms, boolean notifyListeners) {
+	public void zoomToSelection(MapSelection ms, boolean notifyListeners) {
 		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min())
 			return;
 		log.trace("Setting selection to: " + ms);

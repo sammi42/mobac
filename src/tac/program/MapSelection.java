@@ -5,6 +5,8 @@ import java.awt.Point;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 
+import tac.program.interfaces.MapInterface;
+
 public class MapSelection {
 
 	public static final int LAT_MAX = 85;
@@ -19,10 +21,21 @@ public class MapSelection {
 
 	public MapSelection(double lat1, double lat2, double lon1, double lon2) {
 		super();
-		this.lat_max = Math.max(lat1,lat2);
-		this.lat_min = Math.min(lat1,lat2);
-		this.lon_max = Math.max(lon1,lon2);
-		this.lon_min = Math.min(lon1,lon2);
+		this.lat_max = Math.max(lat1, lat2);
+		this.lat_min = Math.min(lat1, lat2);
+		this.lon_max = Math.max(lon1, lon2);
+		this.lon_min = Math.min(lon1, lon2);
+	}
+
+	public MapSelection(MapInterface map) {
+		super();
+		Point min = map.getMinTileCoordinate();
+		Point max = map.getMaxTileCoordinate();
+		int zoom = map.getZoom();
+		this.lat_max = OsmMercator.YToLat(max.y, zoom);
+		this.lat_min = OsmMercator.YToLat(min.y, zoom);
+		this.lon_max = OsmMercator.XToLon(max.x, zoom);
+		this.lon_min = OsmMercator.XToLon(min.x, zoom);
 	}
 
 	public double getLat_max() {

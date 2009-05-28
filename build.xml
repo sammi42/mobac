@@ -85,8 +85,11 @@
 	</target>
 
 	<target name="create_svnversion_jar" description="helper function for creating a combined svnversion.jar out of the the different SVNKit jars">
-		<delete file="lib/svnversion.jar" />
 		<property name="svnkit.home" value="Enter path to SVNKit here" />
+		<available file="${svnkit.home}/svnkit.jar" property="svjkit.present" />
+		<fail unless="svjkit.present" message="SVNKit home dir not set"/>
+		<delete file="lib/svnversion.jar" />
+		
 		<java jar="lib/proguard.jar" fork="true">
 			<arg line=" -injars ${svnkit.home}/svnkit.jar;${svnkit.home}/svnkit-cli.jar;${svnkit.home}/svnkit-javahl.jar;${svnkit.home}/trilead.jar" />
 			<arg line=" -outjars lib/svnversion.jar " />

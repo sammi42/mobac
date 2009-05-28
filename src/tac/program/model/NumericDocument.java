@@ -1,4 +1,4 @@
-package tac.gui.model;
+package tac.program.model;
 
 import java.awt.Toolkit;
 

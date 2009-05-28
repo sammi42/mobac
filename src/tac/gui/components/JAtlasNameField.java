@@ -17,6 +17,7 @@ public class JAtlasNameField extends JTextField {
 	private static final long serialVersionUID = 1L;
 
 	public static final Pattern NAME_PATTERN = Pattern.compile("[\\w _-]*");
+	public static final int MAX_LENGTH = 40;
 
 	public JAtlasNameField() {
 		super();
@@ -38,7 +39,15 @@ public class JAtlasNameField extends JTextField {
 				return;
 			}
 
+			String oldText = JAtlasNameField.this.getText();
+
 			super.insertString(offset, str, attr);
+
+			// Maximum length exceeded?
+			if (JAtlasNameField.this.getText().length() > MAX_LENGTH) {
+				JAtlasNameField.this.setText(oldText);
+				Toolkit.getDefaultToolkit().beep();
+			}
 		}
 	}
 }

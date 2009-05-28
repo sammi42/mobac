@@ -14,7 +14,6 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.LinkedList;
@@ -36,7 +35,9 @@ public class Utilities {
 	public static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
 	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
-	public static final NumberFormat FORMAT_2_DEC = new DecimalFormat("0.00");
+	public static final DecimalFormat FORMAT_2_DEC = new DecimalFormat("0.00");
+	private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
+	private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
 
 	public static boolean testJaiColorQuantizerAvailable() {
 		try {
@@ -322,14 +323,19 @@ public class Utilities {
 	}
 
 	public static String prettyPrintLatLon(double coord, boolean isCoordKindLat) {
-		boolean neg = coord < 0.0 ? true : false;
-		char c;
+		boolean neg = coord < 0.0;
+		String c;
 		if (isCoordKindLat) {
-			c = (neg ? 'S' : 'N');
+			c = (neg ? "S" : "N");
 		} else {
-			c = (neg ? 'W' : 'E');
+			c = (neg ? "W" : "E");
 		}
-		return c + FORMAT_2_DEC.format(Math.abs(coord));
+		double tAbsCoord = Math.abs(coord);
+		int tDegree = (int) tAbsCoord;
+		double tTmpMinutes = (tAbsCoord - tDegree) * 60;
+		int tMinutes = (int) tTmpMinutes;
+		double tSeconds = (tTmpMinutes - tMinutes) * 60;
+		return c + tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'"
+				+ cDmsSecondFormatter.format(tSeconds) + "\"";
 	}
-
 }

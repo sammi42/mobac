@@ -208,6 +208,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		fullScreenButton = new JButton("Full screen off");
 		fullScreenButton.addActionListener(new FullScreenButtonListener());
 		fullScreenButton.setToolTipText("Toggle full screen.");
+		fullScreenButton.setEnabled(false); // TODO: reenable
 
 		// profiles combo box
 		profilesCombo = new JComboBox();
@@ -589,6 +590,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 					"Error on writing program settings to \"settings.xml\"", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	public String getUserText() {
+		return atlasNameTextField.getText();
 	}
 
 	private class ZoomSliderListener implements ChangeListener {

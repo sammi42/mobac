@@ -10,6 +10,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellEditor;
@@ -90,7 +91,9 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	public void clearAtlas() {
 		log.debug("Resetting atlas tree model");
-		treeModel.setAtlas(new Atlas());
+		Atlas newAtlas = new Atlas();
+		newAtlas.setName(MainGUI.getMainGUI().getUserText());
+		treeModel.setAtlas(newAtlas);
 	}
 
 	public Atlas getAtlas() {
@@ -106,6 +109,16 @@ public class AtlasTree extends JTree implements MouseListener {
 			final Object o = selPath.getLastPathComponent();
 			if (o == null)
 				return;
+			if (o instanceof ToolTipProvider) {
+				mi = new JMenuItem("Show item details");
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						ToolTipProvider ttp = (ToolTipProvider) o;
+						JOptionPane.showMessageDialog(MainGUI.getMainGUI(), ttp.getToolTip());
+					}
+				});
+				pm.add(mi);
+			}
 			if (o instanceof MapInterface) {
 				mi = new JMenuItem("Display map area");
 				mi.addActionListener(new ActionListener() {
@@ -164,7 +177,8 @@ public class AtlasTree extends JTree implements MouseListener {
 				pm.add(mi);
 			}
 		}
-		pm.addSeparator();
+		if (pm.getComponentCount() > 0)
+			pm.addSeparator();
 		mi = new JMenuItem("Clear atlas");
 		mi.addActionListener(new ActionListener() {
 

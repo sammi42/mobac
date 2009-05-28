@@ -7,7 +7,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import tac.gui.model.NumericDocument;
+import tac.program.model.NumericDocument;
 import tac.utilities.Utilities;
 
 public class JIntField extends JTextField {

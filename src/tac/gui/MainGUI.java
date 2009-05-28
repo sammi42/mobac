@@ -423,8 +423,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
 		leftPanelContent.add(zoomLevelsPanel, gbc_eol);
 		leftPanelContent.add(tileProcessingPanel, gbc_eol);
-		if (settings.isDevModeEnabled())
-			leftPanelContent.add(atlasContentPanel, gbc_eol);
+		leftPanelContent.add(atlasContentPanel, gbc_eol);
 
 		leftPanelContent.add(atlasNamePanel, gbc_eol);
 		leftPanelContent.add(profilesPanel, gbc_eol);

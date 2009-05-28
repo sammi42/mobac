@@ -3,8 +3,8 @@
 
 	<property file="src/tac/tac.properties" />
 	<property name="jar.name" value="TrekBuddy_Atlas_Creator.jar" />
-	<property name="zip.name" value="TrekBuddy_Atlas_Creator_v${tac.version}.zip" />
-	<property name="zip_src.name" value="TrekBuddy_Atlas_Creator_v${tac.version}_src.zip" />
+	<property name="zip.name" value="TrekBuddy_Atlas_Creator_${tac.version}.zip" />
+	<property name="zip_src.name" value="TrekBuddy_Atlas_Creator_${tac.version}_src.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
 	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release,create_release_src" />

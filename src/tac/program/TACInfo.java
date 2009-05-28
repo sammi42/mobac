@@ -53,7 +53,7 @@ public class TACInfo {
 	}
 
 	public static String getCompleteTitle() {
-		String title = "TrekBuddy Atlas Creator v" + version;
+		String title = "TrekBuddy Atlas Creator " + version;
 		if (!titleHideRevision)
 			title += " " + revision;
 		return title;

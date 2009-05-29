@@ -1,6 +1,10 @@
 package tac.program.model;
 
 import java.awt.Toolkit;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -140,4 +144,15 @@ public class AtlasTreeModel implements TreeModel {
 		notifyStructureChanged();
 	}
 
+	public void save() {
+		XMLEncoder encoder;
+		try {
+			encoder = new XMLEncoder(
+					new BufferedOutputStream(new FileOutputStream("test.xml")));
+			encoder.writeObject(atlas);
+			encoder.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 }

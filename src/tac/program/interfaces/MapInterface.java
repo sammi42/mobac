@@ -20,4 +20,6 @@ public interface MapInterface {
 	public Dimension getTileSize();
 
 	public LayerInterface getLayer();
+
+	public long calculateTilesToDownload();
 }

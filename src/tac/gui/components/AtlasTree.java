@@ -3,16 +3,22 @@ package tac.gui.components;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
@@ -41,6 +47,8 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String ACTION_DELETE_NODE = "DELETE_NODE";
+
 	private static final Logger log = Logger.getLogger(AtlasTree.class);
 
 	private AtlasTreeModel treeModel;
@@ -50,6 +58,8 @@ public class AtlasTree extends JTree implements MouseListener {
 	protected AtlasTreeCellRenderer treeCellRenderer;
 
 	protected String defaultToolTiptext;
+
+	protected KeyStroke deleteNodeKS;
 
 	public AtlasTree(PreviewMap mapView) {
 		super(new AtlasTreeModel());
@@ -66,6 +76,21 @@ public class AtlasTree extends JTree implements MouseListener {
 		setToolTipText("");
 		defaultToolTiptext = "<html>Use context menu of the entries to see all available commands.</html>";
 		addMouseListener(this);
+
+		InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = getActionMap();
+
+		// map moving
+		inputMap.put(deleteNodeKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+				ACTION_DELETE_NODE);
+		actionMap.put(ACTION_DELETE_NODE, new AbstractAction("Delete") {
+
+			public void actionPerformed(ActionEvent e) {
+				deleteSelectedNode();
+			}
+
+		});
+
 	}
 
 	@Override
@@ -96,13 +121,43 @@ public class AtlasTree extends JTree implements MouseListener {
 		treeModel.setAtlas(newAtlas);
 	}
 
+	public void deleteSelectedNode() {
+		TreePath path = getSelectionPath();
+		if (path == null)
+			return;
+		TreeNode selected = (TreeNode) path.getLastPathComponent();
+		int[] selectedRows = getSelectionRows();
+
+		if (!(selected instanceof CapabilityDeletable))
+			return;
+		treeModel.notifyNodeDelete(selected);
+		((CapabilityDeletable) selected).delete();
+
+		int selRow = Math.min(selectedRows[0], getRowCount() - 1);
+		TreePath path1 = path.getParentPath();
+		TreePath path2 = getPathForRow(selRow).getParentPath();
+		if (path1 != path2) {
+			// next row belongs to different parent node -> we select parent
+			// node instead
+			setSelectionPath(path1);
+		} else {
+			setSelectionRow(selRow);
+			scrollRowToVisible(selRow);
+		}
+	}
+
 	public Atlas getAtlas() {
 		return treeModel.getAtlas();
+	}
+
+	public void save() {
+		treeModel.save();
 	}
 
 	protected void showNodePopupMenu(MouseEvent event) {
 		JPopupMenu pm = new JPopupMenu();
 		final TreePath selPath = getPathForLocation(event.getX(), event.getY());
+		setSelectionPath(selPath);
 		JMenuItem mi = null;
 		if (selPath != null) {
 			// not clicked on empty area
@@ -166,14 +221,8 @@ public class AtlasTree extends JTree implements MouseListener {
 			}
 			if (o instanceof CapabilityDeletable) {
 				pm.addSeparator();
-				mi = new JMenuItem("Delete");
-				mi.addActionListener(new ActionListener() {
-
-					public void actionPerformed(ActionEvent e) {
-						treeModel.notifyNodeDelete((TreeNode) o);
-						((CapabilityDeletable) o).delete();
-					}
-				});
+				mi = new JMenuItem(getActionMap().get(ACTION_DELETE_NODE));
+				mi.setAccelerator(deleteNodeKS);
 				pm.add(mi);
 			}
 		}

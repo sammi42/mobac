@@ -20,8 +20,8 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 	private int zoom;
 	private Dimension tileSize;
 
-	public SimpleMap(SimpleLayer layer, String name, MapSource mapSource, Point maxTileNum, Point minTileNum,
-			int zoom, Dimension tileSize) {
+	public SimpleMap(SimpleLayer layer, String name, MapSource mapSource, Point maxTileNum,
+			Point minTileNum, int zoom, Dimension tileSize) {
 		super();
 		this.layer = layer;
 		this.mapSource = mapSource;
@@ -62,6 +62,11 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 
 	public int getZoom() {
 		return zoom;
+	}
+
+	public long calculateTilesToDownload() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override

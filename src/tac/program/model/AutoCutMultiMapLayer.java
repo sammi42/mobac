@@ -26,6 +26,7 @@ import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.tar.TarIndexedArchive;
+import tac.utilities.MyMath;
 
 //import tac.utilities.MyMath;
 
@@ -94,7 +95,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
 		maps.clear();
 		if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
-			SubMap s = new SubMap(0, minTileCoordinate, maxTileCoordinate);
+			SubMap s = new SubMap(name, minTileCoordinate, maxTileCoordinate);
 			maps.add(s);
 			return;
 		}
@@ -107,11 +108,12 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
 			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {
-				Point min = new Point(mapX, mapY);
 				int maxX = Math.min(mapX + maxMapDimension.width, maxTileCoordinate.x);
 				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
-				Point max = new Point(maxX, maxY);
-				SubMap s = new SubMap(mapCounter++, min, max);
+				Point min = new Point(mapX, mapY);
+				Point max = new Point(maxX - 1, maxY - 1);
+				String mapName = String.format("%s-%02d", new Object[] { name, mapCounter++ });
+				SubMap s = new SubMap(mapName, min, max);
 				maps.add(s);
 			}
 		}
@@ -182,9 +184,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 	}
 
 	public long calculateTilesToDownload() {
-		long width = maxTileNum.x - minTileNum.x + 1;
-		long height = maxTileNum.y - minTileNum.y + 1;
-		return width * height;
+		long result = 0;
+		for (MapInterface map : maps)
+			result += map.calculateTilesToDownload();
+		return result;
 	}
 
 	public String getToolTip() {
@@ -213,12 +216,11 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		private Point maxTileCoordinate;
 		private Point minTileCoordinate;
 
-		protected SubMap(int mapNum, Point minTileCoordinate, Point maxTileCoordinate) {
+		protected SubMap(String name, Point minTileCoordinate, Point maxTileCoordinate) {
 			super();
 			this.maxTileCoordinate = maxTileCoordinate;
 			this.minTileCoordinate = minTileCoordinate;
-			name = String
-					.format("%s-%02d", new Object[] { AutoCutMultiMapLayer.this.name, mapNum });
+			this.name = name;
 		}
 
 		public LayerInterface getLayer() {
@@ -265,6 +267,8 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 					+ ")<br>");
 			sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
 					+ ")<br>");
+			sw.write("Map size: " + (maxTileCoordinate.x - minTileCoordinate.x + 1) + "x"
+					+ (maxTileCoordinate.y - minTileCoordinate.y + 1) + " pixel<br>");
 			sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
 			sw.write("</html>");
 			return sw.toString();
@@ -315,6 +319,12 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			return true;
 		}
 
+		public long calculateTilesToDownload() {
+			long width = MyMath.divCeil((maxTileCoordinate.x - minTileCoordinate.x) + 1, Tile.SIZE);
+			long height = MyMath
+					.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, Tile.SIZE);
+			return width * height;
+		}
 	}
 
 	public Iterator<MapInterface> iterator() {

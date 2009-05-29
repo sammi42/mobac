@@ -71,7 +71,7 @@ public class Settings {
 
 	private String defaultMapSource = MapSources.getDefaultMapSourceName();
 
-	private String atlasName = "";
+	private String atlasName = "Layer name";
 
 	private String userAgent = UserAgent.FF2_XP;
 

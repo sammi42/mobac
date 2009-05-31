@@ -55,6 +55,10 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 		processException(t, e);
 	}
 
+	public static void processException(Throwable e) {
+		processException(Thread.currentThread(), e);
+	}
+
 	public static void processException(Thread t, Throwable e) {
 		log.error("Uncaught exception: ", e);
 		showExceptionDialog(e);

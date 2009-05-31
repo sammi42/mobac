@@ -1,6 +1,10 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
+
+import tac.program.jaxb.MapSourceAdapter;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
@@ -8,6 +12,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  * 
  * @author Jan Peter Stotz
  */
+@XmlJavaTypeAdapter(MapSourceAdapter.class)
 public interface MapSource {
 
 	/**

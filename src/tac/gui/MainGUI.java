@@ -383,7 +383,22 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		clearAtlas.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				//atlasTree.clearAtlas();
+				atlasTree.clearAtlas();
+			}
+		});
+		JButton loadAtlas = new JButton("Load");
+		atlasContentPanel.add(loadAtlas, GBC.std());
+		loadAtlas.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				atlasTree.load();
+			}
+		});
+		JButton saveAtlas = new JButton("Save");
+		atlasContentPanel.add(saveAtlas, GBC.std());
+		saveAtlas.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				atlasTree.save();
 			}
 		});

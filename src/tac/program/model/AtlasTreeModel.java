@@ -1,10 +1,7 @@
 package tac.program.model;
 
 import java.awt.Toolkit;
-import java.beans.XMLEncoder;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -15,6 +12,10 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.log4j.Logger;
 
@@ -28,6 +29,7 @@ public class AtlasTreeModel implements TreeModel {
 
 	private static Logger log = Logger.getLogger(AtlasTreeModel.class);
 
+	@XmlElementRef
 	protected Atlas atlas;
 
 	protected Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
@@ -35,6 +37,19 @@ public class AtlasTreeModel implements TreeModel {
 	public AtlasTreeModel() {
 		super();
 		atlas = new Atlas();
+		// try {
+		// new AutoCutMultiMapLayer(atlas, "Test 1", new MapSources.Mapnik(),
+		// new Point(1000, 1000), new Point(2000, 2000), 3, null, 32000);
+		// new AutoCutMultiMapLayer(atlas, "Test 2", new
+		// MapSources.Cykloatlas(), new Point(1000,
+		// 1000), new Point(2000, 2000), 4, null, 32000);
+		// new AutoCutMultiMapLayer(atlas, "Test 3", new
+		// MapSources.OpenArialMap(), new Point(
+		// 1000, 1000), new Point(2000, 2000), 5, null, 32000);
+		// new AutoCutMultiMapLayer(atlas, "Test 4", new MapSources.Mapnik(),
+		// new Point(1000, 1000), new Point(200000, 200000), 16, null, 32000);
+		// } catch (InvalidNameException e) {
+		// }
 	}
 
 	public void addTreeModelListener(TreeModelListener l) {
@@ -144,15 +159,17 @@ public class AtlasTreeModel implements TreeModel {
 		notifyStructureChanged();
 	}
 
-	public void save() {
-		XMLEncoder encoder;
-		try {
-			encoder = new XMLEncoder(
-					new BufferedOutputStream(new FileOutputStream("test.xml")));
-			encoder.writeObject(atlas);
-			encoder.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+	public void save() throws Exception {
+		JAXBContext context = JAXBContext.newInstance(Atlas.class);
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		m.marshal(atlas, new File("atlas.xml"));
+	}
+
+	public void load() throws Exception {
+		JAXBContext context = JAXBContext.newInstance(Atlas.class);
+		Unmarshaller um = context.createUnmarshaller();
+		atlas = (Atlas) um.unmarshal(new File("atlas.xml"));
+		notifyStructureChanged();
 	}
 }

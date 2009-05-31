@@ -41,6 +41,7 @@ import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
 import tac.program.model.AutoCutMultiMapLayer;
+import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
 public class AtlasTree extends JTree implements MouseListener {
@@ -150,8 +151,20 @@ public class AtlasTree extends JTree implements MouseListener {
 		return treeModel.getAtlas();
 	}
 
+	public void load() {
+		try {
+			treeModel.load();
+		} catch (Exception e) {
+			TACExceptionHandler.processException(e);
+		}
+	}
+
 	public void save() {
-		treeModel.save();
+		try {
+			treeModel.save();
+		} catch (Exception e) {
+			TACExceptionHandler.processException(e);
+		}
 	}
 
 	protected void showNodePopupMenu(MouseEvent event) {

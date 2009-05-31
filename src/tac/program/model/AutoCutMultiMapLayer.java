@@ -9,6 +9,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.tree.TreeNode;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -25,6 +32,8 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
+import tac.program.jaxb.DimensionAdapter;
+import tac.program.jaxb.PointAdapter;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.MyMath;
 
@@ -37,23 +46,41 @@ import tac.utilities.MyMath;
  * one map.
  * 
  */
+@XmlRootElement
 public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, DownloadableElement,
 		ToolTipProvider, CapabilityDeletable, CapabilityRenameable, Iterable<MapInterface> {
 
+	@XmlTransient
 	private AtlasInterface atlas;
 
 	private String name;
+
+	@XmlAttribute
 	private MapSource mapSource;
+
+	@XmlAttribute
+	@XmlJavaTypeAdapter(PointAdapter.class)
 	private Point maxTileCoordinate;
 	private Point minTileCoordinate;
 	private Point maxTileNum;
 	private Point minTileNum;
+
+	@XmlAttribute
 	private int zoom;
+
 	private TileImageParameters parameters;
+
 	private Dimension tileDimension;
+	
+	@XmlAttribute
+	@XmlJavaTypeAdapter(DimensionAdapter.class)
 	private Dimension maxMapDimension;
 
+	@XmlElements( { @XmlElement(name = "SubMap", type = SubMap.class) })
 	private LinkedList<MapInterface> maps = new LinkedList<MapInterface>();
+
+	protected AutoCutMultiMapLayer() {
+	}
 
 	public AutoCutMultiMapLayer(Atlas atlas, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
@@ -95,7 +122,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
 		maps.clear();
 		if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
-			SubMap s = new SubMap(name, minTileCoordinate, maxTileCoordinate);
+			SubMap s = new SubMap(this, name, minTileCoordinate, maxTileCoordinate);
 			maps.add(s);
 			return;
 		}
@@ -113,7 +140,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 				Point min = new Point(mapX, mapY);
 				Point max = new Point(maxX - 1, maxY - 1);
 				String mapName = String.format("%s-%02d", new Object[] { name, mapCounter++ });
-				SubMap s = new SubMap(mapName, min, max);
+				SubMap s = new SubMap(this, mapName, min, max);
 				maps.add(s);
 			}
 		}
@@ -141,15 +168,18 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		return maps.size();
 	}
 
+	@XmlAttribute
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String newName) throws InvalidNameException {
-		for (LayerInterface layer : atlas) {
-			if ((layer != this) && newName.equals(layer.getName()))
-				throw new InvalidNameException("There is already a layer named \"" + newName
-						+ "\" in this atlas.\nLayer names have to unique within an atlas.");
+		if (atlas != null) {
+			for (LayerInterface layer : atlas) {
+				if ((layer != this) && newName.equals(layer.getName()))
+					throw new InvalidNameException("There is already a layer named \"" + newName
+							+ "\" in this atlas.\nLayer names have to unique within an atlas.");
+			}
 		}
 		this.name = newName;
 	}
@@ -209,26 +239,38 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		return sw.toString();
 	}
 
-	public class SubMap implements MapInterface, ToolTipProvider, CapabilityDeletable,
+	public static class SubMap implements MapInterface, ToolTipProvider, CapabilityDeletable,
 			CapabilityRenameable, TreeNode {
 
 		private String name;
+
+		private AutoCutMultiMapLayer layer;
+
+		@XmlAttribute
+		@XmlJavaTypeAdapter(PointAdapter.class)
 		private Point maxTileCoordinate;
+
+		@XmlAttribute
+		@XmlJavaTypeAdapter(PointAdapter.class)
 		private Point minTileCoordinate;
 
-		protected SubMap(String name, Point minTileCoordinate, Point maxTileCoordinate) {
-			super();
+		protected SubMap() {
+		}
+
+		protected SubMap(AutoCutMultiMapLayer layer, String name, Point minTileCoordinate,
+				Point maxTileCoordinate) {
+			this.layer = layer;
 			this.maxTileCoordinate = maxTileCoordinate;
 			this.minTileCoordinate = minTileCoordinate;
 			this.name = name;
 		}
 
-		public LayerInterface getLayer() {
-			return AutoCutMultiMapLayer.this;
+		public AutoCutMultiMapLayer getLayer() {
+			return layer;
 		}
 
 		public MapSource getMapSource() {
-			return mapSource;
+			return layer.mapSource;
 		}
 
 		public Point getMaxTileCoordinate() {
@@ -239,12 +281,13 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			return minTileCoordinate;
 		}
 
+		@XmlAttribute
 		public String getName() {
 			return name;
 		}
 
 		public int getZoom() {
-			return zoom;
+			return layer.zoom;
 		}
 
 		@Override
@@ -253,16 +296,16 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		}
 
 		public String getToolTip() {
-			EastNorthCoordinate tl = new EastNorthCoordinate(zoom, minTileCoordinate.x,
+			EastNorthCoordinate tl = new EastNorthCoordinate(layer.zoom, minTileCoordinate.x,
 					minTileCoordinate.y);
-			EastNorthCoordinate br = new EastNorthCoordinate(zoom, maxTileCoordinate.x,
+			EastNorthCoordinate br = new EastNorthCoordinate(layer.zoom, maxTileCoordinate.x,
 					maxTileCoordinate.y);
 
 			StringWriter sw = new StringWriter(1024);
 			sw.write("<html>");
 			sw.write("<b>Map area</b><br>");
-			sw.write("Map source: " + mapSource.getName() + "<br>");
-			sw.write("Zoom level: " + zoom + "<br>");
+			sw.write("Map source: " + layer.mapSource.getName() + "<br>");
+			sw.write("Zoom level: " + layer.zoom + "<br>");
 			sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y
 					+ ")<br>");
 			sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
@@ -275,18 +318,20 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		}
 
 		public Dimension getTileSize() {
-			return tileDimension;
+			return layer.tileDimension;
 		}
 
 		public void delete() {
-			maps.remove(this);
+			layer.maps.remove(this);
 		}
 
 		public void setName(String newName) throws InvalidNameException {
-			for (MapInterface map : AutoCutMultiMapLayer.this) {
-				if ((map != this) && (newName.equals(map.getName())))
-					throw new InvalidNameException("There is already a map named \"" + newName
-							+ "\" in this layer.\nMap names have to unique within an layer.");
+			if (layer != null) {
+				for (MapInterface map : layer) {
+					if ((map != this) && (newName.equals(map.getName())))
+						throw new InvalidNameException("There is already a map named \"" + newName
+								+ "\" in this layer.\nMap names have to unique within an layer.");
+				}
 			}
 			this.name = newName;
 		}
@@ -312,7 +357,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		}
 
 		public TreeNode getParent() {
-			return AutoCutMultiMapLayer.this;
+			return layer;
 		}
 
 		public boolean isLeaf() {
@@ -324,6 +369,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			long height = MyMath
 					.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, Tile.SIZE);
 			return width * height;
+		}
+
+		public void afterUnmarshal(Unmarshaller u, Object parent) {
+			this.layer = (AutoCutMultiMapLayer) parent;
 		}
 	}
 
@@ -359,4 +408,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		return false;
 	}
 
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
+		this.atlas = (Atlas) parent;
+	}
 }

@@ -8,14 +8,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.tree.TreeNode;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.ToolTipProvider;
 
+@XmlRootElement
 public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	private String name = "Atlas";
+
+	@XmlElements( { @XmlElement(name = "MMLayer", type = AutoCutMultiMapLayer.class) })
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
 
 	private AtlasOutputFormat outputFormat = AtlasOutputFormat.TaredAtlas;
@@ -40,6 +47,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		return layers.size();
 	}
 
+	@XmlAttribute
 	public String getName() {
 		return name;
 	}
@@ -48,6 +56,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		this.name = newName;
 	}
 
+	@XmlAttribute
 	public AtlasOutputFormat getOutputFormat() {
 		return outputFormat;
 	}

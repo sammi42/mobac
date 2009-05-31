@@ -71,7 +71,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 	private TileImageParameters parameters;
 
 	private Dimension tileDimension;
-	
+
 	@XmlAttribute
 	@XmlJavaTypeAdapter(DimensionAdapter.class)
 	private Dimension maxMapDimension;
@@ -93,8 +93,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		this.zoom = zoom;
 		this.parameters = parameters;
 
-		maxTileNum = new Point(maxTileCoordinate.x / Tile.SIZE, maxTileCoordinate.y / Tile.SIZE);
-		minTileNum = new Point(minTileCoordinate.x / Tile.SIZE, minTileCoordinate.y / Tile.SIZE);
+		calculateRuntimeValues();
 
 		minTileCoordinate.x = minTileCoordinate.x - (minTileCoordinate.x % Tile.SIZE);
 		minTileCoordinate.y = minTileCoordinate.y - (minTileCoordinate.y % Tile.SIZE);
@@ -102,19 +101,22 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		maxTileCoordinate.x = maxTileCoordinate.x + 255 - (maxTileCoordinate.x % Tile.SIZE);
 		maxTileCoordinate.y = maxTileCoordinate.y + 255 - (maxTileCoordinate.y % Tile.SIZE);
 
+		// We adapt the max map size to the tile size so that we do
+		// not get ugly cutted/incomplete tiles at the borders
+		maxMapDimension = new Dimension(maxMapSize, maxMapSize);
+		maxMapDimension.width -= maxMapSize % tileDimension.width;
+		maxMapDimension.height -= maxMapSize % tileDimension.height;
+		calculateSubMaps();
+		atlas.addLayer(this);
+	}
+
+	protected void calculateRuntimeValues() {
+		maxTileNum = new Point(maxTileCoordinate.x / Tile.SIZE, maxTileCoordinate.y / Tile.SIZE);
+		minTileNum = new Point(minTileCoordinate.x / Tile.SIZE, minTileCoordinate.y / Tile.SIZE);
 		if (parameters == null)
 			tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
 		else
 			tileDimension = new Dimension(parameters.width, parameters.height);
-		maxMapDimension = new Dimension(maxMapSize, maxMapSize);
-
-		// We adapt the max map size to the tile size so that we do
-		// not get ugly cutted/incomplete tiles at the borders
-		maxMapDimension.width -= maxMapSize % tileDimension.width;
-		maxMapDimension.height -= maxMapSize % tileDimension.height;
-		calculateSubMaps();
-
-		atlas.addLayer(this);
 	}
 
 	protected void calculateSubMaps() {
@@ -126,12 +128,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			maps.add(s);
 			return;
 		}
-		/*
-		 * int mapCountX = MyMath.divCeil(maxTileCoordinate.x -
-		 * minTileCoordinate.x, maxMapDimension.width); int mapCountY =
-		 * MyMath.divCeil(maxTileCoordinate.y - minTileCoordinate.y,
-		 * maxMapDimension.height);
-		 */
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
 			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {
@@ -240,7 +236,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 	}
 
 	public static class SubMap implements MapInterface, ToolTipProvider, CapabilityDeletable,
-			CapabilityRenameable, TreeNode {
+			CapabilityRenameable, TreeNode, DownloadableElement {
 
 		private String name;
 
@@ -293,6 +289,10 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		@Override
 		public String toString() {
 			return getName();
+		}
+
+		public TileImageParameters getParameters() {
+			return layer.parameters;
 		}
 
 		public String getToolTip() {
@@ -374,6 +374,11 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		public void afterUnmarshal(Unmarshaller u, Object parent) {
 			this.layer = (AutoCutMultiMapLayer) parent;
 		}
+
+		public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
+				DownloadJobListener listener) {
+			return new DownloadJobEnumerator(this, tileArchive, listener);
+		}
 	}
 
 	public Iterator<MapInterface> iterator() {
@@ -410,5 +415,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
 		this.atlas = (Atlas) parent;
+		calculateRuntimeValues();
 	}
+
 }

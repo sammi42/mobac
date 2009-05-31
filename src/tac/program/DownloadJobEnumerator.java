@@ -1,11 +1,14 @@
 package tac.program;
 
+import java.awt.Point;
 import java.util.Enumeration;
 
+import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
+import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndexedArchive;
 
 public class DownloadJobEnumerator implements Enumeration<Job> {
@@ -35,7 +38,6 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 */
 	public DownloadJobEnumerator(int xMin, int xMax, int yMin, int yMax, int zoom,
 			MapSource mapSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		super();
 		this.listener = listener;
 		this.xMin = xMin;
 		this.xMax = xMax;
@@ -43,6 +45,25 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		this.zoom = zoom;
 		this.tileArchive = tileArchive;
 		this.mapSource = mapSource;
+		y = yMin;
+		x = xMin;
+
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
+	}
+
+	public DownloadJobEnumerator(MapInterface map, TarIndexedArchive tileArchive,
+			DownloadJobListener listener) {
+		this.listener = listener;
+		Point minCoord = map.getMinTileCoordinate();
+		Point maxCoord = map.getMaxTileCoordinate();
+		
+		this.xMin = minCoord.x / Tile.SIZE;
+		this.xMax = maxCoord.x / Tile.SIZE;
+		int yMin = minCoord.y / Tile.SIZE;
+		this.yMax = maxCoord.y / Tile.SIZE;
+		this.zoom = map.getZoom();
+		this.tileArchive = tileArchive;
+		this.mapSource = map.getMapSource();
 		y = yMin;
 		x = xMin;
 

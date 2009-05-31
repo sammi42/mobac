@@ -5,6 +5,7 @@ import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
@@ -72,6 +73,11 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public TileImageParameters getParameters() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

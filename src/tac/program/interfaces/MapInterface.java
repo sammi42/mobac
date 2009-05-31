@@ -5,6 +5,8 @@ import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.program.MapCreatorCustom.TileImageParameters;
+
 public interface MapInterface {
 
 	public String getName();
@@ -20,6 +22,8 @@ public interface MapInterface {
 	public Dimension getTileSize();
 
 	public LayerInterface getLayer();
+
+	public TileImageParameters getParameters();
 
 	public long calculateTilesToDownload();
 }

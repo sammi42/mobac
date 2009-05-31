@@ -20,6 +20,7 @@ import tac.program.JobDispatcher.Job;
 import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.DownloadJobListener;
+import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
@@ -148,108 +149,89 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		try {
 			int layerNum = 0;
 			for (LayerInterface layer : atlas) {
-				AutoCutMultiMapLayer acLayer = (AutoCutMultiMapLayer) layer;
-				jobsCompleted = 0;
-				jobsRetryError = 0;
-				jobsPermanentError = 0;
-				if (t.isInterrupted())
-					throw new InterruptedException();
-
-				// Prepare the tile store directory
-				if (s.isTileStoreEnabled())
-					ts.getTileFile(0, 0, 0, acLayer.getMapSource()).getParentFile().mkdirs();
-
-				/***
-				 * In this section of code below, tiles for Atlas is being
-				 * downloaded and saved in the temporary layer tar file in the
-				 * system temp directory.
-				 **/
-				int zoom = acLayer.getZoom();
-
-				// Point topLeft = mapSelection.getTopLeftTileNumber(zoom);
-				// Point bottomRight =
-				// mapSelection.getBottomRightTileNumber(zoom);
-				//
 				int apMax = (int) layer.calculateTilesToDownload();
-				//
-				// int xMin = topLeft.x;
-				// int xMax = bottomRight.x;
-				// int yMin = topLeft.y;
-				// int yMax = bottomRight.y;
-				ap.initLayer(apMax);
-				ap.initMap(layer.getMapCount());
-				ap.setZoomLevel(zoom);
+				ap.initLayer(apMax, layer.getMapCount());
+				int mapNumber = 1;
+				for (MapInterface map : layer) {
+					jobsCompleted = 0;
+					jobsRetryError = 0;
+					jobsPermanentError = 0;
+					if (t.isInterrupted())
+						throw new InterruptedException();
 
-				jobsProduced = 0;
-				tileArchive = null;
-				if (!SKIP_DOWNLOAD) {
-					String tempSuffix = "TAC_" + atlas.getName() + "_" + zoom + "_";
-					tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
-					// If something goes wrong the temp file only
-					// persists until the VM exits
-					tileArchiveFile.deleteOnExit();
-					log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
-					tileArchive = new TarIndexedArchive(tileArchiveFile, apMax);
-					djp = new DownloadJobProducer(acLayer);
+					// Prepare the tile store directory
+					ts.prepareTileStore(map.getMapSource());
 
-					boolean failedMessageAnswered = false;
+					/***
+					 * In this section of code below, tiles for Atlas is being
+					 * downloaded and saved in the temporary layer tar file in
+					 * the system temp directory.
+					 **/
+					int zoom = map.getZoom();
 
-					while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
-							|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
-						Thread.sleep(500);
-						if (!failedMessageAnswered && (jobsRetryError > 100)) {
-							int answer = JOptionPane.showConfirmDialog(ap,
-									"Multiple tile downloads have failed. "
-											+ "Something may be wrong with your connection to the "
-											+ "download server or your selected area.\n"
-											+ "Are you sure you want to continue "
-											+ "and create the atlas anyway?",
-									"Download of more than 100 tiles failed",
-									JOptionPane.ERROR_MESSAGE);
-							failedMessageAnswered = true;
-							if (answer != JOptionPane.YES_OPTION) {
-								downloadJobDispatcher.cancelOutstandingJobs();
-								downloadJobDispatcher.terminateAllWorkerThreads();
-								djp.cancel();
-								return;
+					ap.setZoomLevel(zoom);
+
+					jobsProduced = 0;
+					tileArchive = null;
+					if (!SKIP_DOWNLOAD) {
+						String tempSuffix = "TAC_" + atlas.getName() + "_" + zoom + "_";
+						tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
+						// If something goes wrong the temp file only
+						// persists until the VM exits
+						tileArchiveFile.deleteOnExit();
+						log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
+						tileArchive = new TarIndexedArchive(tileArchiveFile, apMax);
+						djp = new DownloadJobProducer((DownloadableElement) map);
+
+						boolean failedMessageAnswered = false;
+
+						while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
+								|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
+							Thread.sleep(500);
+							if (!failedMessageAnswered && (jobsRetryError > 100)) {
+								int answer = JOptionPane
+										.showConfirmDialog(
+												ap,
+												"Multiple tile downloads have failed. "
+														+ "Something may be wrong with your connection to the "
+														+ "download server or your selected area.\n"
+														+ "Are you sure you want to continue "
+														+ "and create the atlas anyway?",
+												"Download of more than 100 tiles failed",
+												JOptionPane.ERROR_MESSAGE);
+								failedMessageAnswered = true;
+								if (answer != JOptionPane.YES_OPTION) {
+									downloadJobDispatcher.cancelOutstandingJobs();
+									downloadJobDispatcher.terminateAllWorkerThreads();
+									djp.cancel();
+									return;
+								}
 							}
 						}
+						djp = null;
+						log.debug("All download jobs has been completed!");
+						tileArchive.writeEndofArchive();
+						tileArchive.close();
+						tileIndex = tileArchive.getTarIndex();
+						if (tileIndex.size() != (map.calculateTilesToDownload())) {
+							int answer = JOptionPane.showConfirmDialog(ap,
+									"Something is wrong with download of atlas tiles.\n"
+											+ "The amount of downladed tiles is not as "
+											+ "high as it was calculated.\nTherfore tiles "
+											+ "will be missing in the created atlas.\n\n"
+											+ "Are you sure you want to continue "
+											+ "and create the atlas anyway?",
+									"Error - tiles are missing - do you want to continue anyway?",
+									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+							if (answer != JOptionPane.YES_OPTION)
+								return;
+						}
 					}
-					djp = null;
-					log.debug("All download jobs has been completed!");
-					tileArchive.writeEndofArchive();
-					tileArchive.close();
-					tileIndex = tileArchive.getTarIndex();
-					if (tileIndex.size() != (layer.calculateTilesToDownload())) {
-						int answer = JOptionPane.showConfirmDialog(ap,
-								"Something is wrong with download of atlas tiles.\n"
-										+ "The amount of downladed tiles is not as "
-										+ "high as it was calculated.\nTherfore tiles "
-										+ "will be missing in the created atlas.\n\n"
-										+ "Are you sure you want to continue "
-										+ "and create the atlas anyway?",
-								"Error - tiles are missing - do you want to continue anyway?",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-						if (answer != JOptionPane.YES_OPTION)
-							return;
-					}
-				}
-				ap.setLayerProgress(apMax);
+					ap.setLayerProgress(apMax);
 
-				log.debug("Starting to create atlas from downloaded tiles");
+					log.debug("Starting to create atlas from downloaded tiles");
 
-				// int mapSize = s.getMaxMapSize();
-
-				// List<MapSlice> subMaps =
-				// MapSlicer.calculateMapSlices(mapSize, xMin, xMax, yMin,
-				// yMax);
-				// log.trace("Map will been splitted into " + subMaps.size()
-				// + " sections because of TrekBuddy maximum map limitation");
-
-				// ap.initMap(subMaps.size());
-				TileImageParameters parameters = acLayer.getParameters();
-				int mapNumber = 1;
-				for (MapInterface map : acLayer) {
+					TileImageParameters parameters = map.getParameters();
 
 					MapCreator mc;
 					if (parameters == null)
@@ -257,12 +239,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					else
 						mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
 					mc.createMap();
-					ap.setMap(mapNumber);
-					mapNumber++;
+					ap.setMap(mapNumber++);
+					downloadJobDispatcher.cancelOutstandingJobs();
+					tileIndex.closeAndDelete();
 				}
 				ap.setLayer(layerNum++);
-				downloadJobDispatcher.cancelOutstandingJobs();
-				tileIndex.closeAndDelete();
 			}
 		} finally {
 			// In case of an abort: Stop create new download jobs
@@ -363,22 +344,15 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 
 		private Logger log = Logger.getLogger(DownloadJobProducer.class);
 
-		// Point topLeft;
-		// Point bottomRight;
-		// int zoom;
-
-		// public DownloadJobProducer(Point topLeft, Point bottomRight, int
-		// zoom) {
-		// super("JobProducerThread_" + atlas.getName());
-		// this.bottomRight = bottomRight;
-		// this.topLeft = topLeft;
-		// this.zoom = zoom;
-		// start();
-		// }
 		Enumeration<Job> jobEnumerator;
 
 		public DownloadJobProducer(AutoCutMultiMapLayer acLayer) {
 			jobEnumerator = acLayer.getDownloadJobs(tileArchive, AtlasThread.this);
+			start();
+		}
+
+		public DownloadJobProducer(DownloadableElement de) {
+			jobEnumerator = de.getDownloadJobs(tileArchive, AtlasThread.this);
 			start();
 		}
 

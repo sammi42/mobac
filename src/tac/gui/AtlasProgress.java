@@ -29,12 +29,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
 import tac.program.AtlasThread;
+import tac.program.Logging;
 import tac.utilities.GBC;
 import tac.utilities.OSUtilities;
+import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
 /**
@@ -256,21 +259,18 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		TIMER.schedule(updateTask, 0, 500);
 	}
 
-	public void initLayer(int numberOfTiles) {
+	public void initLayer(int numberOfTiles, int numberOfMaps) {
 		layerProgressMax = numberOfTiles;
 		initialLayerTime = System.currentTimeMillis();
 		mapProgress = 0;
+		mapCount = 0;
+		mapCountMax = numberOfMaps;
 		updateGUI();
 	}
 
 	public void incAtlasProgress() {
 		atlasProgress++;
 		updateGUI();
-	}
-
-	public void initMap(int numberOfMapSplices) {
-		mapCount = 0;
-		mapCountMax = numberOfMapSplices;
 	}
 
 	public void setMap(int currentMapSplices) {
@@ -398,6 +398,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			updateTask.cancel();
 			if (abortListener != null)
 				abortListener.actionPerformed(null);
+			else
+				dispose();
 		}
 	}
 
@@ -520,4 +522,16 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		}
 	}
 
+	public static void main(String[] args) {
+		Logging.configureLogging();
+		TACExceptionHandler.installToolkitEventQueueProxy();
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			log.error("The selection of look and feel failed!", e);
+		}
+		AtlasProgress ap = new AtlasProgress(null);
+		ap.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		ap.setVisible(true);
+	}
 }

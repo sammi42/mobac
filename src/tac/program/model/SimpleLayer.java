@@ -2,6 +2,7 @@ package tac.program.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,6 +68,11 @@ public class SimpleLayer implements LayerInterface, CapabilityDeletable {
 		for (MapInterface map : maps)
 			result += map.calculateTilesToDownload();
 		return result;
+	}
+
+	public Iterator<MapInterface> iterator() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,6 +1,6 @@
 package tac.program.interfaces;
 
-public interface LayerInterface {
+public interface LayerInterface extends Iterable<MapInterface> {
 
 	public String getName();
 

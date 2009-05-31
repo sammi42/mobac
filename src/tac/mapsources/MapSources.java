@@ -32,7 +32,7 @@ public class MapSources {
 		loadMapSourceProperties();
 		MAP_SOURCES = new MapSource[] {
 				// For debugging purposes
-				// new tac.mapsources.LocalhostTestSource(), //
+				 new tac.mapsources.LocalhostTestSource(), //
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
 				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),

@@ -78,6 +78,12 @@ public class TileStore {
 		return f.exists();
 	}
 
+	public void prepareTileStore(MapSource mapSource) {
+		File tileStoreTile = getTileFile(0, 0, 0, mapSource);
+		File tileStoreDir = tileStoreTile.getParentFile();
+		tileStoreDir.mkdirs();
+	}
+
 	public void clearStore(MapSource tileSource) {
 		File tileStore = new File(tileStorePath, tileSource.getName());
 

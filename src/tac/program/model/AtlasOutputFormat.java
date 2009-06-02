@@ -2,8 +2,8 @@ package tac.program.model;
 
 public enum AtlasOutputFormat {
 
-	TaredAtlas("TrekBuddy tared: tiles packed in tar files"), // 
-	UntaredAtlas("TrekBuddy untared: tiles in seperate files"), //
+	TaredAtlas("TrekBuddy tared atlas"), // 
+	UntaredAtlas("TrekBuddy untared atlas"), //
 	AndNav("AndNav atlas format");
 
 	private final String displayName;

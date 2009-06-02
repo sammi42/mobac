@@ -37,6 +37,7 @@ public class AtlasTreeModel implements TreeModel {
 	public AtlasTreeModel() {
 		super();
 		atlas = new Atlas();
+		// Sample data:
 		// try {
 		// new AutoCutMultiMapLayer(atlas, "Test 1", new MapSources.Mapnik(),
 		// new Point(1000, 1000), new Point(2000, 2000), 3, null, 32000);

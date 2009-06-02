@@ -227,6 +227,46 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		return sw.toString();
 	}
 
+	public Iterator<MapInterface> iterator() {
+		return maps.iterator();
+	}
+
+	public Enumeration<?> children() {
+		return Collections.enumeration(maps);
+	}
+
+	public boolean getAllowsChildren() {
+		return true;
+	}
+
+	public TreeNode getChildAt(int childIndex) {
+		return (TreeNode) maps.get(childIndex);
+	}
+
+	public int getChildCount() {
+		return maps.size();
+	}
+
+	public int getIndex(TreeNode node) {
+		return maps.indexOf(node);
+	}
+
+	public TreeNode getParent() {
+		return (TreeNode) atlas;
+	}
+
+	public boolean isLeaf() {
+		return false;
+	}
+
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
+		this.atlas = (Atlas) parent;
+		calculateRuntimeValues();
+		// TODO: Test loaded data for problems (missing fields, duplicate names)
+	}
+
+	/***********************************************************/
+
 	public static class SubMap implements MapInterface, ToolTipProvider, CapabilityDeletable,
 			CapabilityRenameable, TreeNode, DownloadableElement {
 
@@ -362,49 +402,14 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 
 		public void afterUnmarshal(Unmarshaller u, Object parent) {
 			this.layer = (AutoCutMultiMapLayer) parent;
+			// TODO: Test loaded data for problems (missing fields, duplicate
+			// names, ...)
 		}
 
 		public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
 				DownloadJobListener listener) {
 			return new DownloadJobEnumerator(this, tileArchive, listener);
 		}
-	}
-
-	public Iterator<MapInterface> iterator() {
-		return maps.iterator();
-	}
-
-	public Enumeration<?> children() {
-		return Collections.enumeration(maps);
-	}
-
-	public boolean getAllowsChildren() {
-		return true;
-	}
-
-	public TreeNode getChildAt(int childIndex) {
-		return (TreeNode) maps.get(childIndex);
-	}
-
-	public int getChildCount() {
-		return maps.size();
-	}
-
-	public int getIndex(TreeNode node) {
-		return maps.indexOf(node);
-	}
-
-	public TreeNode getParent() {
-		return (TreeNode) atlas;
-	}
-
-	public boolean isLeaf() {
-		return false;
-	}
-
-	public void afterUnmarshal(Unmarshaller u, Object parent) {
-		this.atlas = (Atlas) parent;
-		calculateRuntimeValues();
 	}
 
 }

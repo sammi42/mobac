@@ -20,9 +20,9 @@ import tac.program.interfaces.ToolTipProvider;
 @XmlRootElement
 public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
-	private String name = "Atlas";
+	private String name = "Unnamed atlas";
 
-	@XmlElements( { @XmlElement(name = "MMLayer", type = AutoCutMultiMapLayer.class) })
+	@XmlElements( { @XmlElement(name = "ACLayer", type = AutoCutMultiMapLayer.class) })
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
 
 	private AtlasOutputFormat outputFormat = AtlasOutputFormat.TaredAtlas;

@@ -842,9 +842,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class CreateAtlasButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String errorText = validateInput(true);
-			if (errorText.length() > 0) {
-				JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
+			if (atlasTree.getAtlas().calculateTilesToDownload() == 0) {
+				String message = "Atlas is empty - please add at least one selection to atlas content.";
+				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + message + "</html>",
+						"Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			System.gc();
@@ -965,11 +966,18 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		Settings settings = Settings.getInstance();
+		String errorText = validateInput(true);
+		if (errorText.length() > 0) {
+			JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
 		int[] zoomLevels = sZL.getZoomLevels();
 		if (zoomLevels.length == 0) {
 			JOptionPane.showMessageDialog(this, "Please select at least one zoom level");
 			return;
 		}
+
 		for (int zoom : zoomLevels) {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftTileCoordinate(zoom);
@@ -1049,49 +1057,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 					+ " and " + JTileSizeCombo.MAX + ". \n";
 
 		if (checkCreateAtlas) {
-			if (atlasNameTextField.getText().length() < 1) {
-				errorText += "Please specify an \"Atlas name\". \n";
-			}
-		}
-
-		if (checkCreateAtlas) {
-			if (atlasTree.getAtlas().calculateTilesToDownload() == 0)
-				errorText += "Atlas is empty - please add at least one selection to atlas content. \n";
 		}
 		return errorText;
-	}
-
-	private boolean validateLatLongMinMax() {
-
-		Double latMax;
-		Double latMin;
-		Double longMax;
-		Double longMin;
-		try {
-			latMax = latMaxTextField.getCoordinate();
-			latMin = latMinTextField.getCoordinate();
-			longMax = lonMaxTextField.getCoordinate();
-			longMin = lonMinTextField.getCoordinate();
-		} catch (ParseException e) {
-			log.error("Error retrieving coordinates:", e);
-			return false;
-		}
-
-		boolean maxIsBiggerThanMin = true;
-
-		if (latMax < latMin) {
-			JOptionPane.showMessageDialog(null, "Latitude Min is greater than Latitude Max",
-					"Errors", JOptionPane.ERROR_MESSAGE);
-			maxIsBiggerThanMin = false;
-		}
-
-		if (longMax < longMin) {
-			JOptionPane.showMessageDialog(null, "Longitude Min is greater than Longitude Max",
-					"Errors", JOptionPane.ERROR_MESSAGE);
-			maxIsBiggerThanMin = false;
-		}
-
-		return maxIsBiggerThanMin;
 	}
 
 	private void calculateNrOfTilesToDownload() {

@@ -13,7 +13,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import tac.gui.AtlasProgress;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
-import tac.program.model.TileImageFormat;
+import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.utilities.MyMath;
 
@@ -185,19 +185,6 @@ public class MapCreatorCustom extends MapCreator {
 		cache[cachePos] = new CachedTile(image, xTile, yTile);
 		cachePos = (cachePos + 1) % cache.length;
 		return image;
-	}
-
-	public static class TileImageParameters {
-		public int width;
-		public int height;
-		public TileImageFormat format;
-
-		@Override
-		public String toString() {
-			return "Tile size: (" + width + "/" + height + ") " + format.toString() + "("
-					+ format.name() + ")";
-		}
-
 	}
 
 	private static class CachedTile {

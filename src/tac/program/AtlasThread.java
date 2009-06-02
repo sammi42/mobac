@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 
 import tac.gui.AtlasProgress;
 import tac.program.JobDispatcher.Job;
-import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
@@ -25,6 +24,7 @@ import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AutoCutMultiMapLayer;
+import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.TACExceptionHandler;

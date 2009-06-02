@@ -5,7 +5,6 @@ import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;

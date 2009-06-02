@@ -31,7 +31,6 @@ import org.apache.log4j.Logger;
 import tac.gui.MainGUI;
 import tac.gui.mapview.PreviewMap;
 import tac.program.MapSelection;
-import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.CapabilityRenameable;
@@ -41,6 +40,7 @@ import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
 import tac.program.model.AutoCutMultiMapLayer;
+import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 

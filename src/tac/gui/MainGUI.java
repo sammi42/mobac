@@ -51,12 +51,10 @@ import tac.gui.mapview.MapSelectionListener;
 import tac.gui.mapview.PreviewMap;
 import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
-import tac.program.MapCreatorCustom;
 import tac.program.MapSelection;
 import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
-import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
@@ -64,6 +62,7 @@ import tac.program.model.AutoCutMultiMapLayer;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Profile;
 import tac.program.model.TileImageFormat;
+import tac.program.model.TileImageParameters;
 import tac.utilities.GBC;
 import tac.utilities.PersistentProfiles;
 import tac.utilities.TACExceptionHandler;
@@ -954,10 +953,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	public TileImageParameters getSelectedTileImageParameters() {
-		MapCreatorCustom.TileImageParameters customTileParameters = null;
+		TileImageParameters customTileParameters = null;
 		boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
 		if (customTileSize) {
-			customTileParameters = new MapCreatorCustom.TileImageParameters();
+			customTileParameters = new TileImageParameters();
 			customTileParameters.width = tileSizeWidth.getValue();
 			customTileParameters.height = tileSizeHeight.getValue();
 			customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
@@ -983,7 +982,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftTileCoordinate(zoom);
 			Point br = ms.getBottomRightTileCoordinate(zoom);
-			MapCreatorCustom.TileImageParameters customTileParameters = getSelectedTileImageParameters();
+			TileImageParameters customTileParameters = getSelectedTileImageParameters();
 
 			String layerName = name;
 			boolean success = false;

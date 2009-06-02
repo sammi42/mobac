@@ -5,7 +5,7 @@ import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.program.MapCreatorCustom.TileImageParameters;
+import tac.program.model.TileImageParameters;
 
 public interface MapInterface {
 

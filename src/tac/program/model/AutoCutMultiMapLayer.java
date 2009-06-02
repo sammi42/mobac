@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -23,7 +22,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.InvalidNameException;
 import tac.program.DownloadJobEnumerator;
 import tac.program.JobDispatcher.Job;
-import tac.program.MapCreatorCustom.TileImageParameters;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.CapabilityRenameable;
@@ -32,12 +30,8 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
-import tac.program.jaxb.DimensionAdapter;
-import tac.program.jaxb.PointAdapter;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.MyMath;
-
-//import tac.utilities.MyMath;
 
 /**
  * A layer holding one or multiple maps of the same map source and the same zoom
@@ -59,7 +53,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 	private MapSource mapSource;
 
 	@XmlAttribute
-	@XmlJavaTypeAdapter(PointAdapter.class)
 	private Point maxTileCoordinate;
 	private Point minTileCoordinate;
 	private Point maxTileNum;
@@ -73,7 +66,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 	private Dimension tileDimension;
 
 	@XmlAttribute
-	@XmlJavaTypeAdapter(DimensionAdapter.class)
 	private Dimension maxMapDimension;
 
 	@XmlElements( { @XmlElement(name = "SubMap", type = SubMap.class) })
@@ -243,11 +235,9 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		private AutoCutMultiMapLayer layer;
 
 		@XmlAttribute
-		@XmlJavaTypeAdapter(PointAdapter.class)
 		private Point maxTileCoordinate;
 
 		@XmlAttribute
-		@XmlJavaTypeAdapter(PointAdapter.class)
 		private Point minTileCoordinate;
 
 		protected SubMap() {

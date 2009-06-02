@@ -20,5 +20,5 @@ public interface AtlasInterface extends CapabilityRenameable, Iterable<LayerInte
 
 	public AtlasOutputFormat getOutputFormat();
 
-	public long calculateTilesToDownload();
+	public int calculateTilesToDownload();
 }

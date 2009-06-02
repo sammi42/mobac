@@ -191,7 +191,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
                 fin.close();
                 fileAge = tileFile.lastModified();
                 boolean oldTile = System.currentTimeMillis() - fileAge > maxCacheFileAge;
-                // System.out.println("Loaded from file: " + tile);
                 if (!oldTile) {
                     tile.setLoaded(true);
                     listener.tileLoadingFinished(tile, true);
@@ -254,9 +253,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
             prepareHttpUrlConnection(urlConn);
             urlConn.setRequestMethod("HEAD");
             urlConn.setReadTimeout(30000); // 30 seconds read timeout
-            // System.out.println("Tile age: " + new
-            // Date(urlConn.getLastModified()) + " / "
-            // + new Date(fileAge));
             long lastModified = urlConn.getLastModified();
             if (lastModified == 0)
                 return true; // no LastModified time returned
@@ -270,9 +266,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
             prepareHttpUrlConnection(urlConn);
             urlConn.setRequestMethod("HEAD");
             urlConn.setReadTimeout(30000); // 30 seconds read timeout
-            // System.out.println("Tile age: " + new
-            // Date(urlConn.getLastModified()) + " / "
-            // + new Date(fileAge));
             String osmETag = urlConn.getHeaderField("ETag");
             if (osmETag == null)
                 return true;
@@ -290,7 +283,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
                         + "_" + tile.getYtile() + "." + source.getTileType());
                 f.write(rawData);
                 f.close();
-                // System.out.println("Saved tile to file: " + tile);
             } catch (Exception e) {
                 System.err.println("Failed to save tile content: " + e.getLocalizedMessage());
             }

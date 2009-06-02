@@ -67,17 +67,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	public void run() {
 		TACExceptionHandler.registerForCurrentThread();
 		log.info("Starting altas creation");
-		// log.trace("Atlas to download:\n\t" + "MapSource: " + tileSource +
-		// "\n\tAtlas name: "
-		// + atlasName + "\n\tMap selection: " + mapSelection +
-		// "\n\tSelectedZoomLevels: "
-		// + sZL);
 		ap.setAbortListener(this);
 		try {
 			createAtlas();
 			ap.atlasCreationFinished();
 			log.info("Altas creation finished");
 		} catch (OutOfMemoryError e) {
+			System.gc();
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(null,
@@ -105,6 +101,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			log.error("Altas creation aborted because of an error: ", e);
 			TACExceptionHandler.showExceptionDialog(e);
 		}
+		System.gc();
 	}
 
 	protected void createAtlas() throws InterruptedException, IOException {
@@ -123,9 +120,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		 * In this section of code below, atlas is created.
 		 **/
 
-		int nrOfLayers = atlas.getLayerCount();
-		// int[] zoomLevels = sZL.getZoomLevels();
-
 		long totalNrOfTiles = atlas.calculateTilesToDownload();
 
 		if (totalNrOfTiles > Integer.MAX_VALUE) {
@@ -134,8 +128,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			return;
 		}
 
-		ap.init((int) totalNrOfTiles, nrOfLayers);
-		updateGUI();
+		ap.init(atlas);
 		ap.setVisible(true);
 
 		TileStore ts = TileStore.getInstance();
@@ -147,12 +140,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		Thread t = Thread.currentThread();
 		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
-			int layerNum = 0;
 			for (LayerInterface layer : atlas) {
 				int apMax = (int) layer.calculateTilesToDownload();
-				ap.initLayer(apMax, layer.getMapCount());
-				int mapNumber = 1;
 				for (MapInterface map : layer) {
+					ap.initMapDownload(map);
 					jobsCompleted = 0;
 					jobsRetryError = 0;
 					jobsPermanentError = 0;
@@ -227,8 +218,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 								return;
 						}
 					}
-					ap.setLayerProgress(apMax);
-
 					log.debug("Starting to create atlas from downloaded tiles");
 
 					TileImageParameters parameters = map.getParameters();
@@ -239,11 +228,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					else
 						mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
 					mc.createMap();
-					ap.setMap(mapNumber++);
 					downloadJobDispatcher.cancelOutstandingJobs();
 					tileIndex.closeAndDelete();
 				}
-				ap.setLayer(layerNum++);
 			}
 		} finally {
 			// In case of an abort: Stop create new download jobs
@@ -272,13 +259,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		}
 
 		ap.atlasCreationFinished();
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JOptionPane.showMessageDialog(null, "Atlas download completed", "Information",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
 	}
 
 	/**
@@ -296,11 +276,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		}
 	}
 
-	private void updateGUI() {
-		ap.incAtlasProgress();
-		ap.setLayerProgress(jobsCompleted);
-	}
-
 	public int getActiveDownloads() {
 		return activeDownloads;
 	}
@@ -312,10 +287,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	public void jobFinishedSuccessfully(int bytesDownloaded) {
 		synchronized (this) {
 			ap.addDownloadedBytes(bytesDownloaded);
+			ap.incMapDownloadProgress();
 			activeDownloads--;
 			jobsCompleted++;
 		}
-		updateGUI();
+		ap.updateGUI();
 	}
 
 	public void jobFinishedWithError(boolean retry) {
@@ -323,11 +299,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 			activeDownloads--;
 			if (retry)
 				jobsRetryError++;
-			else
+			else {
 				jobsPermanentError++;
+				ap.incMapDownloadProgress();
+			}
 		}
 		Toolkit.getDefaultToolkit().beep();
 		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
+		ap.updateGUI();
 	}
 
 	public AtlasProgress getAtlasProgress() {

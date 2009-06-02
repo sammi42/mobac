@@ -64,7 +64,7 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 		return zoom;
 	}
 
-	public long calculateTilesToDownload() {
+	public int calculateTilesToDownload() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

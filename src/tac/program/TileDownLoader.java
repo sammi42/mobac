@@ -28,7 +28,7 @@ public class TileDownLoader {
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
-	public static int getImage(int x, int y, int zoom, MapSource tileSource,
+	public static int getImage(int x, int y, int zoom, MapSource mapSource,
 			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
 			UnrecoverableDownloadException {
 
@@ -51,15 +51,15 @@ public class TileDownLoader {
 		 * settings is to use the tile store
 		 */
 		Settings s = Settings.getInstance();
-		String tileFileName = "y" + y + "x" + x + "." + tileSource.getTileType();
+		String tileFileName = "y" + y + "x" + x + "." + mapSource.getTileType();
 
 		if (s.isTileStoreEnabled()) {
 
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
 			try {
-				File tsTileFile = ts.getTileFile(x, y, zoom, tileSource);
-				if (tsTileFile.exists()) {
+				File tsTileFile = ts.getTileFile(x, y, zoom, mapSource);
+				if (tsTileFile!= null && tsTileFile.exists()) {
 					byte[] data = Utilities.getFileBytes(tsTileFile);
 					synchronized (tileArchive) {
 						log.trace("Tile used from tilestore");
@@ -71,10 +71,10 @@ public class TileDownLoader {
 			}
 		}
 
-		String url = tileSource.getTileUrl(zoom, x, y);
+		String url = mapSource.getTileUrl(zoom, x, y);
 		if (url == null)
 			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
-					+ " is not a valid tile in map source " + tileSource);
+					+ " is not a valid tile in map source " + mapSource);
 
 		log.trace("Downloading " + url);
 		URL u = new URL(url);
@@ -121,10 +121,10 @@ public class TileDownLoader {
 		Utilities.checkForInterruption();
 		File tilestoreFile = null;
 		OutputStream tilestoreFileStream = null;
-		if (s.isTileStoreEnabled()) {
+		if (mapSource.allowFileStore() && s.isTileStoreEnabled()) {
 			// We are writing simultaneously to the target file
 			// and the file in the tile store
-			tilestoreFile = ts.getTileFile(x, y, zoom, tileSource);
+			tilestoreFile = ts.getTileFile(x, y, zoom, mapSource);
 			tilestoreFileStream = new FileOutputStream(tilestoreFile, false);
 			tilestoreFileStream.write(data);
 		}

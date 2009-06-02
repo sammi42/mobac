@@ -26,4 +26,8 @@ public class CustomMapSource extends AbstractMapSource {
 		tmp = tmp.replace("{$z}", Integer.toString(zoom));
 		return tmp;
 	}
+
+	public boolean allowFileStore() {
+		return true;
+	}
 }

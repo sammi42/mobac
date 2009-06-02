@@ -91,4 +91,10 @@ public interface MapSource {
 	 * @return file extension of the tile image type
 	 */
 	public String getTileType();
+
+	/**
+	 * Usually this method shoud return <code>true</code> but for debugging
+	 * purposes it can be sometimes useful to deactivate local storing of tiles.
+	 */
+	public boolean allowFileStore();
 }

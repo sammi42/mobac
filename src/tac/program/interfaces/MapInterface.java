@@ -25,5 +25,5 @@ public interface MapInterface {
 
 	public TileImageParameters getParameters();
 
-	public long calculateTilesToDownload();
+	public int calculateTilesToDownload();
 }

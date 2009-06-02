@@ -10,5 +10,5 @@ public interface LayerInterface extends Iterable<MapInterface> {
 
 	public AtlasInterface getAtlas();
 
-	public long calculateTilesToDownload();
+	public int calculateTilesToDownload();
 }

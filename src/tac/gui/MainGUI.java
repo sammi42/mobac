@@ -847,25 +847,17 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-
-			boolean maxIsBiggerThanMin = true;
-
-			maxIsBiggerThanMin = validateLatLongMinMax();
-
-			if (maxIsBiggerThanMin) {
-
-				try {
-					AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
-							.getSelectedItem();
-					AtlasInterface atlas = atlasTree.getAtlas();
-					atlas.setOutputFormat(atlasOutputFormat);
-					Thread atlasThread = new AtlasThread(atlas);
-					atlasThread.start();
-				} catch (Exception exception) {
-					log.error("", exception);
-				}
-			}
 			System.gc();
+			try {
+				AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
+						.getSelectedItem();
+				AtlasInterface atlas = atlasTree.getAtlas();
+				atlas.setOutputFormat(atlasOutputFormat);
+				Thread atlasThread = new AtlasThread(atlas);
+				atlasThread.start();
+			} catch (Exception exception) {
+				log.error("", exception);
+			}
 		}
 	}
 

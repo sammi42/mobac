@@ -74,8 +74,8 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		return layers.iterator();
 	}
 
-	public long calculateTilesToDownload() {
-		long tiles = 0;
+	public int calculateTilesToDownload() {
+		int tiles = 0;
 		for (LayerInterface layer : layers)
 			tiles += layer.calculateTilesToDownload();
 		return tiles;

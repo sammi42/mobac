@@ -39,13 +39,17 @@ public class TileStore {
 		}
 	}
 
-	private String getTilePath(int x, int y, int zoom, MapSource tileSource) {
-		return tileStorePath + tileSource.getName() + "/" + zoom + "_" + x + "_" + y + "."
-				+ tileSource.getTileType();
+	private String getTilePath(int x, int y, int zoom, MapSource mapSource) {
+		if (!mapSource.allowFileStore())
+			return null;
+		return tileStorePath + mapSource.getName() + "/" + zoom + "_" + x + "_" + y + "."
+				+ mapSource.getTileType();
 	}
 
-	public File getTileFile(int x, int y, int zoom, MapSource tileSource) {
-		return new File(getTilePath(x, y, zoom, tileSource));
+	public File getTileFile(int x, int y, int zoom, MapSource mapSource) {
+		if (!mapSource.allowFileStore())
+			return null;
+		return new File(getTilePath(x, y, zoom, mapSource));
 	}
 
 	public boolean copyStoredTileTo(File targetFileName, int x, int y, int zoom,
@@ -75,10 +79,12 @@ public class TileStore {
 
 	public boolean contains(int x, int y, int zoom, MapSource tileSource) {
 		File f = getTileFile(x, y, zoom, tileSource);
-		return f.exists();
+		return f != null && f.exists();
 	}
 
 	public void prepareTileStore(MapSource mapSource) {
+		if (!mapSource.allowFileStore())
+			return;
 		File tileStoreTile = getTileFile(0, 0, 0, mapSource);
 		File tileStoreDir = tileStoreTile.getParentFile();
 		tileStoreDir.mkdirs();

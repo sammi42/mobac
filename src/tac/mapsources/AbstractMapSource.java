@@ -44,4 +44,9 @@ public abstract class AbstractMapSource implements MapSource {
 		return TileUpdate.None;
 	}
 
+	public boolean allowFileStore() {
+		return true;
+	}
+	
+
 }

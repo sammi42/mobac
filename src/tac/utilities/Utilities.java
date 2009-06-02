@@ -39,6 +39,10 @@ public class Utilities {
 	private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
 	private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
 
+	public static String fmt(String format, int value) {
+		return String.format(format, new Object[] { value });
+	}
+
 	public static boolean testJaiColorQuantizerAvailable() {
 		try {
 			Class<?> c = Class.forName("javax.media.jai.operator.ColorQuantizerDescriptor");

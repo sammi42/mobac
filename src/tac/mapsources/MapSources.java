@@ -103,7 +103,6 @@ public class MapSources {
 			else
 				base = "http://mc3.tiles-cdn.multimap.com/ptiles/map/mi931/";
 			s = base + z + "/" + s + ".png?client=public_api&service_seq=14458";
-			// System.out.println(s);
 			return s;
 		}
 	}

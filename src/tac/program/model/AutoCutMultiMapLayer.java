@@ -201,8 +201,8 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		return name;
 	}
 
-	public long calculateTilesToDownload() {
-		long result = 0;
+	public int calculateTilesToDownload() {
+		int result = 0;
 		for (MapInterface map : maps)
 			result += map.calculateTilesToDownload();
 		return result;
@@ -354,10 +354,9 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			return true;
 		}
 
-		public long calculateTilesToDownload() {
-			long width = MyMath.divCeil((maxTileCoordinate.x - minTileCoordinate.x) + 1, Tile.SIZE);
-			long height = MyMath
-					.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, Tile.SIZE);
+		public int calculateTilesToDownload() {
+			int width = MyMath.divCeil((maxTileCoordinate.x - minTileCoordinate.x) + 1, Tile.SIZE);
+			int height = MyMath.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, Tile.SIZE);
 			return width * height;
 		}
 

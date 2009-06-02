@@ -28,6 +28,11 @@ public class WmsSources {
 			result[3] = OsmMercator.YToLat(tiley, zoom); // lat_max
 			return result;
 		}
+
+		public boolean allowFileStore() {
+			return true;
+		}
+		
 	}
 
 	public static class TerraserverUSA extends WmsMapSource {

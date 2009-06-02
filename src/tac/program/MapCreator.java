@@ -127,7 +127,7 @@ public class MapCreator {
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {
 			ap = ((AtlasThread) t).getAtlasProgress();
-			ap.initMapSplice((xMax - xMin + 1) * (yMax - yMin + 1));
+			ap.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		}
 		ImageIO.setUseCache(false);
 		BufferedImage emptyImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
@@ -144,7 +144,7 @@ public class MapCreator {
 				if (t.isInterrupted())
 					throw new InterruptedException();
 				if (ap != null)
-					ap.incMapProgress();
+					ap.incMapCreationProgress();
 				try {
 					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
 							+ "." + mapSource.getTileType();

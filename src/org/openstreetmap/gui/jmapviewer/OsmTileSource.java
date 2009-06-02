@@ -30,6 +30,9 @@ public class OsmTileSource {
 			return "png";
 		}
 
+		public boolean allowFileStore() {
+			return true;
+		}
 	}
 
 	public static class Mapnik extends AbstractOsmTileSource {

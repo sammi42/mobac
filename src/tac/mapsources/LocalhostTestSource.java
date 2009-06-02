@@ -10,4 +10,10 @@ public class LocalhostTestSource extends AbstractMapSource {
 		return "http://localhost/tile?x=" + tilex + "&y=" + tiley + "&z=" + zoom;
 	}
 
+	@Override
+	public boolean allowFileStore() {
+		return false;
+	}
+
+	
 }

@@ -220,13 +220,15 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 					}
 					log.debug("Starting to create atlas from downloaded tiles");
 
-					TileImageParameters parameters = map.getParameters();
-
 					MapCreator mc;
-					if (parameters == null)
-						mc = new MapCreator(map, tileIndex, atlasDir);
-					else
-						mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
+					if (atlas.getOutputFormat() != AtlasOutputFormat.AndNav) {
+						TileImageParameters parameters = map.getParameters();
+						if (parameters == null)
+							mc = new MapCreator(map, tileIndex, atlasDir);
+						else
+							mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
+					} else
+						mc = new MapCreatorAndNav(map, tileIndex, atlasDir);
 					mc.createMap();
 					downloadJobDispatcher.cancelOutstandingJobs();
 					tileIndex.closeAndDelete();

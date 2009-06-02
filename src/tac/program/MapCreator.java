@@ -27,9 +27,6 @@ import tac.tar.TarIndex;
 import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
 
-/**
- * @author Fredrik
- */
 public class MapCreator {
 
 	public static final String TEXT_FILE_CHARSET = "ISO-8859-1";
@@ -89,7 +86,7 @@ public class MapCreator {
 		}
 	}
 
-	private void writeMapFile() {
+	protected void writeMapFile() {
 		File mapFile = new File(mapFolder, map.getName() + ".map");
 		FileOutputStream mapFileStream = null;
 		try {
@@ -102,7 +99,7 @@ public class MapCreator {
 		}
 	}
 
-	private void writeMapFile(OutputStream stream) throws IOException {
+	protected void writeMapFile(OutputStream stream) throws IOException {
 		log.trace("Writing map file");
 		OutputStreamWriter mapWriter = new OutputStreamWriter(stream, TEXT_FILE_CHARSET);
 

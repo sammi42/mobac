@@ -16,10 +16,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -33,8 +30,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -56,7 +57,6 @@ import tac.program.SelectedZoomLevels;
 import tac.program.Settings;
 import tac.program.TACInfo;
 import tac.program.interfaces.AtlasInterface;
-import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AutoCutMultiMapLayer;
 import tac.program.model.EastNorthCoordinate;
@@ -64,7 +64,6 @@ import tac.program.model.Profile;
 import tac.program.model.TileImageFormat;
 import tac.program.model.TileImageParameters;
 import tac.utilities.GBC;
-import tac.utilities.PersistentProfiles;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
@@ -78,8 +77,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private static Color labelForegroundColor = Color.white;
 
 	private static MainGUI mainGUI = null;
-
-	private Vector<Profile> profilesVector = new Vector<Profile>();
 
 	private AtlasTree atlasTree;
 	private PreviewMap previewMap;
@@ -212,6 +209,14 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		// profiles combo box
 		profilesCombo = new JComboBox();
 		profilesCombo.setEditable(true);
+		profilesCombo.setEditor(new BasicComboBoxEditor() {
+
+			@Override
+			protected JTextField createEditorComponent() {
+				return new JAtlasNameField();
+			}
+
+		});
 		profilesCombo.setToolTipText("Select an atlas creation profile\n "
 				+ "or enter a name for a new profile");
 
@@ -375,6 +380,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		JScrollPane treeScrollPane = new JScrollPane(atlasTree,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		atlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
+
 		treeScrollPane.setPreferredSize(new Dimension(100, 100));
 		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
 		JButton clearAtlas = new JButton("Clear");
@@ -383,22 +390,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 			public void actionPerformed(ActionEvent e) {
 				atlasTree.clearAtlas();
-			}
-		});
-		JButton loadAtlas = new JButton("Load");
-		atlasContentPanel.add(loadAtlas, GBC.std());
-		loadAtlas.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				atlasTree.load();
-			}
-		});
-		JButton saveAtlas = new JButton("Save");
-		atlasContentPanel.add(saveAtlas, GBC.std());
-		saveAtlas.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				atlasTree.save();
 			}
 		});
 		JButton addLayers = new JButton("Add selection");
@@ -420,8 +411,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
 		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
 
-		// TODO: Correct implementation and re-enable
-		profilesCombo.setEnabled(false);
 		saveAsProfileButton.setEnabled(false);
 		deleteProfileButton.setEnabled(false);
 
@@ -700,21 +689,18 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	private Profile getProfile(String profileName) {
-		for (Profile profile : profilesVector) {
-			if (profile.getProfileName().equals(profileName))
-				return profile;
-		}
-		return null;
-	}
+	// private Profile getProfile(String profileName) {
+	// for (Profile profile : profilesVector) {
+	// if (profile.getProfileName().equals(profileName))
+	// return profile;
+	// }
+	// return null;
+	// }
 
 	private void initializeProfilesCombo() {
 		// Load all profiles from the profiles file from disk
-		profilesVector = PersistentProfiles.load(new File(System.getProperty("user.dir"),
-				"profiles.xml"));
-
-		for (Profile p : profilesVector) {
-			profilesCombo.addItem(p.getProfileName());
+		for (Profile p : Profile.getProfiles()) {
+			profilesCombo.addItem(p);
 		}
 		profilesCombo.setSelectedIndex(-1);
 		ProfilesComboListener pcl = new ProfilesComboListener();
@@ -725,46 +711,24 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class ProfilesComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Profile profile = getProfile((String) profilesCombo.getEditor().getItem());
-			if (profile != null) {
-				MapSource map = MapSources.getSourceByName(profile.getMapSource());
-				mapSourceCombo.setSelectedItem(map);
-
-				latMinTextField.setCoordinate(profile.getLatitudeMin());
-				latMaxTextField.setCoordinate(profile.getLatitudeMax());
-				lonMinTextField.setCoordinate(profile.getLongitudeMin());
-				lonMaxTextField.setCoordinate(profile.getLongitudeMax());
-
-				tileSizeWidth.setValue(profile.getTileSizeWidth());
-				tileSizeHeight.setValue(profile.getTileSizeHeight());
-
-				atlasNameTextField.setText(profile.getAtlasName());
-
-				boolean[] zoomValues = new boolean[cbZoom.length];
-
-				zoomValues = profile.getZoomLevels();
-
-				int min = Math.min(cbZoom.length, zoomValues.length);
-				for (int i = 0; i < min; i++) {
-					cbZoom[i].setSelected(zoomValues[i]);
-				}
-
-				calculateNrOfTilesToDownload();
-				previewSelection();
-				deleteProfileButton.setEnabled(true);
-			} else {
-				deleteProfileButton.setEnabled(false);
-			}
+			Object selItem = profilesCombo.getSelectedItem();
+			boolean valid = (selItem instanceof Profile);
+			deleteProfileButton.setEnabled(valid);
+			if (!valid)
+				return;
+			Profile profile = (Profile) selItem;
+			atlasTree.load(profile);
 		}
 	}
 
 	private class DeleteProfileListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			profilesVector.removeElementAt(profilesCombo.getSelectedIndex());
-			PersistentProfiles.store(profilesVector);
-			int index = profilesCombo.getSelectedIndex();
+			Profile profile = (Profile) profilesCombo.getSelectedItem();
+			if (profile == null)
+				return;
+			profile.delete();
+			profilesCombo.removeItem(profile);
 			profilesCombo.setSelectedIndex(-1);
-			profilesCombo.removeItemAt(index);
 		}
 
 	}
@@ -778,16 +742,26 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				return;
 			}
 
-			String profileName = (String) profilesCombo.getEditor().getItem();
+			Object selObject = profilesCombo.getEditor().getItem();
+			String profileName = null;
+			Profile profile = null;
+			boolean profileInList = false;
+			if (selObject instanceof Profile) {
+				profile = (Profile) selObject;
+				profileName = profile.getName();
+				profileInList = true;
+			} else
+				profileName = (String) selObject;
 
 			if (profileName.length() == 0) {
 				JOptionPane.showMessageDialog(null, "Please enter a profile name", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 
-			Profile previousProfile = getProfile(profileName);
+			profile = new Profile(profileName);
 
-			if (previousProfile != null) {
+			if (profile.exists()) {
 				int response = JOptionPane.showConfirmDialog(null, "Profile \"" + profileName
 						+ "\" already exists. Overwrite?", "Please confirm",
 						JOptionPane.YES_NO_OPTION);
@@ -795,41 +769,12 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 					return;
 			}
 
-			Profile profile;
-			if (previousProfile != null)
-				profile = previousProfile;
-			else
-				profile = new Profile();
-
-			try {
-				profile.setProfileName(profileName);
-				profile.setAtlasName(atlasNameTextField.getText());
-				profile.setMapSource(((MapSource) mapSourceCombo.getSelectedItem()).getName());
-				profile.setLatitudeMax(latMaxTextField.getCoordinate());
-				profile.setLatitudeMin(latMinTextField.getCoordinate());
-				profile.setLongitudeMax(lonMaxTextField.getCoordinate());
-				profile.setLongitudeMin(lonMinTextField.getCoordinate());
-
-				boolean[] zoomLevels = new boolean[cbZoom.length];
-				for (int i = 0; i < cbZoom.length; i++) {
-					zoomLevels[i] = cbZoom[i].isSelected();
-				}
-
-				profile.setZoomLevels(zoomLevels);
-				profile.setTileSizeWidth(tileSizeWidth.getValue());
-				profile.setTileSizeHeight(tileSizeHeight.getValue());
-
-				if (previousProfile == null) {
-					profilesVector.addElement(profile);
-					profilesCombo.addItem(profileName);
-				}
-				PersistentProfiles.store(profilesVector);
-				deleteProfileButton.setEnabled(true);
-				JOptionPane.showMessageDialog(null, "Saved profile " + profileName, "",
+			if (atlasTree.save(profile)) {
+				if (!profileInList)
+					profilesCombo.addItem(profile);
+				JOptionPane.showMessageDialog(null, "Profile \"" + profileName
+						+ "\" has been successfully saved", "Profile save",
 						JOptionPane.PLAIN_MESSAGE);
-
-			} catch (ParseException exception) {
-				log.error("", exception);
 			}
 		}
 	}
@@ -959,7 +904,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void addSelectedAutoCutMultiMapLayers() {
-		Atlas atlas = atlasTree.getAtlas();
+		AtlasInterface atlas = atlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
@@ -1093,6 +1038,29 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				amountOfTilesLabel.setText(String.format(baseText, new Object[] { "?" }));
 				log.error("", e);
 			}
+		}
+	}
+
+	private class AtlasListener implements TreeModelListener {
+
+		protected void changed() {
+			saveAsProfileButton.setEnabled(atlasTree.getAtlas().getLayerCount() > 0);
+		}
+
+		public void treeNodesChanged(TreeModelEvent e) {
+			changed();
+		}
+
+		public void treeNodesInserted(TreeModelEvent e) {
+			changed();
+		}
+
+		public void treeNodesRemoved(TreeModelEvent e) {
+			changed();
+		}
+
+		public void treeStructureChanged(TreeModelEvent e) {
+			changed();
 		}
 	}
 

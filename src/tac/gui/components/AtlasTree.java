@@ -40,6 +40,7 @@ import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
 import tac.program.model.AutoCutMultiMapLayer;
+import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -147,23 +148,27 @@ public class AtlasTree extends JTree implements MouseListener {
 		}
 	}
 
-	public Atlas getAtlas() {
+	public AtlasInterface getAtlas() {
 		return treeModel.getAtlas();
 	}
 
-	public void load() {
+	public boolean load(Profile profile) {
 		try {
-			treeModel.load();
+			treeModel.load(profile);
+			return true;
 		} catch (Exception e) {
 			TACExceptionHandler.processException(e);
+			return false;
 		}
 	}
 
-	public void save() {
+	public boolean save(Profile profile) {
 		try {
-			treeModel.save();
+			treeModel.save(profile);
+			return true;
 		} catch (Exception e) {
 			TACExceptionHandler.processException(e);
+			return false;
 		}
 	}
 

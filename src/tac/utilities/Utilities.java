@@ -19,7 +19,6 @@ import java.text.ParsePosition;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -28,7 +27,6 @@ import javax.swing.JOptionPane;
 
 import tac.StartTAC;
 import tac.program.Settings;
-import tac.program.model.Profile;
 
 public class Utilities {
 
@@ -216,25 +214,6 @@ public class Utilities {
 		}
 	}
 
-	public static Profile createExampleProfile(String profileName, String mapSource,
-			double latitudeMax, double latitudeMin, double longitudeMax, double longitudeMin,
-			boolean[] zoomValues, int tileSizeWidth, int tileSizeHeight, String atlasName) {
-		Profile profile = new Profile();
-
-		profile.setProfileName(profileName);
-		profile.setMapSource(mapSource);
-		profile.setLatitudeMax(latitudeMax);
-		profile.setLatitudeMin(latitudeMin);
-		profile.setLongitudeMax(longitudeMax);
-		profile.setLongitudeMin(longitudeMin);
-		profile.setZoomLevels(zoomValues);
-		profile.setTileSizeWidth(tileSizeWidth);
-		profile.setTileSizeHeight(tileSizeHeight);
-		profile.setAtlasName(atlasName);
-
-		return profile;
-	}
-
 	public static void checkFileSetup() {
 
 		File userDir = new File(System.getProperty("user.dir"));
@@ -260,38 +239,44 @@ public class Utilities {
 			}
 		}
 
-		File profilesFile = new File(userDir, "profiles.xml");
+		// File profilesFile = new File(userDir, "profiles.xml");
 
-		if (profilesFile.exists() == false) {
-
-			try {
-				profilesFile.createNewFile();
-
-				Vector<Profile> defaultProfiles = new Vector<Profile>();
-
-				defaultProfiles.addElement(createExampleProfile("Google Maps New York",
-						"Google Maps", 40.97264, 40.541982, -73.699036, -74.142609, new boolean[] {
-								false, false, false, false, false, false, false, false, false,
-								false, false, false, true, true, true, true, true, true }, 256,
-						256, "gm nyc"));
-				defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin",
-						"Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
-						new boolean[] { false, false, true, false, true, false, true, false, true,
-								false }, 256, 256, "oa berlin"));
-				defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria", "Mapnik",
-						50.611132, 47.189712, 13.996582, 8.811035, new boolean[] { false, false,
-								false, false, false, false, false, false, false, false, true,
-								false, true, false, true, false, true, false, true }, 256, 256,
-						"osm bavaria"));
-
-				PersistentProfiles.store(defaultProfiles);
-			} catch (IOException iox) {
-				JOptionPane.showMessageDialog(null,
-						"Could not create file profiles.xml program will exit.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				System.exit(0);
-			}
-		}
+		// if (profilesFile.exists() == false) {
+		//
+		// try {
+		// profilesFile.createNewFile();
+		//
+		// Vector<Profile> defaultProfiles = new Vector<Profile>();
+		//
+		//defaultProfiles.addElement(createExampleProfile("Google Maps New York"
+		// ,
+		// "Google Maps", 40.97264, 40.541982, -73.699036, -74.142609, new
+		// boolean[] {
+		// false, false, false, false, false, false, false, false, false,
+		// false, false, false, true, true, true, true, true, true }, 256,
+		// 256, "gm nyc"));
+		//defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
+		// ,
+		// "Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
+		// new boolean[] { false, false, true, false, true, false, true, false,
+		// true,
+		// false }, 256, 256, "oa berlin"));
+		//defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria"
+		// , "Mapnik",
+		// 50.611132, 47.189712, 13.996582, 8.811035, new boolean[] { false,
+		// false,
+		// false, false, false, false, false, false, false, false, true,
+		// false, true, false, true, false, true, false, true }, 256, 256,
+		// "osm bavaria"));
+		//
+		// PersistentProfiles.store(defaultProfiles);
+		// } catch (IOException iox) {
+		// JOptionPane.showMessageDialog(null,
+		// "Could not create file profiles.xml program will exit.", "Error",
+		// JOptionPane.ERROR_MESSAGE);
+		// System.exit(0);
+		// }
+		// }
 	}
 
 	/**

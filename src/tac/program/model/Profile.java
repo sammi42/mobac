@@ -1,154 +1,101 @@
 package tac.program.model;
 
-import java.beans.XMLEncoder;
-import java.io.PrintStream;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import tac.mapsources.MapSources;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
-public class Profile {
+import tac.program.Settings;
+import tac.program.interfaces.AtlasInterface;
 
-	private String profileName;
-	private String atlasName;
+public class Profile implements Comparable<Profile> {
 
-	private double latitudeMax;
-	private double latitudeMin;
-	private double longitudeMax;
-	private double longitudeMin;
+	static final Pattern p = Pattern.compile("tac-profile-([\\w _-]+).xml");
 
-	private String mapSource;
+	private File file;
+	private String name;
 
-	private int tileSizeWidth;
-	private int tileSizeHeight;
+	public static Vector<Profile> getProfiles() {
+		File userDir = new File(Settings.getUserDir());
+		final Vector<Profile> profiles = new Vector<Profile>();
+		userDir.list(new FilenameFilter() {
 
-	private boolean[] zoomLevels;
-
-	// Default constructor
-	public Profile() {
-
-		profileName = "";
-		atlasName = "";
-		latitudeMax = 0.0;
-		latitudeMin = 0.0;
-		longitudeMax = 0.0;
-		longitudeMin = 0.0;
-		tileSizeWidth = 0;
-		tileSizeHeight = 0;
-		mapSource = MapSources.getDefaultMapSourceName();
-
-		zoomLevels = new boolean[10];
-		for (int i = 0; i < zoomLevels.length; i++)
-			zoomLevels[i] = false;
+			public boolean accept(File dir, String fileName) {
+				Matcher m = p.matcher(fileName);
+				if (m.matches()) {
+					String profileName = m.group(1);
+					Profile profile = new Profile(new File(dir, fileName), profileName);
+					profiles.add(profile);
+				}
+				return false;
+			}
+		});
+		return profiles;
 	}
 
-	// Constructor
-	public Profile(String theProfileName, String theAtlasName, String mapSource,
-			double theLatitudeMax, double theLatitudeMin, double theLongitudeMax,
-			double theLongitudeMin, boolean[] theZoomLevels, int theTileSizeWidth,
-			int theTileSizeHeight, int theCustomTileSizeWidth, int theCustomTileSizeHeight) {
-
-		profileName = theProfileName;
-		atlasName = theAtlasName;
-		this.mapSource = mapSource;
-		latitudeMax = theLatitudeMax;
-		latitudeMin = theLatitudeMin;
-		longitudeMax = theLongitudeMax;
-		longitudeMin = theLongitudeMin;
-		zoomLevels = theZoomLevels;
-		tileSizeWidth = theTileSizeWidth;
-		tileSizeHeight = theTileSizeHeight;
+	public Profile(String name) {
+		super();
+		this.file = new File(new File(Settings.getUserDir()), "tac-profile-" + name + ".xml");
+		this.name = name;
 	}
 
-	// SET Methods
-	public void setProfileName(String theProfileName) {
-		profileName = theProfileName;
+	protected Profile(File file, String name) {
+		super();
+		this.file = file;
+		this.name = name;
 	}
 
-	public void setAtlasName(String theAtlasName) {
-		atlasName = theAtlasName;
+	@Override
+	public String toString() {
+		return name;
 	}
 
-	public void setLatitudeMax(Double theLatitudeMax) {
-		latitudeMax = theLatitudeMax;
+	public File getFile() {
+		return file;
 	}
 
-	public void setLatitudeMin(Double theLatitudeMin) {
-		latitudeMin = theLatitudeMin;
+	public String getName() {
+		return name;
 	}
 
-	public void setLongitudeMax(Double theLongitudeMax) {
-		longitudeMax = theLongitudeMax;
+	public boolean exists() {
+		return file.isFile();
 	}
 
-	public void setLongitudeMin(Double theLongitudeMin) {
-		longitudeMin = theLongitudeMin;
+	public void delete() {
+		if (!file.delete())
+			file.deleteOnExit();
 	}
 
-	public void setZoomLevels(boolean[] theZoomLevels) {
-		zoomLevels = theZoomLevels;
+	public int compareTo(Profile o) {
+		return file.compareTo(o.file);
 	}
 
-	public void setTileSizeWidth(int tileSizeWidth) {
-		this.tileSizeWidth = tileSizeWidth;
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Profile))
+			return false;
+		Profile p = (Profile) obj;
+		return file.equals(p.file);
 	}
 
-	public void setTileSizeHeight(int tileSizeHeight) {
-		this.tileSizeHeight = tileSizeHeight;
+	public void save(AtlasInterface atlas) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(Atlas.class);
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		m.marshal(atlas, file);
 	}
 
-	// GET Methods
-	public String getProfileName() {
-		return profileName;
+	public AtlasInterface load() throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(Atlas.class);
+		Unmarshaller um = context.createUnmarshaller();
+		return (AtlasInterface) um.unmarshal(file);
 	}
 
-	public String getAtlasName() {
-		return atlasName;
-	}
-
-	public Double getLatitudeMax() {
-		return latitudeMax;
-	}
-
-	public Double getLatitudeMin() {
-		return latitudeMin;
-	}
-
-	public Double getLongitudeMax() {
-		return longitudeMax;
-	}
-
-	public Double getLongitudeMin() {
-		return longitudeMin;
-	}
-
-	public boolean[] getZoomLevels() {
-		return zoomLevels;
-	}
-
-	public int getTileSizeWidth() {
-		return tileSizeWidth;
-	}
-
-	public int getTileSizeHeight() {
-		return tileSizeHeight;
-	}
-
-	public String getMapSource() {
-		return mapSource;
-	}
-
-	public void setMapSource(String mapSource) {
-		this.mapSource = mapSource;
-	}
-
-	/**
-	 * Test for a possible better implementation for saving Profiles
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		PrintStream ps = new PrintStream(System.out);
-		XMLEncoder out = new XMLEncoder(ps);
-		out.writeObject(new Profile("test", "a", "Google", 1.0, 1.0, 2.0, 2.0, new boolean[] {
-				true, true, false }, 10, 20, 30, 40));
-		out.flush();
-	}
 }

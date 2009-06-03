@@ -74,7 +74,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 	protected AutoCutMultiMapLayer() {
 	}
 
-	public AutoCutMultiMapLayer(Atlas atlas, String name, MapSource mapSource,
+	public AutoCutMultiMapLayer(AtlasInterface atlas, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
 		this.atlas = atlas;

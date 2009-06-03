@@ -1,7 +1,6 @@
 package tac.program.model;
 
 import java.awt.Toolkit;
-import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -12,10 +11,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.log4j.Logger;
 
@@ -29,8 +24,7 @@ public class AtlasTreeModel implements TreeModel {
 
 	private static Logger log = Logger.getLogger(AtlasTreeModel.class);
 
-	@XmlElementRef
-	protected Atlas atlas;
+	protected AtlasInterface atlas;
 
 	protected Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
 
@@ -151,7 +145,7 @@ public class AtlasTreeModel implements TreeModel {
 		}
 	}
 
-	public Atlas getAtlas() {
+	public AtlasInterface getAtlas() {
 		return atlas;
 	}
 
@@ -160,17 +154,12 @@ public class AtlasTreeModel implements TreeModel {
 		notifyStructureChanged();
 	}
 
-	public void save() throws Exception {
-		JAXBContext context = JAXBContext.newInstance(Atlas.class);
-		Marshaller m = context.createMarshaller();
-		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		m.marshal(atlas, new File("atlas.xml"));
+	public void save(Profile profile) throws Exception {
+		profile.save(atlas);
 	}
 
-	public void load() throws Exception {
-		JAXBContext context = JAXBContext.newInstance(Atlas.class);
-		Unmarshaller um = context.createUnmarshaller();
-		atlas = (Atlas) um.unmarshal(new File("atlas.xml"));
+	public void load(Profile profile) throws Exception {
+		atlas = profile.load();
 		notifyStructureChanged();
 	}
 }

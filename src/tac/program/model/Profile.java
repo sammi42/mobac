@@ -2,6 +2,8 @@ package tac.program.model;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,10 +22,12 @@ public class Profile implements Comparable<Profile> {
 
 	private File file;
 	private String name;
+	private static Vector<Profile> profiles = new Vector<Profile>();
 
-	public static Vector<Profile> getProfiles() {
+	public static void updateProfiles() {
 		File userDir = new File(Settings.getUserDir());
-		final Vector<Profile> profiles = new Vector<Profile>();
+		final Set<Profile> deletedProfiles = new HashSet<Profile>();
+		deletedProfiles.addAll(profiles);
 		userDir.list(new FilenameFilter() {
 
 			public boolean accept(File dir, String fileName) {
@@ -31,11 +35,18 @@ public class Profile implements Comparable<Profile> {
 				if (m.matches()) {
 					String profileName = m.group(1);
 					Profile profile = new Profile(new File(dir, fileName), profileName);
+					deletedProfiles.remove(profile);
 					profiles.add(profile);
 				}
 				return false;
 			}
 		});
+		for (Profile p : deletedProfiles)
+			profiles.remove(p);
+	}
+
+	public static Vector<Profile> getProfiles() {
+		updateProfiles();
 		return profiles;
 	}
 

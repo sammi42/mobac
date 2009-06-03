@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -219,7 +220,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		});
 		profilesCombo.setToolTipText("Select an atlas creation profile\n "
 				+ "or enter a name for a new profile");
-
+		profilesCombo.addActionListener(new ProfilesComboListener());
+		
 		// delete profile button
 		deleteProfileButton = new JButton("Delete profile");
 		deleteProfileButton.addActionListener(new DeleteProfileListener());
@@ -689,22 +691,10 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	// private Profile getProfile(String profileName) {
-	// for (Profile profile : profilesVector) {
-	// if (profile.getProfileName().equals(profileName))
-	// return profile;
-	// }
-	// return null;
-	// }
-
 	private void initializeProfilesCombo() {
 		// Load all profiles from the profiles file from disk
-		for (Profile p : Profile.getProfiles()) {
-			profilesCombo.addItem(p);
-		}
+		profilesCombo.setModel(new DefaultComboBoxModel(Profile.getProfiles()));
 		profilesCombo.setSelectedIndex(-1);
-		ProfilesComboListener pcl = new ProfilesComboListener();
-		profilesCombo.addActionListener(pcl);
 
 		deleteProfileButton.setEnabled(false);
 	}

@@ -9,7 +9,11 @@
  ~ = Changes   since previous version
 
  1.2: (2009-??-??)
+ ~ Java requirement has changed: Now at least Java 1.6 is required! 
  + Flexible atlases containing different areas of multiple map sources are possible
+ ~ Profile saving updated to new atlas structure
+ ~ Fullscreen mode is currently unavailable
+ + New atlas output format: AndNav - Android Navigation System http://www.andnav.org 
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

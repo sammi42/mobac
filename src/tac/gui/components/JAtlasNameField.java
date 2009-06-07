@@ -1,53 +1,17 @@
 package tac.gui.components;
 
-import java.awt.Toolkit;
-import java.util.regex.Pattern;
-
 import javax.swing.JTextField;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 
 /**
  * A {@link JTextField} that only accepts ASCII characters, numbers and spaces.
  * 
  */
-public class JAtlasNameField extends JTextField {
+public class JAtlasNameField extends JRegexTextField {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final Pattern NAME_PATTERN = Pattern.compile("[\\w _-]*");
-	public static final int MAX_LENGTH = 40;
-
 	public JAtlasNameField() {
-		super();
-		setDocument(new AtlasNameDocument());
+		super("[\\w _-]*", 40);
 	}
 
-	public class AtlasNameDocument extends PlainDocument {
-
-		private static final long serialVersionUID = 1L;
-
-		public void insertString(int offset, String str, AttributeSet attr)
-				throws BadLocationException {
-
-			if (str == null)
-				return;
-
-			if (!NAME_PATTERN.matcher(str).matches()) {
-				Toolkit.getDefaultToolkit().beep();
-				return;
-			}
-
-			String oldText = JAtlasNameField.this.getText();
-
-			super.insertString(offset, str, attr);
-
-			// Maximum length exceeded?
-			if (JAtlasNameField.this.getText().length() > MAX_LENGTH) {
-				JAtlasNameField.this.setText(oldText);
-				Toolkit.getDefaultToolkit().beep();
-			}
-		}
-	}
 }

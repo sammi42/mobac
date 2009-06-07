@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,12 +30,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -44,9 +41,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.StartTAC;
 import tac.exceptions.InvalidNameException;
-import tac.gui.components.AtlasTree;
 import tac.gui.components.JAtlasNameField;
+import tac.gui.components.JAtlasTree;
 import tac.gui.components.JCoordinateField;
+import tac.gui.components.JProfilesComboBox;
 import tac.gui.components.JTileSizeCombo;
 import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapSelectionListener;
@@ -79,7 +77,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private static MainGUI mainGUI = null;
 
-	private AtlasTree atlasTree;
+	private JAtlasTree jAtlasTree;
 	private PreviewMap previewMap;
 
 	private JLabel zoomLevelText;
@@ -89,7 +87,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private JButton helpButton;
 	private JButton fullScreenButton;
 	private JButton settingsButton;
-	private JComboBox profilesCombo;
+	private JProfilesComboBox profilesCombo;
 	private JButton deleteProfileButton;
 	private JButton saveAsProfileButton;
 	private JAtlasNameField atlasNameTextField;
@@ -208,20 +206,11 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		fullScreenButton.setEnabled(false); // TODO: reenable
 
 		// profiles combo box
-		profilesCombo = new JComboBox();
-		profilesCombo.setEditable(true);
-		profilesCombo.setEditor(new BasicComboBoxEditor() {
-
-			@Override
-			protected JTextField createEditorComponent() {
-				return new JAtlasNameField();
-			}
-
-		});
+		profilesCombo = new JProfilesComboBox();
 		profilesCombo.setToolTipText("Select an atlas creation profile\n "
 				+ "or enter a name for a new profile");
 		profilesCombo.addActionListener(new ProfilesComboListener());
-		
+
 		// delete profile button
 		deleteProfileButton = new JButton("Delete profile");
 		deleteProfileButton.addActionListener(new DeleteProfileListener());
@@ -378,11 +367,11 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
-		atlasTree = new AtlasTree(previewMap);
-		JScrollPane treeScrollPane = new JScrollPane(atlasTree,
+		jAtlasTree = new JAtlasTree(previewMap);
+		JScrollPane treeScrollPane = new JScrollPane(jAtlasTree,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		atlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
+		jAtlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
 
 		treeScrollPane.setPreferredSize(new Dimension(100, 100));
 		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
@@ -391,7 +380,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		clearAtlas.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				atlasTree.clearAtlas();
+				jAtlasTree.clearAtlas();
 			}
 		});
 		JButton addLayers = new JButton("Add selection");
@@ -693,9 +682,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private void initializeProfilesCombo() {
 		// Load all profiles from the profiles file from disk
-		profilesCombo.setModel(new DefaultComboBoxModel(Profile.getProfiles()));
-		profilesCombo.setSelectedIndex(-1);
-
+		profilesCombo.loadProfilesList();
 		deleteProfileButton.setEnabled(false);
 	}
 
@@ -707,20 +694,14 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			if (!valid)
 				return;
 			Profile profile = (Profile) selItem;
-			atlasTree.load(profile);
+			jAtlasTree.load(profile);
 		}
 	}
 
 	private class DeleteProfileListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Profile profile = (Profile) profilesCombo.getSelectedItem();
-			if (profile == null)
-				return;
-			profile.delete();
-			profilesCombo.removeItem(profile);
-			profilesCombo.setSelectedIndex(-1);
+			profilesCombo.deleteSelectedProfile();
 		}
-
 	}
 
 	private class SaveAsProfileListener implements ActionListener {
@@ -759,7 +740,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 					return;
 			}
 
-			if (atlasTree.save(profile)) {
+			if (jAtlasTree.save(profile)) {
 				if (!profileInList)
 					profilesCombo.addItem(profile);
 				JOptionPane.showMessageDialog(null, "Profile \"" + profileName
@@ -777,7 +758,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class CreateAtlasButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (atlasTree.getAtlas().calculateTilesToDownload() == 0) {
+			if (jAtlasTree.getAtlas().calculateTilesToDownload() == 0) {
 				String message = "Atlas is empty - please add at least one selection to atlas content.";
 				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + message + "</html>",
 						"Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
@@ -787,7 +768,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			try {
 				AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
 						.getSelectedItem();
-				AtlasInterface atlas = atlasTree.getAtlas();
+				AtlasInterface atlas = jAtlasTree.getAtlas();
 				atlas.setOutputFormat(atlasOutputFormat);
 				Thread atlasThread = new AtlasThread(atlas);
 				atlasThread.start();
@@ -894,7 +875,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void addSelectedAutoCutMultiMapLayers() {
-		AtlasInterface atlas = atlasTree.getAtlas();
+		AtlasInterface atlas = jAtlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
@@ -932,7 +913,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				}
 			} while (!success);
 		}
-		atlasTree.getTreeModel().notifyStructureChanged();
+		jAtlasTree.getTreeModel().notifyStructureChanged();
 	}
 
 	private void updateCustomTileProcessingControlsState() {
@@ -1034,7 +1015,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private class AtlasListener implements TreeModelListener {
 
 		protected void changed() {
-			saveAsProfileButton.setEnabled(atlasTree.getAtlas().getLayerCount() > 0);
+			saveAsProfileButton.setEnabled(jAtlasTree.getAtlas().getLayerCount() > 0);
 		}
 
 		public void treeNodesChanged(TreeModelEvent e) {

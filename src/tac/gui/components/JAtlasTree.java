@@ -45,13 +45,13 @@ import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
-public class AtlasTree extends JTree implements MouseListener {
+public class JAtlasTree extends JTree implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String ACTION_DELETE_NODE = "DELETE_NODE";
 
-	private static final Logger log = Logger.getLogger(AtlasTree.class);
+	private static final Logger log = Logger.getLogger(JAtlasTree.class);
 
 	private AtlasTreeModel treeModel;
 
@@ -63,7 +63,7 @@ public class AtlasTree extends JTree implements MouseListener {
 
 	protected KeyStroke deleteNodeKS;
 
-	public AtlasTree(PreviewMap mapView) {
+	public JAtlasTree(PreviewMap mapView) {
 		super(new AtlasTreeModel());
 		if (mapView == null)
 			throw new NullPointerException("MapView parameter is null");
@@ -220,7 +220,7 @@ public class AtlasTree extends JTree implements MouseListener {
 				mi = new JMenuItem("Rename");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						AtlasTree.this.startEditingAtPath(selPath);
+						JAtlasTree.this.startEditingAtPath(selPath);
 					}
 				});
 				pm.add(mi);
@@ -347,7 +347,7 @@ public class AtlasTree extends JTree implements MouseListener {
 	protected class AtlasTreeCellEditor extends DefaultTreeCellEditor {
 
 		public AtlasTreeCellEditor() {
-			super(AtlasTree.this, null);
+			super(JAtlasTree.this, null);
 		}
 
 		@Override

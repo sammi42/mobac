@@ -3,6 +3,7 @@ package tac.mapsources;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
@@ -19,6 +20,7 @@ import tac.mapsources.Microsoft.MicrosoftMaps;
 import tac.mapsources.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
 import tac.mapsources.WmsSources.TerraserverUSA;
+import tac.program.Settings;
 import tac.utilities.Utilities;
 
 public class MapSources {
@@ -30,21 +32,25 @@ public class MapSources {
 
 	static {
 		loadMapSourceProperties();
-		MAP_SOURCES = new MapSource[] {
-				// For debugging purposes
-				 new tac.mapsources.LocalhostTestSource(), //
+		MAP_SOURCES = new MapSource[] { //
+				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
 				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA()
-		// new MapPlus() //does not work because of an unknown projection -
+		// new MapPlus() //does not work because of an unknown protection -
 		// cookie?
 		};
 	}
 
-	public static MapSource[] getMapSources() {
-		return MAP_SOURCES;
+	public static Vector<MapSource> getMapSources() {
+		Vector<MapSource> mapSources = new Vector<MapSource>();
+		if (Settings.getInstance().isDevModeEnabled())
+			mapSources.add(new LocalhostTestSource());
+		for (MapSource ms : MAP_SOURCES)
+			mapSources.add(ms);
+		return mapSources;
 	}
 
 	public static String getDefaultMapSourceName() {

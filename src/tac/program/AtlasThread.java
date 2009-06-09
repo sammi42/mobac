@@ -1,8 +1,6 @@
 package tac.program;
 
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +14,7 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import tac.gui.AtlasProgress;
+import tac.gui.AtlasProgress.DownloadControlerListener;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.DownloadJobListener;
@@ -29,7 +28,7 @@ import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.TACExceptionHandler;
 
-public class AtlasThread extends Thread implements DownloadJobListener, ActionListener {
+public class AtlasThread extends Thread implements DownloadJobListener, DownloadControlerListener {
 
 	/**
 	 * Allows to skip the download part for debugging reasons
@@ -67,7 +66,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 	public void run() {
 		TACExceptionHandler.registerForCurrentThread();
 		log.info("Starting altas creation");
-		ap.setAbortListener(this);
+		ap.setDownloadControlerListener(this);
 		try {
 			createAtlas();
 			ap.atlasCreationFinished();
@@ -179,7 +178,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 						while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
 								|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 							Thread.sleep(500);
-							if (!failedMessageAnswered && (jobsRetryError > 100)) {
+							if (!failedMessageAnswered && (jobsRetryError > 50)) {
+								downloadJobDispatcher.pause();
 								int answer = JOptionPane
 										.showConfirmDialog(
 												ap,
@@ -197,6 +197,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 									djp.cancel();
 									return;
 								}
+								downloadJobDispatcher.resume();
 							}
 						}
 						djp = null;
@@ -263,10 +264,17 @@ public class AtlasThread extends Thread implements DownloadJobListener, ActionLi
 		ap.atlasCreationFinished();
 	}
 
+	public void pauseResumeDownload() {
+		if (downloadJobDispatcher.isPaused())
+			downloadJobDispatcher.resume();
+		else
+			downloadJobDispatcher.pause();
+	}
+
 	/**
-	 * Abort listener from {@link AtlasProgress}
+	 * Stop listener from {@link AtlasProgress}
 	 */
-	public void actionPerformed(ActionEvent e) {
+	public void stopDownload() {
 		try {
 			DownloadJobProducer djp_ = djp;
 			if (djp_ != null)

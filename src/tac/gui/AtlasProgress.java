@@ -102,8 +102,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JButton dismissWindowButton;
 	private JButton openProgramFolderButton;
 	private JButton abortAtlasDownloadButton;
+	private JButton pauseResumeDownloadButton;
 
-	private ActionListener abortListener = null;
+	private DownloadControlerListener downloadControlListener = null;
 
 	private UpdateTask updateTask = null;
 	private GUIUpdater guiUpdater = null;
@@ -182,13 +183,13 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		abortAtlasDownloadButton = new JButton("Abort Download");
 		abortAtlasDownloadButton.setToolTipText("Abort current Atlas download");
-		abortAtlasDownloadButton.setEnabled(true);
-		dismissWindowButton = new JButton("wait..");
+		dismissWindowButton = new JButton("Close Window");
 		dismissWindowButton.setToolTipText("Download in progress...");
-		dismissWindowButton.setEnabled(false);
-		openProgramFolderButton = new JButton("wait..");
+		dismissWindowButton.setVisible(false);
+		openProgramFolderButton = new JButton("Open Atlas Folder");
 		openProgramFolderButton.setToolTipText("Download in progress...");
 		openProgramFolderButton.setEnabled(false);
+		pauseResumeDownloadButton = new JButton("Pause/Resume");
 
 		GBC gbcStd = GBC.std();
 		GBC gbcRIF = GBC.std().insets(0, 0, 20, 0).fill(GBC.HORIZONTAL);
@@ -241,6 +242,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		bottomPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
 		bottomPanel.add(abortAtlasDownloadButton, gbcRight);
 		bottomPanel.add(dismissWindowButton, gbcRight);
+		bottomPanel.add(pauseResumeDownloadButton, gbcRight);
 		bottomPanel.add(openProgramFolderButton, gbcRight);
 
 		background.add(bottomPanel, gbcEolFillI);
@@ -255,6 +257,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		abortAtlasDownloadButton.addActionListener(this);
 		dismissWindowButton.addActionListener(this);
 		openProgramFolderButton.addActionListener(this);
+		pauseResumeDownloadButton.addActionListener(this);
 	}
 
 	public void init(AtlasInterface atlas) {
@@ -341,7 +344,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public void atlasCreationFinished() {
 		stopUpdateTask();
-		abortListener = null;
+		downloadControlListener = null;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				abortAtlasDownloadButton.setEnabled(false);
@@ -350,11 +353,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				mapInfo.setText("");
 				setTitle("Atlas creation finished successfully");
 
-				dismissWindowButton.setText("Close Window");
-				dismissWindowButton.setToolTipText("Close atlas download progress window");
-				dismissWindowButton.setEnabled(true);
+				abortAtlasDownloadButton.setVisible(false);
 
-				openProgramFolderButton.setText("Open Atlas Folder");
+				dismissWindowButton.setToolTipText("Close atlas download progress window");
+				dismissWindowButton.setVisible(true);
+
 				openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
 				openProgramFolderButton.setEnabled(true);
 			}
@@ -372,19 +375,19 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public void closeWindow() {
 		try {
 			stopUpdateTask();
-			abortListener = null;
+			downloadControlListener = null;
 			setVisible(false);
 		} finally {
 			dispose();
 		}
 	}
 
-	public ActionListener getAbortListener() {
-		return abortListener;
+	public DownloadControlerListener getDownloadControlListener() {
+		return downloadControlListener;
 	}
 
-	public void setAbortListener(ActionListener abortListener) {
-		this.abortListener = abortListener;
+	public void setDownloadControlerListener(DownloadControlerListener threadControlListener) {
+		this.downloadControlListener = threadControlListener;
 	}
 
 	public void actionPerformed(ActionEvent event) {
@@ -398,14 +401,17 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				log.error("", e);
 			}
 		} else if (dismissWindowButton.equals(source)) {
-			abortListener = null;
+			downloadControlListener = null;
 			closeWindow();
 		} else if (abortAtlasDownloadButton.equals(source)) {
 			updateTask.cancel();
-			if (abortListener != null)
-				abortListener.actionPerformed(null);
+			if (downloadControlListener != null)
+				downloadControlListener.stopDownload();
 			else
 				dispose();
+		} else if (pauseResumeDownloadButton.equals(source)) {
+			if (downloadControlListener!= null)
+				downloadControlListener.pauseResumeDownload();
 		}
 	}
 
@@ -546,10 +552,18 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		@Override
 		public void windowClosing(WindowEvent e) {
 			log.debug("Closing event detected for atlas progress window");
-			ActionListener abortListener = AtlasProgress.this.abortListener;
-			if (abortListener != null)
-				abortListener.actionPerformed(null);
+			DownloadControlerListener listener = AtlasProgress.this.downloadControlListener;
+			if (listener != null)
+				listener.stopDownload();
 		}
+
+	}
+
+	public static interface DownloadControlerListener {
+
+		public void stopDownload();
+
+		public void pauseResumeDownload();
 
 	}
 

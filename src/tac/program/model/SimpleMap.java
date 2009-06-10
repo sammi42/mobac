@@ -79,4 +79,10 @@ public class SimpleMap implements MapInterface, CapabilityDeletable {
 		return null;
 	}
 
+	public void setParameters(TileImageParameters p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

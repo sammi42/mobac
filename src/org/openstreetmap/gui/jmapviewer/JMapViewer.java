@@ -5,6 +5,7 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -20,12 +21,13 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.utilities.Utilities;
 
@@ -59,6 +61,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected MapGridLayer mapGridLayer = null;
 
 	protected List<MapTileLayer> mapTileLayers;
+	public List<MapLayer> mapLayers;
 
 	/**
 	 * x- and y-position of the center of this map-panel on the world map
@@ -92,6 +95,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public JMapViewer(TileCache tileCache, int downloadThreadCount) {
 		super();
 		mapTileLayers = new LinkedList<MapTileLayer>();
+		mapLayers = new LinkedList<MapLayer>();
 		mapSource = new OsmTileSource.Mapnik();
 		tileLoader = new OsmTileLoader(this);
 		this.tileCache = tileCache;
@@ -306,6 +310,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 		int w2 = getWidth() / 2;
 		int h2 = getHeight() / 2;
+		int topLeftX = center.x - w2;
+		int topLeftY = center.y - h2;
+
 		int posx = w2 - off_x;
 		int posy = h2 - off_y;
 
@@ -358,6 +365,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 				iMove = (iMove + 1) % move.length;
 			}
 		}
+
+		int bottomRightX = topLeftX + getWidth();
+		int bottomRightY = topLeftY + getHeight();
+		for (MapLayer l : mapLayers) {
+			l.paint(this, (Graphics2D) g, zoom, topLeftX, topLeftY, bottomRightX, bottomRightY);
+		}
+
 		// outer border of the map
 		int mapSize = Tile.SIZE << zoom;
 		g.drawRect(w2 - center.x, h2 - center.y, mapSize, mapSize);

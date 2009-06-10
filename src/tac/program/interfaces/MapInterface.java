@@ -7,7 +7,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.model.TileImageParameters;
 
-public interface MapInterface {
+public interface MapInterface extends AtlasObject {
 
 	public String getName();
 
@@ -24,6 +24,8 @@ public interface MapInterface {
 	public LayerInterface getLayer();
 
 	public TileImageParameters getParameters();
+
+	public void setParameters(TileImageParameters p);
 
 	public int calculateTilesToDownload();
 }

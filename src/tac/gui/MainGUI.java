@@ -43,12 +43,12 @@ import tac.StartTAC;
 import tac.exceptions.InvalidNameException;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JAtlasTree;
-import tac.gui.components.JCoordinateField;
 import tac.gui.components.JProfilesComboBox;
 import tac.gui.components.JTileSizeCombo;
 import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapSelectionListener;
 import tac.gui.mapview.PreviewMap;
+import tac.gui.panels.JCoordinatesPanel;
 import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
 import tac.program.MapSelection;
@@ -68,7 +68,10 @@ import tac.utilities.Utilities;
 
 public class MainGUI extends JFrame implements MapSelectionListener {
 
-	private static final long serialVersionUID = -8444942802691874960L;
+	private static final long serialVersionUID = 1L;
+
+	private static final String ATLAS_EMPTY_MESSAGE = "Atlas is empty - "
+			+ "please add at least one selection to atlas content.";
 
 	private static Logger log = Logger.getLogger(MainGUI.class);
 
@@ -97,10 +100,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private JCheckBox[] cbZoom = new JCheckBox[0];
 	private JLabel amountOfTilesLabel;
 
-	private JCoordinateField latMinTextField;
-	private JCoordinateField latMaxTextField;
-	private JCoordinateField lonMinTextField;
-	private JCoordinateField lonMaxTextField;
+	private JCoordinatesPanel coordinatesPanel;
+
 	private JCheckBox enableCustomTileProcessingCheckButton;
 	private JLabel tileSizeWidthLabel;
 	private JLabel tileSizeHeightLabel;
@@ -163,6 +164,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void createControls() {
+
+		coordinatesPanel = new JCoordinatesPanel();
+
 		// zoom slider
 		zoomSlider = new JSlider(JMapViewer.MIN_ZOOM, previewMap.getMapSource().getMaxZoom());
 		zoomSlider.setOrientation(JSlider.HORIZONTAL);
@@ -247,16 +251,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		amountOfTilesLabel.setBackground(labelBackgroundColor);
 		amountOfTilesLabel.setForeground(labelForegroundColor);
 
-		// coordinates panel
-		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, true);
-		latMaxTextField.setActionCommand("latMaxTextField");
-		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX, false);
-		lonMinTextField.setActionCommand("longMinTextField");
-		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX, true);
-		lonMaxTextField.setActionCommand("longMaxTextField");
-		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, false);
-		latMinTextField.setActionCommand("latMinTextField");
-
 		// custom tile size
 		enableCustomTileProcessingCheckButton = new JCheckBox(
 				"Recreate/adjust map tiles (CPU intensive)");
@@ -271,11 +265,11 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 		tileSizeWidthLabel = new JLabel("Width:");
 		tileSizeWidth = new JTileSizeCombo();
-		tileSizeWidth.setToolTipText("Width");
+		tileSizeWidth.setToolTipText("Tile width");
 
 		tileSizeHeightLabel = new JLabel("Height:");
 		tileSizeHeight = new JTileSizeCombo();
-		tileSizeHeight.setToolTipText("Height");
+		tileSizeHeight.setToolTipText("Tile height");
 
 		tileImageFormatLabel = new JLabel("Tile format:");
 		tileImageFormat = new JComboBox(TileImageFormat.values());
@@ -304,38 +298,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private void updateLeftPanel() {
 		leftPanel.removeAll();
 
-		// Coordinates Panel
-		JPanel coordinatesPanel = new JPanel(new GridBagLayout());
-		coordinatesPanel.setBorder(BorderFactory
-				.createTitledBorder("Selection coordinates (min/max)"));
-
-		JLabel latMaxLabel = new JLabel("N ", JLabel.CENTER);
-		JLabel lonMinLabel = new JLabel("W ", JLabel.CENTER);
-		JLabel lonMaxLabel = new JLabel("E ", JLabel.CENTER);
-		JLabel latMinLabel = new JLabel("S ", JLabel.CENTER);
-
-		JButton displaySelectionButton = new JButton("Display selection");
-		displaySelectionButton.addActionListener(new DisplaySelectionButtonListener());
-
-		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		coordinatesPanel.add(latMaxLabel);
-		coordinatesPanel.add(latMaxTextField);
-		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-
-		JPanel eastWestPanel = new JPanel(new GridBagLayout());
-		eastWestPanel.add(lonMinLabel);
-		eastWestPanel.add(lonMinTextField);
-		eastWestPanel.add(lonMaxLabel, GBC.std().insets(10, 0, 0, 0));
-		eastWestPanel.add(lonMaxTextField);
-		coordinatesPanel.add(eastWestPanel, GBC.eol().fill().insets(0, 5, 0, 5));
-
-		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		coordinatesPanel.add(latMinLabel);
-		coordinatesPanel.add(latMinTextField);
-		coordinatesPanel.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-
-		coordinatesPanel.add(displaySelectionButton, GBC.eol().anchor(GBC.CENTER)
-				.insets(0, 5, 0, 0));
+		coordinatesPanel.addButtonActionListener(new DisplaySelectionButtonListener());
 
 		JPanel mapSourcePanel = new JPanel(new GridBagLayout());
 		mapSourcePanel.setBorder(BorderFactory.createTitledBorder("Map source"));
@@ -532,10 +495,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		atlasNameTextField.setText(settings.getAtlasName());
 		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoadPosition();
-		latMaxTextField.setCoordinate(settings.getSelectionMax().lat);
-		lonMaxTextField.setCoordinate(settings.getSelectionMax().lon);
-		latMinTextField.setCoordinate(settings.getSelectionMin().lat);
-		lonMinTextField.setCoordinate(settings.getSelectionMin().lon);
+		coordinatesPanel.setMaxCoordinate(settings.getSelectionMax());
+		coordinatesPanel.setMinCoordinate(settings.getSelectionMin());
 		tileImageFormat.setSelectedItem(settings.getTileImageFormat());
 
 		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
@@ -562,10 +523,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			s.setDefaultMapSource(((MapSource) mapSourceCombo.getSelectedItem()).getName());
 			s.setAtlasName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
-			s.setSelectionMax(new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(),
-					lonMaxTextField.getCoordinateOrNaN()));
-			s.setSelectionMin(new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(),
-					lonMinTextField.getCoordinateOrNaN()));
+			s.setSelectionMax(coordinatesPanel.getMaxCoordinate());
+			s.setSelectionMin(coordinatesPanel.getMinCoordinate());
 
 			s.setCustomTileSize(enableCustomTileProcessingCheckButton.isSelected());
 			s.setTileWidth(tileSizeWidth.getValue());
@@ -706,10 +665,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class SaveAsProfileListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String errorText = validateInput(true);
-
-			if (errorText.length() > 0) {
-				JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
+			if (jAtlasTree.getAtlas().calculateTilesToDownload() == 0) {
+				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + ATLAS_EMPTY_MESSAGE
+						+ "</html>", "Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -759,9 +717,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private class CreateAtlasButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if (jAtlasTree.getAtlas().calculateTilesToDownload() == 0) {
-				String message = "Atlas is empty - please add at least one selection to atlas content.";
-				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + message + "</html>",
-						"Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + ATLAS_EMPTY_MESSAGE
+						+ "</html>", "Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			System.gc();
@@ -833,10 +790,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min) {
-		lonMaxTextField.setCoordinate(max.lon);
-		lonMinTextField.setCoordinate(min.lon);
-		latMaxTextField.setCoordinate(max.lat);
-		latMinTextField.setCoordinate(min.lat);
+		coordinatesPanel.setMaxCoordinate(max);
+		coordinatesPanel.setMinCoordinate(min);
 		calculateNrOfTilesToDownload();
 	}
 
@@ -882,7 +837,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		Settings settings = Settings.getInstance();
-		String errorText = validateInput(true);
+		String errorText = validateInput();
 		if (errorText.length() > 0) {
 			JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -905,8 +860,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			int c = 1;
 			do {
 				try {
-					new AutoCutMultiMapLayer(atlas, layerName, tileSource, tl, br, zoom,
+					AutoCutMultiMapLayer layer = new AutoCutMultiMapLayer(atlas, layerName, tileSource, tl, br, zoom,
 							customTileParameters, settings.getMaxMapSize());
+					atlas.addLayer(layer);
 					success = true;
 				} catch (InvalidNameException e) {
 					layerName = name + "_" + Integer.toString(c++);
@@ -929,10 +885,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private void previewSelection() {
 		MapSelection ms = getMapSelectionCoordinates();
 		if (ms.coordinatesAreValid()) {
-			latMaxTextField.setCoordinate(ms.getLat_max());
-			latMinTextField.setCoordinate(ms.getLat_min());
-			lonMaxTextField.setCoordinate(ms.getLon_max());
-			lonMinTextField.setCoordinate(ms.getLon_min());
+			coordinatesPanel.setMaxCoordinate(ms.getMax());
+			coordinatesPanel.setMinCoordinate(ms.getMin());
 			previewMap.zoomToSelection(ms, false);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
@@ -940,29 +894,16 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private MapSelection getMapSelectionCoordinates() {
-		double lat_max, lat_min, lon_max, lon_min;
-		lat_max = latMaxTextField.getCoordinateOrNaN();
-		lat_min = latMinTextField.getCoordinateOrNaN();
-		lon_max = lonMaxTextField.getCoordinateOrNaN();
-		lon_min = lonMinTextField.getCoordinateOrNaN();
-		return new MapSelection(lat_max, lat_min, lon_max, lon_min);
+		EastNorthCoordinate max = coordinatesPanel.getMaxCoordinate();
+		EastNorthCoordinate min = coordinatesPanel.getMinCoordinate();
+		return new MapSelection(max, min);
 	}
 
-	private String validateInput(boolean checkCreateAtlas) {
+	private String validateInput() {
 
 		String errorText = "";
 
-		if (!lonMinTextField.isInputValid())
-			errorText += "Value of \"Longitude Min\" must be between -179 and 179. \n";
-
-		if (!lonMaxTextField.isInputValid())
-			errorText += "Value of \"Longitude Max\" must be between -179 and 179. \n";
-
-		if (!latMaxTextField.isInputValid())
-			errorText += "Value of \"Latitude Max\" must be between -85 and 85. \n";
-
-		if (!latMinTextField.isInputValid())
-			errorText += "Value of \"Latitude Min\" must be between -85 and 85. \n";
+		errorText += coordinatesPanel.getValidationErrorMessages();
 
 		if (!tileSizeHeight.isValueValid())
 			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeCombo.MIN
@@ -971,9 +912,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		if (!tileSizeWidth.isValueValid())
 			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeCombo.MIN
 					+ " and " + JTileSizeCombo.MAX + ". \n";
-
-		if (checkCreateAtlas) {
-		}
 		return errorText;
 	}
 

@@ -29,9 +29,11 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 
 import tac.gui.MainGUI;
+import tac.gui.mapview.MultiMapSelectionLayer;
 import tac.gui.mapview.PreviewMap;
 import tac.program.MapSelection;
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.AtlasObject;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.LayerInterface;
@@ -39,7 +41,6 @@ import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
-import tac.program.model.AutoCutMultiMapLayer;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
@@ -89,6 +90,7 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 				deleteSelectedNode();
+				JAtlasTree.this.mapView.repaint();
 			}
 
 		});
@@ -192,8 +194,20 @@ public class JAtlasTree extends JTree implements MouseListener {
 				});
 				pm.add(mi);
 			}
+			if (o instanceof AtlasObject) {
+				mi = new JMenuItem("Display map areas");
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						mapView.setSelectionByTileCoordinate(null, null, false);
+						mapView.mapLayers.clear();
+						mapView.mapLayers.add(new MultiMapSelectionLayer((AtlasObject) o));
+						mapView.repaint();
+					}
+				});
+				pm.add(mi);
+			}
 			if (o instanceof MapInterface) {
-				mi = new JMenuItem("Display map area");
+				mi = new JMenuItem("Select map area");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						MapInterface map = (MapInterface) o;
@@ -225,14 +239,14 @@ public class JAtlasTree extends JTree implements MouseListener {
 				});
 				pm.add(mi);
 			}
-			if (o instanceof AutoCutMultiMapLayer) {
+			if (o instanceof AtlasObject) {
 				mi = new JMenuItem("Apply tile processing options");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						AutoCutMultiMapLayer acLayer = (AutoCutMultiMapLayer) o;
+						AtlasObject atlasObject = (AtlasObject) o;
 						TileImageParameters p = MainGUI.getMainGUI()
 								.getSelectedTileImageParameters();
-						acLayer.setParameters(p);
+						applyTileImageParameters(atlasObject, p);
 					}
 				});
 				pm.add(mi);
@@ -257,6 +271,17 @@ public class JAtlasTree extends JTree implements MouseListener {
 		pm.show(this, event.getX(), event.getY());
 	}
 
+	protected void applyTileImageParameters(Object o, TileImageParameters p) {
+		if (o instanceof Iterable<?>) {
+			Iterable<?> it = (Iterable<?>) o; 
+			for (Object ao : it) {
+				applyTileImageParameters(ao, p);
+			}
+		} else if (o instanceof MapInterface) {
+			((MapInterface) o).setParameters(p);
+		}
+	}
+
 	public void mouseClicked(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
 			return;
@@ -272,10 +297,6 @@ public class JAtlasTree extends JTree implements MouseListener {
 			mapView.setMapSource(map.getMapSource());
 			mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
 					.getMaxTileCoordinate(), true);
-		} else if (o instanceof AutoCutMultiMapLayer) {
-			AutoCutMultiMapLayer layer = (AutoCutMultiMapLayer) o;
-			mapView.setSelectionByTileCoordinate(layer.getZoom(), layer.getMinTileCoordinate(),
-					layer.getMaxTileCoordinate(), true);
 		}
 	}
 

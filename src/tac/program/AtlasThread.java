@@ -22,7 +22,6 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
-import tac.program.model.AutoCutMultiMapLayer;
 import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
@@ -334,11 +333,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		private Logger log = Logger.getLogger(DownloadJobProducer.class);
 
 		Enumeration<Job> jobEnumerator;
-
-		public DownloadJobProducer(AutoCutMultiMapLayer acLayer) {
-			jobEnumerator = acLayer.getDownloadJobs(tileArchive, AtlasThread.this);
-			start();
-		}
 
 		public DownloadJobProducer(DownloadableElement de) {
 			jobEnumerator = de.getDownloadJobs(tileArchive, AtlasThread.this);

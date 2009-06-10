@@ -33,8 +33,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	private static Logger log = Logger.getLogger(PreviewMap.class);
 	private static final long serialVersionUID = 1L;
-	private static final Color GRID_COLOR = new Color(200, 20, 20, 130);
-	private static final Color SEL_COLOR = new Color(0.9f, 0.7f, 0.7f, 0.6f);
+	public static final Color GRID_COLOR = new Color(200, 20, 20, 130);
+	public static final Color SEL_COLOR = new Color(0.9f, 0.7f, 0.7f, 0.6f);
+	public static final Color MAP_COLOR = new Color(1.0f, 0.84f, 0.0f, 0.4f);
 
 	private Point iSelectionRectStart;
 	private Point iSelectionRectEnd;
@@ -272,6 +273,14 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd,
 			boolean notifyListeners) {
+		if (pStart == null || pEnd == null) {
+			iSelectionRectStart = null;
+			iSelectionRectEnd = null;
+			gridSelectionStart = null;
+			gridSelectionEnd = null;
+			return;
+		}
+
 		Point pNewStart = new Point();
 		Point pNewEnd = new Point();
 		int mapMaxCoordinate = Tile.SIZE << cZoom;

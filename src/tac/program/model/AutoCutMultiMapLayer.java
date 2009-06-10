@@ -41,32 +41,13 @@ import tac.utilities.MyMath;
  * 
  */
 @XmlRootElement
-public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, DownloadableElement,
-		ToolTipProvider, CapabilityDeletable, CapabilityRenameable, Iterable<MapInterface> {
+public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, ToolTipProvider,
+		CapabilityDeletable, CapabilityRenameable, Iterable<MapInterface> {
 
 	@XmlTransient
 	private AtlasInterface atlas;
 
 	private String name;
-
-	@XmlAttribute
-	private MapSource mapSource;
-
-	@XmlAttribute
-	private Point maxTileCoordinate;
-	private Point minTileCoordinate;
-	private Point maxTileNum;
-	private Point minTileNum;
-
-	@XmlAttribute
-	private int zoom;
-
-	private TileImageParameters parameters;
-
-	private Dimension tileDimension;
-
-	@XmlAttribute
-	private Dimension maxMapDimension;
 
 	@XmlElements( { @XmlElement(name = "SubMap", type = SubMap.class) })
 	private LinkedList<MapInterface> maps = new LinkedList<MapInterface>();
@@ -79,13 +60,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
 		this.atlas = atlas;
 		setName(name);
-		this.mapSource = mapSource;
-		this.minTileCoordinate = minTileCoordinate;
-		this.maxTileCoordinate = maxTileCoordinate;
-		this.zoom = zoom;
-		this.parameters = parameters;
-
-		calculateRuntimeValues();
 
 		minTileCoordinate.x = minTileCoordinate.x - (minTileCoordinate.x % Tile.SIZE);
 		minTileCoordinate.y = minTileCoordinate.y - (minTileCoordinate.y % Tile.SIZE);
@@ -93,30 +67,23 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		maxTileCoordinate.x = maxTileCoordinate.x + 255 - (maxTileCoordinate.x % Tile.SIZE);
 		maxTileCoordinate.y = maxTileCoordinate.y + 255 - (maxTileCoordinate.y % Tile.SIZE);
 
-		// We adapt the max map size to the tile size so that we do
-		// not get ugly cutted/incomplete tiles at the borders
-		maxMapDimension = new Dimension(maxMapSize, maxMapSize);
-		maxMapDimension.width -= maxMapSize % tileDimension.width;
-		maxMapDimension.height -= maxMapSize % tileDimension.height;
-		calculateSubMaps();
-		atlas.addLayer(this);
-	}
-
-	protected void calculateRuntimeValues() {
-		maxTileNum = new Point(maxTileCoordinate.x / Tile.SIZE, maxTileCoordinate.y / Tile.SIZE);
-		minTileNum = new Point(minTileCoordinate.x / Tile.SIZE, minTileCoordinate.y / Tile.SIZE);
+		Dimension tileDimension;
 		if (parameters == null)
 			tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
 		else
 			tileDimension = new Dimension(parameters.width, parameters.height);
-	}
+		// We adapt the max map size to the tile size so that we do
+		// not get ugly cutted/incomplete tiles at the borders
+		Dimension maxMapDimension = new Dimension(maxMapSize, maxMapSize);
+		maxMapDimension.width -= maxMapSize % tileDimension.width;
+		maxMapDimension.height -= maxMapSize % tileDimension.height;
 
-	protected void calculateSubMaps() {
 		int mapWidth = maxTileCoordinate.x - minTileCoordinate.x;
 		int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
 		maps.clear();
 		if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
-			SubMap s = new SubMap(this, name, minTileCoordinate, maxTileCoordinate);
+			SubMap s = new SubMap(this, name, mapSource, zoom, minTileCoordinate,
+					maxTileCoordinate, parameters);
 			maps.add(s);
 			return;
 		}
@@ -128,19 +95,14 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 				Point min = new Point(mapX, mapY);
 				Point max = new Point(maxX - 1, maxY - 1);
 				String mapName = String.format("%s-%02d", new Object[] { name, mapCounter++ });
-				SubMap s = new SubMap(this, mapName, min, max);
+				SubMap s = new SubMap(this, mapName, mapSource, zoom, min, max, parameters);
 				maps.add(s);
 			}
 		}
 	}
 
-	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
-		return new DownloadJobEnumerator(minTileNum.x, maxTileNum.x, minTileNum.y, maxTileNum.y,
-				zoom, mapSource, tileArchive, listener);
-	}
-
 	public void delete() {
+		maps.clear();
 		atlas.deleteLayer(this);
 	}
 
@@ -172,30 +134,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		this.name = newName;
 	}
 
-	public Point getMaxTileCoordinate() {
-		return maxTileCoordinate;
-	}
-
-	public Point getMinTileCoordinate() {
-		return minTileCoordinate;
-	}
-
-	public int getZoom() {
-		return zoom;
-	}
-
-	public MapSource getMapSource() {
-		return mapSource;
-	}
-
-	public TileImageParameters getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(TileImageParameters parameters) {
-		this.parameters = parameters;
-	}
-
 	@Override
 	public String toString() {
 		return name;
@@ -213,16 +151,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		sw.write("<html>");
 		sw.write("<b>Layer</b><br>");
 		sw.write("Map count: " + maps.size() + "<br>");
-		sw.write("Map source: " + mapSource.getName() + "<br>");
-		sw.write("Zoom level: " + zoom + "<br>");
-		if (parameters != null) {
-			sw.write("Tile size: " + parameters.width + "x" + parameters.height + "<br>");
-			sw.write("Tile format: " + parameters.format + "<br>");
-		} else
-			sw.write("Tile size: 256x256 (no processing)<br>");
-
 		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
-		sw.write("Max map size: " + maxMapDimension.width + "x" + maxMapDimension.height + "<br>");
 		sw.write("</html>");
 		return sw.toString();
 	}
@@ -261,7 +190,6 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
 		this.atlas = (Atlas) parent;
-		calculateRuntimeValues();
 		// TODO: Test loaded data for problems (missing fields, duplicate names)
 	}
 
@@ -274,29 +202,50 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 
 		private AutoCutMultiMapLayer layer;
 
-		@XmlAttribute
-		private Point maxTileCoordinate;
+		private TileImageParameters parameters = null;
 
 		@XmlAttribute
-		private Point minTileCoordinate;
+		private Point maxTileCoordinate = null;
+
+		@XmlAttribute
+		private Point minTileCoordinate = null;
+
+		@XmlAttribute
+		private MapSource mapSource = null;
+
+		private Dimension tileDimension = null;
+
+		@XmlAttribute
+		private int zoom = -1;
 
 		protected SubMap() {
 		}
 
-		protected SubMap(AutoCutMultiMapLayer layer, String name, Point minTileCoordinate,
-				Point maxTileCoordinate) {
+		protected SubMap(AutoCutMultiMapLayer layer, String name, MapSource mapSource, int zoom,
+				Point minTileCoordinate, Point maxTileCoordinate, TileImageParameters parameters) {
 			this.layer = layer;
 			this.maxTileCoordinate = maxTileCoordinate;
 			this.minTileCoordinate = minTileCoordinate;
 			this.name = name;
+			this.mapSource = mapSource;
+			this.zoom = zoom;
+			this.parameters = parameters;
+			calculateRuntimeValues();
 		}
 
-		public AutoCutMultiMapLayer getLayer() {
+		protected void calculateRuntimeValues() {
+			if (parameters == null)
+				tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
+			else
+				tileDimension = new Dimension(parameters.width, parameters.height);
+		}
+
+		public LayerInterface getLayer() {
 			return layer;
 		}
 
 		public MapSource getMapSource() {
-			return layer.mapSource;
+			return mapSource;
 		}
 
 		public Point getMaxTileCoordinate() {
@@ -313,7 +262,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		}
 
 		public int getZoom() {
-			return layer.zoom;
+			return zoom;
 		}
 
 		@Override
@@ -322,33 +271,42 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		}
 
 		public TileImageParameters getParameters() {
-			return layer.parameters;
+			return parameters;
+		}
+
+		public void setParameters(TileImageParameters parameters) {
+			this.parameters = parameters;
 		}
 
 		public String getToolTip() {
-			EastNorthCoordinate tl = new EastNorthCoordinate(layer.zoom, minTileCoordinate.x,
+			EastNorthCoordinate tl = new EastNorthCoordinate(zoom, minTileCoordinate.x,
 					minTileCoordinate.y);
-			EastNorthCoordinate br = new EastNorthCoordinate(layer.zoom, maxTileCoordinate.x,
+			EastNorthCoordinate br = new EastNorthCoordinate(zoom, maxTileCoordinate.x,
 					maxTileCoordinate.y);
 
 			StringWriter sw = new StringWriter(1024);
 			sw.write("<html>");
 			sw.write("<b>Map area</b><br>");
-			sw.write("Map source: " + layer.mapSource.getName() + "<br>");
-			sw.write("Zoom level: " + layer.zoom + "<br>");
+			sw.write("Map source: " + mapSource.getName() + "<br>");
+			sw.write("Zoom level: " + zoom + "<br>");
 			sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y
 					+ ")<br>");
 			sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
 					+ ")<br>");
 			sw.write("Map size: " + (maxTileCoordinate.x - minTileCoordinate.x + 1) + "x"
 					+ (maxTileCoordinate.y - minTileCoordinate.y + 1) + " pixel<br>");
+			if (parameters != null) {
+				sw.write("Tile size: " + parameters.width + "x" + parameters.height + "<br>");
+				sw.write("Tile format: " + parameters.format + "<br>");
+			} else
+				sw.write("Tile size: 256x256 (no processing)<br>");
 			sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
 			sw.write("</html>");
 			return sw.toString();
 		}
 
 		public Dimension getTileSize() {
-			return layer.tileDimension;
+			return tileDimension;
 		}
 
 		public void delete() {
@@ -387,7 +345,7 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 		}
 
 		public TreeNode getParent() {
-			return layer;
+			return (TreeNode) layer;
 		}
 
 		public boolean isLeaf() {
@@ -404,6 +362,11 @@ public class AutoCutMultiMapLayer implements LayerInterface, TreeNode, Downloada
 			this.layer = (AutoCutMultiMapLayer) parent;
 			// TODO: Test loaded data for problems (missing fields, duplicate
 			// names, ...)
+			if (maxTileCoordinate == null || minTileCoordinate == null || mapSource == null
+					|| zoom < 0)
+				throw new RuntimeException(
+						"Unable to load data from profile file - may be the profile format has changed");
+			calculateRuntimeValues();
 		}
 
 		public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,

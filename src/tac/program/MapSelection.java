@@ -6,6 +6,7 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 
 import tac.program.interfaces.MapInterface;
+import tac.program.model.EastNorthCoordinate;
 
 public class MapSelection {
 
@@ -25,6 +26,14 @@ public class MapSelection {
 		this.lat_min = Math.min(lat1, lat2);
 		this.lon_max = Math.max(lon1, lon2);
 		this.lon_min = Math.min(lon1, lon2);
+	}
+
+	public MapSelection(EastNorthCoordinate max, EastNorthCoordinate min) {
+		super();
+		this.lat_max = max.lat;
+		this.lat_min = min.lat;
+		this.lon_max = max.lon;
+		this.lon_min = min.lon;
 	}
 
 	public MapSelection(MapInterface map) {
@@ -52,6 +61,14 @@ public class MapSelection {
 
 	public double getLon_min() {
 		return lon_min;
+	}
+
+	public EastNorthCoordinate getMax() {
+		return new EastNorthCoordinate(lat_max, lon_max);
+	}
+
+	public EastNorthCoordinate getMin() {
+		return new EastNorthCoordinate(lat_min, lon_min);
 	}
 
 	public boolean coordinatesAreValid() {

@@ -15,6 +15,7 @@ import javax.xml.bind.Unmarshaller;
 
 import tac.program.Settings;
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.AtlasObject;
 
 public class Profile implements Comparable<Profile> {
 
@@ -96,17 +97,35 @@ public class Profile implements Comparable<Profile> {
 		return file.equals(p.file);
 	}
 
-	public void save(AtlasInterface atlas) throws JAXBException {
+	public void save(AtlasInterface atlasInterface) throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(Atlas.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		m.marshal(atlas, file);
+		m.marshal(atlasInterface, file);
 	}
 
 	public AtlasInterface load() throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(Atlas.class);
 		Unmarshaller um = context.createUnmarshaller();
-		return (AtlasInterface) um.unmarshal(file);
+		AtlasInterface newAtlas = (AtlasInterface) um.unmarshal(file);
+		return newAtlas;
 	}
 
+	public static boolean checkLoadedAtlas(AtlasInterface atlasInterface) {
+		return checkAtlasObject(atlasInterface);
+	}
+
+	private static boolean checkAtlasObject(Object o) {
+		boolean result = false;
+		if (o instanceof AtlasObject) {
+			result |= ((AtlasObject) o).checkData();
+		}
+		if (o instanceof Iterable<?>) {
+			Iterable<?> it = (Iterable<?>) o;
+			for (Object ao : it) {
+				result |= checkAtlasObject(ao);
+			}
+		}
+		return result;
+	}
 }

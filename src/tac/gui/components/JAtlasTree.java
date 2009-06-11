@@ -157,6 +157,18 @@ public class JAtlasTree extends JTree implements MouseListener {
 	public boolean load(Profile profile) {
 		try {
 			treeModel.load(profile);
+			boolean problemsDetected = Profile.checkLoadedAtlas(treeModel.getAtlas());
+			if (problemsDetected) {
+				JOptionPane.showMessageDialog(null,
+						"At least one problem was detected while loading the saved atlas profile.\n"
+								+ "Usually this indicates that the profile file is inconsistent "
+								+ "or the file format \n" + "has changed.\n\n"
+								+ "It is recommended to clear the loaded "
+								+ "atlas and delete the affected profile.\n"
+								+ "Otherwise various exceptions may be thrown while "
+								+ "working with this atlas.", "Atlas loading problem",
+						JOptionPane.WARNING_MESSAGE);
+			}
 			return true;
 		} catch (Exception e) {
 			TACExceptionHandler.processException(e);
@@ -273,7 +285,7 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 	protected void applyTileImageParameters(Object o, TileImageParameters p) {
 		if (o instanceof Iterable<?>) {
-			Iterable<?> it = (Iterable<?>) o; 
+			Iterable<?> it = (Iterable<?>) o;
 			for (Object ao : it) {
 				applyTileImageParameters(ao, p);
 			}

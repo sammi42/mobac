@@ -26,8 +26,8 @@ public class JProfilesComboBox extends JComboBox {
 		if (profile == null)
 			return false;
 		profile.delete();
-		removeItem(profile);
 		setSelectedIndex(-1);
+		removeItem(profile);
 		return true;
 	}
 

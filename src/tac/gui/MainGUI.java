@@ -57,7 +57,7 @@ import tac.program.Settings;
 import tac.program.TACInfo;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.model.AtlasOutputFormat;
-import tac.program.model.AutoCutMultiMapLayer;
+import tac.program.model.Layer;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Profile;
 import tac.program.model.TileImageFormat;
@@ -725,9 +725,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			try {
 				AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
 						.getSelectedItem();
-				AtlasInterface atlas = jAtlasTree.getAtlas();
-				atlas.setOutputFormat(atlasOutputFormat);
-				Thread atlasThread = new AtlasThread(atlas);
+				AtlasInterface atlasInterface = jAtlasTree.getAtlas();
+				atlasInterface.setOutputFormat(atlasOutputFormat);
+				Thread atlasThread = new AtlasThread(atlasInterface);
 				atlasThread.start();
 			} catch (Exception exception) {
 				log.error("", exception);
@@ -830,7 +830,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void addSelectedAutoCutMultiMapLayers() {
-		AtlasInterface atlas = jAtlasTree.getAtlas();
+		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
@@ -860,9 +860,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			int c = 1;
 			do {
 				try {
-					AutoCutMultiMapLayer layer = new AutoCutMultiMapLayer(atlas, layerName, tileSource, tl, br, zoom,
+					Layer layer = new Layer(atlasInterface, layerName, tileSource, tl, br, zoom,
 							customTileParameters, settings.getMaxMapSize());
-					atlas.addLayer(layer);
+					atlasInterface.addLayer(layer);
 					success = true;
 				} catch (InvalidNameException e) {
 					layerName = name + "_" + Integer.toString(c++);

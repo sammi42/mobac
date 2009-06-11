@@ -24,13 +24,13 @@ public class AtlasTreeModel implements TreeModel {
 
 	private static Logger log = Logger.getLogger(AtlasTreeModel.class);
 
-	protected AtlasInterface atlas;
+	protected AtlasInterface atlasInterface;
 
 	protected Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
 
 	public AtlasTreeModel() {
 		super();
-		atlas = new Atlas();
+		atlasInterface = new Atlas();
 		// Sample data:
 		// try {
 		// new AutoCutMultiMapLayer(atlas, "Test 1", new MapSources.Mapnik(),
@@ -56,7 +56,7 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public void notifyStructureChanged() {
-		notifyStructureChanged(new TreeModelEvent(this, new Object[] { atlas }));
+		notifyStructureChanged(new TreeModelEvent(this, new Object[] { atlasInterface }));
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public Object getRoot() {
-		return atlas;
+		return atlasInterface;
 	}
 
 	public boolean isLeaf(Object node) {
@@ -146,20 +146,20 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public AtlasInterface getAtlas() {
-		return atlas;
+		return atlasInterface;
 	}
 
 	public void setAtlas(Atlas atlas) {
-		this.atlas = atlas;
+		this.atlasInterface = atlas;
 		notifyStructureChanged();
 	}
 
 	public void save(Profile profile) throws Exception {
-		profile.save(atlas);
+		profile.save(atlasInterface);
 	}
 
 	public void load(Profile profile) throws Exception {
-		atlas = profile.load();
+		atlasInterface = profile.load();
 		notifyStructureChanged();
 	}
 }

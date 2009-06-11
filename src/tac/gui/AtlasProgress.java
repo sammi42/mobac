@@ -58,7 +58,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private long initialMapDownloadTime;
 
 	private static class Data {
-		AtlasInterface atlas;
+		AtlasInterface atlasInterface;
 		MapInterface map;
 		long numberOfDownloadedBytes = 0;
 		int totalNumberOfTiles = 0;
@@ -260,11 +260,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		pauseResumeDownloadButton.addActionListener(this);
 	}
 
-	public void init(AtlasInterface atlas) {
-		data.atlas = atlas;
-		data.totalNumberOfTiles = atlas.calculateTilesToDownload();
+	public void init(AtlasInterface atlasInterface) {
+		data.atlasInterface = atlasInterface;
+		data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload();
 		int mapCount = 0;
-		for (LayerInterface layer : atlas)
+		for (LayerInterface layer : atlasInterface)
 			mapCount += layer.getMapCount();
 		data.totalNumberOfMaps = mapCount;
 
@@ -454,9 +454,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			if (data.totalProgressPercent != newPercent) {
 				data.totalProgressPercent = newPercent;
 				atlasPercent.setText(fmt(TEXT_PERCENT, data.totalProgressPercent));
-				if (data.atlas != null)
+				if (data.atlasInterface != null)
 					AtlasProgress.this.setTitle(Integer.toString(data.totalProgressPercent)
-							+ " % - Downloading atlas \"" + data.atlas.getName() + "\"");
+							+ " % - Downloading atlas \"" + data.atlasInterface.getName() + "\"");
 			}
 
 			long seconds = -1;

@@ -3,6 +3,7 @@ package tac.program.model;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	private String name = "Unnamed atlas";
 
-	@XmlElements( { @XmlElement(name = "ACLayer", type = AutoCutMultiMapLayer.class) })
+	@XmlElements( { @XmlElement(name = "Layer", type = Layer.class) })
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
 
 	private AtlasOutputFormat outputFormat = AtlasOutputFormat.TaredAtlas;
@@ -79,6 +80,18 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		for (LayerInterface layer : layers)
 			tiles += layer.calculateTilesToDownload();
 		return tiles;
+	}
+
+	public boolean checkData() {
+		if (name == null) // name set?
+			return true;
+		// Check for duplicate layer names
+		HashSet<String> names = new HashSet<String>(layers.size());
+		for (LayerInterface layer : layers)
+			names.add(layer.getName());
+		if (names.size() < layers.size())
+			return true; // at least one duplicate name found
+		return false;
 	}
 
 	public String getToolTip() {

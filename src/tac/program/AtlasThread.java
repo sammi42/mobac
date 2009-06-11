@@ -41,7 +41,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap;
 
-	private AtlasInterface atlas;
+	private AtlasInterface atlasInterface;
 
 	private TarIndexedArchive tileArchive;
 
@@ -51,10 +51,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	public AtlasThread(AtlasInterface atlas) {
+	public AtlasThread(AtlasInterface atlasInterface) {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
-		this.atlas = atlas;
+		this.atlasInterface = atlasInterface;
 	}
 
 	private static synchronized int getNextThreadNum() {
@@ -110,7 +110,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String formattedDateString = sdf.format(date);
 
-		File atlasDir = new File(workingDir + "/atlases/" + atlas.getName() + "_"
+		File atlasDir = new File(workingDir + "/atlases/" + atlasInterface.getName() + "_"
 				+ formattedDateString);
 		atlasDir.mkdirs();
 
@@ -118,7 +118,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		 * In this section of code below, atlas is created.
 		 **/
 
-		long totalNrOfTiles = atlas.calculateTilesToDownload();
+		long totalNrOfTiles = atlasInterface.calculateTilesToDownload();
 
 		if (totalNrOfTiles > Integer.MAX_VALUE) {
 			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!",
@@ -126,7 +126,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			return;
 		}
 
-		ap.init(atlas);
+		ap.init(atlasInterface);
 		ap.setVisible(true);
 
 		TileStore ts = TileStore.getInstance();
@@ -138,7 +138,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		Thread t = Thread.currentThread();
 		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
 		try {
-			for (LayerInterface layer : atlas) {
+			for (LayerInterface layer : atlasInterface) {
 				int apMax = (int) layer.calculateTilesToDownload();
 				for (MapInterface map : layer) {
 					ap.initMapDownload(map);
@@ -163,7 +163,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 					jobsProduced = 0;
 					tileArchive = null;
 					if (!SKIP_DOWNLOAD) {
-						String tempSuffix = "TAC_" + atlas.getName() + "_" + zoom + "_";
+						String tempSuffix = "TAC_" + atlasInterface.getName() + "_" + zoom + "_";
 						tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
 						// If something goes wrong the temp file only
 						// persists until the VM exits
@@ -221,7 +221,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 					log.debug("Starting to create atlas from downloaded tiles");
 
 					MapCreator mc;
-					if (atlas.getOutputFormat() != AtlasOutputFormat.AndNav) {
+					if (atlasInterface.getOutputFormat() != AtlasOutputFormat.AndNav) {
 						TileImageParameters parameters = map.getParameters();
 						if (parameters == null)
 							mc = new MapCreator(map, tileIndex, atlasDir);
@@ -247,9 +247,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				tileArchiveFile.delete();
 		}
 
-		if (atlas.getOutputFormat() == AtlasOutputFormat.TaredAtlas)
+		if (atlasInterface.getOutputFormat() == AtlasOutputFormat.TaredAtlas)
 			AtlasTarCreator.createAtlasCrTarArchive(atlasDir);
-		else if (atlas.getOutputFormat() == AtlasOutputFormat.UntaredAtlas) {
+		else if (atlasInterface.getOutputFormat() == AtlasOutputFormat.UntaredAtlas) {
 			File crtba = new File(atlasDir.getAbsolutePath(), "cr.tba");
 			try {
 				FileWriter fw = new FileWriter(crtba);

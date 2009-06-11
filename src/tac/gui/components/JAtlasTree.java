@@ -39,7 +39,6 @@ import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
-import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
@@ -120,9 +119,10 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 	public void clearAtlas() {
 		log.debug("Resetting atlas tree model");
-		Atlas newAtlas = new Atlas();
-		newAtlas.setName(MainGUI.getMainGUI().getUserText());
-		treeModel.setAtlas(newAtlas);
+		treeModel.getAtlas().setName(MainGUI.getMainGUI().getUserText());
+		treeModel.clear();
+		mapView.mapLayers.clear();
+		mapView.repaint();
 	}
 
 	public void deleteSelectedNode() {

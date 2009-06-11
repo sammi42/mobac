@@ -133,4 +133,8 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		return false;
 	}
 
+	public void clear() {
+		layers.clear();
+	}
+
 }

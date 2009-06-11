@@ -162,4 +162,9 @@ public class AtlasTreeModel implements TreeModel {
 		atlasInterface = profile.load();
 		notifyStructureChanged();
 	}
+
+	public void clear() {
+		atlasInterface.clear();
+		notifyStructureChanged();
+	}
 }

@@ -21,4 +21,7 @@ public interface AtlasInterface extends AtlasObject, CapabilityRenameable, Itera
 	public AtlasOutputFormat getOutputFormat();
 
 	public int calculateTilesToDownload();
+
+	public void clear();
+
 }

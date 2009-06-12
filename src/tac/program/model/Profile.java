@@ -111,7 +111,7 @@ public class Profile implements Comparable<Profile> {
 		return newAtlas;
 	}
 
-	public static boolean checkLoadedAtlas(AtlasInterface atlasInterface) {
+	public static boolean checkAtlas(AtlasInterface atlasInterface) {
 		return checkAtlasObject(atlasInterface);
 	}
 

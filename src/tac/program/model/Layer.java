@@ -24,7 +24,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.InvalidNameException;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.CapabilityDeletable;
-import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
@@ -38,7 +37,7 @@ import tac.program.interfaces.ToolTipProvider;
  */
 @XmlRootElement
 public class Layer implements LayerInterface, TreeNode, ToolTipProvider, CapabilityDeletable,
-		CapabilityRenameable, Iterable<MapInterface> {
+		Iterable<MapInterface> {
 
 	private static Logger log = Logger.getLogger(Layer.class);
 

@@ -17,7 +17,6 @@ import tac.exceptions.InvalidNameException;
 import tac.program.DownloadJobEnumerator;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.CapabilityDeletable;
-import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
@@ -26,8 +25,8 @@ import tac.program.interfaces.ToolTipProvider;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.MyMath;
 
-public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable,
-		CapabilityRenameable, TreeNode, DownloadableElement {
+public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode,
+		DownloadableElement {
 
 	private String name;
 
@@ -192,7 +191,7 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable,
 	}
 
 	public boolean checkData() {
-		log.debug("Checking data: map \"" + name + "\"");
+		log.trace("Checking data: map \"" + name + "\"");
 		if (name == null || layer == null || maxTileCoordinate == null || minTileCoordinate == null
 				|| mapSource == null || parameters == null || zoom < 0)
 			return true;

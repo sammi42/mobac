@@ -1,8 +1,6 @@
 package tac.program.interfaces;
 
-public interface LayerInterface extends AtlasObject, Iterable<MapInterface> {
-
-	public String getName();
+public interface LayerInterface extends AtlasObject, Iterable<MapInterface>, CapabilityDeletable {
 
 	public int getMapCount();
 
@@ -11,4 +9,5 @@ public interface LayerInterface extends AtlasObject, Iterable<MapInterface> {
 	public AtlasInterface getAtlas();
 
 	public int calculateTilesToDownload();
+
 }

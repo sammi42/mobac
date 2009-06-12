@@ -35,10 +35,10 @@ import tac.program.MapSelection;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.AtlasObject;
 import tac.program.interfaces.CapabilityDeletable;
-import tac.program.interfaces.CapabilityRenameable;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
+import tac.program.model.Atlas;
 import tac.program.model.AtlasTreeModel;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
@@ -49,6 +49,20 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String MSG_ATLAS_VERSION_MISMATCH = ""
+			+ "The loaded atlas belongs to an older version TrekBuddy Atlas Creator. "
+			+ "This old version \nused a somehow different atlas profile format "
+			+ "which is incompatible to this version.\n\n"
+			+ "It is recommended to clear the loaded atlas and delete the affected profile.\n"
+			+ "Otherwise various exceptions may be thrown while working with this atlas.";
+
+	private static final String MSG_ATLAS_DATA_CHECK_FAILED = ""
+			+ "At least one problem was detected while loading the saved atlas profile.\n"
+			+ "Usually this indicates that the profile file is inconsistent "
+			+ "or the file format \n" + "has changed.\n\n"
+			+ "It is recommended to clear the loaded atlas and delete the affected profile.\n"
+			+ "Otherwise various exceptions may be thrown while working with this atlas.";
+	
 	private static final String ACTION_DELETE_NODE = "DELETE_NODE";
 
 	private static final Logger log = Logger.getLogger(JAtlasTree.class);
@@ -109,8 +123,7 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 	@Override
 	public boolean isPathEditable(TreePath path) {
-		return super.isPathEditable(path)
-				&& (path.getLastPathComponent() instanceof CapabilityRenameable);
+		return super.isPathEditable(path) && (path.getLastPathComponent() instanceof AtlasObject);
 	}
 
 	public AtlasTreeModel getTreeModel() {
@@ -119,8 +132,9 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 	public void clearAtlas() {
 		log.debug("Resetting atlas tree model");
-		treeModel.getAtlas().setName(MainGUI.getMainGUI().getUserText());
-		treeModel.clear();
+		Atlas newAtlas = Atlas.newInstance();
+		newAtlas.setName(MainGUI.getMainGUI().getUserText());
+		treeModel.setAtlas(newAtlas);
 		mapView.mapLayers.clear();
 		mapView.repaint();
 	}
@@ -157,17 +171,18 @@ public class JAtlasTree extends JTree implements MouseListener {
 	public boolean load(Profile profile) {
 		try {
 			treeModel.load(profile);
-			boolean problemsDetected = Profile.checkLoadedAtlas(treeModel.getAtlas());
+			if (treeModel.getAtlas() instanceof Atlas) {
+				Atlas atlas = (Atlas) treeModel.getAtlas();
+				if (atlas.getVersion() < Atlas.CURRENT_ATLAS_VERSION) {
+					JOptionPane.showMessageDialog(null, MSG_ATLAS_VERSION_MISMATCH,
+							"Outdated atlas version", JOptionPane.WARNING_MESSAGE);
+					return true;
+				}
+			}
+			boolean problemsDetected = Profile.checkAtlas(treeModel.getAtlas());
 			if (problemsDetected) {
-				JOptionPane.showMessageDialog(null,
-						"At least one problem was detected while loading the saved atlas profile.\n"
-								+ "Usually this indicates that the profile file is inconsistent "
-								+ "or the file format \n" + "has changed.\n\n"
-								+ "It is recommended to clear the loaded "
-								+ "atlas and delete the affected profile.\n"
-								+ "Otherwise various exceptions may be thrown while "
-								+ "working with this atlas.", "Atlas loading problem",
-						JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, MSG_ATLAS_DATA_CHECK_FAILED,
+						"Atlas loading problem", JOptionPane.WARNING_MESSAGE);
 			}
 			return true;
 		} catch (Exception e) {
@@ -242,7 +257,7 @@ public class JAtlasTree extends JTree implements MouseListener {
 				});
 				pm.add(mi);
 			}
-			if (o instanceof CapabilityRenameable) {
+			if (o instanceof AtlasObject) {
 				mi = new JMenuItem("Rename");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -250,8 +265,6 @@ public class JAtlasTree extends JTree implements MouseListener {
 					}
 				});
 				pm.add(mi);
-			}
-			if (o instanceof AtlasObject) {
 				mi = new JMenuItem("Apply tile processing options");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {

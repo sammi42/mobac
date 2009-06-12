@@ -2,14 +2,19 @@ package tac.program.interfaces;
 
 import tac.program.model.AtlasOutputFormat;
 
-public interface AtlasInterface extends AtlasObject, CapabilityRenameable, Iterable<LayerInterface> {
+public interface AtlasInterface extends AtlasObject, Iterable<LayerInterface> {
 
-	public String getName();
-
-	public void setName(String newName);
-
+	/**
+	 * @return Number of layers in this atlas
+	 */
 	public int getLayerCount();
 
+	/**
+	 * 
+	 * @param index
+	 *            0 - ({@link #getLayerCount()}-1)
+	 * @return
+	 */
 	public LayerInterface getLayer(int index);
 
 	public void addLayer(LayerInterface l);
@@ -22,6 +27,5 @@ public interface AtlasInterface extends AtlasObject, CapabilityRenameable, Itera
 
 	public int calculateTilesToDownload();
 
-	public void clear();
-
+	public int getVersion();
 }

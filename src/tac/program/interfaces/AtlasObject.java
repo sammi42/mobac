@@ -1,10 +1,16 @@
 package tac.program.interfaces;
 
+import tac.exceptions.InvalidNameException;
+
 /**
  * Marker interface that indicates that the implementing class/instance is an
  * atlas or is part of an atlas (layer or map)
  */
 public interface AtlasObject {
+
+	public String getName();
+
+	public void setName(String newName) throws InvalidNameException;
 
 	/**
 	 * Called after loading the complete atlas from a profile.

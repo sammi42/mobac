@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 import tac.exceptions.InvalidNameException;
 import tac.program.interfaces.AtlasInterface;
-import tac.program.interfaces.CapabilityRenameable;
+import tac.program.interfaces.AtlasObject;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 
@@ -30,7 +30,7 @@ public class AtlasTreeModel implements TreeModel {
 
 	public AtlasTreeModel() {
 		super();
-		atlasInterface = new Atlas();
+		atlasInterface = Atlas.newInstance();
 		// Sample data:
 		// try {
 		// new AutoCutMultiMapLayer(atlas, "Test 1", new MapSources.Mapnik(),
@@ -126,7 +126,7 @@ public class AtlasTreeModel implements TreeModel {
 		Object o = path.getLastPathComponent();
 		boolean success = false;
 		try {
-			CapabilityRenameable sel = (CapabilityRenameable) o;
+			AtlasObject sel = (AtlasObject) o;
 			String newName = (String) newValue;
 			if (newName.length() == 0)
 				return;
@@ -163,8 +163,4 @@ public class AtlasTreeModel implements TreeModel {
 		notifyStructureChanged();
 	}
 
-	public void clear() {
-		atlasInterface.clear();
-		notifyStructureChanged();
-	}
 }

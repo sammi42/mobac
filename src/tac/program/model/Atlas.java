@@ -21,6 +21,11 @@ import tac.program.interfaces.ToolTipProvider;
 @XmlRootElement
 public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
+	public static final int CURRENT_ATLAS_VERSION = 1;
+
+	@XmlAttribute
+	private int version = 0;
+
 	private String name = "Unnamed atlas";
 
 	@XmlElements( { @XmlElement(name = "Layer", type = Layer.class) })
@@ -28,7 +33,13 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	private AtlasOutputFormat outputFormat = AtlasOutputFormat.TaredAtlas;
 
-	public Atlas() {
+	public static Atlas newInstance() {
+		Atlas atlas = new Atlas();
+		atlas.version = CURRENT_ATLAS_VERSION;
+		return atlas;
+	}
+
+	private Atlas() {
 		super();
 	}
 
@@ -133,8 +144,8 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		return false;
 	}
 
-	public void clear() {
-		layers.clear();
+	public int getVersion() {
+		return version;
 	}
 
 }

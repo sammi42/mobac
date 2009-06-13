@@ -31,6 +31,19 @@ public class JProfilesComboBox extends JComboBox {
 		return true;
 	}
 
+	/**
+	 * 
+	 * @return the selected profile or <code>null</code> if no profile is
+	 *         selected or a new unsaved profile is selected
+	 */
+	public Profile getSelectedProfile() {
+		Object selItem = getSelectedItem();
+		if (selItem instanceof Profile)
+			return (Profile) selItem;
+		else
+			return null;
+	}
+
 	protected class ProfilesComboBoxEditor extends BasicComboBoxEditor {
 		@Override
 		protected JTextField createEditorComponent() {

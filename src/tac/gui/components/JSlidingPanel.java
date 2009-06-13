@@ -49,7 +49,8 @@ public class JSlidingPanel extends JPanel implements MouseListener {
 		titleLabel.addMouseListener(this);
 		showHideArrow.addMouseListener(this);
 		contentPanel = new JPanel();
-		contentPanel.setBorder(BorderFactory.createEtchedBorder());
+		contentPanel.setBorder(BorderFactory.createTitledBorder("Selection coordinates (min/max)"));
+		//contentPanel.setBorder(BorderFactory.createEtchedBorder());
 		emptyPanel = new JPanel();
 		emptyPanel.setBorder(contentPanel.getBorder());
 		setContentPanelVisible(defaultVisible);

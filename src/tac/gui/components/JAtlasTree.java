@@ -62,7 +62,10 @@ public class JAtlasTree extends JTree implements MouseListener {
 			+ "or the file format \n" + "has changed.\n\n"
 			+ "It is recommended to clear the loaded atlas and delete the affected profile.\n"
 			+ "Otherwise various exceptions may be thrown while working with this atlas.";
-	
+
+	private static final String MSG_ATLAS_EMPTY = "Atlas is empty - "
+			+ "please add at least one selection to atlas content.";
+
 	private static final String ACTION_DELETE_NODE = "DELETE_NODE";
 
 	private static final Logger log = Logger.getLogger(JAtlasTree.class);
@@ -108,6 +111,15 @@ public class JAtlasTree extends JTree implements MouseListener {
 
 		});
 
+	}
+
+	public boolean testAtlasContentValid() {
+		if (getAtlas().calculateTilesToDownload() == 0) {
+			JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>",
+					"Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
 	}
 
 	@Override

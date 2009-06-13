@@ -43,12 +43,12 @@ import tac.StartTAC;
 import tac.exceptions.InvalidNameException;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JAtlasTree;
-import tac.gui.components.JProfilesComboBox;
-import tac.gui.components.JTileSizeCombo;
 import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapSelectionListener;
 import tac.gui.mapview.PreviewMap;
 import tac.gui.panels.JCoordinatesPanel;
+import tac.gui.panels.JProfilesPanel;
+import tac.gui.panels.JTileImageParametersPanel;
 import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
 import tac.program.MapSelection;
@@ -57,10 +57,9 @@ import tac.program.Settings;
 import tac.program.TACInfo;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.model.AtlasOutputFormat;
-import tac.program.model.Layer;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.Layer;
 import tac.program.model.Profile;
-import tac.program.model.TileImageFormat;
 import tac.program.model.TileImageParameters;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
@@ -69,9 +68,6 @@ import tac.utilities.Utilities;
 public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final String ATLAS_EMPTY_MESSAGE = "Atlas is empty - "
-			+ "please add at least one selection to atlas content.";
 
 	private static Logger log = Logger.getLogger(MainGUI.class);
 
@@ -90,9 +86,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private JButton helpButton;
 	private JButton fullScreenButton;
 	private JButton settingsButton;
-	private JProfilesComboBox profilesCombo;
-	private JButton deleteProfileButton;
-	private JButton saveAsProfileButton;
 	private JAtlasNameField atlasNameTextField;
 	private JComboBox atlasOutputFormatCombo;
 	private JButton createAtlasButton;
@@ -101,14 +94,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private JLabel amountOfTilesLabel;
 
 	private JCoordinatesPanel coordinatesPanel;
-
-	private JCheckBox enableCustomTileProcessingCheckButton;
-	private JLabel tileSizeWidthLabel;
-	private JLabel tileSizeHeightLabel;
-	private JLabel tileImageFormatLabel;
-	private JTileSizeCombo tileSizeWidth;
-	private JTileSizeCombo tileSizeHeight;
-	private JComboBox tileImageFormat;
+	private JProfilesPanel profilesPanel;
+	private JTileImageParametersPanel tileImageParametersPanel;
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -156,16 +143,14 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		Utilities.checkFileSetup();
 		loadSettings();
 		updatePanels();
-		initializeProfilesCombo();
+		profilesPanel.initialize();
 		updateZoomLevelCheckBoxes();
 		updateGridSizeCombo();
-		updateCustomTileProcessingControlsState();
+		tileImageParametersPanel.updateControlsState();
 		zoomChanged(previewMap.getZoom());
 	}
 
 	private void createControls() {
-
-		coordinatesPanel = new JCoordinatesPanel();
 
 		// zoom slider
 		zoomSlider = new JSlider(JMapViewer.MIN_ZOOM, previewMap.getMapSource().getMaxZoom());
@@ -209,22 +194,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		fullScreenButton.setToolTipText("Toggle full screen.");
 		fullScreenButton.setEnabled(false); // TODO: reenable
 
-		// profiles combo box
-		profilesCombo = new JProfilesComboBox();
-		profilesCombo.setToolTipText("Select an atlas creation profile\n "
-				+ "or enter a name for a new profile");
-		profilesCombo.addActionListener(new ProfilesComboListener());
-
-		// delete profile button
-		deleteProfileButton = new JButton("Delete profile");
-		deleteProfileButton.addActionListener(new DeleteProfileListener());
-		deleteProfileButton.setToolTipText("Delete atlas profile from list");
-
-		// save as profile button
-		saveAsProfileButton = new JButton("Save as profile");
-		saveAsProfileButton.addActionListener(new SaveAsProfileListener());
-		saveAsProfileButton.setToolTipText("Save atlas profile");
-
 		// atlas output format
 		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
 
@@ -251,48 +220,12 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		amountOfTilesLabel.setBackground(labelBackgroundColor);
 		amountOfTilesLabel.setForeground(labelForegroundColor);
 
-		// custom tile size
-		enableCustomTileProcessingCheckButton = new JCheckBox(
-				"Recreate/adjust map tiles (CPU intensive)");
-		enableCustomTileProcessingCheckButton
-				.addActionListener(new EnableCustomTileSizeCheckButtonListener());
-		enableCustomTileProcessingCheckButton
-				.setToolTipText("<html>If this option is disabled each "
-						+ "map tile (size: 256x256) is used axactly as downloaded "
-						+ "from the server (faster).<br>"
-						+ "Otherwise each tile is newly created which allows to "
-						+ "use custom tile size (slower / CPU intensive).</html>");
+		jAtlasTree = new JAtlasTree(previewMap);
 
-		tileSizeWidthLabel = new JLabel("Width:");
-		tileSizeWidth = new JTileSizeCombo();
-		tileSizeWidth.setToolTipText("Tile width");
-
-		tileSizeHeightLabel = new JLabel("Height:");
-		tileSizeHeight = new JTileSizeCombo();
-		tileSizeHeight.setToolTipText("Tile height");
-
-		tileImageFormatLabel = new JLabel("Tile format:");
-		tileImageFormat = new JComboBox(TileImageFormat.values());
-		tileImageFormat.setMaximumRowCount(tileImageFormat.getItemCount());
-		tileImageFormat.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				TileImageFormat tif = (TileImageFormat) tileImageFormat.getSelectedItem();
-				if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
-					if (Utilities.testJaiColorQuantizerAvailable())
-						return;
-					JOptionPane.showMessageDialog(null,
-							"<html>This image format is requires additional libraries to be installed:<br>"
-									+ "<b>Java Advanced Image library</b>"
-									+ "(jai_core.jar & jai_codec.jar)<br>"
-									+ "For more details please see the file <b>README.HTM</b> "
-									+ "in section <b>Requirements</b>.</html>",
-							"Image format not available - libraries missing",
-							JOptionPane.ERROR_MESSAGE);
-					tileImageFormat.setSelectedIndex(0);
-				}
-			}
-		});
+		coordinatesPanel = new JCoordinatesPanel();
+		tileImageParametersPanel = new JTileImageParametersPanel();
+		profilesPanel = new JProfilesPanel(jAtlasTree);
+		profilesPanel.getProfilesCombo().addActionListener(new ProfilesComboListener());
 	}
 
 	private void updateLeftPanel() {
@@ -309,28 +242,11 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		zoomLevelsPanel.add(zoomLevelPanel, GBC.eol());
 		zoomLevelsPanel.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
 
-		JPanel tileProcessingPanel = new JPanel(new GridBagLayout());
-		tileProcessingPanel.setBorder(BorderFactory
-				.createTitledBorder("Layer settings: custom tile processing"));
-
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
-		tileProcessingPanel.add(enableCustomTileProcessingCheckButton, gbc_eol);
-		JPanel tileSizePanel = new JPanel(new GridBagLayout());
-		tileSizePanel.add(tileSizeWidthLabel, gbc_std);
-		tileSizePanel.add(tileSizeWidth, gbc_std);
-		tileSizePanel.add(tileSizeHeightLabel, gbc_std);
-		tileSizePanel.add(tileSizeHeight, gbc_eol);
-		tileProcessingPanel.add(tileSizePanel, GBC.eol());
-		JPanel tileColorDepthPanel = new JPanel();
-		tileColorDepthPanel.add(tileImageFormatLabel);
-		tileColorDepthPanel.add(tileImageFormat);
-		tileProcessingPanel.add(tileColorDepthPanel, GBC.eol());
-
 		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
 		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
-		jAtlasTree = new JAtlasTree(previewMap);
 		JScrollPane treeScrollPane = new JScrollPane(jAtlasTree,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -357,17 +273,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		atlasContentPanel.add(new JLabel("Name: "), gbc_std);
 		atlasContentPanel.add(atlasNameTextField, gbc_eol.fill());
 
-		JPanel profilesPanel = new JPanel(new GridBagLayout());
-		profilesPanel.setBorder(BorderFactory.createTitledBorder("Saved profiles"));
-
-		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
-		profilesPanel.add(profilesCombo, gbc);
-		profilesPanel.add(saveAsProfileButton, gbc.toggleEol());
-		profilesPanel.add(deleteProfileButton, gbc.toggleEol());
-
-		saveAsProfileButton.setEnabled(false);
-		deleteProfileButton.setEnabled(false);
-
 		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
 		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas settings"));
 		atlasNamePanel.add(new JLabel("Format: "), gbc_std);
@@ -380,7 +285,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
 		leftPanelContent.add(zoomLevelsPanel, gbc_eol);
-		leftPanelContent.add(tileProcessingPanel, gbc_eol);
+		leftPanelContent.add(tileImageParametersPanel, gbc_eol);
 		leftPanelContent.add(atlasContentPanel, gbc_eol);
 
 		leftPanelContent.add(atlasNamePanel, gbc_eol);
@@ -442,9 +347,11 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			atlasNameLabel.setBackground(labelBackgroundColor);
 			atlasNameLabel.setForeground(labelForegroundColor);
 
-			bottomControls.add(profilesCombo, GBC.std().insets(5, 0, 0, 5));
-			bottomControls.add(deleteProfileButton, GBC.std().insets(10, 0, 0, 5));
-			bottomControls.add(saveAsProfileButton, GBC.std().insets(10, 0, 0, 5));
+			// bottomControls.add(profilesCombo, GBC.std().insets(5, 0, 0, 5));
+			// bottomControls.add(deleteProfileButton, GBC.std().insets(10, 0,
+			// 0, 5));
+			// bottomControls.add(saveAsProfileButton, GBC.std().insets(10, 0,
+			// 0, 5));
 			bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
 			bottomControls.add(atlasNameLabel, GBC.std().insets(0, 0, 0, 5));
 			bottomControls.add(atlasNameTextField, GBC.std().insets(0, 0, 0, 5));
@@ -497,13 +404,9 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		previewMap.settingsLoadPosition();
 		coordinatesPanel.setMaxCoordinate(settings.getSelectionMax());
 		coordinatesPanel.setMinCoordinate(settings.getSelectionMin());
-		tileImageFormat.setSelectedItem(settings.getTileImageFormat());
 
+		tileImageParametersPanel.loadSettings();
 		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
-
-		enableCustomTileProcessingCheckButton.setSelected(settings.isCustomTileSize());
-		tileSizeHeight.setValue(settings.getTileHeight());
-		tileSizeWidth.setValue(settings.getTileWidth());
 
 		setSize(settings.getWindowDimension());
 		Point windowLocation = settings.getWindowLocation();
@@ -526,10 +429,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			s.setSelectionMax(coordinatesPanel.getMaxCoordinate());
 			s.setSelectionMin(coordinatesPanel.getMinCoordinate());
 
-			s.setCustomTileSize(enableCustomTileProcessingCheckButton.isSelected());
-			s.setTileWidth(tileSizeWidth.getValue());
-			s.setTileHeight(tileSizeHeight.getValue());
-			s.setTileImageFormat((TileImageFormat) tileImageFormat.getSelectedItem());
+			tileImageParametersPanel.saveSettings();
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 			s.setWindowMaximized(maximized);
 			if (!maximized) {
@@ -593,12 +493,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	private class EnableCustomTileSizeCheckButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			updateCustomTileProcessingControlsState();
-		}
-	}
-
 	private class MapSourceComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			previewMap.setMapSource((MapSource) mapSourceCombo.getSelectedItem());
@@ -634,77 +528,17 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			Settings settings = Settings.getInstance();
 			settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
-			// TODO Reactivate
-			// updatePanels();
+			updatePanels();
 		}
-	}
-
-	private void initializeProfilesCombo() {
-		// Load all profiles from the profiles file from disk
-		profilesCombo.loadProfilesList();
-		deleteProfileButton.setEnabled(false);
 	}
 
 	private class ProfilesComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Object selItem = profilesCombo.getSelectedItem();
-			boolean valid = (selItem instanceof Profile);
-			deleteProfileButton.setEnabled(valid);
-			if (!valid)
+			Profile profile = profilesPanel.getSelectedProfile();
+			profilesPanel.getDeleteButton().setEnabled(profile != null);
+			if (profile == null)
 				return;
-			Profile profile = (Profile) selItem;
 			jAtlasTree.load(profile);
-		}
-	}
-
-	private class DeleteProfileListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			profilesCombo.deleteSelectedProfile();
-		}
-	}
-
-	private class SaveAsProfileListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			if (jAtlasTree.getAtlas().calculateTilesToDownload() == 0) {
-				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + ATLAS_EMPTY_MESSAGE
-						+ "</html>", "Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			Object selObject = profilesCombo.getEditor().getItem();
-			String profileName = null;
-			Profile profile = null;
-			boolean profileInList = false;
-			if (selObject instanceof Profile) {
-				profile = (Profile) selObject;
-				profileName = profile.getName();
-				profileInList = true;
-			} else
-				profileName = (String) selObject;
-
-			if (profileName.length() == 0) {
-				JOptionPane.showMessageDialog(null, "Please enter a profile name", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			profile = new Profile(profileName);
-
-			if (profile.exists()) {
-				int response = JOptionPane.showConfirmDialog(null, "Profile \"" + profileName
-						+ "\" already exists. Overwrite?", "Please confirm",
-						JOptionPane.YES_NO_OPTION);
-				if (response == JOptionPane.NO_OPTION)
-					return;
-			}
-
-			if (jAtlasTree.save(profile)) {
-				if (!profileInList)
-					profilesCombo.addItem(profile);
-				JOptionPane.showMessageDialog(null, "Profile \"" + profileName
-						+ "\" has been successfully saved", "Profile save",
-						JOptionPane.PLAIN_MESSAGE);
-			}
 		}
 	}
 
@@ -716,11 +550,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class CreateAtlasButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (jAtlasTree.getAtlas().calculateTilesToDownload() == 0) {
-				JOptionPane.showMessageDialog(MainGUI.this, "<html>" + ATLAS_EMPTY_MESSAGE
-						+ "</html>", "Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
+			if (!jAtlasTree.testAtlasContentValid())
 				return;
-			}
 			System.gc();
 			try {
 				AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
@@ -816,19 +647,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		}
 	}
 
-	public TileImageParameters getSelectedTileImageParameters() {
-		TileImageParameters customTileParameters = null;
-		boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
-		if (customTileSize) {
-			customTileParameters = new TileImageParameters();
-			customTileParameters.width = tileSizeWidth.getValue();
-			customTileParameters.height = tileSizeHeight.getValue();
-			customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
-					.getSelectedItem();
-		}
-		return customTileParameters;
-	}
-
 	private void addSelectedAutoCutMultiMapLayers() {
 		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
 		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
@@ -872,16 +690,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		jAtlasTree.getTreeModel().notifyStructureChanged();
 	}
 
-	private void updateCustomTileProcessingControlsState() {
-		boolean b = enableCustomTileProcessingCheckButton.isSelected();
-		tileSizeWidthLabel.setEnabled(b);
-		tileSizeHeightLabel.setEnabled(b);
-		tileImageFormatLabel.setEnabled(b);
-		tileSizeHeight.setEnabled(b);
-		tileSizeWidth.setEnabled(b);
-		tileImageFormat.setEnabled(b);
-	}
-
 	private void previewSelection() {
 		MapSelection ms = getMapSelectionCoordinates();
 		if (ms.coordinatesAreValid()) {
@@ -902,17 +710,14 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private String validateInput() {
 
 		String errorText = "";
-
 		errorText += coordinatesPanel.getValidationErrorMessages();
+		errorText += tileImageParametersPanel.getValidationErrorMessages();
 
-		if (!tileSizeHeight.isValueValid())
-			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeCombo.MIN
-					+ " and " + JTileSizeCombo.MAX + ". \n";
-
-		if (!tileSizeWidth.isValueValid())
-			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeCombo.MIN
-					+ " and " + JTileSizeCombo.MAX + ". \n";
 		return errorText;
+	}
+
+	public TileImageParameters getSelectedTileImageParameters() {
+		return tileImageParametersPanel.getSelectedTileImageParameters();
 	}
 
 	private void calculateNrOfTilesToDownload() {
@@ -953,7 +758,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private class AtlasListener implements TreeModelListener {
 
 		protected void changed() {
-			saveAsProfileButton.setEnabled(jAtlasTree.getAtlas().getLayerCount() > 0);
+			profilesPanel.getSaveAsButton().setEnabled(jAtlasTree.getAtlas().getLayerCount() > 0);
 		}
 
 		public void treeNodesChanged(TreeModelEvent e) {

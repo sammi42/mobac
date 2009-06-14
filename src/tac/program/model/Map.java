@@ -191,10 +191,11 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public boolean checkData() {
-		log.trace("Checking data: map \"" + name + "\"");
 		if (name == null || layer == null || maxTileCoordinate == null || minTileCoordinate == null
-				|| mapSource == null || parameters == null || zoom < 0)
+				|| mapSource == null || zoom < 0) {
+			log.debug("Problem detectecte with map \"" + name + "\"");
 			return true;
+		}
 		return false;
 	}
 

@@ -38,7 +38,8 @@ public class MapSources {
 				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
 				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA()
+				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA(),
+				new UmpWawPl()
 		// new MapPlus() //does not work because of an unknown protection -
 		// cookie?
 		};
@@ -259,6 +260,33 @@ public class MapSources {
 	}
 
 	/**
+	 * Darmowa Mapa Polski dla GPS Garmin - UMP-pcPL (added by "maniek-ols")
+	 * 
+	 */
+	public static class UmpWawPl extends AbstractMapSource {
+
+		private static int SERVER_NUM = 0;
+		private static final int MAX_SERVER_NUM = 4;
+
+		public UmpWawPl() {
+			super("UMP-pcPL", 0, 18, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String s = "http://" + SERVER_NUM + ".tiles.ump.waw.pl/ump_tiles/" + zoom + "/" + tilex
+					+ "/" + tiley + ".png";
+			SERVER_NUM = (SERVER_NUM + 1) % MAX_SERVER_NUM;
+			return s;
+		}
+
+		@Override
+		public String toString() {
+			return getName() + " (Poland only)";
+		}
+
+	}
+
+	/**
 	 * Merges the mapsources property into the system property bundle
 	 */
 	public static void loadMapSourceProperties() {
@@ -281,4 +309,5 @@ public class MapSources {
 			Utilities.closeStream(propIn);
 		}
 	}
+
 }

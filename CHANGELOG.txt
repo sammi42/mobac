@@ -16,6 +16,8 @@
  + New atlas output format: AndNav - Android Navigation System http://www.andnav.org
  ~ Google Maps url updated
  + Atlas download can be paused/resumed interactively  
+ + Proxy settings rewritten - now system/Java wide or application settings can be  
+    used alternatively to the user defined proxy 
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

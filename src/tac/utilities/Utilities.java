@@ -327,4 +327,18 @@ public class Utilities {
 		return c + tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'"
 				+ cDmsSecondFormatter.format(tSeconds) + "\"";
 	}
+
+	public static void setHttpProxyHost(String host) {
+		if (host != null && host.length() > 0)
+			System.setProperty("http.proxyHost", host);
+		else
+			System.getProperties().remove("http.proxyHost");
+	}
+
+	public static void setHttpProxyPort(String port) {
+		if (port != null && port.length() > 0)
+			System.setProperty("http.proxyPort", port);
+		else
+			System.getProperties().remove("http.proxyPort");
+	}
 }

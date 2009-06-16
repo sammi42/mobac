@@ -20,6 +20,7 @@ import tac.mapsources.MapSources;
 import tac.mapsources.Google.GoogleSource;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.ProxyType;
 import tac.program.model.TileImageFormat;
 import tac.utilities.Utilities;
 
@@ -43,6 +44,7 @@ public class Settings {
 	private static final String TILE_FORMAT = "tile.format";
 	private static final String ATLAS_NAME = "atlas.name";
 	private static final String ATLAS_FORMAT = "atlas.format";
+	private static final String PROXY_TYPE = "proxy.http.type";
 	private static final String PROXY_HOST = "proxy.http.host";
 	private static final String PROXY_PORT = "proxy.http.port";
 	private static final String SELECTION_LAT_MAX = "selection.max.lat";
@@ -58,6 +60,9 @@ public class Settings {
 	private static final String WINDOW_POS_Y = "window.pos.y";
 	private static final String WINDOW_MAXIMIZED = "window.maximized";
 	private static final String FULL_SCREEN_ENABLED = "full-screen-enabled";
+
+	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
+	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
 	private int maxMapSize = 32767;
 
@@ -95,6 +100,13 @@ public class Settings {
 	private Boolean windowMaximized = true;
 
 	private Boolean fullScreenEnabled = false;
+
+	/**
+	 * Network settings
+	 */
+	private ProxyType proxyType = ProxyType.SYSTEM;
+	private String customProxyHost = "";
+	private String customProxyPort = "";
 
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -159,12 +171,9 @@ public class Settings {
 			atlasOutputFormat = AtlasOutputFormat.valueOf(p.getProperty(ATLAS_FORMAT,
 					atlasOutputFormat.name()));
 			setGoogleLanguage(p.getProperty(GOOGLE_LANGUAGE, googleLanguage));
-			String proxyHost = p.getProperty(PROXY_HOST);
-			String proxyPort = p.getProperty(PROXY_PORT);
-			if (proxyHost != null)
-				System.setProperty("http.proxyHost", proxyHost);
-			if (proxyPort != null)
-				System.setProperty("http.proxyPort", proxyPort);
+			customProxyHost = p.getProperty(PROXY_HOST, "");
+			customProxyPort = p.getProperty(PROXY_PORT, "");
+			proxyType = ProxyType.valueOf(p.getProperty(PROXY_TYPE, ProxyType.SYSTEM.name()));
 			windowDimension.width = p.getIntProperty(WINDOW_WIDTH, windowDimension.width);
 			windowDimension.height = p.getIntProperty(WINDOW_HEIGHT, windowDimension.height);
 			windowLocation.x = p.getIntProperty(WINDOW_POS_X, windowLocation.x);
@@ -172,12 +181,12 @@ public class Settings {
 			windowMaximized = p.getBooleanProperty(WINDOW_MAXIMIZED, windowMaximized);
 
 			fullScreenEnabled = p.getBooleanProperty(FULL_SCREEN_ENABLED, fullScreenEnabled);
-
 		} catch (FileNotFoundException e) {
 		} catch (InvalidPropertiesFormatException e) {
 			log.error("", e);
 		} finally {
 			Utilities.closeStream(is);
+			applyProxySettings();
 		}
 	}
 
@@ -202,8 +211,9 @@ public class Settings {
 			p.setProperty(MAPSOURCE, defaultMapSource);
 			p.setProperty(ATLAS_NAME, atlasName);
 			p.setProperty(ATLAS_FORMAT, atlasOutputFormat.name());
-			p.setStringProperty(PROXY_HOST, System.getProperty("http.proxyHost"));
-			p.setStringProperty(PROXY_PORT, System.getProperty("http.proxyPort"));
+			p.setStringProperty(PROXY_TYPE, proxyType.name());
+			p.setStringProperty(PROXY_HOST, customProxyHost);
+			p.setStringProperty(PROXY_PORT, customProxyPort);
 
 			p.setStringProperty(GOOGLE_LANGUAGE, googleLanguage);
 
@@ -384,8 +394,8 @@ public class Settings {
 	}
 
 	public Boolean getFullScreenEnabled() {
-		//TODO Adapt fullscreen mose
-		//return fullScreenEnabled;
+		// TODO Adapt fullscreen mose
+		// return fullScreenEnabled;
 		return false;
 	}
 
@@ -409,4 +419,49 @@ public class Settings {
 		this.atlasOutputFormat = atlasOutputFormat;
 	}
 
+	public ProxyType getProxyType() {
+		return proxyType;
+	}
+
+	public void setProxyType(ProxyType proxyType) {
+		this.proxyType = proxyType;
+	}
+
+	public String getProxyHost() {
+		return customProxyHost;
+	}
+
+	public String getProxyPort() {
+		return customProxyPort;
+	}
+
+	public void setCustomProxyHost(String proxyHost) {
+		this.customProxyHost = proxyHost;
+	}
+
+	public void setCustomProxyPort(String proxyPort) {
+		this.customProxyPort = proxyPort;
+	}
+
+	public void applyProxySettings() {
+		String newProxyHost = null;
+		String newProxyPort = null;
+		switch (proxyType) {
+		case SYSTEM:
+			System.setProperty("java.net.useSystemProxies", "true");
+			log.info("Proxy configuration applied: system settings");
+			return;
+		case APP_SETTINGS:
+			newProxyHost = SYSTEM_PROXY_HOST;
+			newProxyPort = SYSTEM_PROXY_PORT;
+			break;
+		case CUSTOM:
+			newProxyHost = customProxyHost;
+			newProxyPort = customProxyPort;
+		}
+		Utilities.setHttpProxyHost(newProxyHost);
+		Utilities.setHttpProxyPort(newProxyPort);
+		System.setProperty("java.net.useSystemProxies", "false");
+		log.info("Proxy configuration applied: host=" + newProxyHost + " port=" + newProxyPort);
+	}
 }

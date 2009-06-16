@@ -41,6 +41,7 @@ import tac.mapsources.MapSources;
 import tac.program.Settings;
 import tac.program.TileStore;
 import tac.program.TileStore.TileStoreInfo;
+import tac.program.model.ProxyType;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -64,6 +65,7 @@ public class SettingsGUI extends JDialog {
 
 	private JComboBox threadCount;
 
+	private JComboBox proxyType;
 	private JTextField proxyHost;
 	private JTextField proxyPort;
 
@@ -328,10 +330,28 @@ public class SettingsGUI extends JDialog {
 
 		panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
-		JLabel proxyHostLabel = new JLabel("Proxy host name: ");
-		proxyHost = new JTextField(System.getProperty("http.proxyHost"));
-		JLabel proxyPortLabel = new JLabel("Proxy port: ");
-		proxyPort = new JTextField(System.getProperty("http.proxyPort"));
+		final JLabel proxyTypeLabel = new JLabel("Proxy settings: ");
+		proxyType = new JComboBox(ProxyType.values());
+		proxyType.setSelectedItem(Settings.getInstance().getProxyType());
+		final JLabel proxyHostLabel = new JLabel("Proxy host name: ");
+		proxyHost = new JTextField(Settings.getInstance().getProxyHost());
+		final JLabel proxyPortLabel = new JLabel("Proxy port: ");
+		proxyPort = new JTextField(Settings.getInstance().getProxyPort());
+		ActionListener al = new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				boolean b = ProxyType.CUSTOM.equals(proxyType.getSelectedItem());
+				proxyHost.setEnabled(b);
+				proxyPort.setEnabled(b);
+				proxyHostLabel.setEnabled(b);
+				proxyPortLabel.setEnabled(b);
+			}
+		};
+		al.actionPerformed(null);
+		proxyType.addActionListener(al);
+
+		panel.add(proxyTypeLabel, GBC.std());
+		panel.add(proxyType, gbc_eolh.insets(5, 2, 5, 2));
 		panel.add(proxyHostLabel, GBC.std());
 		panel.add(proxyHost, gbc_eolh);
 		panel.add(proxyPortLabel, GBC.std());
@@ -385,8 +405,10 @@ public class SettingsGUI extends JDialog {
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
 		s.setThreadCount(threads);
 
-		System.setProperty("http.proxyHost", proxyHost.getText());
-		System.setProperty("http.proxyPort", proxyPort.getText());
+		s.setProxyType((ProxyType) proxyType.getSelectedItem());
+		s.setCustomProxyHost(proxyHost.getText());
+		s.setCustomProxyPort(proxyPort.getText());
+		s.applyProxySettings();
 
 		if (googleLang.getSelectedIndex() < 0) {
 			s.setGoogleLanguage(googleLang.getEditor().getItem().toString());

@@ -35,12 +35,9 @@ public class GoogleUrlUpdater {
 	 * Requires <a href="http://jtidy.sourceforge.net/">JTidy</a> library.
 	 */
 	public static void main(String[] args) {
-		System.out.print("GoogleMaps.url=");
-		System.out.println(getUpdatedUrl(URL_MAPS, true));
-		System.out.print("GoogleEarth.url=");
-		System.out.println(getUpdatedUrl(URL_EARTH, true));
-		System.out.print("GoogleTerrain.url=");
-		System.out.println(getUpdatedUrl(URL_TERRAIN, true));
+		System.out.println("GoogleMaps.url=" + getUpdatedUrl(URL_MAPS, true));
+		System.out.println("GoogleEarth.url=" + getUpdatedUrl(URL_EARTH, true));
+		System.out.println("GoogleTerrain.url=" + getUpdatedUrl(URL_TERRAIN, true));
 	}
 
 	static final String URL_MAPS = "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2";
@@ -51,6 +48,9 @@ public class GoogleUrlUpdater {
 			XPathExpressionException {
 		LinkedList<String> list = new LinkedList<String>();
 		URL u = new URL(url);
+		// Proxy p = new Proxy(Type.HTTP,new
+		// InetSocketAddress("localhost",8888));
+		// System.setProperty("java.net.useSystemProxies", "true");
 		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 
 		Tidy tidy = new Tidy();

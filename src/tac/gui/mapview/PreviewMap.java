@@ -97,10 +97,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	@Override
 	public void setMapSource(MapSource newMapSource) {
-		if (mapSource == newMapSource)
+		if (mapSource.equals(newMapSource))
 			return;
-		super.setMapSource(newMapSource);
 		log.trace("Preview map source changed from " + mapSource + " to " + newMapSource);
+		super.setMapSource(newMapSource);
 	}
 
 	protected void zoomChanged(int oldZoom) {

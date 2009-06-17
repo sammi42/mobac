@@ -1,5 +1,6 @@
 package tac.gui.panels;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tac.gui.components.JTileSizeCombo;
-import tac.program.Settings;
+import tac.program.model.Settings;
 import tac.program.model.TileImageFormat;
 import tac.program.model.TileImageParameters;
 import tac.utilities.GBC;
@@ -76,15 +77,15 @@ public class JTileImageParametersPanel extends JPanel {
 		Settings settings = Settings.getInstance();
 		tileImageFormat.setSelectedItem(settings.getTileImageFormat());
 		enableCustomTileProcessingCheckButton.setSelected(settings.isCustomTileSize());
-		tileSizeHeight.setValue(settings.getTileHeight());
-		tileSizeWidth.setValue(settings.getTileWidth());
+		tileSizeHeight.setValue(settings.getTileSize().height);
+		tileSizeWidth.setValue(settings.getTileSize().width);
 	}
 
 	public void saveSettings() {
 		Settings settings = Settings.getInstance();
 		settings.setCustomTileSize(enableCustomTileProcessingCheckButton.isSelected());
-		settings.setTileWidth(tileSizeWidth.getValue());
-		settings.setTileHeight(tileSizeHeight.getValue());
+		Dimension tileSize = new Dimension(tileSizeWidth.getValue(), tileSizeHeight.getValue());
+		settings.setTileSize(tileSize);
 		settings.setTileImageFormat((TileImageFormat) tileImageFormat.getSelectedItem());
 	}
 

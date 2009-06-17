@@ -31,20 +31,6 @@ public class AtlasTreeModel implements TreeModel {
 	public AtlasTreeModel() {
 		super();
 		atlasInterface = Atlas.newInstance();
-		// Sample data:
-		// try {
-		// new AutoCutMultiMapLayer(atlas, "Test 1", new MapSources.Mapnik(),
-		// new Point(1000, 1000), new Point(2000, 2000), 3, null, 32000);
-		// new AutoCutMultiMapLayer(atlas, "Test 2", new
-		// MapSources.Cykloatlas(), new Point(1000,
-		// 1000), new Point(2000, 2000), 4, null, 32000);
-		// new AutoCutMultiMapLayer(atlas, "Test 3", new
-		// MapSources.OpenArialMap(), new Point(
-		// 1000, 1000), new Point(2000, 2000), 5, null, 32000);
-		// new AutoCutMultiMapLayer(atlas, "Test 4", new MapSources.Mapnik(),
-		// new Point(1000, 1000), new Point(200000, 200000), 16, null, 32000);
-		// } catch (InvalidNameException e) {
-		// }
 	}
 
 	public void addTreeModelListener(TreeModelListener l) {

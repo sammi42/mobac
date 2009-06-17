@@ -323,9 +323,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -1492075614917423363L;
 
 		public void actionPerformed(ActionEvent e) {
-			for (MapSelectionListener msp : ((PreviewMap) map).mapSelectionListeners) {
-				msp.selectPreviousMapSource();
-			}
+			((PreviewMap) map).selectPreviousMap();
 		}
 	}
 
@@ -333,9 +331,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -1491235614917423363L;
 
 		public void actionPerformed(ActionEvent e) {
-			for (MapSelectionListener msp : ((PreviewMap) map).mapSelectionListeners) {
-				msp.selectNextMapSource();
-			}
+			((PreviewMap) map).selectNextMap();
 		}
 	}
 

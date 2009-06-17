@@ -38,10 +38,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.components.JMapSizeCombo;
 import tac.mapsources.MapSources;
-import tac.program.Settings;
 import tac.program.TileStore;
 import tac.program.TileStore.TileStoreInfo;
 import tac.program.model.ProxyType;
+import tac.program.model.Settings;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -334,9 +334,9 @@ public class SettingsGUI extends JDialog {
 		proxyType = new JComboBox(ProxyType.values());
 		proxyType.setSelectedItem(Settings.getInstance().getProxyType());
 		final JLabel proxyHostLabel = new JLabel("Proxy host name: ");
-		proxyHost = new JTextField(Settings.getInstance().getProxyHost());
+		proxyHost = new JTextField(Settings.getInstance().getCustomProxyHost());
 		final JLabel proxyPortLabel = new JLabel("Proxy port: ");
-		proxyPort = new JTextField(Settings.getInstance().getProxyPort());
+		proxyPort = new JTextField(Settings.getInstance().getCustomProxyPort());
 		ActionListener al = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -380,7 +380,7 @@ public class SettingsGUI extends JDialog {
 		int size = s.getMaxMapSize();
 		mapSize.setValue(size);
 
-		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.getThreadCount());
+		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.getDownloadThreadCount());
 		if (index < 0)
 			index = 0;
 		threadCount.setSelectedIndex(index);
@@ -403,7 +403,7 @@ public class SettingsGUI extends JDialog {
 		s.setMaxMapSize(size);
 
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
-		s.setThreadCount(threads);
+		s.setDownloadThreadCount(threads);
 
 		s.setProxyType((ProxyType) proxyType.getSelectedItem());
 		s.setCustomProxyHost(proxyHost.getText());

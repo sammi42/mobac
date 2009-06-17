@@ -1,35 +1,38 @@
 package tac;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Logger;
-
-import tac.gui.MainGUI;
-import tac.program.Logging;
-import tac.program.Settings;
-import tac.utilities.TACExceptionHandler;
-
+/**
+ * Main class for starting TrekBuddy Atlas Creator.
+ * 
+ * This class performs the Java Runtime version check and if the correct version
+ * is installed it creates a new instance of the class specified by
+ * {@link #MAIN_CLASS}. The class to be instanciated is specified by it's name
+ * intentionally as this allows to compile this class without any further class
+ * dependencies.
+ * 
+ */
 public class StartTAC {
-	private static Logger log = Logger.getLogger(StartTAC.class);
 
+	public static final String MAIN_CLASS = "tac.Main";
+
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		Logging.configureLogging();
-		// Logging.logSystemProperties();
-		Settings.getInstance().loadOrQuit();
-		TACExceptionHandler.installToolkitEventQueueProxy();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			log.error("The selection of look and feel failed!", e);
 		}
 		checkVersion();
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				MainGUI.createMainGui();
-			}
-		});
+		try {
+			Class.forName(MAIN_CLASS).newInstance();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Unable to start TAC: " + e.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
 	}
 
 	protected static void checkVersion() {
@@ -46,12 +49,17 @@ public class StartTAC {
 		}
 		int version = (major * 1000) + minor;
 		// 1.5 -> 1005; 1.6 -> 1006; 1.7 -> 1007
-		if (version < 1006)
-			JOptionPane.showMessageDialog(null,
-					"The used Java Runtime Environment does not meet the minimum requirements.\n"
-							+ "TrekBuddy Atlas Creator requires at least Java 1.6 or higher.\n"
-							+ "Otherwise several functions will not work properly.\n\n"
-							+ "Detected Java Runtime Version: " + ver,
-					"Java Runtime version problem detected", JOptionPane.WARNING_MESSAGE);
+		if (version < 1006) {
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"The used Java Runtime Environment does not meet the minimum requirements.\n"
+									+ "TrekBuddy Atlas Creator requires at least Java 6 (1.6) or higher.\n"
+									+ "Please update your Java Runtime before starting TrekBuddy Atlas Creator.\n\n"
+									+ "Detected Java Runtime Version: " + ver,
+							"Java Runtime version problem detected", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
 	}
+
 }

@@ -26,8 +26,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSources;
 import tac.program.MapSelection;
-import tac.program.Settings;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.Settings;
 
 public class PreviewMap extends JMapViewer implements ComponentListener {
 
@@ -48,7 +48,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	private int gridFactor;
 	private int gridSize;
 
-	public LinkedList<MapSelectionListener> mapSelectionListeners = new LinkedList<MapSelectionListener>();
+	public LinkedList<MapEventListener> mapEventListeners = new LinkedList<MapEventListener>();
 
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
@@ -82,8 +82,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	 */
 	public void settingsSavePosition() {
 		Settings settings = Settings.getInstance();
-		settings.setPreviewDefaultZoom(getZoom());
-		settings.setPreviewDefaultCoordinate(getPositionCoordinate());
+		settings.setMapviewZoom(getZoom());
+		settings.setMapviewCenterCoordinate(getPositionCoordinate());
 	}
 
 	/**
@@ -91,8 +91,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	 */
 	public void settingsLoadPosition() {
 		Settings settings = Settings.getInstance();
-		EastNorthCoordinate c = settings.getPreviewDefaultCoordinate();
-		setDisplayPositionByLatLon(c, settings.getPreviewDefaultZoom());
+		EastNorthCoordinate c = settings.getMapviewCenterCoordinate();
+		setDisplayPositionByLatLon(c, settings.getMapviewZoom());
 	}
 
 	@Override
@@ -101,16 +101,15 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			return;
 		log.trace("Preview map source changed from " + mapSource + " to " + newMapSource);
 		super.setMapSource(newMapSource);
+		for (MapEventListener listener : mapEventListeners)
+			listener.mapSourceChanged(mapSource);
 	}
 
 	protected void zoomChanged(int oldZoom) {
 		log.trace("Preview map zoom changed from " + oldZoom + " to " + zoom);
-		if (mapSelectionListeners != null) { // can be null during
-			// initialization
-			for (MapSelectionListener msp : mapSelectionListeners) {
-				msp.zoomChanged(zoom);
-			}
-		}
+		if (mapEventListeners != null)
+			for (MapEventListener listener : mapEventListeners)
+				listener.zoomChanged(zoom);
 		updateGridValues();
 	}
 
@@ -344,13 +343,13 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		min.lat = OsmMercator.YToLat(y_max, selectionZoom);
 		min.lon = OsmMercator.XToLon(x_min, selectionZoom);
 		max.lat = OsmMercator.YToLat(y_min, selectionZoom);
-		for (MapSelectionListener msp : mapSelectionListeners) {
-			msp.selectionChanged(max, min);
+		for (MapEventListener listener : mapEventListeners) {
+			listener.selectionChanged(max, min);
 		}
 	}
 
-	public void addMapSelectionListener(MapSelectionListener msl) {
-		mapSelectionListeners.add(msl);
+	public void addMapEventListener(MapEventListener l) {
+		mapEventListeners.add(l);
 	}
 
 	public void componentHidden(ComponentEvent e) {
@@ -368,14 +367,14 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	public void selectPreviousMap() {
-		for (MapSelectionListener msp : mapSelectionListeners) {
-			msp.selectPreviousMapSource();
+		for (MapEventListener listener : mapEventListeners) {
+			listener.selectPreviousMapSource();
 		}
 	}
 
 	public void selectNextMap() {
-		for (MapSelectionListener msp : mapSelectionListeners) {
-			msp.selectNextMapSource();
+		for (MapEventListener listener : mapEventListeners) {
+			listener.selectNextMapSource();
 		}
 	}
 

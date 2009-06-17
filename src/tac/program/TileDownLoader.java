@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.UnrecoverableDownloadException;
+import tac.program.model.Settings;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.Utilities;
 

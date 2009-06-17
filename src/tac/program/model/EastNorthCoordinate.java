@@ -1,13 +1,21 @@
 package tac.program.model;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 
 import tac.utilities.Utilities;
 
+@XmlRootElement
 public class EastNorthCoordinate {
+
+	@XmlAttribute
 	public double lat;
+	@XmlAttribute
 	public double lon;
 
 	public EastNorthCoordinate() {
@@ -28,6 +36,12 @@ public class EastNorthCoordinate {
 	public EastNorthCoordinate(Point2D.Double c) {
 		this.lat = c.y;
 		this.lon = c.x;
+	}
+
+	public Point toTileCoordinate(int zoom) {
+		int x = OsmMercator.LonToX(lon, zoom);
+		int y = OsmMercator.LatToY(lat, zoom);
+		return new Point(x, y);
 	}
 
 	@Override

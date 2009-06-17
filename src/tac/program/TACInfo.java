@@ -3,7 +3,7 @@ package tac.program;
 import java.io.InputStream;
 import java.util.Properties;
 
-import tac.StartTAC;
+import tac.Main;
 import tac.utilities.Utilities;
 
 public class TACInfo {
@@ -21,7 +21,7 @@ public class TACInfo {
 	}
 
 	private static void initialite() {
-		InputStream propIn = StartTAC.class.getResourceAsStream("tac.properties");
+		InputStream propIn = Main.class.getResourceAsStream("tac.properties");
 		try {
 			Properties props = new Properties();
 			props.load(propIn);
@@ -32,7 +32,7 @@ public class TACInfo {
 		} finally {
 			Utilities.closeStream(propIn);
 		}
-		propIn = StartTAC.class.getResourceAsStream("tac-rev.properties");
+		propIn = Main.class.getResourceAsStream("tac-rev.properties");
 		try {
 			Properties props = new Properties();
 			props.load(propIn);

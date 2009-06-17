@@ -39,12 +39,12 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.StartTAC;
+import tac.Main;
 import tac.exceptions.InvalidNameException;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JAtlasTree;
 import tac.gui.mapview.GridZoom;
-import tac.gui.mapview.MapSelectionListener;
+import tac.gui.mapview.MapEventListener;
 import tac.gui.mapview.PreviewMap;
 import tac.gui.panels.JCoordinatesPanel;
 import tac.gui.panels.JProfilesPanel;
@@ -53,19 +53,18 @@ import tac.mapsources.MapSources;
 import tac.program.AtlasThread;
 import tac.program.MapSelection;
 import tac.program.SelectedZoomLevels;
-import tac.program.Settings;
 import tac.program.TACInfo;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Layer;
 import tac.program.model.Profile;
+import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
-import tac.utilities.Utilities;
 
-public class MainGUI extends JFrame implements MapSelectionListener {
+public class MainGUI extends JFrame implements MapEventListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -100,8 +99,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
 
-	private Settings settings;
-
 	public static void createMainGui() {
 		if (mainGUI != null)
 			return;
@@ -116,7 +113,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	private MainGUI() {
 		super();
 		TACExceptionHandler.registerForCurrentThread();
-		settings = Settings.getInstance();
 		setTitle(TACInfo.getCompleteTitle());
 
 		log.trace("Creating main dialog - " + getTitle());
@@ -129,7 +125,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		addComponentListener(new MainWindowListener());
 
 		previewMap = new PreviewMap();
-		previewMap.addMapSelectionListener(this);
+		previewMap.addMapEventListener(this);
 
 		createControls();
 		calculateNrOfTilesToDownload();
@@ -140,7 +136,6 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		layeredPane.add(mapControlPanel, new Integer(1));
 		add(layeredPane, BorderLayout.CENTER);
 
-		Utilities.checkFileSetup();
 		loadSettings();
 		updatePanels();
 		profilesPanel.initialize();
@@ -380,7 +375,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 	}
 
 	private void updatePanels() {
-		boolean fullScreenEnabled = settings.getFullScreenEnabled();
+		boolean fullScreenEnabled = false;
 
 		updateMapControlsPanel(fullScreenEnabled);
 
@@ -399,14 +394,15 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private void loadSettings() {
 		Settings settings = Settings.getInstance();
-		atlasNameTextField.setText(settings.getAtlasName());
+		atlasNameTextField.setText(settings.getElemntName());
 		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoadPosition();
 		coordinatesPanel.setMaxCoordinate(settings.getSelectionMax());
 		coordinatesPanel.setMinCoordinate(settings.getSelectionMin());
 
 		tileImageParametersPanel.loadSettings();
-		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getDefaultMapSource()));
+		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getMapviewMapSource()
+				.getName()));
 
 		setSize(settings.getWindowDimension());
 		Point windowLocation = settings.getWindowLocation();
@@ -423,8 +419,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		try {
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
-			s.setDefaultMapSource(((MapSource) mapSourceCombo.getSelectedItem()).getName());
-			s.setAtlasName(atlasNameTextField.getText());
+			s.setMapviewMapSource(previewMap.getMapSource());
+			s.setElementName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 			s.setSelectionMax(coordinatesPanel.getMaxCoordinate());
 			s.setSelectionMin(coordinatesPanel.getMinCoordinate());
@@ -436,7 +432,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 				s.setWindowDimension(getSize());
 				s.setWindowLocation(getLocation());
 			}
-			s.store();
+			Settings.save();
 		} catch (Exception e) {
 			TACExceptionHandler.showExceptionDialog(e);
 			JOptionPane.showMessageDialog(null,
@@ -505,7 +501,7 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class HelpButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			DataInputStream in = new DataInputStream(StartTAC.class
+			DataInputStream in = new DataInputStream(Main.class
 					.getResourceAsStream("resources/text/help_dialog.html"));
 			byte[] buf;
 			try {
@@ -526,8 +522,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 
 	private class FullScreenButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Settings settings = Settings.getInstance();
-			settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
+			// Settings settings = Settings.getInstance();
+			// settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
 			updatePanels();
 		}
 	}
@@ -573,7 +569,8 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 		cbZoom = new JCheckBox[zoomLevels];
 		zoomLevelPanel.removeAll();
 
-		boolean fullScreenEnabled = Settings.getInstance().getFullScreenEnabled();
+		boolean fullScreenEnabled = false; // Settings.getInstance().
+		// getFullScreenEnabled();
 		if (fullScreenEnabled) {
 			zoomLevelPanel.setLayout(new GridLayout(0, 2, 5, 3));
 		} else {
@@ -688,6 +685,12 @@ public class MainGUI extends JFrame implements MapSelectionListener {
 			} while (!success);
 		}
 		jAtlasTree.getTreeModel().notifyStructureChanged();
+	}
+
+	public void mapSourceChanged(MapSource newMapSource) {
+		if (newMapSource.equals(mapSourceCombo.getSelectedItem()))
+			return;
+		mapSourceCombo.setSelectedItem(newMapSource);
 	}
 
 	private void previewSelection() {

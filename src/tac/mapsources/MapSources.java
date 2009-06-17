@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.StartTAC;
+import tac.Main;
 import tac.mapsources.Google.GoogleEarth;
 import tac.mapsources.Google.GoogleMapMaker;
 import tac.mapsources.Google.GoogleMaps;
@@ -19,8 +19,12 @@ import tac.mapsources.Microsoft.MicrosoftHybrid;
 import tac.mapsources.Microsoft.MicrosoftMaps;
 import tac.mapsources.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.Microsoft.MicrosoftVirtualEarth;
+import tac.mapsources.RegionalMapSources.Cykloatlas;
+import tac.mapsources.RegionalMapSources.DoCeluPL;
+import tac.mapsources.RegionalMapSources.OutdooractiveCom;
+import tac.mapsources.RegionalMapSources.UmpWawPl;
 import tac.mapsources.WmsSources.TerraserverUSA;
-import tac.program.Settings;
+import tac.program.model.Settings;
 import tac.utilities.Utilities;
 
 public class MapSources {
@@ -39,7 +43,7 @@ public class MapSources {
 				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA(),
-				new UmpWawPl()
+				new UmpWawPl(), new DoCeluPL()
 		// new MapPlus() //does not work because of an unknown protection -
 		// cookie?
 		};
@@ -128,20 +132,6 @@ public class MapSources {
 
 	}
 
-	public static class Doculeo extends AbstractMapSource {
-
-		public Doculeo() {
-			super("Doculeo (Poland)", 7, 16, "jpg");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-
-			// http://ed-pl-maps.osl.basefarm.net/tiles/maps/en_FI/6/35/21.png"
-			return "http://i.wp.pl/m/tiles004/c/%d/%d/00/00/00/zcx00089dy000558.png";
-		}
-
-	}
-
 	public static class YahooMaps extends AbstractMapSource {
 
 		public YahooMaps() {
@@ -153,54 +143,6 @@ public class MapSources {
 			int yahooZoom = getMaxZoom() - zoom + 2;
 			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex
 					+ "&y=" + yahooTileY + "+6163&z=" + yahooZoom;
-		}
-
-	}
-
-	/**
-	 * CykloServer http://www.cykloserver.cz/cykloatlas/index.php
-	 */
-	public static class Cykloatlas extends AbstractMapSource {
-
-		public Cykloatlas() {
-			super("Cykloatlas", 7, 14, "png");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String z = Integer.toString(zoom);
-			if (zoom >= 13)
-				z += "c";
-			return "http://services.tmapserver.cz/tiles/gm/shc/" + z + "/" + tilex + "/" + tiley
-					+ ".png";
-		}
-
-		@Override
-		public String toString() {
-			return getName() + " (Czech Republic only)";
-		}
-
-	}
-
-	public static class OutdooractiveCom extends AbstractMapSource {
-
-		private static int SERVER_NUM = 0;
-
-		public OutdooractiveCom() {
-			super("Outdooractive.com", 8, 16, "png");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			if (zoom < 8)
-				throw new RuntimeException("Zoom level not suported");
-			String s = "http://t" + SERVER_NUM + ".outdooractive.com/portal/map/" + zoom + "/"
-					+ tilex + "/" + tiley + ".png";
-			SERVER_NUM = (SERVER_NUM + 1) % 4;
-			return s;
-		}
-
-		@Override
-		public String toString() {
-			return getName() + " (Germany only)";
 		}
 
 	}
@@ -260,37 +202,10 @@ public class MapSources {
 	}
 
 	/**
-	 * Darmowa Mapa Polski dla GPS Garmin - UMP-pcPL (added by "maniek-ols")
-	 * 
-	 */
-	public static class UmpWawPl extends AbstractMapSource {
-
-		private static int SERVER_NUM = 0;
-		private static final int MAX_SERVER_NUM = 4;
-
-		public UmpWawPl() {
-			super("UMP-pcPL", 0, 18, "png");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String s = "http://" + SERVER_NUM + ".tiles.ump.waw.pl/ump_tiles/" + zoom + "/" + tilex
-					+ "/" + tiley + ".png";
-			SERVER_NUM = (SERVER_NUM + 1) % MAX_SERVER_NUM;
-			return s;
-		}
-
-		@Override
-		public String toString() {
-			return getName() + " (Poland only)";
-		}
-
-	}
-
-	/**
 	 * Merges the mapsources property into the system property bundle
 	 */
 	public static void loadMapSourceProperties() {
-		InputStream propIn = StartTAC.class.getResourceAsStream("mapsources.properties");
+		InputStream propIn = Main.class.getResourceAsStream("mapsources.properties");
 		try {
 			Properties systemProps = System.getProperties();
 			Properties props = new Properties();

@@ -53,6 +53,13 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	}
 
 	public Layer(AtlasInterface atlasInterface, String name, MapSource mapSource,
+			EastNorthCoordinate minCoordinate, EastNorthCoordinate maxCoordinate, int zoom,
+			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
+		this(atlasInterface, name, mapSource, minCoordinate.toTileCoordinate(zoom), maxCoordinate
+				.toTileCoordinate(zoom), zoom, parameters, maxMapSize);
+	}
+
+	public Layer(AtlasInterface atlasInterface, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
 		this.atlasInterface = atlasInterface;

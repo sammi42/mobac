@@ -22,6 +22,7 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
+import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
@@ -136,7 +137,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		TarIndex tileIndex = null;
 
 		Thread t = Thread.currentThread();
-		downloadJobDispatcher = new JobDispatcher(s.getThreadCount());
+		downloadJobDispatcher = new JobDispatcher(s.getDownloadThreadCount());
 		try {
 			for (LayerInterface layer : atlasInterface) {
 				int apMax = (int) layer.calculateTilesToDownload();

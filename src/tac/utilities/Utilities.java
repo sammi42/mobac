@@ -25,8 +25,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
-import tac.StartTAC;
-import tac.program.Settings;
+import org.apache.log4j.Logger;
+
+import tac.Main;
+import tac.mapsources.Google;
+import tac.program.model.Atlas;
+import tac.program.model.EastNorthCoordinate;
+import tac.program.model.Layer;
+import tac.program.model.Profile;
+import tac.program.model.Settings;
 
 public class Utilities {
 
@@ -36,6 +43,8 @@ public class Utilities {
 	public static final DecimalFormat FORMAT_2_DEC = new DecimalFormat("0.00");
 	private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
 	private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
+
+	private static final Logger log = Logger.getLogger(Utilities.class);
 
 	public static String fmt(String format, int value) {
 		return String.format(format, new Object[] { value });
@@ -57,16 +66,16 @@ public class Utilities {
 	/**
 	 * 
 	 * @param imageName
-	 *            imagePath resource path relative to the class {@link StartTAC}
+	 *            imagePath resource path relative to the class {@link Main}
 	 * @return
 	 */
 	public static ImageIcon loadResourceImageIcon(String imageName) {
-		URL url = StartTAC.class.getResource("resources/images/" + imageName);
+		URL url = Main.class.getResource("resources/images/" + imageName);
 		return new ImageIcon(url);
 	}
 
 	public static URL getResourceImageUrl(String imageName) {
-		return StartTAC.class.getResource("resources/images/" + imageName);
+		return Main.class.getResource("resources/images/" + imageName);
 	}
 
 	/**
@@ -224,37 +233,31 @@ public class Utilities {
 		File tileStoreFolder = new File(userDir, "tilestore");
 		tileStoreFolder.mkdir();
 
-		File settingsFile = new File(userDir, "settings.xml");
-
-		if (settingsFile.exists() == false) {
+		if (Settings.FILE.exists() == false) {
 
 			try {
-				Settings s = Settings.getInstance();
-				s.store();
-			} catch (IOException iox) {
+				Settings.save();
+			} catch (Exception e) {
+				log.error("", e);
 				JOptionPane.showMessageDialog(null,
 						"Could not create file settings.xml program will exit.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			}
+			Profile p = new Profile("Google Maps New York");
+			Atlas atlas = Atlas.newInstance();
+			try {
+				EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -73.699036);
+				EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -74.142609);
+				atlas.addLayer(new Layer(atlas, "GM New York 16", new Google.GoogleMaps(), max,
+						min, 16, null, 32000));
+				atlas.addLayer(new Layer(atlas, "GM New York 14", new Google.GoogleMaps(), max,
+						min, 14, null, 32000));
+				p.save(atlas);
+			} catch (Exception e) {
+				log.error("", e);
+			}
 		}
-
-		// File profilesFile = new File(userDir, "profiles.xml");
-
-		// if (profilesFile.exists() == false) {
-		//
-		// try {
-		// profilesFile.createNewFile();
-		//
-		// Vector<Profile> defaultProfiles = new Vector<Profile>();
-		//
-		//defaultProfiles.addElement(createExampleProfile("Google Maps New York"
-		// ,
-		// "Google Maps", 40.97264, 40.541982, -73.699036, -74.142609, new
-		// boolean[] {
-		// false, false, false, false, false, false, false, false, false,
-		// false, false, false, true, true, true, true, true, true }, 256,
-		// 256, "gm nyc"));
 		//defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
 		// ,
 		// "Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
@@ -268,15 +271,6 @@ public class Utilities {
 		// false, false, false, false, false, false, false, false, true,
 		// false, true, false, true, false, true, false, true }, 256, 256,
 		// "osm bavaria"));
-		//
-		// PersistentProfiles.store(defaultProfiles);
-		// } catch (IOException iox) {
-		// JOptionPane.showMessageDialog(null,
-		// "Could not create file profiles.xml program will exit.", "Error",
-		// JOptionPane.ERROR_MESSAGE);
-		// System.exit(0);
-		// }
-		// }
 	}
 
 	/**

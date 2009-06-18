@@ -62,6 +62,8 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public Layer(AtlasInterface atlasInterface, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
+		log.trace("Creating new layer: \"" + name + "\" " + mapSource + " " + minTileCoordinate
+				+ " " + maxTileCoordinate + " " + zoom);
 		this.atlasInterface = atlasInterface;
 		setName(name);
 
@@ -194,11 +196,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
 		this.atlasInterface = (Atlas) parent;
-		// TODO: Test loaded data for problems (missing fields, duplicate names)
 	}
 
 	public boolean checkData() {
-		log.debug("Checking data");
 		if (atlasInterface == null)
 			return true;
 		if (name == null)

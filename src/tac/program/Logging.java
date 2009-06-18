@@ -22,14 +22,15 @@ public class Logging {
 		// we perform simple logging to the console
 		if (f.exists() && f.isFile()) {
 			DOMConfigurator.configure(f.getAbsolutePath());
+			Logger logger = Logger.getRootLogger();
+			logger.error("Logging configured by \"" + f.getAbsolutePath() + "\"");
 		} else {
 			Logger logger = Logger.getRootLogger();
-			logger.info("log4.xml not found - enabling default error log to console\n"
-					+ f.getAbsolutePath());
-			logger.setLevel(Level.ERROR);
-			SimpleLayout layout = new SimpleLayout();
-			ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+			ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout());
 			logger.addAppender(consoleAppender);
+			logger.info("log4.xml not found - enabling default error log to console. \n"
+					+ "Full path to expected log4.xml: \"" + f.getAbsolutePath() + "\"");
+			logger.setLevel(Level.ERROR);
 		}
 	}
 
@@ -38,7 +39,7 @@ public class Logging {
 		Properties props = System.getProperties();
 		StringWriter sw = new StringWriter(2 << 13);
 		sw.write("System properties:\n");
-		TreeMap<Object,Object> sortedProps = new TreeMap<Object,Object>(props);
+		TreeMap<Object, Object> sortedProps = new TreeMap<Object, Object>(props);
 		for (Entry<Object, Object> entry : sortedProps.entrySet()) {
 			sw.write(entry.getKey() + " = " + entry.getValue() + "\n");
 		}

@@ -86,6 +86,7 @@
 			<arg line=" -keep class org.apache.log4j.PatternLayout { public *; }" />
 			<arg line=" -keep class org.apache.log4j.FileAppender { public *; }" />
 			<arg line=" -keep class tac.program.model.package-info" />
+			<arg line=" -keep class tac.program.model.* { public *; }" />
 			<arg line=" -keep class ${main.class} { public static void main(java.lang.String[]); }" />
 			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
 		</java>

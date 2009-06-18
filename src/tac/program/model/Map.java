@@ -191,12 +191,21 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public boolean checkData() {
-		if (name == null || layer == null || maxTileCoordinate == null || minTileCoordinate == null
-				|| mapSource == null || zoom < 0) {
-			log.debug("Problem detectecte with map \"" + name + "\"");
-			return true;
-		}
-		return false;
+		boolean result = false;
+		boolean[] checks = { name == null, // 0
+				layer == null, // 1
+				maxTileCoordinate == null, // 2
+				minTileCoordinate == null, // 3
+				mapSource == null, // 4
+				zoom < 0 // 5
+		};
+
+		for (int i = 0; i < checks.length; i++)
+			if (checks[i]) {
+				log.error("Problem detectected with map \"" + name + "\" check: " + i);
+				result = true;
+			}
+		return result;
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {

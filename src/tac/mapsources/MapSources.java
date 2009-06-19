@@ -3,6 +3,7 @@ package tac.mapsources;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -49,12 +50,26 @@ public class MapSources {
 		};
 	}
 
-	public static Vector<MapSource> getMapSources() {
+	public static Vector<MapSource> getAllMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
 		if (Settings.getInstance().isDevModeEnabled())
 			mapSources.add(new LocalhostTestSource());
-		for (MapSource ms : MAP_SOURCES)
+		for (MapSource ms : MAP_SOURCES) {
 			mapSources.add(ms);
+		}
+		return mapSources;
+	}
+	
+	public static Vector<MapSource> getEnabledMapSources() {
+		Vector<MapSource> mapSources = new Vector<MapSource>();
+		if (Settings.getInstance().isDevModeEnabled())
+			mapSources.add(new LocalhostTestSource());
+		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance()
+				.getDisabledMapSources());
+		for (MapSource ms : MAP_SOURCES) {
+			if (!disabledMapSources.contains(ms.getName()))
+				mapSources.add(ms);
+		}
 		return mapSources;
 	}
 

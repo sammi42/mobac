@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.File;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
@@ -75,10 +76,10 @@ public class Settings {
 	 * Network settings
 	 */
 	private ProxyType proxyType = ProxyType.SYSTEM;
-
 	private String customProxyHost = "";
-
 	private String customProxyPort = "";
+
+	private Vector<String> disabledMapSources = new Vector<String>();
 
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -315,6 +316,15 @@ public class Settings {
 		this.customProxyPort = proxyPort;
 	}
 
+	public Vector<String> getDisabledMapSources() {
+		return disabledMapSources;
+	}
+
+	@XmlElement(name="disabledMapSource")
+	public void setDisabledMapSources(Vector<String> disabledMapSources) {
+		this.disabledMapSources = disabledMapSources;
+	}
+
 	public void applyProxySettings() {
 		String newProxyHost = null;
 		String newProxyPort = null;
@@ -339,8 +349,8 @@ public class Settings {
 
 	public static void main(String[] args) {
 		try {
-			save();
 			load();
+			save();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

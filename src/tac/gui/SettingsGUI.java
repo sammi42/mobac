@@ -1,6 +1,7 @@
 package tac.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,9 +16,12 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,10 +30,12 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
@@ -37,6 +43,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.components.JMapSizeCombo;
+import tac.gui.components.JObjectCheckBox;
 import tac.mapsources.MapSources;
 import tac.program.TileStore;
 import tac.program.TileStore.TileStoreInfo;
@@ -77,6 +84,7 @@ public class SettingsGUI extends JDialog {
 	private Thread tileStoreAsyncThread = null;
 
 	private List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<TileSourceInfoComponents>();
+	private Vector<JMapSourceCB> mapSourceCbList = new Vector<JMapSourceCB>();
 
 	static void showSettingsDialog(final JFrame owner) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -142,17 +150,34 @@ public class SettingsGUI extends JDialog {
 		googlePanel.add(new JLabel("Language (hl parameter): "), GBC.std());
 		googlePanel.add(googleLang, GBC.eol());
 
-		// JPanel mapSourcesPanel = new JPanel(new GridBagLayout());
-		// mapSourcesPanel.setBorder(BorderFactory.createTitledBorder(
-		// "Enabled Map Sources"));
-		//
-		// for (TileSource ts : MapSources.getMapSources()) {
-		// JCheckBox mapSource = new JCheckBox(ts.toString());
-		// mapSourcesPanel.add(mapSource, GBC.eol());
-		// }
+		JPanel mapSourcesInnerPanel = new JPanel();
+
+		Color c = UIManager.getColor("List.background");
+		mapSourcesInnerPanel.setBackground(c);
+
+		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance()
+				.getDisabledMapSources());
+
+		mapSourceCbList.clear();
+		for (MapSource ms : MapSources.getAllMapSources()) {
+			JMapSourceCB checkBox = new JMapSourceCB(ms.toString());
+			checkBox.setObject(ms);
+			checkBox.setSelected(!disabledMapSources.contains(ms.getName()));
+			checkBox.setBackground(c);
+			mapSourcesInnerPanel.add(checkBox);
+			mapSourceCbList.add(checkBox);
+		}
+		mapSourcesInnerPanel.setLayout(new BoxLayout(mapSourcesInnerPanel, BoxLayout.Y_AXIS));
+		JScrollPane mapSourcesScrollPane = new JScrollPane(mapSourcesInnerPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		mapSourcesScrollPane.setMinimumSize(new Dimension(300, 200));
+		JPanel mapSourcesOuterPanel = new JPanel(new BorderLayout());
+		mapSourcesOuterPanel.add(mapSourcesScrollPane, BorderLayout.CENTER);
+		mapSourcesOuterPanel.setBorder(BorderFactory.createTitledBorder("Enabled Map Sources"));
+		mapSourcesOuterPanel.setPreferredSize(new Dimension(200, 200));
 
 		tab.add(googlePanel, BorderLayout.NORTH);
-		// tab.add(mapSourcesPanel, BorderLayout.CENTER);
+		tab.add(mapSourcesOuterPanel, BorderLayout.CENTER);
 	}
 
 	private void addTileStorePanel() {
@@ -209,7 +234,7 @@ public class SettingsGUI extends JDialog {
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-		for (MapSource ts : MapSources.getMapSources()) {
+		for (MapSource ts : MapSources.getAllMapSources()) {
 			if (!tileStore.storeExists(ts))
 				continue;
 			String mapTileCountText = "?";
@@ -410,6 +435,15 @@ public class SettingsGUI extends JDialog {
 		s.setCustomProxyPort(proxyPort.getText());
 		s.applyProxySettings();
 
+		Vector<String> disabledMaps = new Vector<String>();
+		for (JMapSourceCB cb : mapSourceCbList) {
+			if (!cb.isSelected())
+				disabledMaps.add(cb.getObject().getName());
+		}
+		s.setDisabledMapSources(disabledMaps);
+
+		MainGUI.getMainGUI().updateMapSourcesList();
+		
 		if (googleLang.getSelectedIndex() < 0) {
 			s.setGoogleLanguage(googleLang.getEditor().getItem().toString());
 		} else {
@@ -496,6 +530,13 @@ public class SettingsGUI extends JDialog {
 				}
 			};
 			t.start();
+		}
+	}
+
+	private static class JMapSourceCB extends JObjectCheckBox<MapSource> {
+
+		public JMapSourceCB(String text) {
+			super(text);
 		}
 	}
 

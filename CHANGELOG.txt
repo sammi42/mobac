@@ -19,7 +19,8 @@
  + Proxy settings rewritten - now system/Java wide or application settings can be  
     used alternatively to the user defined proxy
  + New regional map sources (Poland): ump.waw.pl and docelu.pl
- ~ Settings.xml format has changed 
+ ~ Settings.xml format has changed
+ + Map sources can now be disabled which hides them from the list 
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -168,7 +169,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setToolTipText("Add a grid of the spefified zoom level to the map");
 
 		// map source combo
-		mapSourceCombo = new JComboBox(MapSources.getMapSources());
+		mapSourceCombo = new JComboBox(MapSources.getEnabledMapSources());
 		mapSourceCombo.setMaximumRowCount(20);
 		mapSourceCombo.addActionListener(new MapSourceComboListener());
 		mapSourceCombo.setToolTipText("Select map source");
@@ -390,6 +391,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		calculateNrOfTilesToDownload();
 		updateZoomLevelCheckBoxes();
 		previewMap.grabFocus();
+	}
+
+	public void updateMapSourcesList() {
+		MapSource ms = (MapSource) mapSourceCombo.getSelectedItem();
+		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSources.getEnabledMapSources()));
+		mapSourceCombo.setSelectedItem(ms);
+		MapSource ms2 = (MapSource) mapSourceCombo.getSelectedItem();
+		if (!ms.equals(ms2))
+			previewMap.setMapSource(ms2);
 	}
 
 	private void loadSettings() {

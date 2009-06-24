@@ -19,7 +19,6 @@ import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -54,7 +53,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		super(new PreviewTileCache(), 5);
 		new DefaultMapController(this);
 		mapSource = MapSources.DEFAULT;
-		OsmTileLoader.USER_AGENT = Settings.getInstance().getUserAgent();
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
 		cacheTileLoader.setCacheMaxFileAge(OsmFileCacheTileLoader.FILE_AGE_ONE_WEEK);

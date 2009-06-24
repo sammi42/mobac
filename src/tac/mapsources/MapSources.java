@@ -44,9 +44,11 @@ public class MapSources {
 				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA(),
-				new UmpWawPl(), new DoCeluPL()
-		// new MapPlus() //does not work because of an unknown protection -
-		// cookie?
+				new UmpWawPl(), new DoCeluPL(),
+		// The following map sources do not work because of an unknown
+		// protection - cookie?
+		// new TuristikaMapSk()
+		// new MapPlus()
 		};
 	}
 
@@ -59,7 +61,7 @@ public class MapSources {
 		}
 		return mapSources;
 	}
-	
+
 	public static Vector<MapSource> getEnabledMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
 		if (Settings.getInstance().isDevModeEnabled())

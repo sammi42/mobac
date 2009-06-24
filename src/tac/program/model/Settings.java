@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSources;
@@ -51,7 +52,7 @@ public class Settings {
 
 	private String elementName = "Layer name";
 
-	private String userAgent = UserAgent.FF2_XP;
+	private String userAgent = UserAgent.FF3_XP;
 
 	private int downloadThreadCount = 4;
 
@@ -212,6 +213,7 @@ public class Settings {
 	}
 
 	public void setUserAgent(String userAgent) {
+		OsmTileLoader.USER_AGENT = userAgent;
 		this.userAgent = userAgent;
 	}
 

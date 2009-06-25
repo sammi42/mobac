@@ -227,6 +227,13 @@ public class Utilities {
 
 		File userDir = new File(System.getProperty("user.dir"));
 
+		File profiles = new File(userDir, "profiles.xml"); 
+		if (profiles.isFile()) {
+			// delete old settings and profile files
+			profiles.delete();
+			Settings.FILE.delete();
+		}
+
 		File atlasFolder = new File(userDir, "atlases");
 		atlasFolder.mkdir();
 
@@ -258,13 +265,13 @@ public class Utilities {
 				log.error("", e);
 			}
 		}
-		//defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
+		// defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
 		// ,
 		// "Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
 		// new boolean[] { false, false, true, false, true, false, true, false,
 		// true,
 		// false }, 256, 256, "oa berlin"));
-		//defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria"
+		// defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria"
 		// , "Mapnik",
 		// 50.611132, 47.189712, 13.996582, 8.811035, new boolean[] { false,
 		// false,
@@ -335,4 +342,5 @@ public class Utilities {
 		else
 			System.getProperties().remove("http.proxyPort");
 	}
+
 }

@@ -1,6 +1,6 @@
 package tac.program.interfaces;
 
-import tac.gui.components.JAtlasTree;
+import tac.gui.atlastree.JAtlasTree;
 import tac.program.model.AtlasTreeModel;
 
 /**

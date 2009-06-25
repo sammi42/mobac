@@ -42,8 +42,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.Main;
 import tac.exceptions.InvalidNameException;
+import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JAtlasNameField;
-import tac.gui.components.JAtlasTree;
 import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapEventListener;
 import tac.gui.mapview.PreviewMap;

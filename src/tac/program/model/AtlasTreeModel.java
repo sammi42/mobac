@@ -42,7 +42,11 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public void notifyStructureChanged() {
-		notifyStructureChanged(new TreeModelEvent(this, new Object[] { atlasInterface }));
+		notifyStructureChanged((TreeNode) atlasInterface);
+	}
+
+	public void notifyStructureChanged(TreeNode root) {
+		notifyStructureChanged(new TreeModelEvent(this, new Object[] { root }));
 	}
 
 	/**
@@ -129,6 +133,27 @@ public class AtlasTreeModel implements TreeModel {
 				Toolkit.getDefaultToolkit().beep();
 			}
 		}
+	}
+
+	public void mergeLayers(LayerInterface source, LayerInterface target) {
+
+		boolean sourceFound = false;
+		boolean targetFound = false;
+		for (LayerInterface l : atlasInterface) {
+			if (l.equals(source))
+				sourceFound = true;
+			if (l.equals(target))
+				targetFound = true;
+		}
+		if (!targetFound)
+			return;
+		if (sourceFound)
+			atlasInterface.deleteLayer(source);
+		for (MapInterface map : source) {
+			target.addMap(map);
+		}
+		notifyNodeDelete((TreeNode) source);
+		notifyStructureChanged((TreeNode) target);
 	}
 
 	public AtlasInterface getAtlas() {

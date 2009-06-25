@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import tac.gui.components.JAtlasTree;
+import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JProfilesComboBox;
 import tac.program.model.Profile;
 import tac.utilities.GBC;

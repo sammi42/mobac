@@ -116,6 +116,11 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		return atlasInterface;
 	}
 
+	public void addMap(MapInterface map) {
+		// TODO: Add name collision check
+		maps.add(map);
+	}
+
 	public MapInterface getMap(int index) {
 		return maps.get(index);
 	}

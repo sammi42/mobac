@@ -96,7 +96,7 @@ public class RegionalMapSources {
 	public static class Cykloatlas extends AbstractMapSource {
 
 		public Cykloatlas() {
-			super("Cykloatlas", 7, 14, "png");
+			super("Cykloatlas", 7, 15, "png");
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

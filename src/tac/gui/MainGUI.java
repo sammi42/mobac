@@ -166,7 +166,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo = new JComboBox();
 		gridZoomCombo.setEditable(false);
 		gridZoomCombo.addActionListener(new GridZoomComboListener());
-		gridZoomCombo.setToolTipText("Add a grid of the spefified zoom level to the map");
+		gridZoomCombo.setToolTipText("Projects a grid of the specified zoom level over the map");
 
 		// map source combo
 		mapSourceCombo = new JComboBox(MapSources.getEnabledMapSources());
@@ -334,7 +334,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		// bottom panel
 		JPanel bottomControls = new JPanel(new GridBagLayout());
 		bottomControls.setOpaque(false);
-		bottomControls.add(fullScreenButton, GBC.std().insets(5, 0, 0, 5));
+		//bottomControls.add(fullScreenButton, GBC.std().insets(5, 0, 0, 5));
 		bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
 		if (fullScreenEnabled) {
 			// atlas name label

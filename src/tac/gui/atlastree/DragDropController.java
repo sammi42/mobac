@@ -19,6 +19,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -128,11 +129,15 @@ public class DragDropController {
 					dtde.rejectDrop();
 					return;
 				}
-
 				LayerInterface sourceLayer = (LayerInterface) sourceNode;
 				LayerInterface targetLayer = (LayerInterface) targetNode;
-
-				((AtlasTreeModel) atlasTree.getModel()).mergeLayers(sourceLayer, targetLayer);
+				int answer = JOptionPane.showConfirmDialog(null,
+						"Are you sure you want to merge the maps of layer\n" + "\""
+								+ sourceLayer.getName() + "\" into layer " + "\""
+								+ targetLayer.getName() + "\"?", "Confirm layer merging",
+						JOptionPane.YES_NO_OPTION);
+				if (answer == JOptionPane.YES_OPTION)
+					((AtlasTreeModel) atlasTree.getModel()).mergeLayers(sourceLayer, targetLayer);
 
 			} catch (Exception e) {
 				dtde.rejectDrop();

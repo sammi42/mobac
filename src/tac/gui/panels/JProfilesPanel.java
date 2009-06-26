@@ -1,5 +1,7 @@
 package tac.gui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,9 +15,11 @@ import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JProfilesComboBox;
 import tac.program.model.Profile;
 import tac.utilities.GBC;
+import tac.utilities.Utilities;
 
 public class JProfilesPanel extends JPanel {
 	private JProfilesComboBox profilesCombo;
+	private JButton reloadButton;
 	private JButton deleteButton;
 	private JButton saveAsButton;
 
@@ -43,7 +47,16 @@ public class JProfilesPanel extends JPanel {
 		saveAsButton.addActionListener(new SaveAsProfileListener(atlasTree));
 
 		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
-		add(profilesCombo, gbc);
+		reloadButton = new JButton(Utilities.loadResourceImageIcon("refresh.png"));
+		reloadButton.setToolTipText("reload the profiles list");
+		reloadButton.addActionListener(new ReloadListener());
+		reloadButton.setPreferredSize(new Dimension(24, 0));
+
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(profilesCombo, BorderLayout.CENTER);
+		p.add(reloadButton, BorderLayout.EAST);
+		
+		add(p, gbc);
 		add(saveAsButton, gbc.toggleEol());
 		add(deleteButton, gbc.toggleEol());
 
@@ -55,6 +68,10 @@ public class JProfilesPanel extends JPanel {
 		// Load all profiles from the profiles file from disk
 		profilesCombo.loadProfilesList();
 		deleteButton.setEnabled(false);
+	}
+
+	public void reloadProfileList() {
+		initialize();
 	}
 
 	public JProfilesComboBox getProfilesCombo() {
@@ -125,6 +142,13 @@ public class JProfilesPanel extends JPanel {
 	private class DeleteProfileListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			profilesCombo.deleteSelectedProfile();
+		}
+	}
+
+	private class ReloadListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			reloadProfileList();
 		}
 	}
 

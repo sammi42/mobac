@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.utilities.Utilities;
@@ -78,7 +78,7 @@ public class Tile {
      * difference) from cache and use it as a placeholder until the tile has
      * been loaded.
      */
-    public void loadPlaceholderFromCache(TileCache cache) {
+    public void loadPlaceholderFromCache(TileImageCache cache) {
         BufferedImage tmpImage = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) tmpImage.getGraphics();
         // g.drawImage(image, 0, 0, null);

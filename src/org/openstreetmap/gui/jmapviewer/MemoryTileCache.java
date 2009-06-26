@@ -5,17 +5,17 @@ package org.openstreetmap.gui.jmapviewer;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
- * {@link TileCache} implementation that stores all {@link Tile} objects in
+ * {@link TileImageCache} implementation that stores all {@link Tile} objects in
  * memory up to a certain limit ({@link #getCacheSize()}). If the limit is
  * exceeded the least recently used {@link Tile} objects will be deleted.
  * 
  * @author Jan Peter Stotz
  */
-public class MemoryTileCache implements TileCache {
+public class MemoryTileCache implements TileImageCache {
 
     protected static final Logger log = Logger.getLogger(MemoryTileCache.class.getName());
 

@@ -15,7 +15,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -84,7 +84,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         }
 
         public void run() {
-            TileCache cache = listener.getTileCache();
+            TileImageCache cache = listener.getTileImageCache();
             synchronized (cache) {
                 tile = cache.getTile(source, tilex, tiley, zoom);
                 if (tile == null || tile.isLoaded() || tile.loading)

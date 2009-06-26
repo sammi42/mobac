@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -38,7 +38,7 @@ public class OsmTileLoader implements TileLoader {
             InputStream input = null;
 
             public void run() {
-                TileCache cache = listener.getTileCache();
+                TileImageCache cache = listener.getTileImageCache();
                 Tile tile;
                 synchronized (cache) {
                     tile = cache.getTile(source, tilex, tiley, zoom);

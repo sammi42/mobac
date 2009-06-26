@@ -14,5 +14,5 @@ public interface TileLoaderListener {
 	 */
 	public void tileLoadingFinished(Tile tile, boolean success);
 
-	public TileCache getTileCache();
+	public TileImageCache getTileImageCache();
 }

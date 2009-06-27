@@ -11,12 +11,14 @@ public abstract class AbstractMapSource implements MapSource {
 	protected int minZoom;
 	protected int maxZoom;
 	protected String tileType;
+	protected TileUpdate tileUpdate;
 
 	public AbstractMapSource(String name, int minZoom, int maxZoom, String tileType) {
 		this.name = name;
 		this.minZoom = minZoom;
 		this.maxZoom = maxZoom;
 		this.tileType = tileType;
+		tileUpdate = TileUpdate.None;
 	}
 
 	public int getMaxZoom() {
@@ -41,7 +43,7 @@ public abstract class AbstractMapSource implements MapSource {
 	}
 
 	public TileUpdate getTileUpdate() {
-		return TileUpdate.None;
+		return tileUpdate;
 	}
 
 	public boolean allowFileStore() {

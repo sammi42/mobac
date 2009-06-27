@@ -14,7 +14,7 @@
  ~ Profile saving updated to new atlas structure
  ~ Fullscreen mode is currently unavailable
  + New atlas output format: AndNav - Android Navigation System http://www.andnav.org
- ~ Google Maps, Earth & Mapmaker url updated
+ ~ Google Maps, Earth, Mapmaker, Maps China url updated
  + Atlas download can be paused/resumed interactively  
  + Proxy settings rewritten - now system/Java wide or application settings can be  
     used alternatively to the user defined proxy

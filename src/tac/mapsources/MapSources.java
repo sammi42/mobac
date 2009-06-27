@@ -84,7 +84,7 @@ public class MapSources {
 			if (t.getName().equals(name))
 				return t;
 		}
-		return MAP_SOURCES[0];
+		return null;
 	}
 
 	/**
@@ -152,7 +152,8 @@ public class MapSources {
 	public static class YahooMaps extends AbstractMapSource {
 
 		public YahooMaps() {
-			super("Yahoo Maps", 1, 16, "png");
+			super("Yahoo Maps", 1, 16, "jpg");
+			tileUpdate = TileUpdate.IfModifiedSince;
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

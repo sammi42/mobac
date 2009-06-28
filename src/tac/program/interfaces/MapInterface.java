@@ -21,6 +21,8 @@ public interface MapInterface extends AtlasObject, CapabilityDeletable {
 
 	public LayerInterface getLayer();
 
+	public void setLayer(LayerInterface layer);
+
 	public TileImageParameters getParameters();
 
 	public void setParameters(TileImageParameters p);

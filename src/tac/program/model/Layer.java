@@ -119,6 +119,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public void addMap(MapInterface map) {
 		// TODO: Add name collision check
 		maps.add(map);
+		map.setLayer(this);
 	}
 
 	public MapInterface getMap(int index) {

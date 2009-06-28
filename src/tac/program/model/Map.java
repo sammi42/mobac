@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import javax.swing.tree.TreeNode;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -74,6 +75,11 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 
 	public LayerInterface getLayer() {
 		return layer;
+	}
+
+	@XmlTransient
+	public void setLayer(LayerInterface layer) {
+		this.layer = (Layer) layer;
 	}
 
 	public MapSource getMapSource() {

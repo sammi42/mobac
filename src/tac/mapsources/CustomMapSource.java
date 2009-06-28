@@ -1,22 +1,58 @@
 package tac.mapsources;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+
 /**
- * Custom tile store provider, configurable via constructor.
+ * Custom tile store provider, configurable via settings.xml.
  */
-public class CustomMapSource extends AbstractMapSource {
+@XmlRootElement
+public class CustomMapSource implements MapSource {
 
-	TileUpdate tileUpdate;
-	String url;
+	@XmlElement(nillable = false)
+	private String name = "Custom";
 
-	public CustomMapSource(String name, String url, int minZoom, int maxZoom, String tileType,
-			TileUpdate tileUpdate) {
-		super(name, minZoom, maxZoom, tileType);
-		this.url = url;
-		this.tileUpdate = tileUpdate;
+	@XmlElement
+	private int minZoom = 0;
+
+	@XmlElement
+	private int maxZoom = 0;
+
+	@XmlElement
+	private String tileType = "png";
+
+	@XmlElement
+	private TileUpdate tileUpdate = TileUpdate.None;
+
+	@XmlElement(required = true, nillable = false)
+	private String url = null;
+
+	/**
+	 * Constructor without parameters - required by JAXB
+	 */
+	public CustomMapSource() {
 	}
 
 	public TileUpdate getTileUpdate() {
 		return tileUpdate;
+	}
+
+	public int getMaxZoom() {
+		return maxZoom;
+	}
+
+	public int getMinZoom() {
+		return minZoom;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getTileType() {
+		return tileType;
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -30,4 +66,10 @@ public class CustomMapSource extends AbstractMapSource {
 	public boolean allowFileStore() {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

@@ -14,12 +14,13 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSources;
 import tac.mapsources.Google.GoogleSource;
 import tac.program.UserAgent;
@@ -48,7 +49,7 @@ public class Settings {
 	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
 	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
 
-	private MapSource mapViewMapSource = MapSources.DEFAULT;
+	private String mapViewMapSource = MapSources.DEFAULT.getName();
 
 	private String elementName = "Layer name";
 
@@ -81,6 +82,10 @@ public class Settings {
 	private String customProxyPort = "";
 
 	private Vector<String> disabledMapSources = new Vector<String>();
+
+	@XmlElementWrapper(name = "customMapSources")
+	@XmlElement(name = "customMapSource")
+	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -168,11 +173,12 @@ public class Settings {
 		this.mapviewCenterCoordinate = c;
 	}
 
-	public MapSource getMapviewMapSource() {
+	public String getMapviewMapSource() {
 		return mapViewMapSource;
 	}
 
-	public void setMapviewMapSource(MapSource mapSource) {
+	@XmlElement(nillable = false)
+	public void setMapviewMapSource(String mapSource) {
 		this.mapViewMapSource = mapSource;
 	}
 
@@ -322,7 +328,8 @@ public class Settings {
 		return disabledMapSources;
 	}
 
-	@XmlElement(name="disabledMapSource")
+	@XmlElementWrapper(name = "disabledMapSources")
+	@XmlElement(name = "mapSource")
 	public void setDisabledMapSources(Vector<String> disabledMapSources) {
 		this.disabledMapSources = disabledMapSources;
 	}

@@ -16,13 +16,13 @@ import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
 /**
- * A {@link TileLoader} implementation that loads tiles from OSM via HTTP and
+ * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via HTTP and
  * saves all loaded files in a directory located in the the temporary directory.
  * If a tile is present in this file cache it will not be loaded from OSM again.
  * 

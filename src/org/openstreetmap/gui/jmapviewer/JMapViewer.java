@@ -26,7 +26,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 import tac.utilities.Utilities;
@@ -52,7 +52,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public static final int MAX_ZOOM = 22;
 	public static final int MIN_ZOOM = 0;
 
-	protected TileLoader tileLoader;
+	protected TileLoaderJobCreator tileLoader;
 	protected TileImageCache tileCache;
 	protected MapSource mapSource;
 
@@ -524,11 +524,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		return tileCache;
 	}
 
-	public TileLoader getTileLoader() {
+	public TileLoaderJobCreator getTileLoader() {
 		return tileLoader;
 	}
 
-	public void setTileLoader(TileLoader tileLoader) {
+	public void setTileLoader(TileLoaderJobCreator tileLoader) {
 		this.tileLoader = tileLoader;
 	}
 

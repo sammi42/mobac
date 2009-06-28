@@ -8,7 +8,7 @@ package org.openstreetmap.gui.jmapviewer.interfaces;
  * 
  * @author Jan Peter Stotz
  */
-public interface TileLoader {
+public interface TileLoaderJobCreator {
 
 	/**
 	 * A typical {@link #createTileLoaderJob(int, int, int)} implementation

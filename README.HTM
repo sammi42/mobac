@@ -91,16 +91,59 @@ has to be one of the following values: 2<sup>0</sup>, 2<sup>1</sup>, 2<sup>2</su
 ... 2<sup>21</sup>, 2<sup>22</sup>.</p>
 
 <h2>Details for advanced users</h2>
+<a name="#UpdateMapUrls">
+<h3>Update map urls manually</h3>
 <p>Google often changes the url that is used to access the map
-tiles. Therefore it may happen that Trekbuddy Atlas Creator is unable to
+tiles. Therefore it may happen that TrekBuddy Atlas Creator is unable to
 load tiles from Google and there is no new release that fixes this
 problem. In such a case advanced users can open the file <tt>TrekBuddy_Atlas_Creator.jar</tt>
 with an archive program like WinZip/WinRAR/7Zip... and select the file <tt>tac\mapsources.properties</tt>.
 This text file contains the map url templates for different map sources.
 Each url template contains a specific number of placeholders
-encapsulated by curly brace: <b>{$servernum}</b> for the server number
-(0-3), <b>{$x}</b> and <b>{$y}</b> for the tile coordinate and <b>{$z}</b>
-for the zoom level.</p>
-
+encapsulated by curly brace:
+<ul>
+	<li><b>{$servernum}</b> for the server number (0-3)</li>
+	<li><b>{$x}</b> for the x tile coordinate and</li>
+	<li><b>{$y}</b> for the y tile coordinate and</li>
+	<li><b>{$z}</b> for the zoom level</li>
+</ul>
+</p>
+<h4>Example:</h4>
+<pre>http://mt{$servernum}.google.com/vt/v=w2.97&amp;hl=en&amp;x={$x}&amp;y={$y}&amp;z={$z}</pre>
+<h3>Custom map sources</h3>
+<p>Custom map sources which uses a similar url scheme as
+Google/OpenStreetMap can be added by editing the file <tt>settings.xml</tt>
+with an text editor.<br>
+The following example shows what have to be added for defining two
+custom map sources. The first example defines an additional map Source
+named "Custom OSM Mapnik" which shows map tiles identical to the
+predefined map source "OpenStreetMap Mapnik". The second example does
+the same for the OpenArial map source.</p>
+<pre>
+&lt;settings&gt;
+    &lt;customMapSources&gt;
+        &lt;customMapSource&gt;
+            &lt;name&gt;Custom OSM Mapnik&lt;/name&gt;
+            &lt;minZoom&gt;0&lt;/minZoom&gt;
+            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+            &lt;tileType&gt;png&lt;/tileType&gt;
+            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
+            &lt;url&gt;http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png&lt;/url&gt;
+        &lt;/customMapSource&gt;
+        &lt;customMapSource&gt;
+            &lt;name&gt;Custom OpenArial&lt;/name&gt;
+            &lt;minZoom&gt;0&lt;/minZoom&gt;
+            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+            &lt;tileType&gt;jpg&lt;/tileType&gt;
+            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
+            &lt;url&gt;http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/{$z}/{$x}/{$y}.jpg&lt;/url&gt;
+        &lt;/customMapSource&gt;
+    &lt;/customMapSources&gt;
+    ...
+&lt;/settings&gt;</pre>
+<p>The most important part of this definition is the url. It's
+format is identical to the format described in section <a
+	href="#UpdateMapUrls">Update map urls manually</a> except for the fact
+that the parameter <b>{$servernum}</b> is not supported.</p>
 </body>
 </html>

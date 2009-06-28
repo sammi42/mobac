@@ -8,16 +8,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
- * A {@link TileLoader} implementation that loads tiles from OSM via HTTP.
+ * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via HTTP.
  * 
  * @author Jan Peter Stotz
  */
-public class OsmTileLoader implements TileLoader {
+public class OsmTileLoader implements TileLoaderJobCreator {
 
     /**
      * Holds the used user agent used for HTTP requests. If this field is 

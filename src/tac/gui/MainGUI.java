@@ -334,7 +334,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		// bottom panel
 		JPanel bottomControls = new JPanel(new GridBagLayout());
 		bottomControls.setOpaque(false);
-		//bottomControls.add(fullScreenButton, GBC.std().insets(5, 0, 0, 5));
+		// bottomControls.add(fullScreenButton, GBC.std().insets(5, 0, 0, 5));
 		bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
 		if (fullScreenEnabled) {
 			// atlas name label
@@ -411,8 +411,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		coordinatesPanel.setMinCoordinate(settings.getSelectionMin());
 
 		tileImageParametersPanel.loadSettings();
-		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getMapviewMapSource()
-				.getName()));
+		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getMapviewMapSource()));
 
 		setSize(settings.getWindowDimension());
 		Point windowLocation = settings.getWindowLocation();
@@ -429,7 +428,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		try {
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
-			s.setMapviewMapSource(previewMap.getMapSource());
+			s.setMapviewMapSource(previewMap.getMapSource().getName());
 			s.setElementName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 			s.setSelectionMax(coordinatesPanel.getMaxCoordinate());
@@ -501,7 +500,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private class MapSourceComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			previewMap.setMapSource((MapSource) mapSourceCombo.getSelectedItem());
+			MapSource mapSource = (MapSource) mapSourceCombo.getSelectedItem();
+			if (mapSource == null) {
+				mapSourceCombo.setSelectedIndex(0);
+				mapSource = (MapSource) mapSourceCombo.getSelectedItem();
+			}
+			previewMap.setMapSource(mapSource);
 			zoomSlider.setMinimum(previewMap.getMapSource().getMinZoom());
 			zoomSlider.setMaximum(previewMap.getMapSource().getMaxZoom());
 			updateGridSizeCombo();

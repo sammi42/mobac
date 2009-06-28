@@ -56,9 +56,10 @@ public class MapSources {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
 		if (Settings.getInstance().isDevModeEnabled())
 			mapSources.add(new LocalhostTestSource());
-		for (MapSource ms : MAP_SOURCES) {
+		for (MapSource ms : MAP_SOURCES)
 			mapSources.add(ms);
-		}
+		for (MapSource ms : Settings.getInstance().customMapSources)
+			mapSources.add(ms);
 		return mapSources;
 	}
 
@@ -72,6 +73,8 @@ public class MapSources {
 			if (!disabledMapSources.contains(ms.getName()))
 				mapSources.add(ms);
 		}
+		for (MapSource ms : Settings.getInstance().customMapSources)
+			mapSources.add(ms);
 		return mapSources;
 	}
 
@@ -80,9 +83,13 @@ public class MapSources {
 	}
 
 	public static MapSource getSourceByName(String name) {
-		for (MapSource t : MAP_SOURCES) {
-			if (t.getName().equals(name))
-				return t;
+		for (MapSource ms : MAP_SOURCES) {
+			if (ms.getName().equals(name))
+				return ms;
+		}
+		for (MapSource ms : Settings.getInstance().customMapSources) {
+			if (ms.getName().equals(name))
+				return ms;
 		}
 		return null;
 	}

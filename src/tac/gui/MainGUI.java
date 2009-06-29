@@ -249,6 +249,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		jAtlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
 
 		treeScrollPane.setPreferredSize(new Dimension(100, 100));
+		treeScrollPane.setAutoscrolls(true);
 		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
 		JButton clearAtlas = new JButton("Clear");
 		atlasContentPanel.add(clearAtlas, GBC.std());

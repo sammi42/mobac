@@ -1,5 +1,9 @@
 package tac.gui.atlastree;
 
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.dnd.Autoscroll;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,9 +39,10 @@ import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
 
-public class JAtlasTree extends JTree {
+public class JAtlasTree extends JTree implements Autoscroll {
 
 	private static final long serialVersionUID = 1L;
+	private static final int margin = 12;
 
 	private static final String MSG_ATLAS_VERSION_MISMATCH = ""
 			+ "The loaded atlas belongs to an older version TrekBuddy Atlas Creator. "
@@ -87,6 +92,7 @@ public class JAtlasTree extends JTree {
 		setCellEditor(new NodeEditor(this));
 		setToolTipText("");
 		defaultToolTiptext = "<html>Use context menu of the entries to see all available commands.</html>";
+		setAutoscrolls(true);
 		addMouseListener(new MouseController(this));
 
 		InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -319,6 +325,22 @@ public class JAtlasTree extends JTree {
 			mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
 					.getMaxTileCoordinate(), true);
 		}
+	}
+
+	public void autoscroll(Point cursorLocn) {
+		int realrow = getRowForLocation(cursorLocn.x, cursorLocn.y);
+		Rectangle outer = getBounds();
+		realrow = (cursorLocn.y + outer.y <= margin ? realrow < 1 ? 0 : realrow - 1
+				: realrow < getRowCount() - 1 ? realrow + 1 : realrow);
+		scrollRowToVisible(realrow);
+	}
+
+	public Insets getAutoscrollInsets() {
+		Rectangle outer = getBounds();
+		Rectangle inner = getParent().getBounds();
+		return new Insets(inner.y - outer.y + margin, inner.x - outer.x + margin, outer.height
+				- inner.height - inner.y + outer.y + margin, outer.width - inner.width - inner.x
+				+ outer.x + margin);
 	}
 
 }

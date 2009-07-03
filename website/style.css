@@ -45,15 +45,20 @@ ul#nav {
 }
 #content {
 	padding:45px;
+	line-height: 150%;
 }
 #content h1 {
 	font-size:30px;
+	padding-top:10px;
 	padding-bottom:10px;
 }
 #content h2 {
 	font-size:25px;
 	padding-top:10px;
 	padding-bottom:15px;
+}
+#content p {
+	padding-bottom:10px;
 }
 div.screenshot { 
 	clear:both;
@@ -82,6 +87,10 @@ div.screenshot img {
 #section {
 	height:189px;
 	padding-bottom:20px;
+}
+#section p{
+	padding-top:10px;
+	padding-left:20px;
 }
 #section ul {
 	padding-left:40px;

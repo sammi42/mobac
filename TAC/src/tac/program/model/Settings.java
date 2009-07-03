@@ -87,6 +87,9 @@ public class Settings {
 	@XmlElement(name = "customMapSource")
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
+	@XmlElement
+	public String mapsourcesEtag;
+	
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		windowDimension.width = (int) (0.9f * dScreen.width);

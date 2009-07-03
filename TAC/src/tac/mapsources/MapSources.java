@@ -1,10 +1,12 @@
 package tac.mapsources;
 
-import java.io.InputStream;
-import java.util.Map;
+import java.io.File;
+import java.net.URL;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
@@ -230,24 +232,59 @@ public class MapSources {
 	 * Merges the mapsources property into the system property bundle
 	 */
 	public static void loadMapSourceProperties() {
-		InputStream propIn = Main.class.getResourceAsStream("mapsources.properties");
 		try {
-			Properties systemProps = System.getProperties();
-			Properties props = new Properties();
-			props.load(propIn);
-			for (Map.Entry<Object, Object> entry : props.entrySet()) {
-				String key = (String) entry.getKey();
-				Object o = systemProps.getProperty(key);
-				if (o == null) {
-					String value = (String) entry.getValue();
-					systemProps.setProperty(key, value);
-				}
+			URL mapResUrl = Main.class.getResource("mapsources.properties");
+			File mapFile = new File(Settings.getUserDir(), "mapsources.properties");
+			Properties resProps = new Properties();
+			Properties fileProps = new Properties();
+			Utilities.loadProperties(resProps, mapResUrl);
+			Properties selectedProps;
+			if (mapFile.isFile()) {
+				Utilities.loadProperties(fileProps, mapFile);
+				selectedProps = getNewestProperties(resProps, fileProps);
+			} else {
+				selectedProps = resProps;
 			}
+			if (selectedProps == resProps)
+				log.debug("Used mapsources.properties: resource");
+			else
+				log.debug("Used mapsources.properties: file");
+			Properties systemProps = System.getProperties();
+			systemProps.putAll(selectedProps);
+
 		} catch (Exception e) {
 			log.error("Error while reading mapsources.properties: ", e);
-		} finally {
-			Utilities.closeStream(propIn);
 		}
 	}
 
+	private static Properties getNewestProperties(Properties resProps, Properties fileProps) {
+		String revRes = resProps.getProperty("mapsources.Rev");
+		String revFile = fileProps.getProperty("mapsources.Rev");
+
+		if (revFile == null)
+			return resProps;
+
+		final Pattern SVN_REV = Pattern.compile("\\$Rev\\:\\s*(\\d*)\\s*\\$");
+
+		Matcher m = SVN_REV.matcher(revRes);
+		if (!m.matches())
+			throw new RuntimeException(
+					"Revision information in mapsources.properties (resoure) missing");
+		revRes = m.group(1);
+
+		m = SVN_REV.matcher(revFile);
+		if (!m.matches()) {
+			log.error("External mapsources.properties file does not contain a valid revision");
+			return resProps;
+		}
+		revFile = m.group(1);
+
+		int revisionFile = Integer.parseInt(revFile);
+		int revisionRes = Integer.parseInt(revRes);
+
+		if (revisionFile > revisionRes)
+			return fileProps;
+		else
+			return resProps;
+	}
 }

@@ -41,7 +41,7 @@ public class MapSources {
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
 				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
-				new OsmHikingMap(), new OpenArialMap(), new MicrosoftMaps(),
+				new OsmHikingMap(), /* new OpenArialMap(), */new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new Cykloatlas(), new TerraserverUSA(),
 				new UmpWawPl(), new DoCeluPL(),

@@ -23,7 +23,8 @@
  + Map sources can now be disabled which hides them from the list
  ~ Max zoom for Cycloatlas changed from 14 to 15
  + Merging different layers via drag & drop
- + Custom map sources can be defined via settings.xml (see README.HTM) 
+ + Custom map sources can be defined via settings.xml (see README.HTM)
+ ~ Removed OpenArialMap map source 
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

@@ -1,4 +1,4 @@
-package tac.mapsources;
+package tac.mapsources.impl;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;

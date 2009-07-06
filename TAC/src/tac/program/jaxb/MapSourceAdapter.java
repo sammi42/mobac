@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.MapSources;
+import tac.mapsources.MapSourcesManager;
 
 public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 
@@ -15,7 +15,7 @@ public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 
 	@Override
 	public MapSource unmarshal(String name) throws Exception {
-		return MapSources.getSourceByName(name);
+		return MapSourcesManager.getSourceByName(name);
 	}
 
 }

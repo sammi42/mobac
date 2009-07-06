@@ -21,8 +21,8 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 
 import tac.mapsources.CustomMapSource;
-import tac.mapsources.MapSources;
-import tac.mapsources.Google.GoogleSource;
+import tac.mapsources.MapSourcesManager;
+import tac.mapsources.impl.Google.GoogleSource;
 import tac.program.UserAgent;
 import tac.utilities.Utilities;
 
@@ -49,7 +49,7 @@ public class Settings {
 	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
 	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
 
-	private String mapViewMapSource = MapSources.DEFAULT.getName();
+	private String mapViewMapSource = MapSourcesManager.DEFAULT.getName();
 
 	private String elementName = "Layer name";
 

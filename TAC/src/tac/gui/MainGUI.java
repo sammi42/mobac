@@ -50,7 +50,7 @@ import tac.gui.mapview.PreviewMap;
 import tac.gui.panels.JCoordinatesPanel;
 import tac.gui.panels.JProfilesPanel;
 import tac.gui.panels.JTileImageParametersPanel;
-import tac.mapsources.MapSources;
+import tac.mapsources.MapSourcesManager;
 import tac.program.AtlasThread;
 import tac.program.MapSelection;
 import tac.program.SelectedZoomLevels;
@@ -169,7 +169,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setToolTipText("Projects a grid of the specified zoom level over the map");
 
 		// map source combo
-		mapSourceCombo = new JComboBox(MapSources.getEnabledMapSources());
+		mapSourceCombo = new JComboBox(MapSourcesManager.getEnabledMapSources());
 		mapSourceCombo.setMaximumRowCount(20);
 		mapSourceCombo.addActionListener(new MapSourceComboListener());
 		mapSourceCombo.setToolTipText("Select map source");
@@ -396,7 +396,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	public void updateMapSourcesList() {
 		MapSource ms = (MapSource) mapSourceCombo.getSelectedItem();
-		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSources.getEnabledMapSources()));
+		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSourcesManager.getEnabledMapSources()));
 		mapSourceCombo.setSelectedItem(ms);
 		MapSource ms2 = (MapSource) mapSourceCombo.getSelectedItem();
 		if (!ms.equals(ms2))
@@ -412,7 +412,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		coordinatesPanel.setMinCoordinate(settings.getSelectionMin());
 
 		tileImageParametersPanel.loadSettings();
-		mapSourceCombo.setSelectedItem(MapSources.getSourceByName(settings.getMapviewMapSource()));
+		mapSourceCombo.setSelectedItem(MapSourcesManager.getSourceByName(settings
+				.getMapviewMapSource()));
 
 		setSize(settings.getWindowDimension());
 		Point windowLocation = settings.getWindowLocation();
@@ -453,6 +454,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	public String getUserText() {
 		return atlasNameTextField.getText();
+	}
+
+	public void refreshPreviewMap() {
+		previewMap.refreshMap();
 	}
 
 	private class ZoomSliderListener implements ChangeListener {

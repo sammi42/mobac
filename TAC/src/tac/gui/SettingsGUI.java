@@ -29,6 +29,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -42,9 +43,10 @@ import javax.swing.border.EmptyBorder;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.MapSourcesUpdateException;
 import tac.gui.components.JMapSizeCombo;
 import tac.gui.components.JObjectCheckBox;
-import tac.mapsources.MapSources;
+import tac.mapsources.MapSourcesManager;
 import tac.program.TileStore;
 import tac.program.TileStore.TileStoreInfo;
 import tac.program.model.ProxyType;
@@ -60,6 +62,7 @@ public class SettingsGUI extends JDialog {
 
 	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
 
+	private JButton mapSourcesOnlineUpdate;
 	private JComboBox googleLang;
 
 	private JPanel tileStoreInfoPanel;
@@ -138,7 +141,14 @@ public class SettingsGUI extends JDialog {
 	private void addMapSourceSettingsPanel() {
 
 		JPanel tab = createNewTab("Map sources");
-		tab.setLayout(new BorderLayout());
+		tab.setLayout(new GridBagLayout());
+
+		JPanel updatePanel = new JPanel(new GridBagLayout());
+		updatePanel.setBorder(BorderFactory.createTitledBorder("Mapsources online update"));
+
+		mapSourcesOnlineUpdate = new JButton("Perform online update");
+		mapSourcesOnlineUpdate.addActionListener(new MapSourcesOnlineUpdateAction());
+		updatePanel.add(mapSourcesOnlineUpdate, GBC.std());
 
 		JPanel googlePanel = new JPanel(new GridBagLayout());
 		googlePanel.setBorder(BorderFactory.createTitledBorder("Google Maps"));
@@ -159,7 +169,7 @@ public class SettingsGUI extends JDialog {
 				.getDisabledMapSources());
 
 		mapSourceCbList.clear();
-		for (MapSource ms : MapSources.getAllMapSources()) {
+		for (MapSource ms : MapSourcesManager.getAllMapSources()) {
 			JMapSourceCB checkBox = new JMapSourceCB(ms.toString());
 			checkBox.setObject(ms);
 			checkBox.setSelected(!disabledMapSources.contains(ms.getName()));
@@ -176,8 +186,9 @@ public class SettingsGUI extends JDialog {
 		mapSourcesOuterPanel.setBorder(BorderFactory.createTitledBorder("Enabled Map Sources"));
 		mapSourcesOuterPanel.setPreferredSize(new Dimension(200, 200));
 
-		tab.add(googlePanel, BorderLayout.NORTH);
-		tab.add(mapSourcesOuterPanel, BorderLayout.CENTER);
+		tab.add(updatePanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(googlePanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(mapSourcesOuterPanel, GBC.eol().fill());
 	}
 
 	private void addTileStorePanel() {
@@ -234,7 +245,7 @@ public class SettingsGUI extends JDialog {
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-		for (MapSource ts : MapSources.getAllMapSources()) {
+		for (MapSource ts : MapSourcesManager.getAllMapSources()) {
 			if (!tileStore.storeExists(ts))
 				continue;
 			String mapTileCountText = "?";
@@ -443,7 +454,7 @@ public class SettingsGUI extends JDialog {
 		s.setDisabledMapSources(disabledMaps);
 
 		MainGUI.getMainGUI().updateMapSourcesList();
-		
+
 		if (googleLang.getSelectedIndex() < 0) {
 			s.setGoogleLanguage(googleLang.getEditor().getItem().toString());
 		} else {
@@ -501,6 +512,21 @@ public class SettingsGUI extends JDialog {
 				t.interrupt();
 		}
 
+	}
+
+	private class MapSourcesOnlineUpdateAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent event) {
+			try {
+				boolean result = MapSourcesManager.mapsourcesOnlineUpdate();
+				String msg = (result) ? "Online update successfull" : "No new update avilable";
+				JOptionPane.showMessageDialog(SettingsGUI.this, msg);
+				MainGUI.getMainGUI().refreshPreviewMap();
+			} catch (MapSourcesUpdateException e) {
+				JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(),
+						"Mapsources online update failed", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	private class ClearTileCacheAction implements ActionListener {

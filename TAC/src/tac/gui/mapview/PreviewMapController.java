@@ -340,7 +340,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		private static final long serialVersionUID = -7235666079485033823L;
 
 		public void actionPerformed(ActionEvent e) {
-			((PreviewMap) map).RefreshMap();
+			((PreviewMap) map).refreshMap();
 		}
 	}
 

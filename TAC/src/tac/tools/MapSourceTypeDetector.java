@@ -15,8 +15,8 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.MapSources;
-import tac.mapsources.MapSources.OsmHikingMap;
+import tac.mapsources.MapSourcesManager;
+import tac.mapsources.impl.MiscMapSources.OsmHikingMap;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -36,7 +36,7 @@ public class MapSourceTypeDetector {
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
-		MapSources.loadMapSourceProperties();
+		MapSourcesManager.loadMapSourceProperties();
 		// testMapSource("Google Maps", C_BERLIN);
 		// testMapSource("Yahoo Maps", C_BERLIN);
 		// testMapSource("Google Earth", C_BERLIN);
@@ -58,7 +58,7 @@ public class MapSourceTypeDetector {
 	}
 
 	public static void testMapSource(String mapSourceName, EastNorthCoordinate coordinate) {
-		MapSource ms = MapSources.getSourceByName(mapSourceName);
+		MapSource ms = MapSourcesManager.getSourceByName(mapSourceName);
 		if (ms != null)
 			testMapSource(ms, coordinate);
 	}

@@ -1,4 +1,6 @@
-package tac.mapsources;
+package tac.mapsources.impl;
+
+import tac.mapsources.AbstractMapSource;
 
 /**
  * Map sources that do not cover the whole world

@@ -23,7 +23,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.MapSources;
+import tac.mapsources.MapSourcesManager;
 import tac.program.MapSelection;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Settings;
@@ -52,7 +52,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
 		new DefaultMapController(this);
-		mapSource = MapSources.DEFAULT;
+		mapSource = MapSourcesManager.DEFAULT;
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
 		cacheTileLoader.setCacheMaxFileAge(OsmFileCacheTileLoader.FILE_AGE_ONE_WEEK);
@@ -376,7 +376,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		}
 	}
 
-	public void RefreshMap() {
+	public void refreshMap() {
 		((MemoryTileCache) tileCache).clear();
 		repaint();
 	}

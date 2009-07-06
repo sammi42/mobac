@@ -25,6 +25,7 @@
  + Merging different layers via drag & drop
  + Custom map sources can be defined via settings.xml (see README.HTM)
  ~ Removed OpenArialMap map source 
+ + Mapsources manual online update via settings dialog 
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

@@ -1,26 +1,33 @@
-package tac.mapsources;
+package tac.mapsources.impl;
 
 import org.apache.log4j.Logger;
 
+import tac.mapsources.AbstractMapSource;
+import tac.mapsources.UpdatableMapSource;
+
 public class Google {
 
-	private static final Logger log = Logger.getLogger(MapSources.class);
+	private static final Logger log = Logger.getLogger(Google.class);
 
-	public static abstract class GoogleSource extends AbstractMapSource {
+	public static abstract class GoogleSource extends AbstractMapSource implements
+			UpdatableMapSource {
 
 		private int serverNum = 0;
 
 		public static String LANG = "en";
 
+		public String serverUrl;
+
 		public GoogleSource(String name, int minZoom, int maxZoom, String tileType) {
 			super(name, minZoom, maxZoom, tileType);
+			update();
 		}
 
-		protected String loadUrl() {
+		public void update() {
 			String url = System.getProperty(this.getClass().getSimpleName() + ".url");
 			if (url == null)
 				log.error("Unable to load url for " + this.getClass().getSimpleName());
-			return url;
+			serverUrl = url;
 		}
 
 		protected int getNextServerNum() {
@@ -29,7 +36,7 @@ public class Google {
 			return x;
 		}
 
-		public String getTileUrl(final String serverUrl, int zoom, int x, int y) {
+		public String getTileUrl(int zoom, int x, int y) {
 			String tmp = serverUrl;
 			tmp = tmp.replace("{$servernum}", Integer.toString(getNextServerNum()));
 			tmp = tmp.replace("{$x}", Integer.toString(x));
@@ -37,24 +44,17 @@ public class Google {
 			tmp = tmp.replace("{$z}", Integer.toString(zoom));
 			return tmp;
 		}
+		
 	}
 
 	public static class GoogleMaps extends GoogleSource {
 
-		public static String SERVER_URL;
-
 		public GoogleMaps() {
 			super("Google Maps", 0, 17, "png");
-			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
-		}
-
-		public String getTileUrl(int zoom, int x, int y) {
-			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
-			return tileUrl;
 		}
 
 	}
@@ -64,41 +64,26 @@ public class Google {
 	 */
 	public static class GoogleMapMaker extends GoogleSource {
 
-		public static String SERVER_URL;
-
 		public GoogleMapMaker() {
 			super("Google Map Maker", 1, 17, "png");
-			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
-		}
-
-		public String getTileUrl(int zoom, int x, int y) {
-			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
-			return tileUrl;
 		}
 
 	}
 
 	public static class GoogleTerrain extends GoogleSource {
 
-		public static String SERVER_URL;
-
 		public GoogleTerrain() {
 			super("Google Terrain", 0, 15, "jpg");
-			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
 		}
 
-		public String getTileUrl(int zoom, int x, int y) {
-			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
-			return tileUrl;
-		}
 
 	}
 
@@ -107,20 +92,12 @@ public class Google {
 	 */
 	public static class GoogleMapsChina extends GoogleSource {
 
-		public static String SERVER_URL;
-
 		public GoogleMapsChina() {
 			super("Google Maps China", 0, 19, "png");
-			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
-		}
-
-		public String getTileUrl(int zoom, int x, int y) {
-			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
-			return tileUrl;
 		}
 
 		@Override
@@ -132,41 +109,31 @@ public class Google {
 
 	public static class GoogleEarth extends GoogleSource {
 
-		public static String SERVER_URL;
-
 		public GoogleEarth() {
 			super("Google Earth", 0, 20, "jpg");
-			SERVER_URL = loadUrl();
 		}
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
-		}
-
-		public String getTileUrl(int zoom, int x, int y) {
-			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
-			return tileUrl;
 		}
 
 	}
 
 	public static class GoogleEarthMapsOverlay extends GoogleSource {
 
-		public static String SERVER_URL;
-
 		public GoogleEarthMapsOverlay() {
 			super("Google Earth Maps Overlay", 0, 20, "png");
-			SERVER_URL = "http://mt{$servernum}.google.com/mt/v=w2t.92&hl=en&x={$x}&y={$y}&z={$z}";
+		}
+		
+		@Override
+		public void update() {
+			serverUrl = "http://mt{$servernum}.google.com/mt/v=w2t.92&hl=en&x={$x}&y={$y}&z={$z}";
 		}
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
 		}
 
-		public String getTileUrl(int zoom, int x, int y) {
-			String tileUrl = super.getTileUrl(SERVER_URL, zoom, x, y);
-			return tileUrl;
-		}
 
 	}
 

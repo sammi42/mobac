@@ -1,4 +1,6 @@
-package tac.mapsources;
+package tac.mapsources.impl;
+
+import tac.mapsources.AbstractMapSource;
 
 public class LocalhostTestSource extends AbstractMapSource {
 

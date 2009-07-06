@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import tac.Main;
-import tac.mapsources.Google;
+import tac.mapsources.impl.Google;
 import tac.program.model.Atlas;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Layer;

@@ -46,6 +46,8 @@ public class MapSourcesManager {
 
 	private static final Logger log = Logger.getLogger(MapSourcesManager.class);
 
+	public static final String MAPSOURCES_REV_KEY = "mapsources.Rev";
+
 	private static final String MAPSOURCES_UPDATE_URL = "http://trekbuddyatlasc.sourceforge.net/"
 			+ "mapsources-update/v1/mapsources.properties";
 
@@ -144,8 +146,8 @@ public class MapSourcesManager {
 		}
 	}
 
-	private static int getMapSourcesRev(Properties p) {
-		String revS = p.getProperty("mapsources.Rev");
+	public static int getMapSourcesRev(Properties p) {
+		String revS = p.getProperty(MAPSOURCES_REV_KEY);
 		if (revS == null)
 			return -1;
 		return parseMapSourcesRev(revS);
@@ -201,7 +203,7 @@ public class MapSourcesManager {
 			Properties onlineProps = new Properties();
 			onlineProps.load(new ByteArrayInputStream(data));
 			int onlineRev = getMapSourcesRev(onlineProps);
-			int currentRev = parseMapSourcesRev(System.getProperty("mapsources.Rev"));
+			int currentRev = parseMapSourcesRev(System.getProperty(MAPSOURCES_REV_KEY));
 			if (onlineRev > currentRev) {
 				System.getProperties().putAll(onlineProps);
 				FileOutputStream mapFs = null;

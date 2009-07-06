@@ -24,6 +24,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.apache.log4j.Logger;
 
+import tac.mapsources.MapSourcesManager;
 import tac.program.TACInfo;
 
 public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -87,6 +88,8 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 				sb.append("\nDistribution name: " + dist);
 
 			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.version") + ")");
+			sb.append("\nMapsources rev: "
+					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
 
 			StringWriter stack = new StringWriter();
 			e.printStackTrace(new PrintWriter(stack));

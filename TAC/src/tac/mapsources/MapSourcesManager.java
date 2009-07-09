@@ -3,10 +3,14 @@ package tac.mapsources;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -47,6 +51,24 @@ public class MapSourcesManager {
 	private static final Logger log = Logger.getLogger(MapSourcesManager.class);
 
 	public static final String MAPSOURCES_REV_KEY = "mapsources.Rev";
+	public static final String MAPSOURCES_DATE_KEY = "mapsources.Date";
+
+	/**
+	 * Extracts the revision number from the Subversion keyword entry
+	 * rev/revision
+	 */
+	static final Pattern SVN_REV = Pattern.compile("\\$Rev\\:\\s*(\\d*)\\s*\\$");
+
+	/**
+	 * Extracts the important part of the Subversion keyword entry
+	 * Date/LastChangedDate so that it can be parsed by {@link #SVN_DATE_FORMAT}
+	 */
+	static final Pattern SVN_DATE = Pattern
+			.compile("\\$Date\\:\\s*([\\d\\s:\\-\\+]*) \\(.*\\)\\s*\\$");
+	/**
+	 * Date format for parsing the Subversion date keyword content
+	 */
+	static final SimpleDateFormat SVN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
 	private static final String MAPSOURCES_UPDATE_URL = "http://trekbuddyatlasc.sourceforge.net/"
 			+ "mapsources-update/v1/mapsources.properties";
@@ -156,12 +178,34 @@ public class MapSourcesManager {
 	private static int parseMapSourcesRev(String s) {
 		if (s == null)
 			return -1;
-		final Pattern SVN_REV = Pattern.compile("\\$Rev\\:\\s*(\\d*)\\s*\\$");
 		Matcher m = SVN_REV.matcher(s);
 		if (!m.matches())
 			return -1;
 		s = m.group(1);
 		return Integer.parseInt(s);
+	}
+
+	public static Date getMapSourcesDate(Properties p) {
+		String revS = p.getProperty(MAPSOURCES_DATE_KEY);
+		if (revS == null)
+			return null;
+		return parseMapSourcesDate(revS);
+	}
+
+	private static Date parseMapSourcesDate(String s) {
+		if (s == null)
+			return null;
+		Matcher m = SVN_DATE.matcher(s);
+		if (!m.matches())
+			return null;
+		String part = m.group(1);
+		System.out.println(s + "\n" + part);
+		try {
+			return SVN_DATE_FORMAT.parse(part);
+		} catch (ParseException e) {
+			log.error("", e);
+			return null;
+		}
 	}
 
 	/**
@@ -230,8 +274,12 @@ public class MapSourcesManager {
 	public static void main(String[] args) {
 		try {
 			Logging.configureLogging();
-			System.out.println(mapsourcesOnlineUpdate());
-		} catch (MapSourcesUpdateException e) {
+			File mapFile = new File(Settings.getUserDir(), "mapsources.properties");
+			Properties p = new Properties();
+			p.load(new FileInputStream(mapFile));
+			System.out.println(getMapSourcesDate(p));
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

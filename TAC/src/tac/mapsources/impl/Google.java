@@ -8,13 +8,12 @@ import tac.mapsources.UpdatableMapSource;
 public class Google {
 
 	private static final Logger log = Logger.getLogger(Google.class);
+	public static String LANG = "en";
 
 	public static abstract class GoogleSource extends AbstractMapSource implements
 			UpdatableMapSource {
 
 		private int serverNum = 0;
-
-		public static String LANG = "en";
 
 		public String serverUrl;
 
@@ -39,12 +38,13 @@ public class Google {
 		public String getTileUrl(int zoom, int x, int y) {
 			String tmp = serverUrl;
 			tmp = tmp.replace("{$servernum}", Integer.toString(getNextServerNum()));
+			tmp = tmp.replace("{$lang}", Google.LANG);
 			tmp = tmp.replace("{$x}", Integer.toString(x));
 			tmp = tmp.replace("{$y}", Integer.toString(y));
 			tmp = tmp.replace("{$z}", Integer.toString(zoom));
 			return tmp;
 		}
-		
+
 	}
 
 	public static class GoogleMaps extends GoogleSource {
@@ -83,7 +83,6 @@ public class Google {
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
 		}
-
 
 	}
 
@@ -124,7 +123,7 @@ public class Google {
 		public GoogleEarthMapsOverlay() {
 			super("Google Earth Maps Overlay", 0, 20, "png");
 		}
-		
+
 		@Override
 		public void update() {
 			serverUrl = "http://mt{$servernum}.google.com/mt/v=w2t.92&hl=en&x={$x}&y={$y}&z={$z}";
@@ -133,7 +132,6 @@ public class Google {
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.IfModifiedSince;
 		}
-
 
 	}
 

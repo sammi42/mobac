@@ -118,7 +118,7 @@ public class GoogleUrlUpdater {
 						imgUrl = imgUrl.replaceAll("\\\\x26", "&");
 						imgUrl = imgUrl.replaceAll("\\\\x3d", "=");
 
-						// System.out.println(imgUrl);
+						//System.out.println(imgUrl);
 
 						URL tileUrl = new URL(imgUrl);
 
@@ -129,6 +129,7 @@ public class GoogleUrlUpdater {
 						path = path.replaceFirst("x=\\d+", "x={\\$x}");
 						path = path.replaceFirst("y=\\d+", "y={\\$y}");
 						path = path.replaceFirst("z=\\d+", "z={\\$z}");
+						path = path.replaceFirst("hl=[^&]+", "hl={\\$lang}");
 						path = path.replaceFirst("&s=\\w*", "");
 
 						if (path.equalsIgnoreCase(tileUrl.getPath()))

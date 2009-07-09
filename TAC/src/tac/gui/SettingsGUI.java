@@ -13,7 +13,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -144,7 +146,7 @@ public class SettingsGUI extends JDialog {
 		tab.setLayout(new GridBagLayout());
 
 		JPanel updatePanel = new JPanel(new GridBagLayout());
-		updatePanel.setBorder(BorderFactory.createTitledBorder("Mapsources online update"));
+		updatePanel.setBorder(BorderFactory.createTitledBorder("Map sources online update"));
 
 		mapSourcesOnlineUpdate = new JButton("Perform online update");
 		mapSourcesOnlineUpdate.addActionListener(new MapSourcesOnlineUpdateAction());
@@ -153,7 +155,7 @@ public class SettingsGUI extends JDialog {
 		JPanel googlePanel = new JPanel(new GridBagLayout());
 		googlePanel.setBorder(BorderFactory.createTitledBorder("Google Maps"));
 
-		String[] languages = new String[] { "en", "de" };
+		String[] languages = new String[] { "en", "de", "zh-CN" };
 		googleLang = new JComboBox(languages);
 		googleLang.setEditable(true);
 
@@ -520,6 +522,9 @@ public class SettingsGUI extends JDialog {
 			try {
 				boolean result = MapSourcesManager.mapsourcesOnlineUpdate();
 				String msg = (result) ? "Online update successfull" : "No new update avilable";
+				DateFormat df = DateFormat.getDateTimeInstance();
+				Date date = MapSourcesManager.getMapSourcesDate(System.getProperties());
+				msg += "\nCurrent map source date: " + df.format(date);
 				JOptionPane.showMessageDialog(SettingsGUI.this, msg);
 				MainGUI.getMainGUI().refreshPreviewMap();
 			} catch (MapSourcesUpdateException e) {

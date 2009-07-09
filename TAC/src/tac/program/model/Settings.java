@@ -22,7 +22,7 @@ import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 
 import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.Google.GoogleSource;
+import tac.mapsources.impl.Google;
 import tac.program.UserAgent;
 import tac.utilities.Utilities;
 
@@ -232,7 +232,7 @@ public class Settings {
 
 	public void setGoogleLanguage(String googleLanguage) {
 		this.googleLanguage = googleLanguage;
-		GoogleSource.LANG = googleLanguage;
+		Google.LANG = googleLanguage;
 	}
 
 	public int getConnectionTimeout() {

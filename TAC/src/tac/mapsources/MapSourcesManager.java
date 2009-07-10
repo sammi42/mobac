@@ -244,6 +244,8 @@ public class MapSourcesManager {
 			byte[] data = new byte[conn.getContentLength()];
 			in.readFully(data);
 			in.close();
+			conn.disconnect(); // We don't need a connection to this server in
+								// near future
 			Properties onlineProps = new Properties();
 			onlineProps.load(new ByteArrayInputStream(data));
 			int onlineRev = getMapSourcesRev(onlineProps);

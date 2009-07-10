@@ -27,6 +27,8 @@ import tac.utilities.MyMath;
 public class MapCreatorCustom extends MapCreator {
 
 	private TileImageParameters param;
+	private int realWidth;
+	private int realHeight;
 
 	public MapCreatorCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir,
 			TileImageParameters parameters) {
@@ -61,16 +63,18 @@ public class MapCreatorCustom extends MapCreator {
 		int mergedHeight = yEnd - yStart;
 
 		// Reduce tile size of overall map height/width is smaller that one tile
-		if (param.width > mergedWidth)
-			param.width = mergedWidth;
-		if (param.height > mergedHeight)
-			param.height = mergedHeight;
+		realWidth = param.getWidth();
+		realHeight = param.getHeight();
+		if (realWidth > mergedWidth)
+			realWidth = mergedWidth;
+		if (realHeight > mergedHeight)
+			realHeight = mergedHeight;
 
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {
 			ap = ((AtlasThread) t).getAtlasProgress();
-			int customTileCount = MyMath.divCeil(mergedWidth, param.width)
-					* MyMath.divCeil(mergedHeight, param.height);
+			int customTileCount = MyMath.divCeil(mergedWidth, realWidth)
+					* MyMath.divCeil(mergedHeight, realHeight);
 			ap.initMapCreation(customTileCount);
 		}
 
@@ -78,7 +82,7 @@ public class MapCreatorCustom extends MapCreator {
 		int xAbsPos = xStart;
 		int yAbsPos = yStart;
 
-		log.trace("tile size: " + param.width + " * " + param.height);
+		log.trace("tile size: " + realWidth + " * " + realHeight);
 		log.trace("X: from " + xStart + " to " + xEnd);
 		log.trace("Y: from " + yStart + " to " + yEnd);
 
@@ -86,7 +90,7 @@ public class MapCreatorCustom extends MapCreator {
 		// cache of ImageIO. This will speed up the creation process a bit
 		ImageIO.setUseCache(false);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
-		TileImageDataWriter tileImageDataWriter = param.format.getDataWriter();
+		TileImageDataWriter tileImageDataWriter = param.getFormat().getDataWriter();
 		tileImageDataWriter.initialize();
 		try {
 
@@ -99,7 +103,7 @@ public class MapCreatorCustom extends MapCreator {
 						throw new InterruptedException();
 					if (ap != null)
 						ap.incMapCreationProgress();
-					BufferedImage tileImage = new BufferedImage(param.width, param.height,
+					BufferedImage tileImage = new BufferedImage(realWidth, realHeight,
 							BufferedImage.TYPE_3BYTE_BGR);
 					buf.reset();
 					try {
@@ -115,11 +119,11 @@ public class MapCreatorCustom extends MapCreator {
 						log.error("Error writing tile image: ", e);
 					}
 
-					xRelPos += param.width;
-					xAbsPos += param.width;
+					xRelPos += realWidth;
+					xAbsPos += realWidth;
 				}
-				yRelPos += param.height;
-				yAbsPos += param.height;
+				yRelPos += realHeight;
+				yAbsPos += realHeight;
 			}
 		} finally {
 			tileImageDataWriter.dispose();
@@ -139,10 +143,10 @@ public class MapCreatorCustom extends MapCreator {
 		int xTile = xAbsPos / Tile.SIZE;
 		int xTileOffset = -(xAbsPos % Tile.SIZE);
 
-		for (int x = xTileOffset; x < param.width; x += Tile.SIZE) {
+		for (int x = xTileOffset; x < realWidth; x += Tile.SIZE) {
 			int yTile = yAbsPos / Tile.SIZE;
 			int yTileOffset = -(yAbsPos % Tile.SIZE);
-			for (int y = yTileOffset; y < param.height; y += Tile.SIZE) {
+			for (int y = yTileOffset; y < realHeight; y += Tile.SIZE) {
 				try {
 					BufferedImage orgTileImage = loadOriginalMapTile(xTile, yTile);
 					if (orgTileImage != null)

@@ -77,7 +77,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		if (parameters == null)
 			tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
 		else
-			tileDimension = new Dimension(parameters.width, parameters.height);
+			tileDimension = parameters.getDimension();
 		// We adapt the max map size to the tile size so that we do
 		// not get ugly cutted/incomplete tiles at the borders
 		Dimension maxMapDimension = new Dimension(maxMapSize, maxMapSize);
@@ -220,6 +220,15 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 
 	public void deleteMap(Map map) {
 		maps.remove(map);
+	}
+
+	public LayerInterface deepClone(AtlasInterface atlas) {
+		Layer layer = new Layer();
+		layer.atlasInterface = atlas;
+		layer.name = name;
+		for (MapInterface map : maps)
+			layer.maps.add(map.deepClone(layer));
+		return layer;
 	}
 
 }

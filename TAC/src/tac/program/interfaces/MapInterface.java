@@ -29,4 +29,5 @@ public interface MapInterface extends AtlasObject, CapabilityDeletable {
 
 	public int calculateTilesToDownload();
 
+	public MapInterface deepClone(LayerInterface newLayer);
 }

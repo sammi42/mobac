@@ -70,7 +70,7 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		if (parameters == null)
 			tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
 		else
-			tileDimension = new Dimension(parameters.width, parameters.height);
+			tileDimension = parameters.getDimension();
 	}
 
 	public LayerInterface getLayer() {
@@ -134,8 +134,8 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		sw.write("Map size: " + (maxTileCoordinate.x - minTileCoordinate.x + 1) + "x"
 				+ (maxTileCoordinate.y - minTileCoordinate.y + 1) + " pixel<br>");
 		if (parameters != null) {
-			sw.write("Tile size: " + parameters.width + "x" + parameters.height + "<br>");
-			sw.write("Tile format: " + parameters.format + "<br>");
+			sw.write("Tile size: " + parameters.getWidth() + "x" + parameters.getHeight() + "<br>");
+			sw.write("Tile format: " + parameters.getFormat() + "<br>");
 		} else
 			sw.write("Tile size: 256x256 (no processing)<br>");
 		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
@@ -212,6 +212,26 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 				result = true;
 			}
 		return result;
+	}
+
+	public MapInterface deepClone(LayerInterface newLayer) {
+		Map map = new Map();
+		try {
+			map.layer = (Layer) newLayer;
+			map.mapSource = mapSource;
+			map.maxTileCoordinate = (Point) maxTileCoordinate.clone();
+			map.minTileCoordinate = (Point) minTileCoordinate.clone();
+			map.name = name;
+			if (map.parameters != null)
+				map.parameters = (TileImageParameters) parameters.clone();
+			else
+				map.parameters = null;
+			map.tileDimension = (Dimension) tileDimension.clone();
+			map.zoom = zoom;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+		return map;
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {

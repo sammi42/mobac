@@ -2,6 +2,7 @@ package tac.gui;
 
 import static tac.utilities.Utilities.fmt;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -13,7 +14,6 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -52,7 +52,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JProgressBar mapDownloadProgressBar;
 	private JProgressBar mapCreationProgressBar;
 
-	private JPanel background;
+	private Container background;
 
 	private long initialTotalTime;
 	private long initialMapDownloadTime;
@@ -115,7 +115,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private static String TEXT_PERCENT = "Percent done: %d%%";
 
 	public AtlasProgress(AtlasThread atlasThread) {
-		super("Atlas download in progress");
+		super("Atlas creation in progress");
 		this.atlasThread = atlasThread;
 		setLayout(new GridBagLayout());
 		updateTask = new UpdateTask();
@@ -129,6 +129,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		// The layout is now initialized - we disable it because we don't want
 		// want to the labels to jump around if the content changes.
 		background.setLayout(null);
+		setResizable(false);
 
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension dContent = getSize();
@@ -143,7 +144,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private void createComponents() {
 		background = new JPanel(new GridBagLayout());
 
-		windowTitle = new JLabel("<html><h2>ATLAS CREATION IN PROGRESS...</h2></html>");
+		windowTitle = new JLabel("<html><h3>ATLAS CREATION IN PROGRESS...</h3></html>");
 
 		title = new JLabel("Downloading maps of atlas:");
 
@@ -197,8 +198,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		GBC gbcEolFill = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC gbcEolFillI = GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 0);
 
-		background.add(windowTitle, gbcEolFill);
-		background.add(Box.createVerticalStrut(10), gbcEol);
+//		background.add(windowTitle, gbcEolFill);
+//		background.add(Box.createVerticalStrut(10), gbcEol);
 
 		background.add(mapInfo, gbcEolFill);
 		background.add(Box.createVerticalStrut(20), gbcEol);
@@ -248,11 +249,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		background.add(bottomPanel, gbcEolFillI);
 
 		JPanel borderPanel = new JPanel(new GridBagLayout());
-		borderPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+//		borderPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 		borderPanel.add(background, GBC.std().insets(10, 10, 10, 10).fill());
 
 		add(borderPanel, GBC.std().fill());
-		setUndecorated(true);
+//		setUndecorated(true);
 
 		abortAtlasDownloadButton.addActionListener(this);
 		dismissWindowButton.addActionListener(this);

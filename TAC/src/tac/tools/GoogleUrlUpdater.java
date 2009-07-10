@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +25,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
+import tac.program.Logging;
+
 public class GoogleUrlUpdater {
 
 	/**
@@ -35,14 +38,29 @@ public class GoogleUrlUpdater {
 	 * Requires <a href="http://jtidy.sourceforge.net/">JTidy</a> library.
 	 */
 	public static void main(String[] args) {
-		System.out.println("GoogleMaps.url=" + getUpdatedUrl(URL_MAPS, true));
-		System.out.println("GoogleEarth.url=" + getUpdatedUrl(URL_EARTH, true));
-		System.out.println("GoogleTerrain.url=" + getUpdatedUrl(URL_TERRAIN, true));
+		Logging.configureLogging();
+		testMapSource("GoogleMaps.url");
+		testMapSource("GoogleEarth.url");
+		testMapSource("GoogleTerrain.url");
 	}
 
-	static final String URL_MAPS = "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2";
-	static final String URL_EARTH = "http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2";
-	static final String URL_TERRAIN = "http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2";
+	static Properties mapSourceUrls = new Properties();
+	static {
+		mapSourceUrls.put("GoogleMaps.url", "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2");
+		mapSourceUrls.put("GoogleEarth.url",
+				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2");
+		mapSourceUrls.put("GoogleTerrain.url",
+				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2");
+	}
+
+	public static void testMapSource(String key) {
+		String url = mapSourceUrls.getProperty(key);
+		String oldUrlTemplate = System.getProperty(key);
+		String newUrlTemplate = getUpdatedUrl(url, true);
+		if (!oldUrlTemplate.equals(newUrlTemplate)) {
+			System.out.println(key + "=" + newUrlTemplate);
+		}
+	}
 
 	public static List<String> extractImgSrcList(String url) throws IOException,
 			XPathExpressionException {
@@ -118,7 +136,7 @@ public class GoogleUrlUpdater {
 						imgUrl = imgUrl.replaceAll("\\\\x26", "&");
 						imgUrl = imgUrl.replaceAll("\\\\x3d", "=");
 
-						//System.out.println(imgUrl);
+						// System.out.println(imgUrl);
 
 						URL tileUrl = new URL(imgUrl);
 

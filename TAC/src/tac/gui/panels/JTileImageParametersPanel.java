@@ -93,11 +93,11 @@ public class JTileImageParametersPanel extends JPanel {
 		TileImageParameters customTileParameters = null;
 		boolean customTileSize = enableCustomTileProcessingCheckButton.isSelected();
 		if (customTileSize) {
-			customTileParameters = new TileImageParameters();
-			customTileParameters.width = tileSizeWidth.getValue();
-			customTileParameters.height = tileSizeHeight.getValue();
-			customTileParameters.format = (tac.program.model.TileImageFormat) tileImageFormat
+			int width = tileSizeWidth.getValue();
+			int height = tileSizeHeight.getValue();
+			TileImageFormat format = (tac.program.model.TileImageFormat) tileImageFormat
 					.getSelectedItem();
+			customTileParameters = new TileImageParameters(width, height, format);
 		}
 		return customTileParameters;
 	}

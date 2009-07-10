@@ -148,4 +148,15 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		return version;
 	}
 
+	public AtlasInterface deepClone() {
+		Atlas atlas = new Atlas();
+		atlas.version = version;
+		atlas.name = name;
+		atlas.outputFormat = outputFormat;
+		for (LayerInterface layer : layers) {
+			atlas.layers.add(layer.deepClone(atlas));
+		}
+		return atlas;
+	}
+
 }

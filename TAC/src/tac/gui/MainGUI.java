@@ -572,12 +572,16 @@ public class MainGUI extends JFrame implements MapEventListener {
 			try {
 				AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
 						.getSelectedItem();
-				AtlasInterface atlasInterface = jAtlasTree.getAtlas();
-				atlasInterface.setOutputFormat(atlasOutputFormat);
-				Thread atlasThread = new AtlasThread(atlasInterface);
+				// We have to work on a deep clone otherwise the user would be
+				// able to modify settings of maps, layers and the atlas itself
+				// while the AtlasThread works on that atlas reference
+				AtlasInterface atlasToCreate = jAtlasTree.getAtlas().deepClone();
+				atlasToCreate.setOutputFormat(atlasOutputFormat);
+				Thread atlasThread = new AtlasThread(atlasToCreate);
 				atlasThread.start();
 			} catch (Exception exception) {
 				log.error("", exception);
+				TACExceptionHandler.processException(exception);
 			}
 		}
 	}

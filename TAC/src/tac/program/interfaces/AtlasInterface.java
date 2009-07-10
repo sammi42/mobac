@@ -28,4 +28,6 @@ public interface AtlasInterface extends AtlasObject, Iterable<LayerInterface> {
 	public int calculateTilesToDownload();
 
 	public int getVersion();
+	
+	public AtlasInterface deepClone();
 }

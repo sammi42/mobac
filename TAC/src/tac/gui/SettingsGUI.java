@@ -526,7 +526,8 @@ public class SettingsGUI extends JDialog {
 				Date date = MapSourcesManager.getMapSourcesDate(System.getProperties());
 				msg += "\nCurrent map source date: " + df.format(date);
 				JOptionPane.showMessageDialog(SettingsGUI.this, msg);
-				MainGUI.getMainGUI().refreshPreviewMap();
+				if (result)
+					MainGUI.getMainGUI().refreshPreviewMap();
 			} catch (MapSourcesUpdateException e) {
 				JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(),
 						"Mapsources online update failed", JOptionPane.ERROR_MESSAGE);

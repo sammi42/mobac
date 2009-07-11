@@ -34,6 +34,11 @@ public class Logging {
 		}
 	}
 
+	public static void disableLogging() {
+		Logger logger = Logger.getRootLogger();
+		logger.setLevel(Level.OFF);
+	}
+
 	public static void logSystemProperties() {
 		Logger log = Logger.getLogger("System.properties");
 		Properties props = System.getProperties();

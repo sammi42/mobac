@@ -73,6 +73,8 @@ public class MapSourcesManager {
 	private static final String MAPSOURCES_UPDATE_URL = "http://trekbuddyatlasc.sourceforge.net/"
 			+ "mapsources-update/v1/mapsources.properties";
 
+	private static boolean mapSourcesExternalFileUsed = false;
+	
 	public static final MapSource DEFAULT = new Mapnik();
 	private static MapSource[] MAP_SOURCES;
 
@@ -156,10 +158,11 @@ public class MapSourcesManager {
 			} else {
 				selectedProps = resProps;
 			}
-			if (selectedProps == resProps)
-				log.debug("Used mapsources.properties: resource");
-			else
+			mapSourcesExternalFileUsed = (selectedProps != resProps); 
+			if (mapSourcesExternalFileUsed)
 				log.debug("Used mapsources.properties: file");
+			else
+				log.debug("Used mapsources.properties: resource");
 			Properties systemProps = System.getProperties();
 			systemProps.putAll(selectedProps);
 
@@ -199,7 +202,6 @@ public class MapSourcesManager {
 		if (!m.matches())
 			return null;
 		String part = m.group(1);
-		System.out.println(s + "\n" + part);
 		try {
 			return SVN_DATE_FORMAT.parse(part);
 		} catch (ParseException e) {
@@ -225,7 +227,9 @@ public class MapSourcesManager {
 				conn.addRequestProperty("If-None-Match", s.mapsourcesEtag);
 			int code = conn.getResponseCode();
 			log.trace("Mapsources online update: \n\tUpdate url: " + MAPSOURCES_UPDATE_URL
-					+ "\n\tResponse:   " + code + " " + conn.getResponseMessage());
+					+ "\n\tResponse  : " + code + " " + conn.getResponseMessage()
+					+ "\n\tSize      : " + conn.getContentLength() + " bytes \n\tETag      : "
+					+ conn.getHeaderField("ETag"));
 			if (code == 304)
 				// HTTP 304 = Not Modified => Same as on last update check
 				return false;
@@ -245,12 +249,12 @@ public class MapSourcesManager {
 			in.readFully(data);
 			in.close();
 			conn.disconnect(); // We don't need a connection to this server in
-								// near future
+			// near future
 			Properties onlineProps = new Properties();
 			onlineProps.load(new ByteArrayInputStream(data));
 			int onlineRev = getMapSourcesRev(onlineProps);
 			int currentRev = parseMapSourcesRev(System.getProperty(MAPSOURCES_REV_KEY));
-			if (onlineRev > currentRev) {
+			if (onlineRev > currentRev || !mapSourcesExternalFileUsed) {
 				System.getProperties().putAll(onlineProps);
 				FileOutputStream mapFs = null;
 				try {
@@ -265,6 +269,7 @@ public class MapSourcesManager {
 						((UpdatableMapSource) ms).update();
 					}
 				}
+				mapSourcesExternalFileUsed = true;
 				return true;
 			}
 			return false;

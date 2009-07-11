@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
+import tac.mapsources.MapSourcesManager;
 import tac.program.Logging;
 
 public class GoogleUrlUpdater {
@@ -38,14 +39,21 @@ public class GoogleUrlUpdater {
 	 * Requires <a href="http://jtidy.sourceforge.net/">JTidy</a> library.
 	 */
 	public static void main(String[] args) {
-		Logging.configureLogging();
-		testMapSource("GoogleMaps.url");
-		testMapSource("GoogleEarth.url");
-		testMapSource("GoogleTerrain.url");
+		Logging.disableLogging();
+		MapSourcesManager.getAllMapSources(); // just for initializing the
+		// MapSourcesManager
+		GoogleUrlUpdater g = new GoogleUrlUpdater();
+		g.testMapSource("GoogleMaps.url");
+		g.testMapSource("GoogleEarth.url");
+		g.testMapSource("GoogleTerrain.url");
+		System.out.println("Updated map sources: " + g.updatedMapSources);
 	}
 
-	static Properties mapSourceUrls = new Properties();
-	static {
+	private Properties mapSourceUrls = new Properties();
+
+	protected int updatedMapSources = 0;
+
+	public GoogleUrlUpdater() {
 		mapSourceUrls.put("GoogleMaps.url", "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2");
 		mapSourceUrls.put("GoogleEarth.url",
 				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2");
@@ -53,17 +61,17 @@ public class GoogleUrlUpdater {
 				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2");
 	}
 
-	public static void testMapSource(String key) {
+	public void testMapSource(String key) {
 		String url = mapSourceUrls.getProperty(key);
 		String oldUrlTemplate = System.getProperty(key);
 		String newUrlTemplate = getUpdatedUrl(url, true);
 		if (!oldUrlTemplate.equals(newUrlTemplate)) {
 			System.out.println(key + "=" + newUrlTemplate);
+			updatedMapSources++;
 		}
 	}
 
-	public static List<String> extractImgSrcList(String url) throws IOException,
-			XPathExpressionException {
+	public List<String> extractImgSrcList(String url) throws IOException, XPathExpressionException {
 		LinkedList<String> list = new LinkedList<String>();
 		URL u = new URL(url);
 		// Proxy p = new Proxy(Type.HTTP,new
@@ -88,8 +96,7 @@ public class GoogleUrlUpdater {
 		return list;
 	}
 
-	public static List<String> extractUrlList(String url) throws IOException,
-			XPathExpressionException {
+	public List<String> extractUrlList(String url) throws IOException, XPathExpressionException {
 		LinkedList<String> list = new LinkedList<String>();
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
@@ -116,7 +123,7 @@ public class GoogleUrlUpdater {
 		return list;
 	}
 
-	public static String getUpdatedUrl(String serviceUrl, boolean useImgSrcUrlsOnly) {
+	public String getUpdatedUrl(String serviceUrl, boolean useImgSrcUrlsOnly) {
 
 		try {
 			List<String> urls;

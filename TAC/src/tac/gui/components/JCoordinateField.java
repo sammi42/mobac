@@ -1,7 +1,6 @@
 package tac.gui.components;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
@@ -45,11 +44,6 @@ public class JCoordinateField extends JTextField {
 			// We don't want a tool tip but Java does not allow to disable it?
 			// -> show it at a point where no user will ever see it
 			return new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
-	}
-
-	@Override
-	public Dimension getMaximumSize() {
-		return getPreferredSize();
 	}
 
 	public synchronized void setCoordinate(double value) {

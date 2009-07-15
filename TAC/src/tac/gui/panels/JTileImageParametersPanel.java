@@ -5,13 +5,13 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JTileSizeCombo;
 import tac.program.model.Settings;
 import tac.program.model.TileImageFormat;
@@ -19,7 +19,7 @@ import tac.program.model.TileImageParameters;
 import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
-public class JTileImageParametersPanel extends JPanel {
+public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 	private JCheckBox enableCustomTileProcessingCheckButton;
 	private JLabel tileSizeWidthLabel;
@@ -30,8 +30,8 @@ public class JTileImageParametersPanel extends JPanel {
 	private JComboBox tileImageFormat;
 
 	public JTileImageParametersPanel() {
-		super(new GridBagLayout());
-		setBorder(BorderFactory.createTitledBorder("Layer settings: custom tile processing"));
+		super("Layer settings: custom tile processing", new GridBagLayout());
+		setName("TileImageParameters");
 
 		enableCustomTileProcessingCheckButton = new JCheckBox(
 				"Recreate/adjust map tiles (CPU intensive)");
@@ -60,17 +60,17 @@ public class JTileImageParametersPanel extends JPanel {
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
-		add(enableCustomTileProcessingCheckButton, gbc_eol);
 		JPanel tileSizePanel = new JPanel(new GridBagLayout());
 		tileSizePanel.add(tileSizeWidthLabel, gbc_std);
 		tileSizePanel.add(tileSizeWidth, gbc_std);
 		tileSizePanel.add(tileSizeHeightLabel, gbc_std);
 		tileSizePanel.add(tileSizeHeight, gbc_eol);
-		add(tileSizePanel, GBC.eol());
 		JPanel tileColorDepthPanel = new JPanel();
 		tileColorDepthPanel.add(tileImageFormatLabel);
 		tileColorDepthPanel.add(tileImageFormat);
-		add(tileColorDepthPanel, GBC.eol());
+		contentContainer.add(enableCustomTileProcessingCheckButton, gbc_eol);
+		contentContainer.add(tileSizePanel, GBC.eol());
+		contentContainer.add(tileColorDepthPanel, GBC.eol());
 	}
 
 	public void loadSettings() {

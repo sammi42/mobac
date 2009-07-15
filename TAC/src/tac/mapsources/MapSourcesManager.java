@@ -3,7 +3,6 @@ package tac.mapsources;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -42,7 +41,6 @@ import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveCom;
 import tac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import tac.mapsources.impl.WmsSources.TerraserverUSA;
-import tac.program.Logging;
 import tac.program.model.Settings;
 import tac.utilities.Utilities;
 
@@ -74,7 +72,7 @@ public class MapSourcesManager {
 			+ "mapsources-update/v1/mapsources.properties";
 
 	private static boolean mapSourcesExternalFileUsed = false;
-	
+
 	public static final MapSource DEFAULT = new Mapnik();
 	private static MapSource[] MAP_SOURCES;
 
@@ -158,7 +156,7 @@ public class MapSourcesManager {
 			} else {
 				selectedProps = resProps;
 			}
-			mapSourcesExternalFileUsed = (selectedProps != resProps); 
+			mapSourcesExternalFileUsed = (selectedProps != resProps);
 			if (mapSourcesExternalFileUsed)
 				log.debug("Used mapsources.properties: file");
 			else
@@ -278,16 +276,4 @@ public class MapSourcesManager {
 		}
 	}
 
-	public static void main(String[] args) {
-		try {
-			Logging.configureLogging();
-			File mapFile = new File(Settings.getUserDir(), "mapsources.properties");
-			Properties p = new Properties();
-			p.load(new FileInputStream(mapFile));
-			System.out.println(getMapSourcesDate(p));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

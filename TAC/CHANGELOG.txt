@@ -25,9 +25,10 @@
  + Merging different layers via drag & drop
  + Custom map sources can be defined via settings.xml (see README.HTM)
  ~ Removed OpenArialMap map source 
- + Mapsources manual online update via settings dialog
+ + Map sources manual online update via settings dialog
  ! Editing the atlas content while map creation in progress resulted in
-    unusable/abnormal atlases (see bug #2819613)   
+    unusable/abnormal atlases (see bug #2819613)
+ ~ Panels on the left can be collapsed to save space     
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

@@ -24,6 +24,7 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import tac.exceptions.InvalidNameException;
 import tac.program.interfaces.LayerInterface;
 import tac.program.model.AtlasTreeModel;
 
@@ -136,9 +137,16 @@ public class DragDropController {
 								+ sourceLayer.getName() + "\" into layer " + "\""
 								+ targetLayer.getName() + "\"?", "Confirm layer merging",
 						JOptionPane.YES_NO_OPTION);
-				if (answer == JOptionPane.YES_OPTION)
-					((AtlasTreeModel) atlasTree.getModel()).mergeLayers(sourceLayer, targetLayer);
-
+				if (answer == JOptionPane.YES_OPTION) {
+					try {
+						((AtlasTreeModel) atlasTree.getModel()).mergeLayers(sourceLayer,
+								targetLayer);
+					} catch (InvalidNameException e) {
+						JOptionPane.showMessageDialog(null, e.getMessage(), "Layer merging failed",
+								JOptionPane.ERROR_MESSAGE);
+						throw e;
+					}
+				}
 			} catch (Exception e) {
 				dtde.rejectDrop();
 			}

@@ -70,9 +70,17 @@ public class Settings {
 	@XmlElement
 	private boolean devMode = false;
 
-	private Dimension windowDimension = new Dimension();
-	private Point windowLocation = new Point(-1, -1);
-	private Boolean windowMaximized = true;
+	public final MainWindowSettings mainWindow = new MainWindowSettings();
+
+	public static class MainWindowSettings {
+		public Dimension size = new Dimension();
+		public Point position = new Point(-1, -1);
+		public Boolean maximized = true;
+
+		@XmlElementWrapper(name = "collapsedPanels")
+		@XmlElement(name = "collapsedPanel")
+		public Vector<String> collapsedPanels = new Vector<String>();
+	}
 
 	/**
 	 * Network settings
@@ -89,11 +97,11 @@ public class Settings {
 
 	@XmlElement
 	public String mapsourcesEtag;
-	
+
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		windowDimension.width = (int) (0.9f * dScreen.width);
-		windowDimension.height = (int) (0.9f * dScreen.height);
+		mainWindow.size.width = (int) (0.9f * dScreen.width);
+		mainWindow.size.height = (int) (0.9f * dScreen.height);
 	}
 
 	public static Settings getInstance() {
@@ -261,30 +269,6 @@ public class Settings {
 
 	public boolean isDevModeEnabled() {
 		return devMode;
-	}
-
-	public Dimension getWindowDimension() {
-		return windowDimension;
-	}
-
-	public void setWindowDimension(Dimension windowDimension) {
-		this.windowDimension = windowDimension;
-	}
-
-	public Point getWindowLocation() {
-		return windowLocation;
-	}
-
-	public void setWindowLocation(Point windowLocation) {
-		this.windowLocation = windowLocation;
-	}
-
-	public Boolean getWindowMaximized() {
-		return windowMaximized;
-	}
-
-	public void setWindowMaximized(Boolean windowMaximized) {
-		this.windowMaximized = windowMaximized;
 	}
 
 	public TileImageFormat getTileImageFormat() {

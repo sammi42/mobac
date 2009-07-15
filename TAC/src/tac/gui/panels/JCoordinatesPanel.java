@@ -3,12 +3,12 @@ package tac.gui.panels;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JCoordinateField;
 import tac.program.MapSelection;
 import tac.program.model.EastNorthCoordinate;
@@ -19,7 +19,7 @@ import tac.utilities.GBC;
  * coordinates of the current selection and allows the user to enter own
  * coordinates.
  */
-public class JCoordinatesPanel extends JPanel {
+public class JCoordinatesPanel extends JCollapsiblePanel {
 
 	private JCoordinateField latMinTextField;
 	private JCoordinateField latMaxTextField;
@@ -28,10 +28,8 @@ public class JCoordinatesPanel extends JPanel {
 	private JButton displaySelectionButton;
 
 	public JCoordinatesPanel() {
-		super(new GridBagLayout());
-
-		setBorder(BorderFactory.createTitledBorder("Selection coordinates (min/max)"));
-
+		super("Selection coordinates (min/max)", new GridBagLayout());
+		setName("Coordinates");
 		// coordinates panel
 		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, true);
 		latMaxTextField.setActionCommand("latMaxTextField");
@@ -49,25 +47,23 @@ public class JCoordinatesPanel extends JPanel {
 		JLabel lonMaxLabel = new JLabel("E ", JLabel.CENTER);
 		JLabel latMinLabel = new JLabel("S ", JLabel.CENTER);
 
-		add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		add(latMaxLabel);
-		add(latMaxTextField);
-		add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+		contentContainer.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		contentContainer.add(latMaxLabel, GBC.std().insets(0, 5, 0, 0));
+		contentContainer.add(latMaxTextField, GBC.std().insets(0, 5, 0, 0));
+		contentContainer.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
 
 		JPanel eastWestPanel = new JPanel(new GridBagLayout());
-		eastWestPanel.add(lonMinLabel);
-		eastWestPanel.add(lonMinTextField);
+		eastWestPanel.add(lonMinLabel, GBC.std());
+		eastWestPanel.add(lonMinTextField, GBC.std());
 		eastWestPanel.add(lonMaxLabel, GBC.std().insets(10, 0, 0, 0));
-		eastWestPanel.add(lonMaxTextField);
-		add(eastWestPanel, GBC.eol().fill().insets(0, 5, 0, 5));
-
-		add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		add(latMinLabel);
-		add(latMinTextField);
-		add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-
-		add(displaySelectionButton, GBC.eol().anchor(GBC.CENTER).insets(0, 5, 0, 0));
-
+		eastWestPanel.add(lonMaxTextField, GBC.std());
+		contentContainer.add(eastWestPanel, GBC.eol().fill().insets(0, 5, 0, 5));
+		contentContainer.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		contentContainer.add(latMinLabel);
+		contentContainer.add(latMinTextField);
+		contentContainer.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+		contentContainer.add(displaySelectionButton, GBC.eol().anchor(GBC.CENTER)
+				.insets(0, 5, 0, 0));
 	}
 
 	public void setMaxCoordinate(EastNorthCoordinate coordinate) {

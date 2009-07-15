@@ -44,6 +44,7 @@ import tac.Main;
 import tac.exceptions.InvalidNameException;
 import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JAtlasNameField;
+import tac.gui.components.JCollapsiblePanel;
 import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapEventListener;
 import tac.gui.mapview.PreviewMap;
@@ -99,6 +100,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
+	private JPanel leftPanelContent = null;
 
 	public static void createMainGui() {
 		if (mainGUI != null)
@@ -137,8 +139,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		layeredPane.add(mapControlPanel, new Integer(1));
 		add(layeredPane, BorderLayout.CENTER);
 
-		loadSettings();
 		updatePanels();
+		loadSettings();
 		profilesPanel.initialize();
 		updateZoomLevelCheckBoxes();
 		updateGridSizeCombo();
@@ -229,30 +231,31 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		coordinatesPanel.addButtonActionListener(new DisplaySelectionButtonListener());
 
-		JPanel mapSourcePanel = new JPanel(new GridBagLayout());
-		mapSourcePanel.setBorder(BorderFactory.createTitledBorder("Map source"));
-		mapSourcePanel.add(mapSourceCombo, GBC.std().insets(2, 2, 2, 2).fill());
+		JCollapsiblePanel mapSourcePanel = new JCollapsiblePanel("Map source", new GridBagLayout());
+		mapSourcePanel.addContent(mapSourceCombo, GBC.std().insets(2, 2, 2, 2).fill());
 
-		JPanel zoomLevelsPanel = new JPanel(new GridBagLayout());
-		zoomLevelsPanel.setBorder(BorderFactory.createTitledBorder("Zoom Levels"));
-		zoomLevelsPanel.add(zoomLevelPanel, GBC.eol());
-		zoomLevelsPanel.add(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 0));
+		JCollapsiblePanel zoomLevelsPanel = new JCollapsiblePanel("Zoom Levels",
+				new GridBagLayout());
+		zoomLevelsPanel.addContent(zoomLevelPanel, GBC.eol().insets(2, 4, 2, 0));
+		zoomLevelsPanel.addContent(amountOfTilesLabel, GBC.std().anchor(GBC.WEST)
+				.insets(0, 5, 0, 2));
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
-		JPanel atlasContentPanel = new JPanel(new GridBagLayout());
-		atlasContentPanel.setBorder(BorderFactory.createTitledBorder("Atlas Content"));
+		JCollapsiblePanel atlasContentPanel = new JCollapsiblePanel("Atlas Content",
+				new GridBagLayout());
 		JScrollPane treeScrollPane = new JScrollPane(jAtlasTree,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jAtlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
 
-		treeScrollPane.setPreferredSize(new Dimension(100, 100));
+		treeScrollPane.setMinimumSize(new Dimension(100, 150));
+		treeScrollPane.setPreferredSize(new Dimension(100, 200));
 		treeScrollPane.setAutoscrolls(true);
-		atlasContentPanel.add(treeScrollPane, GBC.eol().fill());
+		atlasContentPanel.addContent(treeScrollPane, GBC.eol().fill().insets(0, 1, 0, 0));
 		JButton clearAtlas = new JButton("Clear");
-		atlasContentPanel.add(clearAtlas, GBC.std());
+		atlasContentPanel.addContent(clearAtlas, GBC.std());
 		clearAtlas.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -260,25 +263,24 @@ public class MainGUI extends JFrame implements MapEventListener {
 			}
 		});
 		JButton addLayers = new JButton("Add selection");
-		atlasContentPanel.add(addLayers, GBC.eol());
+		atlasContentPanel.addContent(addLayers, GBC.eol());
 		addLayers.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				addSelectedAutoCutMultiMapLayers();
 			}
 		});
-		atlasContentPanel.add(new JLabel("Name: "), gbc_std);
-		atlasContentPanel.add(atlasNameTextField, gbc_eol.fill());
+		atlasContentPanel.addContent(new JLabel("Name: "), gbc_std);
+		atlasContentPanel.addContent(atlasNameTextField, gbc_eol.fill(GBC.HORIZONTAL));
 
-		JPanel atlasNamePanel = new JPanel(new GridBagLayout());
-		atlasNamePanel.setBorder(BorderFactory.createTitledBorder("Atlas settings"));
-		atlasNamePanel.add(new JLabel("Format: "), gbc_std);
-		atlasNamePanel.add(atlasOutputFormatCombo, gbc_eol);
-		atlasNamePanel.add(createAtlasButton, gbc_eol.fill());
+		JCollapsiblePanel atlasNamePanel = new JCollapsiblePanel("Atlas settings",
+				new GridBagLayout());
+		atlasNamePanel.addContent(new JLabel("Format: "), gbc_std);
+		atlasNamePanel.addContent(atlasOutputFormatCombo, gbc_eol);
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		JPanel leftPanelContent = new JPanel(new GridBagLayout());
+		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
 		leftPanelContent.add(zoomLevelsPanel, gbc_eol);
@@ -287,6 +289,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		leftPanelContent.add(atlasNamePanel, gbc_eol);
 		leftPanelContent.add(profilesPanel, gbc_eol);
+		leftPanelContent.add(createAtlasButton, gbc_eol);
 		leftPanelContent.add(settingsButton, gbc_eol);
 		leftPanelContent.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 
@@ -295,11 +298,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		// Set the scroll pane width large enough so that the
 		// scroll bar has enough space to appear right to it
-		// Dimension d = scrollPane.getPreferredSize();
-		// d.width += 5 + scrollPane.getVerticalScrollBar().getWidth();
+		Dimension d = scrollPane.getPreferredSize();
+		d.width += 5 + scrollPane.getVerticalScrollBar().getWidth();
 		// scrollPane.setPreferredSize(d);
-		// scrollPane.setMinimumSize(d);
+		scrollPane.setMinimumSize(d);
 		leftPanel.add(scrollPane, GBC.std().fill());
+		// leftPanel.add(leftPanelContent, GBC.std().fill());
 	}
 
 	/**
@@ -415,15 +419,26 @@ public class MainGUI extends JFrame implements MapEventListener {
 		mapSourceCombo.setSelectedItem(MapSourcesManager.getSourceByName(settings
 				.getMapviewMapSource()));
 
-		setSize(settings.getWindowDimension());
-		Point windowLocation = settings.getWindowLocation();
+		setSize(settings.mainWindow.size);
+		Point windowLocation = settings.mainWindow.position;
 		if (windowLocation.x == -1 && windowLocation.y == -1) {
 			setLocationRelativeTo(null);
 		} else {
 			setLocation(windowLocation);
 		}
-		if (settings.getWindowMaximized())
+		if (settings.mainWindow.maximized)
 			setExtendedState(Frame.MAXIMIZED_BOTH);
+
+		if (leftPanelContent != null) {
+			for (Component c : leftPanelContent.getComponents()) {
+				if (c instanceof JCollapsiblePanel) {
+					JCollapsiblePanel cp = (JCollapsiblePanel) c;
+					String name = cp.getName();
+					if (name != null && settings.mainWindow.collapsedPanels.contains(name))
+						cp.setCollapsed(true);
+				}
+			}
+		}
 	}
 
 	private void saveSettings() {
@@ -438,10 +453,20 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			tileImageParametersPanel.saveSettings();
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
-			s.setWindowMaximized(maximized);
+			s.mainWindow.maximized = maximized;
 			if (!maximized) {
-				s.setWindowDimension(getSize());
-				s.setWindowLocation(getLocation());
+				s.mainWindow.size = getSize();
+				s.mainWindow.position = getLocation();
+			}
+			s.mainWindow.collapsedPanels.clear();
+			if (leftPanelContent != null) {
+				for (Component c : leftPanelContent.getComponents()) {
+					if (c instanceof JCollapsiblePanel) {
+						JCollapsiblePanel cp = (JCollapsiblePanel) c;
+						if (cp.isCollapsed())
+							s.mainWindow.collapsedPanels.add(cp.getName());
+					}
+				}
 			}
 			Settings.save();
 		} catch (Exception e) {
@@ -837,8 +862,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 			if ((getExtendedState() & MAXIMIZED_BOTH) != 0)
 				return;
 			Settings s = Settings.getInstance();
-			s.setWindowDimension(getSize());
-			s.setWindowLocation(getLocation());
+			s.mainWindow.size = getSize();
+			s.mainWindow.position = getLocation();
 		}
 	}
 

@@ -135,7 +135,8 @@ public class AtlasTreeModel implements TreeModel {
 		}
 	}
 
-	public void mergeLayers(LayerInterface source, LayerInterface target) {
+	public void mergeLayers(LayerInterface source, LayerInterface target)
+			throws InvalidNameException {
 
 		boolean sourceFound = false;
 		boolean targetFound = false;
@@ -147,6 +148,16 @@ public class AtlasTreeModel implements TreeModel {
 		}
 		if (!targetFound)
 			return;
+		// Check for duplicate names
+		HashSet<String> names = new HashSet<String>();
+		for (MapInterface map : source)
+			names.add(map.getName());
+		for (MapInterface map : target)
+			names.add(map.getName());
+		if (names.size() < (source.getMapCount() + target.getMapCount()))
+			throw new InvalidNameException("Map naming conflict:\n"
+					+ "The layers to be merged contain map(s) of the same name.");
+
 		if (sourceFound)
 			atlasInterface.deleteLayer(source);
 		for (MapInterface map : source) {

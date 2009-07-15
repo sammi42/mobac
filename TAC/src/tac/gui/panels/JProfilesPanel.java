@@ -6,30 +6,28 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tac.gui.atlastree.JAtlasTree;
+import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JProfilesComboBox;
 import tac.program.model.Profile;
 import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
-public class JProfilesPanel extends JPanel {
+public class JProfilesPanel extends JCollapsiblePanel {
 	private JProfilesComboBox profilesCombo;
 	private JButton reloadButton;
 	private JButton deleteButton;
 	private JButton saveAsButton;
 
 	public JProfilesPanel(JAtlasTree atlasTree) {
-		super(new GridBagLayout());
+		super("Saved profiles", new GridBagLayout());
 
 		if (atlasTree == null)
 			throw new NullPointerException();
-
-		setBorder(BorderFactory.createTitledBorder("Saved profiles"));
 
 		// profiles combo box
 		profilesCombo = new JProfilesComboBox();
@@ -55,10 +53,10 @@ public class JProfilesPanel extends JPanel {
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(profilesCombo, BorderLayout.CENTER);
 		p.add(reloadButton, BorderLayout.EAST);
-		
-		add(p, gbc);
-		add(saveAsButton, gbc.toggleEol());
-		add(deleteButton, gbc.toggleEol());
+
+		contentContainer.add(p, gbc);
+		contentContainer.add(saveAsButton, gbc.toggleEol());
+		contentContainer.add(deleteButton, gbc.toggleEol());
 
 		saveAsButton.setEnabled(false);
 		deleteButton.setEnabled(false);

@@ -73,7 +73,7 @@ public class RegionalMapSources {
 		private static int SERVER_NUM = 0;
 
 		public OutdooractiveCom() {
-			super("Outdooractive.com", 8, 16, "png");
+			super("Outdooractive.com", 8, 17, "png");
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

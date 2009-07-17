@@ -221,15 +221,22 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 					}
 					log.debug("Starting to create atlas from downloaded tiles");
 
-					MapCreator mc;
-					if (atlasInterface.getOutputFormat() != AtlasOutputFormat.AndNav) {
+					MapCreator mc = null;
+					switch (atlasInterface.getOutputFormat()) {
+					case TaredAtlas:
+					case UntaredAtlas:
 						TileImageParameters parameters = map.getParameters();
 						if (parameters == null)
 							mc = new MapCreator(map, tileIndex, atlasDir);
 						else
 							mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
-					} else
+						break;
+					case AndNav:
 						mc = new MapCreatorAndNav(map, tileIndex, atlasDir);
+						break;
+					case OziPng:
+						mc = new MapCreatorOzi(map, tileIndex, atlasDir);
+					}
 					mc.createMap();
 					downloadJobDispatcher.cancelOutstandingJobs();
 					tileIndex.closeAndDelete();

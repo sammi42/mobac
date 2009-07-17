@@ -7,7 +7,7 @@ import java.io.OutputStream;
 
 import tac.optional.JavaAdvancedImaging;
 import tac.program.interfaces.TileImageDataWriter;
-import tac.utilities.Png4BitWriter;
+import tac.utilities.imageio.Png4BitWriter;
 
 public class TileImagePng4DataWriter implements TileImageDataWriter {
 

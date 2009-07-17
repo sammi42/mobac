@@ -20,22 +20,22 @@
  * THE SOFTWARE.
  *
  */
-package tac.utilities;
+package tac.utilities.imageio;
 
+import static tac.utilities.imageio.PngConstants.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.CRC32;
-import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
+
+import tac.utilities.MyMath;
 
 /**
  * 4 Bit PNG Writer
@@ -45,22 +45,10 @@ import java.util.zip.DeflaterOutputStream;
  * </p>
  * 
  * Bases on the PNGWriter written by Matthias Mann - www.matthiasmann.de
+ * 
+ * @author r_x
  */
 public class Png4BitWriter {
-
-	private static final byte[] SIGNATURE = { (byte) 137, 80, 78, 71, 13, 10, 26, 10 };
-	private static final int IHDR = (int) 0x49484452;
-	private static final int IDAT = (int) 0x49444154;
-	private static final int IEND = (int) 0x49454E44;
-	private static final int PLTE = (int) 0x504C5445;
-
-	private static final byte COLOR_PALETTE = 3;
-
-	private static final byte COMPRESSION_DEFLATE = 0;
-	private static final byte INTERLACE_NONE = 0;
-
-	public static final byte FILTER_NONE = 0;
-	public static final byte FILTER_PAETH = 4;
 
 	public static void writeImage(File file, BufferedImage image) throws IOException {
 		FileOutputStream out = new FileOutputStream(file);
@@ -112,17 +100,17 @@ public class Png4BitWriter {
 		IndexColorModel palette = (IndexColorModel) cm;
 
 		dos.write(SIGNATURE);
-		Chunk cIHDR = new Chunk(IHDR);
+		PngChunk cIHDR = new PngChunk(IHDR);
 		cIHDR.writeInt(width);
 		cIHDR.writeInt(height);
 		cIHDR.writeByte(4); // 4 bit per component
 		cIHDR.writeByte(COLOR_PALETTE);
 		cIHDR.writeByte(COMPRESSION_DEFLATE);
-		cIHDR.writeByte(FILTER_NONE);
+		cIHDR.writeByte(FILTER_SET_1);
 		cIHDR.writeByte(INTERLACE_NONE);
 		cIHDR.writeTo(dos);
 
-		Chunk cPLTE = new Chunk(PLTE);
+		PngChunk cPLTE = new PngChunk(PLTE);
 		int paletteEntries = palette.getMapSize();
 		byte[] r = new byte[paletteEntries];
 		byte[] g = new byte[paletteEntries];
@@ -138,7 +126,7 @@ public class Png4BitWriter {
 		}
 		cPLTE.writeTo(dos);
 
-		Chunk cIDAT = new Chunk(IDAT);
+		PngChunk cIDAT = new PngChunk(IDAT);
 		DeflaterOutputStream dfos = new DeflaterOutputStream(cIDAT, new Deflater(compression));
 
 		int lineLen = MyMath.divCeil(width, 2);
@@ -146,7 +134,7 @@ public class Png4BitWriter {
 		int[] samples = null;
 
 		for (int line = 0; line < height; line++) {
-			dfos.write(FILTER_NONE);
+			dfos.write(FILTER_TYPE_NONE);
 
 			// Get the samples for the next line - each byte is one sample/pixel
 			samples = image.getRaster().getPixels(0, line, width, 1, samples);
@@ -167,7 +155,7 @@ public class Png4BitWriter {
 		dfos.finish();
 		cIDAT.writeTo(dos);
 
-		Chunk cIEND = new Chunk(IEND);
+		PngChunk cIEND = new PngChunk(IEND);
 		cIEND.writeTo(dos);
 
 		dos.flush();
@@ -177,30 +165,6 @@ public class Png4BitWriter {
 		dos.writeByte(c.getRed());
 		dos.writeByte(c.getGreen());
 		dos.writeByte(c.getBlue());
-	}
-
-	static class Chunk extends DataOutputStream {
-		final CRC32 crc;
-		final ByteArrayOutputStream baos;
-
-		Chunk(int chunkType) throws IOException {
-			this(chunkType, new ByteArrayOutputStream(), new CRC32());
-		}
-
-		private Chunk(int chunkType, ByteArrayOutputStream baos, CRC32 crc) throws IOException {
-			super(new CheckedOutputStream(baos, crc));
-			this.crc = crc;
-			this.baos = baos;
-
-			writeInt(chunkType);
-		}
-
-		public void writeTo(DataOutputStream out) throws IOException {
-			flush();
-			out.writeInt(baos.size() - 4);
-			baos.writeTo(out);
-			out.writeInt((int) crc.getValue());
-		}
 	}
 
 }

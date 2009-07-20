@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import server.TestHttpTileServer;
-import tac.utilities.Png4BitWriter;
+import tac.utilities.imageio.Png4BitWriter;
 
 /**
  * 

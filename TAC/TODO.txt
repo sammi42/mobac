@@ -35,3 +35,9 @@ T O D O
 
    -> Requires platform detection - Windows, Linux (KDE), Linux (Gnome), ...
       System.getProperty("os.name"); 
+      
+8) Change the internal representation of lat/lon coordinates to an integer:
+   
+   Possible example: 1/8 microdegree:
+     Lat [ -90.. 90] => [- 720000.. 720000]
+     Lon [-180..180] => [-1440000..1440000]

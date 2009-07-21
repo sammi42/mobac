@@ -26,16 +26,29 @@ public class MapCreatorOzi extends MapCreator {
 
 	public MapCreatorOzi(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
-		mapDir = new File(atlasDir, map.getMapSource().getName());
+		mapDir = new File(atlasDir, map.getLayer().getName());
 	}
 
 	public void createMap() {
 		mapDir.mkdirs();
 		try {
 			createTiles();
+			writeMapFile();
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
+		}
+	}
+
+	protected void writeMapFile() {
+		FileOutputStream fout = null;
+		try {
+			fout = new FileOutputStream(new File(mapDir, map.getName() + ".map"));
+			writeMapFile(map.getName() + ".png", fout);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			Utilities.closeStream(fout);
 		}
 	}
 

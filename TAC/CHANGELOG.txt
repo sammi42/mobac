@@ -28,7 +28,8 @@
  + Map sources manual online update via settings dialog
  ! Editing the atlas content while map creation in progress resulted in
     unusable/abnormal atlases (see bug #2819613)
- ~ Panels on the left can be collapsed to save space     
+ ~ Panels on the left can be collapsed to save space
+ + New atlas format: OziExplorer / large PNG export
  
  1.1: (2009-05-13)
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)

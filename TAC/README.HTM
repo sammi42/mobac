@@ -3,6 +3,39 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>TrekBuddy Atlas Creator - Readme</title>
+<style type="text/css">
+body {
+	margin-left: 10px;
+}
+
+h1,h2,h3 {
+	color: #0000CC;
+	font-style: italic;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+h2 {
+	margin-left: 20px;
+}
+
+h3 {
+	margin-left: 70px;
+}
+
+h1 {
+	border-bottom: solid thin black;
+}
+
+pre {
+	margin-left: 140px;
+	}
+p,li {
+	font-size: 110%;
+	line-height: 140%;
+	font-family: Helvetica, Arial, sans-serif;
+	margin-left: 100px;
+}
+</style>
 </head>
 <body>
 <h1>TrekBuddy Atlas Creator - Readme</h1>
@@ -42,16 +75,61 @@ a Windows environment or the <tt>start.sh</tt> under an Linux / Unix
 environment. At the first application start all necessary files and
 folders are automatically created by the application.</p>
 
-<h2>Using Atlases with TrekBuddy</h2>
-<p>After having downloaded and created an atlas the files belonging
-to the atlas can be found in the directory "atlases\[Current date and
-time]".</p>
+<h2>Creating and using atlases with TrekBuddy</h2>
+<p>For creating atlases compatible with TrekBuddy you have to select
+<b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
+in section <b>Atlas settings</b> on the left side of the main window.</p>
+<p>After defining the maps and layers for the atlas to be created
+start atlas download and creation via the button <b>Create Atlas</b>.
+Once atlas download and creation has completed all necessary files
+belonging to the atlas can be found in the directory <tt>atlases\[atlas
+name]_[current date and time]</tt>.</p>
 <p>The atlas itself consists of the the atlas startup file <tt>cr.tar</tt>
 (tar format) or <tt>cr.tba</tt> (regular/untared format) and the
 subdirectories containing the different maps of the atlas. For using the
 atlas with TrekBuddy copy the whole directory onto your J2ME device and
 open <tt>cr.tar</tt>/<tt>cr.tba</tt> (in the atlas root directory) in
 TrekBuddy as atlas.</p>
+
+<h2>Creating and using atlases with AndNav</h2>
+<p>For creating atlases compatible with AndNav you have to select <b>AndNav
+atlas format</b> as format in section <b>Atlas settings</b> on the left side
+of the main window. <br>
+As atlases for AndNav does not support all features provided by
+TrekBuddy the following settings are ignored when creating atlases for
+AndNav:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+</ul>
+
+<h2>Creating and using atlases with OziExplorer / large PNG image
+export</h2>
+<p>For creating atlases compatible with OziExplorer you have to
+select <b>OziExplorer (PNG & MAP)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window.</p>
+<p>As OziExplorer does only support individual maps some features
+are ignored when creating atlases in this format:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<p>The output format of an "atlas" for OziExplorer is one
+subdirectory per layer and within this subdirectory one <tt>PNG</tt>
+image and one <tt>MAP</tt> file per defined map. For opening a map in
+OziExplorer select the menu <b>File</b> &rarr; <b>Load from File</b>
+&rarr; <b>Load from MAP file</b> , browse to the layer directory of the
+created atlas and select the MAP file.</p>
+<p>If you are only interested in the map image you can safely delete
+the created map file.</p>
+<h3>Warning</h3>
+<p>TrekBuddy Atlas Creator uses an highly sophisticated and
+optimized algorithm for creating the PNG files for OziExplorer use. This
+algorithm allows to create very large maps images at low memory usage.
+OziExplorer and most image viewers do not use such sophisticated
+algorithms which can lead to the situation that you can create very
+large map images - but OziExplorer and other image viewers are not able
+to open the image.</p>
 
 <h2>Enhancement requests</h2>
 <p>If you are missing the map provider of your choice or have other
@@ -89,12 +167,11 @@ size 256x256 pixels. Additionally the map source has to use the
 spherical Mercator projection and the number of tiles forming the world
 on each zoom level has to be one of the following values: 2<sup>0</sup>,
 2<sup>1</sup>, 2<sup>2</sup> ... 2<sup>21</sup>, 2<sup>22</sup>.<br>
-For more details see OpenStreetMap Wiki: 
-<a href="http://wiki.openstreetmap.org/wiki/Mercator">Mercator</a>, 
-<a href="http://wiki.openstreetmap.org/wiki/Height_and_width_of_a_map">Height and width of a map</a> and 
-<a href="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom levels</a>
-
-</p>
+For more details see OpenStreetMap Wiki: <a
+	href="http://wiki.openstreetmap.org/wiki/Mercator">Mercator</a>, <a
+	href="http://wiki.openstreetmap.org/wiki/Height_and_width_of_a_map">Height
+and width of a map</a> and <a
+	href="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom levels</a></p>
 
 <h2>Details for advanced users</h2>
 <h3>Custom map sources</h3>

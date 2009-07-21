@@ -100,6 +100,10 @@ public class MapCreator {
 	}
 
 	protected void writeMapFile(OutputStream stream) throws IOException {
+		writeMapFile("t_." + mapSource.getTileType(), stream);
+	}
+
+	protected void writeMapFile(String imageFileName, OutputStream stream) throws IOException {
 		log.trace("Writing map file");
 		OutputStreamWriter mapWriter = new OutputStreamWriter(stream, TEXT_FILE_CHARSET);
 
@@ -111,8 +115,8 @@ public class MapCreator {
 		int width = (xMax - xMin + 1) * Tile.SIZE;
 		int height = (yMax - yMin + 1) * Tile.SIZE;
 
-		mapWriter.write(prepareMapString("t_." + mapSource.getTileType(), longitudeMin,
-				longitudeMax, latitudeMin, latitudeMax, width, height));
+		mapWriter.write(prepareMapString(imageFileName, longitudeMin, longitudeMax, latitudeMin,
+				latitudeMax, width, height));
 		mapWriter.flush();
 	}
 

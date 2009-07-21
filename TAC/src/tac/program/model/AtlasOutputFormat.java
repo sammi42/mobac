@@ -5,7 +5,7 @@ public enum AtlasOutputFormat {
 	TaredAtlas("TrekBuddy tared atlas"), // 
 	UntaredAtlas("TrekBuddy untared atlas"), //
 	AndNav("AndNav atlas format"), //
-	OziPng("Each map as one PNG image");
+	OziPng("OziExplorer (PNG & MAP)");
 
 	private final String displayName;
 

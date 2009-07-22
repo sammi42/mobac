@@ -22,16 +22,22 @@ public class Logging {
 		// we perform simple logging to the console
 		if (f.exists() && f.isFile()) {
 			DOMConfigurator.configure(f.getAbsolutePath());
-			Logger logger = Logger.getRootLogger();
-			logger.error("Logging configured by \"" + f.getAbsolutePath() + "\"");
+			Logger logger = Logger.getLogger("LogSystem");
+			logger.setLevel(Level.INFO);
+			logger.info("Logging configured by \"" + f.getAbsolutePath() + "\"");
 		} else {
+			configureConosleLogging();
 			Logger logger = Logger.getRootLogger();
-			ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout());
-			logger.addAppender(consoleAppender);
 			logger.info("log4.xml not found - enabling default error log to console. \n"
 					+ "Full path to expected log4.xml: \"" + f.getAbsolutePath() + "\"");
-			logger.setLevel(Level.ERROR);
 		}
+	}
+
+	public static void configureConosleLogging() {
+		Logger logger = Logger.getRootLogger();
+		ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout());
+		logger.addAppender(consoleAppender);
+		logger.setLevel(Level.ERROR);
 	}
 
 	public static void disableLogging() {

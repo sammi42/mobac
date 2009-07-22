@@ -11,20 +11,20 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 @XmlRootElement
 public class CustomMapSource implements MapSource {
 
-	@XmlElement(nillable = false)
-	private String name = "Custom";
+	@XmlElement(nillable = false, defaultValue = "Custom")
+	private String name;
 
-	@XmlElement
-	private int minZoom = 0;
+	@XmlElement(defaultValue = "0")
+	private int minZoom;
 
-	@XmlElement
+	@XmlElement(required = true)
 	private int maxZoom = 0;
 
-	@XmlElement
-	private String tileType = "png";
+	@XmlElement(defaultValue = "png")
+	private String tileType;
 
-	@XmlElement
-	private TileUpdate tileUpdate = TileUpdate.None;
+	@XmlElement(defaultValue = "NONE")
+	private TileUpdate tileUpdate;
 
 	@XmlElement(required = true, nillable = false)
 	private String url = null;

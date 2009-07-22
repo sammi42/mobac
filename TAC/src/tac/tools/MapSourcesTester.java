@@ -18,6 +18,16 @@ import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
+/**
+ * Small tool that tests every available map source for operability. The
+ * operability test consists of the download of one map tile at the highest
+ * available zoom level of the map source. By default the map tile to be
+ * downloaded is located in the middle of Berlin (at the coordinate of
+ * {@link #C_BERLIN}). As some map providers do not cover Berlin for each
+ * {@link MapSource} a different test coordinate can be specified using
+ * {@link #testCoordinates}.
+ * 
+ */
 public class MapSourcesTester {
 	public static final EastNorthCoordinate C_NEY_YORK = new EastNorthCoordinate(40.75, -73.88);
 	public static final EastNorthCoordinate C_BERLIN = new EastNorthCoordinate(52.50, 13.39);
@@ -28,14 +38,16 @@ public class MapSourcesTester {
 
 	public static final EastNorthCoordinate C_DEFAULT = C_BERLIN;
 
-	static Logger log = Logger.getLogger(MapSourcesTester.class);
+	private static Logger log = Logger.getLogger(MapSourcesTester.class);
+
+	private static HashMap<Class<?>, EastNorthCoordinate> testCoordinates;
 
 	public static void main(String[] args) {
-		Logging.configureLogging();
+		Logging.configureConosleLogging();
 		Logger.getRootLogger().setLevel(Level.ERROR);
 		MapSourcesManager.loadMapSourceProperties();
 
-		HashMap<Class<?>, EastNorthCoordinate> testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
+		testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
 		testCoordinates.put(GoogleMapMaker.class, C_BANGALORE);
 		testCoordinates.put(Cykloatlas.class, C_PRAHA);
 		testCoordinates.put(GoogleMapsChina.class, C_SHANGHAI);
@@ -51,7 +63,6 @@ public class MapSourcesTester {
 			} catch (Exception e) {
 				log.error(mapSource.getName() + " failed", e);
 			}
-			// testMapSource("TilesAtHome", C_BERLIN);
 		}
 	}
 
@@ -68,10 +79,11 @@ public class MapSourcesTester {
 		String name = mapSource.toString();
 		while (name.length() < 40)
 			name += ".";
-		System.out.println(name + " : " + c.getResponseCode());
-		if (c.getResponseCode() != 200)
-			return;
 		c.disconnect();
+		System.out.print(name + ": ");
+		if (c.getResponseCode() == 200)
+			System.out.println("OK");
+		else
+			System.out.println("Error - HTTP " + c.getResponseCode());
 	}
-
 }

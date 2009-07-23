@@ -44,7 +44,7 @@ ul#nav {
 	padding-left:180px;
 }
 #content {
-	padding:45px;
+	padding:35px;
 	line-height: 150%;
 }
 #content h1 {
@@ -72,17 +72,16 @@ div.screenshot img {
 }
 
 #content #left {
-	width:460px;
+	width:510px;
 	float:left;
 	font-size:13px;
 }
-#content #right {
-	width:200px;
-	float:right;
+#content #left li {
+	margin-left:18px;
 }
-#gallery {
-	background:url(images/gallery.gif) no-repeat;
-	height:264px;
+#content #right {
+	width:220px;
+	float:right;
 }
 #section {
 	height:189px;
@@ -101,13 +100,9 @@ div.screenshot img {
 	color:#146894;
 	line-height:20px;
 }
-
 #section li a:hover{
  	color:#0000FF;
 	text-decoration: none;
-}
-#section li {
-	list-style-image:url(images/icon.gif);
 }
 #footer #ftlink {
 	padding-top:20px;
@@ -115,7 +110,6 @@ div.screenshot img {
 #footer #ftlink, #footer #ftlink a {
 	color:#0c70a6;
 }
-
 #footer {
 	margin-top:15px;
 	clear:both;
@@ -131,29 +125,6 @@ div.screenshot img {
 }
 #ftlink, #copyright {
 	padding-bottom:8px;
-}
-#blog p {
-	padding-top:15px;
-}
-#blog p.qoute {
-	background:url(images/quote.gif) no-repeat;
-	color:#8a6f00;
-	line-height:26px;
-	padding:0 5px;
-}
-#blog {
-	height:226px;
-	margin-top:55px;
-}
-.blog {
-	float:left;
-	width:190px;
-}
-#blog .first {
-	padding-right:45px;
-}
-#blog h2 {
-	color:#f5c715;
 }
 #right h2 {
 	font-size:24px;

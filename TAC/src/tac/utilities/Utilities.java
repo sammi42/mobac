@@ -1,6 +1,7 @@
 package tac.utilities;
 
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -242,6 +243,26 @@ public class Utilities {
 		}
 	}
 
+	/**
+	 * Fully reads data from <tt>in</tt> to an internal buffer until the end of in has
+	 * been reached. Then the buffer is returned.
+	 * 
+	 * @param in data source to be read
+	 * @return buffer all data available in in 
+	 * @throws IOException
+	 */
+	public static byte[] getInputBytes(InputStream in) throws IOException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream(in.available());
+		byte[] b = new byte[1024];
+		int read = 0;
+		read = in.read(b);
+		while (read >= 0) {
+			buffer.write(b, 0, read);
+			read = in.read(b);
+		}
+		return buffer.toByteArray();
+	}
+
 	public static void checkFileSetup() {
 
 		File userDir = new File(System.getProperty("user.dir"));
@@ -284,13 +305,13 @@ public class Utilities {
 				log.error("", e);
 			}
 		}
-		//defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
+		// defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
 		// ,
 		// "Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
 		// new boolean[] { false, false, true, false, true, false, true, false,
 		// true,
 		// false }, 256, 256, "oa berlin"));
-		//defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria"
+		// defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria"
 		// , "Mapnik",
 		// 50.611132, 47.189712, 13.996582, 8.811035, new boolean[] { false,
 		// false,

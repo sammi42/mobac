@@ -3,6 +3,7 @@ package tac.tools;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -27,6 +28,7 @@ import org.w3c.tidy.Tidy;
 
 import tac.mapsources.MapSourcesManager;
 import tac.program.Logging;
+import tac.utilities.Utilities;
 
 public class GoogleUrlUpdater {
 
@@ -46,6 +48,7 @@ public class GoogleUrlUpdater {
 		g.testMapSource("GoogleMaps.url");
 		g.testMapSource("GoogleEarth.url");
 		g.testMapSource("GoogleTerrain.url");
+		g.testGoogleMapMaker();
 		System.out.println("Updated map sources: " + g.updatedMapSources);
 	}
 
@@ -180,6 +183,30 @@ public class GoogleUrlUpdater {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void testGoogleMapMaker() {
+		try {
+			HttpURLConnection c = (HttpURLConnection) new URL("http://www.google.com/mapmaker")
+					.openConnection();
+			InputStream in = c.getInputStream();
+			String html = new String(Utilities.getInputBytes(in));
+			in.close();
+			Pattern p = Pattern.compile("\\\"gwm.([\\d]+)\\\"");
+			Matcher m = p.matcher(html);
+			if (!m.find())
+				throw new RuntimeException("pattern not found");
+			String number = m.group(1);
+			String url = "http://gt{$servernum}.google.com/mt/n=404&v=gwm." + number
+					+ "&x={$x}&y={$y}&z={$z}";
+			if (!url.equals(System.getProperty("GoogleMapMaker.url"))) {
+				updatedMapSources++;
+				System.out.println("GoogleMapMaker.url=" + url);
+			}
+			c.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static class NullPrintWriter extends PrintWriter {

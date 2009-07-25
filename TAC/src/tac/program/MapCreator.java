@@ -270,13 +270,13 @@ public class MapCreator {
 				+ getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE) + ","
 				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
 				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point03,xy,    0," + (height - 1) + ",in, deg,"
-				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point04,xy," + (width - 1) + "," + (height - 1) + ",in, deg,"
+		sbMap.append("Point03,xy," + (width - 1) + "," + (height - 1) + ",in, deg,"
 				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
 				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
+				+ ", grid,   ,           ,           ,N\r\n");
+		sbMap.append("Point04,xy,    0," + (height - 1) + ",in, deg,"
+				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
+				+ getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE)
 				+ ", grid,   ,           ,           ,N\r\n");
 		String emptyPointLine = "Point%02d,xy,     ,     ,"
 				+ "in, deg,    ,        ,N,    ,        ,W, "
@@ -286,25 +286,25 @@ public class MapCreator {
 			sbMap.append(s);
 		}
 		sbMap.append("Projection Setup,,,,,,,,,,\r\n");
-		sbMap.append("Map Feature = MF ; Map Comment = MC     " + "These follow if they exist\r\n");
+		sbMap.append("Map Feature = MF ; Map Comment = MC     These follow if they exist\r\n");
 		sbMap.append("Track File = TF      These follow if they exist\r\n");
-		sbMap.append("Moving Map Parameters = MM?    " + "These follow if they exist\r\n");
+		sbMap.append("Moving Map Parameters = MM?    These follow if they exist\r\n");
 
 		sbMap.append("MM0,Yes\r\n");
 		sbMap.append("MMPNUM,4\r\n");
 		sbMap.append("MMPXY,1,0,0\r\n");
 		sbMap.append("MMPXY,2," + (width - 1) + ",0\r\n");
-		sbMap.append("MMPXY,3,0," + (height - 1) + "\r\n");
-		sbMap.append("MMPXY,4," + (width - 1) + "," + (height - 1) + "\r\n");
+		sbMap.append("MMPXY,3," + (width - 1) + "," + (height - 1) + "\r\n");
+		sbMap.append("MMPXY,4,0," + (height - 1) + "\r\n");
 
 		DecimalFormat df6eng = Utilities.FORMAT_6_DEC_ENG;
 		sbMap.append("MMPLL,1,  " + df6eng.format(longitudeMin) + "," + df6eng.format(latitudeMax)
 				+ "\r\n");
 		sbMap.append("MMPLL,2,  " + df6eng.format(longitudeMax) + "," + df6eng.format(latitudeMax)
 				+ "\r\n");
-		sbMap.append("MMPLL,3,  " + df6eng.format(longitudeMin) + "," + df6eng.format(latitudeMin)
+		sbMap.append("MMPLL,3,  " + df6eng.format(longitudeMax) + "," + df6eng.format(latitudeMin)
 				+ "\r\n");
-		sbMap.append("MMPLL,4,  " + df6eng.format(longitudeMax) + "," + df6eng.format(latitudeMin)
+		sbMap.append("MMPLL,4,  " + df6eng.format(longitudeMin) + "," + df6eng.format(latitudeMin)
 				+ "\r\n");
 
 		sbMap.append("IWH,Map Image Width/Height," + width + "," + height + "\r\n");

@@ -112,6 +112,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		sw.write("Name: " + name + "<br>");
 		sw.write("Layer count: " + layers.size() + "<br>");
 		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
+		sw.write("Atlas format: " + outputFormat + "<br>");
 		sw.write("</html>");
 		return sw.toString();
 	}

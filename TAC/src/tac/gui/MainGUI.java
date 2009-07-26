@@ -194,6 +194,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// atlas output format
 		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
+		atlasOutputFormatCombo.addActionListener(new AtlasFormatComboListener());
 
 		// atlas name text field
 		atlasNameTextField = new JAtlasNameField();
@@ -595,19 +596,25 @@ public class MainGUI extends JFrame implements MapEventListener {
 				return;
 			System.gc();
 			try {
-				AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
-						.getSelectedItem();
 				// We have to work on a deep clone otherwise the user would be
 				// able to modify settings of maps, layers and the atlas itself
 				// while the AtlasThread works on that atlas reference
 				AtlasInterface atlasToCreate = jAtlasTree.getAtlas().deepClone();
-				atlasToCreate.setOutputFormat(atlasOutputFormat);
 				Thread atlasThread = new AtlasThread(atlasToCreate);
 				atlasThread.start();
 			} catch (Exception exception) {
 				log.error("", exception);
 				TACExceptionHandler.processException(exception);
 			}
+		}
+	}
+
+	private class AtlasFormatComboListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
+					.getSelectedItem();
+			jAtlasTree.getAtlas().setOutputFormat(atlasOutputFormat);
 		}
 	}
 

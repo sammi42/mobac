@@ -202,8 +202,10 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 				layer == null, // 1
 				maxTileCoordinate == null, // 2
 				minTileCoordinate == null, // 3
-				mapSource == null, // 4
-				zoom < 0 // 5
+				minTileCoordinate.x > maxTileCoordinate.x, // 4
+				minTileCoordinate.y > maxTileCoordinate.y, // 5
+				mapSource == null, // 6
+				zoom < 0 // 7
 		};
 
 		for (int i = 0; i < checks.length; i++)

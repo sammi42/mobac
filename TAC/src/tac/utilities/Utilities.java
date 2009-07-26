@@ -244,11 +244,12 @@ public class Utilities {
 	}
 
 	/**
-	 * Fully reads data from <tt>in</tt> to an internal buffer until the end of in has
-	 * been reached. Then the buffer is returned.
+	 * Fully reads data from <tt>in</tt> to an internal buffer until the end of
+	 * in has been reached. Then the buffer is returned.
 	 * 
-	 * @param in data source to be read
-	 * @return buffer all data available in in 
+	 * @param in
+	 *            data source to be read
+	 * @return buffer all data available in in
 	 * @throws IOException
 	 */
 	public static byte[] getInputBytes(InputStream in) throws IOException {
@@ -294,8 +295,8 @@ public class Utilities {
 			Profile p = new Profile("Google Maps New York");
 			Atlas atlas = Atlas.newInstance();
 			try {
-				EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -73.699036);
-				EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -74.142609);
+				EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
+				EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
 				atlas.addLayer(new Layer(atlas, "GM New York 16", new Google.GoogleMaps(), max,
 						min, 16, null, 32000));
 				atlas.addLayer(new Layer(atlas, "GM New York 14", new Google.GoogleMaps(), max,

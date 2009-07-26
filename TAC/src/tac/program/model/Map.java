@@ -202,10 +202,8 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 				layer == null, // 1
 				maxTileCoordinate == null, // 2
 				minTileCoordinate == null, // 3
-				minTileCoordinate.x > maxTileCoordinate.x, // 4
-				minTileCoordinate.y > maxTileCoordinate.y, // 5
-				mapSource == null, // 6
-				zoom < 0 // 7
+				mapSource == null, // 4
+				zoom < 0 // 5
 		};
 
 		for (int i = 0; i < checks.length; i++)
@@ -213,6 +211,21 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 				log.error("Problem detectected with map \"" + name + "\" check: " + i);
 				result = true;
 			}
+		// Automatically correct bad ordered min/max coordinates
+		try {
+			if (minTileCoordinate.x > maxTileCoordinate.x) {
+				int tmp = maxTileCoordinate.x;
+				maxTileCoordinate.x = minTileCoordinate.x;
+				minTileCoordinate.x = tmp;
+			}
+			if (minTileCoordinate.y > maxTileCoordinate.y) {
+				int tmp = maxTileCoordinate.y;
+				maxTileCoordinate.y = minTileCoordinate.y;
+				minTileCoordinate.y = tmp;
+			}
+		} catch (Exception e) {
+		}
+
 		return result;
 	}
 

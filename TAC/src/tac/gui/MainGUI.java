@@ -194,7 +194,11 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// atlas output format
 		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
-		atlasOutputFormatCombo.addActionListener(new AtlasFormatComboListener());
+		atlasOutputFormatCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				applyAtlasOutputFormat();
+			}
+		});
 
 		// atlas name text field
 		atlasNameTextField = new JAtlasNameField();
@@ -261,6 +265,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			public void actionPerformed(ActionEvent e) {
 				jAtlasTree.clearAtlas();
+				applyAtlasOutputFormat();
 			}
 		});
 		JButton addLayers = new JButton("Add selection");
@@ -609,15 +614,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private class AtlasFormatComboListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
-					.getSelectedItem();
-			jAtlasTree.getAtlas().setOutputFormat(atlasOutputFormat);
-		}
-	}
-
 	private void updateZoomLevelCheckBoxes() {
 		MapSource tileSource = previewMap.getMapSource();
 		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
@@ -682,6 +678,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 	public void zoomChanged(int zoomLevel) {
 		zoomLevelText.setText(" " + zoomLevel + " ");
 		zoomSlider.setValue(zoomLevel);
+	}
+
+	public void applyAtlasOutputFormat() {
+		AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
+				.getSelectedItem();
+		jAtlasTree.getAtlas().setOutputFormat(atlasOutputFormat);
 	}
 
 	public void selectNextMapSource() {

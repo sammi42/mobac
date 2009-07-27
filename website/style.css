@@ -70,7 +70,6 @@ div.screenshot img {
 	float:left;
 	margin-right:30px;
 }
-
 #content #left {
 	width:510px;
 	float:left;
@@ -99,6 +98,13 @@ div.screenshot img {
 	text-decoration:underline;
 	color:#146894;
 	line-height:20px;
+}
+#content #faq li {
+	margin-left:20px;
+}
+#content #faq .question {
+	margin-top:10px;
+	font-weight:bold;
 }
 #section li a:hover{
  	color:#0000FF;

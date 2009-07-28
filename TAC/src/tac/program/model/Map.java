@@ -237,7 +237,7 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 			map.maxTileCoordinate = (Point) maxTileCoordinate.clone();
 			map.minTileCoordinate = (Point) minTileCoordinate.clone();
 			map.name = name;
-			if (map.parameters != null)
+			if (parameters != null)
 				map.parameters = (TileImageParameters) parameters.clone();
 			else
 				map.parameters = null;

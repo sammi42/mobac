@@ -1,5 +1,6 @@
 package tac.program;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -92,7 +93,7 @@ public class MapCreatorOzi extends MapCreator {
 							if (sourceTileData != null) {
 								BufferedImage tile = ImageIO.read(new ByteArrayInputStream(
 										sourceTileData));
-								graphics.drawImage(tile, lineX, 0, null);
+								graphics.drawImage(tile, lineX, 0, Color.WHITE, null);
 							}
 						} catch (IOException e) {
 							log.error("", e);

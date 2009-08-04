@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 
+import tac.gui.panels.JCoordinatesPanel;
 import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google;
@@ -102,6 +103,8 @@ public class Settings {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		mainWindow.size.width = (int) (0.9f * dScreen.width);
 		mainWindow.size.height = (int) (0.9f * dScreen.height);
+		mainWindow.collapsedPanels.add(JCoordinatesPanel.NAME);
+		mainWindow.collapsedPanels.add("Gpx");
 	}
 
 	public static Settings getInstance() {

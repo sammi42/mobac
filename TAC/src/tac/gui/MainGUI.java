@@ -42,6 +42,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.Main;
 import tac.exceptions.InvalidNameException;
+import tac.gui.actions.LoadGpx;
 import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JCollapsiblePanel;
@@ -77,8 +78,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private static MainGUI mainGUI = null;
 
-	private JAtlasTree jAtlasTree;
-	private PreviewMap previewMap;
+	protected JAtlasTree jAtlasTree;
+	public PreviewMap previewMap;
 
 	private JLabel zoomLevelText;
 	private JComboBox gridZoomCombo;
@@ -286,6 +287,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
+		JCollapsiblePanel gpxPanel = new JCollapsiblePanel("Gpx",
+				new GridBagLayout());
+
+		JButton loadGpx = new JButton("Load Gpx");
+		loadGpx.addActionListener(new LoadGpx());
+		gpxPanel.addContent(loadGpx, GBC.std());
+		
 		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
@@ -297,6 +305,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		leftPanelContent.add(profilesPanel, gbc_eol);
 		leftPanelContent.add(createAtlasButton, gbc_eol);
 		leftPanelContent.add(settingsButton, gbc_eol);
+		leftPanelContent.add(gpxPanel, gbc_eol);
 		leftPanelContent.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 
 		JScrollPane scrollPane = new JScrollPane(leftPanelContent);

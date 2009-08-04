@@ -21,6 +21,8 @@ import tac.utilities.GBC;
  */
 public class JCoordinatesPanel extends JCollapsiblePanel {
 
+	public static final String NAME = "Coordinates";
+
 	private JCoordinateField latMinTextField;
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
@@ -29,7 +31,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 
 	public JCoordinatesPanel() {
 		super("Selection coordinates (min/max)", new GridBagLayout());
-		setName("Coordinates");
+		setName(NAME);
 		// coordinates panel
 		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, true);
 		latMaxTextField.setActionCommand("latMaxTextField");

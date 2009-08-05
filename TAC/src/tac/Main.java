@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import tac.gui.MainGUI;
+import tac.program.DirectoryManager;
 import tac.program.Logging;
 import tac.program.model.Settings;
 import tac.utilities.TACExceptionHandler;
@@ -16,7 +17,8 @@ public class Main {
 
 	public Main() {
 		Logging.configureLogging();
-		// Logging.logSystemProperties();
+		//Logging.logSystemProperties();
+		DirectoryManager.initialize();
 		Utilities.checkFileSetup();
 		Settings.loadOrQuit();
 		TACExceptionHandler.installToolkitEventQueueProxy();

@@ -346,13 +346,4 @@ public class Settings {
 		log.info("Proxy configuration applied: host=" + newProxyHost + " port=" + newProxyPort);
 	}
 
-	public static void main(String[] args) {
-		try {
-			load();
-			save();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

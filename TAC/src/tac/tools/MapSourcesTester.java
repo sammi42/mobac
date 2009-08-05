@@ -43,7 +43,7 @@ public class MapSourcesTester {
 	private static HashMap<Class<?>, EastNorthCoordinate> testCoordinates;
 
 	public static void main(String[] args) {
-		Logging.configureConosleLogging();
+		Logging.configureConsoleLogging();
 		Logger.getRootLogger().setLevel(Level.ERROR);
 		MapSourcesManager.loadMapSourceProperties();
 

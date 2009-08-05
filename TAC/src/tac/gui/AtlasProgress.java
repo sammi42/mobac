@@ -1,7 +1,5 @@
 package tac.gui;
 
-import static tac.utilities.Utilities.fmt;
-
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -151,13 +149,13 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		mapInfo = new JLabel("Downloading map: ");
 
 		atlasMapsDone = new JLabel("000 of 000 done");
-		atlasPercent = new JLabel(fmt(TEXT_PERCENT, 100));
+		atlasPercent = new JLabel(String.format(TEXT_PERCENT, 100));
 		atlasTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
 		atlasProgressBar = new JProgressBar();
 
 		mapDownloadTitle = new JLabel(TEXT_MAP_DOWNLOAD + "000");
 		mapDownloadElementsDone = new JLabel("1000000 of 1000000 tiles done");
-		mapDownloadPercent = new JLabel(fmt(TEXT_PERCENT, 100));
+		mapDownloadPercent = new JLabel(String.format(TEXT_PERCENT, 100));
 		mapDownloadTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
 		mapDownloadProgressBar = new JProgressBar();
 
@@ -198,8 +196,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		GBC gbcEolFill = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC gbcEolFillI = GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 0);
 
-//		background.add(windowTitle, gbcEolFill);
-//		background.add(Box.createVerticalStrut(10), gbcEol);
+		// background.add(windowTitle, gbcEolFill);
+		// background.add(Box.createVerticalStrut(10), gbcEol);
 
 		background.add(mapInfo, gbcEolFill);
 		background.add(Box.createVerticalStrut(20), gbcEol);
@@ -249,11 +247,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		background.add(bottomPanel, gbcEolFillI);
 
 		JPanel borderPanel = new JPanel(new GridBagLayout());
-//		borderPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+		// borderPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 		borderPanel.add(background, GBC.std().insets(10, 10, 10, 10).fill());
 
 		add(borderPanel, GBC.std().fill());
-//		setUndecorated(true);
+		// setUndecorated(true);
 
 		abortAtlasDownloadButton.addActionListener(this);
 		dismissWindowButton.addActionListener(this);
@@ -411,7 +409,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			else
 				dispose();
 		} else if (pauseResumeDownloadButton.equals(source)) {
-			if (downloadControlListener!= null)
+			if (downloadControlListener != null)
 				downloadControlListener.pauseResumeDownload();
 		}
 	}
@@ -454,7 +452,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			int newPercent = (int) (atlasProgressBar.getPercentComplete() * 100);
 			if (data.totalProgressPercent != newPercent) {
 				data.totalProgressPercent = newPercent;
-				atlasPercent.setText(fmt(TEXT_PERCENT, data.totalProgressPercent));
+				atlasPercent.setText(String.format(TEXT_PERCENT, data.totalProgressPercent));
 				if (data.atlasInterface != null)
 					AtlasProgress.this.setTitle(Integer.toString(data.totalProgressPercent)
 							+ " % - Downloading atlas \"" + data.atlasInterface.getName() + "\"");
@@ -473,7 +471,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			mapDownloadProgressBar.setMaximum(data.mapDownloadNumberOfTiles);
 			mapDownloadProgressBar.setValue(data.mapDownloadProgress);
 
-			mapDownloadPercent.setText(fmt(TEXT_PERCENT, (int) (mapDownloadProgressBar
+			mapDownloadPercent.setText(String.format(TEXT_PERCENT, (int) (mapDownloadProgressBar
 					.getPercentComplete() * 100)));
 
 			mapDownloadElementsDone.setText(Integer.toString(data.mapDownloadProgress) + " of "

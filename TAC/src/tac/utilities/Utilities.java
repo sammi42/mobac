@@ -11,8 +11,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -47,10 +50,6 @@ public class Utilities {
 	private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
 
 	private static final Logger log = Logger.getLogger(Utilities.class);
-
-	public static String fmt(String format, int value) {
-		return String.format(format, new Object[] { value });
-	}
 
 	public static boolean testJaiColorQuantizerAvailable() {
 		try {
@@ -306,19 +305,6 @@ public class Utilities {
 				log.error("", e);
 			}
 		}
-		// defaultProfiles.addElement(createExampleProfile("Outdooractive Berlin"
-		// ,
-		// "Outdooractive.com", 53.079178, 52.020388, 14.276733, 12.356873,
-		// new boolean[] { false, false, true, false, true, false, true, false,
-		// true,
-		// false }, 256, 256, "oa berlin"));
-		// defaultProfiles.addElement(createExampleProfile("Openstreetmap Bavaria"
-		// , "Mapnik",
-		// 50.611132, 47.189712, 13.996582, 8.811035, new boolean[] { false,
-		// false,
-		// false, false, false, false, false, false, false, false, true,
-		// false, true, false, true, false, true, false, true }, 256, 256,
-		// "osm bavaria"));
 	}
 
 	/**
@@ -384,4 +370,33 @@ public class Utilities {
 			System.getProperties().remove("http.proxyPort");
 	}
 
+	/**
+	 * Returns the file path for the selected class. If the class is located
+	 * inside a JAR file the return value contains the directory that contains
+	 * the JAR file. If the class file is executed outside of an JAR the root
+	 * directory holding the class/package structure is returned.
+	 * 
+	 * @param mainClass
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	public static File getClassLocation(Class<?> mainClass) {
+		ProtectionDomain pDomain = mainClass.getProtectionDomain();
+		CodeSource cSource = pDomain.getCodeSource();
+		URL loc = cSource.getLocation(); // file:/c:/almanac14/examples/
+		File f;
+		try {
+			f = new File(loc.toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Unable to determine program directory: ", e);
+		}
+		if (f.isDirectory()) {
+			// Class is executed from class/package structure from file system
+			return f;
+		} else {
+			// Class is executed from inside of a JAR -> f references the JAR
+			// file
+			return f.getParentFile();
+		}
+	}
 }

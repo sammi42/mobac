@@ -26,18 +26,23 @@ public class Logging {
 			logger.setLevel(Level.INFO);
 			logger.info("Logging configured by \"" + f.getAbsolutePath() + "\"");
 		} else {
-			configureConosleLogging();
+			configureConsoleLogging();
 			Logger logger = Logger.getRootLogger();
 			logger.info("log4.xml not found - enabling default error log to console. \n"
 					+ "Full path to expected log4.xml: \"" + f.getAbsolutePath() + "\"");
 		}
 	}
 
-	public static void configureConosleLogging() {
+	public static void configureConsoleLogging(Level level) {
 		Logger logger = Logger.getRootLogger();
 		ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout());
 		logger.addAppender(consoleAppender);
-		logger.setLevel(Level.ERROR);
+		logger.setLevel(level);
+
+	}
+
+	public static void configureConsoleLogging() {
+		configureConsoleLogging(Level.ERROR);
 	}
 
 	public static void disableLogging() {

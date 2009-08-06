@@ -42,7 +42,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.Main;
 import tac.exceptions.InvalidNameException;
-import tac.gui.actions.LoadGpx;
+import tac.gui.actions.GpxClear;
+import tac.gui.actions.GpxLoad;
 import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JCollapsiblePanel;
@@ -291,8 +292,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 				new GridBagLayout());
 
 		JButton loadGpx = new JButton("Load Gpx");
-		loadGpx.addActionListener(new LoadGpx());
+		loadGpx.addActionListener(new GpxLoad());
 		gpxPanel.addContent(loadGpx, GBC.std());
+
+		JButton clearGpx = new JButton("Clear Gpx");
+		clearGpx.addActionListener(new GpxClear());
+		gpxPanel.addContent(clearGpx, GBC.std());
 		
 		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);

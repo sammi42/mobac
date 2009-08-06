@@ -9,15 +9,14 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.bind.JAXBException;
 
-import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import tac.data.gpx.GPXTest;
 import tac.data.gpx.interfaces.Gpx;
-import tac.data.gpx.interfaces.Wpt;
 import tac.gui.MainGUI;
+import tac.gui.mapview.GpxLayer;
 
-public class LoadGpx implements ActionListener {
+public class GpxLoad implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 		MainGUI.getMainGUI().previewMap.setMapMarkerVisible(true);
@@ -42,10 +41,8 @@ public class LoadGpx implements ActionListener {
 
 		try {
 			Gpx gpx = GPXTest.loadGpxFile(fc.getSelectedFile());
-			for (Wpt wpt : gpx.getWpt()) {
-				mapMarkers.add(new MapMarkerDot(wpt.getLat().doubleValue(), wpt.getLon()
-						.doubleValue()));
-			}
+			GpxLayer gpxLayer = new GpxLayer(gpx);
+			MainGUI.getMainGUI().previewMap.mapLayers.add(gpxLayer);
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);
 		}

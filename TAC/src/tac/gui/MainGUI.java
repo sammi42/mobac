@@ -748,7 +748,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			do {
 				try {
 					Layer layer = new Layer(atlasInterface, layerName, tileSource, tl, br, zoom,
-							customTileParameters, settings.getMaxMapSize());
+							customTileParameters, settings.maxMapSize);
 					atlasInterface.addLayer(layer);
 					success = true;
 				} catch (InvalidNameException e) {

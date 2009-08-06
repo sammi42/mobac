@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 
+import tac.gui.actions.GpxLoad;
 import tac.gui.panels.JCoordinatesPanel;
 import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
@@ -40,7 +41,7 @@ public class Settings {
 	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
 	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
-	private int maxMapSize = 32767;
+	public int maxMapSize = 32767;
 
 	private boolean tileStoreEnabled = true;
 
@@ -63,13 +64,28 @@ public class Settings {
 	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
 	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
-	// Timeout in seconds (default 10 seconds)
+	/**
+	 * Timeout in seconds (default 10 seconds)
+	 */
 	private int connectionTimeout = 10;
 
 	private String googleLanguage = "en";
 
+	/**
+	 * Development mode enabled/disabled
+	 * <p>
+	 * In development mode one additional map source is available for using TAC
+	 * Debug TileServer
+	 * </p>
+	 */
 	@XmlElement
 	private boolean devMode = false;
+
+	/**
+	 * Saves the last used directory of the GPX file chooser dialog. Used in
+	 * {@link GpxLoad}.
+	 */
+	public String gpxFileChooserDir = "";
 
 	public final MainWindowSettings mainWindow = new MainWindowSettings();
 
@@ -96,6 +112,12 @@ public class Settings {
 	@XmlElement(name = "customMapSource")
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
+	/**
+	 * Last ETag value retrieved while online map source update.
+	 * 
+	 * @see MapSourcesManager#mapsourcesOnlineUpdate()
+	 * @see http://en.wikipedia.org/wiki/HTTP_ETag
+	 */
 	@XmlElement
 	public String mapsourcesEtag;
 
@@ -153,14 +175,6 @@ public class Settings {
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-	}
-
-	public int getMaxMapSize() {
-		return maxMapSize;
-	}
-
-	public void setMaxMapSize(int mapsSize) {
-		this.maxMapSize = mapsSize;
 	}
 
 	public boolean isTileStoreEnabled() {

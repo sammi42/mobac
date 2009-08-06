@@ -15,6 +15,7 @@ import tac.data.gpx.GPXTest;
 import tac.data.gpx.interfaces.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.mapview.GpxLayer;
+import tac.program.model.Settings;
 
 public class GpxLoad implements ActionListener {
 
@@ -23,6 +24,11 @@ public class GpxLoad implements ActionListener {
 		List<MapMarker> mapMarkers = MainGUI.getMainGUI().previewMap.getMapMarkerList();
 		mapMarkers.clear();
 		JFileChooser fc = new JFileChooser();
+		try {
+			File dir = new File(Settings.getInstance().gpxFileChooserDir);
+			fc.setCurrentDirectory(dir); // restore the saved directory
+		} catch (Exception e) {
+		}
 		fc.addChoosableFileFilter(new FileFilter() {
 
 			@Override
@@ -38,6 +44,7 @@ public class GpxLoad implements ActionListener {
 		int returnVal = fc.showOpenDialog(MainGUI.getMainGUI());
 		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return;
+		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
 		try {
 			Gpx gpx = GPXTest.loadGpxFile(fc.getSelectedFile());
@@ -48,5 +55,4 @@ public class GpxLoad implements ActionListener {
 		}
 		MainGUI.getMainGUI().previewMap.repaint();
 	}
-
 }

@@ -415,8 +415,7 @@ public class SettingsGUI extends JDialog {
 
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
-		int size = s.getMaxMapSize();
-		mapSize.setValue(size);
+		mapSize.setValue(s.maxMapSize);
 
 		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.getDownloadThreadCount());
 		if (index < 0)
@@ -437,8 +436,7 @@ public class SettingsGUI extends JDialog {
 
 		s.setTileStoreEnabled(tileStoreEnabled.isSelected());
 
-		int size = mapSize.getValue();
-		s.setMaxMapSize(size);
+		s.maxMapSize = mapSize.getValue();
 
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
 		s.setDownloadThreadCount(threads);

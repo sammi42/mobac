@@ -532,7 +532,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		int minZoom = previewMap.getMapSource().getMinZoom();
 		GridZoom lastGridZoom = (GridZoom) gridZoomCombo.getSelectedItem();
 		gridZoomCombo.removeAllItems();
-		gridZoomCombo.setMaximumRowCount(maxZoom + 1);
+		gridZoomCombo.setMaximumRowCount(maxZoom - minZoom + 2);
 		gridZoomCombo.addItem(new GridZoom(-1) {
 
 			@Override

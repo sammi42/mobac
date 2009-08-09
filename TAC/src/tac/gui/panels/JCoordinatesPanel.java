@@ -34,16 +34,16 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		super("Selection coordinates (min/max)", new GridBagLayout());
 		setName(NAME);
 		// coordinates panel
-		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, true);
+		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
 		latMaxTextField.setActionCommand("latMaxTextField");
-		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX, false);
+		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
 		lonMinTextField.setActionCommand("longMinTextField");
-		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX, true);
+		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
 		lonMaxTextField.setActionCommand("longMaxTextField");
-		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, false);
+		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
 		latMinTextField.setActionCommand("latMinTextField");
 
-		applySelectionButton = new JButton("Apply selection");
+		applySelectionButton = new JButton("Select entered coordinates");
 
 		JLabel latMaxLabel = new JLabel("N ", JLabel.CENTER);
 		JLabel lonMinLabel = new JLabel("W ", JLabel.CENTER);

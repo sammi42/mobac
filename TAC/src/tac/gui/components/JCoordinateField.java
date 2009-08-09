@@ -25,13 +25,11 @@ public class JCoordinateField extends JTextField {
 
 	private double min;
 	private double max;
-	private boolean trunc;
-
-	public JCoordinateField(double min, double max, boolean trunc) {
+	
+	public JCoordinateField(double min, double max) {
 		super(10);
 		this.min = min;
 		this.max = max;
-		this.trunc = trunc;
 		coordinateListener = new JCoordinateListener();
 		coordinateListener.checkCoordinate(null);
 	}
@@ -56,13 +54,6 @@ public class JCoordinateField extends JTextField {
 				super.setText("");
 				newValid = false;
 			} else {
-				if (trunc)
-					// DecimalFormat does not allow formatting a number without
-					// rounding, therefore this is a workaround for performing
-					// truncating the coordinate instead
-					value -= 0.0000009;
-				// else
-				// value += 0.0000005;
 				super.setText(Utilities.FORMAT_6_DEC.format(value));
 			}
 			if (newValid != inputIsValid)

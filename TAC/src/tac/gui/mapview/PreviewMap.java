@@ -37,15 +37,28 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public static final Color SEL_COLOR = new Color(0.9f, 0.7f, 0.7f, 0.6f);
 	public static final Color MAP_COLOR = new Color(1.0f, 0.84f, 0.0f, 0.4f);
 
+	/**
+	 * Map selection max/min pixel coordinates regarding zoom level
+	 * <code>MAX_ZOOM</code>
+	 */
 	private Point iSelectionRectStart;
 	private Point iSelectionRectEnd;
+
+	/**
+	 * Map selection max/min pixel coordinates regarding zoom level
+	 * <code>MAX_ZOOM</code> with respect to the grid zoom.
+	 */
 	private Point gridSelectionStart;
 	private Point gridSelectionEnd;
 
+	/**
+	 * Pre-painted tile with grid lines on it. This makes painting the grid a
+	 * lot faster in difference to painting each line or rectangle if the grid
+	 * zoom is much higher that the current zoom level.
+	 */
 	private BufferedImage gridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 
-	private int gridZoom = 10;
-	private int gridFactor;
+	private int gridZoom = -1;
 	private int gridSize;
 
 	public LinkedList<MapEventListener> mapEventListeners = new LinkedList<MapEventListener>();
@@ -116,28 +129,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		if (gridZoom == this.gridZoom)
 			return;
 		this.gridZoom = gridZoom;
-		if (gridZoom < 0) {
-			gridFactor = 0;
-			return;
-		}
-		int gridZoomDiff = 20 - gridZoom;
-		gridFactor = 256 << gridZoomDiff;
 		updateGridValues();
-		if (iSelectionRectStart != null && iSelectionRectEnd != null) {
-			Point pStart = new Point(iSelectionRectStart);
-			Point pEnd = new Point(iSelectionRectEnd);
-
-			// Snap to the current grid
-			pStart.x = pStart.x - (pStart.x % gridFactor);
-			pStart.y = pStart.y - (pStart.y % gridFactor);
-			pEnd.x += gridFactor - 1;
-			pEnd.y += gridFactor - 1;
-			pEnd.x = pEnd.x - (pEnd.x % gridFactor);
-			pEnd.y = pEnd.y - (pEnd.y % gridFactor);
-
-			gridSelectionStart = pStart;
-			gridSelectionEnd = pEnd;
-		}
+		applyGridOnSelection();
+		updateMapSelection();
 		repaint();
 	}
 
@@ -177,23 +171,21 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			int w = Math.min(getWidth(), max - tlc.x);
 			int h = Math.min(getHeight(), max - tlc.y);
 			g.setColor(GRID_COLOR);
-			int off_x = (tlc.x % Tile.SIZE);
-			int off_y = (tlc.y % Tile.SIZE);
 			if (gridSize > 1) {
 				int posx;
 				int posy;
 				if (gridSize >= Tile.SIZE) {
-					posx = -(tlc.x % gridSize);
-					posy = -(tlc.y % gridSize);
+					posx = -tlc.x;
+					posy = -tlc.y;
 					for (int x = posx; x < w; x += gridSize) {
-						g.drawLine(x, 0, x, h);
+						g.drawLine(x, posy, x, h);
 					}
 					for (int y = posy; y < h; y += gridSize) {
-						g.drawLine(0, y, w, y);
+						g.drawLine(posx, y, w, y);
 					}
 				} else {
-					// posx = -Tile.WIDTH + w / 2 - off_x;
-					// posy = -Tile.HEIGHT + h / 2 - off_y;
+					int off_x = tlc.x;
+					int off_y = tlc.y;
 					for (int x = -off_x; x < w; x += 256) {
 						for (int y = -off_y; y < h; y += 256) {
 							g.drawImage(gridTile, x, y, null);
@@ -213,6 +205,18 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			int h = y_max - y_min;
 			g.setColor(SEL_COLOR);
 			g.fillRect(x_min, y_min, w, h);
+			g.setColor(GRID_COLOR);
+			g.drawRect(x_min, y_min, w, h);
+		}
+		if (iSelectionRectStart != null && iSelectionRectEnd != null) {
+			int zoomDiff = MAX_ZOOM - zoom;
+			int x_min = (iSelectionRectStart.x >> zoomDiff) - tlc.x;
+			int y_min = (iSelectionRectStart.y >> zoomDiff) - tlc.y;
+			int x_max = (iSelectionRectEnd.x >> zoomDiff) - tlc.x;
+			int y_max = (iSelectionRectEnd.y >> zoomDiff) - tlc.y;
+
+			int w = x_max - x_min;
+			int h = y_max - y_min;
 			g.setColor(GRID_COLOR);
 			g.drawRect(x_min, y_min, w, h);
 		}
@@ -296,54 +300,69 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		pNewStart.x <<= zoomDiff;
 		pNewStart.y <<= zoomDiff;
 
-		if (gridZoom >= 0) {
-			int gridZoomDiff = MAX_ZOOM - gridZoom;
-			int gridFactor = Tile.SIZE << gridZoomDiff;
-
-			// Snap to the current grid
-			pNewStart.x = pNewStart.x - (pNewStart.x % gridFactor);
-			pNewStart.y = pNewStart.y - (pNewStart.y % gridFactor);
-			pNewEnd.x += gridFactor - 1;
-			pNewEnd.y += gridFactor - 1;
-			pNewEnd.x = pNewEnd.x - (pNewEnd.x % gridFactor);
-			pNewEnd.y = pNewEnd.y - (pNewEnd.y % gridFactor);
-		}
 		iSelectionRectStart = pNewStart;
 		iSelectionRectEnd = pNewEnd;
-		gridSelectionStart = pNewStart;
-		gridSelectionEnd = pNewEnd;
-		if (notifyListeners) {
+		gridSelectionStart = null;
+		gridSelectionEnd = null;
+
+		applyGridOnSelection();
+
+		if (notifyListeners)
 			updateMapSelection();
-		}
 		repaint();
 	}
 
-	public void updateMapSelection() {
+	protected void applyGridOnSelection() {
+		if (gridZoom < 0) {
+			gridSelectionStart = iSelectionRectStart;
+			gridSelectionEnd = iSelectionRectEnd;
+			return;
+		}
 
 		if (iSelectionRectStart == null || iSelectionRectEnd == null)
 			return;
 
-		int selectionZoom;
+		int gridZoomDiff = MAX_ZOOM - gridZoom;
+		int gridFactor = Tile.SIZE << gridZoomDiff;
+
+		Point pNewStart = new Point(iSelectionRectStart);
+		Point pNewEnd = new Point(iSelectionRectEnd);
+
+		// Snap to the current grid
+		pNewStart.x = pNewStart.x - (pNewStart.x % gridFactor);
+		pNewStart.y = pNewStart.y - (pNewStart.y % gridFactor);
+		pNewEnd.x += gridFactor - 1;
+		pNewEnd.y += gridFactor - 1;
+		pNewEnd.x = pNewEnd.x - (pNewEnd.x % gridFactor);
+		pNewEnd.y = pNewEnd.y - (pNewEnd.y % gridFactor);
+
+		gridSelectionStart = pNewStart;
+		gridSelectionEnd = pNewEnd;
+	}
+
+	public void updateMapSelection() {
 		int x_min, y_min, x_max, y_max;
-		int zoomDiff1;
 
 		if (gridZoom >= 0) {
-			selectionZoom = gridZoom;
-			zoomDiff1 = MAX_ZOOM - selectionZoom;
+			if (gridSelectionStart == null || gridSelectionEnd == null)
+				return;
+			x_min = gridSelectionStart.x;
+			y_min = gridSelectionStart.y;
+			x_max = gridSelectionEnd.x;
+			y_max = gridSelectionEnd.y;
 		} else {
-			selectionZoom = zoom;
-			zoomDiff1 = MAX_ZOOM - selectionZoom;
+			if (iSelectionRectStart == null || iSelectionRectEnd == null)
+				return;
+			x_min = iSelectionRectStart.x;
+			y_min = iSelectionRectStart.y;
+			x_max = iSelectionRectEnd.x;
+			y_max = iSelectionRectEnd.y;
 		}
-		x_min = (gridSelectionStart.x >> zoomDiff1);
-		y_min = (gridSelectionStart.y >> zoomDiff1);
-		x_max = (gridSelectionEnd.x >> zoomDiff1);
-		y_max = (gridSelectionEnd.y >> zoomDiff1);
-		MercatorPixelCoordinate min = new MercatorPixelCoordinate(x_min, y_min, selectionZoom);
-		MercatorPixelCoordinate max = new MercatorPixelCoordinate(x_max, y_max, selectionZoom);
+		MercatorPixelCoordinate min = new MercatorPixelCoordinate(x_min, y_min, MAX_ZOOM);
+		MercatorPixelCoordinate max = new MercatorPixelCoordinate(x_max, y_max, MAX_ZOOM);
 		log.debug("sel min=" + min + " max: " + max);
-		for (MapEventListener listener : mapEventListeners) {
+		for (MapEventListener listener : mapEventListeners)
 			listener.selectionChanged(max, min);
-		}
 	}
 
 	public void addMapEventListener(MapEventListener l) {

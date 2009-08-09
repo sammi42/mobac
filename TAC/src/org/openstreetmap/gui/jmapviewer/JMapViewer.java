@@ -29,6 +29,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
+import tac.mapsources.impl.OsmMapSources;
 import tac.utilities.Utilities;
 
 /**
@@ -49,7 +50,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected static final Point[] move = { new Point(1, 0), new Point(0, 1), new Point(-1, 0),
 			new Point(0, -1) };
 
-	public static final int MAX_ZOOM = 22;
+	public static final int MAX_ZOOM = OsmMercator.MAX_ZOOM;
 	public static final int MIN_ZOOM = 0;
 
 	protected TileLoaderJobCreator tileLoader;
@@ -96,7 +97,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		super();
 		mapTileLayers = new LinkedList<MapTileLayer>();
 		mapLayers = new LinkedList<MapLayer>();
-		mapSource = new OsmTileSource.Mapnik();
+		mapSource = new OsmMapSources.Mapnik();
 		tileLoader = new OsmTileLoader(this);
 		this.tileCache = tileCache;
 		jobDispatcher = JobDispatcher.getInstance();

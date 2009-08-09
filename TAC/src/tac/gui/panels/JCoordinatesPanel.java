@@ -12,6 +12,7 @@ import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JCoordinateField;
 import tac.program.MapSelection;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.MercatorPixelCoordinate;
 import tac.utilities.GBC;
 
 /**
@@ -27,7 +28,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 	private JCoordinateField latMaxTextField;
 	private JCoordinateField lonMinTextField;
 	private JCoordinateField lonMaxTextField;
-	private JButton displaySelectionButton;
+	private JButton applySelectionButton;
 
 	public JCoordinatesPanel() {
 		super("Selection coordinates (min/max)", new GridBagLayout());
@@ -42,7 +43,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX, false);
 		latMinTextField.setActionCommand("latMinTextField");
 
-		displaySelectionButton = new JButton("Display selection");
+		applySelectionButton = new JButton("Apply selection");
 
 		JLabel latMaxLabel = new JLabel("N ", JLabel.CENTER);
 		JLabel lonMinLabel = new JLabel("W ", JLabel.CENTER);
@@ -64,18 +65,30 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		contentContainer.add(latMinLabel);
 		contentContainer.add(latMinTextField);
 		contentContainer.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-		contentContainer.add(displaySelectionButton, GBC.eol().anchor(GBC.CENTER)
+		contentContainer.add(applySelectionButton, GBC.eol().anchor(GBC.CENTER)
 				.insets(0, 5, 0, 0));
 	}
 
-	public void setMaxCoordinate(EastNorthCoordinate coordinate) {
-		latMaxTextField.setCoordinate(coordinate.lat);
-		lonMaxTextField.setCoordinate(coordinate.lon);
+	public void setCoordinates(EastNorthCoordinate max, EastNorthCoordinate min) {
+		latMaxTextField.setCoordinate(max.lat);
+		lonMaxTextField.setCoordinate(max.lon);
+		latMinTextField.setCoordinate(min.lat);
+		lonMinTextField.setCoordinate(min.lon);
 	}
 
-	public void setMinCoordinate(EastNorthCoordinate coordinate) {
-		latMinTextField.setCoordinate(coordinate.lat);
-		lonMinTextField.setCoordinate(coordinate.lon);
+	public void setCoordinates(MapSelection ms) {
+		MercatorPixelCoordinate max = ms.getBottomRightPixelCoordinate();
+		MercatorPixelCoordinate min = ms.getTopLeftPixelCoordinate();
+		setSelection(max, min);
+	}
+
+	public void setSelection(MercatorPixelCoordinate max, MercatorPixelCoordinate min) {
+		EastNorthCoordinate c1 = min.getEastNorthCoordinate();
+		EastNorthCoordinate c2 = max.getEastNorthCoordinate();
+		latMaxTextField.setCoordinate(c1.lat);
+		lonMaxTextField.setCoordinate(c2.lon);
+		latMinTextField.setCoordinate(c2.lat);
+		lonMinTextField.setCoordinate(c1.lon);
 	}
 
 	public EastNorthCoordinate getMaxCoordinate() {
@@ -89,7 +102,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 	}
 
 	public void addButtonActionListener(ActionListener l) {
-		displaySelectionButton.addActionListener(l);
+		applySelectionButton.addActionListener(l);
 	}
 
 	public String getValidationErrorMessages() {

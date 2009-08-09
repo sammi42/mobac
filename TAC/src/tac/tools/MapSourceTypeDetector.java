@@ -16,7 +16,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.MiscMapSources.OsmHikingMap;
+import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 

@@ -77,9 +77,13 @@ public interface MapSource {
 	 * Constructs the tile url. Each tile referenced by an url has to be of size
 	 * 256 pixel * 256 pixel. Other dimensions are not supported.
 	 * 
-	 * @param zoom
+	 * @param zoom 
 	 * @param tilex
+	 *            tile number on x-axis for the specified <code>zoom</code>
+	 *            level
 	 * @param tiley
+	 *            tile number on y-axis for the specified <code>zoom</code>
+	 *            level
 	 * @return fully qualified url for downloading the specified tile image
 	 */
 	public String getTileUrl(int zoom, int tilex, int tiley);

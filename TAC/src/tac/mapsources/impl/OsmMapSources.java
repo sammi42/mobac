@@ -1,29 +1,21 @@
-package org.openstreetmap.gui.jmapviewer;
+package tac.mapsources.impl;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import tac.mapsources.AbstractMapSource;
 
-public class OsmTileSource {
+public class OsmMapSources {
 
 	public static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 	public static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
+	public static final String MAP_HIKING = "http://topo.geofabrik.de/trails/";
 
-	protected static abstract class AbstractOsmTileSource implements MapSource {
+	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
 
-		public int getMaxZoom() {
-			return 18;
-		}
-
-		public int getMinZoom() {
-			return 0;
+		public AbstractOsmTileSource(String name) {
+			super(name, 0, 18, "png");
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-		@Override
-		public String toString() {
-			return getName();
 		}
 
 		public String getTileType() {
@@ -37,10 +29,8 @@ public class OsmTileSource {
 
 	public static class Mapnik extends AbstractOsmTileSource {
 
-		public static String NAME = "Mapnik";
-
-		public String getName() {
-			return NAME;
+		public Mapnik() {
+			super("Mapnik");
 		}
 
 		@Override
@@ -52,19 +42,25 @@ public class OsmTileSource {
 			return TileUpdate.IfNoneMatch;
 		}
 
+		@Override
+		public String toString() {
+			return "OpenStreetMap Mapnik";
+		}
+
 	}
 
 	public static class CycleMap extends AbstractOsmTileSource {
 
 		private static final String PATTERN = "http://%s.andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png";
-		public static String NAME = "OSM Cycle Map";
 
 		private static final String[] SERVER = { "a", "b", "c" };
 
 		private int SERVER_NUM = 0;
 
-		public int getMaxZoom() {
-			return 17;
+		public CycleMap() {
+			super("OSM Cycle Map");
+			this.maxZoom = 17;
+			this.tileUpdate = TileUpdate.LastModified;
 		}
 
 		@Override
@@ -75,26 +71,20 @@ public class OsmTileSource {
 			return url;
 		}
 
-		public String getName() {
-			return NAME;
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.LastModified;
+		@Override
+		public String toString() {
+			return "OpenStreetMap Cyclemap";
 		}
 
 	}
 
 	public static class TilesAtHome extends AbstractOsmTileSource {
 
-		public static String NAME = "TilesAtHome";
-
-		public int getMaxZoom() {
-			return 17;
-		}
-
-		public String getName() {
-			return NAME;
+		public TilesAtHome() {
+			super("TilesAtHome");
+			this.maxZoom = 17;
+			this.tileUpdate = TileUpdate.IfModifiedSince;
+			;
 		}
 
 		@Override
@@ -102,8 +92,28 @@ public class OsmTileSource {
 			return MAP_OSMA + super.getTileUrl(zoom, tilex, tiley);
 		}
 
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+		@Override
+		public String toString() {
+			return "OpenStreetMap Osmarenderer";
 		}
+
 	}
+
+	public static class OsmHikingMap extends AbstractMapSource {
+
+		public OsmHikingMap() {
+			super("OSM Hiking", 4, 15, "png");
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking (Germany only)";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return MAP_HIKING + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
 }

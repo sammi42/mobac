@@ -2,11 +2,13 @@ package tac.program;
 
 import java.awt.Point;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 
 import tac.program.interfaces.MapInterface;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.MercatorPixelCoordinate;
 
 public class MapSelection {
 
@@ -15,90 +17,109 @@ public class MapSelection {
 	public static final int LON_MAX = 179;
 	public static final int LON_MIN = -179;
 
-	private double lat_max;
-	private double lat_min;
-	private double lon_max;
-	private double lon_min;
-
-	public MapSelection(double lat1, double lat2, double lon1, double lon2) {
-		super();
-		this.lat_max = Math.max(lat1, lat2);
-		this.lat_min = Math.min(lat1, lat2);
-		this.lon_max = Math.max(lon1, lon2);
-		this.lon_min = Math.min(lon1, lon2);
-	}
+	private int zoom;
+	private int minTileCoordinate_x;
+	private int minTileCoordinate_y;
+	private int maxTileCoordinate_x;
+	private int maxTileCoordinate_y;
 
 	public MapSelection(EastNorthCoordinate max, EastNorthCoordinate min) {
 		super();
-		this.lat_max = max.lat;
-		this.lat_min = min.lat;
-		this.lon_max = max.lon;
-		this.lon_min = min.lon;
+		zoom = JMapViewer.MAX_ZOOM;
+		minTileCoordinate_x = OsmMercator.LonToX(min.lon, zoom);
+		maxTileCoordinate_x = OsmMercator.LonToX(max.lon, zoom);
+		minTileCoordinate_y = OsmMercator.LatToY(min.lat, zoom);
+		maxTileCoordinate_y = OsmMercator.LatToY(max.lat, zoom);
 	}
 
 	public MapSelection(MapInterface map) {
+		this(map.getMaxTileCoordinate(), map.getMinTileCoordinate(), map.getZoom());
+	}
+
+	/**
+	 * 
+	 * @param max
+	 *            tile coordinate
+	 * @param min
+	 *            tile coordinate
+	 * @param zoom
+	 */
+	public MapSelection(Point max, Point min, int zoom) {
 		super();
-		Point min = map.getMinTileCoordinate();
-		Point max = map.getMaxTileCoordinate();
-		int zoom = map.getZoom();
-		this.lat_max = OsmMercator.YToLat(max.y, zoom);
-		this.lat_min = OsmMercator.YToLat(min.y, zoom);
-		this.lon_max = OsmMercator.XToLon(max.x, zoom);
-		this.lon_min = OsmMercator.XToLon(min.x, zoom);
+		minTileCoordinate_x = min.x;
+		minTileCoordinate_y = min.y;
+		maxTileCoordinate_x = max.x;
+		maxTileCoordinate_y = max.y;
+		this.zoom = zoom;
 	}
 
-	public double getLat_max() {
-		return lat_max;
+	public MapSelection(MercatorPixelCoordinate mapSelectionMax,
+			MercatorPixelCoordinate mapSelectionMin) {
+		if (mapSelectionMax.getZoom() != mapSelectionMin.getZoom())
+			throw new RuntimeException("Different zoom levels - unsuported!");
+		this.zoom = mapSelectionMax.getZoom();
+		maxTileCoordinate_x = mapSelectionMax.getX();
+		maxTileCoordinate_y = mapSelectionMax.getY();
+		minTileCoordinate_x = mapSelectionMin.getX();
+		minTileCoordinate_y = mapSelectionMin.getY();
 	}
 
-	public double getLat_min() {
-		return lat_min;
-	}
-
-	public double getLon_max() {
-		return lon_max;
-	}
-
-	public double getLon_min() {
-		return lon_min;
+	/**
+	 * Is an area selected or only one point?
+	 * 
+	 * @return
+	 */
+	public boolean isAreaSelected() {
+		boolean result = maxTileCoordinate_x != minTileCoordinate_x
+				&& maxTileCoordinate_y != minTileCoordinate_y;
+		return result;
 	}
 
 	public EastNorthCoordinate getMax() {
-		return new EastNorthCoordinate(lat_max, lon_max);
+		return new EastNorthCoordinate(zoom, maxTileCoordinate_x, maxTileCoordinate_y);
 	}
 
 	public EastNorthCoordinate getMin() {
-		return new EastNorthCoordinate(lat_min, lon_min);
-	}
-
-	public boolean coordinatesAreValid() {
-		return (!(Double.isNaN(lat_max) || Double.isNaN(lat_min) || Double.isNaN(lon_max) || Double
-				.isNaN(lon_min)));
+		return new EastNorthCoordinate(zoom, minTileCoordinate_x, minTileCoordinate_y);
 	}
 
 	/**
 	 * Returns the top left tile x- and y-tile-number (minimum) of the selected
 	 * area marked by the {@link MapSelection}.
 	 * 
-	 * @param zoom
+	 * @param aZoomLevel
 	 * @return tile number [0..2<sup>zoom</sup>]
 	 */
-	public Point getTopLeftTileNumber(int zoom) {
-		int x = OsmMercator.LonToX(lon_min, zoom) / Tile.SIZE;
-		int y = OsmMercator.LatToY(lat_max, zoom) / Tile.SIZE;
-		return new Point(x, y);
+	public Point getTopLeftTileNumber(int aZoomlevel) {
+		Point tlc = getTopLeftPixelCoordinate(aZoomlevel);
+		tlc.x /= Tile.SIZE;
+		tlc.y /= Tile.SIZE;
+		return tlc;
+	}
+
+	public MercatorPixelCoordinate getTopLeftPixelCoordinate() {
+		return new MercatorPixelCoordinate(minTileCoordinate_x, maxTileCoordinate_y, zoom);
 	}
 
 	/**
 	 * Returns the top left tile x- and y-tile-coordinate (minimum) of the
 	 * selected area marked by the {@link MapSelection}.
 	 * 
-	 * @param zoom
+	 * @param aZoomlevel
 	 * @return tile coordinate [0..(256 * 2<sup>zoom</sup>)]
 	 */
-	public Point getTopLeftTileCoordinate(int zoom) {
-		int x = OsmMercator.LonToX(lon_min, zoom);
-		int y = OsmMercator.LatToY(lat_max, zoom);
+	public Point getTopLeftPixelCoordinate(int aZoomlevel) {
+		int zoomDiff = this.zoom - aZoomlevel;
+		int x = minTileCoordinate_x;
+		int y = maxTileCoordinate_y;
+		if (zoomDiff < 0) {
+			zoomDiff = -zoomDiff;
+			x <<= zoomDiff;
+			y <<= zoomDiff;
+		} else {
+			x >>= zoomDiff;
+			y >>= zoomDiff;
+		}
 		return new Point(x, y);
 	}
 
@@ -106,25 +127,39 @@ public class MapSelection {
 	 * Returns the bottom right tile x- and y-tile-number (minimum) of the
 	 * selected area marked by the {@link MapSelection}.
 	 * 
-	 * @param zoom
+	 * @param aZoomlevel
 	 * @return tile number [0..2<sup>zoom</sup>]
 	 */
-	public Point getBottomRightTileNumber(int zoom) {
-		int x = OsmMercator.LonToX(lon_max, zoom) / Tile.SIZE;
-		int y = OsmMercator.LatToY(lat_min, zoom) / Tile.SIZE;
-		return new Point(x, y);
+	public Point getBottomRightTileNumber(int aZoomlevel) {
+		Point brc = getBottomRightPixelCoordinate(aZoomlevel);
+		brc.x /= Tile.SIZE;
+		brc.y /= Tile.SIZE;
+		return brc;
+	}
+
+	public MercatorPixelCoordinate getBottomRightPixelCoordinate() {
+		return new MercatorPixelCoordinate(maxTileCoordinate_x, minTileCoordinate_y, zoom);
 	}
 
 	/**
 	 * Returns the bottom right tile x- and y-tile-coordinate (minimum) of the
 	 * selected area marked by the {@link MapSelection}.
 	 * 
-	 * @param zoom
+	 * @param aZoomlevel
 	 * @return tile coordinate [0..(256 * 2<sup>zoom</sup>)]
 	 */
-	public Point getBottomRightTileCoordinate(int zoom) {
-		int x = OsmMercator.LonToX(lon_max, zoom);
-		int y = OsmMercator.LatToY(lat_min, zoom);
+	public Point getBottomRightPixelCoordinate(int aZoomlevel) {
+		int zoomDiff = this.zoom - aZoomlevel;
+		int x = maxTileCoordinate_x;
+		int y = minTileCoordinate_y;
+		if (zoomDiff < 0) {
+			zoomDiff = -zoomDiff;
+			x <<= zoomDiff;
+			y <<= zoomDiff;
+		} else {
+			x >>= zoomDiff;
+			y >>= zoomDiff;
+		}
 		return new Point(x, y);
 	}
 
@@ -155,8 +190,10 @@ public class MapSelection {
 
 	@Override
 	public String toString() {
-		return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[] { lat_max, lon_max,
-				lat_min, lon_min });
+		EastNorthCoordinate max = getMax();
+		EastNorthCoordinate min = getMin();
+		return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[] { max.lat, max.lon,
+				min.lat, min.lon });
 	}
 
 }

@@ -47,7 +47,10 @@ public class GpxLayer implements MapLayer {
 					continue; // Point outside of visible region
 				x -= minX;
 				y -= minY;
+				g.setColor(pointColor);
 				g.fillOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
+				g.setColor(Color.BLACK);
+				g.drawOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
 				if (showWaypointName)
 					g.drawString(wpt.getName(), x + POINT_RADIUS + 5, y - POINT_RADIUS);
 			}

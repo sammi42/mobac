@@ -32,10 +32,10 @@ import tac.mapsources.impl.Microsoft.MicrosoftHybrid;
 import tac.mapsources.impl.Microsoft.MicrosoftMaps;
 import tac.mapsources.impl.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
-import tac.mapsources.impl.MiscMapSources.CycleMap;
-import tac.mapsources.impl.MiscMapSources.Mapnik;
-import tac.mapsources.impl.MiscMapSources.OsmHikingMap;
-import tac.mapsources.impl.MiscMapSources.TilesAtHome;
+import tac.mapsources.impl.OsmMapSources.CycleMap;
+import tac.mapsources.impl.OsmMapSources.Mapnik;
+import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
+import tac.mapsources.impl.OsmMapSources.TilesAtHome;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveCom;
@@ -86,10 +86,6 @@ public class MapSourcesManager {
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MiscMapSources.MultimapCom(), new Cykloatlas(),
 				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
-		// The following map sources do not work because of an unknown
-		// protection - cookie?
-		// new TuristikaMapSk()
-		// new MapPlus()
 		};
 	}
 

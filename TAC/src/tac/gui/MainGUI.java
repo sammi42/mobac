@@ -61,6 +61,7 @@ import tac.program.interfaces.AtlasInterface;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Layer;
+import tac.program.model.MercatorPixelCoordinate;
 import tac.program.model.Profile;
 import tac.program.model.SelectedZoomLevels;
 import tac.program.model.Settings;
@@ -103,6 +104,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
 	private JPanel leftPanelContent = null;
+
+	private MercatorPixelCoordinate mapSelectionMax = null;
+	private MercatorPixelCoordinate mapSelectionMin = null;
 
 	public static void createMainGui() {
 		if (mainGUI != null)
@@ -236,7 +240,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private void updateLeftPanel() {
 		leftPanel.removeAll();
 
-		coordinatesPanel.addButtonActionListener(new DisplaySelectionButtonListener());
+		coordinatesPanel.addButtonActionListener(new ApplySelectionButtonListener());
 
 		JCollapsiblePanel mapSourcePanel = new JCollapsiblePanel("Map source", new GridBagLayout());
 		mapSourcePanel.addContent(mapSourceCombo, GBC.std().insets(2, 2, 2, 2).fill());
@@ -288,8 +292,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		JCollapsiblePanel gpxPanel = new JCollapsiblePanel("Gpx",
-				new GridBagLayout());
+		JCollapsiblePanel gpxPanel = new JCollapsiblePanel("Gpx", new GridBagLayout());
 
 		JButton loadGpx = new JButton("Load Gpx");
 		loadGpx.addActionListener(new GpxLoad());
@@ -298,7 +301,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JButton clearGpx = new JButton("Clear Gpx");
 		clearGpx.addActionListener(new GpxClear());
 		gpxPanel.addContent(clearGpx, GBC.std());
-		
+
 		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
@@ -432,12 +435,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 		atlasNameTextField.setText(settings.getElemntName());
 		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoadPosition();
-		coordinatesPanel.setMaxCoordinate(settings.getSelectionMax());
-		coordinatesPanel.setMinCoordinate(settings.getSelectionMin());
+		coordinatesPanel.setCoordinates(settings.getSelectionMax(), settings.getSelectionMin());
 
 		tileImageParametersPanel.loadSettings();
-		mapSourceCombo.setSelectedItem(MapSourcesManager.getSourceByName(settings
-				.getMapviewMapSource()));
+		mapSourceCombo
+				.setSelectedItem(MapSourcesManager.getSourceByName(settings.mapviewMapSource));
+		gridZoomCombo.setSelectedItem(new GridZoom(settings.mapviewGridZoom));
 
 		setSize(settings.mainWindow.size);
 		Point windowLocation = settings.mainWindow.position;
@@ -465,7 +468,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		try {
 			Settings s = Settings.getInstance();
 			previewMap.settingsSavePosition();
-			s.setMapviewMapSource(previewMap.getMapSource().getName());
+			s.mapviewMapSource = previewMap.getMapSource().getName();
+			s.mapviewGridZoom = ((GridZoom) gridZoomCombo.getSelectedItem()).getZoom();
+
 			s.setElementName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 			s.setSelectionMax(coordinatesPanel.getMaxCoordinate());
@@ -543,9 +548,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 			gridZoomCombo.setSelectedItem(lastGridZoom);
 	}
 
-	private class DisplaySelectionButtonListener implements ActionListener {
+	private class ApplySelectionButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			previewSelection();
+			setSelectionByEnteredCoordinates();
 		}
 	}
 
@@ -683,9 +688,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min) {
-		coordinatesPanel.setMaxCoordinate(max);
-		coordinatesPanel.setMinCoordinate(min);
+	public void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min) {
+		mapSelectionMax = max;
+		mapSelectionMin = min;
+		coordinatesPanel.setSelection(max, min);
 		calculateNrOfTilesToDownload();
 	}
 
@@ -723,6 +729,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
 				cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
+		if (ms == null) {
+			JOptionPane.showMessageDialog(this, "Please select an area");
+			return;
+		}
 		Settings settings = Settings.getInstance();
 		String errorText = validateInput();
 		if (errorText.length() > 0) {
@@ -738,8 +748,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		for (int zoom : zoomLevels) {
 			String name = String.format(atlasNameFmt, new Object[] { zoom });
-			Point tl = ms.getTopLeftTileCoordinate(zoom);
-			Point br = ms.getBottomRightTileCoordinate(zoom);
+			Point tl = ms.getTopLeftPixelCoordinate(zoom);
+			Point br = ms.getBottomRightPixelCoordinate(zoom);
 			TileImageParameters customTileParameters = getSelectedTileImageParameters();
 
 			String layerName = name;
@@ -765,11 +775,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 		mapSourceCombo.setSelectedItem(newMapSource);
 	}
 
-	private void previewSelection() {
-		MapSelection ms = getMapSelectionCoordinates();
-		if (ms.coordinatesAreValid()) {
-			coordinatesPanel.setMaxCoordinate(ms.getMax());
-			coordinatesPanel.setMinCoordinate(ms.getMin());
+	private void setSelectionByEnteredCoordinates() {
+		EastNorthCoordinate max = coordinatesPanel.getMaxCoordinate();
+		EastNorthCoordinate min = coordinatesPanel.getMinCoordinate();
+		MapSelection ms = new MapSelection(max, min);
+		if (ms.isAreaSelected()) {
+			mapSelectionMax = ms.getBottomRightPixelCoordinate();
+			mapSelectionMin = ms.getTopLeftPixelCoordinate();
 			previewMap.zoomToSelection(ms, false);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
@@ -777,9 +789,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private MapSelection getMapSelectionCoordinates() {
-		EastNorthCoordinate max = coordinatesPanel.getMaxCoordinate();
-		EastNorthCoordinate min = coordinatesPanel.getMinCoordinate();
-		return new MapSelection(max, min);
+		if (mapSelectionMax == null || mapSelectionMin == null)
+			return null;
+		return new MapSelection(mapSelectionMax, mapSelectionMin);
 	}
 
 	private String validateInput() {
@@ -799,8 +811,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		MapSelection ms = getMapSelectionCoordinates();
 		String baseText;
 		baseText = " %s tiles ";
-		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min()) {
-			amountOfTilesLabel.setText(String.format(baseText, new Object[] { "0" }));
+		if (ms == null || !ms.isAreaSelected()) {
+			amountOfTilesLabel.setText(String.format(baseText, "0"));
 			amountOfTilesLabel.setToolTipText("");
 		} else {
 			try {
@@ -820,11 +832,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 							+ info[2] + ")";
 				}
 				hint = "<html>" + hint + "</html>";
-				amountOfTilesLabel.setText(String.format(baseText, new Object[] { Long
-						.toString(totalNrOfTiles) }));
+				amountOfTilesLabel.setText(String.format(baseText, Long.toString(totalNrOfTiles)));
 				amountOfTilesLabel.setToolTipText(hint);
 			} catch (Exception e) {
-				amountOfTilesLabel.setText(String.format(baseText, new Object[] { "?" }));
+				amountOfTilesLabel.setText(String.format(baseText, "?"));
 				log.error("", e);
 			}
 		}

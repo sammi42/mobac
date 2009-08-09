@@ -26,6 +26,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.mapsources.MapSourcesManager;
 import tac.program.MapSelection;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.MercatorPixelCoordinate;
 import tac.program.model.Settings;
 
 public class PreviewMap extends JMapViewer implements ComponentListener {
@@ -228,16 +229,18 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	public void zoomToSelection(MapSelection ms, boolean notifyListeners) {
-		if (ms.getLat_max() == ms.getLat_min() || ms.getLon_max() == ms.getLon_min())
+		if (!ms.isAreaSelected())
 			return;
 		log.trace("Setting selection to: " + ms);
 		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
-		mml.add(new MapMarkerDot(ms.getLat_max(), ms.getLon_max()));
-		mml.add(new MapMarkerDot(ms.getLat_min(), ms.getLon_min()));
+		EastNorthCoordinate coord = ms.getMax();
+		mml.add(new MapMarkerDot(coord.lat, coord.lon));
+		coord = ms.getMin();
+		mml.add(new MapMarkerDot(coord.lat, coord.lon));
 		setMapMarkerList(mml);
 		setDisplayToFitMapMarkers();
-		Point pStart = ms.getTopLeftTileCoordinate(zoom);
-		Point pEnd = ms.getBottomRightTileCoordinate(zoom);
+		Point pStart = ms.getTopLeftPixelCoordinate(zoom);
+		Point pEnd = ms.getBottomRightPixelCoordinate(zoom);
 		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
 	}
 
@@ -326,21 +329,18 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 		if (gridZoom >= 0) {
 			selectionZoom = gridZoom;
-			zoomDiff1 = PreviewMap.MAX_ZOOM - selectionZoom;
+			zoomDiff1 = MAX_ZOOM - selectionZoom;
 		} else {
 			selectionZoom = zoom;
-			zoomDiff1 = PreviewMap.MAX_ZOOM - selectionZoom;
+			zoomDiff1 = MAX_ZOOM - selectionZoom;
 		}
 		x_min = (gridSelectionStart.x >> zoomDiff1);
 		y_min = (gridSelectionStart.y >> zoomDiff1);
 		x_max = (gridSelectionEnd.x >> zoomDiff1);
 		y_max = (gridSelectionEnd.y >> zoomDiff1);
-		EastNorthCoordinate max = new EastNorthCoordinate();
-		EastNorthCoordinate min = new EastNorthCoordinate();
-		max.lon = OsmMercator.XToLon(x_max, selectionZoom);
-		min.lat = OsmMercator.YToLat(y_max, selectionZoom);
-		min.lon = OsmMercator.XToLon(x_min, selectionZoom);
-		max.lat = OsmMercator.YToLat(y_min, selectionZoom);
+		MercatorPixelCoordinate min = new MercatorPixelCoordinate(x_min, y_min, selectionZoom);
+		MercatorPixelCoordinate max = new MercatorPixelCoordinate(x_max, y_max, selectionZoom);
+		log.debug("sel min=" + min + " max: " + max);
 		for (MapEventListener listener : mapEventListeners) {
 			listener.selectionChanged(max, min);
 		}

@@ -2,12 +2,12 @@ package tac.gui.mapview;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.program.model.EastNorthCoordinate;
+import tac.program.model.MercatorPixelCoordinate;
 
 public interface MapEventListener {
 
 	/** the selection changed */
-	public void selectionChanged(EastNorthCoordinate max, EastNorthCoordinate min);
+	public void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
 
 	/** the zoom changed */
 	public void zoomChanged(int zoomLevel);

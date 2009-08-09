@@ -62,16 +62,17 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public Layer(AtlasInterface atlasInterface, String name, MapSource mapSource,
 			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
-		log.trace("Creating new layer: \"" + name + "\" " + mapSource + " " + minTileCoordinate
-				+ " " + maxTileCoordinate + " " + zoom);
+		log.trace("Creating new layer: \"" + name + "\" " + mapSource + " zoom=" + zoom + " min="
+				+ minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x
+				+ "/" + maxTileCoordinate.y);
 		this.atlasInterface = atlasInterface;
 		setName(name);
 
-		minTileCoordinate.x = minTileCoordinate.x - (minTileCoordinate.x % Tile.SIZE);
-		minTileCoordinate.y = minTileCoordinate.y - (minTileCoordinate.y % Tile.SIZE);
-
-		maxTileCoordinate.x = maxTileCoordinate.x + 255 - (maxTileCoordinate.x % Tile.SIZE);
-		maxTileCoordinate.y = maxTileCoordinate.y + 255 - (maxTileCoordinate.y % Tile.SIZE);
+//		minTileCoordinate.x = minTileCoordinate.x - (minTileCoordinate.x % Tile.SIZE);
+//		minTileCoordinate.y = minTileCoordinate.y - (minTileCoordinate.y % Tile.SIZE);
+//
+//		maxTileCoordinate.x = maxTileCoordinate.x + 255 - (maxTileCoordinate.x % Tile.SIZE);
+//		maxTileCoordinate.y = maxTileCoordinate.y + 255 - (maxTileCoordinate.y % Tile.SIZE);
 
 		Dimension tileDimension;
 		if (parameters == null)

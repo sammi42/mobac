@@ -23,9 +23,9 @@ public class EastNorthCoordinate {
 		lon = Double.NaN;
 	}
 
-	public EastNorthCoordinate(int zoom, int tileNumX, int tileNumY) {
-		this.lat = OsmMercator.YToLat(tileNumY, zoom);
-		this.lon = OsmMercator.XToLon(tileNumX, zoom);
+	public EastNorthCoordinate(int zoom, int pixelCoordinateX, int pixelCoordinateY) {
+		this.lat = OsmMercator.YToLat(pixelCoordinateY, zoom);
+		this.lon = OsmMercator.XToLon(pixelCoordinateX, zoom);
 	}
 
 	public EastNorthCoordinate(double lat, double lon) {

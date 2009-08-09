@@ -51,7 +51,10 @@ public class Settings {
 	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
 	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
 
-	private String mapViewMapSource = MapSourcesManager.DEFAULT.getName();
+	@XmlElement(nillable = false)
+	public String mapviewMapSource = MapSourcesManager.DEFAULT.getName();
+
+	public int mapviewGridZoom = -1;
 
 	private String elementName = "Layer name";
 
@@ -199,15 +202,6 @@ public class Settings {
 
 	public void setMapviewCenterCoordinate(EastNorthCoordinate c) {
 		this.mapviewCenterCoordinate = c;
-	}
-
-	public String getMapviewMapSource() {
-		return mapViewMapSource;
-	}
-
-	@XmlElement(nillable = false)
-	public void setMapviewMapSource(String mapSource) {
-		this.mapViewMapSource = mapSource;
 	}
 
 	public String getElemntName() {

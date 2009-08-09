@@ -1,78 +1,10 @@
 package tac.mapsources.impl;
 
-import org.openstreetmap.gui.jmapviewer.OsmTileSource;
 
 import tac.mapsources.AbstractMapSource;
 
 public class MiscMapSources {
-	public static class MapPlus extends AbstractMapSource {
-
-		public MapPlus() {
-			super("Map+ (Swiss only)", 7, 16, "jpg");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			int z = 17 - zoom;
-			return "http://mp1.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
-					+ "/t" + tiley + "l" + tilex + ".jpg";
-		}
-
-	}
-
-	public static class Mapnik extends OsmTileSource.Mapnik {
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Mapnik";
-		}
-
-	}
-
-	public static class TilesAtHome extends OsmTileSource.TilesAtHome {
-		@Override
-		public String toString() {
-			return "OpenStreetMap Osmarenderer";
-		}
-	}
-
-	public static class CycleMap extends OsmTileSource.CycleMap {
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Cyclemap";
-		}
-	}
-
-	public static class OsmHikingMap extends AbstractMapSource {
-
-		public OsmHikingMap() {
-			super("OSM Hiking", 4, 15, "png");
-		}
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Hiking (Germany only)";
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://topo.geofabrik.de/trails/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-	}
-
-	public static class OpenArialMap extends AbstractMapSource {
-
-		public OpenArialMap() {
-			super("OpenArialMap", 0, 18, "jpg");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/" + zoom + "/"
-					+ tilex + "/" + tiley + ".jpg";
-		}
-
-	}
-
+	
 	/**
 	 * Map from Multimap.com - incomplete for high zoom levels Uses Quad-Tree
 	 * coordinate notation?

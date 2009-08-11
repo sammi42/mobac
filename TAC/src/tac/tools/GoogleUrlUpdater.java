@@ -235,15 +235,17 @@ public class GoogleUrlUpdater {
 			Matcher m = p.matcher(html);
 			if (!m.find())
 				throw new RuntimeException("pattern not found");
-			String urlStart = m.group(1);
-			urlStart = urlStart.replaceAll("\\\\x26", "&");
-			urlStart = urlStart.replaceFirst("[0-3]", "{\\$servernum}");
-			if (!urlStart.endsWith("&"))
-				urlStart += "&";
-			urlStart = urlStart.replaceFirst("hl=[^&]+", "hl={\\$lang}");
-			urlStart += "x={$x}&y={$y}&z={$z}";
-			System.out.println("GoogleMapsChina.url=" + urlStart);
-			updatedMapSources++;
+			String url = m.group(1);
+			url = url.replaceAll("\\\\x26", "&");
+			url = url.replaceFirst("[0-3]", "{\\$servernum}");
+			if (!url.endsWith("&"))
+				url += "&";
+			url = url.replaceFirst("hl=[^&]+", "hl={\\$lang}");
+			url += "x={$x}&y={$y}&z={$z}";
+			if (!url.equals(System.getProperty("GoogleMapsChina.url"))) {
+				updatedMapSources++;
+				System.out.println("GoogleMapsChina.url=" + url);
+			}
 			c.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();

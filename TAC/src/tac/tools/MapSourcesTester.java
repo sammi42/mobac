@@ -38,32 +38,48 @@ public class MapSourcesTester {
 
 	public static final EastNorthCoordinate C_DEFAULT = C_BERLIN;
 
-	private static Logger log = Logger.getLogger(MapSourcesTester.class);
+	//private static Logger log = Logger.getLogger(MapSourcesTester.class);
 
 	private static HashMap<Class<?>, EastNorthCoordinate> testCoordinates;
+
+	static {
+		testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
+		testCoordinates.put(GoogleMapMaker.class, C_BANGALORE);
+		testCoordinates.put(Cykloatlas.class, C_PRAHA);
+		testCoordinates.put(GoogleMapsChina.class, C_SHANGHAI);
+		testCoordinates.put(DoCeluPL.class, C_WARSZAWA);
+	}
 
 	public static void main(String[] args) {
 		Logging.configureConsoleLogging();
 		Logger.getRootLogger().setLevel(Level.ERROR);
 		MapSourcesManager.loadMapSourceProperties();
 
-		testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
-		testCoordinates.put(GoogleMapMaker.class, C_BANGALORE);
-		testCoordinates.put(Cykloatlas.class, C_PRAHA);
-		testCoordinates.put(GoogleMapsChina.class, C_SHANGHAI);
-		testCoordinates.put(DoCeluPL.class, C_WARSZAWA);
-
 		for (MapSource mapSource : MapSourcesManager.getAllMapSources()) {
-
-			EastNorthCoordinate coordinate = testCoordinates.get(mapSource.getClass());
-			if (coordinate == null)
-				coordinate = C_DEFAULT;
 			try {
-				testMapSource(mapSource, coordinate);
+				String name = mapSource.toString();
+				while (name.length() < 40)
+					name += ".";
+				System.out.print(name + ": ");
+				testMapSource(mapSource);
+				System.out.println("OK");
+			} catch (MapSourceTestFailed e) {
+				System.out.println("Failed: " + e.httpResponseCode);
 			} catch (Exception e) {
-				log.error(mapSource.getName() + " failed", e);
+				System.out.println(e);
 			}
 		}
+	}
+
+	public static void testMapSource(Class<? extends MapSource> mapSourceClass) throws Exception {
+		testMapSource(mapSourceClass.newInstance());
+	}
+
+	public static void testMapSource(MapSource mapSource) throws Exception {
+		EastNorthCoordinate coordinate = testCoordinates.get(mapSource.getClass());
+		if (coordinate == null)
+			coordinate = C_DEFAULT;
+		testMapSource(mapSource, coordinate);
 	}
 
 	public static void testMapSource(MapSource mapSource, EastNorthCoordinate coordinate)
@@ -76,14 +92,22 @@ public class MapSourcesTester {
 		URL url = new URL(mapSource.getTileUrl(zoom, tilex, tiley));
 		HttpURLConnection c = (HttpURLConnection) url.openConnection();
 		c.connect();
-		String name = mapSource.toString();
-		while (name.length() < 40)
-			name += ".";
 		c.disconnect();
-		System.out.print(name + ": ");
-		if (c.getResponseCode() == 200)
-			System.out.println("OK");
-		else
-			System.out.println("Error - HTTP " + c.getResponseCode());
+		if (c.getResponseCode() != 200)
+			throw new MapSourceTestFailed(mapSource, c.getResponseCode());
+	}
+
+	public static class MapSourceTestFailed extends Exception {
+		int httpResponseCode;
+
+		public MapSourceTestFailed(MapSource mapSource, int httpResponseCode) {
+			super("MapSource test failed: " + mapSource.toString() + " HTTP " + httpResponseCode);
+			this.httpResponseCode = httpResponseCode;
+		}
+
+		public int getHttpResponseCode() {
+			return httpResponseCode;
+		}
+
 	}
 }

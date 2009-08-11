@@ -12,7 +12,6 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,12 +21,17 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.impl.Google.GoogleEarth;
+import tac.mapsources.impl.Google.GoogleMaps;
+import tac.mapsources.impl.Google.GoogleTerrain;
 import tac.program.Logging;
+import tac.tools.MapSourcesTester.MapSourceTestFailed;
 import tac.utilities.Utilities;
 
 public class GoogleUrlUpdater {
@@ -42,35 +46,46 @@ public class GoogleUrlUpdater {
 	 */
 	public static void main(String[] args) {
 		Logging.disableLogging();
-		MapSourcesManager.getAllMapSources(); // just for initializing the
-		// MapSourcesManager
+
+		// just for initializing the MapSourcesManager
+		MapSourcesManager.getAllMapSources(); 
+		
 		GoogleUrlUpdater g = new GoogleUrlUpdater();
-		g.testMapSource("GoogleMaps.url");
-		g.testMapSource("GoogleEarth.url");
-		g.testMapSource("GoogleTerrain.url");
+		UpdateableMapSource ums;
+
+		ums = new UpdateableMapSource("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2",
+				"GoogleMaps.url", GoogleMaps.class);
+		g.testMapSource(ums);
+		ums = new UpdateableMapSource("http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2",
+				"GoogleEarth.url", GoogleEarth.class);
+		g.testMapSource(ums);
+		ums = new UpdateableMapSource("http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2",
+				"GoogleTerrain.url", GoogleTerrain.class);
+		g.testMapSource(ums);
 		g.testGoogleMapMaker();
+		g.testGoogleMapsChina();
 		System.out.println("Updated map sources: " + g.updatedMapSources);
 	}
 
-	private Properties mapSourceUrls = new Properties();
-
 	protected int updatedMapSources = 0;
 
-	public GoogleUrlUpdater() {
-		mapSourceUrls.put("GoogleMaps.url", "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2");
-		mapSourceUrls.put("GoogleEarth.url",
-				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2");
-		mapSourceUrls.put("GoogleTerrain.url",
-				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2");
-	}
-
-	public void testMapSource(String key) {
-		String url = mapSourceUrls.getProperty(key);
+	public void testMapSource(UpdateableMapSource ums) {
+		String url = ums.updateUrl;
+		String key = ums.key;
 		String oldUrlTemplate = System.getProperty(key);
 		String newUrlTemplate = getUpdatedUrl(url, true);
 		if (!oldUrlTemplate.equals(newUrlTemplate)) {
-			System.out.println(key + "=" + newUrlTemplate);
-			updatedMapSources++;
+			try {
+				System.setProperty(key, newUrlTemplate);
+				MapSourcesTester.testMapSource(ums.mapSourceClass);
+				System.out.println(key + "=" + newUrlTemplate);
+				updatedMapSources++;
+			} catch (MapSourceTestFailed e) {
+				System.err.print("Test of new url failed: ");
+				System.err.println(key + "=" + newUrlTemplate);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -207,6 +222,47 @@ public class GoogleUrlUpdater {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void testGoogleMapsChina() {
+		try {
+			HttpURLConnection c = (HttpURLConnection) new URL("http://ditu.google.com/")
+					.openConnection();
+			InputStream in = c.getInputStream();
+			String html = new String(Utilities.getInputBytes(in));
+			in.close();
+			Pattern p = Pattern.compile("\\\"(http://mt\\d.google.cn/vt/v[^\\\"]*)\\\"");
+			Matcher m = p.matcher(html);
+			if (!m.find())
+				throw new RuntimeException("pattern not found");
+			String urlStart = m.group(1);
+			urlStart = urlStart.replaceAll("\\\\x26", "&");
+			urlStart = urlStart.replaceFirst("[0-3]", "{\\$servernum}");
+			if (!urlStart.endsWith("&"))
+				urlStart += "&";
+			urlStart = urlStart.replaceFirst("hl=[^&]+", "hl={\\$lang}");
+			urlStart += "x={$x}&y={$y}&z={$z}";
+			System.out.println("GoogleMapsChina.url=" + urlStart);
+			updatedMapSources++;
+			c.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static class UpdateableMapSource {
+		public String updateUrl;
+		public String key;
+		public Class<? extends MapSource> mapSourceClass;
+
+		public UpdateableMapSource(String updateUrl, String key,
+				Class<? extends MapSource> mapSourceClass) {
+			super();
+			this.updateUrl = updateUrl;
+			this.key = key;
+			this.mapSourceClass = mapSourceClass;
+		}
+
 	}
 
 	public static class NullPrintWriter extends PrintWriter {

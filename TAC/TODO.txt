@@ -26,8 +26,6 @@ T O D O
 
    -> Not planned
      
-5) Change the internal representation of lat/lon coordinates to an integer:
-   
-   Possible example: 1/8 microdegree:
-     Lat [ -90.. 90] => [- 720000.. 720000]
-     Lon [-180..180] => [-1440000..1440000]
+5) GPX loading (and editing)
+
+6) Display message/error list in AtlasProgressGUI while atlas creation is running 

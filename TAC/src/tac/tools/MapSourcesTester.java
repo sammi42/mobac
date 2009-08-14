@@ -38,7 +38,7 @@ public class MapSourcesTester {
 
 	public static final EastNorthCoordinate C_DEFAULT = C_BERLIN;
 
-	//private static Logger log = Logger.getLogger(MapSourcesTester.class);
+	// private static Logger log = Logger.getLogger(MapSourcesTester.class);
 
 	private static HashMap<Class<?>, EastNorthCoordinate> testCoordinates;
 
@@ -102,6 +102,12 @@ public class MapSourcesTester {
 
 		public MapSourceTestFailed(MapSource mapSource, int httpResponseCode) {
 			super("MapSource test failed: " + mapSource.toString() + " HTTP " + httpResponseCode);
+			this.httpResponseCode = httpResponseCode;
+		}
+
+		public MapSourceTestFailed(Class<? extends MapSource> mapSourceClass, int httpResponseCode) {
+			super("MapSource test failed: " + mapSourceClass.toString() + " HTTP "
+					+ httpResponseCode);
 			this.httpResponseCode = httpResponseCode;
 		}
 

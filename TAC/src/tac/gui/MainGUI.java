@@ -152,6 +152,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		updateGridSizeCombo();
 		tileImageParametersPanel.updateControlsState();
 		zoomChanged(previewMap.getZoom());
+		gridZoomChanged(previewMap.getGridZoom());
 	}
 
 	private void createControls() {
@@ -434,13 +435,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.getElemntName());
 		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
-		previewMap.settingsLoadPosition();
-		coordinatesPanel.setCoordinates(settings.getSelectionMax(), settings.getSelectionMin());
+		previewMap.settingsLoad();
 
 		tileImageParametersPanel.loadSettings();
-		mapSourceCombo
-				.setSelectedItem(MapSourcesManager.getSourceByName(settings.mapviewMapSource));
-		gridZoomCombo.setSelectedItem(new GridZoom(settings.mapviewGridZoom));
+		// mapSourceCombo
+		// .setSelectedItem(MapSourcesManager.getSourceByName(settings.
+		// mapviewMapSource));
 
 		setSize(settings.mainWindow.size);
 		Point windowLocation = settings.mainWindow.position;
@@ -467,15 +467,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private void saveSettings() {
 		try {
 			Settings s = Settings.getInstance();
-			previewMap.settingsSavePosition();
+			previewMap.settingsSave();
 			s.mapviewMapSource = previewMap.getMapSource().getName();
-			s.mapviewGridZoom = ((GridZoom) gridZoomCombo.getSelectedItem()).getZoom();
 
 			s.setElementName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
-			s.setSelectionMax(coordinatesPanel.getMaxCoordinate());
-			s.setSelectionMin(coordinatesPanel.getMinCoordinate());
-
+			
 			tileImageParametersPanel.saveSettings();
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 			s.mainWindow.maximized = maximized;
@@ -518,9 +515,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private class GridZoomComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			if (!gridZoomCombo.isEnabled())
+				return;
 			GridZoom g = (GridZoom) gridZoomCombo.getSelectedItem();
 			if (g == null)
 				return;
+			log.debug("Selected grid zoom combo box item has changed: " + g.getZoom());
 			previewMap.setGridZoom(g.getZoom());
 			repaint();
 			previewMap.updateMapSelection();
@@ -531,6 +531,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		int maxZoom = previewMap.getMapSource().getMaxZoom();
 		int minZoom = previewMap.getMapSource().getMinZoom();
 		GridZoom lastGridZoom = (GridZoom) gridZoomCombo.getSelectedItem();
+		gridZoomCombo.setEnabled(false);
 		gridZoomCombo.removeAllItems();
 		gridZoomCombo.setMaximumRowCount(maxZoom - minZoom + 2);
 		gridZoomCombo.addItem(new GridZoom(-1) {
@@ -546,6 +547,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 		if (lastGridZoom != null)
 			gridZoomCombo.setSelectedItem(lastGridZoom);
+		gridZoomCombo.setEnabled(true);
 	}
 
 	private class ApplySelectionButtonListener implements ActionListener {
@@ -700,6 +702,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		zoomSlider.setValue(zoomLevel);
 	}
 
+	public void gridZoomChanged(int newGridZoomLevel) {
+		gridZoomCombo.setSelectedItem(new GridZoom(newGridZoomLevel));
+	}
+
 	public void applyAtlasOutputFormat() {
 		AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
 				.getSelectedItem();
@@ -809,6 +815,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void calculateNrOfTilesToDownload() {
 		MapSelection ms = getMapSelectionCoordinates();
+		log.debug(ms);
 		String baseText;
 		baseText = " %s tiles ";
 		if (ms == null || !ms.isAreaSelected()) {

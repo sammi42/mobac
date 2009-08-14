@@ -10,7 +10,10 @@ public interface MapEventListener {
 	public void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
 
 	/** the zoom changed */
-	public void zoomChanged(int zoomLevel);
+	public void zoomChanged(int newZoomLevel);
+
+	/** the grid zoom changed */
+	public void gridZoomChanged(int newGridZoomLevel);
 
 	/** select the next map source from the map list */
 	public void selectNextMapSource();

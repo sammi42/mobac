@@ -16,6 +16,8 @@ public class Logging {
 
 	protected static final String CONFIG_FILE = "log4j.xml";
 
+	public static final Logger LOG = Logger.getLogger("TAC");
+	
 	public static void configureLogging() {
 		File f = new File(CONFIG_FILE);
 		// We test for the configuration file, if it exists we use it, otherwise

@@ -28,8 +28,8 @@ public class MapSelection {
 		zoom = JMapViewer.MAX_ZOOM;
 		minTileCoordinate_x = OsmMercator.LonToX(min.lon, zoom);
 		maxTileCoordinate_x = OsmMercator.LonToX(max.lon, zoom);
-		minTileCoordinate_y = OsmMercator.LatToY(min.lat, zoom);
-		maxTileCoordinate_y = OsmMercator.LatToY(max.lat, zoom);
+		maxTileCoordinate_y = OsmMercator.LatToY(min.lat, zoom);
+		minTileCoordinate_y = OsmMercator.LatToY(max.lat, zoom);
 	}
 
 	public MapSelection(MapInterface map) {
@@ -92,6 +92,7 @@ public class MapSelection {
 	 */
 	public Point getTopLeftTileNumber(int aZoomlevel) {
 		Point tlc = getTopLeftPixelCoordinate(aZoomlevel);
+		Logging.LOG.debug("min_pixel " + tlc + " (zoom " + aZoomlevel + ")");
 		tlc.x /= Tile.SIZE;
 		tlc.y /= Tile.SIZE;
 		return tlc;
@@ -111,7 +112,7 @@ public class MapSelection {
 	public Point getTopLeftPixelCoordinate(int aZoomlevel) {
 		int zoomDiff = this.zoom - aZoomlevel;
 		int x = minTileCoordinate_x;
-		int y = maxTileCoordinate_y;
+		int y = minTileCoordinate_y;
 		if (zoomDiff < 0) {
 			zoomDiff = -zoomDiff;
 			x <<= zoomDiff;
@@ -132,8 +133,9 @@ public class MapSelection {
 	 */
 	public Point getBottomRightTileNumber(int aZoomlevel) {
 		Point brc = getBottomRightPixelCoordinate(aZoomlevel);
-		brc.x /= Tile.SIZE;
-		brc.y /= Tile.SIZE;
+		Logging.LOG.debug("max_pixel " + brc + " (zoom " + aZoomlevel + ")");
+		brc.x = brc.x / Tile.SIZE;
+		brc.y = brc.y / Tile.SIZE;
 		return brc;
 	}
 
@@ -151,7 +153,7 @@ public class MapSelection {
 	public Point getBottomRightPixelCoordinate(int aZoomlevel) {
 		int zoomDiff = this.zoom - aZoomlevel;
 		int x = maxTileCoordinate_x;
-		int y = minTileCoordinate_y;
+		int y = maxTileCoordinate_y;
 		if (zoomDiff < 0) {
 			zoomDiff = -zoomDiff;
 			x <<= zoomDiff;
@@ -183,8 +185,12 @@ public class MapSelection {
 	public long[] calculateNrOfTilesEx(int zoom) {
 		Point max = getBottomRightTileNumber(zoom);
 		Point min = getTopLeftTileNumber(zoom);
+		Logging.LOG.debug("max: " + max);
+		Logging.LOG.debug("min: " + max);
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
+		Logging.LOG.debug("width:  " + width);
+		Logging.LOG.debug("height: " + height);
 		return new long[] { width * height, width, height };
 	}
 

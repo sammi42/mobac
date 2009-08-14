@@ -38,11 +38,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public static final Color MAP_COLOR = new Color(1.0f, 0.84f, 0.0f, 0.4f);
 
 	/**
-	 * Map selection max/min pixel coordinates regarding zoom level
+	 * Interactive map selection max/min pixel coordinates regarding zoom level
 	 * <code>MAX_ZOOM</code>
 	 */
-	private Point iSelectionRectStart;
-	private Point iSelectionRectEnd;
+	private Point iSelectionMin;
+	private Point iSelectionMax;
 
 	/**
 	 * Map selection max/min pixel coordinates regarding zoom level
@@ -92,19 +92,27 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	/**
 	 * Updates the current position in {@link Settings} to the current view
 	 */
-	public void settingsSavePosition() {
+	public void settingsSave() {
 		Settings settings = Settings.getInstance();
-		settings.setMapviewZoom(getZoom());
-		settings.setMapviewCenterCoordinate(getPositionCoordinate());
+		settings.mapviewZoom = getZoom();
+		settings.mapviewCenterCoordinate = getPositionCoordinate();
+		settings.mapviewGridZoom = gridZoom;
+		settings.mapviewMapSource = mapSource.getName();
+		settings.mapviewSelectionMin = iSelectionMin;
+		settings.mapviewSelectionMax = iSelectionMax;
 	}
 
 	/**
 	 * Sets the current view by the current values from {@link Settings}
 	 */
-	public void settingsLoadPosition() {
+	public void settingsLoad() {
 		Settings settings = Settings.getInstance();
-		EastNorthCoordinate c = settings.getMapviewCenterCoordinate();
-		setDisplayPositionByLatLon(c, settings.getMapviewZoom());
+		setMapSource(MapSourcesManager.getSourceByName(settings.mapviewMapSource));
+		EastNorthCoordinate c = settings.mapviewCenterCoordinate;
+		gridZoom = settings.mapviewGridZoom;
+		setDisplayPositionByLatLon(c, settings.mapviewZoom);
+		setSelectionByTileCoordinate(MAX_ZOOM, settings.mapviewSelectionMax,
+				settings.mapviewSelectionMin, true);
 	}
 
 	@Override
@@ -133,6 +141,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		applyGridOnSelection();
 		updateMapSelection();
 		repaint();
+	}
+
+	public int getGridZoom() {
+		return gridZoom;
 	}
 
 	protected void updateGridValues() {
@@ -201,22 +213,20 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			int x_max = (gridSelectionEnd.x >> zoomDiff) - tlc.x;
 			int y_max = (gridSelectionEnd.y >> zoomDiff) - tlc.y;
 
-			int w = x_max - x_min;
-			int h = y_max - y_min;
+			int w = x_max - x_min + 1;
+			int h = y_max - y_min + 1;
 			g.setColor(SEL_COLOR);
 			g.fillRect(x_min, y_min, w, h);
-			g.setColor(GRID_COLOR);
-			g.drawRect(x_min, y_min, w, h);
 		}
-		if (iSelectionRectStart != null && iSelectionRectEnd != null) {
+		if (iSelectionMin != null && iSelectionMax != null) {
 			int zoomDiff = MAX_ZOOM - zoom;
-			int x_min = (iSelectionRectStart.x >> zoomDiff) - tlc.x;
-			int y_min = (iSelectionRectStart.y >> zoomDiff) - tlc.y;
-			int x_max = (iSelectionRectEnd.x >> zoomDiff) - tlc.x;
-			int y_max = (iSelectionRectEnd.y >> zoomDiff) - tlc.y;
+			int x_min = (iSelectionMin.x >> zoomDiff) - tlc.x;
+			int y_min = (iSelectionMin.y >> zoomDiff) - tlc.y;
+			int x_max = (iSelectionMax.x >> zoomDiff) - tlc.x;
+			int y_max = (iSelectionMax.y >> zoomDiff) - tlc.y;
 
-			int w = x_max - x_min;
-			int h = y_max - y_min;
+			int w = x_max - x_min + 1;
+			int h = y_max - y_min + 1;
 			g.setColor(GRID_COLOR);
 			g.drawRect(x_min, y_min, w, h);
 		}
@@ -278,8 +288,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd,
 			boolean notifyListeners) {
 		if (pStart == null || pEnd == null) {
-			iSelectionRectStart = null;
-			iSelectionRectEnd = null;
+			iSelectionMin = null;
+			iSelectionMax = null;
 			gridSelectionStart = null;
 			gridSelectionEnd = null;
 			return;
@@ -300,8 +310,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		pNewStart.x <<= zoomDiff;
 		pNewStart.y <<= zoomDiff;
 
-		iSelectionRectStart = pNewStart;
-		iSelectionRectEnd = pNewEnd;
+		iSelectionMin = pNewStart;
+		iSelectionMax = pNewEnd;
 		gridSelectionStart = null;
 		gridSelectionEnd = null;
 
@@ -314,27 +324,27 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	protected void applyGridOnSelection() {
 		if (gridZoom < 0) {
-			gridSelectionStart = iSelectionRectStart;
-			gridSelectionEnd = iSelectionRectEnd;
+			gridSelectionStart = iSelectionMin;
+			gridSelectionEnd = iSelectionMax;
 			return;
 		}
 
-		if (iSelectionRectStart == null || iSelectionRectEnd == null)
+		if (iSelectionMin == null || iSelectionMax == null)
 			return;
 
 		int gridZoomDiff = MAX_ZOOM - gridZoom;
 		int gridFactor = Tile.SIZE << gridZoomDiff;
 
-		Point pNewStart = new Point(iSelectionRectStart);
-		Point pNewEnd = new Point(iSelectionRectEnd);
+		Point pNewStart = new Point(iSelectionMin);
+		Point pNewEnd = new Point(iSelectionMax);
 
 		// Snap to the current grid
 		pNewStart.x = pNewStart.x - (pNewStart.x % gridFactor);
 		pNewStart.y = pNewStart.y - (pNewStart.y % gridFactor);
-		pNewEnd.x += gridFactor - 1;
-		pNewEnd.y += gridFactor - 1;
-		pNewEnd.x = pNewEnd.x - (pNewEnd.x % gridFactor);
-		pNewEnd.y = pNewEnd.y - (pNewEnd.y % gridFactor);
+		pNewEnd.x += gridFactor;
+		pNewEnd.y += gridFactor;
+		pNewEnd.x = pNewEnd.x - (pNewEnd.x % gridFactor) - 1;
+		pNewEnd.y = pNewEnd.y - (pNewEnd.y % gridFactor) - 1;
 
 		gridSelectionStart = pNewStart;
 		gridSelectionEnd = pNewEnd;
@@ -351,16 +361,17 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			x_max = gridSelectionEnd.x;
 			y_max = gridSelectionEnd.y;
 		} else {
-			if (iSelectionRectStart == null || iSelectionRectEnd == null)
+			if (iSelectionMin == null || iSelectionMax == null)
 				return;
-			x_min = iSelectionRectStart.x;
-			y_min = iSelectionRectStart.y;
-			x_max = iSelectionRectEnd.x;
-			y_max = iSelectionRectEnd.y;
+			x_min = iSelectionMin.x;
+			y_min = iSelectionMin.y;
+			x_max = iSelectionMax.x;
+			y_max = iSelectionMax.y;
 		}
 		MercatorPixelCoordinate min = new MercatorPixelCoordinate(x_min, y_min, MAX_ZOOM);
 		MercatorPixelCoordinate max = new MercatorPixelCoordinate(x_max, y_max, MAX_ZOOM);
-		log.debug("sel min=" + min + " max: " + max);
+		log.debug("sel min: [" + min + "]");
+		log.debug("sel max: [" + max + "]");
 		for (MapEventListener listener : mapEventListeners)
 			listener.selectionChanged(max, min);
 	}

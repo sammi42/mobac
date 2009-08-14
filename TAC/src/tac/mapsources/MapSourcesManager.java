@@ -85,8 +85,7 @@ public class MapSourcesManager {
 				new CycleMap(), new OsmHikingMap(), /* new OpenArialMap(), */new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MiscMapSources.MultimapCom(), new Cykloatlas(),
-				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
-		};
+				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {
@@ -135,6 +134,17 @@ public class MapSourcesManager {
 	 * Merges the mapsources property into the system property bundle
 	 */
 	public static void loadMapSourceProperties() {
+		Properties systemProps = System.getProperties();
+		loadMapSourceProperties(systemProps);
+	}
+
+	/**
+	 * Merges the mapsources property into the Properties
+	 * <code>targetprop</code>
+	 * 
+	 * @param targetProp
+	 */
+	public static void loadMapSourceProperties(Properties targetProp) {
 		try {
 			URL mapResUrl = Main.class.getResource("mapsources.properties");
 			File mapFile = new File(Settings.getUserDir(), "mapsources.properties");
@@ -157,8 +167,7 @@ public class MapSourcesManager {
 				log.debug("Used mapsources.properties: file");
 			else
 				log.debug("Used mapsources.properties: resource");
-			Properties systemProps = System.getProperties();
-			systemProps.putAll(selectedProps);
+			targetProp.putAll(selectedProps);
 
 		} catch (Exception e) {
 			log.error("Error while reading mapsources.properties: ", e);

@@ -45,16 +45,19 @@ public class Settings {
 
 	private boolean tileStoreEnabled = true;
 
-	private int mapviewZoom = 3;
-	private EastNorthCoordinate mapviewCenterCoordinate = new EastNorthCoordinate(50, 9);
+	/**
+	 * Mapview related settings
+	 */
+	public int mapviewZoom = 3;
+	public int mapviewGridZoom = -1;
+	public EastNorthCoordinate mapviewCenterCoordinate = new EastNorthCoordinate(50, 9);
 
-	private EastNorthCoordinate selectionMax = new EastNorthCoordinate();
-	private EastNorthCoordinate selectionMin = new EastNorthCoordinate();
+	public Point mapviewSelectionMax = null;
+	public Point mapviewSelectionMin = null;
 
 	@XmlElement(nillable = false)
 	public String mapviewMapSource = MapSourcesManager.DEFAULT.getName();
 
-	public int mapviewGridZoom = -1;
 
 	private String elementName = "Layer name";
 
@@ -188,44 +191,12 @@ public class Settings {
 		this.tileStoreEnabled = tileStoreEnabled;
 	}
 
-	public int getMapviewZoom() {
-		return mapviewZoom;
-	}
-
-	public void setMapviewZoom(int zoom) {
-		this.mapviewZoom = zoom;
-	}
-
-	public EastNorthCoordinate getMapviewCenterCoordinate() {
-		return mapviewCenterCoordinate;
-	}
-
-	public void setMapviewCenterCoordinate(EastNorthCoordinate c) {
-		this.mapviewCenterCoordinate = c;
-	}
-
 	public String getElemntName() {
 		return elementName;
 	}
 
 	public void setElementName(String name) {
 		this.elementName = name;
-	}
-
-	public EastNorthCoordinate getSelectionMax() {
-		return selectionMax;
-	}
-
-	public void setSelectionMax(EastNorthCoordinate selectionMax) {
-		this.selectionMax = selectionMax;
-	}
-
-	public EastNorthCoordinate getSelectionMin() {
-		return selectionMin;
-	}
-
-	public void setSelectionMin(EastNorthCoordinate selectionMin) {
-		this.selectionMin = selectionMin;
 	}
 
 	public int getDownloadThreadCount() {

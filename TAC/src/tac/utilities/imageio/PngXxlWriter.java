@@ -54,6 +54,10 @@ import javax.activation.UnsupportedDataTypeException;
  * to call {@link #finish()} which will write the final PNG structure
  * information into the {@link OutputStream}.
  * </p>
+ * <p>
+ * Please note that this writer creates 24bit/truecolor PNGs. Transparency and
+ * alpha masks are not supported.
+ * </p>
  * Bases on the PNGWriter written by Matthias Mann - www.matthiasmann.de
  * 
  * @author r_x

@@ -87,7 +87,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			if (dist != null)
 				sb.append("\nDistribution name: " + dist);
 
-			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.version") + ")");
+			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version") + ")");
 			sb.append("\nMapsources rev: "
 					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
 

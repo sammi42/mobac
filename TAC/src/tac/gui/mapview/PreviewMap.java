@@ -107,7 +107,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	 */
 	public void settingsLoad() {
 		Settings settings = Settings.getInstance();
-		setMapSource(MapSourcesManager.getSourceByName(settings.mapviewMapSource));
+		MapSource mapSource = MapSourcesManager.getSourceByName(settings.mapviewMapSource);
+		if (mapSource != null)
+			setMapSource(mapSource);
 		EastNorthCoordinate c = settings.mapviewCenterCoordinate;
 		gridZoom = settings.mapviewGridZoom;
 		setDisplayPositionByLatLon(c, settings.mapviewZoom);
@@ -370,8 +372,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		}
 		MercatorPixelCoordinate min = new MercatorPixelCoordinate(x_min, y_min, MAX_ZOOM);
 		MercatorPixelCoordinate max = new MercatorPixelCoordinate(x_max, y_max, MAX_ZOOM);
-		log.debug("sel min: [" + min + "]");
-		log.debug("sel max: [" + max + "]");
+		// log.debug("sel min: [" + min + "]");
+		// log.debug("sel max: [" + max + "]");
 		for (MapEventListener listener : mapEventListeners)
 			listener.selectionChanged(max, min);
 	}

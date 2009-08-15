@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 1.6: (2009-??-??)
+ ! Map selection are does no longer enlarge itself when using grid mode
+ 
  1.5: (2009-08-01)
  ~ Java requirement has changed: Now at least Java 1.6 is required! 
  + Flexible atlases containing different areas of multiple map sources are possible

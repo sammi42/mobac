@@ -25,6 +25,14 @@ public class TarIndexedArchive extends TarArchive {
 		super.writeTarHeader(th);
 	}
 
+	public void delete() {
+		if (tarFile != null) {
+			boolean b = tarFile.delete();
+			if (!b && tarFile.isFile())
+				tarFile.deleteOnExit();
+		}
+	}
+
 	public TarIndex getTarIndex() {
 		try {
 			return new TarIndex(tarFile, tarIndex);

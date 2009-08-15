@@ -76,6 +76,8 @@ public class MapSourcesManager {
 	public static final MapSource DEFAULT = new Mapnik();
 	private static MapSource[] MAP_SOURCES;
 
+	private static MapSource LOCALHOST_TEST_MAPSOURCE = new LocalhostTestSource();
+
 	static {
 		loadMapSourceProperties();
 		MAP_SOURCES = new MapSource[] { //
@@ -102,7 +104,7 @@ public class MapSourcesManager {
 	public static Vector<MapSource> getEnabledMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
 		if (Settings.getInstance().isDevModeEnabled())
-			mapSources.add(new LocalhostTestSource());
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE);
 		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance()
 				.getDisabledMapSources());
 		for (MapSource ms : MAP_SOURCES) {
@@ -127,6 +129,9 @@ public class MapSourcesManager {
 			if (ms.getName().equals(name))
 				return ms;
 		}
+		if (Settings.getInstance().isDevModeEnabled()
+				&& LOCALHOST_TEST_MAPSOURCE.getName().equals(name))
+			return LOCALHOST_TEST_MAPSOURCE;
 		return null;
 	}
 

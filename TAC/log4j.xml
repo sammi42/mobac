@@ -17,6 +17,10 @@
     </layout>
   </appender>
 
+  <logger name="tac.tar">
+  	<level value="DEBUG" />
+  </logger>
+
   <root>
     <!-- 
     For maximum verboseness please use the following line

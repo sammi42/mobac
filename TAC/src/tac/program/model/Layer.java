@@ -68,11 +68,11 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		this.atlasInterface = atlasInterface;
 		setName(name);
 
-//		minTileCoordinate.x = minTileCoordinate.x - (minTileCoordinate.x % Tile.SIZE);
-//		minTileCoordinate.y = minTileCoordinate.y - (minTileCoordinate.y % Tile.SIZE);
-//
-//		maxTileCoordinate.x = maxTileCoordinate.x + 255 - (maxTileCoordinate.x % Tile.SIZE);
-//		maxTileCoordinate.y = maxTileCoordinate.y + 255 - (maxTileCoordinate.y % Tile.SIZE);
+		minTileCoordinate.x -= minTileCoordinate.x % Tile.SIZE;
+		minTileCoordinate.y -= minTileCoordinate.y % Tile.SIZE;
+
+		maxTileCoordinate.x += Tile.SIZE - 1 - (maxTileCoordinate.x % Tile.SIZE);
+		maxTileCoordinate.y += Tile.SIZE - 1 - (maxTileCoordinate.y % Tile.SIZE);
 
 		Dimension tileDimension;
 		if (parameters == null)

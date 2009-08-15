@@ -115,4 +115,9 @@ public class TarArchive {
 		}
 		tarFileStream = null;
 	}
+
+	public File getTarFile() {
+		return tarFile;
+	}
+	
 }

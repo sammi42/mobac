@@ -815,7 +815,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void calculateNrOfTilesToDownload() {
 		MapSelection ms = getMapSelectionCoordinates();
-		log.debug(ms);
 		String baseText;
 		baseText = " %s tiles ";
 		if (ms == null || !ms.isAreaSelected()) {

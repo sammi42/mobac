@@ -1,6 +1,7 @@
 package tac.mapsources.impl;
 
 import tac.mapsources.AbstractMapSource;
+import tac.mapsources.MapSourcesTools;
 
 public class Microsoft {
 
@@ -10,8 +11,6 @@ public class Microsoft {
 	 * Earth Tile System</a> for details.
 	 */
 	public static abstract class AbstractMicrosoft extends AbstractMapSource {
-
-		protected static final char[] NUM_CHAR = { '0', '1', '2', '3' };
 
 		protected String urlBase = ".ortho.tiles.virtualearth.net/tiles/";
 		protected String urlAppend = "?g=45";
@@ -29,16 +28,10 @@ public class Microsoft {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			char[] tileNum = new char[zoom];
-			for (int i = zoom - 1; i >= 0; i--) {
-				int num = (tilex % 2) | ((tiley % 2) << 1);
-				tileNum[i] = NUM_CHAR[num];
-				tilex >>= 1;
-				tiley >>= 1;
-			}
+			String tileNum = MapSourcesTools.encodeQuadTree(zoom, tilex, tiley);
 			serverNum = (serverNum + 1) % serverNumMax;
-			return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar
-					+ new String(tileNum) + "." + tileType + urlAppend;
+			return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar + tileNum + "."
+					+ tileType + urlAppend;
 		}
 
 		@Override

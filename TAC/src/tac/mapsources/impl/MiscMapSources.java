@@ -1,13 +1,13 @@
 package tac.mapsources.impl;
 
-
 import tac.mapsources.AbstractMapSource;
+import tac.mapsources.MapSourcesTools;
 
 public class MiscMapSources {
-	
+
 	/**
 	 * Map from Multimap.com - incomplete for high zoom levels Uses Quad-Tree
-	 * coordinate notation?
+	 * coordinate notation
 	 */
 	public static class MultimapCom extends AbstractMapSource {
 
@@ -21,25 +21,12 @@ public class MiscMapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 
-			int z = zoom + 1;
-			// binary encoding using ones for tilex and twos for tiley.
-			// if a bit is set in tilex and tiley we get a three
-			char[] num = new char[zoom];
-			for (int i = zoom - 1; i >= 0; i--) {
-				int n = 0;
-				if ((tilex & 1) == 1)
-					n += 1;
-				if ((tiley & 1) == 1)
-					n += 2;
-				num[i] = Integer.toString(n).charAt(0);
-				tilex >>= 1;
-				tiley >>= 1;
-			}
-			String s = new String(num);
-			if (s.length() > 12)
-				s = s.substring(0, 6) + "/" + s.substring(6, 12) + "/" + s.substring(12);
-			else if (s.length() > 6)
-				s = s.substring(0, 6) + "/" + s.substring(6);
+			String tileNum = MapSourcesTools.encodeQuadTree(zoom, tilex, tiley);
+			if (tileNum.length() > 12)
+				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/"
+						+ tileNum.substring(12);
+			else if (tileNum.length() > 6)
+				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6);
 
 			String base;
 			if (zoom < 6)
@@ -48,8 +35,43 @@ public class MiscMapSources {
 				base = "http://mc2.tiles-cdn.multimap.com/ptiles/map/mi917/";
 			else
 				base = "http://mc3.tiles-cdn.multimap.com/ptiles/map/mi931/";
-			s = base + z + "/" + s + ".png?client=public_api&service_seq=14458";
-			return s;
+			tileNum = base + (zoom + 1) + "/" + tileNum
+					+ ".png?client=public_api&service_seq=14458";
+			return tileNum;
+		}
+	}
+
+	public static class MultimapOSUkCom extends AbstractMapSource {
+
+		public MultimapOSUkCom() {
+			// zoom level supported:
+			// 0 (fixed url) world.png
+			// 1-5 "mergend binary encoding"
+			// 6-? uses MS MAP tiles at some parts of the world
+			super("Multimap UK OS Map", 1, 16, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String tileNum = MapSourcesTools.encodeQuadTree(zoom, tilex, tiley);
+			if (tileNum.length() > 12)
+				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/"
+						+ tileNum.substring(12);
+			else if (tileNum.length() > 6)
+				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6);
+
+			String base;
+			if (zoom < 6)
+				base = "http://mc1.tiles-cdn.multimap.com/ptiles/map/mi915/";
+			else if (zoom < 14)
+				base = "http://mc2.tiles-cdn.multimap.com/ptiles/map/mi917/";
+			else if (zoom < 15)
+				base = "http://mc0.tiles-cdn.multimap.com/ptiles/map/mi904/";
+			else
+				base = "http://mc0.tiles-cdn.multimap.com/ptiles/map/mi932/";
+
+			tileNum = base + (zoom + 1) + "/" + tileNum
+					+ ".png?client=public_api&service_seq=14458";
+			return tileNum;
 		}
 	}
 

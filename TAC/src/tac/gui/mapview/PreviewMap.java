@@ -113,8 +113,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		EastNorthCoordinate c = settings.mapviewCenterCoordinate;
 		gridZoom = settings.mapviewGridZoom;
 		setDisplayPositionByLatLon(c, settings.mapviewZoom);
-		setSelectionByTileCoordinate(MAX_ZOOM, settings.mapviewSelectionMax,
-				settings.mapviewSelectionMin, true);
+		setSelectionByTileCoordinate(MAX_ZOOM, settings.mapviewSelectionMin,
+				settings.mapviewSelectionMax, true);
 	}
 
 	@Override

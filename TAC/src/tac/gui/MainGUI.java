@@ -153,6 +153,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		tileImageParametersPanel.updateControlsState();
 		zoomChanged(previewMap.getZoom());
 		gridZoomChanged(previewMap.getGridZoom());
+		previewMap.updateMapSelection();
 	}
 
 	private void createControls() {

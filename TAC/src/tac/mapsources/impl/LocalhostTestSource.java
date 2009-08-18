@@ -9,7 +9,7 @@ public class LocalhostTestSource extends AbstractMapSource {
 	}
 	
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return "http://localhost/tile?x=" + tilex + "&y=" + tiley + "&z=" + zoom;
+		return "http://127.0.0.1/tile?x=" + tilex + "&y=" + tiley + "&z=" + zoom;
 	}
 
 	@Override

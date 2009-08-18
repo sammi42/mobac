@@ -87,12 +87,13 @@ public class TileDownLoader {
 		huc.addRequestProperty("User-agent", s.getUserAgent());
 		huc.connect();
 
-		InputStream is = huc.getInputStream();
 		int code = huc.getResponseCode();
 
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invaild HTTP response: " + code);
-
+		
+		InputStream is = huc.getInputStream();
+		
 		int bytesRead = 0;
 		int sumBytes = 0;
 

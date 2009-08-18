@@ -1,5 +1,13 @@
 package tac.exceptions;
 
+import tac.mapsources.MapSourcesManager;
+
+/**
+ * Encapsulates several other exceptions that may occure while performing an
+ * mapsources online update.
+ * 
+ * @see MapSourcesManager#mapsourcesOnlineUpdate()
+ */
 public class MapSourcesUpdateException extends Exception {
 
 	public MapSourcesUpdateException(String message) {

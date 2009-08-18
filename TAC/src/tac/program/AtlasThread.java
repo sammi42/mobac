@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import tac.exceptions.MapDownloadSkippedException;
 import tac.gui.AtlasProgress;
 import tac.gui.AtlasProgress.DownloadControlerListener;
 import tac.program.JobDispatcher.Job;
@@ -133,9 +134,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {
 					try {
-						createMap(map);
+						while (!createMap(map))
+							;
 					} catch (InterruptedException e) {
 						throw e; // User has aborted
+					} catch (MapDownloadSkippedException e) {
+						// Do nothing and continue with next map
 					} catch (Exception e) {
 						log.error("", e);
 					}
@@ -160,7 +164,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		ap.atlasCreationFinished();
 	}
 
-	public void createMap(MapInterface map) throws Exception {
+	/**
+	 * 
+	 * @param map
+	 * @return true if map creation process was finished and false if something
+	 *         went wrong and the user decided to retry map download
+	 * @throws Exception
+	 */
+	public boolean createMap(MapInterface map) throws Exception {
 		TarIndex tileIndex = null;
 		TarIndexedArchive tileArchive = null;
 
@@ -183,7 +194,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		 **/
 		int zoom = map.getZoom();
 
-		int tileCount = map.calculateTilesToDownload();
+		final int tileCount = map.calculateTilesToDownload();
 
 		ap.setZoomLevel(zoom);
 		try {
@@ -204,21 +215,36 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				Thread.sleep(500);
 				if (!failedMessageAnswered && (jobsRetryError > 50)) {
 					downloadJobDispatcher.pause();
-					int answer = JOptionPane.showConfirmDialog(ap,
-							"Multiple tile downloads have failed. "
-									+ "Something may be wrong with your connection to the "
-									+ "download server or your selected area.\n"
-									+ "Are you sure you want to continue "
-									+ "and create the atlas anyway?",
-							"Download of more than 100 tiles failed", JOptionPane.ERROR_MESSAGE);
+					String[] answers = new String[] { "Continue", "Retry", "Skip", "Abort" };
+					String message = "<html>Multiple tile downloads have failed. "
+							+ "Something may be wrong with your connection to the "
+							+ "download server or your selected area. "
+							+ "<br>Do you want to:<br><br>"
+							+ "<u>Continue</u> map download and ignore the errors? (results in blank/missing tiles)<br>"
+							+ "<u>Retry</u> to download this map, by starting over?<br>"
+							+ "<u>Skip</u> the current map and continue to process other maps in the atlas?<br>"
+							+ "<u>Abort</u> the current map and atlas creation process?<br></html>";
+					int answer = JOptionPane.showOptionDialog(ap, message,
+							"Multiple download errors - how to proceed?", 0,
+							JOptionPane.QUESTION_MESSAGE, null, answers, answers[0]);
 					failedMessageAnswered = true;
-					if (answer != JOptionPane.YES_OPTION) {
+					switch (answer) {
+					case 0: // Continue
+						downloadJobDispatcher.resume();
+						break;
+					case 1: // Retry
+						djp.cancel();
+						djp = null;
+						downloadJobDispatcher.cancelOutstandingJobs();
+						return false;
+					case 2: // Skip
+						downloadJobDispatcher.cancelOutstandingJobs();
+						throw new MapDownloadSkippedException();
+					default: // Abort or close dialog
 						downloadJobDispatcher.cancelOutstandingJobs();
 						downloadJobDispatcher.terminateAllWorkerThreads();
-						djp.cancel();
-						return;
+						throw new InterruptedException();
 					}
-					downloadJobDispatcher.resume();
 				}
 			}
 			djp = null;
@@ -226,7 +252,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			tileArchive.writeEndofArchive();
 			tileArchive.close();
 			tileIndex = tileArchive.getTarIndex();
-			if (tileIndex.size() != (map.calculateTilesToDownload())) {
+			if (tileIndex.size() != tileCount) {
+				log.debug("Expected tile count: " + tileCount + " downloaded tile count: "
+						+ tileIndex.size());
 				int answer = JOptionPane.showConfirmDialog(ap,
 						"Something is wrong with download of atlas tiles.\n"
 								+ "The amount of downladed tiles is not as "
@@ -237,7 +265,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 						"Error - tiles are missing - do you want to continue anyway?",
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (answer != JOptionPane.YES_OPTION)
-					return;
+					throw new InterruptedException();
 			}
 			log.debug("Starting to create atlas from downloaded tiles");
 
@@ -261,15 +289,15 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			downloadJobDispatcher.cancelOutstandingJobs();
 			tileIndex.closeAndDelete();
 		} catch (Exception e) {
-			log.error("Error in createMap: " + e.getMessage());
+			log.error("Error in createMap: " + e.getMessage(),e);
 			throw e;
 		} finally {
-			log.debug("Clean-up");
 			if (tileIndex != null)
 				tileIndex.closeAndDelete();
 			if (tileArchive != null)
 				tileArchive.delete();
 		}
+		return true;
 	}
 
 	public void pauseResumeDownload() {
@@ -348,7 +376,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	 * block on {@link JobDispatcher#addJob(Job)}
 	 * 
 	 */
-	public   class DownloadJobProducer extends Thread {
+	public class DownloadJobProducer extends Thread {
 
 		private Logger log = Logger.getLogger(DownloadJobProducer.class);
 

@@ -52,21 +52,24 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	protected Layer() {
 	}
 
-	public Layer(AtlasInterface atlasInterface, String name, MapSource mapSource,
+	public Layer(AtlasInterface atlasInterface, String name) throws InvalidNameException {
+		this.atlasInterface = atlasInterface;
+		setName(name);
+	}
+
+	public void addMapsAutocut(String mapNameBase, MapSource mapSource,
 			EastNorthCoordinate minCoordinate, EastNorthCoordinate maxCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
-		this(atlasInterface, name, mapSource, minCoordinate.toTileCoordinate(zoom), maxCoordinate
+		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(zoom), maxCoordinate
 				.toTileCoordinate(zoom), zoom, parameters, maxMapSize);
 	}
 
-	public Layer(AtlasInterface atlasInterface, String name, MapSource mapSource,
-			Point minTileCoordinate, Point maxTileCoordinate, int zoom,
-			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
-		log.trace("Creating new layer: \"" + name + "\" " + mapSource + " zoom=" + zoom + " min="
-				+ minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x
-				+ "/" + maxTileCoordinate.y);
-		this.atlasInterface = atlasInterface;
-		setName(name);
+	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
+			Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize)
+			throws InvalidNameException {
+		log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom
+				+ " min=" + minTileCoordinate.x + "/" + minTileCoordinate.y + " max="
+				+ maxTileCoordinate.x + "/" + maxTileCoordinate.y);
 
 		minTileCoordinate.x -= minTileCoordinate.x % Tile.SIZE;
 		minTileCoordinate.y -= minTileCoordinate.y % Tile.SIZE;
@@ -87,10 +90,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 
 		int mapWidth = maxTileCoordinate.x - minTileCoordinate.x;
 		int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
-		maps.clear();
 		if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
-			Map s = new Map(this, name, mapSource, zoom, minTileCoordinate, maxTileCoordinate,
-					parameters);
+			Map s = new Map(this, mapNameBase, mapSource, zoom, minTileCoordinate,
+					maxTileCoordinate, parameters);
 			maps.add(s);
 			return;
 		}
@@ -101,7 +103,8 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
 				Point min = new Point(mapX, mapY);
 				Point max = new Point(maxX - 1, maxY - 1);
-				String mapName = String.format("%s-%02d", new Object[] { name, mapCounter++ });
+				String mapName = String.format("%s (%02d)",
+						new Object[] { mapNameBase, mapCounter++ });
 				Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
 				maps.add(s);
 			}

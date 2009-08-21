@@ -148,6 +148,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		updatePanels();
 		loadSettings();
 		profilesPanel.initialize();
+		mapSourceChanged(previewMap.getMapSource());
 		updateZoomLevelCheckBoxes();
 		updateGridSizeCombo();
 		tileImageParametersPanel.updateControlsState();
@@ -473,7 +474,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			s.setElementName(atlasNameTextField.getText());
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
-			
+
 			tileImageParametersPanel.saveSettings();
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 			s.mainWindow.maximized = maximized;
@@ -730,8 +731,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private void addSelectedAutoCutMultiMapLayers() {
+		final String mapNameFmt = "%s %02d";
 		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
-		String atlasNameFmt = atlasNameTextField.getText() + "-%02d";
+		String name = atlasNameTextField.getText();
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
 		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
 				cbZoom);
@@ -753,26 +755,31 @@ public class MainGUI extends JFrame implements MapEventListener {
 			return;
 		}
 
+		String layerName = name;
+		Layer layer = null;
+		int c = 1;
+		boolean success = false;
+		do {
+			try {
+				layer = new Layer(atlasInterface, layerName);
+				success = true;
+			} catch (InvalidNameException e) {
+				layerName = name + "_" + Integer.toString(c++);
+			}
+		} while (!success);
 		for (int zoom : zoomLevels) {
-			String name = String.format(atlasNameFmt, new Object[] { zoom });
 			Point tl = ms.getTopLeftPixelCoordinate(zoom);
 			Point br = ms.getBottomRightPixelCoordinate(zoom);
 			TileImageParameters customTileParameters = getSelectedTileImageParameters();
-
-			String layerName = name;
-			boolean success = false;
-			int c = 1;
-			do {
-				try {
-					Layer layer = new Layer(atlasInterface, layerName, tileSource, tl, br, zoom,
-							customTileParameters, settings.maxMapSize);
-					atlasInterface.addLayer(layer);
-					success = true;
-				} catch (InvalidNameException e) {
-					layerName = name + "_" + Integer.toString(c++);
-				}
-			} while (!success);
+			try {
+				String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
+				layer.addMapsAutocut(mapName, tileSource, tl, br, zoom, customTileParameters,
+						settings.maxMapSize);
+			} catch (InvalidNameException e) {
+				log.error("", e);
+			}
 		}
+		atlasInterface.addLayer(layer);
 		jAtlasTree.getTreeModel().notifyStructureChanged();
 	}
 

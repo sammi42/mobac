@@ -92,7 +92,6 @@ public class MapSelection {
 	 */
 	public Point getTopLeftTileNumber(int aZoomlevel) {
 		Point tlc = getTopLeftPixelCoordinate(aZoomlevel);
-		Logging.LOG.debug("min_pixel " + tlc + " (zoom " + aZoomlevel + ")");
 		tlc.x /= Tile.SIZE;
 		tlc.y /= Tile.SIZE;
 		return tlc;
@@ -133,7 +132,6 @@ public class MapSelection {
 	 */
 	public Point getBottomRightTileNumber(int aZoomlevel) {
 		Point brc = getBottomRightPixelCoordinate(aZoomlevel);
-		Logging.LOG.debug("max_pixel " + brc + " (zoom " + aZoomlevel + ")");
 		brc.x = brc.x / Tile.SIZE;
 		brc.y = brc.y / Tile.SIZE;
 		return brc;

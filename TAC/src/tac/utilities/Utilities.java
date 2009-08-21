@@ -59,7 +59,7 @@ public class Utilities {
 		} catch (NoClassDefFoundError e) {
 			return false;
 		} catch (Throwable t) {
-			log.error("testJaiColorQuantizerAvailable() raisen an error:", t);
+			log.error("Error in testJaiColorQuantizerAvailable():", t);
 			return false;
 		}
 		return true;

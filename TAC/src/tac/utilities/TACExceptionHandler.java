@@ -1,6 +1,7 @@
 package tac.utilities;
 
 import java.awt.AWTEvent;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -77,7 +78,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 		String exceptionName = e.getClass().getSimpleName();
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append("\nVersion: " + TACInfo.getCompleteTitle());
+			sb.append("Version: " + TACInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
 			String windowManager = System.getProperty("sun.desktop");
 			if (windowManager != null)
@@ -87,7 +88,8 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			if (dist != null)
 				sb.append("\nDistribution name: " + dist);
 
-			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version") + ")");
+			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version")
+					+ ")");
 			sb.append("\nMapsources rev: "
 					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
 
@@ -100,7 +102,8 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			String guiText = "" + "An unexpected exception occurred (" + exceptionName + ")<br>"
 					+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + url
 					+ "\">SourceForge.net</a><br>"
-					+ "Include your steps to get to the error (as detailed as possible)!</p>"
+					+ "<b>Please include a detailed description of your performed actions <br>"
+					+ "before the error occurred.</b></p>"
 					+ "Be sure to include the following information:";
 			JEditorPane text = new JEditorPane("text/html", "");
 			text.setOpaque(true);
@@ -124,7 +127,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 							public void lostOwnership(Clipboard clipboard, Transferable contents) {
 							}
 						});
-				guiText += "<p>(The text has already been copied to your clipboard.)</p>";
+				guiText += "<p>(The following text has already been copied to your clipboard.)</p>";
 			} catch (RuntimeException x) {
 			}
 			text.setText("<html>" + guiText + "</html>");
@@ -132,6 +135,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			JTextArea info = new JTextArea(sb.toString(), 20, 60);
 			info.setCaretPosition(0);
 			info.setEditable(false);
+			info.setMinimumSize(new Dimension(150, 150));
 			p.add(new JScrollPane(info), GBC.eop());
 
 			JOptionPane.showMessageDialog(null, p, "Unexpected Exception: " + exceptionName,
@@ -166,6 +170,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 	public static void main(String[] args) {
 		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			throw new RuntimeException("Test");
 		} catch (Exception e) {
 			showExceptionDialog(e);

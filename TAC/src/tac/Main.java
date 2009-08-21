@@ -6,6 +6,7 @@ import javax.swing.UIManager;
 import tac.gui.MainGUI;
 import tac.program.DirectoryManager;
 import tac.program.Logging;
+import tac.program.TACInfo;
 import tac.program.model.Settings;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -17,26 +18,32 @@ public class Main {
 
 	public Main() {
 		Logging.configureLogging();
-		//Logging.logSystemProperties();
-		DirectoryManager.initialize();
-		Utilities.checkFileSetup();
-		Settings.loadOrQuit();
+		TACInfo.initialize(); // Load revision info
 		TACExceptionHandler.installToolkitEventQueueProxy();
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				MainGUI.createMainGui();
-			}
-		});
+		try {
+			// Logging.logSystemProperties();
+			DirectoryManager.initialize();
+			Utilities.checkFileSetup();
+			Settings.loadOrQuit();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					MainGUI.createMainGui();
+				}
+			});
+		} catch (Throwable t) {
+			TACExceptionHandler.processException(t);
+		}
 	}
 
 	/**
-	 * Start TAC without version check
+	 * Start TAC without Java Runtime version check
 	 */
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			new Main();
-		} catch (Exception e) {
+		} catch (Throwable t) {
+			TACExceptionHandler.processException(t);
 		}
 	}
 }

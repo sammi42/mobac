@@ -29,9 +29,9 @@ public class StartTAC {
 		try {
 			Class.forName(MAIN_CLASS).newInstance();
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Unable to start TAC: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
 		}
 	}
 

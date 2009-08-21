@@ -16,11 +16,7 @@ public class TACInfo {
 	 */
 	private static boolean titleHideRevision = false;
 
-	static {
-		initialite();
-	}
-
-	private static void initialite() {
+	public static void initialize() {
 		InputStream propIn = Main.class.getResourceAsStream("tac.properties");
 		try {
 			Properties props = new Properties();

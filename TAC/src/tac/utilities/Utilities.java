@@ -56,9 +56,10 @@ public class Utilities {
 			Class<?> c = Class.forName("javax.media.jai.operator.ColorQuantizerDescriptor");
 			if (c != null)
 				return true;
-		} catch (Exception e) {
-			return false;
 		} catch (NoClassDefFoundError e) {
+			return false;
+		} catch (Throwable t) {
+			log.error("testJaiColorQuantizerAvailable() raisen an error:", t);
 			return false;
 		}
 		return true;

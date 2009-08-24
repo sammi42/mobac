@@ -183,12 +183,8 @@ public class MapSelection {
 	public long[] calculateNrOfTilesEx(int zoom) {
 		Point max = getBottomRightTileNumber(zoom);
 		Point min = getTopLeftTileNumber(zoom);
-		Logging.LOG.debug("max: " + max);
-		Logging.LOG.debug("min: " + max);
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
-		Logging.LOG.debug("width:  " + width);
-		Logging.LOG.debug("height: " + height);
 		return new long[] { width * height, width, height };
 	}
 

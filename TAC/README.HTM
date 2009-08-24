@@ -43,18 +43,44 @@ p,li {
 application. <br>
 TAC is an open source project hosted on SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
+<h2>Table of contents</h2>
+<ul>
+	<li><a href="#License">License</a></li>
+	<li><a href="#Description">Description</a></li>
+	<li><a href="#Requirements">Requirements</a></li>
+	<li><a href="#Installation">Installation</a></li>
+	<li><a href="#Start">Application start</a></li>
+	<li><a href="#TrekBuddy">Creating and using atlases with
+	TrekBuddy</a></li>
+	<li><a href="#MTE">Creating and using atlases with Mobile
+	Trail Explorer (MTE)</a></li>
+	<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
+	<li><a href="#Ozi">Creating and using atlases with OziExplorer
+	/ large PNG image</a></li>
+	<li><a href="#Enhancement">Enhancement requests</a></li>
+	<li><a href="#Limitations">Known problems and limitations</a></li>
+	<li><a href="#AdvancedUsers">Details for advanced users</a></li>
+	<li></li>
+</ul>
 </p>
+<hr />
 
-<h2>License</h2>
+<h2><a name="License">License</a></h2>
 <p>TrekBuddy Atlas Creator (TAC) is under GNU General Public License
 Version 2 (GPL). For details on the GPL see the license file <a
 	href="gpl.txt">gpl.txt</a></p>
 
-<h2>Description</h2>
-<p>This application creates atlases for the J2ME application <a
-	href="http://www.trekbuddy.net">TrekBuddy</a></p>
+<h2><a name="Description">Description</a></h2>
+<p>This application creates atlases for the J2ME applications <a
+	href="http://www.trekbuddy.net">TrekBuddy</a> and <a
+	href="http://code.google.com/p/mobile-trail-explorer/">Mobile Trail
+Explorer (MTE)</a>, the Android application <a href="http://www.andnav.org/">AndNav</a>
+and the commercial Windows application <a
+	href="http://www.oziexplorer.com/">OziExplorer</a>. The map image
+created for OziExplorer can also be used with any PNG capable image
+viewer (map image in one large PNG file).</p>
 
-<h2>Requirements</h2>
+<h2><a name="Requirements">Requirements</a></h2>
 <p>This application requires that a Java Runtime Environment version
 6 (v1.6) or higher is installed on the computer.</p>
 <p>For reducing the color depth of downloaded tiles the library
@@ -65,17 +91,18 @@ Advanced Imaging library can be obtained at <a
 	href="https://jai.dev.java.net/binary-builds.html">https://jai.dev.java.net/binary-builds.html</a>
 </p>
 
-<h2>Installation</h2>
+<h2><a name="Installation">Installation</a></h2>
 <p>Copy or move the unzipped files to a folder where you would like
 to have TAC installed.</p>
 
-<h2>Application start</h2>
+<h2><a name="Start">Application start</a></h2>
 <p>The application is started by executing the <tt>start.cmd</tt> in
 a Windows environment or the <tt>start.sh</tt> under an Linux / Unix
 environment. At the first application start all necessary files and
 folders are automatically created by the application.</p>
 
-<h2>Creating and using atlases with TrekBuddy</h2>
+<h2><a name="TrekBuddy">Creating and using atlases with
+TrekBuddy</a></h2>
 <p>For creating atlases compatible with TrekBuddy you have to select
 <b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
 in section <b>Atlas settings</b> on the left side of the main window.</p>
@@ -91,12 +118,13 @@ atlas with TrekBuddy copy the whole directory onto your J2ME device and
 open <tt>cr.tar</tt>/<tt>cr.tba</tt> (in the atlas root directory) in
 TrekBuddy as atlas.</p>
 
-<h2>Creating and using atlases with Mobile Trail Explorer (MTE)</h2>
+<h2><a name="MTE">Creating and using atlases with Mobile Trail
+Explorer (MTE)</a></h2>
 <p>For creating atlases compatible with Mobile Trail Explorer you
 have to select <b>Mobile Trail Explorer</b> as format in section <b>Atlas
 settings</b> on the left side of the main window. <br>
-If a map source uses an image format different to png the tiles will 
-be automatically converted to the png format.<br /> 
+If a map source uses an image format different to PNG the tiles will be
+automatically converted to the PNG format.<br />
 As atlases for Mobile Trail Explorer does not support all features
 provided by TrekBuddy the following settings are ignored when creating
 atlases for Mobile Trail Explorer:</p>
@@ -106,7 +134,7 @@ atlases for Mobile Trail Explorer:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2>Creating and using atlases with AndNav</h2>
+<h2><a name="AndNav">Creating and using atlases with AndNav</a></h2>
 <p>For creating atlases compatible with AndNav you have to select <b>AndNav
 atlas format</b> as format in section <b>Atlas settings</b> on the left side
 of the main window. <br>
@@ -119,8 +147,8 @@ AndNav:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2>Creating and using atlases with OziExplorer / large PNG image
-export</h2>
+<h2><a name="Ozi">Creating and using atlases with OziExplorer /
+large PNG image export</a></h2>
 <p>For creating atlases compatible with OziExplorer you have to
 select <b>OziExplorer (PNG & MAP)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
@@ -146,13 +174,13 @@ algorithms which can lead to the situation that you can create very
 large map images - but OziExplorer and other image viewers are not able
 to open the image.</p>
 
-<h2>Enhancement requests</h2>
+<h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other
 enhancement ideas for TrekBuddy Atlas Creator feel free te open an <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105497">Feature
 Request Ticket</a> at SourceForge.</p>
 
-<h2>Problems, Bugs &amp; Errors</h2>
+<h2><a name="Bugs">Problems, Bugs &amp; Errors</a></h2>
 <p>In case of unexpected errors while executing TrekBuddy Atlas
 Creator you may get presented a exception dialog containing detailed
 information about the problem. In such a case please create a new <a
@@ -174,7 +202,7 @@ have found a bug please file it in the <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">bug
 tracker at SourceForge</a>.</p>
 
-<h2>Known problems and limitations</h2>
+<h2><a name="Limitations">Known problems and limitations</a></h2>
 <h3>New map sources</h3>
 <p>TrekBuddy Atlas Creator is limited to map sources that provide
 their maps if form of map tiles. Each of that map tiles has to be of
@@ -188,7 +216,7 @@ For more details see OpenStreetMap Wiki: <a
 and width of a map</a> and <a
 	href="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom levels</a></p>
 
-<h2>Details for advanced users</h2>
+<h2><a name="AdvancedUsers">Details for advanced users</a></h2>
 <h3>Custom map sources</h3>
 <p>Custom map sources which uses a similar url scheme as
 Google/OpenStreetMap can be added by editing the file <tt>settings.xml</tt>

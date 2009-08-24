@@ -279,6 +279,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				else
 					mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
 				break;
+			case MTE:
+				mc = new MapCreatorMTE(map, tileIndex, atlasDir);
+				break;
 			case AndNav:
 				mc = new MapCreatorAndNav(map, tileIndex, atlasDir);
 				break;
@@ -289,7 +292,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			downloadJobDispatcher.cancelOutstandingJobs();
 			tileIndex.closeAndDelete();
 		} catch (Exception e) {
-			log.error("Error in createMap: " + e.getMessage(),e);
+			log.error("Error in createMap: " + e.getMessage(), e);
 			throw e;
 		} finally {
 			if (tileIndex != null)

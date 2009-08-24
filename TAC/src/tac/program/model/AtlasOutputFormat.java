@@ -4,6 +4,7 @@ public enum AtlasOutputFormat {
 
 	TaredAtlas("TrekBuddy tared atlas"), // 
 	UntaredAtlas("TrekBuddy untared atlas"), //
+	MTE("Mobile Trail Explorer"), //
 	AndNav("AndNav atlas format"), //
 	OziPng("OziExplorer (PNG & MAP)");
 

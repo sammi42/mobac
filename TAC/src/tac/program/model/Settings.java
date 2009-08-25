@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -57,7 +59,6 @@ public class Settings {
 
 	@XmlElement(nillable = false)
 	public String mapviewMapSource = MapSourcesManager.DEFAULT.getName();
-
 
 	private String elementName = "Layer name";
 
@@ -157,13 +158,17 @@ public class Settings {
 	}
 
 	public static void save() throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(Settings.class);
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		FileOutputStream fo = null;
 		try {
-			JAXBContext context = JAXBContext.newInstance(Settings.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(getInstance(), FILE);
+			fo = new FileOutputStream(FILE);
+			m.marshal(getInstance(), fo);
+		} catch (FileNotFoundException e) {
+			throw new JAXBException(e);
 		} finally {
-			getInstance().applyProxySettings();
+			Utilities.closeStream(fo);
 		}
 	}
 

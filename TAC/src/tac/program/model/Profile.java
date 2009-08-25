@@ -1,6 +1,8 @@
 package tac.program.model;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +17,7 @@ import javax.xml.bind.Unmarshaller;
 
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.AtlasObject;
+import tac.utilities.Utilities;
 
 public class Profile implements Comparable<Profile> {
 
@@ -100,7 +103,15 @@ public class Profile implements Comparable<Profile> {
 		JAXBContext context = JAXBContext.newInstance(Atlas.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		m.marshal(atlasInterface, file);
+		FileOutputStream fo = null;
+		try {
+			fo = new FileOutputStream(file);
+			m.marshal(atlasInterface, fo);
+		} catch (FileNotFoundException e) {
+			throw new JAXBException(e);
+		} finally {
+			Utilities.closeStream(fo);
+		}
 	}
 
 	public AtlasInterface load() throws JAXBException {

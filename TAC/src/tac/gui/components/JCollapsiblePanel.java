@@ -77,6 +77,7 @@ public class JCollapsiblePanel extends JPanel {
 
 	public JCollapsiblePanel(String title, LayoutManager layout) {
 		this(new JPanel(layout), title);
+		setName(title);
 	}
 
 	/**

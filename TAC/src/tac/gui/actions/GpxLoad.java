@@ -15,9 +15,17 @@ import tac.data.gpx.GPXTest;
 import tac.data.gpx.interfaces.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.mapview.GpxLayer;
+import tac.gui.panels.JGpxPanel;
 import tac.program.model.Settings;
 
 public class GpxLoad implements ActionListener {
+
+	JGpxPanel panel;
+	
+	public GpxLoad(JGpxPanel panel) {
+		super();
+		this.panel = panel;
+	}
 
 	public void actionPerformed(ActionEvent event) {
 		MainGUI.getMainGUI().previewMap.setMapMarkerVisible(true);
@@ -47,8 +55,10 @@ public class GpxLoad implements ActionListener {
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
 		try {
-			Gpx gpx = GPXTest.loadGpxFile(fc.getSelectedFile());
+			File f = fc.getSelectedFile();
+			Gpx gpx = GPXTest.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
+			panel.getListModel().addElement(new JGpxPanel.ListModelEntry(f,gpxLayer));
 			MainGUI.getMainGUI().previewMap.mapLayers.add(gpxLayer);
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);

@@ -8,12 +8,20 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 
 import tac.gui.MainGUI;
 import tac.gui.mapview.GpxLayer;
+import tac.gui.panels.JGpxPanel;
 
 /**
  * Deletes all loaded {@link GpxLayer}s from the main map viewer.
  * 
  */
 public class GpxClear implements ActionListener {
+	
+	JGpxPanel panel;
+
+	public GpxClear(JGpxPanel panel) {
+		super();
+		this.panel = panel;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		Iterator<MapLayer> mapLayers = MainGUI.getMainGUI().previewMap.mapLayers.iterator();
@@ -21,6 +29,7 @@ public class GpxClear implements ActionListener {
 			if (mapLayers.next() instanceof GpxLayer)
 				mapLayers.remove();
 		}
+		panel.getListModel().clear();
 		MainGUI.getMainGUI().previewMap.repaint();
 	}
 

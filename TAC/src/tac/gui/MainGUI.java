@@ -42,8 +42,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.Main;
 import tac.exceptions.InvalidNameException;
-import tac.gui.actions.GpxClear;
-import tac.gui.actions.GpxLoad;
 import tac.gui.atlastree.JAtlasTree;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JCollapsiblePanel;
@@ -51,6 +49,7 @@ import tac.gui.mapview.GridZoom;
 import tac.gui.mapview.MapEventListener;
 import tac.gui.mapview.PreviewMap;
 import tac.gui.panels.JCoordinatesPanel;
+import tac.gui.panels.JGpxPanel;
 import tac.gui.panels.JProfilesPanel;
 import tac.gui.panels.JTileImageParametersPanel;
 import tac.mapsources.MapSourcesManager;
@@ -295,15 +294,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		JCollapsiblePanel gpxPanel = new JCollapsiblePanel("Gpx", new GridBagLayout());
-
-		JButton loadGpx = new JButton("Load Gpx");
-		loadGpx.addActionListener(new GpxLoad());
-		gpxPanel.addContent(loadGpx, GBC.std());
-
-		JButton clearGpx = new JButton("Clear Gpx");
-		clearGpx.addActionListener(new GpxClear());
-		gpxPanel.addContent(clearGpx, GBC.std());
+		JCollapsiblePanel gpxPanel = new JGpxPanel();
 
 		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);

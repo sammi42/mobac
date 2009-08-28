@@ -38,9 +38,8 @@ public class GPXTest {
 	}
 
 	public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
-		Class<?>[] gpxClasses = { tac.data.gpx.gpx10.Gpx10.class, tac.data.gpx.gpx11.Gpx11.class };
 		// Load GPX 1.0 and GPX 1.1 definition into the JAXB context
-		JAXBContext context = JAXBContext.newInstance(gpxClasses, null);
+		JAXBContext context = JAXBContext.newInstance(GPX_CLASSES, null);
 
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

@@ -47,8 +47,8 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	/** The speed increase per timer interval when a cursor button is clicked */
 	private static final double ACCELERATION = 0.10;
 
-	public PreviewMapController(PreviewMap map) {
-		super(map);
+	public PreviewMapController(PreviewMap map, boolean enabled) {
+		super(map, enabled);
 
 		InputMap inputMap = map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap actionMap = map.getActionMap();

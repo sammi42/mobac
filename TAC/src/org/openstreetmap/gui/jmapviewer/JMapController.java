@@ -15,15 +15,25 @@ import java.awt.event.MouseWheelListener;
  * <li>{@link MouseMotionListener}</li>
  * <li>{@link MouseWheelListener}</li>
  * </ul>
- * 
- * @author Jan Peter Stotz
  */
 public abstract class JMapController {
 
 	protected JMapViewer map;
+	protected boolean enabled = false;
 
 	public JMapController(JMapViewer map) {
+		this(map, true);
+	}
+
+	public JMapController(JMapViewer map, boolean enabled) {
 		this.map = map;
+		if (enabled)
+			enable();
+	}
+
+	public void enable() {
+		if (enabled)
+			return;
 		if (this instanceof MouseListener)
 			map.addMouseListener((MouseListener) this);
 		if (this instanceof MouseWheelListener)
@@ -32,4 +42,14 @@ public abstract class JMapController {
 			map.addMouseMotionListener((MouseMotionListener) this);
 	}
 
+	public void disable() {
+		if (!enabled)
+			return;
+		if (this instanceof MouseListener)
+			map.removeMouseListener((MouseListener) this);
+		if (this instanceof MouseWheelListener)
+			map.removeMouseWheelListener((MouseWheelListener) this);
+		if (this instanceof MouseMotionListener)
+			map.removeMouseMotionListener((MouseMotionListener) this);
+	}
 }

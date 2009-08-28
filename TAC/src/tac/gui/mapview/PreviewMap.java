@@ -10,10 +10,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
+import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
@@ -31,11 +30,16 @@ import tac.program.model.Settings;
 
 public class PreviewMap extends JMapViewer implements ComponentListener {
 
-	private static Logger log = Logger.getLogger(PreviewMap.class);
 	private static final long serialVersionUID = 1L;
+
 	public static final Color GRID_COLOR = new Color(200, 20, 20, 130);
 	public static final Color SEL_COLOR = new Color(0.9f, 0.7f, 0.7f, 0.6f);
 	public static final Color MAP_COLOR = new Color(1.0f, 0.84f, 0.0f, 0.4f);
+
+	public static final int MAP_CONTROLLER_RECTANGLE_SELECT = 0;
+	public static final int MAP_CONTROLLER_GPX = 1;
+
+	private static Logger log = Logger.getLogger(PreviewMap.class);
 
 	/**
 	 * Interactive map selection max/min pixel coordinates regarding zoom level
@@ -63,6 +67,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public LinkedList<MapEventListener> mapEventListeners = new LinkedList<MapEventListener>();
 
+	protected JMapController[] mapControllers;
+
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
 		new DefaultMapController(this);
@@ -75,14 +81,25 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		mapMarkersVisible = false;
 		setZoomContolsVisible(false);
 
-		new PreviewMapController(this);
-		addComponentListener(this);
+		mapControllers = new JMapController[1];
+		mapControllers[0] = new PreviewMapController(this, true);
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				grabFocus();
-			}
-		});
+		addComponentListener(this);
+	}
+
+	/**
+	 * 
+	 * @param mapControllerNum
+	 *            one of
+	 *            <ul>
+	 *            <li>{@link #MAP_CONTROLLER_RECTANGLE_SELECT}</li>
+	 *            <li>{@link #MAP_CONTROLLER_GPX}</li>
+	 *            </ul>
+	 */
+	public void setActiveMapController(int mapControllerNum) {
+		for (int i = 0; i < mapControllers.length; i++)
+			mapControllers[i].disable();
+		mapControllers[mapControllerNum].enable();
 	}
 
 	public void setDisplayPositionByLatLon(EastNorthCoordinate c, int zoom) {

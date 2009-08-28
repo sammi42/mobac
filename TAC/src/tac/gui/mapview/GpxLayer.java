@@ -60,4 +60,8 @@ public class GpxLayer implements MapLayer {
 		}
 	}
 
+	public Gpx getGpx() {
+		return gpx;
+	}
+	
 }

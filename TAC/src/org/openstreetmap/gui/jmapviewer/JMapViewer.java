@@ -106,7 +106,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		mapMarkersVisible = true;
 		setLayout(null);
 		initializeZoomSlider();
-		setMinimumSize(new Dimension(Tile.SIZE, Tile.SIZE));
+		setMinimumSize(new Dimension(256, 256));
 		setPreferredSize(new Dimension(400, 400));
 		setDisplayPositionByLatLon(50, 9, 3);
 		mapTileLayers.add(new DefaultMapTileLayer(this));
@@ -324,10 +324,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 		int iMove = 0;
 
-		int tilex = center.x / Tile.SIZE;
-		int tiley = center.y / Tile.SIZE;
-		int off_x = (center.x % Tile.SIZE);
-		int off_y = (center.y % Tile.SIZE);
+		int tileSize = mapSource.getMapScale().getTileSize();
+
+		int tilex = center.x / tileSize;
+		int tiley = center.y / tileSize;
+		int off_x = (center.x % tileSize);
+		int off_y = (center.y % tileSize);
 
 		int w2 = getWidth() / 2;
 		int h2 = getHeight() / 2;
@@ -338,9 +340,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int posy = h2 - off_y;
 
 		int diff_left = off_x;
-		int diff_right = Tile.SIZE - off_x;
+		int diff_right = tileSize - off_x;
 		int diff_top = off_y;
-		int diff_bottom = Tile.SIZE - off_y;
+		int diff_bottom = tileSize - off_y;
 
 		boolean start_left = diff_left < diff_right;
 		boolean start_top = diff_top < diff_bottom;
@@ -356,8 +358,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			else
 				iMove = 0;
 		} // calculate the visibility borders
-		int x_min = -Tile.SIZE;
-		int y_min = -Tile.SIZE;
+		int x_min = -tileSize;
+		int y_min = -tileSize;
 		int x_max = getWidth();
 		int y_max = getHeight();
 
@@ -378,8 +380,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 						}
 					}
 					Point p = move[iMove];
-					posx += p.x * Tile.SIZE;
-					posy += p.y * Tile.SIZE;
+					posx += p.x * tileSize;
+					posy += p.y * tileSize;
 					tilex += p.x;
 					tiley += p.y;
 				}
@@ -394,7 +396,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		}
 
 		// outer border of the map
-		int mapSize = Tile.SIZE << zoom;
+		int mapSize = tileSize << zoom;
 		g.drawRect(w2 - center.x, h2 - center.y, mapSize, mapSize);
 
 		// g.drawString("Tiles in cache: " + tileCache.getTileCount(), 50, 20);

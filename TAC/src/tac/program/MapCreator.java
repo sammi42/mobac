@@ -14,8 +14,7 @@ import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
@@ -47,7 +46,8 @@ public class MapCreator {
 	protected File mapFolder;
 	protected int zoom;
 	protected AtlasOutputFormat atlasOutputFormat;
-	protected MapSource mapSource;
+	protected final MapSource mapSource;
+	protected final int tileSize;
 
 	protected MapTileWriter mapTileWriter;
 
@@ -55,11 +55,12 @@ public class MapCreator {
 		log = Logger.getLogger(this.getClass());
 		LayerInterface layer = map.getLayer();
 		this.map = map;
-		xMin = map.getMinTileCoordinate().x / Tile.SIZE;
-		xMax = map.getMaxTileCoordinate().x / Tile.SIZE;
-		yMin = map.getMinTileCoordinate().y / Tile.SIZE;
-		yMax = map.getMaxTileCoordinate().y / Tile.SIZE;
 		this.mapSource = map.getMapSource();
+		this.tileSize = mapSource.getMapScale().getTileSize();
+		xMin = map.getMinTileCoordinate().x / tileSize;
+		xMax = map.getMaxTileCoordinate().x / tileSize;
+		yMin = map.getMinTileCoordinate().y / tileSize;
+		yMax = map.getMaxTileCoordinate().y / tileSize;
 		this.tarTileIndex = tarTileIndex;
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
@@ -107,13 +108,15 @@ public class MapCreator {
 		log.trace("Writing map file");
 		OutputStreamWriter mapWriter = new OutputStreamWriter(stream, TEXT_FILE_CHARSET);
 
-		double longitudeMin = OsmMercator.XToLon(xMin * Tile.SIZE, zoom);
-		double longitudeMax = OsmMercator.XToLon((xMax + 1) * Tile.SIZE, zoom);
-		double latitudeMin = OsmMercator.YToLat((yMax + 1) * Tile.SIZE, zoom);
-		double latitudeMax = OsmMercator.YToLat(yMin * Tile.SIZE, zoom);
+		MapScale mapScale = mapSource.getMapScale();
 
-		int width = (xMax - xMin + 1) * Tile.SIZE;
-		int height = (yMax - yMin + 1) * Tile.SIZE;
+		double longitudeMin = mapScale.cXToLon(xMin * tileSize, zoom);
+		double longitudeMax = mapScale.cXToLon((xMax + 1) * tileSize, zoom);
+		double latitudeMin = mapScale.cYToLat((yMax + 1) * tileSize, zoom);
+		double latitudeMax = mapScale.cYToLat(yMin * tileSize, zoom);
+
+		int width = (xMax - xMin + 1) * tileSize;
+		int height = (yMax - yMin + 1) * tileSize;
 
 		mapWriter.write(prepareMapString(imageFileName, longitudeMin, longitudeMax, latitudeMin,
 				latitudeMax, width, height));

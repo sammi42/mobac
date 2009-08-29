@@ -3,7 +3,10 @@ package tac.mapsources;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+
+import tac.mapsources.mapscale.Power2MapScale;
 
 /**
  * Custom tile store provider, configurable via settings.xml.
@@ -72,4 +75,8 @@ public class CustomMapSource implements MapSource {
 		return name;
 	}
 
+	public MapScale getMapScale() {
+		return Power2MapScale.INSTANCE;
+	}
+	
 }

@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+
 import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JCoordinateField;
 import tac.program.MapSelection;
@@ -121,10 +123,10 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		}
 	}
 
-	public MapSelection getMapSelection() {
+	public MapSelection getMapSelection(MapScale mapScale) {
 		EastNorthCoordinate max = getMaxCoordinate();
 		EastNorthCoordinate min = getMinCoordinate();
-		return new MapSelection(max, min);
+		return new MapSelection(mapScale, max, min);
 	}
 
 	public EastNorthCoordinate getMaxCoordinate() {

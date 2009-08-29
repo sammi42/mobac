@@ -10,8 +10,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.Tile;
-
 import tac.gui.AtlasProgress;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
@@ -67,9 +65,9 @@ public class MapCreatorOzi extends MapCreator {
 		}
 		ImageIO.setUseCache(false);
 
-		int width = (xMax - xMin + 1) * Tile.SIZE;
-		int height = (yMax - yMin + 1) * Tile.SIZE;
-		int tileLineHeight = Tile.SIZE;
+		int width = (xMax - xMin + 1) * tileSize;
+		int height = (yMax - yMin + 1) * tileSize;
+		int tileLineHeight = tileSize;
 
 		FileOutputStream fileOs = null;
 		try {
@@ -98,7 +96,7 @@ public class MapCreatorOzi extends MapCreator {
 						} catch (IOException e) {
 							log.error("", e);
 						}
-						lineX += Tile.SIZE;
+						lineX += tileSize;
 					}
 				} finally {
 					graphics.dispose();

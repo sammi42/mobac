@@ -11,8 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSourcesManager;
@@ -63,15 +62,17 @@ public class MapSourceTypeDetector {
 			testMapSource(ms, coordinate);
 	}
 
-	public static void testMapSource(MapSource ms, EastNorthCoordinate coordinate) {
+	public static void testMapSource(MapSource mapSource, EastNorthCoordinate coordinate) {
 		try {
-			System.out.println("Testing " + ms.toString());
-			int zoom = ms.getMinZoom() + ((ms.getMaxZoom() - ms.getMinZoom()) / 2);
+			System.out.println("Testing " + mapSource.toString());
+			int zoom = mapSource.getMinZoom()
+					+ ((mapSource.getMaxZoom() - mapSource.getMinZoom()) / 2);
 
-			int tilex = OsmMercator.LonToX(coordinate.lon, zoom) / Tile.SIZE;
-			int tiley = OsmMercator.LatToY(coordinate.lat, zoom) / Tile.SIZE;
+			MapScale mapScale = mapSource.getMapScale();
+			int tilex = mapScale.cLonToX(coordinate.lon, zoom) / mapScale.getTileSize();
+			int tiley = mapScale.cLatToY(coordinate.lat, zoom) / mapScale.getTileSize();
 
-			url = new URL(ms.getTileUrl(zoom, tilex, tiley));
+			url = new URL(mapSource.getTileUrl(zoom, tilex, tiley));
 			System.out.println("Sample url: " + url);
 			c = (HttpURLConnection) url.openConnection();
 			System.out.println("Connecting...");

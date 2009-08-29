@@ -782,7 +782,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void setSelectionByEnteredCoordinates() {
 		coordinatesPanel.correctMinMax();
-		MapSelection ms = coordinatesPanel.getMapSelection();
+		MapSelection ms = coordinatesPanel.getMapSelection(previewMap.getMapSource().getMapScale());
 		if (ms.isAreaSelected()) {
 			mapSelectionMax = ms.getBottomRightPixelCoordinate();
 			mapSelectionMin = ms.getTopLeftPixelCoordinate();
@@ -795,7 +795,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private MapSelection getMapSelectionCoordinates() {
 		if (mapSelectionMax == null || mapSelectionMin == null)
 			return null;
-		return new MapSelection(mapSelectionMax, mapSelectionMin);
+		return new MapSelection(previewMap.getMapSource().getMapScale(), mapSelectionMax,
+				mapSelectionMin);
 	}
 
 	private String validateInput() {

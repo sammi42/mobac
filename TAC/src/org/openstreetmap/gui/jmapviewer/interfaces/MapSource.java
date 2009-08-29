@@ -101,4 +101,6 @@ public interface MapSource {
 	 * purposes it can be sometimes useful to deactivate local storing of tiles.
 	 */
 	public boolean allowFileStore();
+	
+	public MapScale getMapScale();
 }

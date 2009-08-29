@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.InvalidNameException;
@@ -60,8 +60,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource,
 			EastNorthCoordinate minCoordinate, EastNorthCoordinate maxCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
-		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(zoom), maxCoordinate
-				.toTileCoordinate(zoom), zoom, parameters, maxMapSize);
+		MapScale mapScale = mapSource.getMapScale();
+		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapScale, zoom),
+				maxCoordinate.toTileCoordinate(mapScale, zoom), zoom, parameters, maxMapSize);
 	}
 
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
@@ -71,15 +72,17 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 				+ " min=" + minTileCoordinate.x + "/" + minTileCoordinate.y + " max="
 				+ maxTileCoordinate.x + "/" + maxTileCoordinate.y);
 
-		minTileCoordinate.x -= minTileCoordinate.x % Tile.SIZE;
-		minTileCoordinate.y -= minTileCoordinate.y % Tile.SIZE;
+		int tileSize = mapSource.getMapScale().getTileSize();
 
-		maxTileCoordinate.x += Tile.SIZE - 1 - (maxTileCoordinate.x % Tile.SIZE);
-		maxTileCoordinate.y += Tile.SIZE - 1 - (maxTileCoordinate.y % Tile.SIZE);
+		minTileCoordinate.x -= minTileCoordinate.x % tileSize;
+		minTileCoordinate.y -= minTileCoordinate.y % tileSize;
+
+		maxTileCoordinate.x += tileSize - 1 - (maxTileCoordinate.x % tileSize);
+		maxTileCoordinate.y += tileSize - 1 - (maxTileCoordinate.y % tileSize);
 
 		Dimension tileDimension;
 		if (parameters == null)
-			tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
+			tileDimension = new Dimension(tileSize, tileSize);
 		else
 			tileDimension = parameters.getDimension();
 		// We adapt the max map size to the tile size so that we do
@@ -103,8 +106,8 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
 				Point min = new Point(mapX, mapY);
 				Point max = new Point(maxX - 1, maxY - 1);
-				String mapName = String.format("%s (%02d)",
-						new Object[] { mapNameBase, mapCounter++ });
+				String mapName = String.format("%s (%02d)", new Object[] { mapNameBase,
+						mapCounter++ });
 				Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
 				maps.add(s);
 			}

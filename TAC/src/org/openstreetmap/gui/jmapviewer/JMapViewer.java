@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
@@ -191,8 +192,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 *            {@link MapSource#getMaxZoom()}
 	 */
 	public void setDisplayPositionByLatLon(Point mapPoint, double lat, double lon, int zoom) {
-		int x = OsmMercator.LonToX(lon, zoom);
-		int y = OsmMercator.LatToY(lat, zoom);
+		MapScale mapScale = mapSource.getMapScale();
+		int x = mapScale.cLonToX(lon, zoom);
+		int y = mapScale.cLatToY(lat, zoom);
 		setDisplayPosition(mapPoint, x, y, zoom);
 	}
 
@@ -230,13 +232,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public void setDisplayToFitMapMarkers() {
 		if (mapMarkerList == null || mapMarkerList.size() == 0)
 			return;
+		MapScale mapScale = mapSource.getMapScale();
 		int x_min = Integer.MAX_VALUE;
 		int y_min = Integer.MAX_VALUE;
 		int x_max = Integer.MIN_VALUE;
 		int y_max = Integer.MIN_VALUE;
 		for (MapMarker marker : mapMarkerList) {
-			int x = OsmMercator.LonToX(marker.getLon(), MAX_ZOOM);
-			int y = OsmMercator.LatToY(marker.getLat(), MAX_ZOOM);
+			int x = mapScale.cLonToX(marker.getLon(), MAX_ZOOM);
+			int y = mapScale.cLatToY(marker.getLat(), MAX_ZOOM);
 			x_max = Math.max(x_max, x);
 			y_max = Math.max(y_max, y);
 			x_min = Math.min(x_min, x);
@@ -246,9 +249,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Sets the displayed map pane and zoom level so that the two points
-	 * (x1/y1) and (x2/y2) visible. Please note that the coordinates
-	 * have to be specified regarding {@link #MAX_ZOOM}.
+	 * Sets the displayed map pane and zoom level so that the two points (x1/y1)
+	 * and (x2/y2) visible. Please note that the coordinates have to be
+	 * specified regarding {@link #MAX_ZOOM}.
 	 * 
 	 * @param x1
 	 * @param y1
@@ -267,8 +270,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			x >>= 1;
 			y >>= 1;
 		}
-		x = Math.min(x2,x1) + Math.abs(x1 - x2) / 2;
-		y = Math.min(y2,y1) + Math.abs(y1 - y2) / 2;
+		x = Math.min(x2, x1) + Math.abs(x1 - x2) / 2;
+		y = Math.min(y2, y1) + Math.abs(y1 - y2) / 2;
 		int z = 1 << (MAX_ZOOM - newZoom);
 		x /= z;
 		y /= z;
@@ -276,16 +279,18 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public Point2D.Double getPosition() {
-		double lon = OsmMercator.XToLon(center.x, zoom);
-		double lat = OsmMercator.YToLat(center.y, zoom);
+		MapScale mapScale = mapSource.getMapScale();
+		double lon = mapScale.cXToLon(center.x, zoom);
+		double lat = mapScale.cYToLat(center.y, zoom);
 		return new Point2D.Double(lat, lon);
 	}
 
 	public Point2D.Double getPosition(Point mapPoint) {
+		MapScale mapScale = mapSource.getMapScale();
 		int x = center.x + mapPoint.x - getWidth() / 2;
 		int y = center.y + mapPoint.y - getHeight() / 2;
-		double lon = OsmMercator.XToLon(x, zoom);
-		double lat = OsmMercator.YToLat(y, zoom);
+		double lon = mapScale.cXToLon(x, zoom);
+		double lat = mapScale.cYToLat(y, zoom);
 		return new Point2D.Double(lat, lon);
 	}
 
@@ -297,8 +302,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 * @return point on the map or <code>null</code> if the point is not visible
 	 */
 	public Point getMapPosition(double lat, double lon) {
-		int x = OsmMercator.LonToX(lon, zoom);
-		int y = OsmMercator.LatToY(lat, zoom);
+		MapScale mapScale = mapSource.getMapScale();
+		int x = mapScale.cLonToX(lon, zoom);
+		int y = mapScale.cLatToY(lat, zoom);
 		x -= center.x - getWidth() / 2;
 		y -= center.y - getHeight() / 2;
 		if (x < 0 || y < 0 || x > getWidth() || y > getHeight())

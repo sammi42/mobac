@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 
 import tac.utilities.Utilities;
 
@@ -23,9 +23,10 @@ public class EastNorthCoordinate {
 		lon = Double.NaN;
 	}
 
-	public EastNorthCoordinate(int zoom, int pixelCoordinateX, int pixelCoordinateY) {
-		this.lat = OsmMercator.YToLat(pixelCoordinateY, zoom);
-		this.lon = OsmMercator.XToLon(pixelCoordinateX, zoom);
+	public EastNorthCoordinate(MapScale mapScale, int zoom, int pixelCoordinateX,
+			int pixelCoordinateY) {
+		this.lat = mapScale.cYToLat(pixelCoordinateY, zoom);
+		this.lon = mapScale.cXToLon(pixelCoordinateX, zoom);
 	}
 
 	public EastNorthCoordinate(double lat, double lon) {
@@ -38,9 +39,9 @@ public class EastNorthCoordinate {
 		this.lon = c.x;
 	}
 
-	public Point toTileCoordinate(int zoom) {
-		int x = OsmMercator.LonToX(lon, zoom);
-		int y = OsmMercator.LatToY(lat, zoom);
+	public Point toTileCoordinate(MapScale mapScale, int zoom) {
+		int x = mapScale.cLonToX(lon, zoom);
+		int y = mapScale.cLatToY(lat, zoom);
 		return new Point(x, y);
 	}
 

@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.InvalidNameException;
@@ -67,9 +67,10 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	protected void calculateRuntimeValues() {
-		if (parameters == null)
-			tileDimension = new Dimension(Tile.SIZE, Tile.SIZE);
-		else
+		if (parameters == null) {
+			int tileSize = mapSource.getMapScale().getTileSize();
+			tileDimension = new Dimension(tileSize, tileSize);
+		} else
 			tileDimension = parameters.getDimension();
 	}
 
@@ -117,9 +118,10 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public String getToolTip() {
-		EastNorthCoordinate tl = new EastNorthCoordinate(zoom, minTileCoordinate.x,
+		MapScale mapScale = mapSource.getMapScale();
+		EastNorthCoordinate tl = new EastNorthCoordinate(mapScale, zoom, minTileCoordinate.x,
 				minTileCoordinate.y);
-		EastNorthCoordinate br = new EastNorthCoordinate(zoom, maxTileCoordinate.x,
+		EastNorthCoordinate br = new EastNorthCoordinate(mapScale, zoom, maxTileCoordinate.x,
 				maxTileCoordinate.y);
 
 		StringWriter sw = new StringWriter(1024);
@@ -191,8 +193,9 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public int calculateTilesToDownload() {
-		int width = MyMath.divCeil((maxTileCoordinate.x - minTileCoordinate.x) + 1, Tile.SIZE);
-		int height = MyMath.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, Tile.SIZE);
+		int tileSize = mapSource.getMapScale().getTileSize();
+		int width = MyMath.divCeil((maxTileCoordinate.x - minTileCoordinate.x) + 1, tileSize);
+		int height = MyMath.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, tileSize);
 		return width * height;
 	}
 

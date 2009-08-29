@@ -8,8 +8,6 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.Tile;
-
 import tac.gui.AtlasProgress;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
@@ -51,13 +49,13 @@ public class MapCreatorCustom extends MapCreator {
 
 		// left upper point on the map in pixels
 		// regarding the current zoom level
-		int xStart = xMin * Tile.SIZE;
-		int yStart = yMin * Tile.SIZE;
+		int xStart = xMin * tileSize;
+		int yStart = yMin * tileSize;
 
 		// lower right point on the map in pixels
 		// regarding the current zoom level
-		int xEnd = xMax * Tile.SIZE + (Tile.SIZE - 1);
-		int yEnd = yMax * Tile.SIZE + (Tile.SIZE - 1);
+		int xEnd = xMax * tileSize + (tileSize - 1);
+		int yEnd = yMax * tileSize + (tileSize - 1);
 
 		int mergedWidth = xEnd - xStart;
 		int mergedHeight = yEnd - yStart;
@@ -140,13 +138,13 @@ public class MapCreatorCustom extends MapCreator {
 	 * @param yAbsPos
 	 */
 	private void paintCustomTile(Graphics2D graphics, int xAbsPos, int yAbsPos) {
-		int xTile = xAbsPos / Tile.SIZE;
-		int xTileOffset = -(xAbsPos % Tile.SIZE);
+		int xTile = xAbsPos / tileSize;
+		int xTileOffset = -(xAbsPos % tileSize);
 
-		for (int x = xTileOffset; x < realWidth; x += Tile.SIZE) {
-			int yTile = yAbsPos / Tile.SIZE;
-			int yTileOffset = -(yAbsPos % Tile.SIZE);
-			for (int y = yTileOffset; y < realHeight; y += Tile.SIZE) {
+		for (int x = xTileOffset; x < realWidth; x += tileSize) {
+			int yTile = yAbsPos / tileSize;
+			int yTileOffset = -(yAbsPos % tileSize);
+			for (int y = yTileOffset; y < realHeight; y += tileSize) {
 				try {
 					BufferedImage orgTileImage = loadOriginalMapTile(xTile, yTile);
 					if (orgTileImage != null)
@@ -156,10 +154,10 @@ public class MapCreatorCustom extends MapCreator {
 					log.error("Error while painting sub-tile", e);
 				}
 				yTile++;
-				yTileOffset += Tile.SIZE;
+				yTileOffset += tileSize;
 			}
 			xTile++;
-			xTileOffset += Tile.SIZE;
+			xTileOffset += tileSize;
 		}
 	}
 

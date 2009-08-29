@@ -1,9 +1,10 @@
 package tac.mapsources.impl;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+
+import tac.mapsources.mapscale.Power2MapScale;
 
 public class WmsSources {
 
@@ -19,20 +20,22 @@ public class WmsSources {
 		 * @return <code>double[] {lon_min , lat_min , lon_max , lat_max}</code>
 		 */
 		protected double[] calculateLatLon(int zoom, int tilex, int tiley) {
+			MapScale mapScale = getMapScale();
+			int tileSize = getMapScale().getTileSize();
 			double[] result = new double[4];
-			tilex *= Tile.SIZE;
-			tiley *= Tile.SIZE;
-			result[0] = OsmMercator.XToLon(tilex, zoom); // lon_min
-			result[1] = OsmMercator.YToLat(tiley + Tile.SIZE, zoom); // lat_max
-			result[2] = OsmMercator.XToLon(tilex + Tile.SIZE, zoom); // lon_min
-			result[3] = OsmMercator.YToLat(tiley, zoom); // lat_max
+			tilex *= tileSize;
+			tiley *= tileSize;
+			result[0] = mapScale.cXToLon(tilex, zoom); // lon_min
+			result[1] = mapScale.cYToLat(tiley + tileSize, zoom); // lat_max
+			result[2] = mapScale.cXToLon(tilex + tileSize, zoom); // lon_min
+			result[3] = mapScale.cYToLat(tiley, zoom); // lat_max
 			return result;
 		}
 
 		public boolean allowFileStore() {
 			return true;
 		}
-		
+
 	}
 
 	public static class TerraserverUSA extends WmsMapSource {
@@ -60,6 +63,10 @@ public class WmsSources {
 
 		public TileUpdate getTileUpdate() {
 			return TileUpdate.None;
+		}
+
+		public MapScale getMapScale() {
+			return Power2MapScale.INSTANCE;
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

@@ -6,8 +6,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSourcesManager;
@@ -86,8 +85,9 @@ public class MapSourcesTester {
 			throws Exception {
 		int zoom = mapSource.getMaxZoom();
 
-		int tilex = OsmMercator.LonToX(coordinate.lon, zoom) / Tile.SIZE;
-		int tiley = OsmMercator.LatToY(coordinate.lat, zoom) / Tile.SIZE;
+		MapScale mapScale = mapSource.getMapScale();
+		int tilex = mapScale.cLonToX(coordinate.lon, zoom) / mapScale.getTileSize();
+		int tiley = mapScale.cLatToY(coordinate.lat, zoom) / mapScale.getTileSize();
 
 		URL url = new URL(mapSource.getTileUrl(zoom, tilex, tiley));
 		HttpURLConnection c = (HttpURLConnection) url.openConnection();

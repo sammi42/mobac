@@ -1,4 +1,4 @@
-package org.openstreetmap.gui.jmapviewer;
+package tac.mapsources.mapscale;
 
 // License: GPL. Copyright 2007 by Tim Haussmann
 
@@ -15,7 +15,7 @@ package org.openstreetmap.gui.jmapviewer;
 
 public class OsmMercator {
 
-    public static final int TILE_SIZE = 256;
+    protected static final int TILE_SIZE = 256;
     public static final double MAX_LAT = 85.05112877980659;
     public static final double MIN_LAT = -85.05112877980659;
 
@@ -60,7 +60,7 @@ public class OsmMercator {
      * @return [0..2^Zoomlevel*TILE_SIZE[
      * @author Jan Peter Stotz
      */
-    public static int LonToX(double aLongitude, int aZoomlevel) {
+    protected static int LonToX(double aLongitude, int aZoomlevel) {
         int mp = getMaxPixels(aZoomlevel);
         int x = (int) ((mp * (aLongitude + 180l)) / 360l);
         x = Math.min(x, mp - 1);
@@ -85,7 +85,7 @@ public class OsmMercator {
      * @return [0..2^Zoomlevel*TILE_SIZE[
      * @author Jan Peter Stotz
      */
-    public static int LatToY(double aLat, int aZoomlevel) {
+    protected static int LatToY(double aLat, int aZoomlevel) {
         if (aLat < MIN_LAT)
             aLat = MIN_LAT;
         else if (aLat > MAX_LAT)
@@ -116,7 +116,7 @@ public class OsmMercator {
      * @return ]-180..180[
      * @author Jan Peter Stotz
      */
-    public static double XToLon(int aX, int aZoomlevel) {
+    protected static double XToLon(int aX, int aZoomlevel) {
         return ((360d * aX) / getMaxPixels(aZoomlevel)) - 180.0;
     }
 

@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 
 import tac.data.gpx.gpx10.Gpx10;
 import tac.data.gpx.gpx11.Gpx11;
@@ -34,8 +34,9 @@ public class GpxMapController extends JMapController implements MouseListener {
 			Point tl = ((PreviewMap) map).getTopLeftCoordinate();
 			p.x += tl.x;
 			p.y += tl.y;
-			double lon = OsmMercator.XToLon(p.x, map.getZoom());
-			double lat = OsmMercator.YToLat(p.y, map.getZoom());
+			MapScale mapScale = map.getMapSource().getMapScale();
+			double lon = mapScale.cXToLon(p.x, map.getZoom());
+			double lat = mapScale.cYToLat(p.y, map.getZoom());
 			String name = JOptionPane
 					.showInputDialog(null, "Plase input a name for the new point:");
 			if (name == null)

@@ -1,7 +1,7 @@
 package tac.program.model;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 
 /**
  * Coordinate point in Mercator projection regarding a world with height and
@@ -10,21 +10,25 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
  */
 public class MercatorPixelCoordinate {
 
-	private int x;
-	private int y;
-	private int zoom;
+	private final MapScale mapScale;
+	private final int x;
+	private final int y;
+	private final int zoom;
 
-	public MercatorPixelCoordinate(int x, int y, int zoom) {
+	public MercatorPixelCoordinate(MapScale mapScale, int x, int y, int zoom) {
 		super();
+		this.mapScale = mapScale;
 		this.x = x;
 		this.y = y;
 		this.zoom = zoom;
 	}
 
-	public MercatorPixelCoordinate(double lat, double lon) {
+	public MercatorPixelCoordinate(MapScale mapScale, double lat, double lon) {
 		super();
-		this.x = OsmMercator.LonToX(lon, JMapViewer.MAX_ZOOM);
-		this.y = OsmMercator.LatToY(lat, JMapViewer.MAX_ZOOM);
+		this.mapScale = mapScale;
+		this.x = mapScale.cLonToX(lon, JMapViewer.MAX_ZOOM);
+		this.y = mapScale.cLatToY(lat, JMapViewer.MAX_ZOOM);
+		this.zoom = JMapViewer.MAX_ZOOM;
 	}
 
 	public int getX() {
@@ -39,9 +43,13 @@ public class MercatorPixelCoordinate {
 		return zoom;
 	}
 
+	public MapScale getMapScale() {
+		return mapScale;
+	}
+
 	public EastNorthCoordinate getEastNorthCoordinate() {
-		double lon = OsmMercator.XToLon(x, zoom);
-		double lat = OsmMercator.YToLat(y, zoom);
+		double lon = mapScale.cXToLon(x, zoom);
+		double lat = mapScale.cYToLat(y, zoom);
 		return new EastNorthCoordinate(lat, lon);
 	}
 
@@ -57,7 +65,7 @@ public class MercatorPixelCoordinate {
 			new_x >>= zoomDiff;
 			new_y >>= zoomDiff;
 		}
-		return new MercatorPixelCoordinate(new_x, new_y, aZoomlevel);
+		return new MercatorPixelCoordinate(mapScale, new_x, new_y, aZoomlevel);
 	}
 
 	@Override

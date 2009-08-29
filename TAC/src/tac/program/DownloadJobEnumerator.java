@@ -3,7 +3,6 @@ package tac.program;
 import java.awt.Point;
 import java.util.Enumeration;
 
-import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.JobDispatcher.Job;
@@ -56,11 +55,11 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
 		Point maxCoord = map.getMaxTileCoordinate();
-		
-		this.xMin = minCoord.x / Tile.SIZE;
-		this.xMax = maxCoord.x / Tile.SIZE;
-		int yMin = minCoord.y / Tile.SIZE;
-		this.yMax = maxCoord.y / Tile.SIZE;
+		int tileSize = map.getMapSource().getMapScale().getTileSize();
+		this.xMin = minCoord.x / tileSize;
+		this.xMax = maxCoord.x / tileSize;
+		int yMin = minCoord.y / tileSize;
+		this.yMax = maxCoord.y / tileSize;
 		this.zoom = map.getZoom();
 		this.tileArchive = tileArchive;
 		this.mapSource = map.getMapSource();

@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
 
 import tac.data.gpx.interfaces.Gpx;
 import tac.data.gpx.interfaces.Wpt;
@@ -37,12 +37,13 @@ public class GpxLayer implements MapLayer {
 
 	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
 		g.setColor(pointColor);
+		final MapScale mapScale = map.getMapSource().getMapScale();
 		if (showWaypoints) {
 			for (Wpt wpt : gpx.getWpt()) {
-				int x = OsmMercator.LonToX(wpt.getLon().doubleValue(), zoom);
+				int x = mapScale.cLonToX(wpt.getLon().doubleValue(), zoom);
 				if (x < minX || x > maxX)
 					continue; // Point outside of visible region
-				int y = OsmMercator.LatToY(wpt.getLat().doubleValue(), zoom);
+				int y = mapScale.cLatToY(wpt.getLat().doubleValue(), zoom);
 				if (y < minY || y > maxY)
 					continue; // Point outside of visible region
 				x -= minX;

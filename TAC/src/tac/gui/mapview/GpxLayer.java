@@ -21,7 +21,7 @@ public class GpxLayer implements MapLayer {
 
 	private Color pointColor = Color.RED;
 
-	//private Logger log = Logger.getLogger(GpxLayer.class);
+	// private Logger log = Logger.getLogger(GpxLayer.class);
 
 	private Gpx gpx;
 
@@ -51,7 +51,7 @@ public class GpxLayer implements MapLayer {
 				g.fillOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
 				g.setColor(Color.BLACK);
 				g.drawOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
-				if (showWaypointName)
+				if (showWaypointName && wpt.getName() != null)
 					g.drawString(wpt.getName(), x + POINT_RADIUS + 5, y - POINT_RADIUS);
 			}
 		}
@@ -63,5 +63,5 @@ public class GpxLayer implements MapLayer {
 	public Gpx getGpx() {
 		return gpx;
 	}
-	
+
 }

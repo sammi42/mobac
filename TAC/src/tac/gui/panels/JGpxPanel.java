@@ -8,6 +8,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 
+import tac.gui.actions.GpxAddPoint;
 import tac.gui.actions.GpxClear;
 import tac.gui.actions.GpxLoad;
 import tac.gui.actions.GpxSave;
@@ -29,17 +30,23 @@ public class JGpxPanel extends JCollapsiblePanel {
 		JButton saveGpx = new JButton("Save Gpx");
 		saveGpx.addActionListener(new GpxSave(this));
 
-		JButton clearGpx = new JButton("Clear");
+		JButton clearGpx = new JButton("Clear List");
 		clearGpx.addActionListener(new GpxClear(this));
+
+		JButton addPointGpx = new JButton("Add wpt");
+		addPointGpx.addActionListener(new GpxAddPoint(this));
 
 		listModel = new DefaultListModel();
 		list = new JList(listModel);
 		list.setPreferredSize(new Dimension(100, 100));
 
-		addContent(list, GBC.eol().fill(GBC.HORIZONTAL));
-		addContent(loadGpx, GBC.std());
-		addContent(saveGpx, GBC.std());
-		addContent(clearGpx, GBC.std());
+		GBC eol = GBC.eol().fill(GBC.HORIZONTAL);
+		GBC std = GBC.std().fill(GBC.HORIZONTAL);
+		addContent(list, eol);
+		addContent(clearGpx, std);
+		addContent(addPointGpx, eol);
+		addContent(loadGpx, std);
+		addContent(saveGpx, eol);
 	}
 
 	public ListModelEntry getSelectedEntry() {
@@ -48,6 +55,12 @@ public class JGpxPanel extends JCollapsiblePanel {
 
 	public DefaultListModel getListModel() {
 		return listModel;
+	}
+
+	public void addListEntry(File gpxFile, GpxLayer layer) {
+		ListModelEntry entry = new JGpxPanel.ListModelEntry(gpxFile, layer);
+		listModel.addElement(entry);
+		list.setSelectedValue(entry, true);
 	}
 
 	public static class ListModelEntry {
@@ -74,6 +87,6 @@ public class JGpxPanel extends JCollapsiblePanel {
 		public GpxLayer getLayer() {
 			return layer;
 		}
-		
+
 	}
 }

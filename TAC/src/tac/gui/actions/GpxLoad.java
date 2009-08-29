@@ -54,7 +54,7 @@ public class GpxLoad implements ActionListener {
 			File f = fc.getSelectedFile();
 			Gpx gpx = GPXTest.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
-			panel.getListModel().addElement(new JGpxPanel.ListModelEntry(f, gpxLayer));
+			panel.addListEntry(f, gpxLayer);
 			MainGUI.getMainGUI().previewMap.mapLayers.add(gpxLayer);
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);

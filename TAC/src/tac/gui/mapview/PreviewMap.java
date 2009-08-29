@@ -64,7 +64,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public LinkedList<MapEventListener> mapEventListeners = new LinkedList<MapEventListener>();
 
-	protected JMapController[] mapControllers;
+	protected JMapController mapKeyboardController;
+	protected JMapController mapSelectionController;
 
 	public PreviewMap() {
 		super(new PreviewTileCache(), 5);
@@ -78,25 +79,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		mapMarkersVisible = false;
 		setZoomContolsVisible(false);
 
-		mapControllers = new JMapController[1];
-		mapControllers[0] = new PreviewMapController(this, true);
+		mapKeyboardController = new MapKeyboardController(this, true);
+		mapSelectionController = new PreviewMapController(this, true);
 
 		addComponentListener(this);
-	}
-
-	/**
-	 * 
-	 * @param mapControllerNum
-	 *            one of
-	 *            <ul>
-	 *            <li>{@link #MAP_CONTROLLER_RECTANGLE_SELECT}</li>
-	 *            <li>{@link #MAP_CONTROLLER_GPX}</li>
-	 *            </ul>
-	 */
-	public void setActiveMapController(int mapControllerNum) {
-		for (int i = 0; i < mapControllers.length; i++)
-			mapControllers[i].disable();
-		mapControllers[mapControllerNum].enable();
 	}
 
 	public void setDisplayPositionByLatLon(EastNorthCoordinate c, int zoom) {
@@ -423,4 +409,12 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		repaint();
 	}
 
+	public JMapController getMapKeyboardController() {
+		return mapKeyboardController;
+	}
+
+	public JMapController getMapSelectionController() {
+		return mapSelectionController;
+	}
+	
 }

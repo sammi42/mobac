@@ -58,7 +58,6 @@ import tac.program.MapSelection;
 import tac.program.TACInfo;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.model.AtlasOutputFormat;
-import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Layer;
 import tac.program.model.MercatorPixelCoordinate;
 import tac.program.model.Profile;
@@ -782,9 +781,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private void setSelectionByEnteredCoordinates() {
-		EastNorthCoordinate max = coordinatesPanel.getMaxCoordinate();
-		EastNorthCoordinate min = coordinatesPanel.getMinCoordinate();
-		MapSelection ms = new MapSelection(max, min);
+		coordinatesPanel.correctMinMax();
+		MapSelection ms = coordinatesPanel.getMapSelection();
 		if (ms.isAreaSelected()) {
 			mapSelectionMax = ms.getBottomRightPixelCoordinate();
 			mapSelectionMin = ms.getTopLeftPixelCoordinate();
@@ -803,7 +801,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private String validateInput() {
 
 		String errorText = "";
-		errorText += coordinatesPanel.getValidationErrorMessages();
 		errorText += tileImageParametersPanel.getValidationErrorMessages();
 
 		return errorText;

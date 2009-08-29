@@ -15,7 +15,7 @@ package org.openstreetmap.gui.jmapviewer;
 
 public class OsmMercator {
 
-    private static int TILE_SIZE = 256;
+    public static final int TILE_SIZE = 256;
     public static final double MAX_LAT = 85.05112877980659;
     public static final double MIN_LAT = -85.05112877980659;
 

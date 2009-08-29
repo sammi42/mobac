@@ -7,19 +7,16 @@ import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSourcesManager;
@@ -265,13 +262,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		if (!ms.isAreaSelected())
 			return;
 		log.trace("Setting selection to: " + ms);
-		ArrayList<MapMarker> mml = new ArrayList<MapMarker>(2);
-		EastNorthCoordinate coord = ms.getMax();
-		mml.add(new MapMarkerDot(coord.lat, coord.lon));
-		coord = ms.getMin();
-		mml.add(new MapMarkerDot(coord.lat, coord.lon));
-		setMapMarkerList(mml);
-		setDisplayToFitMapMarkers();
+		Point max = ms.getBottomRightPixelCoordinate(MAX_ZOOM);
+		Point min = ms.getTopLeftPixelCoordinate(MAX_ZOOM);
+		setDisplayToFitPixelCoordinates(max.x, max.y, min.x, min.y);
 		Point pStart = ms.getTopLeftPixelCoordinate(zoom);
 		Point pEnd = ms.getBottomRightPixelCoordinate(zoom);
 		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);

@@ -2,6 +2,7 @@ package tac.gui.panels;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -65,8 +66,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		contentContainer.add(latMinLabel);
 		contentContainer.add(latMinTextField);
 		contentContainer.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-		contentContainer.add(applySelectionButton, GBC.eol().anchor(GBC.CENTER)
-				.insets(0, 5, 0, 0));
+		contentContainer.add(applySelectionButton, GBC.eol().anchor(GBC.CENTER).insets(0, 5, 0, 0));
 	}
 
 	public void setCoordinates(EastNorthCoordinate max, EastNorthCoordinate min) {
@@ -91,6 +91,42 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		lonMinTextField.setCoordinate(c1.lon);
 	}
 
+	/**
+	 * Checks if the values for min/max langitude and min/max latitude are
+	 * interchanged (smaller value in the max field and larger value in the min
+	 * field) and swaps them if necessary.
+	 */
+	public void correctMinMax() {
+		try {
+			double lat1 = latMaxTextField.getCoordinate();
+			double lat2 = latMinTextField.getCoordinate();
+			if (lat1 < lat2) {
+				String tmp = latMaxTextField.getText();
+				latMaxTextField.setText(latMinTextField.getText());
+				latMinTextField.setText(tmp);
+			}
+		} catch (ParseException e) {
+			// one of the lat fields contains an invalid coordinate
+		}
+		try {
+			double lon1 = lonMaxTextField.getCoordinate();
+			double lon2 = lonMinTextField.getCoordinate();
+			if (lon1 < lon2) {
+				String tmp = lonMaxTextField.getText();
+				lonMaxTextField.setText(lonMinTextField.getText());
+				lonMinTextField.setText(tmp);
+			}
+		} catch (ParseException e) {
+			// one of the lon fields contains an invalid coordinate
+		}
+	}
+
+	public MapSelection getMapSelection() {
+		EastNorthCoordinate max = getMaxCoordinate();
+		EastNorthCoordinate min = getMinCoordinate();
+		return new MapSelection(max, min);
+	}
+
 	public EastNorthCoordinate getMaxCoordinate() {
 		return new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(), lonMaxTextField
 				.getCoordinateOrNaN());
@@ -105,19 +141,4 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		applySelectionButton.addActionListener(l);
 	}
 
-	public String getValidationErrorMessages() {
-		String errorText = new String();
-		if (!lonMinTextField.isInputValid())
-			errorText += "Value of \"Longitude Min\" must be between -179 and 179. \n";
-
-		if (!lonMaxTextField.isInputValid())
-			errorText += "Value of \"Longitude Max\" must be between -179 and 179. \n";
-
-		if (!latMaxTextField.isInputValid())
-			errorText += "Value of \"Latitude Max\" must be between -85 and 85. \n";
-
-		if (!latMinTextField.isInputValid())
-			errorText += "Value of \"Latitude Min\" must be between -85 and 85. \n";
-		return errorText;
-	}
 }

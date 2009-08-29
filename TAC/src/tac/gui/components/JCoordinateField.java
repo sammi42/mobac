@@ -75,10 +75,6 @@ public class JCoordinateField extends JTextField {
 		}
 	}
 
-	public void setText(String t) {
-		throw new RuntimeException("Calling setText() is not allowed!");
-	}
-
 	public boolean isInputValid() {
 		return inputIsValid;
 	}

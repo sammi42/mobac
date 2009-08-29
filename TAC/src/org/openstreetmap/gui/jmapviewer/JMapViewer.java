@@ -234,28 +234,42 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int y_min = Integer.MAX_VALUE;
 		int x_max = Integer.MIN_VALUE;
 		int y_max = Integer.MIN_VALUE;
-		int mapZoomMax = mapSource.getMaxZoom();
 		for (MapMarker marker : mapMarkerList) {
-			int x = OsmMercator.LonToX(marker.getLon(), mapZoomMax);
-			int y = OsmMercator.LatToY(marker.getLat(), mapZoomMax);
+			int x = OsmMercator.LonToX(marker.getLon(), MAX_ZOOM);
+			int y = OsmMercator.LatToY(marker.getLat(), MAX_ZOOM);
 			x_max = Math.max(x_max, x);
 			y_max = Math.max(y_max, y);
 			x_min = Math.min(x_min, x);
 			y_min = Math.min(y_min, y);
 		}
+		setDisplayToFitPixelCoordinates(x_max, y_max, x_min, y_min);
+	}
+
+	/**
+	 * Sets the displayed map pane and zoom level so that the two points
+	 * (x1/y1) and (x2/y2) visible. Please note that the coordinates
+	 * have to be specified regarding {@link #MAX_ZOOM}.
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 */
+	public void setDisplayToFitPixelCoordinates(int x1, int y1, int x2, int y2) {
+		int mapZoomMax = mapSource.getMaxZoom();
 		int height = Math.max(0, getHeight());
 		int width = Math.max(0, getWidth());
-		int newZoom = mapZoomMax;
-		int x = x_max - x_min;
-		int y = y_max - y_min;
-		while (x > width || y > height) {
+		int newZoom = MAX_ZOOM;
+		int x = Math.abs(x1 - x2);
+		int y = Math.abs(y1 - y2);
+		while (x > width || y > height || newZoom > mapZoomMax) {
 			newZoom--;
 			x >>= 1;
 			y >>= 1;
 		}
-		x = x_min + (x_max - x_min) / 2;
-		y = y_min + (y_max - y_min) / 2;
-		int z = 1 << (mapZoomMax - newZoom);
+		x = Math.min(x2,x1) + Math.abs(x1 - x2) / 2;
+		y = Math.min(y2,y1) + Math.abs(y1 - y2) / 2;
+		int z = 1 << (MAX_ZOOM - newZoom);
 		x /= z;
 		y /= z;
 		setDisplayPosition(x, y, newZoom);

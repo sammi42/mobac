@@ -26,10 +26,11 @@ public class MapSelection {
 	public MapSelection(EastNorthCoordinate max, EastNorthCoordinate min) {
 		super();
 		zoom = JMapViewer.MAX_ZOOM;
-		minTileCoordinate_x = OsmMercator.LonToX(min.lon, zoom);
-		maxTileCoordinate_x = OsmMercator.LonToX(max.lon, zoom);
-		maxTileCoordinate_y = OsmMercator.LatToY(min.lat, zoom);
-		minTileCoordinate_y = OsmMercator.LatToY(max.lat, zoom);
+		int x1 = OsmMercator.LonToX(min.lon, zoom);
+		int x2 = OsmMercator.LonToX(max.lon, zoom);
+		int y1 = OsmMercator.LatToY(min.lat, zoom);
+		int y2 = OsmMercator.LatToY(max.lat, zoom);
+		setCoordinates(x1, x2, y1, y2);
 	}
 
 	public MapSelection(MapInterface map) {
@@ -38,30 +39,30 @@ public class MapSelection {
 
 	/**
 	 * 
-	 * @param max
+	 * @param p1
 	 *            tile coordinate
-	 * @param min
+	 * @param p2
 	 *            tile coordinate
 	 * @param zoom
 	 */
-	public MapSelection(Point max, Point min, int zoom) {
+	public MapSelection(Point p1, Point p2, int zoom) {
 		super();
-		minTileCoordinate_x = min.x;
-		minTileCoordinate_y = min.y;
-		maxTileCoordinate_x = max.x;
-		maxTileCoordinate_y = max.y;
 		this.zoom = zoom;
+		setCoordinates(p1.x, p2.x, p1.y, p2.y);
 	}
 
-	public MapSelection(MercatorPixelCoordinate mapSelectionMax,
-			MercatorPixelCoordinate mapSelectionMin) {
-		if (mapSelectionMax.getZoom() != mapSelectionMin.getZoom())
+	public MapSelection(MercatorPixelCoordinate c1, MercatorPixelCoordinate c2) {
+		if (c1.getZoom() != c2.getZoom())
 			throw new RuntimeException("Different zoom levels - unsuported!");
-		this.zoom = mapSelectionMax.getZoom();
-		maxTileCoordinate_x = mapSelectionMax.getX();
-		maxTileCoordinate_y = mapSelectionMax.getY();
-		minTileCoordinate_x = mapSelectionMin.getX();
-		minTileCoordinate_y = mapSelectionMin.getY();
+		this.zoom = c1.getZoom();
+		setCoordinates(c1.getX(), c2.getX(), c1.getY(), c2.getY());
+	}
+
+	protected void setCoordinates(int x1, int x2, int y1, int y2) {
+		maxTileCoordinate_x = Math.max(x1, x2);
+		minTileCoordinate_x = Math.min(x1, x2);
+		maxTileCoordinate_y = Math.max(y1, y2);
+		minTileCoordinate_y = Math.min(y1, y2);
 	}
 
 	/**
@@ -75,12 +76,22 @@ public class MapSelection {
 		return result;
 	}
 
+	/**
+	 * Warning: maximum lat/lon is the top right corner of the map selection!
+	 * 
+	 * @return maximum lat/lon
+	 */
 	public EastNorthCoordinate getMax() {
-		return new EastNorthCoordinate(zoom, maxTileCoordinate_x, maxTileCoordinate_y);
+		return new EastNorthCoordinate(zoom, maxTileCoordinate_x, minTileCoordinate_y);
 	}
 
+	/**
+	 * Warning: minimum lat/lon is the bottom left corner of the map selection!
+	 * 
+	 * @return minimum lat/lon
+	 */
 	public EastNorthCoordinate getMin() {
-		return new EastNorthCoordinate(zoom, minTileCoordinate_x, minTileCoordinate_y);
+		return new EastNorthCoordinate(zoom, minTileCoordinate_x, maxTileCoordinate_y);
 	}
 
 	/**
@@ -98,7 +109,7 @@ public class MapSelection {
 	}
 
 	public MercatorPixelCoordinate getTopLeftPixelCoordinate() {
-		return new MercatorPixelCoordinate(minTileCoordinate_x, maxTileCoordinate_y, zoom);
+		return new MercatorPixelCoordinate(minTileCoordinate_x, minTileCoordinate_y, zoom);
 	}
 
 	/**
@@ -138,7 +149,7 @@ public class MapSelection {
 	}
 
 	public MercatorPixelCoordinate getBottomRightPixelCoordinate() {
-		return new MercatorPixelCoordinate(maxTileCoordinate_x, minTileCoordinate_y, zoom);
+		return new MercatorPixelCoordinate(maxTileCoordinate_x, maxTileCoordinate_y, zoom);
 	}
 
 	/**

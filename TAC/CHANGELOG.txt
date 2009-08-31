@@ -10,7 +10,9 @@
 
  1.6: (2009-??-??)
  ! Map selection are does no longer enlarge itself when using grid mode
- ~ Add way points from GPX as overlay on the preview map view  
+ + Loading & saving of GPX files (way points are shown as overlay on the preview 
+    map view
+ + Add new way points to a GPX file (properties: lat, lon, name)   
  ~ Behavior on adding new maps and layers changed: the number of layers 
     has been reduced to a minimum making it easier switch between different
     zoom levels when using TrekBuddy

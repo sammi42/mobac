@@ -5,7 +5,7 @@ import tac.mapsources.AbstractMapSource;
 public class LocalhostTestSource extends AbstractMapSource {
 
 	public LocalhostTestSource() {
-		super("Localhost test", 0, 18, "png");
+		super("Localhost test", 0, 22, "png");
 	}
 	
 	public String getTileUrl(int zoom, int tilex, int tiley) {

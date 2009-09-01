@@ -55,7 +55,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
 		Point maxCoord = map.getMaxTileCoordinate();
-		int tileSize = map.getMapSource().getMapScale().getTileSize();
+		int tileSize = map.getMapSource().getMapSpace().getTileSize();
 		this.xMin = minCoord.x / tileSize;
 		this.xMax = maxCoord.x / tileSize;
 		int yMin = minCoord.y / tileSize;

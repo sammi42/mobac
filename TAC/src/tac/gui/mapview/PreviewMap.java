@@ -16,7 +16,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSourcesManager;
@@ -232,12 +232,13 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			g.setColor(GRID_COLOR);
 			g.drawRect(x_min, y_min, w, h);
 		}
+		MapRuler.paintMapRuler(g, mapSource.getMapSpace(), tlc, zoom);
 	}
 
 	public EastNorthCoordinate getPositionCoordinate() {
-		MapScale mapScale = mapSource.getMapScale();
-		double lon = mapScale.cXToLon(center.x, zoom);
-		double lat = mapScale.cYToLat(center.y, zoom);
+		MapSpace mapSpace = mapSource.getMapSpace();
+		double lon = mapSpace.cXToLon(center.x, zoom);
+		double lat = mapSpace.cYToLat(center.y, zoom);
 		return new EastNorthCoordinate(lat, lon);
 	}
 
@@ -367,9 +368,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			x_max = iSelectionMax.x;
 			y_max = iSelectionMax.y;
 		}
-		MercatorPixelCoordinate min = new MercatorPixelCoordinate(mapSource.getMapScale(), x_min,
+		MercatorPixelCoordinate min = new MercatorPixelCoordinate(mapSource.getMapSpace(), x_min,
 				y_min, MAX_ZOOM);
-		MercatorPixelCoordinate max = new MercatorPixelCoordinate(mapSource.getMapScale(), x_max,
+		MercatorPixelCoordinate max = new MercatorPixelCoordinate(mapSource.getMapSpace(), x_max,
 				y_max, MAX_ZOOM);
 		// log.debug("sel min: [" + min + "]");
 		// log.debug("sel max: [" + max + "]");

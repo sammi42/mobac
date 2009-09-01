@@ -1,10 +1,10 @@
 package tac.mapsources.impl;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.mapscale.Power2MapScale;
+import tac.mapsources.mapspace.Power2MapSpace;
 
 public class WmsSources {
 
@@ -20,15 +20,15 @@ public class WmsSources {
 		 * @return <code>double[] {lon_min , lat_min , lon_max , lat_max}</code>
 		 */
 		protected double[] calculateLatLon(int zoom, int tilex, int tiley) {
-			MapScale mapScale = getMapScale();
-			int tileSize = getMapScale().getTileSize();
+			MapSpace mapSpace = getMapSpace();
+			int tileSize = getMapSpace().getTileSize();
 			double[] result = new double[4];
 			tilex *= tileSize;
 			tiley *= tileSize;
-			result[0] = mapScale.cXToLon(tilex, zoom); // lon_min
-			result[1] = mapScale.cYToLat(tiley + tileSize, zoom); // lat_max
-			result[2] = mapScale.cXToLon(tilex + tileSize, zoom); // lon_min
-			result[3] = mapScale.cYToLat(tiley, zoom); // lat_max
+			result[0] = mapSpace.cXToLon(tilex, zoom); // lon_min
+			result[1] = mapSpace.cYToLat(tiley + tileSize, zoom); // lat_max
+			result[2] = mapSpace.cXToLon(tilex + tileSize, zoom); // lon_min
+			result[3] = mapSpace.cYToLat(tiley, zoom); // lat_max
 			return result;
 		}
 
@@ -65,8 +65,8 @@ public class WmsSources {
 			return TileUpdate.None;
 		}
 
-		public MapScale getMapScale() {
-			return Power2MapScale.INSTANCE;
+		public MapSpace getMapSpace() {
+			return Power2MapSpace.INSTANCE;
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

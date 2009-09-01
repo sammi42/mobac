@@ -102,5 +102,5 @@ public interface MapSource {
 	 */
 	public boolean allowFileStore();
 	
-	public MapScale getMapScale();
+	public MapSpace getMapSpace();
 }

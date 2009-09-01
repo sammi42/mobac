@@ -1,9 +1,9 @@
 package tac.mapsources;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.mapscale.Power2MapScale;
+import tac.mapsources.mapspace.Power2MapSpace;
 
 /**
  * Abstract base class for map sources.
@@ -53,8 +53,8 @@ public abstract class AbstractMapSource implements MapSource {
 		return true;
 	}
 
-	public MapScale getMapScale() {
-		return Power2MapScale.INSTANCE;
+	public MapSpace getMapSpace() {
+		return Power2MapSpace.INSTANCE;
 	}
 
 }

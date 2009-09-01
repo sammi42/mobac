@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.InvalidNameException;
@@ -60,9 +60,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource,
 			EastNorthCoordinate minCoordinate, EastNorthCoordinate maxCoordinate, int zoom,
 			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
-		MapScale mapScale = mapSource.getMapScale();
-		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapScale, zoom),
-				maxCoordinate.toTileCoordinate(mapScale, zoom), zoom, parameters, maxMapSize);
+		MapSpace mapSpace = mapSource.getMapSpace();
+		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapSpace, zoom),
+				maxCoordinate.toTileCoordinate(mapSpace, zoom), zoom, parameters, maxMapSize);
 	}
 
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
@@ -72,7 +72,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 				+ " min=" + minTileCoordinate.x + "/" + minTileCoordinate.y + " max="
 				+ maxTileCoordinate.x + "/" + maxTileCoordinate.y);
 
-		int tileSize = mapSource.getMapScale().getTileSize();
+		int tileSize = mapSource.getMapSpace().getTileSize();
 
 		minTileCoordinate.x -= minTileCoordinate.x % tileSize;
 		minTileCoordinate.y -= minTileCoordinate.y % tileSize;

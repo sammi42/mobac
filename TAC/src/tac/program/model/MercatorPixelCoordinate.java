@@ -1,7 +1,7 @@
 package tac.program.model;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * Coordinate point in Mercator projection regarding a world with height and
@@ -10,24 +10,24 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
  */
 public class MercatorPixelCoordinate {
 
-	private final MapScale mapScale;
+	private final MapSpace mapSpace;
 	private final int x;
 	private final int y;
 	private final int zoom;
 
-	public MercatorPixelCoordinate(MapScale mapScale, int x, int y, int zoom) {
+	public MercatorPixelCoordinate(MapSpace mapSpace, int x, int y, int zoom) {
 		super();
-		this.mapScale = mapScale;
+		this.mapSpace = mapSpace;
 		this.x = x;
 		this.y = y;
 		this.zoom = zoom;
 	}
 
-	public MercatorPixelCoordinate(MapScale mapScale, double lat, double lon) {
+	public MercatorPixelCoordinate(MapSpace mapSpace, double lat, double lon) {
 		super();
-		this.mapScale = mapScale;
-		this.x = mapScale.cLonToX(lon, JMapViewer.MAX_ZOOM);
-		this.y = mapScale.cLatToY(lat, JMapViewer.MAX_ZOOM);
+		this.mapSpace = mapSpace;
+		this.x = mapSpace.cLonToX(lon, JMapViewer.MAX_ZOOM);
+		this.y = mapSpace.cLatToY(lat, JMapViewer.MAX_ZOOM);
 		this.zoom = JMapViewer.MAX_ZOOM;
 	}
 
@@ -43,13 +43,13 @@ public class MercatorPixelCoordinate {
 		return zoom;
 	}
 
-	public MapScale getMapScale() {
-		return mapScale;
+	public MapSpace getMapSpace() {
+		return mapSpace;
 	}
 
 	public EastNorthCoordinate getEastNorthCoordinate() {
-		double lon = mapScale.cXToLon(x, zoom);
-		double lat = mapScale.cYToLat(y, zoom);
+		double lon = mapSpace.cXToLon(x, zoom);
+		double lat = mapSpace.cYToLat(y, zoom);
 		return new EastNorthCoordinate(lat, lon);
 	}
 
@@ -65,7 +65,7 @@ public class MercatorPixelCoordinate {
 			new_x >>= zoomDiff;
 			new_y >>= zoomDiff;
 		}
-		return new MercatorPixelCoordinate(mapScale, new_x, new_y, aZoomlevel);
+		return new MercatorPixelCoordinate(mapSpace, new_x, new_y, aZoomlevel);
 	}
 
 	@Override

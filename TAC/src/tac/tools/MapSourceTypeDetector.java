@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MapSourcesManager;
@@ -68,9 +68,9 @@ public class MapSourceTypeDetector {
 			int zoom = mapSource.getMinZoom()
 					+ ((mapSource.getMaxZoom() - mapSource.getMinZoom()) / 2);
 
-			MapScale mapScale = mapSource.getMapScale();
-			int tilex = mapScale.cLonToX(coordinate.lon, zoom) / mapScale.getTileSize();
-			int tiley = mapScale.cLatToY(coordinate.lat, zoom) / mapScale.getTileSize();
+			MapSpace mapSpace = mapSource.getMapSpace();
+			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
+			int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
 
 			url = new URL(mapSource.getTileUrl(zoom, tilex, tiley));
 			System.out.println("Sample url: " + url);

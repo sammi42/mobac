@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.utilities.Utilities;
 
@@ -23,10 +23,10 @@ public class EastNorthCoordinate {
 		lon = Double.NaN;
 	}
 
-	public EastNorthCoordinate(MapScale mapScale, int zoom, int pixelCoordinateX,
+	public EastNorthCoordinate(MapSpace mapSpace, int zoom, int pixelCoordinateX,
 			int pixelCoordinateY) {
-		this.lat = mapScale.cYToLat(pixelCoordinateY, zoom);
-		this.lon = mapScale.cXToLon(pixelCoordinateX, zoom);
+		this.lat = mapSpace.cYToLat(pixelCoordinateY, zoom);
+		this.lon = mapSpace.cXToLon(pixelCoordinateX, zoom);
 	}
 
 	public EastNorthCoordinate(double lat, double lon) {
@@ -39,9 +39,9 @@ public class EastNorthCoordinate {
 		this.lon = c.x;
 	}
 
-	public Point toTileCoordinate(MapScale mapScale, int zoom) {
-		int x = mapScale.cLonToX(lon, zoom);
-		int y = mapScale.cLatToY(lat, zoom);
+	public Point toTileCoordinate(MapSpace mapSpace, int zoom) {
+		int x = mapSpace.cLonToX(lon, zoom);
+		int y = mapSpace.cLatToY(lat, zoom);
 		return new Point(x, y);
 	}
 

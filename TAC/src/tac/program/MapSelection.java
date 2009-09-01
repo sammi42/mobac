@@ -3,7 +3,7 @@ package tac.program;
 import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.program.interfaces.MapInterface;
 import tac.program.model.EastNorthCoordinate;
@@ -16,7 +16,7 @@ public class MapSelection {
 	public static final int LON_MAX = 179;
 	public static final int LON_MIN = -179;
 
-	private final MapScale mapScale;
+	private final MapSpace mapSpace;
 	private final int mapSourceTileSize;
 	private final int zoom;
 	private int minTileCoordinate_x;
@@ -24,44 +24,44 @@ public class MapSelection {
 	private int maxTileCoordinate_x;
 	private int maxTileCoordinate_y;
 
-	public MapSelection(MapScale mapScale, EastNorthCoordinate max, EastNorthCoordinate min) {
+	public MapSelection(MapSpace mapSpace, EastNorthCoordinate max, EastNorthCoordinate min) {
 		super();
-		this.mapScale = mapScale;
-		mapSourceTileSize = this.mapScale.getTileSize();
+		this.mapSpace = mapSpace;
+		mapSourceTileSize = this.mapSpace.getTileSize();
 		zoom = JMapViewer.MAX_ZOOM;
-		int x1 = mapScale.cLonToX(min.lon, zoom);
-		int x2 = mapScale.cLonToX(max.lon, zoom);
-		int y1 = mapScale.cLatToY(min.lat, zoom);
-		int y2 = mapScale.cLatToY(max.lat, zoom);
+		int x1 = mapSpace.cLonToX(min.lon, zoom);
+		int x2 = mapSpace.cLonToX(max.lon, zoom);
+		int y1 = mapSpace.cLatToY(min.lat, zoom);
+		int y2 = mapSpace.cLatToY(max.lat, zoom);
 		setCoordinates(x1, x2, y1, y2);
 	}
 
 	public MapSelection(MapInterface map) {
-		this(map.getMapSource().getMapScale(), map.getMaxTileCoordinate(), map
+		this(map.getMapSource().getMapSpace(), map.getMaxTileCoordinate(), map
 				.getMinTileCoordinate(), map.getZoom());
 	}
 
 	/**
-	 * @param mapScale
+	 * @param mapSpace
 	 * @param p1
 	 *            tile coordinate
 	 * @param p2
 	 *            tile coordinate
 	 * @param zoom
 	 */
-	public MapSelection(MapScale mapScale, Point p1, Point p2, int zoom) {
+	public MapSelection(MapSpace mapSpace, Point p1, Point p2, int zoom) {
 		super();
-		this.mapScale = mapScale;
-		mapSourceTileSize = mapScale.getTileSize();
+		this.mapSpace = mapSpace;
+		mapSourceTileSize = mapSpace.getTileSize();
 		this.zoom = zoom;
 		setCoordinates(p1.x, p2.x, p1.y, p2.y);
 	}
 
-	public MapSelection(MapScale mapScale, MercatorPixelCoordinate c1, MercatorPixelCoordinate c2) {
+	public MapSelection(MapSpace mapSpace, MercatorPixelCoordinate c1, MercatorPixelCoordinate c2) {
 		if (c1.getZoom() != c2.getZoom())
 			throw new RuntimeException("Different zoom levels - unsuported!");
-		this.mapScale = mapScale;
-		mapSourceTileSize = mapScale.getTileSize();
+		this.mapSpace = mapSpace;
+		mapSourceTileSize = mapSpace.getTileSize();
 		this.zoom = c1.getZoom();
 		setCoordinates(c1.getX(), c2.getX(), c1.getY(), c2.getY());
 	}
@@ -90,7 +90,7 @@ public class MapSelection {
 	 * @return maximum lat/lon
 	 */
 	public EastNorthCoordinate getMax() {
-		return new EastNorthCoordinate(mapScale, zoom, maxTileCoordinate_x, minTileCoordinate_y);
+		return new EastNorthCoordinate(mapSpace, zoom, maxTileCoordinate_x, minTileCoordinate_y);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class MapSelection {
 	 * @return minimum lat/lon
 	 */
 	public EastNorthCoordinate getMin() {
-		return new EastNorthCoordinate(mapScale, zoom, minTileCoordinate_x, maxTileCoordinate_y);
+		return new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate_x, maxTileCoordinate_y);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class MapSelection {
 	}
 
 	public MercatorPixelCoordinate getTopLeftPixelCoordinate() {
-		return new MercatorPixelCoordinate(mapScale, minTileCoordinate_x, minTileCoordinate_y, zoom);
+		return new MercatorPixelCoordinate(mapSpace, minTileCoordinate_x, minTileCoordinate_y, zoom);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class MapSelection {
 	}
 
 	public MercatorPixelCoordinate getBottomRightPixelCoordinate() {
-		return new MercatorPixelCoordinate(mapScale, maxTileCoordinate_x, maxTileCoordinate_y, zoom);
+		return new MercatorPixelCoordinate(mapSpace, maxTileCoordinate_x, maxTileCoordinate_y, zoom);
 	}
 
 	/**

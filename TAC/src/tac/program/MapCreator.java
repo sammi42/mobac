@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapScale;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.gui.AtlasProgress;
@@ -56,7 +56,7 @@ public class MapCreator {
 		LayerInterface layer = map.getLayer();
 		this.map = map;
 		this.mapSource = map.getMapSource();
-		this.tileSize = mapSource.getMapScale().getTileSize();
+		this.tileSize = mapSource.getMapSpace().getTileSize();
 		xMin = map.getMinTileCoordinate().x / tileSize;
 		xMax = map.getMaxTileCoordinate().x / tileSize;
 		yMin = map.getMinTileCoordinate().y / tileSize;
@@ -108,12 +108,12 @@ public class MapCreator {
 		log.trace("Writing map file");
 		OutputStreamWriter mapWriter = new OutputStreamWriter(stream, TEXT_FILE_CHARSET);
 
-		MapScale mapScale = mapSource.getMapScale();
+		MapSpace mapSpace = mapSource.getMapSpace();
 
-		double longitudeMin = mapScale.cXToLon(xMin * tileSize, zoom);
-		double longitudeMax = mapScale.cXToLon((xMax + 1) * tileSize, zoom);
-		double latitudeMin = mapScale.cYToLat((yMax + 1) * tileSize, zoom);
-		double latitudeMax = mapScale.cYToLat(yMin * tileSize, zoom);
+		double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
+		double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
+		double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
+		double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
 
 		int width = (xMax - xMin + 1) * tileSize;
 		int height = (yMax - yMin + 1) * tileSize;

@@ -1,4 +1,4 @@
-package tac.mapsources.mapscale;
+package tac.mapsources.mapspace;
 
 // License: GPL. Copyright 2007 by Tim Haussmann
 

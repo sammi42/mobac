@@ -52,4 +52,20 @@ public class Power2MapSpace implements MapSpace {
 		return w;
 	}
 
+	public double horizontalDistance(int zoom, int y, int xDist) {
+		y = Math.max(y, 0);
+		y = Math.min(y, OsmMercator.getMaxPixels(zoom));
+		double lat = OsmMercator.YToLat(y, zoom);
+		double lon1 = -180.0;
+		double lon2 = OsmMercator.XToLon(xDist, zoom);
+
+		double dLon = Math.toRadians(lon2 - lon1);
+
+		double cos_lat = Math.cos(Math.toRadians(lat));
+		double sin_dLon_2 = Math.sin(dLon) / 2;
+
+		double a = cos_lat * cos_lat * sin_dLon_2 * sin_dLon_2;
+		return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	}
+
 }

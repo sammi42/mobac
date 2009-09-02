@@ -67,10 +67,24 @@ public interface MapSpace {
 	 *            y-coordinate specifying the latitude to "walk" on
 	 * @param zoom
 	 * @param angularDist
-	 *            angular distance: distance / earth radius (6367.5km or
+	 *            angular distance: distance / earth radius (e.g. 6367.5km or
 	 *            3956.6miles)
-	 * @return "mileage" in number of pixels 
+	 * @return "mileage" in number of pixels
 	 */
 	public int moveOnLatitude(int startX, int y, int zoom, double angularDist);
+
+	/**
+	 * Calculates the distance between two points that are laying on the same
+	 * latitude / y-coordinate.
+	 * 
+	 * @param zoom
+	 * @param y
+	 *            y-coordinate specifying the latitude
+	 * @param xDist
+	 *            distance in pixels on the x-axis
+	 * @return angular distance angular distance: distance / earth radius (e.g.
+	 *         6367.5km or 3956.6miles)
+	 */
+	public double horizontalDistance(int zoom, int y, int xDist);
 
 }

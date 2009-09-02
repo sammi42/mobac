@@ -17,7 +17,7 @@
     has been reduced to a minimum making it easier switch between different
     zoom levels when using TrekBuddy
  + New atlas format: Mobile Trail Explorer (MTE)
- + Map ruler added (metric only)
+ + Map scale bar added (metric/imperial selectable)
  
  1.5: (2009-08-01)
  ~ Java requirement has changed: Now at least Java 1.6 is required! 

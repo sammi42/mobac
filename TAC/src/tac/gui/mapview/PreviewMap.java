@@ -16,8 +16,8 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
 import tac.program.MapSelection;
@@ -232,7 +232,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			g.setColor(GRID_COLOR);
 			g.drawRect(x_min, y_min, w, h);
 		}
-		MapRuler.paintMapRuler(g, mapSource.getMapSpace(), tlc, zoom);
+		ScaleBar.paintScaleBar(g, mapSource.getMapSpace(), tlc, zoom);
 	}
 
 	public EastNorthCoordinate getPositionCoordinate() {
@@ -408,6 +408,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		}
 	}
 
+	/**
+	 * Clears the in-memory tile cache and performs a repaint which causes a
+	 * reload of all displayed tiles (from disk or if not present from the map
+	 * source via network).
+	 */
 	public void refreshMap() {
 		((MemoryTileCache) tileCache).clear();
 		repaint();

@@ -53,6 +53,7 @@ import tac.program.TileStore;
 import tac.program.TileStore.TileStoreInfo;
 import tac.program.model.ProxyType;
 import tac.program.model.Settings;
+import tac.program.model.UnitSystem;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -63,6 +64,8 @@ public class SettingsGUI extends JDialog {
 	private static Logger log = Logger.getLogger(SettingsGUI.class);
 
 	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
+
+	private JComboBox unitSystem;
 
 	private JButton mapSourcesOnlineUpdate;
 	private JComboBox googleLang;
@@ -125,6 +128,7 @@ public class SettingsGUI extends JDialog {
 	public void createTabbedPane() {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
+		addDisplaySettingsPanel();
 		addMapSourceSettingsPanel();
 		addTileStorePanel();
 		addMapSizePanel();
@@ -138,6 +142,22 @@ public class SettingsGUI extends JDialog {
 		tabPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		tabbedPane.add(tabPanel, tabTitle);
 		return tabPanel;
+	}
+
+	private void addDisplaySettingsPanel() {
+		JPanel tab = createNewTab("Display");
+		tab.setLayout(new GridBagLayout());
+
+		JPanel unitSystemPanel = new JPanel(new GridBagLayout());
+		unitSystemPanel.setBorder(BorderFactory.createTitledBorder("Unit System"));
+
+		UnitSystem[] us = UnitSystem.values();
+		unitSystem = new JComboBox(us);
+		unitSystemPanel.add(new JLabel("Unit system for map scale bar: "), GBC.std());
+		unitSystemPanel.add(unitSystem, GBC.std());
+		unitSystemPanel.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(unitSystemPanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 	}
 
 	private void addMapSourceSettingsPanel() {
@@ -413,6 +433,7 @@ public class SettingsGUI extends JDialog {
 	private void loadSettings() {
 		Settings s = Settings.getInstance();
 
+		unitSystem.setSelectedItem(s.getUnitSystem());
 		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
 
 		mapSize.setValue(s.maxMapSize);
@@ -434,6 +455,7 @@ public class SettingsGUI extends JDialog {
 	private void applySettings() {
 		Settings s = Settings.getInstance();
 
+		s.setUnitSystem((UnitSystem) unitSystem.getSelectedItem());
 		s.setTileStoreEnabled(tileStoreEnabled.isSelected());
 
 		s.maxMapSize = mapSize.getValue();
@@ -461,6 +483,7 @@ public class SettingsGUI extends JDialog {
 			s.setGoogleLanguage(googleLang.getSelectedItem().toString());
 		}
 
+		MainGUI.getMainGUI().previewMap.repaint();
 		// Close the dialog window
 		SettingsGUI.this.dispose();
 	}

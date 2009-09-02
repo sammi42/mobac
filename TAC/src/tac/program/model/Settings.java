@@ -3,9 +3,10 @@ package tac.program.model;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -23,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 
 import tac.gui.actions.GpxLoad;
+import tac.gui.mapview.ScaleBar;
 import tac.gui.panels.JCoordinatesPanel;
 import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
@@ -161,11 +163,17 @@ public class Settings {
 		JAXBContext context = JAXBContext.newInstance(Settings.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		ByteArrayOutputStream bo = null;
 		FileOutputStream fo = null;
 		try {
+			// First we write to a buffer and if that works be write the buffer
+			// to disk. Direct writing to file may result in an defect xml file
+			// in case of an error
+			bo = new ByteArrayOutputStream();
+			m.marshal(getInstance(), bo);
 			fo = new FileOutputStream(FILE);
-			m.marshal(getInstance(), fo);
-		} catch (FileNotFoundException e) {
+			fo.write(bo.toByteArray());
+		} catch (IOException e) {
 			throw new JAXBException(e);
 		} finally {
 			Utilities.closeStream(fo);
@@ -330,4 +338,14 @@ public class Settings {
 		log.info("Proxy configuration applied: host=" + newProxyHost + " port=" + newProxyPort);
 	}
 
+	@XmlElement
+	public void setUnitSystem(UnitSystem unitSystem) {
+		if (unitSystem == null)
+			unitSystem = UnitSystem.Metric;
+		ScaleBar.unitSystem = unitSystem;
+	}
+
+	public UnitSystem getUnitSystem() {
+		return ScaleBar.unitSystem;
+	}
 }

@@ -220,6 +220,36 @@ public class MapSourcesManager {
 		}
 	}
 
+	public static void regularMapsourcesOnlineUpdate(boolean async) {
+		Date lastUpdate = Settings.getInstance().mapSourcesUpdate.lastUpdate;
+		if (lastUpdate == null)
+			lastUpdate = getMapSourcesDate(System.getProperties());
+		Date end = new Date();
+		long diff = end.getTime() - lastUpdate.getTime();
+		diff /= 1000 * 60 * 60 * 24;
+		if (diff < 7) // online update every week
+			return;
+		Runnable r = new Runnable() {
+
+			public void run() {
+				try {
+					log.info("Performing a map sources update");
+					boolean result = mapsourcesOnlineUpdate();
+					if (result)
+						log.info("Updated map sources file retrieved");
+					else
+						log.info("No new update available");
+				} catch (MapSourcesUpdateException e) {
+					log.error("Scheduled map sources update failed:", e);
+				}
+			}
+		};
+		if (async)
+			new Thread(r, "MapSourcesUpdate").start();
+		else
+			r.run();
+	}
+
 	/**
 	 * 
 	 * @return <ul>
@@ -233,8 +263,9 @@ public class MapSourcesManager {
 			url = new URL(MAPSOURCES_UPDATE_URL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			Settings s = Settings.getInstance();
-			if (mapFile.isFile() && s.mapsourcesEtag != null && s.mapsourcesEtag != "")
-				conn.addRequestProperty("If-None-Match", s.mapsourcesEtag);
+			if (mapFile.isFile() && s.mapSourcesUpdate.etag != null
+					&& s.mapSourcesUpdate.etag != "")
+				conn.addRequestProperty("If-None-Match", s.mapSourcesUpdate.etag);
 			int code = conn.getResponseCode();
 			log.trace("Mapsources online update: \n\tUpdate url: " + MAPSOURCES_UPDATE_URL
 					+ "\n\tResponse  : " + code + " " + conn.getResponseMessage()
@@ -264,6 +295,8 @@ public class MapSourcesManager {
 			onlineProps.load(new ByteArrayInputStream(data));
 			int onlineRev = getMapSourcesRev(onlineProps);
 			int currentRev = parseMapSourcesRev(System.getProperty(MAPSOURCES_REV_KEY));
+			s.mapSourcesUpdate.lastUpdate = new Date();
+			s.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
 			if (onlineRev > currentRev || !mapSourcesExternalFileUsed) {
 				System.getProperties().putAll(onlineProps);
 				FileOutputStream mapFs = null;
@@ -273,7 +306,6 @@ public class MapSourcesManager {
 				} finally {
 					Utilities.closeStream(mapFs);
 				}
-				s.mapsourcesEtag = conn.getHeaderField("ETag");
 				for (MapSource ms : getAllMapSources()) {
 					if (ms instanceof UpdatableMapSource) {
 						((UpdatableMapSource) ms).update();

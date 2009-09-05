@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -73,6 +74,9 @@ public class Settings {
 	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
 	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
+	public String atlasOutputDirectory;
+	public String tileStoreDirectory;
+
 	/**
 	 * Timeout in seconds (default 10 seconds)
 	 */
@@ -117,18 +121,23 @@ public class Settings {
 
 	private Vector<String> disabledMapSources = new Vector<String>();
 
-	@XmlElementWrapper(name = "customMapSources")
 	@XmlElement(name = "customMapSource")
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
-	/**
-	 * Last ETag value retrieved while online map source update.
-	 * 
-	 * @see MapSourcesManager#mapsourcesOnlineUpdate()
-	 * @see http://en.wikipedia.org/wiki/HTTP_ETag
-	 */
-	@XmlElement
-	public String mapsourcesEtag;
+	@XmlElement(name = "MapSourcesUpdate")
+	public final MapSourcesUpdate mapSourcesUpdate = new MapSourcesUpdate();
+
+	public static class MapSourcesUpdate {
+		/**
+		 * Last ETag value retrieved while online map source update.
+		 * 
+		 * @see MapSourcesManager#mapsourcesOnlineUpdate()
+		 * @see http://en.wikipedia.org/wiki/HTTP_ETag
+		 */
+		public String etag;
+
+		public Date lastUpdate;
+	}
 
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -155,7 +164,8 @@ public class Settings {
 			Unmarshaller um = context.createUnmarshaller();
 			instance = (Settings) um.unmarshal(FILE);
 		} finally {
-			getInstance().applyProxySettings();
+			Settings s = getInstance();
+			s.applyProxySettings();
 		}
 	}
 

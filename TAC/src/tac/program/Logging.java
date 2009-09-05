@@ -7,44 +7,89 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 
 public class Logging {
 
-	protected static final String CONFIG_FILE = "log4j.xml";
+	protected static final String CONFIG_FILENAME = "log4j.xml";
+
+	protected static File CONFIG_FILE = null;
 
 	public static final Logger LOG = Logger.getLogger("TAC");
-	
+
 	public static void configureLogging() {
-		File f = new File(CONFIG_FILE);
 		// We test for the configuration file, if it exists we use it, otherwise
 		// we perform simple logging to the console
-		if (f.exists() && f.isFile()) {
-			DOMConfigurator.configure(f.getAbsolutePath());
-			Logger logger = Logger.getLogger("LogSystem");
-			logger.setLevel(Level.INFO);
-			logger.info("Logging configured by \"" + f.getAbsolutePath() + "\"");
-		} else {
-			configureConsoleLogging();
+		if (!loadLog4JConfigXml()) {
+			configureDefaultErrorLogging();
 			Logger logger = Logger.getRootLogger();
-			logger.info("log4.xml not found - enabling default error log to console. \n"
-					+ "Full path to expected log4.xml: \"" + f.getAbsolutePath() + "\"");
+			logger.info("log4.xml not found - enabling default error log to console");
 		}
+	}
+
+	public static boolean loadLog4JConfigXml() {
+		if (loadLog4JConfigXml(DirectoryManager.userSettingsDir))
+			return true;
+		if (loadLog4JConfigXml(DirectoryManager.currentDir))
+			return true;
+		if (loadLog4JConfigXml(DirectoryManager.programDir))
+			return true;
+		return false;
+	}
+
+	public static boolean loadLog4JConfigXml(File directory) {
+		File f = new File(directory, CONFIG_FILENAME);
+		if (!f.isFile())
+			return false;
+		try {
+			DOMConfigurator.configure(f.getAbsolutePath());
+		} catch (Exception e) {
+			System.err.println("Error loading log4j config file \"" + f.getAbsolutePath() + "\"");
+			return false;
+		}
+		Logger logger = Logger.getLogger("LogSystem");
+		logger.setLevel(Level.INFO);
+		logger.info("Logging configured by \"" + f.getAbsolutePath() + "\"");
+		return true;
+	}
+
+	public static void configureDefaultErrorLogging() {
+		configureConsoleLogging(Level.INFO);
+		configureLogfileLogging(Level.WARN);
+	}
+
+	public static void configureConsoleLogging() {
+		configureConsoleLogging(Level.ERROR);
 	}
 
 	public static void configureConsoleLogging(Level level) {
 		Logger logger = Logger.getRootLogger();
 		ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout());
+		consoleAppender.setThreshold(level);
 		logger.addAppender(consoleAppender);
-		logger.setLevel(level);
-
 	}
 
-	public static void configureConsoleLogging() {
-		configureConsoleLogging(Level.ERROR);
+	public static void configureLogfileLogging(Level level) {
+		Logger logger = Logger.getRootLogger();
+		File logFileDir = DirectoryManager.userSettingsDir;
+		logFileDir.mkdirs();
+		String logFilename = new File(logFileDir, "TrekBuffy Atlas Creator.log").getAbsolutePath();
+		Layout layout = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
+		FileAppender consoleAppender;
+		try {
+			consoleAppender = new FileAppender(layout, logFilename, false);
+			consoleAppender.setThreshold(level);
+			logger.addAppender(consoleAppender);
+		} catch (Exception e) {
+			Logger log = Logger.getLogger("LogSystem");
+			log.error("", e);
+		}
 	}
 
 	public static void disableLogging() {

@@ -154,6 +154,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomChanged(previewMap.getGridZoom());
 		previewMap.updateMapSelection();
 		previewMap.grabFocus();
+		MapSourcesManager.regularMapsourcesOnlineUpdate(true);
 	}
 
 	private void createControls() {

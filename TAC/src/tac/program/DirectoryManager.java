@@ -6,12 +6,24 @@ import tac.utilities.OSUtilities;
 import tac.utilities.Utilities;
 import tac.utilities.OSUtilities.OperatingSystem;
 
+/**
+ * Provides the five common directories used within TrekBuddy Atlas Creator:
+ * <ul>
+ * <li>current directory</li>
+ * <li>program directory</li>
+ * <li>user home directory</li>
+ * <li>user settings directory</li>
+ * <li>temporary directory</li>
+ * </ul>
+ * 
+ */
 public class DirectoryManager {
 
 	// private static Logger log = Logger.getLogger(DirectoryManager.class);
 
 	static {
 		currentDir = new File(".");
+		userHomeDir = new File(System.getProperty("user.home"));
 		userSettingsDir = getUserSettingsDir();
 		tempDir = new File(System.getProperty("java.io.tmpdir"));
 		programDir = getProgramDir();
@@ -19,6 +31,7 @@ public class DirectoryManager {
 
 	public static final File currentDir;
 	public static final File programDir;
+	public static final File userHomeDir;
 	public static final File userSettingsDir;
 	public static final File tempDir;
 

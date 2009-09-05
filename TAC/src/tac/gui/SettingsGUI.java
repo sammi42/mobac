@@ -482,6 +482,14 @@ public class SettingsGUI extends JDialog {
 		} else {
 			s.setGoogleLanguage(googleLang.getSelectedItem().toString());
 		}
+		try {
+			Settings.save();
+		} catch (Exception e) {
+			log.error("Error saving settings to file", e);
+			JOptionPane.showMessageDialog(null, "Error saving settings to file:\n" + e.toString()
+					+ " (" + e.getClass().getSimpleName() + ")", "Error saving settings to file",
+					JOptionPane.ERROR_MESSAGE);
+		}
 
 		MainGUI.getMainGUI().previewMap.repaint();
 		// Close the dialog window

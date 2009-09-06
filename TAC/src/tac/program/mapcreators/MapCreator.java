@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.mapcreators;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -14,10 +14,12 @@ import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
+import tac.program.AtlasThread;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
@@ -67,7 +69,7 @@ public class MapCreator {
 		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
 	}
 
-	public void createMap() {
+	public void createMap() throws MapCreationException {
 		mapFolder.mkdirs();
 
 		// write the .map file containing the calibration points

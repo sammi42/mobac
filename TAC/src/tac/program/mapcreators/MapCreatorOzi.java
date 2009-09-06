@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.mapcreators;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import tac.gui.AtlasProgress;
+import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.Utilities;

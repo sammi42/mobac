@@ -6,6 +6,7 @@ public enum AtlasOutputFormat {
 	UntaredAtlas("TrekBuddy untared atlas"), //
 	MTE("Mobile Trail Explorer"), //
 	AndNav("AndNav atlas format"), //
+	BigPlanet("BigPlanet SQLite"), //
 	OziPng("OziExplorer (PNG & MAP)");
 
 	private final String displayName;

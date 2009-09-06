@@ -1,7 +1,5 @@
-package tac.program;
+package tac.program.mapcreators;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,25 +7,23 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import tac.gui.AtlasProgress;
+import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.Utilities;
 
 /**
- * Creates maps using the Mobile Trail Explorer (MTE) / JTileDownloader atlas
- * format (converted to PNG, size 256x256 pixel).
+ * Creates maps using the AndNav atlas format.
  * 
  * Please note that this atlas format ignores the defined atlas structure. It
  * uses a separate directory for each used map source and inside one directory
  * for each zoom level.
  */
-public class MapCreatorMTE extends MapCreator {
+public class MapCreatorAndNav extends MapCreator {
 
 	private File mapZoomDir;
 
-	protected String appendFileExt = "";
-
-	public MapCreatorMTE(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+	public MapCreatorAndNav(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
 		File mapDir = new File(atlasDir, map.getMapSource().getName());
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
@@ -35,12 +31,10 @@ public class MapCreatorMTE extends MapCreator {
 
 	public void createMap() {
 		mapZoomDir.mkdirs();
+
+		// This means there should not be any resizing of the tiles.
 		try {
-			if ("png".equalsIgnoreCase(mapSource.getTileType()))
-				mapTileWriter = new SimpleFileTileWriter();
-			else
-				// If the tile image format is not png we have to convert it
-				mapTileWriter = new PngFileTileWriter();
+			mapTileWriter = new AndNavTileWriter();
 			createTiles();
 		} catch (InterruptedException e) {
 			// User has aborted process
@@ -67,7 +61,7 @@ public class MapCreatorMTE extends MapCreator {
 				if (ap != null)
 					ap.incMapCreationProgress();
 				try {
-					String tileFileName = x + "/" + y + ".png";
+					String tileFileName = x + "/" + y + "." + mapSource.getTileType() + ".andnav";
 					byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x + "."
 							+ mapSource.getTileType());
 					if (sourceTileData != null)
@@ -79,10 +73,7 @@ public class MapCreatorMTE extends MapCreator {
 		}
 	}
 
-	/**
-	 * Simply writes the tileData to the specified file
-	 */
-	protected class SimpleFileTileWriter implements MapTileWriter {
+	protected class AndNavTileWriter implements MapTileWriter {
 
 		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
 			File f = new File(mapZoomDir, tileFileName);
@@ -92,21 +83,6 @@ public class MapCreatorMTE extends MapCreator {
 			} finally {
 				Utilities.closeStream(out);
 			}
-		}
-
-		public void finalizeMap() {
-		}
-	}
-
-	/**
-	 * Converts the image to be saved to png.
-	 */
-	protected class PngFileTileWriter implements MapTileWriter {
-
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
-			BufferedImage image = ImageIO.read(new ByteArrayInputStream(tileData));
-			File f = new File(mapZoomDir, tileFileName);
-			ImageIO.write(image, "png", f);
 		}
 
 		public void finalizeMap() {

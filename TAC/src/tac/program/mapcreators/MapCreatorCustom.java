@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.mapcreators;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -9,6 +9,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import tac.gui.AtlasProgress;
+import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.TileImageParameters;

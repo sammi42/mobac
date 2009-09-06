@@ -22,6 +22,12 @@ import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
+import tac.program.mapcreators.MapCreator;
+import tac.program.mapcreators.MapCreatorAndNav;
+import tac.program.mapcreators.MapCreatorBigPlanet;
+import tac.program.mapcreators.MapCreatorCustom;
+import tac.program.mapcreators.MapCreatorMTE;
+import tac.program.mapcreators.MapCreatorOzi;
 import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
@@ -142,6 +148,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 						// Do nothing and continue with next map
 					} catch (Exception e) {
 						log.error("", e);
+						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
+								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
+								+ "Press OK to continue atlas creation.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -267,6 +277,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				if (answer != JOptionPane.YES_OPTION)
 					throw new InterruptedException();
 			}
+			downloadJobDispatcher.cancelOutstandingJobs();
 			log.debug("Starting to create atlas from downloaded tiles");
 
 			MapCreator mc = null;
@@ -285,12 +296,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			case AndNav:
 				mc = new MapCreatorAndNav(map, tileIndex, atlasDir);
 				break;
+			case BigPlanet:
+				mc = new MapCreatorBigPlanet(map, tileIndex, atlasDir);
+				break;
 			case OziPng:
 				mc = new MapCreatorOzi(map, tileIndex, atlasDir);
 			}
 			mc.createMap();
-			downloadJobDispatcher.cancelOutstandingJobs();
-			tileIndex.closeAndDelete();
 		} catch (Exception e) {
 			log.error("Error in createMap: " + e.getMessage(), e);
 			throw e;

@@ -34,10 +34,12 @@ import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
+import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AtlasTreeModel;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
+import tac.utilities.jdbc.SQLite;
 
 public class JAtlasTree extends JTree implements Autoscroll {
 
@@ -60,6 +62,10 @@ public class JAtlasTree extends JTree implements Autoscroll {
 
 	private static final String MSG_ATLAS_EMPTY = "Atlas is empty - "
 			+ "please add at least one selection to atlas content.";
+
+	private static final String MSG_SQLITE_MISSING = "Unable to find the SQLite libraries. "
+			+ "These are required for BigPlanet output format.<br>Please read the README.HTM "
+			+ "section \"Creating and using atlases with BigMap\". ";
 
 	private static final String ACTION_DELETE_NODE = "DELETE_NODE";
 
@@ -113,7 +119,15 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	}
 
 	public boolean testAtlasContentValid() {
-		if (getAtlas().calculateTilesToDownload() == 0) {
+		AtlasInterface atlas = getAtlas();
+		if (AtlasOutputFormat.BigPlanet.equals(atlas.getOutputFormat())) {
+			if (!SQLite.loadSQLite()) {
+				JOptionPane.showMessageDialog(null, "<html>" + MSG_SQLITE_MISSING + "</html>",
+						"Error - SQLite not available", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		if (atlas.calculateTilesToDownload() == 0) {
 			JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>",
 					"Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
 			return false;

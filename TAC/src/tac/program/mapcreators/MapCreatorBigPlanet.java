@@ -4,8 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,11 +16,18 @@ import javax.imageio.ImageIO;
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.program.AtlasThread;
-import tac.program.DirectoryManager;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
+import tac.utilities.jdbc.SQLite;
 
 /**
+ * Atlas/Map creator for "BigPlanet-Maps application for Android" (affline
+ * SQLIte maps) http://bigplanetmaps.wordpress.com/
+ * 
+ * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
+ * http://www.ch-werner.de/javasqlite/
+ * 
+ * <p>
  * Hello "tytung".
  * 
  * I havn't found a different way to communicate with you. You modified
@@ -33,20 +38,21 @@ import tac.tar.TarIndex;
  * 
  * Please do not proceed in modifying TrekBuddy Atlas creator yourself - instead
  * please write a patch and upload it into the patch tracker
- * http://sourceforge.net/tracker/?group_id=238075&atid=1105496
- * or contact me directly via e-mail:
+ * http://sourceforge.net/tracker/?group_id=238075&atid=1105496 or contact me
+ * directly via e-mail:
  * 
- * r_x [at] 
- * users.sourceforge.net
+ * r_x [at] users.sourceforge.net
+ * </p>
  */
 public class MapCreatorBigPlanet extends MapCreator {
 
-	private static final String DB_DRIVER = "SQLite.JDBCDriver";
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
 	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,s,image) VALUES (?,?,?,?,?)";
 
 	private static final String DATABASE_FILENAME = "BigPlanet_maps.sqlitedb";
+
+	
 
 	/**
 	 * Commit only every i tiles
@@ -81,30 +87,11 @@ public class MapCreatorBigPlanet extends MapCreator {
 		}
 	}
 
-	private boolean loadSQLite() {
-		try {
-			try {
-				Class.forName(DB_DRIVER);
-				return true;
-			} catch (Exception e) {
-			}
-			File pdir = DirectoryManager.programDir;
-			File jarFile = new File(pdir, "sqlite.jar");
-			String lcStr = DB_DRIVER;
-			URL jarfile = new URL("jar", "", "file:" + jarFile.getAbsolutePath() + "!/");
-			URLClassLoader cl = URLClassLoader.newInstance(new URL[] { jarfile });
-			cl.loadClass(lcStr);
-			return true;
-		} catch (Exception e) {
-			log.error("",e);
-			return false;
-		}
-	}
+	
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {
-		loadSQLite();
+		SQLite.loadSQLite();
 		String url = "jdbc:sqlite:/" + this.databaseFile;
-		Class.forName(DB_DRIVER);
 		Connection conn = DriverManager.getConnection(url);
 		return conn;
 	}

@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.utilities.DeleteFileFilter;
 import tac.utilities.Utilities;
+import tac.utilities.file.DeleteFileFilter;
 
 public class TileStore {
 

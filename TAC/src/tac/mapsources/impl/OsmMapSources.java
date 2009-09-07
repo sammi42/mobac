@@ -78,15 +78,15 @@ public class OsmMapSources {
 
 	}
 
-	public static class PublicTransport extends AbstractOsmTileSource {
+	public static class OsmPublicTransport extends AbstractOsmTileSource {
 
 		private static final String PATTERN = "http://tile.xn--pnvkarte-m4a.de/tilegen/%d/%d/%d.png";
 
-		public PublicTransport() {
+		public OsmPublicTransport() {
 			super("OSMPublicTransport");
 			this.maxZoom = 16;
 			this.minZoom = 2;
-			this.tileUpdate = TileUpdate.LastModified;
+			this.tileUpdate = TileUpdate.ETag;
 		}
 
 		@Override

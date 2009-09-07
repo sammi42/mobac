@@ -11,11 +11,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
+import tac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -41,7 +41,8 @@ public class MapSourceTypeDetector {
 		// testMapSource("Google Earth", C_BERLIN);
 		// testMapSource("Mapnik", C_PRAHA);
 		// testMapSource(Cykloatlas.class, C_PRAHA);
-		testMapSource(OsmHikingMap.class, C_BERLIN);
+		// testMapSource(OsmHikingMap.class, C_BERLIN);
+		testMapSource(OsmPublicTransport.class, C_BERLIN);
 		// testMapSource("TilesAtHome", C_BERLIN);
 	}
 

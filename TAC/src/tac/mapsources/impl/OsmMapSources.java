@@ -78,6 +78,30 @@ public class OsmMapSources {
 
 	}
 
+	public static class PublicTransport extends AbstractOsmTileSource {
+
+		private static final String PATTERN = "http://tile.xn--pnvkarte-m4a.de/tilegen/%d/%d/%d.png";
+
+		public PublicTransport() {
+			super("OSMPublicTransport");
+			this.maxZoom = 16;
+			this.minZoom = 2;
+			this.tileUpdate = TileUpdate.LastModified;
+		}
+
+		@Override
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String url = String.format(PATTERN, new Object[] { zoom, tilex, tiley });
+			return url;
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Public Transport";
+		}
+
+	}
+
 	public static class TilesAtHome extends AbstractOsmTileSource {
 
 		public TilesAtHome() {

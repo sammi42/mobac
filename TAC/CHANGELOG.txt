@@ -20,6 +20,7 @@
  + New atlas format: Mobile Trail Explorer (MTE)
  + New atlas format: BigPlanet SQLite (Android application, 
     requires additional sqlite libraries) 
+ + New map source: OpenStreetMap Public Transport (öpnvkarte.de)
  
  1.5: (2009-08-01)
  ~ Java requirement has changed: Now at least Java 1.6 is required! 

@@ -107,6 +107,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 			String locale = Locale.getDefault().toString();
 			stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + locale + "')");
 		}
+		stat.close();
 	}
 
 	@Override

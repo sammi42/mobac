@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
@@ -29,8 +30,10 @@ public class MapCreatorAndNav extends MapCreator {
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
 	}
 
-	public void createMap() {
-		mapZoomDir.mkdirs();
+	public void createMap() throws MapCreationException {
+		if (!mapZoomDir.mkdirs())
+			throw new MapCreationException("Failed to create directory: \""
+					+ mapZoomDir.getAbsolutePath() + "\"");
 
 		// This means there should not be any resizing of the tiles.
 		try {
@@ -43,7 +46,7 @@ public class MapCreatorAndNav extends MapCreator {
 	}
 
 	@Override
-	protected void createTiles() throws InterruptedException {
+	protected void createTiles() throws InterruptedException, MapCreationException {
 		Thread t = Thread.currentThread();
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {
@@ -54,7 +57,11 @@ public class MapCreatorAndNav extends MapCreator {
 
 		for (int x = xMin; x <= xMax; x++) {
 			File xDir = new File(mapZoomDir, Integer.toString(x));
-			xDir.mkdir();
+			try {
+				Utilities.mkDir(xDir);
+			} catch (IOException e1) {
+				throw new MapCreationException(e1);
+			}
 			for (int y = yMin; y <= yMax; y++) {
 				if (t.isInterrupted())
 					throw new InterruptedException();

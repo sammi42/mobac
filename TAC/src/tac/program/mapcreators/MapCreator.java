@@ -86,6 +86,8 @@ public class MapCreator {
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
+		} catch (Exception e) {
+			throw new MapCreationException(e);
 		}
 	}
 
@@ -125,7 +127,7 @@ public class MapCreator {
 		mapWriter.flush();
 	}
 
-	protected void createTiles() throws InterruptedException {
+	protected void createTiles() throws InterruptedException, MapCreationException {
 		int pixelValueX = 0;
 		int pixelValueY = 0;
 
@@ -210,10 +212,10 @@ public class MapCreator {
 		File setFolder;
 		Writer setFileWriter;
 
-		public FileTileWriter() {
+		public FileTileWriter() throws IOException {
 			super();
 			setFolder = new File(mapFolder, "set");
-			setFolder.mkdir();
+			Utilities.mkDir(setFolder);
 			log.debug("Writing tiles to set folder: " + setFolder);
 			File setFile = new File(mapFolder, map.getName() + ".set");
 			try {

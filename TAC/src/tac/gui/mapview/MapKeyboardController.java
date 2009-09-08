@@ -36,10 +36,10 @@ public class MapKeyboardController extends JMapController {
 	/** The speed increase per timer interval when a cursor button is clicked */
 	private static final double ACCELERATION = 0.10;
 
-	private InputMap inputMap;
+	private final InputMap inputMap;
 
 	public MapKeyboardController(PreviewMap map, boolean enabled) {
-		super(map, false);
+		super(map);
 
 		inputMap = new ComponentInputMap(map);
 		ActionMap actionMap = map.getActionMap();

@@ -99,6 +99,12 @@ public class Profile implements Comparable<Profile> {
 		return file.equals(p.file);
 	}
 
+	@Override
+	public int hashCode() {
+		assert false : "hashCode not designed";
+		return -1;
+	}
+
 	public void save(AtlasInterface atlasInterface) throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(Atlas.class);
 		Marshaller m = context.createMarshaller();

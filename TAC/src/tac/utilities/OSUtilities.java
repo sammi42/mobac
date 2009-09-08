@@ -83,14 +83,15 @@ public class OSUtilities {
 				JOptionPane.showMessageDialog(null, "Your desktop environment " + dt
 						+ " is not supported.", "Unsupported desktop environment",
 						JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			Runtime.getRuntime().exec(strCmd);
 		} catch (IOException e) {
-			String cmd = "";
+			StringBuilder sb = new StringBuilder(512);
 			for (String s : strCmd) {
-				cmd += "[" + s + "]";
+				sb.append("[" + s + "]");
 			}
-			log.error("Error while executing \"" + strCmd + "\"", e);
+			log.error("Error while executing \"" + sb.toString() + "\"", e);
 		}
 
 	}

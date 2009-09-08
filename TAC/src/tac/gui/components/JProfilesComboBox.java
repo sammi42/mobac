@@ -44,7 +44,7 @@ public class JProfilesComboBox extends JComboBox {
 			return null;
 	}
 
-	protected class ProfilesComboBoxEditor extends BasicComboBoxEditor {
+	protected static class ProfilesComboBoxEditor extends BasicComboBoxEditor {
 		@Override
 		protected JTextField createEditorComponent() {
 			JAtlasNameField field = new JAtlasNameField();

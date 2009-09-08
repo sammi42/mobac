@@ -15,8 +15,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -40,9 +38,10 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.Main;
 import tac.exceptions.InvalidNameException;
+import tac.gui.actions.ShowHelpAction;
 import tac.gui.atlastree.JAtlasTree;
+import tac.gui.components.FilledLayeredPane;
 import tac.gui.components.JAtlasNameField;
 import tac.gui.components.JCollapsiblePanel;
 import tac.gui.mapview.GridZoom;
@@ -139,8 +138,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		setLayout(new BorderLayout());
 		add(leftPanel, BorderLayout.WEST);
 		JLayeredPane layeredPane = new FilledLayeredPane();
-		layeredPane.add(previewMap, new Integer(0));
-		layeredPane.add(mapControlPanel, new Integer(1));
+		layeredPane.add(previewMap, Integer.valueOf(0));
+		layeredPane.add(mapControlPanel, Integer.valueOf(1));
 		add(layeredPane, BorderLayout.CENTER);
 
 		updatePanels();
@@ -187,7 +186,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// help button
 		helpButton = new JButton("Help");
-		helpButton.addActionListener(new HelpButtonListener());
+		helpButton.addActionListener(new ShowHelpAction());
 		helpButton.setToolTipText("Display some help information");
 
 		// settings button
@@ -565,27 +564,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private class HelpButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			DataInputStream in = new DataInputStream(Main.class
-					.getResourceAsStream("resources/text/help_dialog.html"));
-			byte[] buf;
-			try {
-				buf = new byte[in.available()];
-				in.readFully(buf);
-				in.close();
-				String helpMessage = new String(buf, "UTF-8");
-				// Strip out all line breaks because JOptionPane shows
-				// the raw HTML code otherwise
-				helpMessage = helpMessage.replaceAll("\n", "");
-				JOptionPane.showMessageDialog(null, helpMessage, "Help",
-						JOptionPane.INFORMATION_MESSAGE);
-			} catch (IOException e) {
-				log.error("", e);
-			}
-		}
-	}
-
 	private class FullScreenButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			// Settings settings = Settings.getInstance();
@@ -614,7 +592,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		public void actionPerformed(ActionEvent e) {
 			if (!jAtlasTree.testAtlasContentValid())
 				return;
-			System.gc();
 			try {
 				// We have to work on a deep clone otherwise the user would be
 				// able to modify settings of maps, layers and the atlas itself
@@ -828,17 +805,18 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 				long totalNrOfTiles = 0;
 
-				String hint = "Total amount of tiles to download:";
+				StringBuilder hint = new StringBuilder(1024);
+				hint.append("Total amount of tiles to download:");
 				for (int i = 0; i < zoomLevels.length; i++) {
 					int zoom = zoomLevels[i];
 					long[] info = ms.calculateNrOfTilesEx(zoom);
 					totalNrOfTiles += info[0];
-					hint += "<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] + "*"
-							+ info[2] + ")";
+					hint.append("<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1]
+							+ "*" + info[2] + ")");
 				}
-				hint = "<html>" + hint + "</html>";
+				String hintText = "<html>" + hint.toString() + "</html>";
 				amountOfTilesLabel.setText(String.format(baseText, Long.toString(totalNrOfTiles)));
-				amountOfTilesLabel.setToolTipText(hint);
+				amountOfTilesLabel.setToolTipText(hintText);
 			} catch (Exception e) {
 				amountOfTilesLabel.setText(String.format(baseText, "?"));
 				log.error("", e);
@@ -906,27 +884,4 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private class FilledLayeredPane extends JLayeredPane {
-
-		private static final long serialVersionUID = -756648362160847296L;
-
-		/**
-		 * Layout each of the components in this JLayeredPane so that they all
-		 * fill the entire extents of the layered pane -- from (0,0) to
-		 * (getWidth(), getHeight())
-		 */
-		@Override
-		public void doLayout() {
-			// Synchronizing on getTreeLock, because I see other layouts doing
-			// that.
-			// see BorderLayout::layoutContainer(Container)
-			synchronized (getTreeLock()) {
-				int w = getWidth();
-				int h = getHeight();
-				for (Component c : getComponents()) {
-					c.setBounds(0, 0, w, h);
-				}
-			}
-		}
-	}
 }

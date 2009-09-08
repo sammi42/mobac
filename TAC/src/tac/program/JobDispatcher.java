@@ -56,7 +56,6 @@ public class JobDispatcher {
 		jobQueue.clear();
 	}
 
-	
 	public boolean isPaused() {
 		return paused;
 	}
@@ -153,7 +152,8 @@ public class JobDispatcher {
 				try {
 					if (paused) {
 						synchronized (lock) {
-							lock.wait();
+							if (paused)
+								lock.wait();
 						}
 					}
 					idle = true;

@@ -113,7 +113,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 	}
 
 	public String getValidationErrorMessages() {
-		String errorText = new String();
+		String errorText = "";
 		if (!enableCustomTileProcessingCheckButton.isSelected())
 			return errorText;
 		if (!tileSizeHeight.isValueValid())

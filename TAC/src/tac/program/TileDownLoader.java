@@ -137,6 +137,7 @@ public class TileDownLoader {
 		try {
 			success = true;
 		} finally {
+			Utilities.closeStream(is);
 			Utilities.closeStream(tilestoreFileStream);
 			if ((!success) || (sumBytes == 0)) {
 				// In case of an error while download or an empty file we have

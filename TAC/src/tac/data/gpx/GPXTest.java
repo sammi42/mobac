@@ -13,7 +13,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import tac.data.gpx.interfaces.Gpx;
-import tac.data.gpx.interfaces.Wpt;
 import tac.utilities.Utilities;
 
 public class GPXTest {
@@ -52,30 +51,6 @@ public class GPXTest {
 		} finally {
 			Utilities.closeStream(os);
 		}
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			Gpx gpx = loadGpxFile(new File("D:/GPS/Traces/GPX/2008-06-18-16-09-45.gpx"));
-			System.out.println(gpx + " " + gpx.getVersion());
-			for (Wpt wpt : gpx.getWpt()) {
-				System.out.println("\t" + wpt.getName() + " lat=" + wpt.getLat() + " lon="
-						+ wpt.getLon());
-			}
-			gpx = loadGpxFile(new File("D:/GPS/GPX10.gpx"));
-			System.out.println(gpx + " " + gpx.getVersion());
-			for (Wpt wpt : gpx.getWpt()) {
-				System.out.println("\t" + wpt.getName() + " lat=" + wpt.getLat() + " lon="
-						+ wpt.getLon());
-			}
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 }

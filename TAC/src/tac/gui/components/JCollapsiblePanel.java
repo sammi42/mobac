@@ -38,14 +38,16 @@ public class JCollapsiblePanel extends JPanel {
 	protected static final Color DEFAULT_TITLE_BACKGROUND_COLOR = Color.LIGHT_GRAY;
 	protected static final Color DEFAULT_TITLE_COLOR = Color.BLACK;
 
-	private static ImageIcon arrowClosed = new ImageIcon();
-	private static ImageIcon arrowOpen = new ImageIcon();
+	private static ImageIcon arrowClosed;
+	private static ImageIcon arrowOpen;
 
 	static {
 		try {
 			arrowClosed = Utilities.loadResourceImageIcon("arrow_closed.png");
 			arrowOpen = Utilities.loadResourceImageIcon("arrow_open.png");
 		} catch (Exception e) {
+			arrowClosed = new ImageIcon();
+			arrowOpen = new ImageIcon();
 		}
 	}
 

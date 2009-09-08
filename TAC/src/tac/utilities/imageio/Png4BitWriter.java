@@ -85,8 +85,6 @@ public class Png4BitWriter {
 	 */
 	public static void writeImage(OutputStream out, BufferedImage image, int compression)
 			throws IOException {
-		int[] pixels = null;
-		pixels = image.getData().getPixels(0, 0, image.getWidth(), image.getHeight(), pixels);
 		DataOutputStream dos = new DataOutputStream(out);
 
 		int width = image.getWidth();

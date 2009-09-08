@@ -44,7 +44,7 @@ public class JCoordinateField extends JTextField {
 			return new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
 	}
 
-	public synchronized void setCoordinate(double value) {
+	public void setCoordinate(double value) {
 		try {
 			// We know that the number is valid, therefore we can skip the check
 			// -> saves CPU power while selecting via preview map

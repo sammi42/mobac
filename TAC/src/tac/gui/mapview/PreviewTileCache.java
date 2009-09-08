@@ -51,6 +51,5 @@ public class PreviewTileCache extends MemoryTileCache implements NotificationLis
 				log.warning(e.getMessage());
 			}
 		}
-		System.gc();
 	}
 }

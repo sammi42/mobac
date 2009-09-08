@@ -23,4 +23,11 @@ public class GridZoom {
 			return false;
 		return ((GridZoom) obj).zoom == zoom;
 	}
+
+	@Override
+	public int hashCode() {
+		assert false : "hashCode not designed";
+		return -1;
+	}
+
 }

@@ -345,6 +345,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				downloadJobDispatcher.terminateAllWorkerThreads();
 			this.interrupt();
 		} catch (Exception ex) {
+			// ingored
 		}
 	}
 

@@ -210,7 +210,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				try {
 					if (fin != null) {
 						fin.close();
-						tileFile.delete();
+						if (!tileFile.delete())
+							tileFile.deleteOnExit();
 					}
 				} catch (Exception e1) {
 				}

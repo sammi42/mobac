@@ -57,9 +57,11 @@ public class MapSourcesTester {
 		for (MapSource mapSource : MapSourcesManager.getAllMapSources()) {
 			try {
 				String name = mapSource.toString();
-				while (name.length() < 40)
-					name += ".";
-				System.out.print(name + ": ");
+				StringBuilder sb = new StringBuilder(40);
+				sb.append(name);
+				while (sb.length() < 40)
+					sb.append('.');
+				System.out.print(sb.toString() + ": ");
 				testMapSource(mapSource);
 				System.out.println("OK");
 			} catch (MapSourceTestFailed e) {

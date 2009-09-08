@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
@@ -24,18 +25,24 @@ import tac.utilities.Utilities;
  */
 public class MapCreatorMTE extends MapCreator {
 
-	private File mapZoomDir;
+	private final File mapDir;
+	private final File mapZoomDir;
 
 	protected String appendFileExt = "";
 
 	public MapCreatorMTE(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
-		File mapDir = new File(atlasDir, map.getMapSource().getName());
+		mapDir = new File(atlasDir, map.getMapSource().getName());
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
 	}
 
-	public void createMap() {
-		mapZoomDir.mkdirs();
+	public void createMap() throws MapCreationException {
+		try {
+			Utilities.mkDir(mapDir);
+			Utilities.mkDir(mapZoomDir);
+		} catch (IOException e1) {
+			throw new MapCreationException(e1);
+		}
 		try {
 			if ("png".equalsIgnoreCase(mapSource.getTileType()))
 				mapTileWriter = new SimpleFileTileWriter();
@@ -50,7 +57,7 @@ public class MapCreatorMTE extends MapCreator {
 	}
 
 	@Override
-	protected void createTiles() throws InterruptedException {
+	protected void createTiles() throws InterruptedException, MapCreationException {
 		Thread t = Thread.currentThread();
 		AtlasProgress ap = null;
 		if (t instanceof AtlasThread) {
@@ -61,7 +68,11 @@ public class MapCreatorMTE extends MapCreator {
 
 		for (int x = xMin; x <= xMax; x++) {
 			File xDir = new File(mapZoomDir, Integer.toString(x));
-			xDir.mkdir();
+			try {
+				Utilities.mkDir(xDir);
+			} catch (IOException e1) {
+				throw new MapCreationException(e1);
+			}
 			for (int y = yMin; y <= yMax; y++) {
 				if (t.isInterrupted())
 					throw new InterruptedException();

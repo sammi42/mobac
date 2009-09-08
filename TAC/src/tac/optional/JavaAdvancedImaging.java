@@ -16,7 +16,7 @@ public class JavaAdvancedImaging {
 	public static BufferedImage colorReduceMedianCut(RenderedImage image, int colorCount) {
 		RenderedOp ro = ColorQuantizerDescriptor.create(image, ColorQuantizerDescriptor.MEDIANCUT, // 
 				new Integer(colorCount), // Max number of colors
-				null, null, new Integer(1), new Integer(1), null);
+				null, null, new Integer(1), Integer.valueOf(1), null);
 		return ro.getAsBufferedImage();
 
 		// MedianCutQuantizer mc = new MedianCutQuantizer();

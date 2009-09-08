@@ -41,11 +41,10 @@ public class DragDropController {
 
 	protected class AtlasDragSource implements DragSourceListener, DragGestureListener {
 
-		DragGestureRecognizer recognizer;
+		final DragGestureRecognizer recognizer;
+		final DragSource source;
 
 		Transferable transferable;
-
-		DragSource source;
 		TreeNode oldNode;
 
 		public AtlasDragSource() {
@@ -91,7 +90,7 @@ public class DragDropController {
 
 	protected class AtlasDropTarget implements DropTargetListener {
 
-		DropTarget target;
+		final DropTarget target;
 
 		public AtlasDropTarget() throws HeadlessException {
 			super();

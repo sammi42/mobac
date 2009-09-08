@@ -58,6 +58,7 @@ public class GpxLayer implements MapLayer {
 		}
 		if (showTrackpoints) {
 			// TODO
+			throw new RuntimeException("not implemented");
 		}
 	}
 

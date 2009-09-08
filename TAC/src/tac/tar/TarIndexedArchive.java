@@ -21,7 +21,7 @@ public class TarIndexedArchive extends TarArchive {
 	@Override
 	protected void writeTarHeader(TarHeader th) throws IOException {
 		int streamPos = getTarFilePos();
-		tarIndex.put(th.getFileName(), new Integer(streamPos));
+		tarIndex.put(th.getFileName(), Integer.valueOf(streamPos));
 		super.writeTarHeader(th);
 	}
 

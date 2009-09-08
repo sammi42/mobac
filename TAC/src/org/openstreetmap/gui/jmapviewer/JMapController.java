@@ -18,15 +18,15 @@ import java.awt.event.MouseWheelListener;
  */
 public abstract class JMapController {
 
-	protected JMapViewer map;
+	protected final JMapViewer map;
 	protected boolean enabled = false;
 
 	public JMapController(JMapViewer map) {
-		this(map, true);
+		this.map = map;
 	}
 
 	public JMapController(JMapViewer map, boolean enabled) {
-		this.map = map;
+		this(map);
 		if (enabled)
 			enable();
 	}

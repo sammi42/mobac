@@ -125,30 +125,38 @@ public class Utilities {
 	}
 
 	public static void closeStream(InputStream in) {
+		if (in == null)
+			return;
 		try {
 			in.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 		}
 	}
 
 	public static void closeStream(OutputStream out) {
+		if (out == null)
+			return;
 		try {
 			out.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 		}
 	}
 
 	public static void closeWriter(Writer writer) {
+		if (writer == null)
+			return;
 		try {
 			writer.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 		}
 	}
 
 	public static void closeReader(OutputStream reader) {
+		if (reader == null)
+			return;
 		try {
 			reader.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 		}
 	}
 
@@ -185,6 +193,13 @@ public class Utilities {
 		if (bytes < 1000000000)
 			return FORMAT_2_DEC.format(bytes / 1048576d) + " MiByte";
 		return FORMAT_2_DEC.format(bytes / 1073741824d) + " GiByte";
+	}
+
+	public static void mkDir(File dir) throws IOException {
+		if (dir.isDirectory())
+			return;
+		if (!dir.mkdir())
+			throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
 	}
 
 	public static void fileCopy(File sourceFile, File destFile) throws IOException {

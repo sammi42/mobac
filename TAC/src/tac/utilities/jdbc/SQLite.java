@@ -2,6 +2,8 @@ package tac.utilities.jdbc;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import tac.program.DirectoryManager;
 import tac.program.mapcreators.MapCreatorBigPlanet;
 import tac.utilities.ExtensionClassLoader;
@@ -14,6 +16,8 @@ public class SQLite {
 
 	private static final String DB_DRIVER = "SQLite.JDBCDriver";
 	private static boolean SQLITE_LOADED = false;
+
+	private static final Logger log = Logger.getLogger(SQLite.class);
 
 	public static boolean loadSQLite() {
 		if (SQLITE_LOADED)
@@ -38,6 +42,7 @@ public class SQLite {
 				return true;
 			}
 		} catch (Exception e) {
+			log.error("SQLite loading failed", e);
 			return false;
 		}
 	}

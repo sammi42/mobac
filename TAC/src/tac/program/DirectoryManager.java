@@ -84,7 +84,9 @@ public class DirectoryManager {
 		}
 		File userDir = new File(System.getProperty("user.home"));
 		File tacUserDir = new File(userDir, ".tac");
-		tacUserDir.mkdir();
+		if (!tacUserDir.mkdir())
+			throw new RuntimeException("Unable to create directory \""
+					+ tacUserDir.getAbsolutePath() + "\"");
 		return tacUserDir;
 	}
 }

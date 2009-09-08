@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class JobDispatcher {
 
-	private static JobDispatcher instance;
+	private static JobDispatcher INSTANCE;
 
 	/**
 	 * @return the singelton instance of the {@link JobDispatcher}
@@ -25,20 +25,19 @@ public class JobDispatcher {
 	public static JobDispatcher getInstance() {
 		// for speed reasons we check if the instance has been created
 		// one time before we enter the synchronized section...
-		if (instance != null)
-			return instance;
+		if (INSTANCE != null)
+			return INSTANCE;
 		synchronized (JobDispatcher.class) {
 			// ... and for thread safety reasons one time inside the
 			// synchronized section.
-			if (instance != null)
-				return instance;
-			new JobDispatcher();
-			return instance;
+			if (INSTANCE != null)
+				return INSTANCE;
+			INSTANCE = new JobDispatcher();
+			return INSTANCE;
 		}
 	}
 
 	private JobDispatcher() {
-		instance = this;
 		addWorkerThread().firstThread = true;
 	}
 
@@ -95,8 +94,8 @@ public class JobDispatcher {
 
 	protected class JobThread extends Thread {
 
-		Runnable job;
-		boolean firstThread = false;
+		private Runnable job;
+		private boolean firstThread = false;
 
 		public JobThread(int threadId) {
 			super("OSMJobThread " + threadId);
@@ -108,7 +107,7 @@ public class JobDispatcher {
 		@Override
 		public void run() {
 			executeJobs();
-			synchronized (instance) {
+			synchronized (INSTANCE) {
 				workerThreadCount--;
 			}
 		}
@@ -116,7 +115,7 @@ public class JobDispatcher {
 		protected void executeJobs() {
 			while (!isInterrupted()) {
 				try {
-					synchronized (instance) {
+					synchronized (INSTANCE) {
 						workerThreadIdleCount++;
 					}
 					if (firstThread)
@@ -126,7 +125,7 @@ public class JobDispatcher {
 				} catch (InterruptedException e1) {
 					return;
 				} finally {
-					synchronized (instance) {
+					synchronized (INSTANCE) {
 						workerThreadIdleCount--;
 					}
 				}

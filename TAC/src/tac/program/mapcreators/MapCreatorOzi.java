@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
@@ -29,8 +30,12 @@ public class MapCreatorOzi extends MapCreator {
 		mapDir = new File(atlasDir, map.getLayer().getName());
 	}
 
-	public void createMap() {
-		mapDir.mkdirs();
+	public void createMap() throws MapCreationException {
+		try {
+			Utilities.mkDir(mapDir);
+		} catch (IOException e1) {
+			throw new MapCreationException(e1);
+		}
 		try {
 			createTiles();
 			writeMapFile();

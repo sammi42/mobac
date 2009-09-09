@@ -19,12 +19,11 @@ import java.awt.event.MouseWheelListener;
 public class DefaultMapController extends JMapController implements MouseListener,
 		MouseMotionListener, MouseWheelListener {
 
-	private static final int MOUSE_BUTTONS_MASK =
-			MouseEvent.BUTTON3_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK
-					| MouseEvent.BUTTON2_DOWN_MASK;
+	private static final int MOUSE_BUTTONS_MASK = MouseEvent.BUTTON3_DOWN_MASK
+			| MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
 
 	public DefaultMapController(JMapViewer map) {
-		super(map);
+		super(map, true);
 	}
 
 	private Point lastDragPoint;

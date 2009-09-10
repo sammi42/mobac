@@ -106,6 +106,7 @@ public class SettingsGUI extends JDialog {
 		super(owner);
 		TACExceptionHandler.registerForCurrentThread();
 		setModal(true);
+		setMinimumSize(new Dimension(300,300));
 		createJFrame();
 		createTabbedPane();
 		createJButtons();
@@ -350,18 +351,22 @@ public class SettingsGUI extends JDialog {
 		backGround.setLayout(new GridBagLayout());
 		mapSize = new JMapSizeCombo();
 
-		JLabel mapSizeLabel = new JLabel("<html>If the image of the selected region to download "
-				+ "is larger in <br> height or width than the mapsize it will be splitted into "
-				+ "several <br> maps that are no larger than the selected mapsize.</html>");
-		mapSizeLabel.setVerticalAlignment(JLabel.TOP);
-		// mapSizeLabel.setPreferredSize(new Dimension(300, 100));
+		JLabel mapSizeLabel = new JLabel("Maximum size (width & height) of each map: ");
+		JLabel mapSizeText = new JLabel("<html>If the image of the selected region to download "
+				+ "is larger in height or width than <br>the mapsize it will be splitted into "
+				+ "several maps that are no larger than the "
+				+ "<br>specified maximum map size.<br><br>"
+				+ "<b>Warning</b><br>TrekBuddy versions before v0.9.88 "
+				+ "do not support map sizes larger than 32767.<br>"
+				+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
 		JPanel leftPanel = new JPanel(new GridBagLayout());
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Map size settings"));
 
-		GBC gbc = GBC.std().insets(10, 5, 5, 5).anchor(GBC.EAST);
-		leftPanel.add(mapSize, gbc);
-		leftPanel.add(mapSizeLabel, gbc.toggleEol());
+		GBC gbc = GBC.eol().insets(0, 5, 0, 5);
+		leftPanel.add(mapSizeLabel, GBC.std());
+		leftPanel.add(mapSize, GBC.eol());
+		leftPanel.add(mapSizeText, gbc.fill(GBC.HORIZONTAL));
 		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 
 		backGround.add(leftPanel, GBC.std().fill(GBC.HORIZONTAL).anchor(GBC.NORTHEAST));
@@ -416,6 +421,8 @@ public class SettingsGUI extends JDialog {
 		panel.add(proxyPort, gbc_eolh);
 		backGround.add(panel, gbc_eolh);
 
+		backGround.add(panel, gbc_eolh);
+
 		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
 
@@ -434,11 +441,11 @@ public class SettingsGUI extends JDialog {
 		Settings s = Settings.getInstance();
 
 		unitSystem.setSelectedItem(s.getUnitSystem());
-		tileStoreEnabled.setSelected(s.isTileStoreEnabled());
+		tileStoreEnabled.setSelected(s.tileStoreEnabled);
 
 		mapSize.setValue(s.maxMapSize);
 
-		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.getDownloadThreadCount());
+		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.downloadThreadCount);
 		if (index < 0)
 			index = 0;
 		threadCount.setSelectedIndex(index);
@@ -456,12 +463,12 @@ public class SettingsGUI extends JDialog {
 		Settings s = Settings.getInstance();
 
 		s.setUnitSystem((UnitSystem) unitSystem.getSelectedItem());
-		s.setTileStoreEnabled(tileStoreEnabled.isSelected());
+		s.tileStoreEnabled = tileStoreEnabled.isSelected();
 
 		s.maxMapSize = mapSize.getValue();
 
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
-		s.setDownloadThreadCount(threads);
+		s.downloadThreadCount = threads;
 
 		s.setProxyType((ProxyType) proxyType.getSelectedItem());
 		s.setCustomProxyHost(proxyHost.getText());

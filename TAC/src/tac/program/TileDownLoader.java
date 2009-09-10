@@ -54,7 +54,7 @@ public class TileDownLoader {
 		Settings s = Settings.getInstance();
 		String tileFileName = "y" + y + "x" + x + "." + mapSource.getTileType();
 
-		if (s.isTileStoreEnabled()) {
+		if (s.tileStoreEnabled) {
 
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
@@ -123,7 +123,7 @@ public class TileDownLoader {
 		Utilities.checkForInterruption();
 		File tilestoreFile = null;
 		OutputStream tilestoreFileStream = null;
-		if (mapSource.allowFileStore() && s.isTileStoreEnabled()) {
+		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
 			// We are writing simultaneously to the target file
 			// and the file in the tile store
 			tilestoreFile = ts.getTileFile(x, y, zoom, mapSource);

@@ -202,6 +202,13 @@ public class Utilities {
 			throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
 	}
 
+	public static void mkDirs(File dir) throws IOException {
+		if (dir.isDirectory())
+			return;
+		if (!dir.mkdirs())
+			throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
+	}
+
 	public static void fileCopy(File sourceFile, File destFile) throws IOException {
 
 		FileChannel source = null;

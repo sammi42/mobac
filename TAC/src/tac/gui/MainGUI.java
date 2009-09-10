@@ -426,7 +426,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void loadSettings() {
 		Settings settings = Settings.getInstance();
-		atlasNameTextField.setText(settings.getElemntName());
+		atlasNameTextField.setText(settings.elementName);
 		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoad();
 
@@ -463,7 +463,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			previewMap.settingsSave();
 			s.mapviewMapSource = previewMap.getMapSource().getName();
 
-			s.setElementName(atlasNameTextField.getText());
+			s.elementName = atlasNameTextField.getText();
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 
 			tileImageParametersPanel.saveSettings();

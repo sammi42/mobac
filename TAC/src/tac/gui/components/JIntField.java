@@ -14,7 +14,7 @@ public class JIntField extends JTextField {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Color ERROR_COLOR = new Color(255, 100, 100);
+	protected Color errorColor = new Color(255, 100, 100);
 
 	public int min = 0;
 
@@ -34,6 +34,10 @@ public class JIntField extends JTextField {
 		listener = new InputListener();
 		listener.checkInput(null);
 		setBorder(new EmptyBorder(2, 2, 2, 0));
+	}
+
+	public void setErrorColor(Color c) {
+		errorColor = c;
 	}
 
 	public int getValue() throws NumberFormatException {
@@ -88,7 +92,7 @@ public class JIntField extends JTextField {
 		}
 
 		private void setDisplayedValidMode(boolean valid) {
-			Color newC = valid ? defaultColor : ERROR_COLOR;
+			Color newC = valid ? defaultColor : errorColor;
 			JIntField.this.setBackground(newC);
 			String toolTip = valid ? "" : String.format(errorText, new Object[] { min, max });
 			JIntField.this.setToolTipText(toolTip);

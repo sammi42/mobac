@@ -33,6 +33,7 @@ import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
 import tac.utilities.TACExceptionHandler;
+import tac.utilities.Utilities;
 
 public class AtlasThread extends Thread implements DownloadJobListener, DownloadControlerListener {
 
@@ -108,15 +109,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 
 	protected void createAtlas() throws InterruptedException, IOException {
 
-		String workingDir = System.getProperty("user.dir");
-
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-		String formattedDateString = sdf.format(date);
+		String atlasDirName = atlasInterface.getName() + "_" + sdf.format(date);
+		File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
 
-		atlasDir = new File(workingDir + "/atlases/" + atlasInterface.getName() + "_"
-				+ formattedDateString);
-		atlasDir.mkdirs();
+		atlasDir = new File(atlasOutputDir, atlasDirName);
+		Utilities.mkDirs(atlasDir);
 
 		/***
 		 * In this section of code below, atlas is created.
@@ -135,7 +134,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 
 		Settings s = Settings.getInstance();
 
-		downloadJobDispatcher = new JobDispatcher(s.getDownloadThreadCount());
+		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount);
 		try {
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {

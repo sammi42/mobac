@@ -22,7 +22,7 @@ public class DirectoryManager {
 	// private static Logger log = Logger.getLogger(DirectoryManager.class);
 
 	static {
-		currentDir = new File(".");
+		currentDir = new File(System.getProperty("user.dir"));
 		userHomeDir = new File(System.getProperty("user.home"));
 		userSettingsDir = getUserSettingsDir();
 		tempDir = new File(System.getProperty("java.io.tmpdir"));

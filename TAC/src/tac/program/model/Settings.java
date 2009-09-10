@@ -30,6 +30,7 @@ import tac.gui.panels.JCoordinatesPanel;
 import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google;
+import tac.program.DirectoryManager;
 import tac.program.UserAgent;
 import tac.utilities.Utilities;
 
@@ -38,17 +39,16 @@ import tac.utilities.Utilities;
 public class Settings {
 
 	private static Logger log = Logger.getLogger(Settings.class);
+	private static Settings instance;
 
 	public static final File FILE = new File(getUserDir(), "settings.xml");
-
-	private static Settings instance;
 
 	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
 	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
 	public int maxMapSize = 32767;
 
-	private boolean tileStoreEnabled = true;
+	public boolean tileStoreEnabled = true;
 
 	/**
 	 * Mapview related settings
@@ -63,18 +63,19 @@ public class Settings {
 	@XmlElement(nillable = false)
 	public String mapviewMapSource = MapSourcesManager.DEFAULT.getName();
 
-	private String elementName = "Layer name";
+	public String elementName = "Layer name";
 
 	private String userAgent = UserAgent.FF3_XP;
 
-	private int downloadThreadCount = 4;
+	public int downloadThreadCount = 4;
 
 	private boolean customTileProcessing = false;
 	private Dimension tileSize = new Dimension(256, 256);
 	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
 	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
-	public String atlasOutputDirectory;
+	@XmlElement
+	private String atlasOutputDirectory = null;
 	public String tileStoreDirectory;
 
 	/**
@@ -206,30 +207,6 @@ public class Settings {
 		}
 	}
 
-	public boolean isTileStoreEnabled() {
-		return tileStoreEnabled;
-	}
-
-	public void setTileStoreEnabled(boolean tileStoreEnabled) {
-		this.tileStoreEnabled = tileStoreEnabled;
-	}
-
-	public String getElemntName() {
-		return elementName;
-	}
-
-	public void setElementName(String name) {
-		this.elementName = name;
-	}
-
-	public int getDownloadThreadCount() {
-		return downloadThreadCount;
-	}
-
-	public void setDownloadThreadCount(int threadCount) {
-		this.downloadThreadCount = threadCount;
-	}
-
 	public String getUserAgent() {
 		return userAgent;
 	}
@@ -357,5 +334,21 @@ public class Settings {
 
 	public UnitSystem getUnitSystem() {
 		return ScaleBar.unitSystem;
+	}
+
+	public File getAtlasOutputDirectory() {
+		if (atlasOutputDirectory != null || atlasOutputDirectory.length() == 0)
+			return new File(atlasOutputDirectory);
+
+		return new File(DirectoryManager.currentDir, "atlases");
+	}
+
+	public void setAtlasOutputDirectory(String dir) {
+		if (dir == null || dir.trim().length() == 0
+				|| !(new File(atlasOutputDirectory).isDirectory())) {
+			atlasOutputDirectory = null;
+			return;
+		}
+		atlasOutputDirectory = dir;
 	}
 }

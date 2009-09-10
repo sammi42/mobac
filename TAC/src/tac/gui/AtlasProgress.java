@@ -28,6 +28,7 @@ import tac.program.Logging;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
+import tac.program.model.Settings;
 import tac.utilities.GBC;
 import tac.utilities.OSUtilities;
 import tac.utilities.TACExceptionHandler;
@@ -391,8 +392,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
-		String workingDir = System.getProperty("user.dir");
-		File atlasFolder = new File(workingDir, "atlases");
+		File atlasFolder = Settings.getInstance().getAtlasOutputDirectory();
 		if (openProgramFolderButton.equals(source)) {
 			try {
 				OSUtilities.openFolderBrowser(atlasFolder);

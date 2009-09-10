@@ -21,6 +21,7 @@ public class JIntCombo extends JComboBox {
 	public JIntCombo(Vector<Integer> values, Integer defaultValue) {
 		super(values);
 		this.defaultValue = defaultValue;
+		
 		createEditorComponent();
 		setEditable(true);
 		setEditor(new Editor());

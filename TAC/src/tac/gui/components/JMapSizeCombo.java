@@ -1,5 +1,6 @@
 package tac.gui.components;
 
+import java.awt.Color;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -21,7 +22,8 @@ public class JMapSizeCombo extends JIntCombo {
 	static {
 		// Sizes from 1024 to 32768
 		MAP_SIZE_VALUES = new Vector<Integer>(10);
-		MAP_SIZE_VALUES.addElement(new Integer(32767));
+		MAP_SIZE_VALUES.addElement(new Integer(1048575));
+		MAP_SIZE_VALUES.addElement(DEFAULT = new Integer(32767));
 		MAP_SIZE_VALUES.addElement(new Integer(30000));
 		MAP_SIZE_VALUES.addElement(new Integer(25000));
 		MAP_SIZE_VALUES.addElement(new Integer(20000));
@@ -39,8 +41,12 @@ public class JMapSizeCombo extends JIntCombo {
 
 	@Override
 	protected void createEditorComponent() {
-		editorComponent = new JIntField(MIN, MAX, 4, "<html>Invalid map size!<br>"
-				+ "Please enter a number between %d and %d</html>");
+		editorComponent = new JIntField(MIN, MAX, 4,
+				"<html>Warning: TrekBuddy versions before v0.9.88 "
+						+ "do not support map sizes larger than 32767.<br>"
+						+ "Newer versions have a map size limitation of 1048575.<br>"
+						+ "Please enter a number larger than %d and 32767/1048575</html>");
+		editorComponent.setErrorColor(Color.ORANGE);
 	}
 
 }

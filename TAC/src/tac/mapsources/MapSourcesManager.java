@@ -39,6 +39,7 @@ import tac.mapsources.impl.OsmMapSources.Mapnik;
 import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
 import tac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import tac.mapsources.impl.OsmMapSources.TilesAtHome;
+import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveCom;
@@ -90,7 +91,7 @@ public class MapSourcesManager {
 				new CycleMap(), new OsmHikingMap(), new OsmPublicTransport(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
-				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), };
+				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new AustrianMap() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

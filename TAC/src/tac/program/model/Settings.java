@@ -337,18 +337,18 @@ public class Settings {
 	}
 
 	public File getAtlasOutputDirectory() {
-		if (atlasOutputDirectory != null || atlasOutputDirectory.length() == 0)
+		if (atlasOutputDirectory != null)
 			return new File(atlasOutputDirectory);
-
 		return new File(DirectoryManager.currentDir, "atlases");
 	}
 
+	/**
+	 * 
+	 * @param dir
+	 *            <code>null</code> reset to default directory otherwise set the
+	 *            new atlas output directory.
+	 */
 	public void setAtlasOutputDirectory(String dir) {
-		if (dir == null || dir.trim().length() == 0
-				|| !(new File(atlasOutputDirectory).isDirectory())) {
-			atlasOutputDirectory = null;
-			return;
-		}
 		atlasOutputDirectory = dir;
 	}
 }

@@ -21,12 +21,14 @@ import tac.tar.TarIndex;
 import tac.utilities.jdbc.SQLite;
 
 /**
- * Atlas/Map creator for "BigPlanet-Maps application for Android" (affline
- * SQLIte maps) http://bigplanetmaps.wordpress.com/
+ * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
+ * SQLite maps) http://bigplanetmaps.wordpress.com/
  * 
  * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
  * http://www.ch-werner.de/javasqlite/
  * 
+ * Some source parts are taken from the "android-map.blogspot.com Version of
+ * TrekBuddy Atlas Creator": http://code.google.com/p/android-map/
  * <p>
  * Hello "tytung".
  * 
@@ -51,8 +53,6 @@ public class MapCreatorBigPlanet extends MapCreator {
 	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,s,image) VALUES (?,?,?,?,?)";
 
 	private static final String DATABASE_FILENAME = "BigPlanet_maps.sqlitedb";
-
-	
 
 	/**
 	 * Commit only every i tiles
@@ -86,8 +86,6 @@ public class MapCreatorBigPlanet extends MapCreator {
 			throw new MapCreationException("Error creating SQL database", e);
 		}
 	}
-
-	
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {
 		SQLite.loadSQLite();

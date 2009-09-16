@@ -20,6 +20,11 @@ import tac.utilities.OSUtilities.OperatingSystem;
 public class DirectoryManager {
 
 	// private static Logger log = Logger.getLogger(DirectoryManager.class);
+	public static final File currentDir;
+	public static final File programDir;
+	public static final File userHomeDir;
+	public static final File userSettingsDir;
+	public static final File tempDir;
 
 	static {
 		currentDir = new File(System.getProperty("user.dir"));
@@ -28,12 +33,6 @@ public class DirectoryManager {
 		tempDir = new File(System.getProperty("java.io.tmpdir"));
 		programDir = getProgramDir();
 	}
-
-	public static final File currentDir;
-	public static final File programDir;
-	public static final File userHomeDir;
-	public static final File userSettingsDir;
-	public static final File tempDir;
 
 	public static void initialize() {
 		if (currentDir == null || userSettingsDir == null || tempDir == null || programDir == null)

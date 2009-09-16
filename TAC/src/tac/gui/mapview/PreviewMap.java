@@ -232,7 +232,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			g.setColor(GRID_COLOR);
 			g.drawRect(x_min, y_min, w, h);
 		}
-		ScaleBar.paintScaleBar(g, mapSource.getMapSpace(), tlc, zoom);
+		ScaleBar.paintScaleBar(this, g, mapSource.getMapSpace(), tlc, zoom);
 	}
 
 	public EastNorthCoordinate getPositionCoordinate() {

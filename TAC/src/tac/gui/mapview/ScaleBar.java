@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import javax.swing.JComponent;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.program.model.UnitSystem;
@@ -29,8 +31,8 @@ public class ScaleBar {
 
 	public static UnitSystem unitSystem = UnitSystem.Metric;
 
-	public static void paintScaleBar(Graphics g, MapSpace mapSpace, Point tlc, int zoom) {
-		Rectangle r = g.getClipBounds();
+	public static void paintScaleBar(JComponent c, Graphics g, MapSpace mapSpace, Point tlc, int zoom) {
+		Rectangle r = c.getBounds();
 		int posX;
 		int posY = r.height - r.y;
 		posY -= MARGIN_Y;

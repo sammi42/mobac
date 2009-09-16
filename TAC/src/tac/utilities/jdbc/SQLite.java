@@ -36,7 +36,7 @@ public class SQLite {
 				File[] dirList = new File[] { DirectoryManager.programDir,
 						new File(DirectoryManager.programDir, "lib"), DirectoryManager.currentDir,
 						new File(DirectoryManager.currentDir, "lib") };
-				cl = new ExtensionClassLoader(dirList, "sqlite.*");
+				cl = ExtensionClassLoader.create(dirList, "sqlite.*");
 				DriverProxy.loadSQLDriver("SQLite.JDBCDriver", cl);
 				SQLITE_LOADED = true;
 				return true;

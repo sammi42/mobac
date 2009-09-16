@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.apache.log4j.Logger;
 
@@ -58,11 +60,22 @@ public class ExtensionClassLoader extends URLClassLoader {
 		if (jarFiles == null)
 			throw new FileNotFoundException("No directory containing \"" + regexFilePattern
 					+ "\" found.");
-		URL[] urls = new URL[jarFiles.length];
+		final URL[] urls = new URL[jarFiles.length];
 		for (int i = 0; i < urls.length; i++) {
 			urls[i] = new URL("jar", "", "file:" + jarFiles[i].getAbsolutePath() + "!/");
 		}
-		return new ExtensionClassLoader(urls, jarDir);
+		final File jarDir_ = jarDir;
+		ExtensionClassLoader ecl = AccessController
+				.doPrivileged(new PrivilegedAction<ExtensionClassLoader>() {
+					public ExtensionClassLoader run() {
+						try {
+							return new ExtensionClassLoader(urls, jarDir_);
+						} catch (MalformedURLException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				});
+		return ecl;
 	}
 
 	@Override

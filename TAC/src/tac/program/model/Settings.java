@@ -43,6 +43,8 @@ public class Settings {
 
 	public static final File FILE = new File(getUserDir(), "settings.xml");
 
+	private static long SETTINGS_LAST_MODIFIED = 0;
+
 	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
 	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
@@ -122,6 +124,7 @@ public class Settings {
 
 	private Vector<String> disabledMapSources = new Vector<String>();
 
+	@XmlElementWrapper(name = "customMapSources")
 	@XmlElement(name = "customMapSource")
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
@@ -164,10 +167,20 @@ public class Settings {
 			JAXBContext context = JAXBContext.newInstance(Settings.class);
 			Unmarshaller um = context.createUnmarshaller();
 			instance = (Settings) um.unmarshal(FILE);
+			SETTINGS_LAST_MODIFIED = FILE.lastModified();
 		} finally {
 			Settings s = getInstance();
 			s.applyProxySettings();
 		}
+	}
+
+	public static boolean checkSettingsFileModified() {
+		if (SETTINGS_LAST_MODIFIED == 0)
+			return false;
+		// Check if the settings.xml has been modified
+		// since it has been loaded
+		long lastModified = FILE.lastModified();
+		return (SETTINGS_LAST_MODIFIED != lastModified);
 	}
 
 	public static void save() throws JAXBException {
@@ -184,6 +197,7 @@ public class Settings {
 			m.marshal(getInstance(), bo);
 			fo = new FileOutputStream(FILE);
 			fo.write(bo.toByteArray());
+			SETTINGS_LAST_MODIFIED = FILE.lastModified();
 		} catch (IOException e) {
 			throw new JAXBException(e);
 		} finally {

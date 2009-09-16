@@ -56,11 +56,7 @@ public class ExtensionClassLoader extends URLClassLoader {
 	protected String findLibrary(String libname) {
 		libname = System.mapLibraryName(libname);
 		File f = new File(jarDir, libname);
-		if (f.isFile())
-			return f.getAbsolutePath();
-		else
-			return null;
-
+		return f.getAbsolutePath();
 	}
 
 }

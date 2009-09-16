@@ -15,22 +15,22 @@ import tac.mapsources.mapspace.Power2MapSpace;
 public class CustomMapSource implements MapSource {
 
 	@XmlElement(nillable = false, defaultValue = "Custom")
-	private String name;
+	private String name = "Custom";
 
 	@XmlElement(defaultValue = "0")
-	private int minZoom;
+	private int minZoom = 0;
 
 	@XmlElement(required = true)
 	private int maxZoom = 0;
 
 	@XmlElement(defaultValue = "png")
-	private String tileType;
+	private String tileType = "png";
 
 	@XmlElement(defaultValue = "NONE")
 	private TileUpdate tileUpdate;
 
 	@XmlElement(required = true, nillable = false)
-	private String url = null;
+	private String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
 
 	/**
 	 * Constructor without parameters - required by JAXB
@@ -78,5 +78,5 @@ public class CustomMapSource implements MapSource {
 	public MapSpace getMapSpace() {
 		return Power2MapSpace.INSTANCE;
 	}
-	
+
 }

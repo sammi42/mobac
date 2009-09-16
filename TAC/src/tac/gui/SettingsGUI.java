@@ -490,7 +490,7 @@ public class SettingsGUI extends JDialog {
 			s.setGoogleLanguage(googleLang.getSelectedItem().toString());
 		}
 		try {
-			Settings.save();
+			MainGUI.getMainGUI().checkAndSaveSettings();
 		} catch (Exception e) {
 			log.error("Error saving settings to file", e);
 			JOptionPane.showMessageDialog(null, "Error saving settings to file:\n" + e.toString()

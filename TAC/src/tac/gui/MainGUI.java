@@ -33,6 +33,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -483,13 +484,27 @@ public class MainGUI extends JFrame implements MapEventListener {
 					}
 				}
 			}
-			Settings.save();
+			checkAndSaveSettings();
 		} catch (Exception e) {
 			TACExceptionHandler.showExceptionDialog(e);
 			JOptionPane.showMessageDialog(null,
 					"Error on writing program settings to \"settings.xml\"", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	public void checkAndSaveSettings() throws JAXBException {
+		if (Settings.checkSettingsFileModified()) {
+			int x = JOptionPane.showConfirmDialog(this,
+					"The settings.xml files has been changed by another application.\n"
+							+ "Do you want to overwrite these changes?\n"
+							+ "All changes made by the other application will be lost!",
+					"Overwrite changes?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (x != JOptionPane.YES_OPTION)
+				return;
+		}
+		Settings.save();
+
 	}
 
 	public String getUserText() {

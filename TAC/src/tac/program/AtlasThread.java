@@ -147,10 +147,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 						// Do nothing and continue with next map
 					} catch (Exception e) {
 						log.error("", e);
-						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
-								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
-								+ "Press OK to continue atlas creation.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						TACExceptionHandler.processException(e);
+//						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
+//								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
+//								+ "Press OK to continue atlas creation.", "Error",
+//								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}

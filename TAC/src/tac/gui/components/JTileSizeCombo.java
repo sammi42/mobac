@@ -10,7 +10,7 @@ public class JTileSizeCombo extends JIntCombo {
 
 	public static final int MIN = 50;
 
-	public static final int MAX = 1792;
+	public static final int MAX = 2000;
 
 	static Vector<Integer> TILE_SIZE_VALUES;
 

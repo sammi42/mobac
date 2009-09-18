@@ -27,6 +27,7 @@ import tac.program.mapcreators.MapCreatorAndNav;
 import tac.program.mapcreators.MapCreatorBigPlanet;
 import tac.program.mapcreators.MapCreatorCustom;
 import tac.program.mapcreators.MapCreatorMTE;
+import tac.program.mapcreators.MapCreatorOSMTracker;
 import tac.program.mapcreators.MapCreatorOzi;
 import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
@@ -295,6 +296,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				break;
 			case AndNav:
 				mc = new MapCreatorAndNav(map, tileIndex, atlasDir);
+				break;
+			case OSMTracker:
+				mc = new MapCreatorOSMTracker(map, tileIndex, atlasDir);
 				break;
 			case BigPlanet:
 				mc = new MapCreatorBigPlanet(map, tileIndex, atlasDir);

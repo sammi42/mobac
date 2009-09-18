@@ -20,6 +20,7 @@
  + New atlas format: Mobile Trail Explorer (MTE)
  + New atlas format: BigPlanet SQLite (Android application, 
     requires additional sqlite libraries) 
+ + New atlas format: OSMTracker 
  + New map source: OpenStreetMap Public Transport (öpnvkarte.de)
  + New map source: AustrianMap (z14 & z15 of www.austrianmap.at) 
     [provided by Guenther Hoelzl]

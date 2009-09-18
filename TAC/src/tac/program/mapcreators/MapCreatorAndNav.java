@@ -24,6 +24,8 @@ public class MapCreatorAndNav extends MapCreator {
 
 	private File mapZoomDir;
 
+	protected String additionalFileExt = ".andnav";
+
 	public MapCreatorAndNav(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
 		File mapDir = new File(atlasDir, map.getMapSource().getName());
@@ -68,7 +70,8 @@ public class MapCreatorAndNav extends MapCreator {
 				if (ap != null)
 					ap.incMapCreationProgress();
 				try {
-					String tileFileName = x + "/" + y + "." + mapSource.getTileType() + ".andnav";
+					String tileFileName = x + "/" + y + "." + mapSource.getTileType()
+							+ additionalFileExt;
 					byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x + "."
 							+ mapSource.getTileType());
 					if (sourceTileData != null)

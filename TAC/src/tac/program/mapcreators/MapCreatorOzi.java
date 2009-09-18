@@ -21,7 +21,7 @@ import tac.utilities.imageio.PngXxlWriter;
 /**
  * 
  */
-public class MapCreatorOzi extends MapCreator {
+public class MapCreatorOzi extends MapCreatorTrekBuddy {
 
 	private File mapDir;
 
@@ -45,6 +45,7 @@ public class MapCreatorOzi extends MapCreator {
 		}
 	}
 
+	@Override
 	protected void writeMapFile() {
 		FileOutputStream fout = null;
 		try {

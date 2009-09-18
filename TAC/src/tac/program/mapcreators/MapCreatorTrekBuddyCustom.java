@@ -17,19 +17,19 @@ import tac.tar.TarIndex;
 import tac.utilities.MyMath;
 
 /**
- * Extends the {@link MapCreator} so that custom tiles are written. Custom tiles
- * can have a size different of 255x255 pixels), a different color depth and a
- * different image type (jpg/png).
+ * Extends the {@link MapCreatorTrekBuddy} so that custom tiles are written.
+ * Custom tiles can have a size different of 255x255 pixels), a different color
+ * depth and a different image type (jpg/png).
  * 
  * @author r_x
  */
-public class MapCreatorCustom extends MapCreator {
+public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 
 	private TileImageParameters param;
 	private int realWidth;
 	private int realHeight;
 
-	public MapCreatorCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir,
+	public MapCreatorTrekBuddyCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir,
 			TileImageParameters parameters) {
 		super(map, tarTileIndex, atlasDir);
 		this.param = parameters;

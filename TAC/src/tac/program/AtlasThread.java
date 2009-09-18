@@ -25,10 +25,11 @@ import tac.program.interfaces.MapInterface;
 import tac.program.mapcreators.MapCreator;
 import tac.program.mapcreators.MapCreatorAndNav;
 import tac.program.mapcreators.MapCreatorBigPlanet;
-import tac.program.mapcreators.MapCreatorCustom;
 import tac.program.mapcreators.MapCreatorMTE;
 import tac.program.mapcreators.MapCreatorOSMTracker;
 import tac.program.mapcreators.MapCreatorOzi;
+import tac.program.mapcreators.MapCreatorTrekBuddy;
+import tac.program.mapcreators.MapCreatorTrekBuddyCustom;
 import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
@@ -149,10 +150,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 					} catch (Exception e) {
 						log.error("", e);
 						TACExceptionHandler.processException(e);
-//						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
-//								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
-//								+ "Press OK to continue atlas creation.", "Error",
-//								JOptionPane.ERROR_MESSAGE);
+						// JOptionPane.showMessageDialog(null,
+						// "An error occured: " + e.getMessage()
+						// + "\n[" + e.getClass().getSimpleName() + "]\n\n"
+						// + "Press OK to continue atlas creation.", "Error",
+						// JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -287,9 +289,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			case UntaredAtlas:
 				TileImageParameters parameters = map.getParameters();
 				if (parameters == null)
-					mc = new MapCreator(map, tileIndex, atlasDir);
+					mc = new MapCreatorTrekBuddy(map, tileIndex, atlasDir);
 				else
-					mc = new MapCreatorCustom(map, tileIndex, atlasDir, parameters);
+					mc = new MapCreatorTrekBuddyCustom(map, tileIndex, atlasDir, parameters);
 				break;
 			case MTE:
 				mc = new MapCreatorMTE(map, tileIndex, atlasDir);

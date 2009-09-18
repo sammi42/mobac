@@ -184,4 +184,56 @@ public class RegionalMapSources {
 
 	}
 
+	public static class FreemapSlovakia extends AbstractMapSource {
+
+		public FreemapSlovakia() {
+			super("FreemapSlovakia", 5, 16, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://www.freemap.sk/layers/allinone/?/BNp/" + zoom + "/" + tilex + "/"
+					+ tiley;
+		}
+
+		@Override
+		public String toString() {
+			return "Freemap Slovakia (Atlas)";
+		}
+
+	}
+
+	public static class FreemapSlovakiaHikingHillShade extends AbstractMapSource {
+
+		public FreemapSlovakiaHikingHillShade() {
+			super("FreemapSlovakiaHikingHillShade", 6, 16, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://www.freemap.sk/layers/allinone/?/BVRNTp/" + zoom + "/" + tilex + "/"
+					+ tiley;
+		}
+
+		@Override
+		public String toString() {
+			return "Freemap Slovakia Hiking (with HillShade)";
+		}
+	}
+
+	public static class FreemapSlovakiaHiking extends AbstractMapSource {
+
+		public FreemapSlovakiaHiking() {
+			super("FreemapSlovakiaHiking", 6, 16, "png");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://www.freemap.sk/layers/allinone/?/BNTNp/" + zoom + "/" + tilex + "/"
+					+ tiley;
+		}
+
+		@Override
+		public String toString() {
+			return "Freemap Slovakia Hiking";
+		}
+	}
+
 }

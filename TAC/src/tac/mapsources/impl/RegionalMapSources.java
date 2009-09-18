@@ -184,6 +184,9 @@ public class RegionalMapSources {
 
 	}
 
+	/**
+	 * @author SourceForge.net user didoa. 
+	 */
 	public static class FreemapSlovakia extends AbstractMapSource {
 
 		public FreemapSlovakia() {
@@ -202,6 +205,9 @@ public class RegionalMapSources {
 
 	}
 
+	/**
+	 * @author SourceForge.net user didoa. 
+	 */
 	public static class FreemapSlovakiaHikingHillShade extends AbstractMapSource {
 
 		public FreemapSlovakiaHikingHillShade() {
@@ -219,6 +225,9 @@ public class RegionalMapSources {
 		}
 	}
 
+	/**
+	 * @author SourceForge.net user didoa. 
+	 */
 	public static class FreemapSlovakiaHiking extends AbstractMapSource {
 
 		public FreemapSlovakiaHiking() {

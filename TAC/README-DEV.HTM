@@ -28,7 +28,8 @@ h1 {
 
 pre {
 	margin-left: 140px;
-	}
+}
+
 p,li {
 	font-size: 110%;
 	font-family: Helvetica, Arial, sans-serif;
@@ -68,6 +69,26 @@ which is a Java only version of the command <a
 (bases on <a href="http://svnkit.com">SVNKit</a>). This command updates
 the SVN revision information in file <tt>src/tac/tac-rev.properties</tt>
 which is included in the final jar of TAC.</p>
+
+<h2>Guidelines for publishing custom builds/releases</h2>
+<p>If you modify TrekBuddy Atlas Creator and you want to publish it
+yourself please consider the following guidelines:</p>
+<ol>
+	<li>Chose a version/release name that makes it clear that it is
+	not an official release: Change the version string to refelect that.<br>
+	Example: <tt>1.6 beta 3 XYZ edition</tt><br>
+	The version string is located in the properties file <tt>src/tac/tac.properties</tt>.
+	Change the entry <b>tac.version</b> to your custom release name.</li>
+	<li>Do not forget that TrekBuddy Atlas Creator is a GPL project -
+	therefore publishing the source code together with the binary release
+	should went without saying.</li>
+	<li>If your modification is useful you may consider to present it
+	to the TrekBuddy Atlas Creator development team. <a
+		href="https://sourceforge.net/tracker/?group_id=238075&atid=1105496">Patches</a>
+	are always welcome. Useful modifications have a great chance to be
+	integrated into the main branch.
+	<li>
+</ol>
 
 <h2>Participation</h2>
 <p>If you are familiar with the programming language Java and you

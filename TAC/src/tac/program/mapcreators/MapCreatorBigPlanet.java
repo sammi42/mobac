@@ -23,14 +23,26 @@ import tac.utilities.jdbc.SQLite;
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
  * SQLite maps) http://bigplanetmaps.wordpress.com/
- * 
+ * <p>
  * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
  * http://www.ch-werner.de/javasqlite/
- * 
+ * </p>
+ * <p>
  * Some source parts are taken from the "android-map.blogspot.com Version of
  * TrekBuddy Atlas Creator": http://code.google.com/p/android-map/
+ * </p>
  * <p>
- * Hello "tytung".
+ * Additionally the created BigPlanet SQLite database has one additional table
+ * containing special info needed by the Android application <a
+ * href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>.<br>
+ * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and
+ * {@link #RMAPS_UPDATE_INFO_SQL} ).<br>
+ * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
+ * <p>
+ * Finally some in-code developer-to-developer communication:
+ * 
+ * <pre>
+ * Hello &quot;tytung&quot;.
  * 
  * I havn't found a different way to communicate with you. You modified
  * TrekBuddy Atlas Creator without publishing the sources - you bad boy ;-).
@@ -40,17 +52,19 @@ import tac.utilities.jdbc.SQLite;
  * 
  * Please do not proceed in modifying TrekBuddy Atlas creator yourself - instead
  * please write a patch and upload it into the patch tracker
- * http://sourceforge.net/tracker/?group_id=238075&atid=1105496 or contact me
+ * http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105496 or contact me
  * directly via e-mail:
  * 
  * r_x [at] users.sourceforge.net
- * </p>
+ * </pre>
  */
 public class MapCreatorBigPlanet extends MapCreator {
 
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
 	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,s,image) VALUES (?,?,?,?,?)";
+	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 As minzoom, 0 As maxzoom";
+	private static final String RMAPS_UPDATE_INFO_SQL = "DELETE FROM info; INSERT INTO info SELECT MIN(z), MAX(z) FROM tiles";
 
 	private static final String DATABASE_FILENAME = "BigPlanet_maps.sqlitedb";
 
@@ -99,6 +113,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate(TABLE_DDL);
 		stat.executeUpdate(INDEX_DDL);
+		stat.executeUpdate(RMAPS_TABLE_INFO_DDL);
 
 		stat.executeUpdate("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)");
 		if (!(stat.executeQuery("SELECT * FROM android_metadata").first())) {
@@ -145,6 +160,9 @@ public class MapCreatorBigPlanet extends MapCreator {
 			prepStmt.executeBatch();
 			conn.commit();
 			prepStmt.clearBatch();
+
+			Statement stat = conn.createStatement();
+			stat.executeUpdate(RMAPS_UPDATE_INFO_SQL);
 		} catch (SQLException e) {
 			log.error("", e);
 		}

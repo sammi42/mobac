@@ -39,7 +39,7 @@ p,li {
 </head>
 <body>
 <h1>TrekBuddy Atlas Creator - Readme</h1>
-<p>This is the readme file for the TrekBuddy Atlas Creator (TAC)
+<p>This is  readme file for the TrekBuddy Atlas Creator (TAC)
 application. <br>
 TAC is an open source project hosted on SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
@@ -55,7 +55,8 @@ TAC is an open source project hosted on SourceForge.net: <br>
 	<li><a href="#MTE">Creating and using atlases with Mobile
 	Trail Explorer (MTE)</a></li>
 	<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
-	<li><a href="#BigMap">Creating and using atlases with BigPlanet/RMaps</a></li>
+	<li><a href="#BigPlanet">Creating and using atlases with
+	BigPlanet / RMaps</a></li>
 	<li><a href="#Ozi">Creating and using atlases with OziExplorer
 	/ large PNG image</a></li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
@@ -81,8 +82,8 @@ created for OziExplorer can also be used with any PNG capable image
 viewer (map image in one large PNG file).</p>
 
 <h2><a name="Requirements">Requirements</a></h2>
-<p>This application requires that a Java Runtime Environment Version 6 Update 14
- (v1.6.0_14) or higher is installed on the computer.</p>
+<p>This application requires that a Java Runtime Environment Version
+6 Update 14 (v1.6.0_14) or higher is installed on the computer.</p>
 <p>For reducing the color depth of downloaded tiles the library
 files of the "Java Advanced Imaging" (JAI) have to be present on the
 system respectively in the same directory as
@@ -97,7 +98,7 @@ to have TAC installed.</p>
 
 <h2><a name="Start">Application start</a></h2>
 <p>The application is started by executing the <tt>start.cmd</tt> in
-a Windows environment or the <tt>start.sh</tt> under an Linux / Unix
+a Windows environment or the <tt>start.sh</tt> under a Linux / Unix
 environment. At the first application start all necessary files and
 folders are automatically created by the application.</p>
 
@@ -111,7 +112,7 @@ start atlas download and creation via the button <b>Create Atlas</b>.
 Once atlas download and creation has completed all necessary files
 belonging to the atlas can be found in the directory <tt>atlases\[atlas
 name]_[current date and time]</tt>.</p>
-<p>The atlas itself consists of the the atlas startup file <tt>cr.tar</tt>
+<p>The atlas itself consists of the atlas startup file <tt>cr.tar</tt>
 (tar format) or <tt>cr.tba</tt> (regular/untared format) and the
 subdirectories containing the different maps of the atlas. For using the
 atlas with TrekBuddy copy the whole directory onto your J2ME device and
@@ -147,18 +148,44 @@ AndNav:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2><a name="BigMap">Creating and using atlases with BigPlanet/RMaps</a></h2>
-<p>
-
-<a href="http://robertdeveloper.blogspot.com/search/label/rmaps>RMaps</a>
-TODO
-</p>
-<h3>SQLite library</h3>
-<p>
-<a href="http://www.ch-werner.de/javasqlite">JavaSQLite</a><br>
-<a href="http://www.ch-werner.de/javasqlite/javasqlite-20090430.tar.gz">
-SQLite binaries for Win32</a>
-</p>
+<h2><a name="BigPlanet">Creating and using atlases with
+BigPlanet / RMaps</a></h2>
+<p>For creating offline atlases compatible with <a
+	href="http://bigplanetmaps.wordpress.com/">BigPlanet-Maps</a> and <a
+	href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>
+(both Android applications) you have to select <b>BigPlanet SQLite</b>
+as format in section <b>Atlas settings</b> on the left side of the main
+window. <br>
+Please not that this atlas format requires additional libraries which
+are not shipped with TrekBuddy Atlas Creator. Read section <a
+	href="#SQLite">SQLite library</a> for details what libraries are
+required and how to obtain them.<br>
+The atlas format BigPlanet SQLite does not support all features provided
+by TrekBuddy the following settings are ignored when creating atlases
+using this output format:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+	<li>Atlases created after another are merged into one Database
+	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
+	output directory.</li>
+</ul>
+<h3><a name="SQLite">SQLite library</a></h3>
+<p>The BigPlanet atlas format uses a SQLite database for storing the
+tiles. For creating SQLite database additional libraries (Java and
+native) are required. TrekBuddy Atlas Creator uses the <a
+	href="http://www.ch-werner.de/javasqlite">JavaSQLite wrapper by
+Christian Werner</a>. For installing the SQLite wrapper copy the files <tt>sqlite.jar</tt>
+and <tt>sqlite_jni.dll</tt> (Windows) respectively <tt>sqlite_jni.so</tt>
+(Linux/Unix) into the program directory of TrekBuddy Atlas Creator
+(where the TrekBuddy_Atlas_Creator.jar is located).</p>
+<p>For 32 bit Windows systems there are pre-compiled binaries
+available: <a
+	href="http://www.ch-werner.de/javasqlite/javasqlite-20090430-win32.zip">
+SQLite binaries for Win32</a>. Other operating systems have to compile the
+wrapper using the <a
+	href="http://www.ch-werner.de/javasqlite/javasqlite-20090430.tar.gz">sources</a>.</p>
 
 <h2><a name="Ozi">Creating and using atlases with OziExplorer /
 large PNG image export</a></h2>
@@ -189,7 +216,7 @@ to open the image.</p>
 
 <h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other
-enhancement ideas for TrekBuddy Atlas Creator feel free te open an <a
+enhancement ideas for TrekBuddy Atlas Creator feel free to open an <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105497">Feature
 Request Ticket</a> at SourceForge.</p>
 
@@ -231,7 +258,7 @@ and width of a map</a> and <a
 
 <h2><a name="AdvancedUsers">Details for advanced users</a></h2>
 <h3>Custom map sources</h3>
-<p>Custom map sources which uses a similar url scheme as
+<p>Custom map sources which uses a similar URL scheme as
 Google/OpenStreetMap can be added by editing the file <tt>settings.xml</tt>
 with an text editor.<br>
 The following example shows what have to be added for defining a custom

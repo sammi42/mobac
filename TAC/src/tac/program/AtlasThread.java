@@ -265,7 +265,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			tileArchive.writeEndofArchive();
 			tileArchive.close();
 			tileIndex = tileArchive.getTarIndex();
-			if (tileIndex.size() != tileCount) {
+			if (tileIndex.size() < tileCount) {
 				log.debug("Expected tile count: " + tileCount + " downloaded tile count: "
 						+ tileIndex.size());
 				int answer = JOptionPane.showConfirmDialog(ap,

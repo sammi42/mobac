@@ -17,24 +17,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class JobDispatcher {
 
-	private static JobDispatcher INSTANCE;
+	private static final JobDispatcher INSTANCE = new JobDispatcher();
 
 	/**
-	 * @return the singelton instance of the {@link JobDispatcher}
+	 * @return the singleton instance of the {@link JobDispatcher}
 	 */
 	public static JobDispatcher getInstance() {
-		// for speed reasons we check if the instance has been created
-		// one time before we enter the synchronized section...
-		if (INSTANCE != null)
-			return INSTANCE;
-		synchronized (JobDispatcher.class) {
-			// ... and for thread safety reasons one time inside the
-			// synchronized section.
-			if (INSTANCE != null)
-				return INSTANCE;
-			INSTANCE = new JobDispatcher();
-			return INSTANCE;
-		}
+		return INSTANCE;
 	}
 
 	private JobDispatcher() {

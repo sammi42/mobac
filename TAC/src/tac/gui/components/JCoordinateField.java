@@ -23,8 +23,8 @@ public class JCoordinateField extends JTextField {
 	private JCoordinateListener coordinateListener;
 	private boolean inputIsValid = true;
 
-	private double min;
-	private double max;
+	private final double min;
+	private final double max;
 	
 	public JCoordinateField(double min, double max) {
 		super(10);

@@ -11,8 +11,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.InvalidNameException;
 import tac.program.DownloadJobEnumerator;
@@ -24,7 +24,6 @@ import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.tar.TarIndexedArchive;
-import tac.utilities.MyMath;
 
 public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode,
 		DownloadableElement {
@@ -194,8 +193,14 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 
 	public int calculateTilesToDownload() {
 		int tileSize = mapSource.getMapSpace().getTileSize();
-		int width = MyMath.divCeil((maxTileCoordinate.x - minTileCoordinate.x) + 1, tileSize);
-		int height = MyMath.divCeil((maxTileCoordinate.y - minTileCoordinate.y) + 1, tileSize);
+		// This algorithm has to be identically to those used in
+		// @DownloadJobEnumerator
+		int xMin = minTileCoordinate.x / tileSize;
+		int xMax = maxTileCoordinate.x / tileSize;
+		int yMin = minTileCoordinate.y / tileSize;
+		int yMax = maxTileCoordinate.y / tileSize;
+		int width = xMax - xMin + 1;
+		int height = yMax - yMin + 1;
 		return width * height;
 	}
 

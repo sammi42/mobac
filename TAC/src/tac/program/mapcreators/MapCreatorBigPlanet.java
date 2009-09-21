@@ -163,6 +163,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 
 			Statement stat = conn.createStatement();
 			stat.executeUpdate(RMAPS_UPDATE_INFO_SQL);
+			stat.close();
 		} catch (SQLException e) {
 			log.error("", e);
 		}

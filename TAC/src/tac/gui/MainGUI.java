@@ -86,7 +86,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JSlider zoomSlider;
 	private JComboBox mapSourceCombo;
 	private JButton helpButton;
-	private JButton fullScreenButton;
 	private JButton settingsButton;
 	private JAtlasNameField atlasNameTextField;
 	private JComboBox atlasOutputFormatCombo;
@@ -194,12 +193,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		settingsButton = new JButton("Settings");
 		settingsButton.addActionListener(new SettingsButtonListener());
 		settingsButton.setToolTipText("Open the preferences dialogue panel.");
-
-		// full screen
-		fullScreenButton = new JButton("Full screen off");
-		fullScreenButton.addActionListener(new FullScreenButtonListener());
-		fullScreenButton.setToolTipText("Toggle full screen.");
-		fullScreenButton.setEnabled(false); // TODO: reenable
 
 		// atlas output format
 		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
@@ -324,11 +317,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		// leftPanel.add(leftPanelContent, GBC.std().fill());
 	}
 
-	/**
-	 * Updates the panel that holds all controls which are placed
-	 * "inside"/"over" the preview map.
-	 */
-	private JPanel updateMapControlsPanel(boolean fullScreenEnabled) {
+	private JPanel updateMapControlsPanel() {
 		mapControlPanel.removeAll();
 		mapControlPanel.setOpaque(false);
 
@@ -346,71 +335,23 @@ public class MainGUI extends JFrame implements MapEventListener {
 		topControls.add(zoomLevelText, GBC.std().insets(0, 5, 0, 0));
 		topControls.add(gridZoomCombo, GBC.std().insets(10, 5, 0, 0));
 		topControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		if (fullScreenEnabled)
-			topControls.add(mapSourceCombo, GBC.std().insets(20, 5, 20, 0));
 		topControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		if (fullScreenEnabled)
-			topControls.add(settingsButton, GBC.std().insets(20, 5, 0, 0));
 		topControls.add(helpButton, GBC.std().insets(10, 5, 5, 0));
 		mapControlPanel.add(topControls, BorderLayout.NORTH);
 
 		// bottom panel
 		JPanel bottomControls = new JPanel(new GridBagLayout());
 		bottomControls.setOpaque(false);
-		// bottomControls.add(fullScreenButton, GBC.std().insets(5, 0, 0, 5));
 		bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		if (fullScreenEnabled) {
-			// atlas name label
-			JLabel atlasNameLabel = new JLabel(" Atlas name ");
-			atlasNameLabel.setOpaque(true);
-			atlasNameLabel.setBackground(labelBackgroundColor);
-			atlasNameLabel.setForeground(labelForegroundColor);
-
-			// bottomControls.add(profilesCombo, GBC.std().insets(5, 0, 0, 5));
-			// bottomControls.add(deleteProfileButton, GBC.std().insets(10, 0,
-			// 0, 5));
-			// bottomControls.add(saveAsProfileButton, GBC.std().insets(10, 0,
-			// 0, 5));
-			bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-			bottomControls.add(atlasNameLabel, GBC.std().insets(0, 0, 0, 5));
-			bottomControls.add(atlasNameTextField, GBC.std().insets(0, 0, 0, 5));
-			bottomControls.add(createAtlasButton, GBC.std().insets(10, 0, 5, 5));
-		}
 		mapControlPanel.add(bottomControls, BorderLayout.SOUTH);
 
-		// left controls panel
-		if (fullScreenEnabled) {
-			// zoom levels label
-			JLabel label = new JLabel(" Zoom levels ");
-			label.setOpaque(true);
-			label.setBackground(labelBackgroundColor);
-			label.setForeground(labelForegroundColor);
-			label.setToolTipText("Select the zoom levels to include in the atlas");
-
-			JPanel leftControls = new JPanel(new GridBagLayout());
-			leftControls.add(label, GBC.eol().insets(5, 20, 0, 0));
-			leftControls.add(zoomLevelPanel, GBC.eol().insets(0, 5, 0, 0));
-			leftControls.add(amountOfTilesLabel, GBC.eol().insets(5, 10, 0, 10));
-			leftControls.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
-			leftControls.setOpaque(false);
-			mapControlPanel.add(leftControls, BorderLayout.WEST);
-		}
 		return mapControlPanel;
 	}
 
 	private void updatePanels() {
-		boolean fullScreenEnabled = false;
-
-		updateMapControlsPanel(fullScreenEnabled);
-
-		if (fullScreenEnabled) {
-			leftPanel.setVisible(false);
-			fullScreenButton.setText("Full screen off");
-		} else {
-			updateLeftPanel();
-			leftPanel.setVisible(true);
-			fullScreenButton.setText("Full screen");
-		}
+		updateMapControlsPanel();
+		updateLeftPanel();
+		leftPanel.setVisible(true);
 		calculateNrOfTilesToDownload();
 		updateZoomLevelCheckBoxes();
 		previewMap.grabFocus();
@@ -579,14 +520,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private class FullScreenButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// Settings settings = Settings.getInstance();
-			// settings.setFullScreenEnabled(!settings.getFullScreenEnabled());
-			updatePanels();
-		}
-	}
-
 	private class ProfilesComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Profile profile = profilesPanel.getSelectedProfile();
@@ -628,13 +561,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		cbZoom = new JCheckBox[zoomLevels];
 		zoomLevelPanel.removeAll();
 
-		boolean fullScreenEnabled = false; // Settings.getInstance().
-		// getFullScreenEnabled();
-		if (fullScreenEnabled) {
-			zoomLevelPanel.setLayout(new GridLayout(0, 2, 5, 3));
-		} else {
-			zoomLevelPanel.setLayout(new GridLayout(0, 10, 1, 2));
-		}
+		zoomLevelPanel.setLayout(new GridLayout(0, 10, 1, 2));
 		ZoomLevelCheckBoxListener cbl = new ZoomLevelCheckBoxListener();
 
 		for (int i = cbZoom.length - 1; i >= 0; i--) {
@@ -652,22 +579,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 			cbZoom[i] = cb;
 
 			JLabel l = new JLabel(Integer.toString(cbz));
-			if (fullScreenEnabled) {
-				l.setOpaque(true);
-				l.setBackground(labelBackgroundColor);
-				l.setForeground(labelForegroundColor);
-			}
 			zoomLevelPanel.add(l);
 		}
-		if (fullScreenEnabled) {
-			amountOfTilesLabel.setOpaque(true);
-			amountOfTilesLabel.setBackground(labelBackgroundColor);
-			amountOfTilesLabel.setForeground(labelForegroundColor);
-		} else {
-			amountOfTilesLabel.setOpaque(false);
-			amountOfTilesLabel.setForeground(Color.black);
-		}
-
+		amountOfTilesLabel.setOpaque(false);
+		amountOfTilesLabel.setForeground(Color.black);
 	}
 
 	private class ZoomLevelCheckBoxListener implements ActionListener {

@@ -116,7 +116,7 @@ public class Google {
 		}
 
 		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			return TileUpdate.None;
 		}
 
 		@Override

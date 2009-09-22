@@ -6,14 +6,18 @@ import java.util.HashMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMapsChina;
+import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
+import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
+import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
+import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -34,6 +38,8 @@ public class MapSourcesTester {
 	public static final EastNorthCoordinate C_BANGALORE = new EastNorthCoordinate(12.95, 77.616667);
 	public static final EastNorthCoordinate C_SHANGHAI = new EastNorthCoordinate(31.2333, 121.4666);
 	public static final EastNorthCoordinate C_WARSZAWA = new EastNorthCoordinate(52.2166, 21.0333);
+	public static final EastNorthCoordinate C_VIENNA = new EastNorthCoordinate(48.20, 16.37);
+	public static final EastNorthCoordinate C_BRATISLAVA = new EastNorthCoordinate(48.154, 17.14);
 
 	public static final EastNorthCoordinate C_DEFAULT = C_BERLIN;
 
@@ -47,6 +53,10 @@ public class MapSourcesTester {
 		testCoordinates.put(Cykloatlas.class, C_PRAHA);
 		testCoordinates.put(GoogleMapsChina.class, C_SHANGHAI);
 		testCoordinates.put(DoCeluPL.class, C_WARSZAWA);
+		testCoordinates.put(AustrianMap.class, C_VIENNA);
+		testCoordinates.put(FreemapSlovakia.class, C_BRATISLAVA);
+		testCoordinates.put(FreemapSlovakiaHiking.class, C_BRATISLAVA);
+		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, C_BRATISLAVA);
 	}
 
 	public static void main(String[] args) {

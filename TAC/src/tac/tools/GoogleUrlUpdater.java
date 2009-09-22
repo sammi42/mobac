@@ -128,7 +128,7 @@ public class GoogleUrlUpdater {
 			try {
 				System.setProperty(key, newUrlTemplate);
 				MapSourcesTester.testMapSource(ums.mapSourceClass);
-				System.out.println(key + "=" + newUrlTemplate);
+				System.out.println(ums.mapSourceClass.getSimpleName());
 				MAPSOURCES_PROPERTIES.setProperty(key, newUrlTemplate);
 				updatedMapSources++;
 			} catch (MapSourceTestFailed e) {

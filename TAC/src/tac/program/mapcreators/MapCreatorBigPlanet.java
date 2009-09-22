@@ -133,6 +133,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 		}
 		ImageIO.setUseCache(false);
 		try {
+			conn.setAutoCommit(false);
 			int tileCount = 0;
 			prepStmt = conn.prepareStatement(INSERT_SQL);
 			for (int x = xMin; x <= xMax; x++) {

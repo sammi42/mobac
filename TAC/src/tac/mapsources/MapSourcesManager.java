@@ -22,11 +22,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.Main;
 import tac.exceptions.MapSourcesUpdateException;
 import tac.mapsources.impl.LocalhostTestSource;
-import tac.mapsources.impl.MiscMapSources;
 import tac.mapsources.impl.Google.GoogleEarth;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMaps;
 import tac.mapsources.impl.Google.GoogleMapsChina;
+import tac.mapsources.impl.Google.GoogleMapsKorea;
 import tac.mapsources.impl.Google.GoogleTerrain;
 import tac.mapsources.impl.Microsoft.MicrosoftHybrid;
 import tac.mapsources.impl.Microsoft.MicrosoftMaps;
@@ -34,6 +34,7 @@ import tac.mapsources.impl.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import tac.mapsources.impl.MiscMapSources.MultimapCom;
 import tac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
+import tac.mapsources.impl.MiscMapSources.YahooMaps;
 import tac.mapsources.impl.OsmMapSources.CycleMap;
 import tac.mapsources.impl.OsmMapSources.Mapnik;
 import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
@@ -89,9 +90,10 @@ public class MapSourcesManager {
 		loadMapSourceProperties();
 		MAP_SOURCES = new MapSource[] { //
 				//
-				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleEarth(),
-				new GoogleTerrain(), new MiscMapSources.YahooMaps(), DEFAULT, new TilesAtHome(),
-				new CycleMap(), new OsmHikingMap(), new OsmPublicTransport(), new MicrosoftMaps(),
+				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
+				new GoogleMapsKorea(), new GoogleEarth(), new GoogleTerrain(),
+				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
+				new OsmHikingMap(), new OsmPublicTransport(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
 				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new AustrianMap(),

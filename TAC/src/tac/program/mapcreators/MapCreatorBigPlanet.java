@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 
-import javax.imageio.ImageIO;
-
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.program.AtlasThread;
@@ -37,7 +35,8 @@ import tac.utilities.jdbc.SQLite;
  * href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>.<br>
  * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and
  * {@link #RMAPS_UPDATE_INFO_SQL} ).<br>
- * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
+ * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of
+ * RMaps.
  * <p>
  * Finally some in-code developer-to-developer communication:
  * 
@@ -131,7 +130,6 @@ public class MapCreatorBigPlanet extends MapCreator {
 			ap = ((AtlasThread) t).getAtlasProgress();
 			ap.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		}
-		ImageIO.setUseCache(false);
 		try {
 			conn.setAutoCommit(false);
 			int tileCount = 0;

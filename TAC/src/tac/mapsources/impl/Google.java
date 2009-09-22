@@ -106,6 +106,26 @@ public class Google {
 
 	}
 
+	/**
+	 * Google Maps Korea
+	 */
+	public static class GoogleMapsKorea extends GoogleSource {
+
+		public GoogleMapsKorea() {
+			super("Google Maps Korea", 0, 19, "png");
+		}
+
+		public TileUpdate getTileUpdate() {
+			return TileUpdate.IfModifiedSince;
+		}
+
+		@Override
+		public String toString() {
+			return "Google Maps Korea";
+		}
+
+	}
+
 	public static class GoogleEarth extends GoogleSource {
 
 		public GoogleEarth() {

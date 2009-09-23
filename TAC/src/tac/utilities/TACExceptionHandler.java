@@ -93,6 +93,13 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			sb.append("\nMapsources rev: "
 					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
 
+			sb.append("\n\nError hierarchy:");
+			Throwable tmp = e;
+			while (tmp != null) {
+				sb.append("\n  " + tmp.getClass().getSimpleName() + ": " + tmp.getMessage());
+				tmp = tmp.getCause();
+			}
+
 			StringWriter stack = new StringWriter();
 			e.printStackTrace(new PrintWriter(stack));
 			sb.append("\n\n" + stack.getBuffer().toString());

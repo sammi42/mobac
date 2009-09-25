@@ -13,3 +13,7 @@ SwissGeo
 Enrio.se
 	http://kartor.eniro.se/
 	Reson: Incompatible zoom levels
+
+OpenSeaMap: 
+	http://www.openseamap.org/
+	Reason: map is only an overlyay to OSM Mapnik

@@ -1,0 +1,15 @@
+Ireland Map 
+	http://ims0.osiemaps.ie/website/publicviewer/main.aspx?id=&utype=&ecom=S1&user=
+	Reason: Wrong tile size (512x512)
+	
+Mapy.cz
+	http://www.mapy.cz/
+	Reson: Incompatible zoom levels
+	
+SwissGeo
+	http://www.swissgeo.ch/surf.php
+	Reason: Wrong tile size (400x400)
+
+Enrio.se
+	http://kartor.eniro.se/
+	Reson: Incompatible zoom levels

@@ -38,24 +38,6 @@ import tac.utilities.jdbc.SQLite;
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of
  * RMaps.
  * <p>
- * Finally some in-code developer-to-developer communication:
- * 
- * <pre>
- * Hello &quot;tytung&quot;.
- * 
- * I havn't found a different way to communicate with you. You modified
- * TrekBuddy Atlas Creator without publishing the sources - you bad boy ;-).
- * Luckily java classes can be decompiled and your changes were not too much.
- * Please look onto the code below. I optimized so that it works now without the
- * intermediate AndNav format: It writes now directly into the SQLite database.
- * 
- * Please do not proceed in modifying TrekBuddy Atlas creator yourself - instead
- * please write a patch and upload it into the patch tracker
- * http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105496 or contact me
- * directly via e-mail:
- * 
- * r_x [at] users.sourceforge.net
- * </pre>
  */
 public class MapCreatorBigPlanet extends MapCreator {
 

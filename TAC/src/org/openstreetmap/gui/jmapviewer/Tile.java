@@ -2,6 +2,7 @@ package org.openstreetmap.gui.jmapviewer;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -11,8 +12,8 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 
 import tac.utilities.Utilities;
 
@@ -203,7 +204,7 @@ public class Tile {
 	public void paint(Graphics g, int x, int y) {
 		if (image == null)
 			return;
-		g.drawImage(image, x, y, null);
+		g.drawImage(image, x, y, Color.WHITE, null);
 	}
 
 	@Override

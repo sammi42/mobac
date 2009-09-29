@@ -15,7 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.Google.GoogleMapsKorea;
+import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -44,7 +44,7 @@ public class MapSourceTypeDetector {
 		// testMapSource("Mapnik", C_PRAHA);
 		// testMapSource(Cykloatlas.class, C_PRAHA);
 		// testMapSource(OsmHikingMap.class, C_BERLIN);
-		testMapSource(GoogleMapsKorea.class, C_SEOUL);
+		testMapSource(OsmHikingMap.class, C_BERLIN);
 		// testMapSource("TilesAtHome", C_BERLIN);
 	}
 

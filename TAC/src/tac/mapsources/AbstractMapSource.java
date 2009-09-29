@@ -1,7 +1,7 @@
 package tac.mapsources;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.mapspace.Power2MapSpace;
 
@@ -17,11 +17,16 @@ public abstract class AbstractMapSource implements MapSource {
 	protected TileUpdate tileUpdate;
 
 	public AbstractMapSource(String name, int minZoom, int maxZoom, String tileType) {
+		this(name, minZoom, maxZoom, tileType, TileUpdate.None);
+	}
+
+	public AbstractMapSource(String name, int minZoom, int maxZoom, String tileType,
+			TileUpdate tileUpdate) {
 		this.name = name;
 		this.minZoom = minZoom;
 		this.maxZoom = maxZoom;
 		this.tileType = tileType;
-		tileUpdate = TileUpdate.None;
+		this.tileUpdate = tileUpdate;
 	}
 
 	public int getMaxZoom() {

@@ -37,6 +37,7 @@ import tac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import tac.mapsources.impl.MiscMapSources.YahooMaps;
 import tac.mapsources.impl.OsmMapSources.CycleMap;
 import tac.mapsources.impl.OsmMapSources.Mapnik;
+import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
 import tac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import tac.mapsources.impl.OsmMapSources.TilesAtHome;
@@ -91,9 +92,9 @@ public class MapSourcesManager {
 		MAP_SOURCES = new MapSource[] { //
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
-				new GoogleMapsKorea(), new GoogleEarth(), new GoogleTerrain(),
-				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
-				new OsmHikingMap(), new OsmPublicTransport(), new MicrosoftMaps(),
+				new GoogleMapsKorea(), new GoogleEarth(), new GoogleTerrain(), new YahooMaps(),
+				DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
+				new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
 				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new AustrianMap(),

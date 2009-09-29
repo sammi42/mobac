@@ -7,6 +7,7 @@ public class OsmMapSources {
 	public static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 	public static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 	public static final String MAP_HIKING = "http://topo.geofabrik.de/trails/";
+	public static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
 
@@ -108,7 +109,6 @@ public class OsmMapSources {
 			super("TilesAtHome");
 			this.maxZoom = 17;
 			this.tileUpdate = TileUpdate.IfModifiedSince;
-			;
 		}
 
 		@Override
@@ -126,7 +126,7 @@ public class OsmMapSources {
 	public static class OsmHikingMap extends AbstractMapSource {
 
 		public OsmHikingMap() {
-			super("OSM Hiking", 4, 15, "png");
+			super("OSM Hiking", 4, 15, "png", TileUpdate.LastModified);
 		}
 
 		@Override
@@ -139,5 +139,21 @@ public class OsmMapSources {
 		}
 
 	}
+	public static class OpenPisteMap extends AbstractMapSource {
 
+		public OpenPisteMap() {
+			super("OpenPisteMap", 0, 17, "png");
+			tileUpdate = TileUpdate.LastModified;
+		}
+
+		@Override
+		public String toString() {
+			return "Open Piste Map";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return MAP_PISTE + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
 }

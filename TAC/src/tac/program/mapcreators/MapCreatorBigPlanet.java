@@ -20,7 +20,7 @@ import tac.utilities.jdbc.SQLite;
 
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
- * SQLite maps) http://bigplanetmaps.wordpress.com/
+ * SQLite maps) http://code.google.com/p/bigplanet/
  * <p>
  * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
  * http://www.ch-werner.de/javasqlite/

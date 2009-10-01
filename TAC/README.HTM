@@ -39,7 +39,7 @@ p,li {
 </head>
 <body>
 <h1>TrekBuddy Atlas Creator - Readme</h1>
-<p>This is  readme file for the TrekBuddy Atlas Creator (TAC)
+<p>This is readme file for the TrekBuddy Atlas Creator (TAC)
 application. <br>
 TAC is an open source project hosted on SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
@@ -55,6 +55,8 @@ TAC is an open source project hosted on SourceForge.net: <br>
 	<li><a href="#MTE">Creating and using atlases with Mobile
 	Trail Explorer (MTE)</a></li>
 	<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
+	<li><a href="#Maverick">Creating and using atlases with
+	Maverick</a></li>
 	<li><a href="#BigPlanet">Creating and using atlases with
 	BigPlanet / RMaps</a></li>
 	<li><a href="#Ozi">Creating and using atlases with OziExplorer
@@ -75,7 +77,11 @@ Version 2 (GPL). For details on the GPL see the license file <a
 <p>This application creates atlases for the J2ME applications <a
 	href="http://www.trekbuddy.net">TrekBuddy</a> and <a
 	href="http://code.google.com/p/mobile-trail-explorer/">Mobile Trail
-Explorer (MTE)</a>, the Android application <a href="http://www.andnav.org/">AndNav</a>
+Explorer (MTE)</a>, the Android applications <a
+	href="http://www.andnav.org/">AndNav</a>, <a
+	href="http://www.codesector.com/maverick.php">Maverick</a>, <a
+	href="http://code.google.com/p/bigplanet/">BigPlanet-Maps</a>, <a
+	href="http://robertdeveloper.blogspot.com/search/label/rmaps.release">RMaps</a>
 and the commercial Windows application <a
 	href="http://www.oziexplorer.com/">OziExplorer</a>. The map image
 created for OziExplorer can also be used with any PNG capable image
@@ -140,6 +146,19 @@ atlases for Mobile Trail Explorer:</p>
 atlas format</b> as format in section <b>Atlas settings</b> on the left side
 of the main window. <br>
 As atlases for AndNav does not support all features provided by
+TrekBuddy the following settings are ignored when creating atlases for
+AndNav:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+</ul>
+
+<h2><a name="Maverick">Creating and using atlases with Maverick</a></h2>
+<p>For creating atlases compatible with Maverick you have to select
+<b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
+on the left side of the main window. <br>
+As atlases for Maverick does not support all features provided by
 TrekBuddy the following settings are ignored when creating atlases for
 AndNav:</p>
 <ul>

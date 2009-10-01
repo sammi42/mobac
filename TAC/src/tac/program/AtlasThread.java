@@ -23,13 +23,9 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.mapcreators.MapCreator;
-import tac.program.mapcreators.MapCreatorAndNav;
-import tac.program.mapcreators.MapCreatorBigPlanet;
-import tac.program.mapcreators.MapCreatorMTE;
-import tac.program.mapcreators.MapCreatorOSMTracker;
-import tac.program.mapcreators.MapCreatorOzi;
 import tac.program.mapcreators.MapCreatorTrekBuddy;
 import tac.program.mapcreators.MapCreatorTrekBuddyCustom;
+import tac.program.model.AtlasOutputFormat;
 import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
@@ -283,8 +279,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			downloadJobDispatcher.cancelOutstandingJobs();
 			log.debug("Starting to create atlas from downloaded tiles");
 
+			AtlasOutputFormat aof = atlasInterface.getOutputFormat();
 			MapCreator mc = null;
-			switch (atlasInterface.getOutputFormat()) {
+			switch (aof) {
 			case TaredAtlas:
 			case UntaredAtlas:
 				TileImageParameters parameters = map.getParameters();
@@ -293,20 +290,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 				else
 					mc = new MapCreatorTrekBuddyCustom(map, tileIndex, atlasDir, parameters);
 				break;
-			case MTE:
-				mc = new MapCreatorMTE(map, tileIndex, atlasDir);
-				break;
-			case AndNav:
-				mc = new MapCreatorAndNav(map, tileIndex, atlasDir);
-				break;
-			case OSMTracker:
-				mc = new MapCreatorOSMTracker(map, tileIndex, atlasDir);
-				break;
-			case BigPlanet:
-				mc = new MapCreatorBigPlanet(map, tileIndex, atlasDir);
-				break;
-			case OziPng:
-				mc = new MapCreatorOzi(map, tileIndex, atlasDir);
+			default:
+				mc = aof.createMapCreatorInstance(map, tileIndex, atlasDir);
 			}
 			mc.createMap();
 		} catch (Exception e) {

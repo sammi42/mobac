@@ -32,7 +32,7 @@ import tac.utilities.jdbc.SQLite;
  * <p>
  * Additionally the created BigPlanet SQLite database has one additional table
  * containing special info needed by the Android application <a
- * href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>.<br>
+ * href="http://robertdeveloper.blogspot.com/search/label/rmaps.release">RMaps</a>.<br>
  * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and
  * {@link #RMAPS_UPDATE_INFO_SQL} ).<br>
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of

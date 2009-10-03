@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
 
 import tac.data.gpx.GPXTest;
-import tac.data.gpx.interfaces.Gpx;
+import tac.data.gpx.gpx11.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.panels.JGpxPanel;
 import tac.gui.panels.JGpxPanel.ListModelEntry;

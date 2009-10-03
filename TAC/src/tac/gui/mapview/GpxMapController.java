@@ -11,9 +11,7 @@ import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import tac.data.gpx.gpx10.Gpx10;
-import tac.data.gpx.gpx11.Gpx11;
-import tac.data.gpx.interfaces.Gpx;
+import tac.data.gpx.gpx11.Gpx;
 import tac.gui.panels.JGpxPanel.ListModelEntry;
 
 public class GpxMapController extends JMapController implements MouseListener {
@@ -41,22 +39,12 @@ public class GpxMapController extends JMapController implements MouseListener {
 					.showInputDialog(null, "Plase input a name for the new point:");
 			if (name == null)
 				return;
-			if (gpx instanceof Gpx10) {
-				Gpx10 gpx10 = (Gpx10) gpx;
-				tac.data.gpx.gpx10.WptType wpt = new tac.data.gpx.gpx10.WptType();
-				wpt.setName(name);
-				wpt.setLat(new BigDecimal(lat));
-				wpt.setLon(new BigDecimal(lon));
-				gpx10.getWpt().add(wpt);
-			}
-			if (gpx instanceof Gpx11) {
-				Gpx11 gpx11 = (Gpx11) gpx;
-				tac.data.gpx.gpx11.WptType wpt = new tac.data.gpx.gpx11.WptType();
-				wpt.setName(name);
-				wpt.setLat(new BigDecimal(lat));
-				wpt.setLon(new BigDecimal(lon));
-				gpx11.getWpt().add(wpt);
-			}
+			Gpx gpx11 = (Gpx) gpx;
+			tac.data.gpx.gpx11.WptType wpt = new tac.data.gpx.gpx11.WptType();
+			wpt.setName(name);
+			wpt.setLat(new BigDecimal(lat));
+			wpt.setLon(new BigDecimal(lon));
+			gpx11.getWpt().add(wpt);
 		}
 		map.repaint();
 	}

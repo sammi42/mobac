@@ -12,17 +12,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import tac.data.gpx.interfaces.Gpx;
+import tac.data.gpx.gpx11.Gpx;
 import tac.utilities.Utilities;
 
 public class GPXTest {
 
-	private static final Class<?>[] GPX_CLASSES = { tac.data.gpx.gpx10.Gpx10.class,
-			tac.data.gpx.gpx11.Gpx11.class };
-
 	public static Gpx loadGpxFile(File f) throws JAXBException {
 		// Load GPX 1.0 and GPX 1.1 definition into the JAXB context
-		JAXBContext context = JAXBContext.newInstance(GPX_CLASSES, null);
+		JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		InputStream is = null;
@@ -38,7 +35,7 @@ public class GPXTest {
 
 	public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
 		// Load GPX 1.0 and GPX 1.1 definition into the JAXB context
-		JAXBContext context = JAXBContext.newInstance(GPX_CLASSES, null);
+		JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

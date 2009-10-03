@@ -10,7 +10,6 @@ package tac.data.gpx.gpx11;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
-import tac.data.gpx.common.BoundsType;
 
 
 /**
@@ -111,11 +110,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Gpx11 }
+     * Create an instance of {@link Gpx }
      * 
      */
-    public Gpx11 createGpx() {
-        return new Gpx11();
+    public Gpx createGpx() {
+        return new Gpx();
     }
 
     /**

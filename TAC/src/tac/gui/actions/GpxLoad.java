@@ -9,7 +9,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.bind.JAXBException;
 
 import tac.data.gpx.GPXTest;
-import tac.data.gpx.interfaces.Gpx;
+import tac.data.gpx.gpx11.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.mapview.GpxLayer;
 import tac.gui.panels.JGpxPanel;
@@ -42,7 +42,7 @@ public class GpxLoad implements ActionListener {
 
 			@Override
 			public String getDescription() {
-				return "GPX 1.0/1.1 files (*.gpx)";
+				return "GPX 1.1 files (*.gpx)";
 			}
 		});
 		int returnVal = fc.showOpenDialog(MainGUI.getMainGUI());

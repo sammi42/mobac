@@ -68,7 +68,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "wptType", propOrder = { "ele", "time", "magvar", "geoidheight", "name", "cmt",
 		"desc", "src", "link", "sym", "type", "fix", "sat", "hdop", "vdop", "pdop",
 		"ageofdgpsdata", "dgpsid", "extensions" })
-public class WptType implements tac.data.gpx.interfaces.Wpt {
+public class WptType {
 
 	protected BigDecimal ele;
 	protected XMLGregorianCalendar time;

@@ -1,4 +1,4 @@
-package tac.data.gpx.common;
+package tac.data.gpx.gpx11;
 
 import java.math.BigDecimal;
 

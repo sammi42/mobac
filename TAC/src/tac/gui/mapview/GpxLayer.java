@@ -7,8 +7,8 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import tac.data.gpx.interfaces.Gpx;
-import tac.data.gpx.interfaces.Wpt;
+import tac.data.gpx.gpx11.Gpx;
+import tac.data.gpx.gpx11.WptType;
 
 /**
  * A {@link MapLayer} displaying the content of a loaded GPX file in a
@@ -39,7 +39,7 @@ public class GpxLayer implements MapLayer {
 		g.setColor(pointColor);
 		final MapSpace mapSpace = map.getMapSource().getMapSpace();
 		if (showWaypoints) {
-			for (Wpt wpt : gpx.getWpt()) {
+			for (WptType wpt : gpx.getWpt()) {
 				int x = mapSpace.cLonToX(wpt.getLon().doubleValue(), zoom);
 				if (x < minX || x > maxX)
 					continue; // Point outside of visible region

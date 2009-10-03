@@ -9,6 +9,7 @@ package tac.data.gpx.gpx11;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "metadata", "wpt", "rte", "trk", "extensions" })
 @XmlRootElement(name = "gpx")
-public class Gpx11 implements tac.data.gpx.interfaces.Gpx {
+public class Gpx {
 
 	protected MetadataType metadata;
 	protected List<WptType> wpt;

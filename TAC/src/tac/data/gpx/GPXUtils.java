@@ -15,10 +15,10 @@ import javax.xml.bind.Unmarshaller;
 import tac.data.gpx.gpx11.Gpx;
 import tac.utilities.Utilities;
 
-public class GPXTest {
+public class GPXUtils {
 
 	public static Gpx loadGpxFile(File f) throws JAXBException {
-		// Load GPX 1.0 and GPX 1.1 definition into the JAXB context
+		// Create GPX 1.1 JAXB context
 		JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -34,7 +34,7 @@ public class GPXTest {
 	}
 
 	public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
-		// Load GPX 1.0 and GPX 1.1 definition into the JAXB context
+		// Create GPX 1.1 JAXB context
 		JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
 		Marshaller marshaller = context.createMarshaller();

@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.bind.JAXBException;
 
-import tac.data.gpx.GPXTest;
+import tac.data.gpx.GPXUtils;
 import tac.data.gpx.gpx11.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.mapview.GpxLayer;
@@ -53,7 +53,7 @@ public class GpxLoad implements ActionListener {
 
 		File f = fc.getSelectedFile();
 		try {
-			Gpx gpx = GPXTest.loadGpxFile(f);
+			Gpx gpx = GPXUtils.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
 			panel.addListEntry(f, gpxLayer);
 			MainGUI.getMainGUI().previewMap.mapLayers.add(gpxLayer);

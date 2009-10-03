@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
 
-import tac.data.gpx.GPXTest;
+import tac.data.gpx.GPXUtils;
 import tac.data.gpx.gpx11.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.panels.JGpxPanel;
@@ -58,7 +58,7 @@ public class GpxSave implements ActionListener {
 
 		try {
 			File f = entry.getGpxFile();// fc.getSelectedFile();
-			GPXTest.saveGpxFile(gpx, f);
+			GPXUtils.saveGpxFile(gpx, f);
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);
 		}

@@ -72,7 +72,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 			super();
 			this.gpxFile = gpxFile;
 			this.layer = layer;
-			name = gpxFile.getName() + " [wpt]";
+			name = gpxFile.getName();
 		}
 
 		@Override

@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.bind.JAXBException;
 
@@ -50,14 +51,19 @@ public class GpxLoad implements ActionListener {
 			return;
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
+		File f = fc.getSelectedFile();
 		try {
-			File f = fc.getSelectedFile();
 			Gpx gpx = GPXTest.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
 			panel.addListEntry(f, gpxLayer);
 			MainGUI.getMainGUI().previewMap.mapLayers.add(gpxLayer);
 		} catch (JAXBException e) {
-			throw new RuntimeException(e);
+			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
+					"<html>Unable to load the GPX file <br><i>" + f.getAbsolutePath()
+							+ "</i><br><br><b>Please make sure the file is a valid GPX v1.1 file.</b><br>"
+							+ "<br>Internal error message:<br>" + e.getMessage() + "</html>",
+					"GPX loading failed", JOptionPane.ERROR_MESSAGE);
+
 		}
 		MainGUI.getMainGUI().previewMap.repaint();
 	}

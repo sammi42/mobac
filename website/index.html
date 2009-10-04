@@ -23,17 +23,30 @@
 			<h2>Welcome to TrekBuddy Atlas Creator</h2>
 			<p>
 				TrekBuddy Atlas Creator is an open source (GPL) program which creates offline atlases for the cell phone applications
-				<a href="http://www.trekbuddy.net">TrekBuddy</a> (J2ME program) and <a href="http://www.andnav.org/">AndNav</a>. 
+				like <a href="http://www.trekbuddy.net">TrekBuddy</a> and <a href="http://www.andnav.org/">AndNav</a>. 
+				For the full list of supported applications please see the <a href="#features">features</a> section.
 				Additionally individual maps can be exported as one large PNG image with calibration MAP file for OziExplorer.
 				As source for an offline atlas TrekBuddy Atlas Creator can use a large number of different online maps such
 				as <a href="http://www.openstreetmap.org/">OpenStreetMap</a>, <a href="http://maps.google.com/">Google Maps</a>,
 				<a href="http://www.bing.com/maps/">Microsoft/Bing Maps</a>, <a href="http://maps.yahoo.com/">Yahoo Maps</a> 
 				and many more online map providers.
 			</p>
-			<h2>Features</h2>
+			<h2><a name="features">Features</a></h2>
 			<ul>
-				<li>Create atlases for <a href="http://www.trekbuddy.net">TrekBuddy</a> and <a href="http://www.andnav.org/">AndNav</a></li>
-				<li>Export maps as single image (PNG) with calibration (MAP) file - usable with OziExplorer</li>
+				<li>Create offline atlases for a large number of different mobile applications: 
+					<ul>
+						<li><a href="http://www.trekbuddy.net">TrekBuddy</a> (J2ME, Android)</li>
+						<li><a href="http://www.andnav.org/">AndNav</a> (Android)</li>
+						<li><a href="http://robertdeveloper.blogspot.com/search/label/rmaps.release">RMaps SQLite format</a> (Android)</li>
+						<li><a href="http://code.google.com/p/bigplanet/">BigPlanetTW SQLite format</a> (Android)</li>
+						<li><a href="http://code.google.com/p/mobile-trail-explorer/">Mobile Trail Explorer</a> (J2ME)</li>
+						<li><a href="http://www.codesector.com/maverick.php">Maverick</a> (Android)</li>
+						<li><a href="http://wiki.openstreetmap.org/wiki/Osmtracker">OSMtracker</a> (Windows Mobile/Pocket PC)</li>
+					</ul>
+				</li>
+				<li>Export maps as single image (PNG) with calibration (MAP) file - usable with 
+					<a href="http://www.oziexplorer.com/">OziExplorer</a>
+				</li>
 				<li>Prepare atlases consisting of multiple layers, different map sources map resolutions (zoom levels)...</li>
 				<li>Save and load your favorite atlas compilation as profile to/from file</li>
 				<li>Merge different layers using Drag &amp; Drop</li>
@@ -42,7 +55,7 @@
 				<li>Downloaded tiles are cached locally - avoids multiple downloads of same map tiles</li>
 				<li>Full support for network connections via HTTP proxy</li>
 			</ul>
-			<h2>Requirements</h2>
+			<h2><a name="requirements">Requirements</a></h2>
 			<p>
 				TrekBuddy Atlas Creator is written in Java and runs therefore on a large number of platforms: Windows, Linux, Mac OS X,...
 				As a Java program TrekBuddy Atlas Creator requires <b>Java Runtime Environment Version 6 Update 14 (v1.6.0_14)</b> or higher 
@@ -55,37 +68,22 @@
 				The easiest way is to download the latest ready to use 
 				<a href="https://jai.dev.java.net/binary-builds.html">binary build</a> of Java Advanced Imaging library.
 			</p>
-			<h2>Download</h2>
+			<h2><a name="download">Download</a></h2>
 			<p>
 				The latest stable version of TrekBuddy Atlas Creator in binary and source form can be obtained in the 
 				<a href="http://sourceforge.net/projects/trekbuddyatlasc/files/">download area of TrekBuddy Atlas Creator on SourceForge</a>.
 				Unstable and test versions like beta &amp; preview versions are announced in the 
-				<a href="http://www.trekbuddy.net/forum/viewtopic.php?t=464">TrekBuddy Atlas Creator thread</a> in the 
+				<a href="http://www.trekbuddy.net/forum/viewtopic.php?t=464&amp;postdays=0&amp;postorder=desc">TrekBuddy Atlas Creator thread</a> in the 
 				<a href="http://www.trekbuddy.net/forum/viewforum.php?f=7">TrekBuddy Tools forum</a> (see section Contact &amp; Community).
 			</p>
-			<h2>Contact &amp; Community</h2>
+			<h2><a name="contact">Contact &amp; Community</a></h2>
 			<p>
 				You can contact the lead developer <a href="http://sourceforge.net/users/r_x">Robert</a> directly via SourceForge or
-				visit the <a href="http://www.trekbuddy.net/forum/viewtopic.php?t=464">TrekBuddy Atlas Creator thread</a> in the 
-				<a href="http://www.trekbuddy.net/forum/viewforum.php?f=7">TrekBuddy Tools forum</a>. <br />
+				visit the <a href="http://www.trekbuddy.net/forum/viewtopic.php?t=464&amp;postdays=0&amp;postorder=desc">TrekBuddy Atlas 
+				Creator thread</a> in the <a href="http://www.trekbuddy.net/forum/viewforum.php?f=7">TrekBuddy Tools forum</a>. <br />
 				This thread is also the place where we publish preview and beta versions of new versions. Stable versions are always 
 				published in the <a href="http://sourceforge.net/projects/trekbuddyatlasc/files/">files section of TrekBuddy Atlas Creator on SourceForge</a>
 			</p>
-			<!--
-			<div id="blog">
-				<div class="blog first">
-					<h2>Blog #1</h2>
-						<p class="qoute">fully standards-compliant CSS template designed</p>
-					<p>This free template ...
-					</p>
-				</div>
-				<div class="blog">
-					<h2>Blog #2</h2>
-						<p class="qoute">fully standards-compliant CSS template designed</p>
-					<p>This free template...
-					</p>
-				</div>
-			</div>-->
 		</div>
 		<div id="right">
 			<div id="section">
@@ -95,23 +93,30 @@
 					<li><a href="http://maps.google.com/">Google Maps</a></li>
 					<li><a href="http://www.google.com/mapmaker">Google Map Maker</a></li>
 					<li><a href="http://ditu.google.com/">Google Maps China (Ditu)</a></li>
+					<li><a href="http://maps.google.com/?ie=UTF8&amp;ll=36.359375,127.749023&amp;spn=6.244879,9.865723&amp;z=7">Google Maps Korea</a></li>
 					<li><a href="http://maps.google.com/?t=k">Google Earth</a></li>
 					<li><a href="http://maps.google.com/?t=p">Google Terrain</a></li>
 					<li><a href="http://maps.yahoo.com/">Yahoo Maps</a></li>
 					<li><a href="http://www.openstreetmap.org/">OpenStreetMap Mapnik</a></li>
 					<li><a href="http://www.openstreetmap.org/?layers=0B00FTF">OpenStreetMap Osmarenderer</a></li>
 					<li><a href="http://www.opencyclemap.org/">OpenStreetMap Cyclemap</a></li>
+					<li><a href="http://www.öpnvkarte.de/">OpenStreetMap Public Transport</a></li>
 					<li><a href="http://topo.geofabrik.de/">OpenStreetMap Hiking</a></li>
 					<li><a href="http://www.bing.com/maps/">Microsoft Maps</a></li>
 					<li><a href="http://cn.bing.com/ditu/">Microsoft Maps China</a></li>
 					<li><a href="http://www.bing.com/maps/default.aspx?v=2amp;FORM=LMLTCP&amp;style=a">Microsoft Virtual Earth</a></li>
 					<li><a href="http://www.bing.com/maps/default.aspx?v=2&amp;FORM=LMLTCP&amp;style=h">Microsoft Maps/Earth Hybrid</a></li>
 					<li><a href="http://www.outdooractive.com/de/Tourismus-Region/Frankfurt-am-Main-und-Umgebung/Karte~tjznmoplyl2q">Outdooractive.com</a></li>
+					
+					<li><a href="http://www.austrianmap.at">AustrianMap</a></li>
 					<li><a href="http://www.multimap.com/maps/">Multimap.com</a></li>
 					<li><a href="http://www.cykloserver.cz/cykloatlas/">Cykloatlas</a></li>
+					<li><a href="http://www.freemap.sk">Freemap Slovakia</a></li>
 					<li><a href="http://terraserver-usa.com/image.aspx?T=2&amp;S=17&amp;Z=18&amp;X=22&amp;Y=175&amp;W=1">Terraserver-USA</a></li>
 					<li><a href="http://ump.waw.pl">UMP-PC.pl</a></li>
 					<li><a href="http://docelu.pl">Doculea.pl</a></li>
+					<li><a href="http://openpistemap.org">OpenPisteMap</a></li>
+					
 				</ul>
 			</div>
 			

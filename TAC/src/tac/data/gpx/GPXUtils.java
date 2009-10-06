@@ -11,8 +11,18 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.util.JAXBResult;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
 
 import tac.data.gpx.gpx11.Gpx;
+import tac.program.Logging;
 import tac.utilities.Utilities;
 
 public class GPXUtils {
@@ -25,8 +35,29 @@ public class GPXUtils {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(f);
-			return (Gpx) unmarshaller.unmarshal(is);
-		} catch (FileNotFoundException e) {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			DocumentBuilder loader = factory.newDocumentBuilder();
+			Document document = loader.parse(is);
+			String namespace = document.getDocumentElement().getNamespaceURI();
+			if ("http://www.topografix.com/GPX/1/1".equals(namespace)) {
+				return (Gpx) unmarshaller.unmarshal(document);
+			}
+			if ("http://www.topografix.com/GPX/1/0".equals(namespace)) {
+				Source xmlSource = new javax.xml.transform.dom.DOMSource(document);
+				Source xsltSource = new StreamSource(GPXUtils.class
+						.getResourceAsStream("/tac/resources/xsl/gpx10to11.xsl"));
+				JAXBResult result = new JAXBResult(unmarshaller);
+				TransformerFactory transFact = TransformerFactory.newInstance();
+				Transformer trans = transFact.newTransformer(xsltSource);
+				trans.transform(xmlSource, result);
+				return (Gpx) result.getResult();
+			}
+			throw new JAXBException("Expected GPX 1.0 or GPX1.1 namespace but found \n\""
+					+ namespace + "\"");
+		} catch (JAXBException e) {
+			throw e;
+		} catch (Exception e) {
 			throw new JAXBException(e);
 		} finally {
 			Utilities.closeStream(is);
@@ -50,4 +81,13 @@ public class GPXUtils {
 		}
 	}
 
+	public static void main(String[] args) {
+		Logging.configureConsoleLogging();
+		try {
+			loadGpxFile(new File("misc/samples/gpx/gpx11 wpt.gpx"));
+			loadGpxFile(new File("misc/samples/gpx/gpx10 wpt.gpx"));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+	}
 }

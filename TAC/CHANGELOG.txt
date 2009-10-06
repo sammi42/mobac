@@ -13,6 +13,7 @@
     beyond the selected grid
  + Loading & saving of GPX 1.1 files (way- track- and routepoints are
     displayed as overlay) 
+ + GPX 1.0 files are automatically transformed to GPX 1.1 file on load 
  + Add new way points to a GPX file (properties: lat, lon, name)   
  ~ Behavior on adding new maps and layers changed: the number of layers 
     has been reduced to a minimum making it easier switch between different

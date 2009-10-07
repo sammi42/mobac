@@ -72,8 +72,7 @@ public class MapCreatorAndNav extends MapCreator {
 				try {
 					String tileFileName = x + "/" + y + "." + mapSource.getTileType()
 							+ additionalFileExt;
-					byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x + "."
-							+ mapSource.getTileType());
+					byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 					if (sourceTileData != null)
 						mapTileWriter.writeTile(tileFileName, sourceTileData);
 				} catch (IOException e) {

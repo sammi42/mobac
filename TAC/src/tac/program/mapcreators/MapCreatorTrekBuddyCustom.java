@@ -171,8 +171,7 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	private int cachePos = 0;
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		String tileFileName = "y" + yTile + "x" + xTile + "." + mapSource.getTileType();
-		byte[] sourceTileData = tarTileIndex.getEntryContent(tileFileName);
+		byte[] sourceTileData = mapDlTileProcessor.getTileData(xTile, yTile);
 		if (sourceTileData == null)
 			return null;
 		for (CachedTile ct : cache) {

@@ -126,8 +126,7 @@ public class MapCreatorTrekBuddy extends MapCreator {
 				try {
 					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
 							+ "." + mapSource.getTileType();
-					byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x + "."
-							+ mapSource.getTileType());
+					byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 					if (sourceTileData != null) {
 						mapTileWriter.writeTile(tileFileName, sourceTileData);
 					} else {

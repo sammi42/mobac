@@ -93,8 +93,7 @@ public class MapCreatorOzi extends MapCreatorTrekBuddy {
 						if (ap != null)
 							ap.incMapCreationProgress();
 						try {
-							byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x
-									+ "." + mapSource.getTileType());
+							byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 							if (sourceTileData != null) {
 								BufferedImage tile = ImageIO.read(new ByteArrayInputStream(
 										sourceTileData));

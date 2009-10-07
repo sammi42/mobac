@@ -5,11 +5,11 @@ import java.io.OutputStream;
 import javax.swing.JComboBox;
 
 import tac.gui.MainGUI;
-import tac.program.TileImageJpegDataWriter;
-import tac.program.TileImagePng4DataWriter;
-import tac.program.TileImagePng8DataWriter;
-import tac.program.TileImagePngDataWriter;
 import tac.program.interfaces.TileImageDataWriter;
+import tac.program.tiledatawriter.TileImageJpegDataWriter;
+import tac.program.tiledatawriter.TileImagePng4DataWriter;
+import tac.program.tiledatawriter.TileImagePng8DataWriter;
+import tac.program.tiledatawriter.TileImagePngDataWriter;
 
 /**
  * Defines all available image formats selectable in the {@link JComboBox} in

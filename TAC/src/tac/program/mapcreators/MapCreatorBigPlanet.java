@@ -123,8 +123,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 					if (ap != null)
 						ap.incMapCreationProgress();
 					try {
-						byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x
-								+ "." + mapSource.getTileType());
+						byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 						if (sourceTileData != null) {
 							writeTile(x, y, zoom, sourceTileData);
 							if (++tileCount % COMMIT_RATE == 0) {

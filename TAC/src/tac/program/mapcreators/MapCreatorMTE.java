@@ -80,8 +80,7 @@ public class MapCreatorMTE extends MapCreator {
 					ap.incMapCreationProgress();
 				try {
 					String tileFileName = x + "/" + y + ".png";
-					byte[] sourceTileData = tarTileIndex.getEntryContent("y" + y + "x" + x + "."
-							+ mapSource.getTileType());
+					byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 					if (sourceTileData != null)
 						mapTileWriter.writeTile(tileFileName, sourceTileData);
 				} catch (IOException e) {

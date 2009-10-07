@@ -32,6 +32,7 @@ public abstract class MapCreator {
 	protected final MapSource mapSource;
 	protected final int tileSize;
 
+	protected MapDownloadedTileProcessor mapDlTileProcessor;
 	protected MapTileWriter mapTileWriter;
 
 	public MapCreator(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
@@ -47,6 +48,7 @@ public abstract class MapCreator {
 		this.tarTileIndex = tarTileIndex;
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
+		mapDlTileProcessor = new MapDownloadedTileProcessor(tarTileIndex, mapSource);
 	}
 
 	public abstract void createMap() throws MapCreationException;

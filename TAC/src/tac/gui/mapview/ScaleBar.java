@@ -1,9 +1,11 @@
 package tac.gui.mapview;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 
 import javax.swing.JComponent;
 
@@ -16,6 +18,8 @@ import tac.utilities.MyMath;
  * Simple scale bar showing the map scale using the selected unit system.
  */
 public class ScaleBar {
+
+	private static final Stroke STROKE = new BasicStroke(1);
 
 	/**
 	 * Horizontal margin between scale bar and right border of the map
@@ -31,7 +35,8 @@ public class ScaleBar {
 
 	public static UnitSystem unitSystem = UnitSystem.Metric;
 
-	public static void paintScaleBar(JComponent c, Graphics g, MapSpace mapSpace, Point tlc, int zoom) {
+	public static void paintScaleBar(JComponent c, Graphics2D g, MapSpace mapSpace, Point tlc,
+			int zoom) {
 		Rectangle r = c.getBounds();
 		int posX;
 		int posY = r.height - r.y;
@@ -60,6 +65,7 @@ public class ScaleBar {
 		// apply the round factor to the width of our scale bar
 		int w2 = (int) (w1 * factor);
 
+		g.setStroke(STROKE);
 		g.setColor(Color.YELLOW);
 		g.fillRect(posX, posY - 10, w2, 20);
 		g.setColor(Color.BLACK);

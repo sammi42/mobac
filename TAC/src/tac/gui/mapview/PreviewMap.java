@@ -174,10 +174,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics graphics) {
 		if (!isEnabled())
 			return;
-		super.paintComponent(g);
+		super.paintComponent(graphics);
+		Graphics2D g = (Graphics2D) graphics;
 		Point tlc = getTopLeftCoordinate();
 		if (gridZoom >= 0) {
 			// Only paint grid if it is enabled (gridZoom not -1)

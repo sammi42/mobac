@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
 
@@ -12,14 +13,29 @@ import tac.data.gpx.gpx11.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.panels.JGpxPanel;
 import tac.gui.panels.JGpxPanel.ListModelEntry;
+import tac.program.model.Settings;
+import tac.utilities.file.GpxFileFilter;
 
 public class GpxSave implements ActionListener {
 
-	JGpxPanel panel;
+	private JGpxPanel panel;
+	private boolean saveAs;
 
 	public GpxSave(JGpxPanel panel) {
+		this(panel, false);
+	}
+
+	/**
+	 * 
+	 * @param panel
+	 * @param saveAs
+	 *            if true a file chooser dialog is displayed where the user can
+	 *            change the filename
+	 */
+	public GpxSave(JGpxPanel panel, boolean saveAs) {
 		super();
 		this.panel = panel;
+		this.saveAs = saveAs;
 	}
 
 	public void actionPerformed(ActionEvent event) {
@@ -32,36 +48,35 @@ public class GpxSave implements ActionListener {
 		}
 		Gpx gpx = entry.getLayer().getGpx();
 
-		// JFileChooser fc = new JFileChooser();
-		// try {
-		// File dir = new File(Settings.getInstance().gpxFileChooserDir);
-		// fc.setCurrentDirectory(dir); // restore the saved directory
-		// } catch (Exception e) {
-		// }
-		// fc.addChoosableFileFilter(new FileFilter() {
-		//
-		// @Override
-		// public boolean accept(File f) {
-		// return f.isDirectory() || f.getName().endsWith(".gpx");
-		// }
-		//
-		// @Override
-		// public String getDescription() {
-		// return "GPX 1.0/1.1 files (*.gpx)";
-		// }
-		// });
-		// int returnVal = fc.showOpenDialog(MainGUI.getMainGUI());
-		// if (returnVal != JFileChooser.APPROVE_OPTION)
-		// return;
-		// Settings.getInstance().gpxFileChooserDir =
-		// fc.getCurrentDirectory().getAbsolutePath();
-
 		try {
-			File f = entry.getGpxFile();// fc.getSelectedFile();
+			File f = entry.getGpxFile();
+			if (saveAs || f == null)
+				f = selectFile(f);
+			if (f == null)
+				return;
+			entry.setFile(f);
 			GPXUtils.saveGpxFile(gpx, f);
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);
 		}
 		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	private File selectFile(File f) {
+		JFileChooser fc = new JFileChooser();
+		try {
+			File dir = new File(Settings.getInstance().gpxFileChooserDir);
+			if (f == null)
+				fc.setCurrentDirectory(dir); // restore the saved directory
+			else
+				fc.setSelectedFile(f);
+		} catch (Exception e) {
+		}
+		fc.addChoosableFileFilter(new GpxFileFilter(true));
+		int returnVal = fc.showOpenDialog(MainGUI.getMainGUI());
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return null;
+		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
+		return fc.getSelectedFile();
 	}
 }

@@ -11,19 +11,29 @@ import javax.swing.JList;
 import tac.gui.actions.GpxAddPoint;
 import tac.gui.actions.GpxClear;
 import tac.gui.actions.GpxLoad;
+import tac.gui.actions.GpxNew;
 import tac.gui.actions.GpxSave;
 import tac.gui.components.JCollapsiblePanel;
 import tac.gui.mapview.GpxLayer;
+import tac.gui.mapview.PreviewMap;
 import tac.utilities.GBC;
 
 public class JGpxPanel extends JCollapsiblePanel {
 
-	private DefaultListModel listModel;
+	protected final GpxListModel listModel;
 
 	private JList list;
 
-	public JGpxPanel() {
+	private PreviewMap previewMap;
+
+	public JGpxPanel(PreviewMap previewMap) {
 		super("Gpx", new GridBagLayout());
+
+		this.previewMap = previewMap;
+
+		JButton newGpx = new JButton("New Gpx");
+		newGpx.addActionListener(new GpxNew(this));
+
 		JButton loadGpx = new JButton("Load Gpx");
 		loadGpx.addActionListener(new GpxLoad(this));
 
@@ -36,7 +46,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 		JButton addPointGpx = new JButton("Add wpt");
 		addPointGpx.addActionListener(new GpxAddPoint(this));
 
-		listModel = new DefaultListModel();
+		listModel = new GpxListModel();
 		list = new JList(listModel);
 		list.setPreferredSize(new Dimension(100, 100));
 
@@ -45,6 +55,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 		addContent(list, eol);
 		addContent(clearGpx, std);
 		addContent(addPointGpx, eol);
+		addContent(newGpx, std);
 		addContent(loadGpx, std);
 		addContent(saveGpx, eol);
 	}
@@ -57,13 +68,15 @@ public class JGpxPanel extends JCollapsiblePanel {
 		return listModel;
 	}
 
-	public void addListEntry(File gpxFile, GpxLayer layer) {
+	public ListModelEntry addGpxLayer(File gpxFile, GpxLayer layer) {
 		ListModelEntry entry = new JGpxPanel.ListModelEntry(gpxFile, layer);
 		listModel.addElement(entry);
 		list.setSelectedValue(entry, true);
+		previewMap.mapLayers.add(layer);
+		return entry;
 	}
 
-	public static class ListModelEntry {
+	public class ListModelEntry {
 		File gpxFile;
 		GpxLayer layer;
 		String name;
@@ -72,7 +85,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 			super();
 			this.gpxFile = gpxFile;
 			this.layer = layer;
-			name = gpxFile.getName();
+			updateName();
 		}
 
 		@Override
@@ -84,9 +97,31 @@ public class JGpxPanel extends JCollapsiblePanel {
 			return gpxFile;
 		}
 
+		public void setFile(File f) {
+			if (f == gpxFile)
+				return;
+			this.gpxFile = f;
+			updateName();
+			listModel.notifyChange(this);
+		}
+
 		public GpxLayer getLayer() {
 			return layer;
 		}
 
+		public void updateName() {
+			String newName;
+			if (gpxFile != null)
+				newName = gpxFile.getName();
+			else
+				newName = "Unnamed";
+			this.name = newName;
+		}
+	}
+
+	public static class GpxListModel extends DefaultListModel {
+		public void notifyChange(ListModelEntry entry) {
+			fireContentsChanged(this, 0, getSize());
+		}
 	}
 }

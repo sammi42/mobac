@@ -288,7 +288,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		JCollapsiblePanel gpxPanel = new JGpxPanel();
+		JCollapsiblePanel gpxPanel = new JGpxPanel(previewMap);
 
 		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);

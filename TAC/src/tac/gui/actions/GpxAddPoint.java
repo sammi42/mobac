@@ -23,9 +23,12 @@ public class GpxAddPoint implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		ListModelEntry entry = panel.getSelectedEntry();
 		if (entry == null) {
-			JOptionPane.showMessageDialog(null, "No Gpx file selected", "Error adding pint",
-					JOptionPane.ERROR_MESSAGE);
-			return;
+			int answer = JOptionPane.showConfirmDialog(null, "No GPX file selected.\n"
+					+ "Do you want to create a new GPX file?", "Add point to new GPX file?",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (answer!= JOptionPane.YES_OPTION)
+				return;
+			entry = new GpxNew(panel).newGpx();
 		}
 		PreviewMap map = MainGUI.getMainGUI().previewMap;
 		map.getMapSelectionController().disable();

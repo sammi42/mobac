@@ -8,6 +8,7 @@ import tac.utilities.Utilities;
 
 public class TACInfo {
 
+	public static final String PROG_NAME = "TrekBuddy Atlas Creator";
 	private static String version = null;
 	private static String revision = "";
 
@@ -51,14 +52,19 @@ public class TACInfo {
 		return revision;
 	}
 
-	public static String getCompleteTitle() {
+	public static String getVersionTitle() {
 		String title;
 		if (version != null) {
-			title = "TrekBuddy Atlas Creator " + version;
-			if (!titleHideRevision)
-				title += " " + revision;
+			title = PROG_NAME + " " + version;
 		} else
-			title = getVersion();
+			title = PROG_NAME + " unknown version";
+		return title;
+	}
+
+	public static String getCompleteTitle() {
+		String title = getVersionTitle();
+		if (!titleHideRevision)
+			title += " " + revision;
 		return title;
 	}
 

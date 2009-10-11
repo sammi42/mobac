@@ -24,7 +24,7 @@ public class GpxNew implements ActionListener {
 	}
 
 	public ListModelEntry newGpx() {
-		Gpx gpx = new Gpx();
+		Gpx gpx = Gpx.createGpx();
 		GpxLayer gpxLayer = new GpxLayer(gpx);
 		return panel.addGpxLayer(null, gpxLayer);
 	}

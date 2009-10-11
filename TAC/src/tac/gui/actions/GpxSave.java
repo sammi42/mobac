@@ -54,6 +54,8 @@ public class GpxSave implements ActionListener {
 				f = selectFile(f);
 			if (f == null)
 				return;
+			if (!f.getName().toLowerCase().endsWith(".gpx"))
+				f = new File(f.getAbsolutePath() + ".gpx");
 			entry.setFile(f);
 			GPXUtils.saveGpxFile(gpx, f);
 		} catch (JAXBException e) {

@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import tac.program.TACInfo;
+
 /**
  * 
  * GPX documents contain a metadata header, followed by waypoints, routes, and
@@ -64,6 +66,16 @@ public class Gpx {
 	protected String version;
 	@XmlAttribute(required = true)
 	protected String creator;
+
+	public static Gpx createGpx() {
+		Gpx gpx = new Gpx();
+		gpx.setVersion("1.1");
+		gpx.setCreator(TACInfo.getVersionTitle());
+		return gpx;
+	}
+
+	protected Gpx() {
+	}
 
 	/**
 	 * Gets the value of the metadata property.

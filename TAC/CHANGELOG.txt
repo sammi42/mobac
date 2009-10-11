@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
 
  1.6: (2009-??-??)
- ! Map selection are does no longer unwanted enlarge itself in grid mode 
+ ! Map selections do no longer unwanted enlarge itself in grid mode 
     beyond the selected grid
  + Loading & saving of GPX 1.1 files (way- track- and routepoints are
     displayed as overlay) 

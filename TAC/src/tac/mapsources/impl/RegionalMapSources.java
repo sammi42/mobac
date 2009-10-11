@@ -185,12 +185,12 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * @author SourceForge.net user didoa. 
+	 * @author SourceForge.net user didoa.
 	 */
 	public static class FreemapSlovakia extends AbstractMapSource {
 
 		public FreemapSlovakia() {
-			super("FreemapSlovakia", 5, 16, "png");
+			super("FreemapSlovakia", 5, 16, "png", TileUpdate.ETag);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -206,12 +206,12 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * @author SourceForge.net user didoa. 
+	 * @author SourceForge.net user didoa.
 	 */
 	public static class FreemapSlovakiaHikingHillShade extends AbstractMapSource {
 
 		public FreemapSlovakiaHikingHillShade() {
-			super("FreemapSlovakiaHikingHillShade", 6, 16, "png");
+			super("FreemapSlovakiaHikingHillShade", 6, 16, "png", TileUpdate.ETag);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -226,12 +226,12 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * @author SourceForge.net user didoa. 
+	 * @author SourceForge.net user didoa.
 	 */
 	public static class FreemapSlovakiaHiking extends AbstractMapSource {
 
 		public FreemapSlovakiaHiking() {
-			super("FreemapSlovakiaHiking", 6, 16, "png");
+			super("FreemapSlovakiaHiking", 6, 16, "png", TileUpdate.ETag);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -242,6 +242,26 @@ public class RegionalMapSources {
 		@Override
 		public String toString() {
 			return "Freemap Slovakia Hiking";
+		}
+	}
+
+	/**
+	 * @author TB-forum member "Velociraptor"
+	 */
+	public static class EmapaPl extends AbstractMapSource {
+
+		public EmapaPl() {
+			super("EmapaPl", 0, 19, "png", TileUpdate.None);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://mapa.emapa.pl/mapsrc/img.aspx?&x=" + tilex + "&y=" + tiley + "&zoom="
+					+ zoom;
+		}
+
+		@Override
+		public String toString() {
+			return "Emapa.pl (Poland)";
 		}
 	}
 

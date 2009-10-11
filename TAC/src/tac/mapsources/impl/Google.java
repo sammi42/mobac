@@ -107,7 +107,9 @@ public class Google {
 	}
 
 	/**
-	 * Google Maps Korea
+	 * <a href="http://maps.google.com/?ie=UTF8&ll=36.279707,128.204956&spn=3.126164,4.932861&z=8"
+	 * >Google Maps Korea</a>
+	 * 
 	 */
 	public static class GoogleMapsKorea extends GoogleSource {
 

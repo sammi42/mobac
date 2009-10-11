@@ -1,6 +1,10 @@
 package tac.tools;
 
+import static tac.tools.Cities.*;
+
 import java.net.HttpURLConnection;
+
+
 import java.net.URL;
 import java.util.HashMap;
 
@@ -12,6 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMapsChina;
+import tac.mapsources.impl.Google.GoogleMapsKorea;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -21,27 +26,20 @@ import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
+
 /**
  * Small tool that tests every available map source for operability. The
  * operability test consists of the download of one map tile at the highest
  * available zoom level of the map source. By default the map tile to be
  * downloaded is located in the middle of Berlin (at the coordinate of
- * {@link #C_BERLIN}). As some map providers do not cover Berlin for each
+ * {@link #BERLIN}). As some map providers do not cover Berlin for each
  * {@link MapSource} a different test coordinate can be specified using
  * {@link #testCoordinates}.
  * 
  */
 public class MapSourcesTester {
-	public static final EastNorthCoordinate C_NEY_YORK = new EastNorthCoordinate(40.75, -73.88);
-	public static final EastNorthCoordinate C_BERLIN = new EastNorthCoordinate(52.50, 13.39);
-	public static final EastNorthCoordinate C_PRAHA = new EastNorthCoordinate(50.00, 14.41);
-	public static final EastNorthCoordinate C_BANGALORE = new EastNorthCoordinate(12.95, 77.616667);
-	public static final EastNorthCoordinate C_SHANGHAI = new EastNorthCoordinate(31.2333, 121.4666);
-	public static final EastNorthCoordinate C_WARSZAWA = new EastNorthCoordinate(52.2166, 21.0333);
-	public static final EastNorthCoordinate C_VIENNA = new EastNorthCoordinate(48.20, 16.37);
-	public static final EastNorthCoordinate C_BRATISLAVA = new EastNorthCoordinate(48.154, 17.14);
 
-	public static final EastNorthCoordinate C_DEFAULT = C_BERLIN;
+	public static final EastNorthCoordinate C_DEFAULT = BERLIN;
 
 	// private static Logger log = Logger.getLogger(MapSourcesTester.class);
 
@@ -49,14 +47,15 @@ public class MapSourcesTester {
 
 	static {
 		testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
-		testCoordinates.put(GoogleMapMaker.class, C_BANGALORE);
-		testCoordinates.put(Cykloatlas.class, C_PRAHA);
-		testCoordinates.put(GoogleMapsChina.class, C_SHANGHAI);
-		testCoordinates.put(DoCeluPL.class, C_WARSZAWA);
-		testCoordinates.put(AustrianMap.class, C_VIENNA);
-		testCoordinates.put(FreemapSlovakia.class, C_BRATISLAVA);
-		testCoordinates.put(FreemapSlovakiaHiking.class, C_BRATISLAVA);
-		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, C_BRATISLAVA);
+		testCoordinates.put(GoogleMapMaker.class, BANGALORE);
+		testCoordinates.put(Cykloatlas.class, PRAHA);
+		testCoordinates.put(GoogleMapsChina.class, SHANGHAI);
+		testCoordinates.put(GoogleMapsKorea.class, SEOUL);
+		testCoordinates.put(DoCeluPL.class, WARSZAWA);
+		testCoordinates.put(AustrianMap.class, VIENNA);
+		testCoordinates.put(FreemapSlovakia.class, BRATISLAVA);
+		testCoordinates.put(FreemapSlovakiaHiking.class, BRATISLAVA);
+		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, BRATISLAVA);
 	}
 
 	public static void main(String[] args) {

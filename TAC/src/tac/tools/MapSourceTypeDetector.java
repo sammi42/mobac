@@ -1,5 +1,7 @@
 package tac.tools;
 
+import static tac.tools.Cities.BERLIN;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -15,17 +17,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
+import tac.mapsources.impl.RegionalMapSources;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
 public class MapSourceTypeDetector {
-
-	public static final EastNorthCoordinate C_NEY_YORK = new EastNorthCoordinate(40.75, -73.88);
-	public static final EastNorthCoordinate C_BERLIN = new EastNorthCoordinate(52.50, 13.39);
-	public static final EastNorthCoordinate C_PRAHA = new EastNorthCoordinate(50.00, 14.41);
-	public static final EastNorthCoordinate C_VIENNA = new EastNorthCoordinate(48.20, 16.37);
-	public static final EastNorthCoordinate C_SEOUL = new EastNorthCoordinate(37.55, 126.98);
 
 	public static final SecureRandom RND = new SecureRandom();
 
@@ -44,7 +40,7 @@ public class MapSourceTypeDetector {
 		// testMapSource("Mapnik", C_PRAHA);
 		// testMapSource(Cykloatlas.class, C_PRAHA);
 		// testMapSource(OsmHikingMap.class, C_BERLIN);
-		testMapSource(OsmHikingMap.class, C_BERLIN);
+		testMapSource(RegionalMapSources.FreemapSlovakia.class, BERLIN);
 		// testMapSource("TilesAtHome", C_BERLIN);
 	}
 

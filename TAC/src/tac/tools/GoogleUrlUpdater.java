@@ -71,6 +71,10 @@ public class GoogleUrlUpdater {
 				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2", GoogleEarth.class));
 		g.testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2", GoogleTerrain.class));
+		// g.testMapSource(new UpdateableMapSource(
+		// "http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8",
+		// GoogleMapsKorea.class, false));
+
 		g.testMapSource(new UpdateableMapSource("", GoogleMapMaker.class) {
 
 			@Override
@@ -143,9 +147,6 @@ public class GoogleUrlUpdater {
 	public List<String> extractImgSrcList(String url) throws IOException, XPathExpressionException {
 		LinkedList<String> list = new LinkedList<String>();
 		URL u = new URL(url);
-		// Proxy p = new Proxy(Type.HTTP,new
-		// InetSocketAddress("localhost",8888));
-		// System.setProperty("java.net.useSystemProxies", "true");
 		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 
 		Tidy tidy = new Tidy();
@@ -212,7 +213,7 @@ public class GoogleUrlUpdater {
 						imgUrl = imgUrl.replaceAll("\\\\x26", "&");
 						imgUrl = imgUrl.replaceAll("\\\\x3d", "=");
 
-						// System.out.println(imgUrl);
+						//System.out.println(imgUrl);
 
 						URL tileUrl = new URL(imgUrl);
 
@@ -303,16 +304,23 @@ public class GoogleUrlUpdater {
 		public String updateUrl;
 		public String key;
 		public Class<? extends MapSource> mapSourceClass;
+		private boolean useImgSrcUrlsOnly;
 
 		public UpdateableMapSource(String updateUrl, Class<? extends MapSource> mapSourceClass) {
+			this(updateUrl, mapSourceClass, true);
+		}
+
+		public UpdateableMapSource(String updateUrl, Class<? extends MapSource> mapSourceClass,
+				boolean useImgSrcUrlsOnly) {
 			super();
 			this.updateUrl = updateUrl;
 			this.key = mapSourceClass.getSimpleName() + ".url";
 			this.mapSourceClass = mapSourceClass;
+			this.useImgSrcUrlsOnly = useImgSrcUrlsOnly;
 		}
 
 		public String getUpdatedUrl(GoogleUrlUpdater g) {
-			return g.getUpdatedUrl(updateUrl, true);
+			return g.getUpdatedUrl(updateUrl, useImgSrcUrlsOnly);
 		}
 
 	}

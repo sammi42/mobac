@@ -44,6 +44,7 @@ import tac.mapsources.impl.OsmMapSources.TilesAtHome;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
+import tac.mapsources.impl.RegionalMapSources.EmapaPl;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
@@ -97,8 +98,8 @@ public class MapSourcesManager {
 				new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
 				new OutdooractiveCom(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
-				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new AustrianMap(),
-				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
+				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new EmapaPl(),
+				new AustrianMap(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaHikingHillShade() };
 	}
 

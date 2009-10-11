@@ -31,7 +31,7 @@
  + New map sources: Google Maps Korea
  + New map sources: Open Piste Map (openpistemap.org)
  + New atlas format: Maverick (Android application)
- ! Extreme performance break-in in grid-mode 
+ ! Extreme performance break-in in grid-mode fixed
  
  1.5: (2009-08-01)
  ~ Java requirement has changed: Now at least Java 1.6 is required! 

@@ -110,6 +110,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			return;
 		mainGUI = new MainGUI();
 		mainGUI.setVisible(true);
+		log.trace("MainGUI now visible");
 	}
 
 	public static MainGUI getMainGUI() {

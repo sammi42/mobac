@@ -199,8 +199,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 						g.drawLine(posx, y, w, y);
 					}
 				} else {
-					int off_x = tlc.x;
-					int off_y = tlc.y;
+					int off_x = tlc.x % 256;
+					int off_y = tlc.y % 256;
 					for (int x = -off_x; x < w; x += 256) {
 						for (int y = -off_y; y < h; y += 256) {
 							g.drawImage(gridTile, x, y, null);

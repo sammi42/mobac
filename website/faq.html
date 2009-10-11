@@ -25,8 +25,8 @@
 	<div id="content">
 		<h1>FAQ</h1>
 		<div id="faq">
-			<ol>
-				<li>
+			<ul style="list-style-type:none">
+				<li><a name="GoogleBlockingIP"></a>
 					<div class="question">
 						Q: One of the map sources by Google shows only red crosses instead of map tiles.
 					</div>
@@ -37,6 +37,17 @@
 						(can happen especially for the "Google Earth" map provider).
 					</div>
 				</li>
+				<li><a name="MultiLayerMaps"></a>
+					<div class="question">
+						Q: Why is Google Hybrid not supported?
+					</div>
+					<div class="answer">
+						A: Google Hybrid maps consists of two independent layers, the background with the sattelite
+						images and an overlay containing the roads and the labels (town names...). 
+						TrekBuddy Atlas Creator can only process single layer maps and therefore Google Hybrid is 
+						not available. You can use "Microsoft Maps/Earth Hybrid" as alternative.
+					</div>
+				</li>
 				<li>
 					<div class="question">
 						Q: ...
@@ -44,7 +55,8 @@
 					<div class="answer">
 						A: 
 					</div>
-				</li>			</ol>
+				</li>			
+			</ul>
 		</div>
 	</div>
 	<div id="footer">

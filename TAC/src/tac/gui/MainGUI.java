@@ -540,6 +540,16 @@ public class MainGUI extends JFrame implements MapEventListener {
 		public void actionPerformed(ActionEvent e) {
 			if (!jAtlasTree.testAtlasContentValid())
 				return;
+			if (jAtlasTree.getAtlas().calculateTilesToDownload() > 3000000) {
+				JOptionPane.showMessageDialog(null,
+						"TrekBuddy Atlas Creator has detected that you are trying to\n"
+								+ "download an extra ordinary large atlas "
+								+ "with a very high number of tiles.\n"
+								+ "Please reduce the selected areas "
+								+ "on high zoom levels and try again.",
+						"Atlas download prohibited", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			try {
 				// We have to work on a deep clone otherwise the user would be
 				// able to modify settings of maps, layers and the atlas itself

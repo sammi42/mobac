@@ -246,7 +246,10 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * @author TB-forum member "Velociraptor"
+	 * Mapa Polski i Europy Emapa.pl (added by "Velociraptor")
+	 * <p>
+	 * <a href="mapa.emapa.pl">mapa.emapa.pl</a>
+	 * </p>
 	 */
 	public static class EmapaPl extends AbstractMapSource {
 
@@ -261,7 +264,7 @@ public class RegionalMapSources {
 
 		@Override
 		public String toString() {
-			return "Emapa.pl (Poland)";
+			return "Emapa.pl (Poland only)";
 		}
 	}
 

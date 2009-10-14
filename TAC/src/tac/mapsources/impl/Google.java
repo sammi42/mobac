@@ -50,7 +50,7 @@ public class Google {
 	public static class GoogleMaps extends GoogleSource {
 
 		public GoogleMaps() {
-			super("Google Maps", 0, 17, "png");
+			super("Google Maps", 0, 19, "png");
 		}
 
 		public TileUpdate getTileUpdate() {

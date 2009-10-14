@@ -33,9 +33,11 @@ public class MapCreatorAndNav extends MapCreator {
 	}
 
 	public void createMap() throws MapCreationException {
-		if (!mapZoomDir.mkdirs())
-			throw new MapCreationException("Failed to create directory: \""
-					+ mapZoomDir.getAbsolutePath() + "\"");
+		try {
+			Utilities.mkDirs(mapZoomDir);
+		} catch (IOException e) {
+			throw new MapCreationException(e);
+		}
 
 		// This means there should not be any resizing of the tiles.
 		try {

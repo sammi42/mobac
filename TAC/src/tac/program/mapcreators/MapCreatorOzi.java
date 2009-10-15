@@ -23,11 +23,13 @@ import tac.utilities.imageio.PngXxlWriter;
  */
 public class MapCreatorOzi extends MapCreatorTrekBuddy {
 
-	private File mapDir;
+	protected File mapDir;
+	protected String mapName;
 
 	public MapCreatorOzi(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
 		mapDir = new File(atlasDir, map.getLayer().getName());
+		mapName = map.getName();
 	}
 
 	public void createMap() throws MapCreationException {
@@ -49,7 +51,7 @@ public class MapCreatorOzi extends MapCreatorTrekBuddy {
 	protected void writeMapFile() {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, map.getName() + ".map"));
+			fout = new FileOutputStream(new File(mapDir, mapName + ".map"));
 			writeMapFile(map.getName() + ".png", fout);
 		} catch (Exception e) {
 			log.error("", e);
@@ -78,7 +80,7 @@ public class MapCreatorOzi extends MapCreatorTrekBuddy {
 
 		FileOutputStream fileOs = null;
 		try {
-			fileOs = new FileOutputStream(new File(mapDir, map.getName() + ".png"));
+			fileOs = new FileOutputStream(new File(mapDir, mapName + ".png"));
 			PngXxlWriter pngWriter = new PngXxlWriter(width, height, fileOs);
 
 			for (int y = yMin; y <= yMax; y++) {

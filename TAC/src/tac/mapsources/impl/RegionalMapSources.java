@@ -116,20 +116,6 @@ public class RegionalMapSources {
 
 	}
 
-	public static class Doculeo extends AbstractMapSource {
-
-		public Doculeo() {
-			super("Doculeo (Poland)", 7, 16, "jpg");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-
-			// http://ed-pl-maps.osl.basefarm.net/tiles/maps/en_FI/6/35/21.png"
-			return "http://i.wp.pl/m/tiles004/c/%d/%d/00/00/00/zcx00089dy000558.png";
-		}
-
-	}
-
 	/**
 	 * 
 	 * Requires known user agent, and something else otherwise we get only a

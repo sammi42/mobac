@@ -3,25 +3,41 @@ package tac.program.tiledatawriter;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 
+import org.apache.log4j.Logger;
+
 import tac.program.interfaces.TileImageDataWriter;
 
 public class TileImagePngDataWriter implements TileImageDataWriter {
+
+	protected Logger log;
 
 	protected ImageWriter pngImageWriter = null;
 
 	protected ImageWriteParam iwp = null;
 
 	public TileImagePngDataWriter() {
+		log = Logger.getLogger(this.getClass());
 	}
 
 	public void initialize() {
+		if (log.isTraceEnabled()) {
+			String s = "Available PNG image writers:";
+			Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
+			while (writers.hasNext()) {
+				ImageWriter w = writers.next();
+				s += "\n\t" + w.getClass().getName();
+			}
+			log.trace(s);
+		}
 		pngImageWriter = ImageIO.getImageWritersByFormatName("png").next();
+		log.debug("Used PNG image writer: " + pngImageWriter.getClass().getName());
 	}
 
 	public void processImage(RenderedImage image, OutputStream out) throws IOException {
@@ -39,5 +55,4 @@ public class TileImagePngDataWriter implements TileImageDataWriter {
 		return "png";
 	}
 
-	
 }

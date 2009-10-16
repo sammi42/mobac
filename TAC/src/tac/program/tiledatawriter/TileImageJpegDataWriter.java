@@ -3,15 +3,20 @@ package tac.program.tiledatawriter;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 
+import org.apache.log4j.Logger;
+
 import tac.program.interfaces.TileImageDataWriter;
 
 public class TileImageJpegDataWriter implements TileImageDataWriter {
+
+	protected Logger log;
 
 	protected ImageWriter jpegImageWriter = null;
 
@@ -27,10 +32,21 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	 */
 	public TileImageJpegDataWriter(double jpegCompressionLevel) {
 		this.jpegCompressionLevel = (float) jpegCompressionLevel;
+		log = Logger.getLogger(this.getClass());
 	}
 
 	public void initialize() {
+		if (log.isTraceEnabled()) {
+			String s = "Available JPEG image writers:";
+			Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+			while (writers.hasNext()) {
+				ImageWriter w = writers.next();
+				s += "\n\t" + w.getClass().getName();
+			}
+			log.trace(s);
+		}
 		jpegImageWriter = ImageIO.getImageWritersByFormatName("jpeg").next();
+		log.debug("Used JPEG image writer: " + jpegImageWriter.getClass().getName());
 		iwp = jpegImageWriter.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 		iwp.setCompressionQuality(jpegCompressionLevel);

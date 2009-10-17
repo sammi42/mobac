@@ -8,7 +8,6 @@ public class OsmMapSources {
 	public static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 	public static final String MAP_HIKING = "http://topo.geofabrik.de/trails/";
 	public static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
-	public static final String MAP_SURFER = "http://tiles1.mapsurfer.net/tms_r.ashx?";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
 
@@ -155,24 +154,6 @@ public class OsmMapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return MAP_PISTE + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-	}
-
-	public static class MapSurfer extends AbstractMapSource {
-
-		public MapSurfer() {
-			super("MapSurfer", 0, 19, "png");
-			tileUpdate = TileUpdate.LastModified;
-		}
-
-		@Override
-		public String toString() {
-			return "MapSurfer.net";
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return MAP_SURFER + "x=" + tilex + "&y=" + tiley + "&z=" + zoom;
 		}
 
 	}

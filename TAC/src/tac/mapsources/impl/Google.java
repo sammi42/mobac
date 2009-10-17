@@ -114,7 +114,7 @@ public class Google {
 	public static class GoogleMapsKorea extends GoogleSource {
 
 		public GoogleMapsKorea() {
-			super("Google Maps Korea", 0, 19, "png");
+			super("Google Maps Korea", 0, 18, "png");
 		}
 
 		public TileUpdate getTileUpdate() {

@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 
 import org.apache.log4j.Logger;
@@ -19,8 +18,6 @@ public class TileImagePngDataWriter implements TileImageDataWriter {
 	protected Logger log;
 
 	protected ImageWriter pngImageWriter = null;
-
-	protected ImageWriteParam iwp = null;
 
 	public TileImagePngDataWriter() {
 		log = Logger.getLogger(this.getClass());

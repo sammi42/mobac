@@ -39,7 +39,7 @@
 			<classpath refid="maincp" />
 			<include name="tac/StartTAC.java" />
 		</javac>
-		<!-- Compile the rest for Java 1.6 -->
+		<!-- Compile the other classes for Java 1.6 -->
 		<javac srcdir="src" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<exclude name="tac/StartTAC.java" />

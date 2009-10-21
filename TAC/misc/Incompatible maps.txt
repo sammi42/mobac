@@ -16,4 +16,16 @@ Enrio.se
 
 OpenSeaMap: 
 	http://www.openseamap.org/
-	Reason: map is only an overlyay to OSM Mapnik
+	Reason: map is only an overlay to OSM Mapnik
+	
+Topo Schweiz 
+	www.gps-tracks.com 
+	Reson: Wrong tile size (200x200)
+	
+Topo Deutschland
+	www.gps-tracks.com
+	Reason: Wrong tile size (400x400)
+
+Topo Österreich
+	www.gps-tracks.com 
+	Reson: Wrong tile size (200x200)

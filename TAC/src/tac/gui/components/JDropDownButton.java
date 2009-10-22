@@ -15,6 +15,8 @@ import javax.swing.plaf.basic.BasicArrowButton;
 
 public class JDropDownButton extends JButton {
 
+	private static final long serialVersionUID = 1L;
+	
 	private BasicArrowButton arrowButton;
 	private JPopupMenu buttonPopupMenu;
 

@@ -8,7 +8,12 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import tac.program.model.Profile;
 
+/**
+ * An editable {@link JComboBox} for displaying the saved atlases profiles.
+ */
 public class JProfilesComboBox extends JComboBox {
+
+	private static final long serialVersionUID = 1L;
 
 	public JProfilesComboBox() {
 		super();

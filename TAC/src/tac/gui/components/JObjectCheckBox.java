@@ -4,8 +4,17 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 
+/**
+ * An extended {@link JCheckBox} implementation that allows to link one user
+ * object to the checkbox.
+ * 
+ * @param <E>
+ *            type of the user object linked/stored with the checkbox
+ */
 public class JObjectCheckBox<E> extends JCheckBox {
 
+	private static final long serialVersionUID = 1L;
+	
 	private E object;
 
 	public JObjectCheckBox(Icon icon) {
@@ -43,5 +52,5 @@ public class JObjectCheckBox<E> extends JCheckBox {
 	public void setObject(E object) {
 		this.object = object;
 	}
-	
+
 }

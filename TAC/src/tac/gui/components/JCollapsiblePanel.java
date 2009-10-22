@@ -29,11 +29,11 @@ import tac.utilities.Utilities;
  * A {@code TitleContainer} is a simple container that provides an easily
  * visible title.
  * 
- * @author dhsu
  */
 public class JCollapsiblePanel extends JPanel {
 
-	// defaults
+	private static final long serialVersionUID = 1L;
+
 	protected static final int DEFAULT_TITLE_PADDING = 3;
 	protected static final Color DEFAULT_TITLE_BACKGROUND_COLOR = Color.LIGHT_GRAY;
 	protected static final Color DEFAULT_TITLE_COLOR = Color.BLACK;

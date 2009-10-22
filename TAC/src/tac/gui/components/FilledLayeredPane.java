@@ -6,6 +6,8 @@ import javax.swing.JLayeredPane;
 
 public class FilledLayeredPane extends JLayeredPane {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Layout each of the components in this JLayeredPane so that they all fill
 	 * the entire extents of the layered pane -- from (0,0) to (getWidth(),

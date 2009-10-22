@@ -21,7 +21,10 @@ import tac.utilities.Utilities;
 
 public class Profile implements Comparable<Profile> {
 
-	static final Pattern p = Pattern.compile("tac-profile-([\\w _-]+).xml");
+	public static final String PROFILE_NAME_REGEX = "[\\w _-]+";
+
+	private static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile("tac-profile-("
+			+ PROFILE_NAME_REGEX + ").xml");
 
 	private File file;
 	private String name;
@@ -34,7 +37,7 @@ public class Profile implements Comparable<Profile> {
 		userDir.list(new FilenameFilter() {
 
 			public boolean accept(File dir, String fileName) {
-				Matcher m = p.matcher(fileName);
+				Matcher m = PROFILE_FILENAME_PATTERN.matcher(fileName);
 				if (m.matches()) {
 					String profileName = m.group(1);
 					Profile profile = new Profile(new File(dir, fileName), profileName);

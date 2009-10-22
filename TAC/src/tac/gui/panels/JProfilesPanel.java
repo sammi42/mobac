@@ -18,6 +18,9 @@ import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
 public class JProfilesPanel extends JCollapsiblePanel {
+	
+	private static final long serialVersionUID = 1L;
+
 	private JProfilesComboBox profilesCombo;
 	private JButton reloadButton;
 	private JButton deleteButton;

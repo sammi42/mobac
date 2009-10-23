@@ -127,6 +127,9 @@ public class MapSourcesTester {
 	}
 
 	public static class MapSourceTestFailed extends Exception {
+
+		private static final long serialVersionUID = 1L;
+		
 		final int httpResponseCode;
 		final URL url;
 

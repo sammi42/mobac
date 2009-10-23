@@ -1,7 +1,5 @@
 package tac.tools;
 
-import static tac.tools.Cities.BERLIN;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -40,7 +38,7 @@ public class MapSourceTypeDetector {
 		// testMapSource("Mapnik", C_PRAHA);
 		// testMapSource(Cykloatlas.class, C_PRAHA);
 		// testMapSource(OsmHikingMap.class, C_BERLIN);
-		testMapSource(RegionalMapSources.FreemapSlovakia.class, BERLIN);
+		testMapSource(RegionalMapSources.OutdooractiveAustria.class, Cities.VIENNA);
 		// testMapSource("TilesAtHome", C_BERLIN);
 	}
 

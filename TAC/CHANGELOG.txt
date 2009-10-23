@@ -35,6 +35,7 @@
  + New map sources: Emapa.pl (Poland)
  ~ Max zoom level of Google Maps increased from 17 to 19
  + New atlas format: Glopus (PNG & KAL)
+ + New map sources: Outdooractive.com Austria and South Tyrol
  
  1.5: (2009-08-01)
  ~ Java requirement has changed: Now at least Java 1.6 is required! 

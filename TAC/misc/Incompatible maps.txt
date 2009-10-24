@@ -4,7 +4,7 @@ Ireland Map
 	
 Mapy.cz
 	http://www.mapy.cz/
-	Reson: Incompatible zoom levels
+	Reason: Incompatible zoom levels
 	
 SwissGeo
 	http://www.swissgeo.ch/surf.php
@@ -12,7 +12,7 @@ SwissGeo
 
 Enrio.se
 	http://kartor.eniro.se/
-	Reson: Incompatible zoom levels
+	Reason: Incompatible zoom levels
 
 OpenSeaMap: 
 	http://www.openseamap.org/
@@ -20,7 +20,7 @@ OpenSeaMap:
 	
 Topo Schweiz 
 	www.gps-tracks.com 
-	Reson: Wrong tile size (200x200)
+	Reason: Wrong tile size (200x200)
 	
 Topo Deutschland
 	www.gps-tracks.com
@@ -28,4 +28,8 @@ Topo Deutschland
 
 Topo Österreich
 	www.gps-tracks.com 
-	Reson: Wrong tile size (200x200)
+	Reason: Wrong tile size (200x200)
+	
+Centrum.cz
+	http://amapy.centrum.cz
+	Reason: Wrong projection	 

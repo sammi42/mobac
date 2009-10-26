@@ -68,26 +68,60 @@ public class RegionalMapSources {
 
 	}
 
-	public static class OutdooractiveCom extends AbstractMapSource {
+	public static class OutdooractiveGermany extends AbstractMapSource {
 
 		private static int SERVER_NUM = 0;
 
-		public OutdooractiveCom() {
-			super("Outdooractive.com", 8, 17, "png");
+		protected String mapName = "portal";
+
+		public OutdooractiveGermany() {
+			super("Outdooractive.com", 8, 17, "png", TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			if (zoom < 8)
 				throw new RuntimeException("Zoom level not suported");
-			String s = "http://t" + SERVER_NUM + ".outdooractive.com/portal/map/" + zoom + "/"
-					+ tilex + "/" + tiley + ".png";
+			String s = "http://t" + SERVER_NUM + ".outdooractive.com/" + mapName + "/map/" + zoom
+					+ "/" + tilex + "/" + tiley + ".png";
 			SERVER_NUM = (SERVER_NUM + 1) % 4;
 			return s;
 		}
 
 		@Override
 		public String toString() {
-			return getName() + " (Germany only)";
+			return "Outdooractive.com (Germany only)";
+		}
+
+	}
+
+	public static class OutdooractiveSouthTyrol extends OutdooractiveGermany {
+
+		public OutdooractiveSouthTyrol() {
+			super();
+			name = "OutdooractiveSouthTyrol";
+			mapName = "suedtirol";
+			minZoom = 9;
+		}
+
+		@Override
+		public String toString() {
+			return "Outdooractive.com (South Tyrol only)";
+		}
+
+	}
+
+	public static class OutdooractiveAustria extends OutdooractiveGermany {
+
+		public OutdooractiveAustria() {
+			super();
+			name = "OutdooractiveAustria";
+			mapName = "austria";
+			minZoom = 9;
+		}
+
+		@Override
+		public String toString() {
+			return "Outdooractive.com (Austria only)";
 		}
 
 	}

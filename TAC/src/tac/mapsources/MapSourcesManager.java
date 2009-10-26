@@ -48,7 +48,9 @@ import tac.mapsources.impl.RegionalMapSources.EmapaPl;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
-import tac.mapsources.impl.RegionalMapSources.OutdooractiveCom;
+import tac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
+import tac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
+import tac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
 import tac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import tac.mapsources.impl.WmsSources.TerraserverUSA;
 import tac.program.model.Settings;
@@ -97,9 +99,10 @@ public class MapSourcesManager {
 				DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
 				new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-				new OutdooractiveCom(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
-				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new EmapaPl(),
-				new AustrianMap(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
+				new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),
+				new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(), new TerraserverUSA(),
+				new UmpWawPl(), new DoCeluPL(), new EmapaPl(), new AustrianMap(),
+				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaHikingHillShade() };
 	}
 

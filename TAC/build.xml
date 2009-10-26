@@ -76,6 +76,9 @@
 			<arg line=" -outjars ${jar.name} " />
 			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
 			<arg line=" -keepattributes *Annotation*" />
+			<arg line=" -keep class ${main.class} { public static void main(java.lang.String[]); }" />
+			<arg line=" -keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource { public *; }" />
+			<arg line=" -keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSpace { public *; }" />
 			<arg line=" -keep class org.apache.log4j.Layout { public *; }" />
 			<arg line=" -keep class org.apache.log4j.Level { public *; }" />
 			<arg line=" -keep class org.apache.log4j.Category { public *; }" />
@@ -86,11 +89,12 @@
 			<arg line=" -keep class org.apache.log4j.PatternLayout { public *; }" />
 			<arg line=" -keep class org.apache.log4j.FileAppender { public *; }" />
 			<arg line=" -keep class tac.program.model.package-info" />
+			<arg line=" -keep class tac.program.interfaces.* { public *; }" />
 			<arg line=" -keep class tac.program.model.* { public *; }" />
-			<arg line=" -keep class tac.data.gpx.gpx10.* { public *; }" />
-			<arg line=" -keep class tac.data.gpx.gpx11.* { public *; }" />
-			<arg line=" -keep class ${main.class} { public static void main(java.lang.String[]); }" />
-			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
+			<arg line=" -keep class tac.tar.TarIndex { public *; }" />
+			<arg line=" -keep class tac.tar.TarIndexedArchive { public *; }" />
+			<arg line=" -dontwarn -dontoptimize -dontobfuscate" />
+			<!-- <arg line=" -dontnote" /> -->
 		</java>
 		<delete file="build/temp.jar" />
 	</target>

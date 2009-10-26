@@ -1,15 +1,15 @@
 package tac.utilities;
 
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -26,6 +26,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import org.apache.log4j.Logger;
 
 import tac.mapsources.MapSourcesManager;
+import tac.program.Logging;
 import tac.program.TACInfo;
 
 public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -104,8 +105,8 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			e.printStackTrace(new PrintWriter(stack));
 			sb.append("\n\n" + stack.getBuffer().toString());
 
-			JPanel p = new JPanel(new GridBagLayout());
-			String url = "https://sourceforge.net/tracker/?group_id=238075&atid=1105494";
+			JPanel panel = new JPanel(new BorderLayout());
+			String url = "http://sourceforge.net/tracker/?group_id=238075&atid=1105494";
 			String guiText = "" + "An unexpected exception occurred (" + exceptionName + ")<br>"
 					+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + url
 					+ "\">SourceForge.net</a><br>"
@@ -122,30 +123,33 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 					if (e.getEventType() != EventType.ACTIVATED)
 						return;
 					try {
-						BrowserLauncher.openURL(e.getURL().toString());
-					} catch (IOException e1) {
+						Desktop.getDesktop().browse(e.getURL().toURI());
+					} catch (Exception e1) {
+						log.error("", e1);
 					}
 				}
 			});
-			p.add(text, GBC.eol());
+			panel.add(text, BorderLayout.NORTH);
 			try {
-				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-						new StringSelection(sb.toString()), new ClipboardOwner() {
-							public void lostOwnership(Clipboard clipboard, Transferable contents) {
-							}
-						});
+				StringSelection contents = new StringSelection(sb.toString());
+				ClipboardOwner owner = new ClipboardOwner() {
+					public void lostOwnership(Clipboard clipboard, Transferable contents) {
+					}
+				};
+				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, owner);
 				guiText += "<p>(The following text has already been copied to your clipboard.)</p>";
 			} catch (RuntimeException x) {
+				log.error("", x);
 			}
 			text.setText("<html>" + guiText + "</html>");
 
 			JTextArea info = new JTextArea(sb.toString(), 20, 60);
 			info.setCaretPosition(0);
 			info.setEditable(false);
-			info.setMinimumSize(new Dimension(150, 150));
-			p.add(new JScrollPane(info), GBC.eop());
-
-			JOptionPane.showMessageDialog(null, p, "Unexpected Exception: " + exceptionName,
+			info.setMinimumSize(new Dimension(200, 150));
+			panel.add(new JScrollPane(info), BorderLayout.CENTER);
+			panel.validate();
+			JOptionPane.showMessageDialog(null, panel, "Unexpected Exception: " + exceptionName,
 					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -176,11 +180,13 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	}
 
 	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			throw new RuntimeException("Test");
-		} catch (Exception e) {
-			showExceptionDialog(e);
-		}
+		for (;;)
+			try {
+				Logging.configureConsoleLogging();
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				throw new RuntimeException("Test", new Exception("Inner"));
+			} catch (Exception e) {
+				showExceptionDialog(e);
+			}
 	}
 }

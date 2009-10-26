@@ -32,7 +32,8 @@ import tac.utilities.jdbc.SQLite;
  * <p>
  * Additionally the created BigPlanet SQLite database has one additional table
  * containing special info needed by the Android application <a
- * href="http://robertdeveloper.blogspot.com/search/label/rmaps.release">RMaps</a>.<br>
+ * href="http://robertdeveloper.blogspot.com/search/label/rmaps.release"
+ * >RMaps</a>.<br>
  * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and
  * {@link #RMAPS_UPDATE_INFO_SQL} ).<br>
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of
@@ -45,7 +46,8 @@ public class MapCreatorBigPlanet extends MapCreator {
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
 	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,s,image) VALUES (?,?,?,?,?)";
 	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 As minzoom, 0 As maxzoom";
-	private static final String RMAPS_UPDATE_INFO_SQL = "DELETE FROM info; INSERT INTO info SELECT MIN(z), MAX(z) FROM tiles";
+	private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info";
+	private static final String RMAPS_UPDATE_INFO_SQL = "INSERT INTO info SELECT MIN(z) as minzoom, MAX(z) as maxzoom FROM tiles";
 
 	private static final String DATABASE_FILENAME = "BigPlanet_maps.sqlitedb";
 
@@ -142,8 +144,11 @@ public class MapCreatorBigPlanet extends MapCreator {
 			prepStmt.clearBatch();
 
 			Statement stat = conn.createStatement();
-			stat.executeUpdate(RMAPS_UPDATE_INFO_SQL);
+			stat.addBatch(RMAPS_CLEAR_INFO_SQL);
+			stat.addBatch(RMAPS_UPDATE_INFO_SQL);
+			stat.executeBatch();
 			stat.close();
+			conn.commit();
 		} catch (SQLException e) {
 			log.error("", e);
 		}

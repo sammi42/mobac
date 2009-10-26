@@ -107,7 +107,20 @@ public class MapCreatorBigPlanetSqlJet extends MapCreator {
 			db.commit();
 		}
 		ISqlJetTable table = db.getTable("android_metadata");
-		table.insert(Locale.getDefault().toString());
+		db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
+		boolean empty = true;
+		try {
+			ISqlJetCursor cursor = table.open();
+			empty = !cursor.first();
+			cursor.close();
+		} finally {
+			db.commit();
+		}
+		if (!empty) {
+			db.beginTransaction(SqlJetTransactionMode.WRITE);
+			table.insert(Locale.getDefault().toString());
+			db.commit();
+		}
 	}
 
 	@Override
@@ -138,29 +151,7 @@ public class MapCreatorBigPlanetSqlJet extends MapCreator {
 			}
 			db.commit();
 
-			db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
-			ISqlJetTable tbInfo = db.getTable("info");
-			ISqlJetTable tbTiles = db.getTable("info");
-			int z_min = 99;
-			int z_max = 0;
-
-			ISqlJetCursor allTiles = tbTiles.open();
-			if (!allTiles.eof()) {
-				do {
-					int z = (int) allTiles.getInteger(2);
-					log.info(allTiles.getInteger(0) + " " + allTiles.getInteger(1) + " "
-							+ allTiles.getInteger(2));
-					z_min = Math.min(z_min, z);
-					z_max = Math.max(z_max, z);
-
-				} while (allTiles.next());
-			}
-			allTiles.close();
-			db.commit();
-			db.beginTransaction(SqlJetTransactionMode.WRITE);
-			tbInfo.clear();
-			tbInfo.insert(z_min, z_max);
-			db.commit();
+			updateRmapsInfo();
 		} catch (SqlJetException e) {
 			log.error("", e);
 		}
@@ -206,13 +197,37 @@ public class MapCreatorBigPlanetSqlJet extends MapCreator {
 		}
 	}
 
+	public void updateRmapsInfo() throws SqlJetException {
+		db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
+		ISqlJetTable tbTiles = db.getTable("tiles");
+		int z_min = 99;
+		int z_max = 0;
+
+		ISqlJetCursor allTiles = tbTiles.open();
+		if (!allTiles.eof()) {
+			do {
+				int z = (int) allTiles.getInteger("z");
+				z_min = Math.min(z_min, z);
+				z_max = Math.max(z_max, z);
+			} while (allTiles.next());
+		}
+		allTiles.close();
+		log.debug("Min: " + z_min + " max: " + z_max);
+		db.commit();
+		db.beginTransaction(SqlJetTransactionMode.WRITE);
+		ISqlJetTable tbInfo = db.getTable("info");
+		tbInfo.clear();
+		tbInfo.insert(z_min, z_max);
+		db.commit();
+	}
+
 	/**
 	 * Standalone test
 	 */
 	public static void main(String[] args) throws SqlJetException {
 		try {
 			File dbFile = new File("D:/test/test.db");
-			if (!dbFile.delete())
+			if (dbFile.isFile() && !dbFile.delete())
 				throw new IOException("Unable to delete database");
 			SqlJetDb db = SqlJetDb.open(dbFile, true);
 			db.getOptions().setAutovacuum(true);
@@ -234,30 +249,31 @@ public class MapCreatorBigPlanetSqlJet extends MapCreator {
 
 			SqlJetInsertOrUpdateTile iou = new SqlJetInsertOrUpdateTile(db, "tiles");
 			SecureRandom rnd = new SecureRandom();
-			for (int i = 0; i < 10000; i++) {
+			for (int i = 0; i < 1000; i++) {
 				byte[] blob = new byte[1024 + rnd.nextInt(4096)];
 				rnd.nextBytes(blob);
 				byte[] text = ("LOOP" + i).getBytes("ASCII");
 				System.arraycopy(text, 0, blob, 0, text.length);
-				iou.addTile(rnd.nextInt(2048), 1, 1, 0, blob);
+				iou.addTile(rnd.nextInt(2048), rnd.nextInt(2048), rnd.nextInt(10), 0, blob);
 			}
 			db.commit();
 
 			db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
 			ISqlJetTable tbInfo = db.getTable("info");
-			ISqlJetTable tbTiles = db.getTable("info");
+			ISqlJetTable tbTiles = db.getTable("tiles");
 			int z_min = 99;
 			int z_max = 0;
 
 			ISqlJetCursor allTiles = tbTiles.open();
 			if (!allTiles.eof()) {
 				do {
-					int z = (int) allTiles.getInteger(2);
+					int z = (int) allTiles.getInteger("z");
 					z_min = Math.min(z_min, z);
 					z_max = Math.max(z_max, z);
 
 				} while (allTiles.next());
 			}
+			System.out.println("min/max " + z_min + "/" + z_max);
 			allTiles.close();
 			db.commit();
 			db.beginTransaction(SqlJetTransactionMode.WRITE);

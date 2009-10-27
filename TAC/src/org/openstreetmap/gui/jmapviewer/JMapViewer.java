@@ -270,6 +270,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			x >>= 1;
 			y >>= 1;
 		}
+		
+		// Do not select a zoom level that is unsupported by the current map source
+		newZoom = Math.max(mapSource.getMinZoom(), Math.min(mapSource.getMaxZoom(), newZoom));
+
 		x = Math.min(x2, x1) + Math.abs(x1 - x2) / 2;
 		y = Math.min(y2, y1) + Math.abs(y1 - y2) / 2;
 		int z = 1 << (MAX_ZOOM - newZoom);

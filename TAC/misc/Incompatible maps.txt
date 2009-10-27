@@ -33,3 +33,7 @@ Topo Österreich
 Centrum.cz
 	http://amapy.centrum.cz
 	Reason: Wrong projection	 
+	
+Mapy.sk
+	http://mapy.atlas.sk
+	Reason: Wrong tile size (250x250)

@@ -8,7 +8,7 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 1.6: (2009-??-??)
+ 1.6: (2009-10-27)
  ! Map selections do no longer unwanted enlarge itself in grid mode 
     beyond the selected grid
  + Loading & saving of GPX 1.1 files (way- track- and routepoints are

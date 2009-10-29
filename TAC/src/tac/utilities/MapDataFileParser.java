@@ -111,6 +111,8 @@ public class MapDataFileParser {
 
 	public static class MapFileFormatException extends Exception {
 
+		private static final long serialVersionUID = 1L;
+
 		public MapFileFormatException(String message, Throwable cause) {
 			super(message, cause);
 		}
@@ -125,6 +127,7 @@ public class MapDataFileParser {
 		try {
 			File f = new File("atlases/Test_2009-10-01_164148/Test1/Test1 14/Test1 14.map");
 			MapDataFileParser p = new MapDataFileParser(f);
+			System.out.println(p);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

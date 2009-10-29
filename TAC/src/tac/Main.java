@@ -5,11 +5,11 @@ import javax.swing.UIManager;
 
 import tac.gui.MainGUI;
 import tac.program.DirectoryManager;
+import tac.program.EnvironmentSetup;
 import tac.program.Logging;
 import tac.program.TACInfo;
 import tac.program.model.Settings;
 import tac.utilities.TACExceptionHandler;
-import tac.utilities.Utilities;
 
 /**
  * Java 6 version of the main starter class
@@ -23,7 +23,7 @@ public class Main {
 		try {
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
-			Utilities.checkFileSetup();
+			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {

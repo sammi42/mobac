@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,17 +27,11 @@ import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
 import tac.Main;
-import tac.mapsources.impl.Google;
-import tac.program.model.Atlas;
-import tac.program.model.EastNorthCoordinate;
-import tac.program.model.Layer;
-import tac.program.model.Profile;
-import tac.program.model.Settings;
+import tac.utilities.file.DirectoryFileFilter;
 
 public class Utilities {
 
@@ -63,6 +56,21 @@ public class Utilities {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Checks if the available JAXB version is at least v2.1
+	 */
+	public static boolean checkJAXBVersion() {
+		try {
+			// We are trying to load the class javax.xml.bind.JAXB which has
+			// been introduced with JAXB 2.1. Previous version do not contain
+			// this class and will therefore throw an exception.
+			Class<?> c = Class.forName("javax.xml.bind.JAXB");
+			return (c != null);
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -286,52 +294,6 @@ public class Utilities {
 		return buffer.toByteArray();
 	}
 
-	public static void checkFileSetup() {
-
-		File userDir = new File(System.getProperty("user.dir"));
-
-		File profiles = new File(userDir, "profiles.xml");
-		if (profiles.isFile()) {
-			// delete old settings and profile files
-			profiles.delete();
-			Settings.FILE.delete();
-		}
-
-		File atlasFolder = new File(userDir, "atlases");
-		atlasFolder.mkdir();
-
-		File tileStoreFolder = new File(userDir, "tilestore");
-		tileStoreFolder.mkdir();
-
-		if (Settings.FILE.exists() == false) {
-
-			try {
-				Settings.save();
-			} catch (Exception e) {
-				log.error("", e);
-				JOptionPane.showMessageDialog(null,
-						"Could not create file settings.xml program will exit.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				System.exit(0);
-			}
-			Profile p = new Profile("Google Maps New York");
-			Atlas atlas = Atlas.newInstance();
-			try {
-				EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
-				EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
-				Layer layer = new Layer(atlas, "GM New York");
-				layer.addMapsAutocut("GM New York 16", new Google.GoogleMaps(), max, min, 16, null,
-						32000);
-				layer.addMapsAutocut("GM New York 14", new Google.GoogleMaps(), max, min, 14, null,
-						32000);
-				atlas.addLayer(layer);
-				p.save(atlas);
-			} catch (Exception e) {
-				log.error("", e);
-			}
-		}
-	}
-
 	/**
 	 * Lists all direct sub directories of <code>dir</code>
 	 * 
@@ -339,7 +301,7 @@ public class Utilities {
 	 * @return list of directories
 	 */
 	public static File[] listSubDirectories(File dir) {
-		return dir.listFiles(new DirectoryFilter());
+		return dir.listFiles(new DirectoryFileFilter());
 	}
 
 	public static List<File> listSubDirectoriesRec(File dir, int maxDepth) {
@@ -349,18 +311,11 @@ public class Utilities {
 	}
 
 	public static void addSubDirectories(List<File> dirList, File dir, int maxDepth) {
-		File[] subDirs = dir.listFiles(new DirectoryFilter());
+		File[] subDirs = dir.listFiles(new DirectoryFileFilter());
 		for (File f : subDirs) {
 			dirList.add(f);
 			if (maxDepth > 0)
 				addSubDirectories(dirList, f, maxDepth - 1);
-		}
-	}
-
-	public static class DirectoryFilter implements FileFilter {
-
-		public boolean accept(File f) {
-			return f.isDirectory();
 		}
 	}
 

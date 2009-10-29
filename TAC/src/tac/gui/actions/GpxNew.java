@@ -3,6 +3,7 @@ package tac.gui.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import tac.data.gpx.GPXUtils;
 import tac.data.gpx.gpx11.Gpx;
 import tac.gui.MainGUI;
 import tac.gui.mapview.GpxLayer;
@@ -19,6 +20,8 @@ public class GpxNew implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent event) {
+		if (!GPXUtils.checkJAXBVersion())
+			return;
 		newGpx();
 		MainGUI.getMainGUI().previewMap.repaint();
 	}

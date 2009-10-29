@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -26,6 +27,19 @@ import tac.program.Logging;
 import tac.utilities.Utilities;
 
 public class GPXUtils {
+
+	public static boolean checkJAXBVersion() {
+		boolean res = Utilities.checkJAXBVersion();
+		if (!res)
+			JOptionPane.showMessageDialog(null,
+					"Outdated Java Runtime Environment and JAXB version",
+					"TrekBuddy Atlas Creator has detected that your used "
+							+ "Java Runtime Environment is too old.\n Please update "
+							+ "the Java Runtime Environment to at least \nversion "
+							+ "1.6.0_14 and restart TrekBuddy Atlas Creator.",
+					JOptionPane.ERROR_MESSAGE);
+		return res;
+	}
 
 	public static Gpx loadGpxFile(File f) throws JAXBException {
 		// Create GPX 1.1 JAXB context

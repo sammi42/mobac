@@ -46,6 +46,9 @@ public class GpxSave implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		if (!GPXUtils.checkJAXBVersion())
+			return;
+
 		Gpx gpx = entry.getLayer().getGpx();
 
 		try {

@@ -26,6 +26,8 @@ public class GpxLoad implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent event) {
+		if (!GPXUtils.checkJAXBVersion())
+			return;
 		JFileChooser fc = new JFileChooser();
 		try {
 			File dir = new File(Settings.getInstance().gpxFileChooserDir);

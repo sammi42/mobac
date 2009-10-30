@@ -4,6 +4,8 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import tac.program.interfaces.MapInterface;
 import tac.program.mapcreators.MapCreator;
 import tac.program.mapcreators.MapCreatorAndNav;
@@ -15,6 +17,7 @@ import tac.program.mapcreators.MapCreatorOSMTracker;
 import tac.program.mapcreators.MapCreatorOzi;
 import tac.tar.TarIndex;
 
+@XmlRootElement
 public enum AtlasOutputFormat {
 
 	TaredAtlas("TrekBuddy tared atlas", null), // 

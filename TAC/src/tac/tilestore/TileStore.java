@@ -8,16 +8,24 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.DirectoryManager;
 import tac.program.model.Settings;
+import tac.tilestore.berkeleydb.BerkeleyDbTileStore;
 
 public abstract class TileStore {
 
-	private static final TileStore INSTANCE = new FileTileStore();
+	private static TileStore INSTANCE = null;
 
 	protected Logger log;
 
 	protected File tileStoreDir;
 
 	public static TileStore getInstance() {
+		if (INSTANCE != null)
+			return INSTANCE;
+		synchronized (TileStore.class) {
+			if (INSTANCE != null)
+				return INSTANCE;
+			INSTANCE = new BerkeleyDbTileStore();
+		}
 		return INSTANCE;
 	}
 

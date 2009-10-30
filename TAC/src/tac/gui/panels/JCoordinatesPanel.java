@@ -25,6 +25,8 @@ import tac.utilities.GBC;
  */
 public class JCoordinatesPanel extends JCollapsiblePanel {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final String NAME = "Coordinates";
 
 	private JCoordinateField latMinTextField;

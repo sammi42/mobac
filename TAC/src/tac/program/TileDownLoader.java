@@ -2,11 +2,8 @@ package tac.program;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -16,6 +13,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.model.Settings;
 import tac.tar.TarIndexedArchive;
+import tac.tilestore.TileStore;
 import tac.utilities.Utilities;
 
 public class TileDownLoader {
@@ -58,17 +56,13 @@ public class TileDownLoader {
 
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
-			try {
-				File tsTileFile = ts.getTileFile(x, y, zoom, mapSource);
-				if (tsTileFile!= null && tsTileFile.exists()) {
-					byte[] data = Utilities.getFileBytes(tsTileFile);
-					synchronized (tileArchive) {
-						log.trace("Tile used from tilestore");
-						tileArchive.writeFileFromData(tileFileName, data);
-					}
-					return 0;
+			byte[] data = ts.getTileData(x, y, zoom, mapSource);
+			if (data != null) {
+				synchronized (tileArchive) {
+					log.trace("Tile used from tilestore");
+					tileArchive.writeFileFromData(tileFileName, data);
 				}
-			} catch (IOException e) {
+				return 0;
 			}
 		}
 
@@ -91,62 +85,47 @@ public class TileDownLoader {
 
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invaild HTTP response: " + code);
-		
-		InputStream is = huc.getInputStream();
-		
+
 		int bytesRead = 0;
 		int sumBytes = 0;
-
-		boolean success = false;
-		int contentLen = huc.getContentLength();
-		if (contentLen > MAX_DOWNLOAD_SIZE)
-			throw new UnrecoverableDownloadException("Remote resource '" + url + "' of size "
-					+ contentLen + "bytes exceeds the maximum download size of "
-					+ MAX_DOWNLOAD_SIZE + " bytes.");
-		byte[] data = null;
-		if (contentLen < 0) {
-			byte[] b = new byte[8192];
-			ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
-			while ((bytesRead = is.read(b)) > 0) {
-				sumBytes += bytesRead;
-				buf.write(b, 0, bytesRead);
-			}
-			data = buf.toByteArray();
-		} else {
-			DataInputStream din = new DataInputStream(is);
-			data = new byte[contentLen];
-			din.readFully(data);
-			sumBytes = contentLen;
-			if (din.read() >= 0)
-				throw new IOException("Data after content end available!");
-		}
-		Utilities.checkForInterruption();
-		File tilestoreFile = null;
-		OutputStream tilestoreFileStream = null;
-		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
-			// We are writing simultaneously to the target file
-			// and the file in the tile store
-			tilestoreFile = ts.getTileFile(x, y, zoom, mapSource);
-			tilestoreFileStream = new FileOutputStream(tilestoreFile, false);
-			tilestoreFileStream.write(data);
-		}
-		Utilities.checkForInterruption();
-		synchronized (tileArchive) {
-			tileArchive.writeFileFromData(tileFileName, data);
-		}
+		InputStream is = huc.getInputStream();
 		try {
-			success = true;
+
+			int contentLen = huc.getContentLength();
+			if (contentLen > MAX_DOWNLOAD_SIZE)
+				throw new UnrecoverableDownloadException("Remote resource '" + url + "' of size "
+						+ contentLen + "bytes exceeds the maximum download size of "
+						+ MAX_DOWNLOAD_SIZE + " bytes.");
+			byte[] data = null;
+			if (contentLen < 0) {
+				byte[] b = new byte[8192];
+				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
+				while ((bytesRead = is.read(b)) > 0) {
+					sumBytes += bytesRead;
+					buf.write(b, 0, bytesRead);
+				}
+				data = buf.toByteArray();
+			} else {
+				DataInputStream din = new DataInputStream(is);
+				data = new byte[contentLen];
+				din.readFully(data);
+				sumBytes = contentLen;
+				if (din.read() >= 0)
+					throw new IOException("Data after content end available!");
+			}
+			Utilities.checkForInterruption();
+			if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+				// We are writing simultaneously to the target file
+				// and the file in the tile store
+				ts.putTileData(data, x, y, zoom, mapSource);
+			}
+			Utilities.checkForInterruption();
+			synchronized (tileArchive) {
+				tileArchive.writeFileFromData(tileFileName, data);
+			}
 		} finally {
 			Utilities.closeStream(is);
-			Utilities.closeStream(tilestoreFileStream);
-			if ((!success) || (sumBytes == 0)) {
-				// In case of an error while download or an empty file we have
-				// an invalid tile image we don't want -> delete it
-				if (tilestoreFile != null)
-					tilestoreFile.delete();
-			}
 		}
-
 		return sumBytes;
 	}
 

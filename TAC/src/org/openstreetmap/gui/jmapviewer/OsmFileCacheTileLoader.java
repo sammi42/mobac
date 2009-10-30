@@ -4,22 +4,19 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
+
+import tac.tilestore.TileStore;
 
 /**
  * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via
@@ -33,32 +30,17 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
 	private static final Logger log = Logger.getLogger(OsmFileCacheTileLoader.class.getName());
 
-	private static final String ETAG_FILE_EXT = ".etag";
-
-	private static final Charset ETAG_CHARSET = Charset.forName("UTF-8");
-
 	public static final long FILE_AGE_ONE_DAY = 1000 * 60 * 60 * 24;
 	public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
 
-	protected String cacheDirBase;
+	protected TileStore tileStore;
 
 	protected long maxCacheFileAge = FILE_AGE_ONE_WEEK;
 	protected long recheckAfter = FILE_AGE_ONE_DAY;
 
 	public OsmFileCacheTileLoader(TileLoaderListener map) {
 		super(map);
-		String tempDir = System.getProperty("java.io.tmpdir");
-		try {
-			if (tempDir == null)
-				throw new IOException();
-			File cacheDir = new File(tempDir, "JMapViewerTiles");
-			log.finest("Tile cache directory: " + cacheDir);
-			if (!cacheDir.exists() && !cacheDir.mkdirs())
-				throw new IOException();
-			cacheDirBase = cacheDir.getAbsolutePath();
-		} catch (Exception e) {
-			cacheDirBase = "tiles";
-		}
+		tileStore = TileStore.getInstance();
 	}
 
 	public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley,
@@ -71,15 +53,12 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
 		int tilex, tiley, zoom;
 		Tile tile;
-		MapSource source;
-		File tileCacheDir;
-		File tileFile = null;
-		long fileAge = 0;
+		MapSource mapSource;
 		boolean fileTilePainted = false;
 
 		public FileLoadJob(MapSource source, int tilex, int tiley, int zoom) {
 			super();
-			this.source = source;
+			this.mapSource = source;
 			this.tilex = tilex;
 			this.tiley = tiley;
 			this.zoom = zoom;
@@ -88,21 +67,18 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		public void run() {
 			TileImageCache cache = listener.getTileImageCache();
 			synchronized (cache) {
-				tile = cache.getTile(source, tilex, tiley, zoom);
+				tile = cache.getTile(mapSource, tilex, tiley, zoom);
 				if (tile == null || tile.isLoaded() || tile.loading)
 					return;
 				tile.loading = true;
 			}
-			tileCacheDir = new File(cacheDirBase, source.getName());
-			if (!tileCacheDir.exists())
-				tileCacheDir.mkdirs();
-			if (loadTileFromFile())
+			if (loadTileFromStore())
 				return;
 			if (fileTilePainted) {
 				Runnable job = new Runnable() {
 
 					public void run() {
-						loadOrUpdateTile();
+						FileLoadJob.this.loadOrUpdateTile();
 					}
 				};
 				JobDispatcher.getInstance().addJob(job);
@@ -116,62 +92,65 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			try {
 				// log.finest("Loading tile from OSM: " + tile);
 				HttpURLConnection urlConn = loadTileFromOsm(tile);
-				if (tileFile != null) {
-					switch (source.getTileUpdate()) {
-					case IfModifiedSince:
-						urlConn.setIfModifiedSince(fileAge);
-						break;
-					case LastModified:
-						if (!isOsmTileNewer(fileAge)) {
-							log.finest("LastModified test: local version is up to date: " + tile);
-							tile.setLoaded(true);
-							tileFile.setLastModified(System.currentTimeMillis() - maxCacheFileAge
-									+ recheckAfter);
-							return;
-						}
-						break;
-					}
-				}
-				if (source.getTileUpdate() == TileUpdate.ETag
-						|| source.getTileUpdate() == TileUpdate.IfNoneMatch) {
-					if (tileFile != null) {
-						String fileETag = loadETagfromFile();
-						if (fileETag != null) {
-							switch (source.getTileUpdate()) {
-							case IfNoneMatch:
-								urlConn.addRequestProperty("If-None-Match", fileETag);
-								break;
-							case ETag:
-								if (hasOsmTileETag(fileETag)) {
-									tile.setLoaded(true);
-									tileFile.setLastModified(System.currentTimeMillis()
-											- maxCacheFileAge + recheckAfter);
-									return;
-								}
-							}
-						}
-					}
-
-					String eTag = urlConn.getHeaderField("ETag");
-					saveETagToFile(eTag);
-				}
-				if (urlConn.getResponseCode() == 304) {
-					// If we are isModifiedSince or If-None-Match has been set
-					// and the server answers with a HTTP 304 = "Not Modified"
-					log.finest("ETag test: local version is up to date: " + tile);
-					tile.setLoaded(true);
-					tileFile.setLastModified(System.currentTimeMillis() - maxCacheFileAge
-							+ recheckAfter);
-					return;
-				}
+				// if (tileFile != null) {
+				// switch (mapSource.getTileUpdate()) {
+				// case IfModifiedSince:
+				// urlConn.setIfModifiedSince(fileAge);
+				// break;
+				// case LastModified:
+				// if (!isOsmTileNewer(fileAge)) {
+				// log.finest("LastModified test: local version is up to date: "
+				// + tile);
+				// tile.setLoaded(true);
+				// tileFile.setLastModified(System.currentTimeMillis() -
+				// maxCacheFileAge
+				// + recheckAfter);
+				// return;
+				// }
+				// break;
+				// }
+				// }
+				// if (mapSource.getTileUpdate() == TileUpdate.ETag
+				// || mapSource.getTileUpdate() == TileUpdate.IfNoneMatch) {
+				// if (tileFile != null) {
+				// String fileETag = loadETagfromFile();
+				// if (fileETag != null) {
+				// switch (mapSource.getTileUpdate()) {
+				// case IfNoneMatch:
+				// urlConn.addRequestProperty("If-None-Match", fileETag);
+				// break;
+				// case ETag:
+				// if (hasOsmTileETag(fileETag)) {
+				// tile.setLoaded(true);
+				// tileFile.setLastModified(System.currentTimeMillis()
+				// - maxCacheFileAge + recheckAfter);
+				// return;
+				// }
+				// }
+				// }
+				// }
+				//
+				// String eTag = urlConn.getHeaderField("ETag");
+				// saveETagToFile(eTag);
+				// }
+				// if (urlConn.getResponseCode() == 304) {
+				// // If we are isModifiedSince or If-None-Match has been set
+				// // and the server answers with a HTTP 304 = "Not Modified"
+				// log.finest("ETag test: local version is up to date: " +
+				// tile);
+				// tile.setLoaded(true);
+				// tileFile.setLastModified(System.currentTimeMillis() -
+				// maxCacheFileAge
+				// + recheckAfter);
+				// return;
+				// }
 
 				byte[] buffer = loadTileInBuffer(urlConn);
 				if (buffer != null) {
 					tile.loadImage(new ByteArrayInputStream(buffer));
 					tile.setLoaded(true);
 					listener.tileLoadingFinished(tile, true);
-					if (source.allowFileStore())
-						saveTileToFile(buffer);
+					tileStore.putTileData(buffer, tilex, tiley, zoom, mapSource);
 				} else {
 					tile.setLoaded(true);
 				}
@@ -187,43 +166,34 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			}
 		}
 
-		protected boolean loadTileFromFile() {
-			FileInputStream fin = null;
+		protected boolean loadTileFromStore() {
 			try {
-				tileFile = getTileFile();
-				fin = new FileInputStream(tileFile);
-				if (fin.available() == 0)
-					throw new IOException("File empty");
-				tile.loadImage(fin);
-				fin.close();
-				fileAge = tileFile.lastModified();
-				boolean oldTile = System.currentTimeMillis() - fileAge > maxCacheFileAge;
-				if (!oldTile) {
-					tile.setLoaded(true);
-					listener.tileLoadingFinished(tile, true);
-					fileTilePainted = true;
-					return true;
-				}
+				byte[] tileData = tileStore.getTileData(tilex, tiley, zoom, mapSource);
+				if (tileData == null)
+					return false;
+				tile.loadImage(new ByteArrayInputStream(tileData));
+				// fileAge = tileFile.lastModified();
+				// boolean oldTile = System.currentTimeMillis() - fileAge >
+				// maxCacheFileAge;
+				// if (!oldTile) {
+				// tile.setLoaded(true);
+				// listener.tileLoadingFinished(tile, true);
+				// fileTilePainted = true;
+				// return true;
+				// }
 				listener.tileLoadingFinished(tile, true);
 				fileTilePainted = true;
+				return true;
 			} catch (Exception e) {
-				try {
-					if (fin != null) {
-						fin.close();
-						if (!tileFile.delete())
-							tileFile.deleteOnExit();
-					}
-				} catch (Exception e1) {
-				}
-				tileFile = null;
-				fileAge = 0;
+				log.error("", e);
 			}
 			return false;
 		}
 
 		protected byte[] loadTileInBuffer(URLConnection urlConn) throws IOException {
 			input = urlConn.getInputStream();
-			ByteArrayOutputStream bout = new ByteArrayOutputStream(input.available());
+			int bufSize = Math.max(input.available(), 32768);
+			ByteArrayOutputStream bout = new ByteArrayOutputStream(bufSize);
 			byte[] buffer = new byte[2048];
 			boolean finished = false;
 			do {
@@ -280,45 +250,32 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			return (osmETag.equals(eTag));
 		}
 
-		protected File getTileFile() {
-			return new File(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile() + "_"
-					+ tile.getYtile() + "." + source.getTileType());
-		}
+		// protected void saveETagToFile(String eTag) {
+		// try {
+		// FileOutputStream f = new FileOutputStream(tileCacheDir + "/" +
+		// tile.getZoom() + "_"
+		// + tile.getXtile() + "_" + tile.getYtile() + ETAG_FILE_EXT);
+		// f.write(eTag.getBytes(ETAG_CHARSET.name()));
+		// f.close();
+		// } catch (Exception e) {
+		// System.err.println("Failed to save ETag: " +
+		// e.getLocalizedMessage());
+		// }
+		// }
 
-		protected void saveTileToFile(byte[] rawData) {
-			try {
-				FileOutputStream f = new FileOutputStream(tileCacheDir + "/" + tile.getZoom() + "_"
-						+ tile.getXtile() + "_" + tile.getYtile() + "." + source.getTileType());
-				f.write(rawData);
-				f.close();
-			} catch (Exception e) {
-				System.err.println("Failed to save tile content: " + e.getLocalizedMessage());
-			}
-		}
-
-		protected void saveETagToFile(String eTag) {
-			try {
-				FileOutputStream f = new FileOutputStream(tileCacheDir + "/" + tile.getZoom() + "_"
-						+ tile.getXtile() + "_" + tile.getYtile() + ETAG_FILE_EXT);
-				f.write(eTag.getBytes(ETAG_CHARSET.name()));
-				f.close();
-			} catch (Exception e) {
-				System.err.println("Failed to save ETag: " + e.getLocalizedMessage());
-			}
-		}
-
-		protected String loadETagfromFile() {
-			try {
-				FileInputStream f = new FileInputStream(tileCacheDir + "/" + tile.getZoom() + "_"
-						+ tile.getXtile() + "_" + tile.getYtile() + ETAG_FILE_EXT);
-				byte[] buf = new byte[f.available()];
-				f.read(buf);
-				f.close();
-				return new String(buf, ETAG_CHARSET.name());
-			} catch (Exception e) {
-				return null;
-			}
-		}
+		// protected String loadETagfromFile() {
+		// try {
+		// FileInputStream f = new FileInputStream(tileCacheDir + "/" +
+		// tile.getZoom() + "_"
+		// + tile.getXtile() + "_" + tile.getYtile() + ETAG_FILE_EXT);
+		// byte[] buf = new byte[f.available()];
+		// f.read(buf);
+		// f.close();
+		// return new String(buf, ETAG_CHARSET.name());
+		// } catch (Exception e) {
+		// return null;
+		// }
+		// }
 
 	}
 
@@ -341,16 +298,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 	 */
 	public void setCacheMaxFileAge(long maxFileAge) {
 		this.maxCacheFileAge = maxFileAge;
-	}
-
-	public String getCacheDirBase() {
-		return cacheDirBase;
-	}
-
-	public void setTileCacheDir(String tileCacheDir) {
-		File dir = new File(tileCacheDir);
-		dir.mkdirs();
-		this.cacheDirBase = dir.getAbsolutePath();
 	}
 
 }

@@ -48,6 +48,9 @@ public class NodeRenderer implements TreeCellRenderer {
 	}
 
 	protected static class SimpleTreeCellRenderer extends DefaultTreeCellRenderer {
+
+		private static final long serialVersionUID = 1L;
+
 		public SimpleTreeCellRenderer(Icon icon) {
 			super();
 			setIcon(icon);

@@ -49,11 +49,11 @@ import tac.exceptions.MapSourcesUpdateException;
 import tac.gui.components.JMapSizeCombo;
 import tac.gui.components.JObjectCheckBox;
 import tac.mapsources.MapSourcesManager;
-import tac.program.TileStore;
-import tac.program.TileStore.TileStoreInfo;
 import tac.program.model.ProxyType;
 import tac.program.model.Settings;
 import tac.program.model.UnitSystem;
+import tac.tilestore.TileStore;
+import tac.tilestore.TileStoreInfo;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -106,7 +106,7 @@ public class SettingsGUI extends JDialog {
 		super(owner);
 		TACExceptionHandler.registerForCurrentThread();
 		setModal(true);
-		setMinimumSize(new Dimension(300,300));
+		setMinimumSize(new Dimension(300, 300));
 		createJFrame();
 		createTabbedPane();
 		createJButtons();
@@ -602,6 +602,8 @@ public class SettingsGUI extends JDialog {
 	}
 
 	private static class JMapSourceCB extends JObjectCheckBox<MapSource> {
+
+		private static final long serialVersionUID = 1L;
 
 		public JMapSourceCB(String text) {
 			super(text);

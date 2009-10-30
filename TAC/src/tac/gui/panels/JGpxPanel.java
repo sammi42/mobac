@@ -20,6 +20,8 @@ import tac.utilities.GBC;
 
 public class JGpxPanel extends JCollapsiblePanel {
 
+	private static final long serialVersionUID = 1L;
+
 	protected final GpxListModel listModel;
 
 	private JList list;
@@ -120,6 +122,9 @@ public class JGpxPanel extends JCollapsiblePanel {
 	}
 
 	public static class GpxListModel extends DefaultListModel {
+
+		private static final long serialVersionUID = 1L;
+
 		public void notifyChange(ListModelEntry entry) {
 			fireContentsChanged(this, 0, getSize());
 		}

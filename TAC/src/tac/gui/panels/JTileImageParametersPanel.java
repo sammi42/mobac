@@ -21,6 +21,8 @@ import tac.utilities.Utilities;
 
 public class JTileImageParametersPanel extends JCollapsiblePanel {
 
+	private static final long serialVersionUID = 1L;
+
 	private JCheckBox enableCustomTileProcessingCheckButton;
 	private JLabel tileSizeWidthLabel;
 	private JLabel tileSizeHeightLabel;

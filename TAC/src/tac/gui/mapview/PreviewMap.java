@@ -74,7 +74,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
 		cacheTileLoader.setCacheMaxFileAge(OsmFileCacheTileLoader.FILE_AGE_ONE_WEEK);
-		cacheTileLoader.setTileCacheDir("./tilestore");
 		setTileLoader(cacheTileLoader);
 		mapMarkersVisible = false;
 		setZoomContolsVisible(false);

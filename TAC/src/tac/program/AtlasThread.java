@@ -50,14 +50,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	private final TileStore ts;
+	//private final TileStore ts;
 	private File atlasDir = null;
 
 	public AtlasThread(AtlasInterface atlasInterface) {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
 		this.atlasInterface = atlasInterface;
-		ts = TileStore.getInstance();
+		//ts = TileStore.getInstance();
 	}
 
 	private static synchronized int getNextThreadNum() {
@@ -194,7 +194,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			throw new InterruptedException();
 
 		// Prepare the tile store directory
-		ts.prepareTileStore(map.getMapSource());
+		//ts.prepareTileStore(map.getMapSource());
 
 		/***
 		 * In this section of code below, tiles for Atlas is being downloaded

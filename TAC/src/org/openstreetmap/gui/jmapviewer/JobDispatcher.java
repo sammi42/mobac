@@ -87,7 +87,7 @@ public class JobDispatcher {
 		private boolean firstThread = false;
 
 		public JobThread(int threadId) {
-			super("OSMJobThread " + threadId);
+			super(String.format("OSMJobThread %02d", threadId));
 			setDaemon(true);
 			job = null;
 			start();

@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.logging.Handler;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
@@ -14,6 +15,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
+
+import tac.utilities.Juli2Log4jHandler;
 
 public class Logging {
 
@@ -96,6 +99,17 @@ public class Logging {
 		logger.setLevel(Level.OFF);
 	}
 
+	public static void enableJAXBLogging() {
+		java.util.logging.Logger logger;
+		Handler h = new Juli2Log4jHandler();
+		logger = java.util.logging.Logger.getLogger("javax.xml.bind");
+		logger.setLevel(java.util.logging.Level.ALL);
+		logger.addHandler(h);
+		logger = java.util.logging.Logger.getLogger("com.sun.xml.internal.bind");
+		logger.setLevel(java.util.logging.Level.ALL);
+		logger.addHandler(h);
+	}
+
 	public static void logSystemProperties() {
 		Logger log = Logger.getLogger("System.properties");
 		Properties props = System.getProperties();
@@ -107,4 +121,5 @@ public class Logging {
 		}
 		log.info(sw.toString());
 	}
+
 }

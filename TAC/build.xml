@@ -31,7 +31,9 @@
 	<target name="build">
 		<mkdir dir="build" />
 		<path id="maincp">
-			<fileset dir="lib" includes="*.jar" />
+			<fileset dir="lib" includes="log*.jar" />
+			<fileset dir="lib" includes="jai*.jar" />
+			<fileset dir="lib" includes="je-*.jar" />
 		</path>
 		<!-- Compile the starter class for Java 1.4 (shows an verbose --> 
 		<!-- error if the JRE requirements are not met -->
@@ -43,6 +45,9 @@
 		<javac srcdir="src" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<exclude name="tac/StartTAC.java" />
+			<exclude name="tac/tilestore/berkeleydb/*" />
+			<exclude name="tac/tools/*" />
+			<exclude name="tac/program/mapcreators/MapCreatorBigPlanetSqlJet*" />
 			<include name="org/openstreetmap/**" />
 			<include name="tac/**" />
 		</javac>
@@ -62,6 +67,7 @@
 				<attribute name="Class-Path" value=". jai_core.jar jai_codec.jar lib/jai_core.jar lib/jai_codec.jar jai_*.jar lib/jai_*.jar" />
 			</manifest>
 			<zipfileset src="lib/log4j-1.2.15.jar" />
+			<zipfileset src="lib/je-3.3.87.jar" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />
@@ -70,32 +76,48 @@
 	</target>
 
 	<target name="shrink" depends="create_jar" description="Removes unused classes from compiled jar">
+		<taskdef resource="proguard/ant/task.properties"
+		         classpath="lib/proguard.jar" />
 		<move file="${jar.name}" tofile="build/temp.jar" overwrite="true" />
-		<java jar="lib/proguard.jar" fork="true">
-			<arg line=" -injars build/temp.jar " />
-			<arg line=" -outjars ${jar.name} " />
-			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
-			<arg line=" -keepattributes *Annotation*" />
-			<arg line=" -keep class ${main.class} { public static void main(java.lang.String[]); }" />
-			<arg line=" -keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource { public *; }" />
-			<arg line=" -keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSpace { public *; }" />
-			<arg line=" -keep class org.apache.log4j.Layout { public *; }" />
-			<arg line=" -keep class org.apache.log4j.Level { public *; }" />
-			<arg line=" -keep class org.apache.log4j.Category { public *; }" />
-			<arg line=" -keep class org.apache.log4j.Priority { public *; }" />
-			<arg line=" -keep class org.apache.log4j.spi.LoggingEvent { public *; }" />
-			<arg line=" -keep class org.apache.log4j.spi.ThrowableInformation { public *; }" />
-			<arg line=" -keep class org.apache.log4j.spi.LocationInfo { public *; }" />
-			<arg line=" -keep class org.apache.log4j.PatternLayout { public *; }" />
-			<arg line=" -keep class org.apache.log4j.FileAppender { public *; }" />
-			<arg line=" -keep class tac.program.model.package-info" />
-			<arg line=" -keep class tac.program.interfaces.* { public *; }" />
-			<arg line=" -keep class tac.program.model.* { public *; }" />
-			<arg line=" -keep class tac.tar.TarIndex { public *; }" />
-			<arg line=" -keep class tac.tar.TarIndexedArchive { public *; }" />
-			<arg line=" -dontwarn -dontoptimize -dontobfuscate" />
-			<!-- <arg line=" -dontnote" /> -->
-		</java>
+		<proguard>
+			-libraryjars ${java.home}/lib/rt.jar
+			-injars     build/temp.jar
+			-outjars    ${jar.name}
+			-keepattributes *Annotation*
+			-keep class ${main.class} { public static void main(java.lang.String[]); }
+			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource$TileUpdate { public *; }
+			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource { public *; }
+			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSpace { public *; }
+			-keep class org.apache.log4j.Layout { public *; }
+			-keep class org.apache.log4j.Level { public *; }
+			-keep class org.apache.log4j.Category { public *; }
+			-keep class org.apache.log4j.Priority { public *; }
+			-keep class org.apache.log4j.spi.LoggingEvent { public *; }
+			-keep class org.apache.log4j.spi.ThrowableInformation { public *; }
+			-keep class org.apache.log4j.spi.LocationInfo { public *; }
+			-keep class org.apache.log4j.PatternLayout { public *; }
+			-keep class org.apache.log4j.FileAppender { public *; }
+			-keep class tac.program.model.package-info
+			-keep class tac.program.model.* { public *; }
+			-keep class tac.program.interfaces.* { public *; }
+			-keep class tac.tar.TarIndex { public *; }
+			-keep class tac.tar.TarIndexedArchive { public *; }
+			-keep class tac.data.gpx.gpx11.* { public *; }
+			-keep class tac.tilestore.berkeleydb.* { *; }
+			-keepclassmembers class * implements java.io.Serializable {
+			    static final long serialVersionUID;
+			    private void writeObject(java.io.ObjectOutputStream);
+			    private void readObject(java.io.ObjectInputStream);
+			    java.lang.Object writeReplace();
+			    java.lang.Object readResolve();
+			}
+			-keepclassmembers class * implements com.sleepycat.persist.evolve.Conversion {
+				boolean equals(java.lang.Object);
+			}
+			-dontwarn
+			-dontoptimize 
+			-dontobfuscate
+		</proguard>
 		<delete file="build/temp.jar" />
 	</target>
 
@@ -111,7 +133,6 @@
 			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
 			<arg line=" -keep public class org.tmatesoft.svn.cli.svnversion.SVNVersion { public static void main(java.lang.String[]); }" />
 			<arg line=" -keep public class org.apache.log4j.PatternLayout { public *; } " />
-			<arg line=" -keep public class org.apache.log4j.FileAppender { public *; } " />
 			<arg line=" -keep public class org.apache.log4j.FileAppender { public *; } " />
 			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
 		</java>
@@ -157,6 +178,8 @@
 				<include name="lib/log4j-1.2.15.jar" />
 				<include name="lib/Tidy.jar" />
 				<include name="lib/jai_*.jar" />
+				<include name="lib/sqlite.jar" />
+				<include name="lib/proguard.jar" />
 			</fileset>
 		</zip>
 	</target>

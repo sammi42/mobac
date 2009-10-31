@@ -59,11 +59,11 @@ public abstract class TileStore {
 
 	public abstract void prepareTileStore(MapSource mapSource);
 
-	public abstract void clearStore(MapSource tileSource);
+	public abstract void clearStore(MapSource mapSource);
 
 	/**
 	 * This method returns the amount of tiles in the store of tiles which is
-	 * specified by the TileSource object.
+	 * specified by the {@link MapSource} object.
 	 * 
 	 * @param mapSource
 	 *            the store to calculate number of tiles in
@@ -92,5 +92,8 @@ public abstract class TileStore {
 	public abstract boolean storeExists(MapSource mapSource);
 
 	public abstract TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException;
+
+	public void closeAll(boolean shutdown) {
+	};
 
 }

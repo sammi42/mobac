@@ -30,6 +30,7 @@ import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
+import tac.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
@@ -50,14 +51,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	//private final TileStore ts;
 	private File atlasDir = null;
 
 	public AtlasThread(AtlasInterface atlasInterface) {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
 		this.atlasInterface = atlasInterface;
-		//ts = TileStore.getInstance();
+		TileStore.getInstance().closeAll(false);
 	}
 
 	private static synchronized int getNextThreadNum() {

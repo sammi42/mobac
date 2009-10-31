@@ -64,6 +64,7 @@ import tac.program.model.Profile;
 import tac.program.model.SelectedZoomLevels;
 import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
+import tac.tilestore.TileStore;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
 
@@ -791,6 +792,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private class WindowDestroyer extends WindowAdapter {
 		public void windowClosing(WindowEvent event) {
 			saveSettings();
+			TileStore.getInstance().closeAll(true);
 		}
 	}
 

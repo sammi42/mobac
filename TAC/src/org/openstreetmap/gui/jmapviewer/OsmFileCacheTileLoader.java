@@ -29,7 +29,7 @@ import tac.tilestore.TileStore;
  */
 public class OsmFileCacheTileLoader extends OsmTileLoader {
 
-	private static final Logger log = Logger.getLogger(OsmFileCacheTileLoader.class.getName());
+	private static final Logger log = Logger.getLogger(OsmFileCacheTileLoader.class);
 
 	public static final long FILE_AGE_ONE_DAY = 1000 * 60 * 60 * 24;
 	public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
@@ -160,7 +160,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				tile.setImage(Tile.ERROR_IMAGE);
 				listener.tileLoadingFinished(tile, false);
 				if (input == null)
-					System.err.println("failed loading " + zoom + "/" + tilex + "/" + tiley + " "
+					log.error("failed loading " + zoom + "/" + tilex + "/" + tiley + " "
 							+ e.getMessage());
 			} finally {
 				tile.loading = false;

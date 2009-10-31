@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -18,6 +19,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  * @author Jan Peter Stotz
  */
 public class OsmTileLoader implements TileLoaderJobCreator {
+
+	private static final Logger log = Logger.getLogger(OsmTileLoader.class);
 
     /**
      * Holds the used user agent used for HTTP requests. If this field is 
@@ -58,7 +61,7 @@ public class OsmTileLoader implements TileLoaderJobCreator {
                     tile.setImage(Tile.ERROR_IMAGE);
                     listener.tileLoadingFinished(tile, false);
                     if (input == null)
-                        System.err.println("failed loading " + zoom + "/" + tilex + "/" + tiley + " " + e.getMessage());
+                        log.error("failed loading " + zoom + "/" + tilex + "/" + tiley + " " + e.getMessage());
                 } finally {
                     tile.loading = false;
                     tile.setLoaded(true);

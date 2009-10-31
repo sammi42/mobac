@@ -65,7 +65,7 @@ public class TileDownLoader {
 				return 0;
 			}
 		}
-		byte[] data = downloadTileAndUpdateStore(maxTileIndex, y, zoom, mapSource);
+		byte[] data = downloadTileAndUpdateStore(x, y, zoom, mapSource);
 		synchronized (tileArchive) {
 			tileArchive.writeFileFromData(tileFileName, data);
 		}

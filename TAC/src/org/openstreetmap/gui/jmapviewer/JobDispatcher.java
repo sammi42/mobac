@@ -6,6 +6,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import tac.tilestore.berkeleydb.DelayedInterruptThread;
+
 /**
  * A generic class that processes a list of {@link Runnable} one-by-one using
  * one or more {@link Thread}-instances. The number of instances varies between
@@ -81,7 +83,7 @@ public class JobDispatcher {
 		return jobThread;
 	}
 
-	protected class JobThread extends Thread {
+	protected class JobThread extends DelayedInterruptThread {
 
 		private Runnable job;
 		private boolean firstThread = false;

@@ -12,10 +12,10 @@ public class LocalhostTestSource extends AbstractMapSource {
 		return "http://127.0.0.1/tile?x=" + tilex + "&y=" + tiley + "&z=" + zoom;
 	}
 
-	@Override
-	public boolean allowFileStore() {
-		return false;
-	}
+//	@Override
+//	public boolean allowFileStore() {
+//		return false;
+//	}
 
 	
 }

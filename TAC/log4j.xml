@@ -27,7 +27,7 @@
     <priority value="TRACE" /> 
     -->
     <!-- By default we use log level/priority "DEBUG" -->
-    <priority value="TRACE" />
+    <priority value="DEBUG" />
     <appender-ref ref="console" />
     <appender-ref ref="file" />
   </root>

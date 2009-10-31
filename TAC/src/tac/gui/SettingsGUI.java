@@ -54,6 +54,7 @@ import tac.program.model.Settings;
 import tac.program.model.UnitSystem;
 import tac.tilestore.TileStore;
 import tac.tilestore.TileStoreInfo;
+import tac.tilestore.berkeleydb.DelayedInterruptThread;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
@@ -89,7 +90,7 @@ public class SettingsGUI extends JDialog {
 
 	private JTabbedPane tabbedPane;
 
-	private Thread tileStoreAsyncThread = null;
+	private DelayedInterruptThread tileStoreAsyncThread = null;
 
 	private List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<TileSourceInfoComponents>();
 	private Vector<JMapSourceCB> mapSourceCbList = new Vector<JMapSourceCB>();
@@ -237,7 +238,7 @@ public class SettingsGUI extends JDialog {
 	private synchronized void updateTileStoreInfoPanelAsync() {
 		if (tileStoreAsyncThread != null)
 			return; // An update is currently running
-		tileStoreAsyncThread = new Thread("TileStoreInfoRetriever") {
+		tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
 
 			@Override
 			public void run() {
@@ -583,7 +584,7 @@ public class SettingsGUI extends JDialog {
 			final JButton b = (JButton) e.getSource();
 			b.setEnabled(false);
 			b.setToolTipText("Deleting in progress - please wait");
-			Thread t = new Thread("TileStore_" + source.getName() + "_DeleteThread") {
+			Thread t = new DelayedInterruptThread("TileStore_" + source.getName() + "_DeleteThread") {
 
 				@Override
 				public void run() {

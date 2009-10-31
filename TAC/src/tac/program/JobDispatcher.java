@@ -5,6 +5,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
+import tac.tilestore.berkeleydb.DelayedInterruptThread;
+
 /**
  * Controls the worker threads that are downloading the map tiles in parallel.
  * Additionally the job queue containing the unprocessed tile download jobs can
@@ -127,7 +129,7 @@ public class JobDispatcher {
 	 * Each worker thread takes the first job from the job queue and executes
 	 * it. If the queue is empty the worker blocks, waiting for the next job.
 	 */
-	protected class WorkerThread extends Thread {
+	protected class WorkerThread extends DelayedInterruptThread {
 
 		Job job = null;
 
@@ -174,6 +176,7 @@ public class JobDispatcher {
 				}
 			}
 		}
+
 	}
 
 }

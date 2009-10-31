@@ -15,7 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.RegionalMapSources;
+import tac.mapsources.impl.OsmMapSources.Mapnik;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -32,13 +32,14 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		// testMapSource("Google Maps", C_BERLIN);
+		testMapSource(Mapnik.class, Cities.BERLIN);
 		// testMapSource("Yahoo Maps", C_BERLIN);
 		// testMapSource("Google Earth", C_BERLIN);
 		// testMapSource("Mapnik", C_PRAHA);
 		// testMapSource(Cykloatlas.class, C_PRAHA);
 		// testMapSource(OsmHikingMap.class, C_BERLIN);
-		testMapSource(RegionalMapSources.OutdooractiveAustria.class, Cities.VIENNA);
+		// testMapSource(RegionalMapSources.OutdooractiveAustria.class,
+		// Cities.VIENNA);
 		// testMapSource("TilesAtHome", C_BERLIN);
 	}
 

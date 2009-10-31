@@ -16,6 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
+import tac.program.TileDownLoader;
 import tac.tilestore.TileStore;
 
 /**
@@ -78,7 +79,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				Runnable job = new Runnable() {
 
 					public void run() {
-						FileLoadJob.this.loadOrUpdateTile();
+						loadOrUpdateTile();
 					}
 				};
 				JobDispatcher.getInstance().addJob(job);
@@ -90,8 +91,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		protected void loadOrUpdateTile() {
 
 			try {
+
 				// log.finest("Loading tile from OSM: " + tile);
-				HttpURLConnection urlConn = loadTileFromOsm(tile);
+				// HttpURLConnection urlConn = loadTileFromOsm(tile);
 				// if (tileFile != null) {
 				// switch (mapSource.getTileUpdate()) {
 				// case IfModifiedSince:
@@ -145,12 +147,12 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				// return;
 				// }
 
-				byte[] buffer = loadTileInBuffer(urlConn);
+				byte[] buffer = TileDownLoader.downloadTileAndUpdateStore(tilex, tiley, zoom,
+						mapSource);
 				if (buffer != null) {
 					tile.loadImage(new ByteArrayInputStream(buffer));
 					tile.setLoaded(true);
 					listener.tileLoadingFinished(tile, true);
-					tileStore.putTileData(buffer, tilex, tiley, zoom, mapSource);
 				} else {
 					tile.setLoaded(true);
 				}

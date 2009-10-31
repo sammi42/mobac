@@ -61,22 +61,26 @@ public class BerkeleyDbTileStore extends TileStore {
 			return null;
 		}
 		if (log.isTraceEnabled())
-			log.trace("Loaded tile from store: (x,y,z)" + x + "/" + y + "/" + zoom + " "
-					+ mapSource.getName());
-		return tile.data;
+			log.trace("Loaded " + mapSource.getName() + " " + tile);
+		return tile.getData();
 	}
 
 	@Override
 	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource)
 			throws IOException {
+		this.putTileData(tileData, x, y, zoom, mapSource, -1, -1, null);
+	}
+
+	@Override
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource,
+			long timeLastModified, long timeExpires, String eTag) throws IOException {
 		if (!mapSource.allowFileStore())
 			return;
-		TileDbEntry tile = new TileDbEntry(x, y, zoom);
-		tile.data = tileData;
+		TileDbEntry tile = new TileDbEntry(x, y, zoom, tileData, timeLastModified, timeExpires,
+				eTag);
 		try {
 			if (log.isTraceEnabled())
-				log.trace("Saved tile to store: (x,y,z)" + x + "/" + y + "/" + zoom + " "
-						+ mapSource.getName());
+				log.trace("Saved " + mapSource.getName() + " " + tile);
 			getTileDatabase(mapSource).put(tile);
 		} catch (DatabaseException e) {
 			log.error("Faild to write tile to tile store \"" + mapSource.getName() + "\"", e);

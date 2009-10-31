@@ -35,11 +35,15 @@ public abstract class TileStore {
 		if (tileStorePath != null)
 			tileStoreDir = new File(tileStorePath);
 		else
-			tileStoreDir = new File(DirectoryManager.userHomeDir, "tilestore");
+			tileStoreDir = new File(DirectoryManager.currentDir, "tilestore");
+		log.debug("Tile store path: " + tileStoreDir);
 	}
 
 	public abstract void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource)
 			throws IOException;
+
+	public abstract void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource,
+			long timeLastModified, long timeExpires, String eTag) throws IOException;
 
 	/**
 	 * 

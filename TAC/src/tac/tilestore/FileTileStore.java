@@ -44,6 +44,13 @@ public class FileTileStore extends TileStore {
 		}
 	}
 
+	@Override
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource,
+			long timeLastModified, long timeExpires, String eTag) throws IOException {
+		// We ignore the extra parameters
+		putTileData(tileData, x, y, zoom, mapSource);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -78,7 +78,7 @@ public class GpxSave implements ActionListener {
 		} catch (Exception e) {
 		}
 		fc.addChoosableFileFilter(new GpxFileFilter(true));
-		int returnVal = fc.showOpenDialog(MainGUI.getMainGUI());
+		int returnVal = fc.showSaveDialog(MainGUI.getMainGUI());
 		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return null;
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();

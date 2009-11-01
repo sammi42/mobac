@@ -1,7 +1,8 @@
 package tac.tilestore.berkeleydb;
 
-import java.io.Serializable;
 import java.util.Date;
+
+import tac.tilestore.TileStoreEntry;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.KeyField;
@@ -9,9 +10,7 @@ import com.sleepycat.persist.model.Persistent;
 import com.sleepycat.persist.model.PrimaryKey;
 
 @Entity(version = 1)
-public class TileDbEntry implements Serializable {
-
-	private static final long serialVersionUID = -1759454532213387536L;
+public class TileDbEntry implements TileStoreEntry {
 
 	@PrimaryKey
 	protected TileDbKey tileKey;
@@ -30,6 +29,8 @@ public class TileDbEntry implements Serializable {
 
 	public TileDbEntry(int x, int y, int zoom, byte[] data) {
 		tileKey = new TileDbKey(x, y, zoom);
+		if (data == null)
+			throw new NullPointerException("Tile data can not be null!");
 		this.data = data;
 		this.timeDownloaded = System.currentTimeMillis();
 	}
@@ -66,14 +67,12 @@ public class TileDbEntry implements Serializable {
 	public String toString() {
 		String tlm = (timeLastModified <= 0) ? "-" : new Date(timeLastModified).toString();
 		String txp = (timeExpires <= 0) ? "-" : new Date(timeExpires).toString();
-		return String.format("Tile %3d/%3d/z%2d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.x, tileKey.y,
-				tileKey.zoom, new Date(timeDownloaded), tlm, txp, eTag);
+		return String.format("Tile %3d/%3d/z%2d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.x,
+				tileKey.y, tileKey.zoom, new Date(timeDownloaded), tlm, txp, eTag);
 	}
 
 	@Persistent(version = 1)
-	public static class TileDbKey implements Serializable {
-
-		private static final long serialVersionUID = 6037918679593107685L;
+	public static class TileDbKey {
 
 		@KeyField(1)
 		public int zoom;

@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.tilestore.TileStore;
+import tac.tilestore.TileStoreEntry;
 import tac.tilestore.TileStoreInfo;
 import tac.tilestore.berkeleydb.TileDbEntry.TileDbKey;
 import tac.utilities.Utilities;
@@ -45,25 +46,35 @@ public class BerkeleyDbTileStore extends TileStore {
 		envConfig.setAllowCreate(true);
 	}
 
+	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
+		TileDatabase db;
+		synchronized (tileDbMap) {
+			db = tileDbMap.get(mapSource.getName());
+		}
+		if (db != null)
+			return db;
+		try {
+			synchronized (tileDbMap) {
+				cleanupDatabases();
+				db = tileDbMap.get(mapSource.getName());
+				if (db == null) {
+					db = new TileDatabase(mapSource);
+					db.lastAccess = System.currentTimeMillis();
+					tileDbMap.put(mapSource.getName(), db);
+				}
+				return db;
+			}
+		} catch (Exception e) {
+			log.error("Error creating tile store db \"" + mapSource.getName() + "\"", e);
+			throw new DatabaseException(e);
+		}
+	}
+	
 	@Override
 	public TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException {
 		int tileCount = getNrOfTiles(mapSource);
 		long storeSize = getStoreSize(mapSource);
 		return new TileStoreInfo(storeSize, tileCount);
-	}
-
-	@Override
-	public byte[] getTileData(int x, int y, int zoom, MapSource mapSource) {
-		TileDbEntry tile = getTile(x, y, zoom, mapSource);
-		if (tile == null) {
-			if (log.isTraceEnabled())
-				log.trace("Tile store cache miss: (x,y,z)" + x + "/" + y + "/" + zoom + " "
-						+ mapSource.getName());
-			return null;
-		}
-		if (log.isTraceEnabled())
-			log.trace("Loaded " + mapSource.getName() + " " + tile);
-		return tile.getData();
 	}
 
 	@Override
@@ -92,37 +103,22 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
-	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
-		TileDatabase db;
-		synchronized (tileDbMap) {
-			db = tileDbMap.get(mapSource.getName());
-		}
-		if (db != null)
-			return db;
-		try {
-			synchronized (tileDbMap) {
-				cleanupDatabases();
-				db = tileDbMap.get(mapSource.getName());
-				if (db == null) {
-					db = new TileDatabase(mapSource);
-					db.lastAccess = System.currentTimeMillis();
-					tileDbMap.put(mapSource.getName(), db);
-				}
-				return db;
-			}
-		} catch (Exception e) {
-			log.error("Error creating tile store db \"" + mapSource.getName() + "\"", e);
-			throw new DatabaseException(e);
-		}
-	}
-
-	public TileDbEntry getTile(int x, int y, int zoom, MapSource mapSource) {
+	@Override
+	public TileStoreEntry getTileData(int x, int y, int zoom, MapSource mapSource) {
 		if (!mapSource.allowFileStore())
 			return null;
 		TileDatabase db = null;
 		try {
 			db = getTileDatabase(mapSource);
-			return db.get(new TileDbKey(x, y, zoom));
+			TileStoreEntry tile = db.get(new TileDbKey(x, y, zoom));
+			if (log.isTraceEnabled()) {
+				if (tile == null)
+					log.trace("Tile store cache miss: (x,y,z)" + x + "/" + y + "/" + zoom + " "
+							+ mapSource.getName());
+				else
+					log.trace("Loaded " + mapSource.getName() + " " + tile);
+			}
+			return tile;
 		} catch (Exception e) {
 			if (db != null)
 				db.close();
@@ -224,7 +220,6 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
-	@Override
 	public void closeAll(final boolean shutdown) {
 		Thread t = new DelayedInterruptThread("DBShutdown") {
 
@@ -307,39 +302,6 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		public long entryCount() throws DatabaseException {
 			return tileIndex.count();
-			// DelayedInterruptThread t = (DelayedInterruptThread)
-			// Thread.currentThread();
-			// try {
-			// t.pauseInterrupt();
-			// long count = 0;
-			//
-			// store.sync();
-			// env.cleanLog();
-			//
-			// DatabaseEntry key = new DatabaseEntry();
-			// DatabaseEntry data = new DatabaseEntry();
-			// Cursor cursor = null;
-			// Transaction txn = env.beginTransaction(null, null);
-			// try {
-			// // Get the cursor
-			// CursorConfig cc = new CursorConfig();
-			// cc.setReadUncommitted(true);
-			// cursor = tileIndex.getDatabase().openCursor(txn, cc);
-			// while (cursor.getNext(key, data, LockMode.DEFAULT) ==
-			// OperationStatus.SUCCESS) {
-			// count++;
-			// }
-			// } finally {
-			// if (cursor != null)
-			// cursor.close();
-			// txn.commit();
-			// }
-			// return count;
-			// } finally {
-			// if (t.interruptedWhilePaused())
-			// close();
-			// t.resumeInterrupt();
-			// }
 		}
 
 		public void put(TileDbEntry tile) throws DatabaseException {

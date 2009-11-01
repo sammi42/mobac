@@ -11,10 +11,16 @@ public class TileStoreInfo {
 		this.tileCount = tileCount;
 	}
 
+	/**
+	 * @return Number of tiles stored in the tile store
+	 */
 	public int getTileCount() {
 		return tileCount;
 	}
 
+	/**
+	 * @return store size in bytes
+	 */
 	public long getStoreSize() {
 		return storeSize;
 	}

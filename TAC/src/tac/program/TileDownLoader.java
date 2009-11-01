@@ -14,16 +14,19 @@ import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.model.Settings;
 import tac.tar.TarIndexedArchive;
 import tac.tilestore.TileStore;
+import tac.tilestore.TileStoreEntry;
 import tac.utilities.Utilities;
 
 public class TileDownLoader {
 
 	static {
-		System.setProperty("http.maxConnections", "10");
+		System.setProperty("http.maxConnections", "15");
 	}
 
-	private static int MAX_DOWNLOAD_SIZE = 1024 * 1024; // 1 MB max tile size to
-	// download
+	/**
+	 * 1 MB max tile size to download
+	 */
+	private static int MAX_DOWNLOAD_SIZE = 1024 * 1024;
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
@@ -56,11 +59,11 @@ public class TileDownLoader {
 
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
-			byte[] data = ts.getTileData(x, y, zoom, mapSource);
-			if (data != null) {
+			TileStoreEntry tile = ts.getTileData(x, y, zoom, mapSource);
+			if (tile != null) {
 				synchronized (tileArchive) {
 					log.trace("Tile used from tilestore");
-					tileArchive.writeFileFromData(tileFileName, data);
+					tileArchive.writeFileFromData(tileFileName, tile.getData());
 				}
 				return 0;
 			}

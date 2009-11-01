@@ -18,6 +18,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 import tac.program.TileDownLoader;
 import tac.tilestore.TileStore;
+import tac.tilestore.TileStoreEntry;
 
 /**
  * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via
@@ -170,10 +171,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
 		protected boolean loadTileFromStore() {
 			try {
-				byte[] tileData = tileStore.getTileData(tilex, tiley, zoom, mapSource);
-				if (tileData == null)
+				TileStoreEntry tileStoreEntry = tileStore.getTileData(tilex, tiley, zoom, mapSource);
+				if (tileStoreEntry == null)
 					return false;
-				tile.loadImage(new ByteArrayInputStream(tileData));
+				tile.loadImage(new ByteArrayInputStream(tileStoreEntry.getData()));
 				// fileAge = tileFile.lastModified();
 				// boolean oldTile = System.currentTimeMillis() - fileAge >
 				// maxCacheFileAge;

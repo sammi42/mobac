@@ -53,34 +53,13 @@ public abstract class TileStore {
 	 * @param mapSource
 	 * @return
 	 */
-	public abstract byte[] getTileData(int x, int y, int zoom, MapSource mapSource);
+	public abstract TileStoreEntry getTileData(int x, int y, int zoom, MapSource mapSource);
 
 	public abstract boolean contains(int x, int y, int zoom, MapSource mapSource);
 
 	public abstract void prepareTileStore(MapSource mapSource);
 
 	public abstract void clearStore(MapSource mapSource);
-
-	/**
-	 * This method returns the amount of tiles in the store of tiles which is
-	 * specified by the {@link MapSource} object.
-	 * 
-	 * @param mapSource
-	 *            the store to calculate number of tiles in
-	 * @return the amount of tiles in the specified store.
-	 * @throws InterruptedException
-	 */
-	public abstract int getNrOfTiles(MapSource mapSource) throws InterruptedException;
-
-	/**
-	 * Returns the size in bytes occupied by all entries of the tile store
-	 * instance belonging to <code>mapSource</code>
-	 * 
-	 * @param mapSource
-	 * @return
-	 * @throws InterruptedException
-	 */
-	public abstract long getStoreSize(MapSource mapSource) throws InterruptedException;
 
 	/**
 	 * Returns <code>true</code> if the tile store directory of the specified
@@ -91,9 +70,20 @@ public abstract class TileStore {
 	 */
 	public abstract boolean storeExists(MapSource mapSource);
 
+	/**
+	 * 
+	 * @param mapSource
+	 * @return
+	 * @throws InterruptedException
+	 */
 	public abstract TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException;
 
-	public void closeAll(boolean shutdown) {
-	};
+	/**
+	 * 
+	 * @param shutdown
+	 *            if <code>true</code> the application wide tile store will
+	 *            shutdown so that it can not be used again. 
+	 */
+	public abstract void closeAll(boolean shutdown);
 
 }

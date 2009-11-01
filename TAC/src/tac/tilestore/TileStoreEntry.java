@@ -2,6 +2,12 @@ package tac.tilestore;
 
 public interface TileStoreEntry {
 
+	public int getX();
+
+	public int getY();
+
+	public int getZoom();
+
 	/**
 	 * This function does never return a <code>null</code> value!
 	 * 
@@ -18,6 +24,8 @@ public interface TileStoreEntry {
 	 */
 	public long getTimeDownloaded();
 
+	public void update(long timeExpires);
+	
 	/**
 	 * 
 	 * @return Last modification time in UTC or <code>0</code> if not supported

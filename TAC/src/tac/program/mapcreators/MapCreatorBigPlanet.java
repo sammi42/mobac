@@ -70,6 +70,11 @@ public class MapCreatorBigPlanet extends MapCreator {
 	@Override
 	public void createMap() throws MapCreationException {
 		try {
+			SQLite.loadSQLite();
+		} catch (SQLException e) {
+			throw new MapCreationException(SQLite.MSG_SQLITE_MISSING, e);
+		}
+		try {
 			mapTileWriter = null;
 			initializeDB();
 			createTiles();
@@ -77,21 +82,19 @@ public class MapCreatorBigPlanet extends MapCreator {
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
-		} catch (ClassNotFoundException e) {
-			throw new MapCreationException("SQLite Java driver not available", e);
 		} catch (SQLException e) {
-			throw new MapCreationException("Error creating SQL database", e);
+			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\"",
+					e);
 		}
 	}
 
-	private Connection getConnection() throws ClassNotFoundException, SQLException {
-		SQLite.loadSQLite();
+	private Connection getConnection() throws SQLException {
 		String url = "jdbc:sqlite:/" + this.databaseFile;
 		Connection conn = DriverManager.getConnection(url);
 		return conn;
 	}
 
-	private void initializeDB() throws ClassNotFoundException, SQLException {
+	private void initializeDB() throws SQLException {
 		conn = getConnection();
 		Statement stat = conn.createStatement();
 		stat.executeUpdate(TABLE_DDL);

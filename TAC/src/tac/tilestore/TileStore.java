@@ -53,7 +53,7 @@ public abstract class TileStore {
 	 * @param mapSource
 	 * @return
 	 */
-	public abstract TileStoreEntry getTileData(int x, int y, int zoom, MapSource mapSource);
+	public abstract TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource);
 
 	public abstract boolean contains(int x, int y, int zoom, MapSource mapSource);
 
@@ -82,8 +82,13 @@ public abstract class TileStore {
 	 * 
 	 * @param shutdown
 	 *            if <code>true</code> the application wide tile store will
-	 *            shutdown so that it can not be used again. 
+	 *            shutdown so that it can not be used again.
 	 */
 	public abstract void closeAll(boolean shutdown);
+
+	public abstract void putTile(TileStoreEntry tile, MapSource mapSource);
+
+	public abstract TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data,
+			long timeLastModified, long timeExpires, String eTag);
 
 }

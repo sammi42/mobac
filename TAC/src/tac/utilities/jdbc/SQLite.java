@@ -1,11 +1,12 @@
 package tac.utilities.jdbc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import javax.swing.JOptionPane;
 
 import tac.program.DirectoryManager;
-import tac.program.mapcreators.MapCreatorBigPlanet;
 import tac.utilities.ExtensionClassLoader;
 
 /**
@@ -17,33 +18,49 @@ public class SQLite {
 	private static final String DB_DRIVER = "SQLite.JDBCDriver";
 	private static boolean SQLITE_LOADED = false;
 
-	private static final Logger log = Logger.getLogger(SQLite.class);
+	public static final String MSG_SQLITE_MISSING = "Unable to find the SQLite libraries. "
+			+ "These are required for BigPlanet output format.<br>Please read the README.HTM "
+			+ "section \"Creating and using atlases with BigPlanet / RMaps\". ";
 
-	public static boolean loadSQLite() {
-		if (SQLITE_LOADED)
-			return true;
+	public static boolean loadSQLiteOrShowError() {
 		try {
-			synchronized (MapCreatorBigPlanet.class) {
-				if (SQLITE_LOADED)
-					return true;
-				try {
-					Class.forName(DB_DRIVER);
-					SQLITE_LOADED = true;
-					return true;
-				} catch (Exception e) {
-				}
-				ExtensionClassLoader cl;
-				File[] dirList = new File[] { DirectoryManager.programDir,
-						new File(DirectoryManager.programDir, "lib"), DirectoryManager.currentDir,
-						new File(DirectoryManager.currentDir, "lib") };
-				cl = ExtensionClassLoader.create(dirList, "sqlite.*");
-				DriverProxy.loadSQLDriver("SQLite.JDBCDriver", cl);
-				SQLITE_LOADED = true;
-				return true;
-			}
+			SQLite.loadSQLite();
+			return true;
 		} catch (Exception e) {
-			log.error("SQLite loading failed", e);
+			JOptionPane.showMessageDialog(null, "<html>" + MSG_SQLITE_MISSING + "</html>",
+					"Error - SQLite not available", JOptionPane.ERROR_MESSAGE);
 			return false;
+		}
+	}
+
+	public static void loadSQLite() throws SQLException {
+		if (SQLITE_LOADED)
+			return;
+		synchronized (SQLite.class) {
+			if (SQLITE_LOADED)
+				return;
+			try {
+				Class.forName(DB_DRIVER);
+				SQLITE_LOADED = true;
+				return;
+			} catch (Exception e) {
+			}
+			ExtensionClassLoader cl;
+			File[] dirList = new File[] { DirectoryManager.programDir,
+					new File(DirectoryManager.programDir, "lib"), DirectoryManager.currentDir,
+					new File(DirectoryManager.currentDir, "lib") };
+			try {
+				cl = ExtensionClassLoader.create(dirList, "sqlite.*");
+			} catch (FileNotFoundException e) {
+				throw new SQLException("sqlite.jar and native library not found.");
+			}
+			try {
+				DriverProxy.loadSQLDriver(DB_DRIVER, cl);
+			} catch (Exception e) {
+				throw new SQLException("Error while loading SQLite driver", e);
+			}
+			SQLITE_LOADED = true;
+			return;
 		}
 	}
 }

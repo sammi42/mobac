@@ -43,6 +43,23 @@ public class TileDbEntry implements TileStoreEntry {
 		this.eTag = eTag;
 	}
 
+	public void update(long timeExpires) {
+		timeDownloaded = System.currentTimeMillis();
+		this.timeExpires = timeExpires;
+	}
+
+	public int getX() {
+		return tileKey.x;
+	}
+
+	public int getY() {
+		return tileKey.y;
+	}
+
+	public int getZoom() {
+		return tileKey.zoom;
+	}
+
 	public byte[] getData() {
 		return data;
 	}
@@ -67,8 +84,8 @@ public class TileDbEntry implements TileStoreEntry {
 	public String toString() {
 		String tlm = (timeLastModified <= 0) ? "-" : new Date(timeLastModified).toString();
 		String txp = (timeExpires <= 0) ? "-" : new Date(timeExpires).toString();
-		return String.format("Tile %3d/%3d/z%2d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.x,
-				tileKey.y, tileKey.zoom, new Date(timeDownloaded), tlm, txp, eTag);
+		return String.format("Tile z%d/%d/%d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.zoom,
+				tileKey.x, tileKey.y, new Date(timeDownloaded), tlm, txp, eTag);
 	}
 
 	@Persistent(version = 1)

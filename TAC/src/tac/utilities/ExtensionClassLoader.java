@@ -42,11 +42,11 @@ public class ExtensionClassLoader extends URLClassLoader {
 	 * @throws FileNotFoundException
 	 */
 	public static ExtensionClassLoader create(File[] dirList, String regexFilePattern)
-			throws MalformedURLException, FileNotFoundException {
+			throws FileNotFoundException {
 		File[] jarFiles = null;
 		File jarDir = null;
 		for (File dir : dirList) {
-			if (!dir.isDirectory())
+			if (dir == null || !dir.isDirectory())
 				continue;
 			File[] files = dir.listFiles(new RegexFileFilter(regexFilePattern));
 			if (files.length > 0) {
@@ -62,7 +62,11 @@ public class ExtensionClassLoader extends URLClassLoader {
 					+ "\" found.");
 		final URL[] urls = new URL[jarFiles.length];
 		for (int i = 0; i < urls.length; i++) {
-			urls[i] = new URL("jar", "", "file:" + jarFiles[i].getAbsolutePath() + "!/");
+			try {
+				urls[i] = new URL("jar", "", "file:" + jarFiles[i].getAbsolutePath() + "!/");
+			} catch (MalformedURLException e) {
+				log.error("", e);
+			}
 		}
 		final File jarDir_ = jarDir;
 		ExtensionClassLoader ecl = AccessController

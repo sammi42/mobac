@@ -46,6 +46,12 @@ public class BerkeleyDbTileStore extends TileStore {
 		envConfig.setAllowCreate(true);
 	}
 
+	@Override
+	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data,
+			long timeLastModified, long timeExpires, String eTag) {
+		return new TileDbEntry(x, y, zoom, data, timeLastModified, timeExpires, eTag);
+	}
+
 	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
 		TileDatabase db;
 		synchronized (tileDbMap) {
@@ -69,7 +75,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			throw new DatabaseException(e);
 		}
 	}
-	
+
 	@Override
 	public TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException {
 		int tileCount = getNrOfTiles(mapSource);
@@ -104,7 +110,24 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	@Override
-	public TileStoreEntry getTileData(int x, int y, int zoom, MapSource mapSource) {
+	public void putTile(TileStoreEntry tile, MapSource mapSource) {
+		if (!mapSource.allowFileStore())
+			return;
+		TileDatabase db = null;
+		try {
+			if (log.isTraceEnabled())
+				log.trace("Saved " + mapSource.getName() + " " + tile);
+			db = getTileDatabase(mapSource);
+			db.put((TileDbEntry) tile);
+		} catch (Exception e) {
+			if (db != null)
+				db.close();
+			log.error("Faild to write tile to tile store \"" + mapSource.getName() + "\"", e);
+		}
+	}
+
+	@Override
+	public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
 		if (!mapSource.allowFileStore())
 			return null;
 		TileDatabase db = null;

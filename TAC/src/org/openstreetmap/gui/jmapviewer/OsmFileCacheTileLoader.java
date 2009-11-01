@@ -3,12 +3,10 @@ package org.openstreetmap.gui.jmapviewer;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -32,13 +30,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
 	private static final Logger log = Logger.getLogger(OsmFileCacheTileLoader.class);
 
-	public static final long FILE_AGE_ONE_DAY = 1000 * 60 * 60 * 24;
-	public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
-
 	protected TileStore tileStore;
-
-	protected long maxCacheFileAge = FILE_AGE_ONE_WEEK;
-	protected long recheckAfter = FILE_AGE_ONE_DAY;
 
 	public OsmFileCacheTileLoader(TileLoaderListener map) {
 		super(map);
@@ -53,10 +45,11 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 	protected class FileLoadJob implements Runnable {
 		InputStream input = null;
 
-		int tilex, tiley, zoom;
+		final int tilex, tiley, zoom;
+		final MapSource mapSource;
 		Tile tile;
-		MapSource mapSource;
 		boolean fileTilePainted = false;
+		protected TileStoreEntry tileStoreEntry;
 
 		public FileLoadJob(MapSource source, int tilex, int tiley, int zoom) {
 			super();
@@ -148,8 +141,14 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				// return;
 				// }
 
-				byte[] buffer = TileDownLoader.downloadTileAndUpdateStore(tilex, tiley, zoom,
-						mapSource);
+				byte[] buffer;
+				if (tileStoreEntry == null)
+					buffer = TileDownLoader.downloadTileAndUpdateStore(tilex, tiley, zoom,
+							mapSource);
+				else {
+					TileDownLoader.updateStoredTile(tileStoreEntry, mapSource);
+					buffer = tileStoreEntry.getData();
+				}
 				if (buffer != null) {
 					tile.loadImage(new ByteArrayInputStream(buffer));
 					tile.setLoaded(true);
@@ -171,10 +170,13 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
 		protected boolean loadTileFromStore() {
 			try {
-				TileStoreEntry tileStoreEntry = tileStore.getTileData(tilex, tiley, zoom, mapSource);
+				tileStoreEntry = tileStore.getTile(tilex, tiley, zoom, mapSource);
 				if (tileStoreEntry == null)
 					return false;
 				tile.loadImage(new ByteArrayInputStream(tileStoreEntry.getData()));
+				listener.tileLoadingFinished(tile, true);
+				if (TileDownLoader.isTileExpired(tileStoreEntry))
+					return false;
 				// fileAge = tileFile.lastModified();
 				// boolean oldTile = System.currentTimeMillis() - fileAge >
 				// maxCacheFileAge;
@@ -184,31 +186,12 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				// fileTilePainted = true;
 				// return true;
 				// }
-				listener.tileLoadingFinished(tile, true);
 				fileTilePainted = true;
 				return true;
 			} catch (Exception e) {
 				log.error("", e);
 			}
 			return false;
-		}
-
-		protected byte[] loadTileInBuffer(URLConnection urlConn) throws IOException {
-			input = urlConn.getInputStream();
-			int bufSize = Math.max(input.available(), 32768);
-			ByteArrayOutputStream bout = new ByteArrayOutputStream(bufSize);
-			byte[] buffer = new byte[2048];
-			boolean finished = false;
-			do {
-				int read = input.read(buffer);
-				if (read >= 0)
-					bout.write(buffer, 0, read);
-				else
-					finished = true;
-			} while (!finished);
-			if (bout.size() == 0)
-				return null;
-			return bout.toByteArray();
 		}
 
 		/**
@@ -280,27 +263,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		// }
 		// }
 
-	}
-
-	public long getMaxFileAge() {
-		return maxCacheFileAge;
-	}
-
-	/**
-	 * Sets the maximum age of the local cached tile in the file system. If a
-	 * local tile is older than the specified file age
-	 * {@link OsmFileCacheTileLoader} will connect to the tile server and check
-	 * if a newer tile is available using the mechanism specified for the
-	 * selected tile source/server.
-	 * 
-	 * @param maxFileAge
-	 *            maximum age in milliseconds
-	 * @see #FILE_AGE_ONE_DAY
-	 * @see #FILE_AGE_ONE_WEEK
-	 * @see MapSource#getTileUpdate()
-	 */
-	public void setCacheMaxFileAge(long maxFileAge) {
-		this.maxCacheFileAge = maxFileAge;
 	}
 
 }

@@ -1,7 +1,6 @@
 package tac.program;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -19,14 +18,12 @@ import tac.utilities.Utilities;
 
 public class TileDownLoader {
 
+	public static final long FILE_AGE_ONE_DAY = 1000 * 60 * 60 * 24;
+	public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
+
 	static {
 		System.setProperty("http.maxConnections", "15");
 	}
-
-	/**
-	 * 1 MB max tile size to download
-	 */
-	private static int MAX_DOWNLOAD_SIZE = 1024 * 1024;
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
 
@@ -55,12 +52,16 @@ public class TileDownLoader {
 		Settings s = Settings.getInstance();
 		String tileFileName = "y" + y + "x" + x + "." + mapSource.getTileType();
 
+		TileStoreEntry tile = null;
 		if (s.tileStoreEnabled) {
 
 			// Copy the file from the persistent tilestore instead of
 			// downloading it from internet.
-			TileStoreEntry tile = ts.getTileData(x, y, zoom, mapSource);
+			tile = ts.getTile(x, y, zoom, mapSource);
+			boolean expired = isTileExpired(tile);
 			if (tile != null) {
+				if (expired)
+					log.trace("Expired: " + mapSource.getName() + " " + tile);
 				synchronized (tileArchive) {
 					log.trace("Tile used from tilestore");
 					tileArchive.writeFileFromData(tileFileName, tile.getData());
@@ -68,13 +69,32 @@ public class TileDownLoader {
 				return 0;
 			}
 		}
-		byte[] data = downloadTileAndUpdateStore(x, y, zoom, mapSource);
+		byte[] data = null;
+		if (tile == null) {
+			data = downloadTileAndUpdateStore(x, y, zoom, mapSource);
+		} else {
+			updateStoredTile(tile, mapSource);
+			data = tile.getData();
+		}
+		if (data == null)
+			return 0;
 		synchronized (tileArchive) {
 			tileArchive.writeFileFromData(tileFileName, data);
 		}
-		return (data == null) ? 0 : data.length;
+		return data.length;
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @param mapSource
+	 * @return
+	 * @throws UnrecoverableDownloadException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, MapSource mapSource)
 			throws UnrecoverableDownloadException, IOException, InterruptedException {
 		String url = mapSource.getTileUrl(zoom, x, y);
@@ -102,41 +122,116 @@ public class TileDownLoader {
 		long timeLastModified = huc.getLastModified();
 		long timeExpires = huc.getExpiration();
 
-		int bytesRead = 0;
-		InputStream is = huc.getInputStream();
-		byte[] data = null;
-		try {
-
-			int contentLen = huc.getContentLength();
-			if (contentLen > MAX_DOWNLOAD_SIZE)
-				throw new UnrecoverableDownloadException("Remote resource '" + url + "' of size "
-						+ contentLen + "bytes exceeds the maximum download size of "
-						+ MAX_DOWNLOAD_SIZE + " bytes.");
-			if (contentLen < 0) {
-				byte[] b = new byte[8192];
-				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
-				while ((bytesRead = is.read(b)) > 0) {
-					buf.write(b, 0, bytesRead);
-				}
-				data = buf.toByteArray();
-			} else {
-				DataInputStream din = new DataInputStream(is);
-				data = new byte[contentLen];
-				din.readFully(data);
-				if (din.read() >= 0)
-					throw new IOException("Data after content end available!");
-			}
-			Utilities.checkForInterruption();
-			if (mapSource.allowFileStore() && s.tileStoreEnabled) {
-				// We are writing simultaneously to the target file
-				// and the file in the tile store
-				TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
-						timeExpires, eTag);
-			}
-			Utilities.checkForInterruption();
-		} finally {
-			Utilities.closeStream(is);
+		byte[] data = loadTileInBuffer(huc);
+		Utilities.checkForInterruption();
+		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
+					timeExpires, eTag);
 		}
+		Utilities.checkForInterruption();
 		return data;
+	}
+
+	public static byte[] updateStoredTile(TileStoreEntry tile, MapSource mapSource)
+			throws UnrecoverableDownloadException, IOException, InterruptedException {
+		final int x = tile.getX();
+		final int y = tile.getY();
+		final int zoom = tile.getZoom();
+
+		String url = mapSource.getTileUrl(zoom, x, y);
+		if (url == null)
+			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
+					+ " is not a valid tile in map source " + mapSource);
+
+		if (log.isTraceEnabled())
+			log.trace(String.format("Downloading (zoom,x,y) %d/%d/%d %s", zoom, x, y, url));
+		URL u = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+
+		conn.setRequestMethod("GET");
+
+		boolean conditionalRequest = false;
+
+		switch (mapSource.getTileUpdate()) {
+		case IfNoneMatch: {
+			if (tile.geteTag() != null) {
+				conn.setRequestProperty("If-None-Match", tile.geteTag());
+				conditionalRequest = true;
+			}
+			break;
+		}
+		case IfModifiedSince: {
+			if (tile.getTimeLastModified() > 0) {
+				conn.setIfModifiedSince(tile.getTimeLastModified());
+				conditionalRequest = true;
+			}
+			break;
+		}
+		}
+
+		Settings s = Settings.getInstance();
+		conn.setConnectTimeout(1000 * s.getConnectionTimeout());
+		conn.addRequestProperty("User-agent", s.getUserAgent());
+		conn.connect();
+
+		int code = conn.getResponseCode();
+
+		if (conditionalRequest && code == HttpURLConnection.HTTP_NOT_MODIFIED) {
+			// Data unchanged on server
+			if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+				tile.update(conn.getExpiration());
+				TileStore.getInstance().putTile(tile, mapSource);
+			}
+			if (log.isTraceEnabled())
+				log.trace("Data unchanged on server: " + mapSource + " " + tile);
+			return null;
+		}
+
+		if (code != HttpURLConnection.HTTP_OK)
+			throw new IOException("Invaild HTTP response: " + code);
+
+		String eTag = conn.getHeaderField("ETag");
+		long timeLastModified = conn.getLastModified();
+		long timeExpires = conn.getExpiration();
+
+		byte[] data = loadTileInBuffer(conn);
+		Utilities.checkForInterruption();
+		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
+					timeExpires, eTag);
+		}
+		Utilities.checkForInterruption();
+		return data;
+	}
+
+	public static boolean isTileExpired(TileStoreEntry tileStoreEntry) {
+		if (tileStoreEntry == null)
+			return true;
+		long expiredTime = tileStoreEntry.getTimeExpires();
+		if (expiredTime >= 0) {
+			// server had set an expiry time
+			return (expiredTime < System.currentTimeMillis());
+		} else {
+			return (tileStoreEntry.getTimeDownloaded() + FILE_AGE_ONE_DAY > System
+					.currentTimeMillis());
+		}
+	}
+
+	protected static byte[] loadTileInBuffer(HttpURLConnection conn) throws IOException {
+		InputStream input = conn.getInputStream();
+		int bufSize = Math.max(input.available(), 32768);
+		ByteArrayOutputStream bout = new ByteArrayOutputStream(bufSize);
+		byte[] buffer = new byte[2048];
+		boolean finished = false;
+		do {
+			int read = input.read(buffer);
+			if (read >= 0)
+				bout.write(buffer, 0, read);
+			else
+				finished = true;
+		} while (!finished);
+		if (bout.size() == 0)
+			return null;
+		return bout.toByteArray();
 	}
 }

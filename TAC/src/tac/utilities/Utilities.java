@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -43,6 +44,9 @@ public class Utilities {
 	private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
 
 	private static final Logger log = Logger.getLogger(Utilities.class);
+
+	public static final long SECONDS_PER_HOUR = TimeUnit.HOURS.toSeconds(1);
+	public static final long SECONDS_PER_DAY = TimeUnit.DAYS.toSeconds(1);
 
 	public static boolean testJaiColorQuantizerAvailable() {
 		try {
@@ -201,6 +205,40 @@ public class Utilities {
 		if (bytes < 1000000000)
 			return FORMAT_2_DEC.format(bytes / 1048576d) + " MiByte";
 		return FORMAT_2_DEC.format(bytes / 1073741824d) + " GiByte";
+	}
+
+	public static String formatDurationSeconds(long seconds) {
+		long x = seconds;
+		long days = x / SECONDS_PER_DAY;
+		x %= SECONDS_PER_DAY;
+		int years = (int) (days / 365);
+		days -= (years * 365);
+
+		int months = (int) (days * 12d / 365d);
+		String m = (months == 1) ? "month" : "months";
+
+		if (years > 5)
+			return String.format("%d years", years);
+		if (years > 0) {
+			String y = (years == 1) ? "year" : "years";
+			return String.format("%d %s %d %s", years, y, months, m);
+		}
+		String d = (days == 1) ? "day" : "days";
+		if (months > 0) {
+			days -= months * (365d / 12d);
+			return String.format("%d %s %d %s", months, m, days, d);
+		}
+		long hours = TimeUnit.SECONDS.toHours(x);
+		String h = (hours == 1) ? "hour" : "hours";
+		x -= hours * SECONDS_PER_HOUR;
+		if (days > 0)
+			return String.format("%d %s %d %s", days, d, hours, h);
+		long minutes = TimeUnit.SECONDS.toMinutes(x);
+		String min = (minutes == 1) ? "minute" : "minutes";
+		if (hours > 0)
+			return String.format("%d %s %d %s", hours, h, minutes, min);
+		else
+			return String.format("%d %s", minutes, min);
 	}
 
 	public static void mkDir(File dir) throws IOException {

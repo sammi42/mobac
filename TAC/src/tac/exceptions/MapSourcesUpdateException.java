@@ -3,12 +3,14 @@ package tac.exceptions;
 import tac.mapsources.MapSourcesManager;
 
 /**
- * Encapsulates several other exceptions that may occure while performing an
+ * Encapsulates several other exceptions that may occur while performing an
  * mapsources online update.
  * 
  * @see MapSourcesManager#mapsourcesOnlineUpdate()
  */
 public class MapSourcesUpdateException extends Exception {
+	
+	private static final long serialVersionUID = 1L;
 
 	public MapSourcesUpdateException(String message) {
 		super(message);

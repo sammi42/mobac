@@ -41,6 +41,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -48,6 +51,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.MapSourcesUpdateException;
 import tac.gui.components.JMapSizeCombo;
 import tac.gui.components.JObjectCheckBox;
+import tac.gui.components.JTimeSlider;
 import tac.mapsources.MapSourcesManager;
 import tac.program.model.ProxyType;
 import tac.program.model.Settings;
@@ -74,6 +78,10 @@ public class SettingsGUI extends JDialog {
 	private JPanel tileStoreInfoPanel;
 
 	private JCheckBox tileStoreEnabled;
+	private JTimeSlider defaultExpirationTime;
+	private JTimeSlider minExpirationTime;
+	private JTimeSlider maxExpirationTime;
+
 	private JLabel totalTileCountLabel;
 	private JLabel totalTileSizeLabel;
 
@@ -217,22 +225,74 @@ public class SettingsGUI extends JDialog {
 
 	private void addTileStorePanel() {
 
-		JPanel backGround = createNewTab("Tile store");
-		backGround.setLayout(new BorderLayout());
+		JPanel backGround = createNewTab("Tile update");
+		backGround.setLayout(new GridBagLayout());
 
 		tileStoreEnabled = new JCheckBox("Enable tile store for atlas download");
 
 		JPanel tileStorePanel = new JPanel(new BorderLayout());
 		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
-		tileStorePanel.add(tileStoreEnabled, BorderLayout.NORTH);
+		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
+
+		ChangeListener sliderChangeListener = new ChangeListener() {
+
+			public void stateChanged(ChangeEvent e) {
+				JTimeSlider slider = ((JTimeSlider) e.getSource());
+				long x = slider.getTimeSecondsValue();
+				JPanel panel = (JPanel) slider.getParent();
+				TitledBorder tb = (TitledBorder) panel.getBorder();
+				tb.setTitle(panel.getName() + ": " + Utilities.formatDurationSeconds(x));
+				panel.repaint();
+			}
+		};
+		GBC gbc_ef = GBC.eol().fill(GBC.HORIZONTAL);
+
+		JPanel defaultExpirationPanel = new JPanel(new GridBagLayout());
+		defaultExpirationPanel.setName("Default expiration time");
+		defaultExpirationPanel.setBorder(BorderFactory.createTitledBorder(""));
+		defaultExpirationTime = new JTimeSlider();
+		defaultExpirationTime.addChangeListener(sliderChangeListener);
+		JLabel descr = new JLabel(
+				"<html>The default exipration time is used for map sources that do not <br>"
+						+ "provide an expiration time for each map tile.</html>", JLabel.CENTER);
+
+		defaultExpirationPanel.add(descr, gbc_ef);
+		defaultExpirationPanel.add(defaultExpirationTime, gbc_ef);
+
+		JPanel maxExpirationPanel = new JPanel(new BorderLayout());
+		maxExpirationPanel.setName("Maximum expiration time");
+		maxExpirationPanel.setBorder(BorderFactory.createTitledBorder(""));
+		maxExpirationTime = new JTimeSlider();
+		maxExpirationTime.addChangeListener(sliderChangeListener);
+		maxExpirationPanel.add(maxExpirationTime, BorderLayout.CENTER);
+
+		JPanel minExpirationPanel = new JPanel(new BorderLayout());
+		minExpirationPanel.setName("Minimum expiration time");
+		minExpirationPanel.setBorder(BorderFactory.createTitledBorder(""));
+		minExpirationTime = new JTimeSlider();
+		minExpirationTime.addChangeListener(sliderChangeListener);
+		minExpirationPanel.add(minExpirationTime, BorderLayout.CENTER);
 
 		tileStoreInfoPanel = new JPanel(new GridBagLayout());
 		tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
 		prepareTileStoreInfoPanel();
 
-		backGround.add(tileStorePanel, BorderLayout.NORTH);
-		backGround.add(tileStoreInfoPanel, BorderLayout.CENTER);
+		descr = new JLabel("<html>Tiles are updated automatically base on the settings below. "
+				+ "Each map tile has <br>an expiry date that is sometimes provided by "
+				+ "the server. If the server does <br> not provide one, the default expiration "
+				+ "time is used.</html>", JLabel.CENTER);
+
+		backGround.add(descr, gbc_ef);
+		backGround.add(defaultExpirationPanel, gbc_ef);
+		backGround.add(minExpirationPanel, gbc_ef);
+		backGround.add(maxExpirationPanel, gbc_ef);
+		backGround.add(Box.createVerticalGlue(), GBC.std().fill());
+
+		backGround = createNewTab("Tile store");
+		backGround.setLayout(new GridBagLayout());
+		backGround.add(tileStorePanel, gbc_ef);
+		backGround.add(tileStoreInfoPanel, GBC.std().fill());
 	}
 
 	private synchronized void updateTileStoreInfoPanelAsync() {
@@ -451,6 +511,10 @@ public class SettingsGUI extends JDialog {
 			index = 0;
 		threadCount.setSelectedIndex(index);
 
+		defaultExpirationTime.setTimeMilliValue(s.tileDefaultExpirationTime);
+		maxExpirationTime.setTimeMilliValue(s.tileMaxExpirationTime);
+		minExpirationTime.setTimeMilliValue(s.tileMinExpirationTime);
+
 		String lang = s.getGoogleLanguage();
 		googleLang.setSelectedItem(lang);
 
@@ -465,7 +529,9 @@ public class SettingsGUI extends JDialog {
 
 		s.setUnitSystem((UnitSystem) unitSystem.getSelectedItem());
 		s.tileStoreEnabled = tileStoreEnabled.isSelected();
-
+		s.tileDefaultExpirationTime = defaultExpirationTime.getTimeMilliValue();
+		s.tileMinExpirationTime = minExpirationTime.getTimeMilliValue();
+		s.tileMaxExpirationTime = maxExpirationTime.getTimeMilliValue();
 		s.maxMapSize = mapSize.getValue();
 
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();

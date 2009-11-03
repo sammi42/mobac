@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.UnrecoverableDownloadException;
@@ -18,14 +19,13 @@ import tac.utilities.Utilities;
 
 public class TileDownLoader {
 
-	public static final long FILE_AGE_ONE_DAY = 1000 * 60 * 60 * 24;
-	public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
-
 	static {
 		System.setProperty("http.maxConnections", "15");
 	}
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
+
+	private static Settings settings = Settings.getInstance();
 
 	public static int getImage(int x, int y, int zoom, MapSource mapSource,
 			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
@@ -109,7 +109,7 @@ public class TileDownLoader {
 		huc.setRequestMethod("GET");
 
 		Settings s = Settings.getInstance();
-		huc.setConnectTimeout(1000 * s.getConnectionTimeout());
+		huc.setConnectTimeout(1000 * s.connectionTimeout);
 		huc.addRequestProperty("User-agent", s.getUserAgent());
 		huc.connect();
 
@@ -144,7 +144,7 @@ public class TileDownLoader {
 					+ " is not a valid tile in map source " + mapSource);
 
 		if (log.isTraceEnabled())
-			log.trace(String.format("Downloading (zoom,x,y) %d/%d/%d %s", zoom, x, y, url));
+			log.trace(String.format("Checking %s %s", mapSource.getName(), tile));
 		URL u = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 
@@ -170,7 +170,7 @@ public class TileDownLoader {
 		}
 
 		Settings s = Settings.getInstance();
-		conn.setConnectTimeout(1000 * s.getConnectionTimeout());
+		conn.setConnectTimeout(1000 * s.connectionTimeout);
 		conn.addRequestProperty("User-agent", s.getUserAgent());
 		conn.connect();
 
@@ -209,12 +209,15 @@ public class TileDownLoader {
 			return true;
 		long expiredTime = tileStoreEntry.getTimeExpires();
 		if (expiredTime >= 0) {
-			// server had set an expiry time
-			return (expiredTime < System.currentTimeMillis());
+			// server had set an expiration time
+			long maxExpirationTime = settings.tileMaxExpirationTime + tileStoreEntry.getTimeDownloaded(); 
+			long minExpirationTime = settings.tileMinExpirationTime + tileStoreEntry.getTimeDownloaded(); 
+			expiredTime = Math.max(minExpirationTime, Math.min(maxExpirationTime, expiredTime));
 		} else {
-			return (tileStoreEntry.getTimeDownloaded() + FILE_AGE_ONE_DAY > System
-					.currentTimeMillis());
+			// no expiration time set by server - use the default one
+			expiredTime = tileStoreEntry.getTimeDownloaded() + settings.tileDefaultExpirationTime;
 		}
+		return (expiredTime < System.currentTimeMillis());
 	}
 
 	protected static byte[] loadTileInBuffer(HttpURLConnection conn) throws IOException {

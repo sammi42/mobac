@@ -8,6 +8,8 @@ import tac.program.AtlasThread;
  */
 public class MapDownloadSkippedException extends Exception {
 
+	private static final long serialVersionUID = 1L;
+
 	public MapDownloadSkippedException() {
 		super();
 	}

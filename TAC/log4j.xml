@@ -16,11 +16,19 @@
       <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c{1}: %m%n" />
     </layout>
   </appender>
-
+  
+  <logger name="tac.program">
+  	<level value="TRACE" />
+  </logger>
+  
+  <logger name="tac.tilestore">
+  	<level value="TRACE" />
+  </logger>
+  
   <logger name="tac.tar">
   	<level value="DEBUG" />
   </logger>
-
+    
   <root>
     <!-- 
     For maximum verboseness please use the following line

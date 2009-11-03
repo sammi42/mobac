@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
@@ -83,7 +84,27 @@ public class Settings {
 	/**
 	 * Timeout in seconds (default 10 seconds)
 	 */
-	private int connectionTimeout = 10;
+	public int connectionTimeout = 10;
+
+	/**
+	 * Maximum expiration (in milliseconds) acceptable. If a server sets an
+	 * expiration time larger than this value it is truncated to this value on
+	 * next download.
+	 */
+	public long tileMaxExpirationTime = TimeUnit.DAYS.toMillis(365);
+
+	/**
+	 * Minimum expiration (in milliseconds) acceptable. If a server sets an
+	 * expiration time smaller than this value it is truncated to this value on
+	 * next download.
+	 */
+	public long tileMinExpirationTime = TimeUnit.DAYS.toMillis(1);
+
+	/**
+	 * Expiration time (in milliseconds) of a tile if the server does not
+	 * provide an expiration time
+	 */
+	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(7);
 
 	private String googleLanguage = "en";
 
@@ -237,14 +258,6 @@ public class Settings {
 	public void setGoogleLanguage(String googleLanguage) {
 		this.googleLanguage = googleLanguage;
 		Google.LANG = googleLanguage;
-	}
-
-	public int getConnectionTimeout() {
-		return connectionTimeout;
-	}
-
-	public void setConnectionTimeout(int connectionTimeout) {
-		this.connectionTimeout = connectionTimeout;
 	}
 
 	public boolean isCustomTileSize() {

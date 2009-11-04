@@ -169,7 +169,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	public void clearStore(MapSource mapSource) {
-		File databaseDir = new File(tileStoreDir, mapSource.getName());
+		File databaseDir = getStoreDir(mapSource);
 
 		TileDatabase db;
 		synchronized (tileDbMap) {
@@ -197,7 +197,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	 */
 	public int getNrOfTiles(MapSource mapSource) throws InterruptedException {
 		try {
-			File storeDir = new File(tileStoreDir, mapSource.getName());
+			File storeDir = getStoreDir(mapSource);
 			if (!storeDir.isDirectory())
 				return 0;
 			TileDatabase db = getTileDatabase(mapSource);
@@ -211,7 +211,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	public long getStoreSize(MapSource mapSource) throws InterruptedException {
-		File tileStore = new File(tileStoreDir, mapSource.getName());
+		File tileStore = getStoreDir(mapSource);
 		if (tileStore.exists()) {
 			DirInfoFileFilter diff = new DirInfoFileFilter();
 			try {
@@ -278,8 +278,17 @@ public class BerkeleyDbTileStore extends TileStore {
 	 * @return
 	 */
 	public boolean storeExists(MapSource mapSource) {
-		File tileStore = new File(tileStoreDir, mapSource.getName());
+		File tileStore = getStoreDir(mapSource);
 		return (tileStore.isDirectory()) && (tileStore.exists());
+	}
+
+	/**
+	 * @param mapSource
+	 * @return directory used for storing the tile database belonging to
+	 *         <code>mapSource</code>
+	 */
+	protected File getStoreDir(MapSource mapSource) {
+		return new File(tileStoreDir, "db-" + mapSource.getName());
 	}
 
 	protected class TileDatabase {
@@ -300,7 +309,7 @@ public class BerkeleyDbTileStore extends TileStore {
 				this.mapSource = mapSource;
 				lastAccess = System.currentTimeMillis();
 
-				File storeDir = new File(tileStoreDir, mapSource.getName());
+				File storeDir = getStoreDir(mapSource);
 				Utilities.mkDirs(storeDir);
 
 				env = new Environment(storeDir, envConfig);

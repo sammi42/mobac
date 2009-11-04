@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,7 +31,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
@@ -49,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapSourcesUpdateException;
+import tac.gui.components.JDirectoryChooser;
 import tac.gui.components.JMapSizeCombo;
 import tac.gui.components.JObjectCheckBox;
 import tac.gui.components.JTimeSlider;
@@ -86,6 +93,8 @@ public class SettingsGUI extends JDialog {
 	private JLabel totalTileSizeLabel;
 
 	private JMapSizeCombo mapSize;
+
+	private JTextField atlasOutputDirectory;
 
 	private JComboBox threadCount;
 
@@ -140,8 +149,10 @@ public class SettingsGUI extends JDialog {
 		tabbedPane.setBounds(0, 0, 492, 275);
 		addDisplaySettingsPanel();
 		addMapSourceSettingsPanel();
+		addTileUpdatePanel();
 		addTileStorePanel();
 		addMapSizePanel();
+		addDirectoriesPanel();
 		addNetworkPanel();
 
 		add(tabbedPane, BorderLayout.CENTER);
@@ -223,16 +234,9 @@ public class SettingsGUI extends JDialog {
 		tab.add(mapSourcesOuterPanel, GBC.eol().fill());
 	}
 
-	private void addTileStorePanel() {
-
+	private void addTileUpdatePanel() {
 		JPanel backGround = createNewTab("Tile update");
 		backGround.setLayout(new GridBagLayout());
-
-		tileStoreEnabled = new JCheckBox("Enable tile store for atlas download");
-
-		JPanel tileStorePanel = new JPanel(new BorderLayout());
-		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
-		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
 
 		ChangeListener sliderChangeListener = new ChangeListener() {
 
@@ -288,11 +292,20 @@ public class SettingsGUI extends JDialog {
 		backGround.add(minExpirationPanel, gbc_ef);
 		backGround.add(maxExpirationPanel, gbc_ef);
 		backGround.add(Box.createVerticalGlue(), GBC.std().fill());
+	}
 
-		backGround = createNewTab("Tile store");
-		backGround.setLayout(new GridBagLayout());
-		backGround.add(tileStorePanel, gbc_ef);
-		backGround.add(tileStoreInfoPanel, GBC.std().fill());
+	private void addTileStorePanel() {
+		JPanel backGround = createNewTab("Tile store");
+
+		tileStoreEnabled = new JCheckBox("Enable tile store for atlas download");
+
+		JPanel tileStorePanel = new JPanel(new BorderLayout());
+		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
+		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
+
+		backGround.setLayout(new BorderLayout());
+		backGround.add(tileStorePanel, BorderLayout.NORTH);
+		backGround.add(tileStoreInfoPanel, BorderLayout.CENTER);
 	}
 
 	private synchronized void updateTileStoreInfoPanelAsync() {
@@ -434,6 +447,35 @@ public class SettingsGUI extends JDialog {
 		backGround.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 	}
 
+	private void addDirectoriesPanel() {
+		JPanel backGround = createNewTab("Directories");
+		backGround.setLayout(new GridBagLayout());
+		JPanel atlasOutputDirPanel = new JPanel(new GridBagLayout());
+		atlasOutputDirPanel.setBorder(BorderFactory.createTitledBorder("Atlas output directory"));
+
+		atlasOutputDirectory = new JTextField();
+		atlasOutputDirectory.setToolTipText("<html>If empty the default directory "
+				+ "is used: <br><tt>" + Settings.getInstance().getAtlasOutputDirectory()
+				+ "</tt></html>");
+		JButton selectAtlasOutputDirectory = new JButton("Select");
+		selectAtlasOutputDirectory.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				JDirectoryChooser dc = new JDirectoryChooser();
+				dc.setCurrentDirectory(Settings.getInstance().getAtlasOutputDirectory());
+				if (dc.showDialog(SettingsGUI.this, "Select Directory") != JFileChooser.APPROVE_OPTION)
+					return;
+				atlasOutputDirectory.setText(dc.getSelectedFile().getAbsolutePath());
+			}
+		});
+
+		atlasOutputDirPanel.add(atlasOutputDirectory, GBC.std().fillH());
+		atlasOutputDirPanel.add(selectAtlasOutputDirectory, GBC.std());
+
+		backGround.add(atlasOutputDirPanel, GBC.eol().fillH());
+		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
+	}
+
 	private void addNetworkPanel() {
 		JPanel backGround = createNewTab("Network");
 		backGround.setLayout(new GridBagLayout());
@@ -506,6 +548,8 @@ public class SettingsGUI extends JDialog {
 
 		mapSize.setValue(s.maxMapSize);
 
+		atlasOutputDirectory.setText(s.getAtlasOutputDirectoryString());
+
 		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.downloadThreadCount);
 		if (index < 0)
 			index = 0;
@@ -534,6 +578,7 @@ public class SettingsGUI extends JDialog {
 		s.tileMaxExpirationTime = maxExpirationTime.getTimeMilliValue();
 		s.maxMapSize = mapSize.getValue();
 
+		s.setAtlasOutputDirectory(atlasOutputDirectory.getText());
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
 		s.downloadThreadCount = threads;
 
@@ -585,6 +630,15 @@ public class SettingsGUI extends JDialog {
 				SettingsGUI.this.dispose();
 			}
 		});
+
+		KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		Action escapeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				SettingsGUI.this.dispose();
+			}
+		};
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+		getRootPane().getActionMap().put("ESCAPE", escapeAction);
 	}
 
 	private class WindowShowListener extends ComponentAdapter {

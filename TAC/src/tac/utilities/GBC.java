@@ -110,6 +110,10 @@ public class GBC extends GridBagConstraints {
 		return this;
 	}
 
+	public GBC fillH() {
+		return fill(GBC.HORIZONTAL);
+	}
+
 	/**
 	 * Set the anchor of this GBC to a.
 	 * 

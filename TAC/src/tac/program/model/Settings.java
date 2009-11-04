@@ -369,13 +369,21 @@ public class Settings {
 		return new File(DirectoryManager.currentDir, "atlases");
 	}
 
+	public String getAtlasOutputDirectoryString() {
+		if (atlasOutputDirectory == null)
+			return "";
+		return atlasOutputDirectory;
+	}
+
 	/**
 	 * 
 	 * @param dir
-	 *            <code>null</code> reset to default directory otherwise set the
-	 *            new atlas output directory.
+	 *            <code>null</code> or empty string resets to default directory
+	 *            otherwise set the new atlas output directory.
 	 */
 	public void setAtlasOutputDirectory(String dir) {
+		if (dir != null && dir.trim().length() == 0)
+			dir = null;
 		atlasOutputDirectory = dir;
 	}
 }

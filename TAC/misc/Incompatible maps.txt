@@ -37,3 +37,8 @@ Centrum.cz
 Mapy.sk
 	http://mapy.atlas.sk
 	Reason: Wrong tile size (250x250)
+	
+Géoportail
+	http://www.geoportail.fr/5069711/visu2D/afficher-en-2d.htm
+	Reason: Incompatible zoom levels
+	

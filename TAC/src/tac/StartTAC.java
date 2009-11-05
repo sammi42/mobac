@@ -21,10 +21,7 @@ public class StartTAC {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-		}
+		setLookAndFeel();
 		checkVersion();
 		try {
 			Class.forName(MAIN_CLASS).newInstance();
@@ -32,6 +29,13 @@ public class StartTAC {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Unable to start TAC: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public static void setLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
 		}
 	}
 

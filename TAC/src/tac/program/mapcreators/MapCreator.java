@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
+import tac.gui.AtlasProgress;
+import tac.program.AtlasThread;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
@@ -35,6 +37,8 @@ public abstract class MapCreator {
 	protected MapDownloadedTileProcessor mapDlTileProcessor;
 	protected MapTileWriter mapTileWriter;
 
+	protected AtlasProgress atlasProgress = null;
+
 	public MapCreator(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		log = Logger.getLogger(this.getClass());
 		LayerInterface layer = map.getLayer();
@@ -49,6 +53,21 @@ public abstract class MapCreator {
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
 		mapDlTileProcessor = new MapDownloadedTileProcessor(tarTileIndex, mapSource);
+		Thread t = Thread.currentThread();
+		if (!(t instanceof AtlasThread))
+			throw new RuntimeException("Calling thread must be AtlasThread!");
+		atlasProgress = ((AtlasThread) t).getAtlasProgress();
+	}
+
+	/**
+	 * Checks if the user has aborted atlas creation and if <code>true</code> an
+	 * {@link InterruptedException} is thrown.
+	 * 
+	 * @throws InterruptedException
+	 */
+	protected void checkUserAbort() throws InterruptedException {
+		if (Thread.currentThread().isInterrupted())
+			throw new InterruptedException();
 	}
 
 	public abstract void createMap() throws MapCreationException;

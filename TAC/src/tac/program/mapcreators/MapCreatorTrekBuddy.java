@@ -16,8 +16,6 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.MapCreationException;
-import tac.gui.AtlasProgress;
-import tac.program.AtlasThread;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
@@ -101,12 +99,8 @@ public class MapCreatorTrekBuddy extends MapCreator {
 		int pixelValueX = 0;
 		int pixelValueY = 0;
 
-		Thread t = Thread.currentThread();
-		AtlasProgress ap = null;
-		if (t instanceof AtlasThread) {
-			ap = ((AtlasThread) t).getAtlasProgress();
-			ap.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-		}
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+
 		ImageIO.setUseCache(false);
 		BufferedImage emptyImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
@@ -119,10 +113,8 @@ public class MapCreatorTrekBuddy extends MapCreator {
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y <= yMax; y++) {
-				if (t.isInterrupted())
-					throw new InterruptedException();
-				if (ap != null)
-					ap.incMapCreationProgress();
+				checkUserAbort();
+				atlasProgress.incMapCreationProgress();
 				try {
 					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
 							+ "." + mapSource.getTileType();

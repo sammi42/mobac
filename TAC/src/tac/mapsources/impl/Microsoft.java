@@ -18,13 +18,10 @@ public class Microsoft {
 		protected int serverNumMax = 4;
 		protected char mapTypeChar;
 
-		public AbstractMicrosoft(String name, String tileType, char mapTypeChar) {
-			super(name, 1, 19, tileType);
+		public AbstractMicrosoft(String name, String tileType, char mapTypeChar,
+				TileUpdate tileUpdate) {
+			super(name, 1, 19, tileType, tileUpdate);
 			this.mapTypeChar = mapTypeChar;
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.None;
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -43,7 +40,7 @@ public class Microsoft {
 	public static class MicrosoftMaps extends AbstractMicrosoft {
 
 		public MicrosoftMaps() {
-			super("Microsoft Maps", "png", 'r');
+			super("Microsoft Maps", "png", 'r', TileUpdate.IfNoneMatch);
 		}
 
 	}
@@ -51,7 +48,7 @@ public class Microsoft {
 	public static class MicrosoftMapsChina extends AbstractMicrosoft {
 
 		public MicrosoftMapsChina() {
-			super("Microsoft Maps China", "png", 'r');
+			super("Microsoft Maps China", "png", 'r', TileUpdate.IfNoneMatch);
 			urlBase = ".tiles.ditu.live.com/tiles/";
 			urlAppend = "?g=1";
 			maxZoom = 18;
@@ -62,7 +59,7 @@ public class Microsoft {
 	public static class MicrosoftVirtualEarth extends AbstractMicrosoft {
 
 		public MicrosoftVirtualEarth() {
-			super("Microsoft Virtual Earth", "jpg", 'a');
+			super("Microsoft Virtual Earth", "jpg", 'a', TileUpdate.IfNoneMatch);
 		}
 
 	}
@@ -70,7 +67,7 @@ public class Microsoft {
 	public static class MicrosoftHybrid extends AbstractMicrosoft {
 
 		public MicrosoftHybrid() {
-			super("Microsoft Hybrid", "jpg", 'h');
+			super("Microsoft Hybrid", "jpg", 'h', TileUpdate.None);
 		}
 
 		@Override

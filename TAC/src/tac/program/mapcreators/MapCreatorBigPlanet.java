@@ -12,8 +12,6 @@ import java.sql.Statement;
 import java.util.Locale;
 
 import tac.exceptions.MapCreationException;
-import tac.gui.AtlasProgress;
-import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.jdbc.SQLite;
@@ -111,22 +109,15 @@ public class MapCreatorBigPlanet extends MapCreator {
 
 	@Override
 	protected void createTiles() throws InterruptedException {
-		Thread t = Thread.currentThread();
-		AtlasProgress ap = null;
-		if (t instanceof AtlasThread) {
-			ap = ((AtlasThread) t).getAtlasProgress();
-			ap.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-		}
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		try {
 			conn.setAutoCommit(false);
 			int tileCount = 0;
 			prepStmt = conn.prepareStatement(INSERT_SQL);
 			for (int x = xMin; x <= xMax; x++) {
 				for (int y = yMin; y <= yMax; y++) {
-					if (t.isInterrupted())
-						throw new InterruptedException();
-					if (ap != null)
-						ap.incMapCreationProgress();
+					checkUserAbort();
+					atlasProgress.incMapCreationProgress();
 					try {
 						byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 						if (sourceTileData != null) {

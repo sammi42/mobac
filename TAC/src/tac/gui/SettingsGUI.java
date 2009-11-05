@@ -54,12 +54,14 @@ import javax.swing.event.ChangeListener;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.StartTAC;
 import tac.exceptions.MapSourcesUpdateException;
 import tac.gui.components.JDirectoryChooser;
 import tac.gui.components.JMapSizeCombo;
 import tac.gui.components.JObjectCheckBox;
 import tac.gui.components.JTimeSlider;
 import tac.mapsources.MapSourcesManager;
+import tac.program.Logging;
 import tac.program.model.ProxyType;
 import tac.program.model.Settings;
 import tac.program.model.UnitSystem;
@@ -123,6 +125,7 @@ public class SettingsGUI extends JDialog {
 	private SettingsGUI(JFrame owner) {
 		super(owner);
 		TACExceptionHandler.registerForCurrentThread();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setModal(true);
 		setMinimumSize(new Dimension(300, 300));
 		createJFrame();
@@ -735,5 +738,12 @@ public class SettingsGUI extends JDialog {
 		JLabel sizeLabel;
 		JLabel countLabel;
 		MapSource tileSource;
+	}
+
+	public static void main(String[] args) {
+		StartTAC.setLookAndFeel();
+		Logging.configureConsoleLogging();
+		
+		new SettingsGUI(null);
 	}
 }

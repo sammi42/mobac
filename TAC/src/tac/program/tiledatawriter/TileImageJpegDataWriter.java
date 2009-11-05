@@ -52,6 +52,11 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 		iwp.setCompressionQuality(jpegCompressionLevel);
 	}
 
+	public void setJpegCompressionLevel(float jpegCompressionLevel) {
+		this.jpegCompressionLevel = jpegCompressionLevel;
+		iwp.setCompressionQuality(jpegCompressionLevel);
+	}
+
 	public void processImage(RenderedImage image, OutputStream out) throws IOException {
 		jpegImageWriter.setOutput(ImageIO.createImageOutputStream(out));
 		IIOImage ioImage = new IIOImage(image, null, null);

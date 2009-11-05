@@ -8,8 +8,6 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import tac.gui.AtlasProgress;
-import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.TileImageParameters;
@@ -46,7 +44,6 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	@Override
 	protected void createTiles() throws InterruptedException {
 		log.debug("Starting map creation using custom parameters: " + param);
-		Thread t = Thread.currentThread();
 
 		// left upper point on the map in pixels
 		// regarding the current zoom level
@@ -69,13 +66,9 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 		if (realHeight > mergedHeight)
 			realHeight = mergedHeight;
 
-		AtlasProgress ap = null;
-		if (t instanceof AtlasThread) {
-			ap = ((AtlasThread) t).getAtlasProgress();
-			int customTileCount = MyMath.divCeil(mergedWidth, realWidth)
-					* MyMath.divCeil(mergedHeight, realHeight);
-			ap.initMapCreation(customTileCount);
-		}
+		int customTileCount = MyMath.divCeil(mergedWidth, realWidth)
+				* MyMath.divCeil(mergedHeight, realHeight);
+		atlasProgress.initMapCreation(customTileCount);
 
 		// Absolute positions
 		int xAbsPos = xStart;
@@ -98,10 +91,8 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 				int xRelPos = 0;
 				xAbsPos = xStart;
 				while (xAbsPos < xEnd) {
-					if (t.isInterrupted())
-						throw new InterruptedException();
-					if (ap != null)
-						ap.incMapCreationProgress();
+					checkUserAbort();
+					atlasProgress.incMapCreationProgress();
 					BufferedImage tileImage = new BufferedImage(realWidth, realHeight,
 							BufferedImage.TYPE_3BYTE_BGR);
 					buf.reset();

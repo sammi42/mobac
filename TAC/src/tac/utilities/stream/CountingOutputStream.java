@@ -1,4 +1,4 @@
-package tac.utilities;
+package tac.utilities.stream;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;

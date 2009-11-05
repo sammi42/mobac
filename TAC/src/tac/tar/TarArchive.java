@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import tac.utilities.CountingOutputStream;
+import tac.utilities.stream.CountingOutputStream;
 
 /**
  * Creates a new tar file and allows to add files from the file system or

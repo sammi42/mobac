@@ -7,8 +7,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import tac.exceptions.MapCreationException;
-import tac.gui.AtlasProgress;
-import tac.program.AtlasThread;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.Utilities;
@@ -51,12 +49,7 @@ public class MapCreatorAndNav extends MapCreator {
 
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		Thread t = Thread.currentThread();
-		AtlasProgress ap = null;
-		if (t instanceof AtlasThread) {
-			ap = ((AtlasThread) t).getAtlasProgress();
-			ap.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-		}
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		ImageIO.setUseCache(false);
 
 		for (int x = xMin; x <= xMax; x++) {
@@ -67,10 +60,8 @@ public class MapCreatorAndNav extends MapCreator {
 				throw new MapCreationException(e1);
 			}
 			for (int y = yMin; y <= yMax; y++) {
-				if (t.isInterrupted())
-					throw new InterruptedException();
-				if (ap != null)
-					ap.incMapCreationProgress();
+				checkUserAbort();
+				atlasProgress.incMapCreationProgress();
 				try {
 					String tileFileName = x + "/" + y + "." + mapSource.getTileType()
 							+ additionalFileExt;

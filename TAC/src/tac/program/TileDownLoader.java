@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.UnrecoverableDownloadException;
@@ -210,8 +209,10 @@ public class TileDownLoader {
 		long expiredTime = tileStoreEntry.getTimeExpires();
 		if (expiredTime >= 0) {
 			// server had set an expiration time
-			long maxExpirationTime = settings.tileMaxExpirationTime + tileStoreEntry.getTimeDownloaded(); 
-			long minExpirationTime = settings.tileMinExpirationTime + tileStoreEntry.getTimeDownloaded(); 
+			long maxExpirationTime = settings.tileMaxExpirationTime
+					+ tileStoreEntry.getTimeDownloaded();
+			long minExpirationTime = settings.tileMinExpirationTime
+					+ tileStoreEntry.getTimeDownloaded();
 			expiredTime = Math.max(minExpirationTime, Math.min(maxExpirationTime, expiredTime));
 		} else {
 			// no expiration time set by server - use the default one

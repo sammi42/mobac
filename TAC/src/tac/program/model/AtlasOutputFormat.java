@@ -10,6 +10,7 @@ import tac.program.interfaces.MapInterface;
 import tac.program.mapcreators.MapCreator;
 import tac.program.mapcreators.MapCreatorAndNav;
 import tac.program.mapcreators.MapCreatorBigPlanet;
+import tac.program.mapcreators.MapCreatorGarminCustom;
 import tac.program.mapcreators.MapCreatorGlopus;
 import tac.program.mapcreators.MapCreatorMTE;
 import tac.program.mapcreators.MapCreatorMaverick;
@@ -27,8 +28,9 @@ public enum AtlasOutputFormat {
 	Maverick("Maverick atlas format", MapCreatorMaverick.class), //
 	OSMTracker("OSMTracker tile storage", MapCreatorOSMTracker.class), //
 	BigPlanet("BigPlanet SQLite", MapCreatorBigPlanet.class), //
-	OziPng("OziExplorer (PNG & MAP)", MapCreatorOzi.class),
-	Glopus("Glopus (PNG & KAL)", MapCreatorGlopus.class);
+	OziPng("OziExplorer (PNG & MAP)", MapCreatorOzi.class), //
+	Glopus("Glopus (PNG & KAL)", MapCreatorGlopus.class), // 
+	GarminCustom("Garmin Custom Map (kmz)", MapCreatorGarminCustom.class);
 
 	private final String displayName;
 	private Class<? extends MapCreator> mapCreatorClass;
@@ -46,9 +48,10 @@ public enum AtlasOutputFormat {
 		return mapCreatorClass;
 	}
 
-	public MapCreator createMapCreatorInstance(MapInterface map, TarIndex tarTileIndex, File atlasDir)
-			throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-			InstantiationException, IllegalAccessException, InvocationTargetException {
+	public MapCreator createMapCreatorInstance(MapInterface map, TarIndex tarTileIndex,
+			File atlasDir) throws SecurityException, NoSuchMethodException,
+			IllegalArgumentException, InstantiationException, IllegalAccessException,
+			InvocationTargetException {
 		if (mapCreatorClass == null)
 			return null;
 		Constructor<? extends MapCreator> c = mapCreatorClass.getConstructor(MapInterface.class,

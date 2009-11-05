@@ -108,7 +108,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 	}
 
 	@Override
-	protected void createTiles() throws InterruptedException {
+	protected void createTiles() throws InterruptedException, MapCreationException {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		try {
 			conn.setAutoCommit(false);
@@ -129,7 +129,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 							}
 						}
 					} catch (IOException e) {
-						log.error("", e);
+						throw new MapCreationException(e);
 					}
 				}
 			}

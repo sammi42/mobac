@@ -11,17 +11,17 @@ import java.util.Hashtable;
  */
 public class TarIndexedArchive extends TarArchive {
 
-	private Hashtable<String, Integer> tarIndex;
+	private TarIndexTable tarIndex;
 
 	public TarIndexedArchive(File tarFile, int approxFileCount) throws IOException {
 		super(tarFile, null);
-		tarIndex = new Hashtable<String, Integer>(approxFileCount);
+		tarIndex = new TarIndexTable(approxFileCount);
 	}
 
 	@Override
 	protected void writeTarHeader(TarHeader th) throws IOException {
-		int streamPos = getTarFilePos();
-		tarIndex.put(th.getFileName(), Integer.valueOf(streamPos));
+		long streamPos = getTarFilePos();
+		tarIndex.addTarEntry(th.getFileName(), streamPos);
 		super.writeTarHeader(th);
 	}
 

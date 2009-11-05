@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 public class CountingOutputStream extends FilterOutputStream {
 
-	private int bytesWritten = 0;
+	private long bytesWritten = 0;
 
 	public CountingOutputStream(OutputStream out) {
 		super(out);
@@ -30,7 +30,7 @@ public class CountingOutputStream extends FilterOutputStream {
 		bytesWritten += b.length;
 	}
 
-	public int getBytesWritten() {
+	public long getBytesWritten() {
 		return bytesWritten;
 	}
 

@@ -35,7 +35,7 @@ public class TarArchive {
 		this.baseDir = baseDir;
 	}
 
-	public int getTarFilePos() {
+	public long getTarFilePos() {
 		return tarFileStream.getBytesWritten();
 	}
 

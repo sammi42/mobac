@@ -48,8 +48,8 @@ public class TarTmiArchive extends TarArchive {
 
 	@Override
 	protected void writeTarHeader(TarHeader th) throws IOException {
-		int streamPos = getTarFilePos();
-		int block = streamPos / 512;
+		long streamPos = getTarFilePos();
+		int block = (int) (streamPos >> 9);
 		String line = String.format("block %10d: %s\n", new Object[] { block, th.getFileName() });
 		tmiWriter.write(line);
 		super.writeTarHeader(th);

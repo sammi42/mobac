@@ -39,7 +39,7 @@ import tac.program.model.AtlasTreeModel;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
 import tac.utilities.TACExceptionHandler;
-import tac.utilities.jdbc.SQLite;
+import tac.utilities.jdbc.SQLiteLoader;
 
 public class JAtlasTree extends JTree implements Autoscroll {
 
@@ -117,7 +117,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	public boolean testAtlasContentValid() {
 		AtlasInterface atlas = getAtlas();
 		if (AtlasOutputFormat.BigPlanet.equals(atlas.getOutputFormat())) {
-			if (!SQLite.loadSQLiteOrShowError())
+			if (!SQLiteLoader.loadSQLiteOrShowError())
 				return false;
 		}
 		if (atlas.calculateTilesToDownload() == 0) {

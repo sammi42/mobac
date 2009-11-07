@@ -30,7 +30,7 @@ public enum AtlasOutputFormat {
 	BigPlanet("BigPlanet SQLite", MapCreatorBigPlanet.class), //
 	OziPng("OziExplorer (PNG & MAP)", MapCreatorOzi.class), //
 	Glopus("Glopus (PNG & KAL)", MapCreatorGlopus.class), // 
-	GarminCustom("Garmin Custom Map (kmz)", MapCreatorGarminCustom.class);
+	GarminCustom("Garmin Custom Map (KMZ)", MapCreatorGarminCustom.class);
 
 	private final String displayName;
 	private Class<? extends MapCreator> mapCreatorClass;

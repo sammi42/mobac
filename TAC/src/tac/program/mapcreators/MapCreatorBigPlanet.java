@@ -14,7 +14,7 @@ import java.util.Locale;
 import tac.exceptions.MapCreationException;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
-import tac.utilities.jdbc.SQLite;
+import tac.utilities.jdbc.SQLiteLoader;
 
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
@@ -52,7 +52,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 	/**
 	 * Commit only every i tiles
 	 */
-	private static final int COMMIT_RATE = 1000;
+	private static final int COMMIT_RATE = 200;
 
 	private String databaseFile;
 
@@ -68,9 +68,9 @@ public class MapCreatorBigPlanet extends MapCreator {
 	@Override
 	public void createMap() throws MapCreationException {
 		try {
-			SQLite.loadSQLite();
+			SQLiteLoader.loadSQLite();
 		} catch (SQLException e) {
-			throw new MapCreationException(SQLite.MSG_SQLITE_MISSING, e);
+			throw new MapCreationException(SQLiteLoader.MSG_SQLITE_MISSING, e);
 		}
 		try {
 			mapTileWriter = null;

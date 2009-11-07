@@ -62,6 +62,7 @@ TAC is an open source project hosted on SourceForge.net: <br>
 	<li><a href="#Ozi">Creating and using atlases with OziExplorer
 	/ large PNG image</a></li>
 	<li><a href="#Glopus">Creating and using atlases with Glopus</a></li>
+	<li><a href="#GarminCustom">Creating Garmin Custom Maps</a></li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
 	<li><a href="#Limitations">Known problems and limitations</a></li>
 	<li><a href="#AdvancedUsers">Details for advanced users</a></li>
@@ -245,6 +246,24 @@ when creating atlases:</p>
 <p>The output format of an "atlas" for Glopus is one subdirectory
 per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
 file per defined map.</p>
+
+<h2><a name="GarminCustom">Creating Garmin Custom Maps</a></h2>
+<p>For creating atlases of Creating Garmin Custom Maps you have to
+select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window.</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<p>The output format of an "atlas" for Glopus is one subdirectory
+per layer and within this subdirectory each map in form of one <tt>KMZ</tt>
+file containing one <tt>JPG</tt> file. The Garmin Custom Map format
+defines a maximum image size of 1024x1024 pixels. If a map is larger it
+will be automatically scaled down to fit into this size. For more
+details about the Garmin Custom Map please visit the <a
+	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
+Forums</a>.</p>
 <h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other
 enhancement ideas for TrekBuddy Atlas Creator feel free to open an <a
@@ -293,10 +312,10 @@ and width of a map</a> and <a
 Google/OpenStreetMap can be added by editing the file <tt>settings.xml</tt>
 with an text editor.</p>
 <p><b>Warning</b>: You have to close TrekBuddy Atlas Creator before
-editing <tt>settings.xml</tt> - otherwise you will lost all made
-changes when closing TrekBuddy Atlas Creator!</p>
-<p>The following example shows what have to be added for defining a custom
-map source. It defines an additional map Source named "Custom OSM
+editing <tt>settings.xml</tt> - otherwise you will lost all made changes
+when closing TrekBuddy Atlas Creator!</p>
+<p>The following example shows what have to be added for defining a
+custom map source. It defines an additional map Source named "Custom OSM
 Mapnik" which shows map tiles identical to the predefined map source
 "OpenStreetMap Mapnik".</p>
 <pre>

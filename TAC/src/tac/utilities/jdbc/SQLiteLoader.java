@@ -7,8 +7,9 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
 import tac.program.DirectoryManager;
-import SQLite.Database;
 
 /**
  * Dynamic loading of "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
@@ -16,10 +17,9 @@ import SQLite.Database;
  */
 public class SQLiteLoader {
 
-	private static final String CLASS_DB_DRIVER = "SQLite.JDBCDriver";
-	private static boolean SQLITE_LOADED = false;
+	private static final Logger log = Logger.getLogger(SQLiteLoader.class);
 
-	private static Database database;
+	private static boolean SQLITE_LOADED = false;
 
 	public static final String MSG_SQLITE_MISSING = "Unable to find the SQLite libraries. "
 			+ "These are required for BigPlanet output format.<br>Please read the README.HTM "
@@ -36,7 +36,6 @@ public class SQLiteLoader {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void loadSQLite() throws SQLException {
 		if (SQLITE_LOADED)
 			return;
@@ -45,45 +44,44 @@ public class SQLiteLoader {
 				return;
 			try {
 				// Load the main class which loads the native library
-				database = new SQLite.Database();
-				Class<Driver> jdbcDriverClass = (Class<Driver>) Class.forName(CLASS_DB_DRIVER);
-				DriverManager.registerDriver(jdbcDriverClass.newInstance());
+				System.loadLibrary("sqlite_jni");
+				DriverManager.registerDriver(new SQLite.JDBCDriver());
 				SQLITE_LOADED = true;
 				return;
 			} catch (Throwable t) {
 				// t.printStackTrace();
 			}
-			File pd = DirectoryManager.programDir;
-			File cd = DirectoryManager.currentDir;
-			File[] dirList = new File[] { pd, new File(pd, "lib"), cd, new File(cd, "lib") };
-
-			File verifiedLibDir = null;
-			String libName = System.mapLibraryName("sqlite_jni");
-			for (File libDir : dirList) {
-				File lib = new File(libDir, libName);
-				if (lib.isFile()) {
-					verifiedLibDir = libDir;
-					break;
-				}
-			}
-			if (verifiedLibDir == null)
-				throw new SQLException("Native SQLite file not found: " + libName);
-			System.setProperty("SQLite.library.path", verifiedLibDir.getPath());
 
 			try {
+				File pd = DirectoryManager.programDir;
+				File cd = DirectoryManager.currentDir;
+				File[] dirList = new File[] { pd, new File(pd, "lib"), cd, new File(cd, "lib") };
+
+				File verifiedLibDir = null;
+				String libName = System.mapLibraryName("sqlite_jni");
+				for (File libDir : dirList) {
+					File lib = new File(libDir, libName);
+					if (lib.isFile()) {
+						verifiedLibDir = libDir;
+						log.debug("SQLite_jni found: " + lib.getPath());
+						System.load(lib.getPath());
+						break;
+					}
+				}
+				if (verifiedLibDir == null)
+					throw new SQLException("Native SQLite file not found: " + libName);
+
 				// Load the main class which loads the native library
-				database = new SQLite.Database();
-				Class<Driver> jdbcDriverClass = (Class<Driver>) Class.forName(CLASS_DB_DRIVER);
-				DriverManager.registerDriver(jdbcDriverClass.newInstance());
+				DriverManager.registerDriver(new SQLite.JDBCDriver());
 				SQLITE_LOADED = true;
 				return;
+			} catch (SQLException e) {
+				throw e;
 			} catch (Throwable t) {
+				log.error("SQLite loading failed: ", t);
 				throw new SQLException(t);
 			}
 		}
 	}
 
-	public static String getDatabaseVersion() {
-		return database.dbversion();
-	}
 }

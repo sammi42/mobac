@@ -106,6 +106,7 @@
 			-keep class tac.tar.TarIndexedArchive { public *; }
 			-keep class tac.data.gpx.gpx11.* { public *; }
 			-keep class tac.tilestore.berkeleydb.* { *; }
+			-keep class SQLite.JDBC2z.* { public *; }
 			-keepclassmembers class * implements java.io.Serializable {
 			    static final long serialVersionUID;
 			    private void writeObject(java.io.ObjectOutputStream);

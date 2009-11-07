@@ -1,7 +1,6 @@
 package tac.utilities.jdbc;
 
 import java.io.File;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 

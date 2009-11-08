@@ -12,6 +12,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
@@ -21,7 +22,6 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +34,8 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	private static final TACExceptionHandler instance = new TACExceptionHandler();
 
 	private static final Logger log = Logger.getLogger(TACExceptionHandler.class);
+
+	private static final double MB_DIV = 1024d * 1024d;
 
 	static {
 		Thread.setDefaultUncaughtExceptionHandler(instance);
@@ -78,7 +80,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	public static void showExceptionDialog(Throwable e) {
 		String exceptionName = e.getClass().getSimpleName();
 		try {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(1024);
 			sb.append("Version: " + TACInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
 			String windowManager = System.getProperty("sun.desktop");
@@ -91,6 +93,10 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version")
 					+ ")");
+			if (e.getClass().equals(java.lang.OutOfMemoryError.class)) {
+				Runtime r = Runtime.getRuntime();
+				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
+			}
 			sb.append("\nMapsources rev: "
 					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
 
@@ -120,7 +126,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			text.addHyperlinkListener(new HyperlinkListener() {
 
 				public void hyperlinkUpdate(HyperlinkEvent e) {
-					if (e.getEventType() != EventType.ACTIVATED)
+					if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
 						return;
 					try {
 						Desktop.getDesktop().browse(e.getURL().toURI());
@@ -180,13 +186,19 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 	}
 
 	public static void main(String[] args) {
-		for (;;)
+		for (;;) {
+			ArrayList<byte[]> list = new ArrayList<byte[]>();
 			try {
 				Logging.configureConsoleLogging();
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				for (int i = 0; i < 10000; i++) {
+					list.add(new byte[220000]);
+				}
 				throw new RuntimeException("Test", new Exception("Inner"));
 			} catch (Exception e) {
 				showExceptionDialog(e);
 			}
+			break;
+		}
 	}
 }

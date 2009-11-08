@@ -109,7 +109,9 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 			StringWriter stack = new StringWriter();
 			e.printStackTrace(new PrintWriter(stack));
-			sb.append("\n\n" + stack.getBuffer().toString());
+			sb.append("\n\n#############################################################\n\n");
+			sb.append(stack.getBuffer().toString());
+			sb.append("\n#############################################################");
 
 			JPanel panel = new JPanel(new BorderLayout());
 			String url = "http://sourceforge.net/tracker/?group_id=238075&atid=1105494";
@@ -154,6 +156,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 			info.setEditable(false);
 			info.setMinimumSize(new Dimension(200, 150));
 			panel.add(new JScrollPane(info), BorderLayout.CENTER);
+			panel.setMinimumSize(new Dimension(700, 300));
 			panel.validate();
 			JOptionPane.showMessageDialog(null, panel, "Unexpected Exception: " + exceptionName,
 					JOptionPane.ERROR_MESSAGE);
@@ -192,10 +195,12 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 				Logging.configureConsoleLogging();
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				for (int i = 0; i < 10000; i++) {
-					list.add(new byte[220000]);
+					list.add(new byte[300000]);
 				}
 				throw new RuntimeException("Test", new Exception("Inner"));
 			} catch (Exception e) {
+				showExceptionDialog(e);
+			} catch (Error e) {
 				showExceptionDialog(e);
 			}
 			break;

@@ -49,17 +49,12 @@ public class MapCreatorBigPlanet extends MapCreator {
 
 	private static final String DATABASE_FILENAME = "BigPlanet_maps.sqlitedb";
 
-	/**
-	 * Commit only every i tiles
-	 */
-	private static final int COMMIT_RATE = 1000;
-
-	/**
-	 * Accumulate x tiles in a batch statement before executing
-	 */
-	private int batchExecutionRate = 100;
-
 	private String databaseFile;
+
+	/**
+	 * Accumulate tiles in batch process until 5MB of heap are remaining
+	 */
+	private static final long HEAP_MIN = 5 * 1024 * 1024;
 
 	private Connection conn = null;
 	private PreparedStatement prepStmt;
@@ -68,16 +63,6 @@ public class MapCreatorBigPlanet extends MapCreator {
 		super(map, tarTileIndex, atlasDir);
 		atlasDir.delete(); // We don't use the atlas directory
 		databaseFile = new File(atlasDir.getParent(), DATABASE_FILENAME).getAbsolutePath();
-		long heapMaxSize = Runtime.getRuntime().maxMemory();
-		int heapMapSizeMB = (int) (heapMaxSize / (1024 * 1024));
-
-		if (heapMapSizeMB > 1000)
-			batchExecutionRate = 500;
-		else if (heapMapSizeMB > 100)
-			batchExecutionRate = 200;
-		else
-			batchExecutionRate = 100;
-		log.debug("Batch execution rate=" + batchExecutionRate);
 	}
 
 	@Override
@@ -124,10 +109,12 @@ public class MapCreatorBigPlanet extends MapCreator {
 
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+		atlasProgress.initMapCreation(2 * (xMax - xMin + 1) * (yMax - yMin + 1));
 		try {
 			conn.setAutoCommit(false);
-			int tileCount = 0;
+			int batchTileCount = 0;
+			Runtime r = Runtime.getRuntime();
+			long heapMaxSize = r.maxMemory();
 			prepStmt = conn.prepareStatement(INSERT_SQL);
 			for (int x = xMin; x <= xMax; x++) {
 				for (int y = yMin; y <= yMax; y++) {
@@ -137,13 +124,18 @@ public class MapCreatorBigPlanet extends MapCreator {
 						byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
 						if (sourceTileData != null) {
 							writeTile(x, y, zoom, sourceTileData);
-							if (++tileCount % batchExecutionRate == 0) {
+							long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
+
+							batchTileCount++;
+							if (heapAvailable < HEAP_MIN) {
+								log.trace("Batch commited containing " + batchTileCount + " tiles");
 								prepStmt.executeBatch();
 								prepStmt.clearBatch();
+								atlasProgress.incMapCreationProgress(batchTileCount);
+								batchTileCount = 0;
+								conn.commit();
 								System.gc();
 							}
-							if (tileCount % COMMIT_RATE == 0)
-								conn.commit();
 						}
 					} catch (IOException e) {
 						throw new MapCreationException(e);
@@ -153,6 +145,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 			prepStmt.executeBatch();
 			conn.commit();
 			prepStmt.clearBatch();
+			atlasProgress.incMapCreationProgress(batchTileCount);
 
 			Statement stat = conn.createStatement();
 			stat.addBatch(RMAPS_CLEAR_INFO_SQL);

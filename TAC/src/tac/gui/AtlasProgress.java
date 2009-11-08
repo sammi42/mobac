@@ -308,6 +308,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		updateGUI();
 	}
 
+	public void incMapCreationProgress(int stepSize) {
+		data.mapCreationProgress += stepSize;
+		updateGUI();
+	}
+
 	public void addDownloadedBytes(int bytes) {
 		data.numberOfDownloadedBytes += bytes;
 	}

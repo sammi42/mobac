@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.model;
 
 import java.awt.Point;
 
@@ -6,8 +6,6 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.program.interfaces.MapInterface;
-import tac.program.model.EastNorthCoordinate;
-import tac.program.model.MercatorPixelCoordinate;
 
 public class MapSelection {
 

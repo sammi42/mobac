@@ -155,6 +155,7 @@ public class Png4BitWriter {
 
 		PngChunk cIEND = new PngChunk(IEND);
 		cIEND.writeTo(dos);
+		cIEND.close();
 
 		dos.flush();
 	}

@@ -4,7 +4,6 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -14,7 +13,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
-import tac.program.TileDownLoader;
+import tac.program.download.TileDownLoader;
 import tac.tilestore.TileStore;
 import tac.tilestore.TileStoreEntry;
 
@@ -43,7 +42,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 	}
 
 	protected class FileLoadJob implements Runnable {
-		InputStream input = null;
 
 		final int tilex, tiley, zoom;
 		final MapSource mapSource;
@@ -159,9 +157,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			} catch (Exception e) {
 				tile.setImage(Tile.ERROR_IMAGE);
 				listener.tileLoadingFinished(tile, false);
-				if (input == null)
-					log.error("failed loading " + zoom + "/" + tilex + "/" + tiley + " "
-							+ e.getMessage());
 			} finally {
 				tile.loading = false;
 				tile.setLoaded(true);
@@ -214,7 +209,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			URL url;
 			url = new URL(tile.getUrl());
 			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-			prepareHttpUrlConnection(urlConn);
 			urlConn.setRequestMethod("HEAD");
 			urlConn.setReadTimeout(30000); // 30 seconds read timeout
 			long lastModified = urlConn.getLastModified();
@@ -227,7 +221,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			URL url;
 			url = new URL(tile.getUrl());
 			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-			prepareHttpUrlConnection(urlConn);
 			urlConn.setRequestMethod("HEAD");
 			urlConn.setReadTimeout(30000); // 30 seconds read timeout
 			String osmETag = urlConn.getHeaderField("ETag");

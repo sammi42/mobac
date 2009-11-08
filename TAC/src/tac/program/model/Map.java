@@ -15,8 +15,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.InvalidNameException;
-import tac.program.DownloadJobEnumerator;
 import tac.program.JobDispatcher.Job;
+import tac.program.download.DownloadJobEnumerator;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;

@@ -22,11 +22,6 @@ public class OsmTileLoader implements TileLoaderJobCreator {
 
 	private static final Logger log = Logger.getLogger(OsmTileLoader.class);
 
-    /**
-     * Holds the used user agent used for HTTP requests. If this field is 
-     * <code>null</code>, the default Java user agent is used.
-     */
-    public static String USER_AGENT = null;
     public static String ACCEPT = "text/html, image/png, image/jpeg, image/gif, */*";
 
     protected TileLoaderListener listener;
@@ -75,15 +70,8 @@ public class OsmTileLoader implements TileLoaderJobCreator {
         URL url;
         url = new URL(tile.getUrl());
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        prepareHttpUrlConnection(urlConn);
         urlConn.setReadTimeout(30000); // 30 seconds read timeout
         return urlConn;
-    }
-
-    protected void prepareHttpUrlConnection(HttpURLConnection urlConn) {
-        if (USER_AGENT != null)
-            urlConn.setRequestProperty("User-agent", USER_AGENT);
-        urlConn.setRequestProperty("Accept", ACCEPT);
     }
 
     @Override

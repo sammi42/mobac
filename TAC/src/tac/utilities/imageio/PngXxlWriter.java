@@ -156,6 +156,7 @@ public class PngXxlWriter {
 		imageDataChunkWriter.finish();
 		PngChunk cIEND = new PngChunk(IEND);
 		cIEND.writeTo(dos);
+		cIEND.close();
 		dos.flush();
 	}
 

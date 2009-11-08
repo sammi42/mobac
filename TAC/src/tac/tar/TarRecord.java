@@ -57,6 +57,7 @@ public class TarRecord {
 			inputFile = new FileInputStream(theFile);
 			dIn = new DataInputStream(inputFile);
 			dIn.readFully(fileData, 0, (int) theFile.length());
+			dIn.close();
 		} finally {
 			Utilities.closeStream(inputFile);
 		}

@@ -283,9 +283,15 @@ public class Utilities {
 		}
 	}
 
+	/**
+	 * Deletes a directory including files and subdirectories.
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public static boolean deleteDirectory(File path) {
 
-		if (path.exists()) {
+		if (path.isDirectory()) {
 			File[] files = path.listFiles();
 
 			for (int i = 0; i < files.length; i++) {

@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 
 import tac.gui.actions.GpxLoad;
 import tac.gui.mapview.ScaleBar;
@@ -32,7 +31,7 @@ import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google;
 import tac.program.DirectoryManager;
-import tac.program.UserAgent;
+import tac.program.download.UserAgent;
 import tac.utilities.Utilities;
 
 @XmlRootElement
@@ -247,7 +246,6 @@ public class Settings {
 	}
 
 	public void setUserAgent(String userAgent) {
-		OsmTileLoader.USER_AGENT = userAgent;
 		this.userAgent = userAgent;
 	}
 

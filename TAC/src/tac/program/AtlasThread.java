@@ -194,7 +194,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			throw new InterruptedException();
 
 		// Prepare the tile store directory
-		//ts.prepareTileStore(map.getMapSource());
+		// ts.prepareTileStore(map.getMapSource());
 
 		/***
 		 * In this section of code below, tiles for Atlas is being downloaded
@@ -335,8 +335,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			if (downloadJobDispatcher != null)
 				downloadJobDispatcher.terminateAllWorkerThreads();
 			this.interrupt();
-		} catch (Exception ex) {
-			// ingored
+		} catch (Exception e) {
+			log.error("Exception thrown in stopDownload()" + e.getMessage());
 		}
 	}
 

@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.download;
 
 import java.awt.Point;
 import java.util.Enumeration;

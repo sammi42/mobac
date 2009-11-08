@@ -20,8 +20,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.program.MapSelection;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.MapSelection;
 import tac.program.model.MercatorPixelCoordinate;
 import tac.program.model.Settings;
 
@@ -175,8 +175,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	protected void paintComponent(Graphics graphics) {
 		if (!isEnabled())
 			return;
-		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;
+		super.paintComponent(g);
 		Point tlc = getTopLeftCoordinate();
 		if (gridZoom >= 0) {
 			// Only paint grid if it is enabled (gridZoom not -1)

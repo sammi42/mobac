@@ -13,8 +13,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JCoordinateField;
-import tac.program.MapSelection;
 import tac.program.model.EastNorthCoordinate;
+import tac.program.model.MapSelection;
 import tac.program.model.MercatorPixelCoordinate;
 import tac.utilities.GBC;
 

@@ -1,4 +1,4 @@
-package tac.program;
+package tac.program.download;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -59,13 +59,15 @@ public class TileDownLoader {
 			tile = ts.getTile(x, y, zoom, mapSource);
 			boolean expired = isTileExpired(tile);
 			if (tile != null) {
-				if (expired)
+				if (expired) {
 					log.trace("Expired: " + mapSource.getName() + " " + tile);
-				synchronized (tileArchive) {
-					log.trace("Tile used from tilestore");
-					tileArchive.writeFileFromData(tileFileName, tile.getData());
+				} else {
+					synchronized (tileArchive) {
+						log.trace("Tile used from tilestore");
+						tileArchive.writeFileFromData(tileFileName, tile.getData());
+					}
+					return 0;
 				}
-				return 0;
 			}
 		}
 		byte[] data = null;

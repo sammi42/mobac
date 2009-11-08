@@ -1,9 +1,10 @@
-package tac.program;
+package tac.program.download;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.UnrecoverableDownloadException;
+import tac.program.JobDispatcher;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
 import tac.tar.TarIndexedArchive;

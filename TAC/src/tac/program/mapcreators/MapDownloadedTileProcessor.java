@@ -6,7 +6,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.tar.TarIndex;
 
-public class MapDownloadedTileProcessor {
+public class MapDownloadedTileProcessor implements RawTileProvider {
 
 	TarIndex tarIndex;
 	String mapTileType;
@@ -19,5 +19,5 @@ public class MapDownloadedTileProcessor {
 	public byte[] getTileData(int x, int y) throws IOException {
 		return tarIndex.getEntryContent("y" + y + "x" + x + "." + mapTileType);
 	}
-	
+
 }

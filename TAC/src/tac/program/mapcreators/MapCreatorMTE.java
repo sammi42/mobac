@@ -71,7 +71,7 @@ public class MapCreatorMTE extends MapCreator {
 				atlasProgress.incMapCreationProgress();
 				try {
 					String tileFileName = x + "/" + y + ".png";
-					byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
+					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null)
 						mapTileWriter.writeTile(tileFileName, sourceTileData);
 				} catch (IOException e) {

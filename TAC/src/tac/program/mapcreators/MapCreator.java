@@ -36,7 +36,7 @@ public abstract class MapCreator {
 	protected final int tileSize;
 	protected final TileImageParameters parameters;
 	
-	protected MapDownloadedTileProcessor mapDlTileProcessor;
+	protected RawTileProvider mapDlTileProvider;
 	protected MapTileWriter mapTileWriter;
 
 	protected AtlasProgress atlasProgress = null;
@@ -55,7 +55,7 @@ public abstract class MapCreator {
 		this.tarTileIndex = tarTileIndex;
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
-		mapDlTileProcessor = new MapDownloadedTileProcessor(tarTileIndex, mapSource);
+		mapDlTileProvider = new MapDownloadedTileProcessor(tarTileIndex, mapSource);
 		Thread t = Thread.currentThread();
 		if (!(t instanceof AtlasThread))
 			throw new RuntimeException("Calling thread must be AtlasThread!");

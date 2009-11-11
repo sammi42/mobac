@@ -111,7 +111,7 @@ public class MapCreatorGarminCustom extends MapCreator {
 					checkUserAbort();
 					atlasProgress.incMapCreationProgress();
 					try {
-						byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
+						byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 						if (sourceTileData != null) {
 							BufferedImage tile = ImageIO.read(new ByteArrayInputStream(
 									sourceTileData));

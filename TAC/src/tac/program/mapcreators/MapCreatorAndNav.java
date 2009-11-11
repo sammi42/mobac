@@ -24,10 +24,18 @@ public class MapCreatorAndNav extends MapCreator {
 
 	protected String additionalFileExt = ".andnav";
 
+	protected String tileType;
+
 	public MapCreatorAndNav(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
 		File mapDir = new File(atlasDir, map.getMapSource().getName());
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
+		tileType = mapSource.getTileType();
+		if (parameters != null) {
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters
+					.getFormat());
+			tileType = parameters.getFormat().getDataWriter().getFileExt();
+		}
 	}
 
 	public void createMap() throws MapCreationException {
@@ -63,9 +71,8 @@ public class MapCreatorAndNav extends MapCreator {
 				checkUserAbort();
 				atlasProgress.incMapCreationProgress();
 				try {
-					String tileFileName = x + "/" + y + "." + mapSource.getTileType()
-							+ additionalFileExt;
-					byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
+					String tileFileName = x + "/" + y + "." + tileType + additionalFileExt;
+					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null)
 						mapTileWriter.writeTile(tileFileName, sourceTileData);
 				} catch (IOException e) {

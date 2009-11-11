@@ -39,9 +39,9 @@ public enum TileImageFormat {
 	JPEG60("JPEG - quality 60", new TileImageJpegDataWriter(0.60)), //
 	JPEG50("JPEG - quality 50", new TileImageJpegDataWriter(0.50)); //
 
-	private String description;
+	private final String description;
 
-	private TileImageDataWriter dataWriter;
+	private final TileImageDataWriter dataWriter;
 
 	private TileImageFormat(String description, TileImageDataWriter dataWriter) {
 		this.description = description;

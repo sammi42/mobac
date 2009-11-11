@@ -43,6 +43,7 @@ p,li {
 application. <br>
 TAC is an open source project hosted on SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
+</p>
 <h2>Table of contents</h2>
 <ul>
 	<li><a href="#License">License</a></li>
@@ -54,9 +55,9 @@ TAC is an open source project hosted on SourceForge.net: <br>
 	TrekBuddy</a></li>
 	<li><a href="#MTE">Creating and using atlases with Mobile
 	Trail Explorer (MTE)</a></li>
-	<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
 	<li><a href="#Maverick">Creating and using atlases with
 	Maverick</a></li>
+	<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
 	<li><a href="#OSMTracker">Creating atlases for OSMTracker</a></li>
 	<li><a href="#BigPlanet">Creating and using atlases with
 	BigPlanet / RMaps</a></li>
@@ -143,19 +144,6 @@ atlases for Mobile Trail Explorer:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2><a name="AndNav">Creating and using atlases with AndNav</a></h2>
-<p>For creating atlases compatible with AndNav you have to select <b>AndNav
-atlas format</b> as format in section <b>Atlas settings</b> on the left side
-of the main window. <br>
-As atlases for AndNav do not support all features provided by
-TrekBuddy the following settings are ignored when creating atlases for
-AndNav:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-	<li>Name of all layers and maps</li>
-	<li>Structure of the atlas (which maps belongs to which layer)</li>
-</ul>
-
 <h2><a name="Maverick">Creating and using atlases with Maverick</a></h2>
 <p>For creating atlases compatible with Maverick you have to select
 <b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
@@ -169,6 +157,18 @@ AndNav:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
+<h2><a name="AndNav">Creating and using atlases with AndNav</a></h2>
+<p>For creating atlases compatible with AndNav you have to select <b>AndNav
+atlas format</b> as format in section <b>Atlas settings</b> on the left side
+of the main window. <br>
+As atlases for AndNav do not support all features provided by TrekBuddy
+the following settings are ignored when creating atlases for AndNav:</p>
+<ul>
+	<li>Change height or width of the map tiles</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+</ul>
+
 <h2><a name="OSMTracker">Creating atlases for OSMTracker</a></h2>
 <p>For creating atlases compatible with OSMTracker you have to
 select <b>OSMTracker tile storage</b> as format in section <b>Atlas
@@ -177,7 +177,7 @@ As atlases for OSMTracker do not support all features provided by
 TrekBuddy the following settings are ignored when creating atlases for
 OSMTracker:</p>
 <ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Change height or width of the map tiles</li>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
@@ -221,6 +221,7 @@ available: <a
 SQLite binaries for Win32</a>. Other operating systems have to compile the
 wrapper using the <a
 	href="http://www.ch-werner.de/javasqlite/javasqlite-20090430.tar.gz">sources</a>:
+</p>
 <pre>
 wget http://www.ch-werner.de/javasqlite/javasqlite-20090430.tar.gz
 tar xzvf javasqlite-20090430.tar.gz
@@ -228,12 +229,12 @@ cd javasqlite-20090430/
 ./configure
 make
 su -c "make install"
-</pre></p>
+</pre>
 
 <h2><a name="Ozi">Creating and using atlases with OziExplorer /
 large PNG image export</a></h2>
 <p>For creating atlases compatible with OziExplorer you have to
-select <b>OziExplorer (PNG & MAP)</b> as format in section <b>Atlas
+select <b>OziExplorer (PNG &amp; MAP)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
 <p>As OziExplorer does only support individual maps some features
 are ignored when creating atlases in this format:</p>
@@ -259,7 +260,7 @@ to open the image.</p>
 
 <h2><a name="Glopus">Creating and using atlases with Glopus</a></h2>
 <p>For creating atlases compatible with OziExplorer you have to
-select <b>Glopus (PNG & KAL)</b> as format in section <b>Atlas
+select <b>Glopus (PNG &amp; KAL)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
 <p>Using this atlas output format the following features are ignored
 when creating atlases:</p>

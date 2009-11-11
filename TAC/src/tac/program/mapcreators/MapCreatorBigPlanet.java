@@ -121,7 +121,7 @@ public class MapCreatorBigPlanet extends MapCreator {
 					checkUserAbort();
 					atlasProgress.incMapCreationProgress();
 					try {
-						byte[] sourceTileData = mapDlTileProcessor.getTileData(x, y);
+						byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 						if (sourceTileData != null) {
 							writeTile(x, y, zoom, sourceTileData);
 							long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();

@@ -11,6 +11,7 @@ import tac.program.AtlasThread;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
+import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 
 /**
@@ -33,7 +34,8 @@ public abstract class MapCreator {
 	protected final AtlasOutputFormat atlasOutputFormat;
 	protected final MapSource mapSource;
 	protected final int tileSize;
-
+	protected final TileImageParameters parameters;
+	
 	protected MapDownloadedTileProcessor mapDlTileProcessor;
 	protected MapTileWriter mapTileWriter;
 
@@ -45,6 +47,7 @@ public abstract class MapCreator {
 		this.map = map;
 		this.mapSource = map.getMapSource();
 		this.tileSize = mapSource.getMapSpace().getTileSize();
+		this.parameters = map.getParameters();
 		xMin = map.getMinTileCoordinate().x / tileSize;
 		xMax = map.getMaxTileCoordinate().x / tileSize;
 		yMin = map.getMinTileCoordinate().y / tileSize;

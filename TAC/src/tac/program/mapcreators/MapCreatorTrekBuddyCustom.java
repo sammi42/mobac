@@ -8,9 +8,10 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import tac.exceptions.MapCreationException;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
-import tac.program.model.TileImageParameters;
+import tac.program.model.AtlasOutputFormat;
 import tac.tar.TarIndex;
 import tac.utilities.MyMath;
 
@@ -23,14 +24,40 @@ import tac.utilities.MyMath;
  */
 public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 
-	private TileImageParameters param;
 	private int realWidth;
 	private int realHeight;
 
-	public MapCreatorTrekBuddyCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir,
-			TileImageParameters parameters) {
+	public MapCreatorTrekBuddyCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		super(map, tarTileIndex, atlasDir);
-		this.param = parameters;
+	}
+
+	public void createMap() throws MapCreationException {
+		mapFolder.mkdirs();
+
+		// write the .map file containing the calibration points
+		writeMapFile();
+
+		// This means there should not be any resizing of the tiles.
+		try {
+			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
+				mapTileWriter = new TarTileWriter();
+			else
+				mapTileWriter = new FileTileWriter();
+
+			// Select the tile creator instance based on whether tile image
+			// parameters has been set or not
+			if (parameters != null)
+				createTiles();
+			else
+				super.createTiles();
+
+			mapTileWriter.finalizeMap();
+		} catch (InterruptedException e) {
+			// User has aborted process
+			return;
+		} catch (Exception e) {
+			throw new MapCreationException(e);
+		}
 	}
 
 	/**
@@ -43,7 +70,7 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	 */
 	@Override
 	protected void createTiles() throws InterruptedException {
-		log.debug("Starting map creation using custom parameters: " + param);
+		log.debug("Starting map creation using custom parameters: " + parameters);
 
 		// left upper point on the map in pixels
 		// regarding the current zoom level
@@ -59,8 +86,8 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 		int mergedHeight = yEnd - yStart;
 
 		// Reduce tile size of overall map height/width is smaller that one tile
-		realWidth = param.getWidth();
-		realHeight = param.getHeight();
+		realWidth = parameters.getWidth();
+		realHeight = parameters.getHeight();
 		if (realWidth > mergedWidth)
 			realWidth = mergedWidth;
 		if (realHeight > mergedHeight)
@@ -82,7 +109,7 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 		// cache of ImageIO. This will speed up the creation process a bit
 		ImageIO.setUseCache(false);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
-		TileImageDataWriter tileImageDataWriter = param.getFormat().getDataWriter();
+		TileImageDataWriter tileImageDataWriter = parameters.getFormat().getDataWriter();
 		tileImageDataWriter.initialize();
 		try {
 

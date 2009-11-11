@@ -23,11 +23,8 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.mapcreators.MapCreator;
-import tac.program.mapcreators.MapCreatorTrekBuddy;
-import tac.program.mapcreators.MapCreatorTrekBuddyCustom;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.Settings;
-import tac.program.model.TileImageParameters;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
 import tac.tilestore.TileStore;
@@ -280,19 +277,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			log.debug("Starting to create atlas from downloaded tiles");
 
 			AtlasOutputFormat aof = atlasInterface.getOutputFormat();
-			MapCreator mc = null;
-			switch (aof) {
-			case TaredAtlas:
-			case UntaredAtlas:
-				TileImageParameters parameters = map.getParameters();
-				if (parameters == null)
-					mc = new MapCreatorTrekBuddy(map, tileIndex, atlasDir);
-				else
-					mc = new MapCreatorTrekBuddyCustom(map, tileIndex, atlasDir, parameters);
-				break;
-			default:
-				mc = aof.createMapCreatorInstance(map, tileIndex, atlasDir);
-			}
+			MapCreator mc = aof.createMapCreatorInstance(map, tileIndex, atlasDir);
 			mc.createMap();
 		} catch (Exception e) {
 			log.error("Error in createMap: " + e.getMessage(), e);

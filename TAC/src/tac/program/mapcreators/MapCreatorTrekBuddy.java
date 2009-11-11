@@ -18,13 +18,12 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import tac.exceptions.MapCreationException;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
-import tac.program.model.AtlasOutputFormat;
 import tac.tar.TarArchive;
 import tac.tar.TarIndex;
 import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
 
-public class MapCreatorTrekBuddy extends MapCreator {
+public abstract class MapCreatorTrekBuddy extends MapCreator {
 
 	protected static final int COORD_KIND_LATTITUDE = 1;
 	protected static final int COORD_KIND_LONGITUDE = 2;
@@ -35,28 +34,6 @@ public class MapCreatorTrekBuddy extends MapCreator {
 		super(map, tarTileIndex, atlasDir);
 		LayerInterface layer = map.getLayer();
 		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
-	}
-
-	public void createMap() throws MapCreationException {
-		mapFolder.mkdirs();
-
-		// write the .map file containing the calibration points
-		writeMapFile();
-
-		// This means there should not be any resizing of the tiles.
-		try {
-			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
-				mapTileWriter = new TarTileWriter();
-			else
-				mapTileWriter = new FileTileWriter();
-			createTiles();
-			mapTileWriter.finalizeMap();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		} catch (Exception e) {
-			throw new MapCreationException(e);
-		}
 	}
 
 	protected void writeMapFile() {

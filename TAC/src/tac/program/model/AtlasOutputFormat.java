@@ -16,13 +16,14 @@ import tac.program.mapcreators.MapCreatorMTE;
 import tac.program.mapcreators.MapCreatorMaverick;
 import tac.program.mapcreators.MapCreatorOSMTracker;
 import tac.program.mapcreators.MapCreatorOzi;
+import tac.program.mapcreators.MapCreatorTrekBuddyCustom;
 import tac.tar.TarIndex;
 
 @XmlRootElement
 public enum AtlasOutputFormat {
 
-	TaredAtlas("TrekBuddy tared atlas", null), // 
-	UntaredAtlas("TrekBuddy untared atlas", null), //
+	TaredAtlas("TrekBuddy tared atlas", MapCreatorTrekBuddyCustom.class), // 
+	UntaredAtlas("TrekBuddy untared atlas", MapCreatorTrekBuddyCustom.class), //
 	MTE("Mobile Trail Explorer", MapCreatorMTE.class), //
 	AndNav("AndNav atlas format", MapCreatorAndNav.class), //
 	Maverick("Maverick atlas format", MapCreatorMaverick.class), //

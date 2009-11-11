@@ -16,7 +16,7 @@ public class RegionalMapSources {
 	public static class DoCeluPL extends AbstractMapSource {
 
 		public DoCeluPL() {
-			super("docelu.pl", 2, 16, "png");
+			super("docelu.pl", 2, 16, "png", TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -26,7 +26,7 @@ public class RegionalMapSources {
 			char[] cy = sy.toCharArray();
 			String szoom = Integer.toHexString(zoom);
 
-			String s = "http://i.wp.pl/m/tiles004/" + szoom + "/" + cx[4] + cy[4] + "/" + cx[3]
+			String s = "http://i.wp.pl/m/tiles006/" + szoom + "/" + cx[4] + cy[4] + "/" + cx[3]
 					+ cy[3] + "/" + cx[2] + cy[2] + "/" + cx[1] + cy[1] + "/" + cx[0] + cy[0]
 					+ "/z" + szoom + "x" + sx + "y" + sy + ".png";
 			return s;
@@ -51,7 +51,7 @@ public class RegionalMapSources {
 		private static final int MAX_SERVER_NUM = 4;
 
 		public UmpWawPl() {
-			super("UMP-pcPL", 0, 18, "png");
+			super("UMP-pcPL", 0, 18, "png", TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -132,7 +132,7 @@ public class RegionalMapSources {
 	public static class Cykloatlas extends AbstractMapSource {
 
 		public Cykloatlas() {
-			super("Cykloatlas", 7, 15, "png");
+			super("Cykloatlas", 7, 15, "png", TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

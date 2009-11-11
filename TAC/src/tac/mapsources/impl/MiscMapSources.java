@@ -16,7 +16,7 @@ public class MiscMapSources {
 			// 0 (fixed url) world.png
 			// 1-5 "mergend binary encoding"
 			// 6-? uses MS MAP tiles at some parts of the world
-			super("Multimap.com", 1, 17, "png");
+			super("Multimap.com", 1, 17, "png", TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -48,7 +48,7 @@ public class MiscMapSources {
 			// 0 (fixed url) world.png
 			// 1-5 "mergend binary encoding"
 			// 6-? uses MS MAP tiles at some parts of the world
-			super("Multimap UK OS Map", 1, 16, "png");
+			super("Multimap UK OS Map", 1, 16, "png", TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

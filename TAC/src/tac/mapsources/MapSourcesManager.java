@@ -99,11 +99,11 @@ public class MapSourcesManager {
 				DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
 				new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-				new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),
-				new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(), new TerraserverUSA(),
-				new UmpWawPl(), new DoCeluPL(), new EmapaPl(), new AustrianMap(),
-				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
-				new FreemapSlovakiaHikingHillShade() };
+				new OutdooractiveGermany(), new OutdooractiveAustria(),
+				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
+				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
+				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),
+				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

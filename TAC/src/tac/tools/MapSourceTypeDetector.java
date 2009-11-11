@@ -2,12 +2,12 @@ package tac.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +15,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.Microsoft;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -23,39 +22,60 @@ public class MapSourceTypeDetector {
 
 	public static final SecureRandom RND = new SecureRandom();
 
-	static URL url;
-	static HttpURLConnection c;
-
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		testMapSource(Microsoft.MicrosoftMaps.class, Cities.BERLIN);
-		testMapSource(Microsoft.MicrosoftMapsChina.class, Cities.SHANGHAI);
-		testMapSource(Microsoft.MicrosoftHybrid.class, Cities.BERLIN);
-		testMapSource(Microsoft.MicrosoftVirtualEarth.class, Cities.BERLIN);
+		// testMapSource(Microsoft.MicrosoftVirtualEarth.class, Cities.BERLIN);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,
 			EastNorthCoordinate coordinate) {
-		MapSource ms;
+		MapSourceTypeDetector mstd;
 		try {
-			ms = mapSourceClass.newInstance();
-			testMapSource(ms, coordinate);
+			mstd = new MapSourceTypeDetector(mapSourceClass);
+			mstd.testMapSource(coordinate);
+			System.out.println(mstd);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("Error while testing map source: " + e.getMessage());
 		}
 	}
 
 	public static void testMapSource(String mapSourceName, EastNorthCoordinate coordinate) {
-		MapSource ms = MapSourcesManager.getSourceByName(mapSourceName);
-		if (ms != null)
-			testMapSource(ms, coordinate);
+		MapSourceTypeDetector mstd = new MapSourceTypeDetector(mapSourceName);
+		mstd.testMapSource(coordinate);
+		System.out.println(mstd);
 	}
 
-	public static void testMapSource(MapSource mapSource, EastNorthCoordinate coordinate) {
+	private final MapSource mapSource;
+	private URL url;
+	private HttpURLConnection c;
+
+	private boolean eTagSupported = false;
+	private boolean expirationTimePresent = false;
+	private boolean lastModifiedTimePresent = false;
+
+	private boolean ifModifiedSinceSupported = false;
+	private boolean ifNoneMatchSupported = false;
+
+	public MapSourceTypeDetector(Class<? extends MapSource> mapSourceClass)
+			throws InstantiationException, IllegalAccessException {
+		this(mapSourceClass.newInstance());
+	}
+
+	public MapSourceTypeDetector(String mapSourceName) {
+		this(MapSourcesManager.getSourceByName(mapSourceName));
+	}
+
+	public MapSourceTypeDetector(MapSource mapSource) {
+		this.mapSource = mapSource;
+		if (mapSource == null)
+			throw new NullPointerException("MapSource not set");
+	}
+
+	public void testMapSource(EastNorthCoordinate coordinate) {
 		try {
 			System.out.println("Testing " + mapSource.toString());
 			int zoom = mapSource.getMinZoom()
@@ -86,30 +106,37 @@ public class MapSourceTypeDetector {
 				System.out.println("unknown");
 
 			String eTag = c.getHeaderField("ETag");
-			boolean eTagSupported = (eTag != null);
+			eTagSupported = (eTag != null);
 			if (eTagSupported) {
-				System.out.println("eTag                  : " + eTag);
+				// System.out.println("eTag                  : " + eTag);
 				testIfNoneMatch();
-			} else
-				System.out.println("eTag                  : -");
+			}
+			// else System.out.println("eTag                  : -");
 
-			long date = c.getDate();
-			if (date == 0)
-				System.out.println("Date time             : -");
-			else
-				System.out.println("Date time             : " + new Date(date));
+			// long date = c.getDate();
+			// if (date == 0)
+			// System.out.println("Date time             : -");
+			// else
+			// System.out.println("Date time             : " + new Date(date));
 
 			long exp = c.getExpiration();
-			if (exp == 0)
-				System.out.println("Expiration time       : -");
-			else
-				System.out.println("Expiration time       : " + new Date(exp));
-
+			expirationTimePresent = (c.getHeaderField("expires") != null) && (exp != 0);
+			if (exp == 0) {
+				// System.out.println("Expiration time       : -");
+			} else {
+				// long diff = (exp - System.currentTimeMillis()) / 1000;
+				// System.out.println("Expiration time       : " + new Date(exp)
+				// + " => "
+				// + Utilities.formatDurationSeconds(diff));
+			}
 			long modified = c.getLastModified();
-			if (modified == 0)
-				System.out.println("Last modified time    : not set");
-			else
-				System.out.println("Last modified time    : " + new Date(modified));
+			lastModifiedTimePresent = (c.getHeaderField("last-modified") != null)
+					&& (modified != 0);
+			// if (modified == 0)
+			// System.out.println("Last modified time    : not set");
+			// else
+			// System.out.println("Last modified time    : " + new
+			// Date(modified));
 
 			testIfModified();
 
@@ -119,7 +146,7 @@ public class MapSourceTypeDetector {
 		System.out.println("\n");
 	}
 
-	private static void testIfNoneMatch() throws Exception {
+	private void testIfNoneMatch() throws Exception {
 		String eTag = c.getHeaderField("ETag");
 		InputStream in = c.getInputStream();
 		byte[] buffer = new byte[1024];
@@ -144,22 +171,26 @@ public class MapSourceTypeDetector {
 		c2.addRequestProperty("If-None-Match", eTag);
 		c2.connect();
 		int code = c2.getResponseCode();
-		System.out.print("If-None-Match response: ");
 		boolean supported = (code == 304);
-		System.out.println(b2s(supported) + " - " + code + " (" + c2.getResponseMessage() + ")");
+		ifNoneMatchSupported = supported;
+		// System.out.print("If-None-Match response: ");
+		// System.out.println(b2s(supported) + " - " + code + " (" +
+		// c2.getResponseMessage() + ")");
 	}
 
-	private static void testIfModified() throws IOException {
+	private void testIfModified() throws IOException {
 		HttpURLConnection c2 = (HttpURLConnection) url.openConnection();
 		c2.setIfModifiedSince(System.currentTimeMillis() + 1000); // future date
 		c2.connect();
 		int code = c2.getResponseCode();
-		System.out.print("If-Modified-Since     : ");
 		boolean supported = (code == 304);
-		System.out.println(b2s(supported) + " - " + code + " (" + c2.getResponseMessage() + ")");
+		ifModifiedSinceSupported = supported;
+		// System.out.print("If-Modified-Since     : ");
+		// System.out.println(b2s(supported) + " - " + code + " (" +
+		// c2.getResponseMessage() + ")");
 	}
 
-	static void printHeaders() {
+	protected void printHeaders() {
 		System.out.println("\nHeaders:");
 		for (Map.Entry<String, List<String>> entry : c.getHeaderFields().entrySet()) {
 			String key = entry.getKey();
@@ -172,11 +203,24 @@ public class MapSourceTypeDetector {
 		System.out.println();
 	}
 
+	@Override
+	public String toString() {
+		StringWriter sw = new StringWriter();
+		sw.append("Mapsource........: " + mapSource.getName() + "\n");
+		sw.append("If-None-Match....: " + b2s(ifNoneMatchSupported) + "\n");
+		sw.append("eTag.............: " + b2s(eTagSupported) + "\n");
+		sw.append("If-Modified-Since: " + b2s(ifModifiedSinceSupported) + "\n");
+		sw.append("LastModified.....: " + b2s(lastModifiedTimePresent) + "\n");
+		sw.append("Expires..........: " + b2s(expirationTimePresent) + "\n");
+
+		return sw.toString();
+	}
+
 	private static String b2s(boolean b) {
 		if (b)
 			return "supported";
 		else
-			return "unsupported";
+			return "-";
 	}
 
 	static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3',

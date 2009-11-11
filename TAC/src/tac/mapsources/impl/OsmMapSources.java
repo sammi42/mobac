@@ -4,10 +4,10 @@ import tac.mapsources.AbstractMapSource;
 
 public class OsmMapSources {
 
-	public static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
-	public static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
-	public static final String MAP_HIKING = "http://topo.geofabrik.de/trails/";
-	public static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
+	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
+	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
+	protected static final String MAP_HIKING = "http://topo.geofabrik.de/trails/";
+	protected static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
 
@@ -143,8 +143,7 @@ public class OsmMapSources {
 	public static class OpenPisteMap extends AbstractMapSource {
 
 		public OpenPisteMap() {
-			super("OpenPisteMap", 0, 17, "png");
-			tileUpdate = TileUpdate.LastModified;
+			super("OpenPisteMap", 0, 17, "png", TileUpdate.LastModified);
 		}
 
 		@Override

@@ -1,12 +1,12 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
-import tac.mapsources.mapspace.Power2MapSpace;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 /**
  * Preparation for supporting map resolutions other than those uses by
  * Google/OpenstreetMap.
  * 
- * {@link Power2MapSpace} is the only implementation that is currently supported
+ * {@link MercatorPower2MapSpace} is the only implementation that is currently supported
  * by TrekBuddy Atlas Creator.
  * <p>
  * DO NOT TRY TO IMPLEMENT YOUR OWN. IT WILL NOT WORK!

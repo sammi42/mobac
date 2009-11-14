@@ -3,6 +3,7 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.Graphics;
 
 import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 
 public class DefaultMapTileLayer implements MapTileLayer {
@@ -11,6 +12,9 @@ public class DefaultMapTileLayer implements MapTileLayer {
 
 	public DefaultMapTileLayer(JMapViewer mapViewer) {
 		this.mapViewer = mapViewer;
+	}
+
+	public void startPainting(MapSource mapSource) {
 	}
 
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {

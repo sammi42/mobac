@@ -368,6 +368,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int y_max = getHeight();
 
 		// paint the tiles in a spiral, starting from center of the map
+		for (MapTileLayer l : mapTileLayers) 
+			l.startPainting(mapSource);
 		boolean painted = (mapTileLayers.size() > 0);
 		int x = 0;
 		while (painted) {

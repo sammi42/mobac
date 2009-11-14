@@ -2,6 +2,7 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.Graphics;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 
 /**
@@ -9,8 +10,14 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
  */
 public class MapGridLayer implements MapTileLayer {
 
+	private int tileSize;
+
+	public void startPainting(MapSource mapSource) {
+		tileSize = mapSource.getMapSpace().getTileSize();
+	}
+
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
-		g.drawRect(gx, gy, Tile.SIZE, Tile.SIZE);
+		g.drawRect(gx, gy, tileSize, tileSize);
 	}
 
 }

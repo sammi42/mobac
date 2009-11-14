@@ -14,6 +14,8 @@ import tac.mapsources.mapspace.MercatorPower2MapSpace;
  */
 public interface MapSpace {
 
+	public int getMaxPixels(int zoom);
+	
 	/**
 	 * @return size (height and width) of each tile in pixel
 	 */

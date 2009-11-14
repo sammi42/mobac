@@ -37,11 +37,11 @@ public class MercatorPower2MapSpace implements MapSpace {
 	 */
 	protected final int[] worldSize;
 
-	protected MercatorPower2MapSpace(int tileSize) {
+	public MercatorPower2MapSpace(int tileSize) {
 		this.tileSize = tileSize;
 		worldSize = new int[PreviewMap.MAX_ZOOM + 1];
 		for (int zoom = 0; zoom < worldSize.length; zoom++)
-			worldSize[zoom] = tileSize * (1 << zoom);
+			worldSize[zoom] = 256 * (1 << zoom);
 	}
 
 	protected double radius(int zoom) {
@@ -57,7 +57,7 @@ public class MercatorPower2MapSpace implements MapSpace {
 	 *            [0..22]
 	 * @return
 	 */
-	protected int getMaxPixels(int zoom) {
+	public int getMaxPixels(int zoom) {
 		return worldSize[zoom];
 	}
 

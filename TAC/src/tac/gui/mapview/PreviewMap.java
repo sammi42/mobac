@@ -15,7 +15,6 @@ import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
-import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
@@ -187,7 +186,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			if (gridSize > 1) {
 				int posx;
 				int posy;
-				if (gridSize >= Tile.SIZE) {
+				if (gridSize >= mapSource.getMapSpace().getTileSize()) {
 					posx = -tlc.x;
 					posy = -tlc.y;
 					for (int x = posx; x < w; x += gridSize) {
@@ -296,7 +295,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 		Point pNewStart = new Point();
 		Point pNewEnd = new Point();
-		int mapMaxCoordinate = Tile.SIZE << cZoom;
+		int mapMaxCoordinate = mapSource.getMapSpace().getMaxPixels(cZoom);
 		pNewStart.x = Math.max(0, Math.min(mapMaxCoordinate, pStart.x));
 		pNewStart.y = Math.max(0, Math.min(mapMaxCoordinate, pStart.y));
 		pNewEnd.x = Math.max(0, Math.min(mapMaxCoordinate, pEnd.x));
@@ -332,7 +331,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			return;
 
 		int gridZoomDiff = MAX_ZOOM - gridZoom;
-		int gridFactor = Tile.SIZE << gridZoomDiff;
+		int gridFactor = mapSource.getMapSpace().getTileSize() << gridZoomDiff;
 
 		Point pNewStart = new Point(iSelectionMin);
 		Point pNewEnd = new Point(iSelectionMax);

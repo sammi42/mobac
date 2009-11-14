@@ -4,6 +4,8 @@ import java.awt.Graphics;
 
 public interface MapTileLayer {
 
+	public void startPainting(MapSource mapSource);
+	
 	/**
 	 * Paints the tile identified by <code>tilex</code>/<code>tiley</code>/
 	 * <code>zoom</code> onto the {@link Graphics} <code>g</code> with it's

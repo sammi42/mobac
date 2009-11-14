@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.mapspace.Power2MapSpace;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 /**
  * Custom tile store provider, configurable via settings.xml.
@@ -76,7 +76,7 @@ public class CustomMapSource implements MapSource {
 	}
 
 	public MapSpace getMapSpace() {
-		return Power2MapSpace.INSTANCE;
+		return MercatorPower2MapSpace.INSTANCE_256;
 	}
 
 }

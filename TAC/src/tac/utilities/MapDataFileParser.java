@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import tac.mapsources.mapspace.Power2MapSpace;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 public class MapDataFileParser {
 
@@ -86,7 +86,7 @@ public class MapDataFileParser {
 		System.out.println(String.format("Max point (lat/lon): %4f %4f", lat_max, lon_max));
 		System.out.println(String.format("Min point (lat/lon): %4f %4f", lat_min, lon_min));
 
-		MapSpace ms = Power2MapSpace.INSTANCE;
+		MapSpace ms = MercatorPower2MapSpace.INSTANCE_256;
 		int x1 = ms.cLonToX(lon_max, JMapViewer.MAX_ZOOM);
 		int x2 = ms.cLonToX(lon_min, JMapViewer.MAX_ZOOM);
 		int diff = Math.abs(x1 - x2);

@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.mapsources.mapspace.Power2MapSpace;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 public class WmsSources {
 
@@ -66,7 +66,7 @@ public class WmsSources {
 		}
 
 		public MapSpace getMapSpace() {
-			return Power2MapSpace.INSTANCE;
+			return MercatorPower2MapSpace.INSTANCE_256;
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

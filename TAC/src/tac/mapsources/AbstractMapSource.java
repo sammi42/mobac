@@ -3,7 +3,7 @@ package tac.mapsources;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import tac.mapsources.mapspace.Power2MapSpace;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 /**
  * Abstract base class for map sources.
@@ -59,7 +59,7 @@ public abstract class AbstractMapSource implements MapSource {
 	}
 
 	public MapSpace getMapSpace() {
-		return Power2MapSpace.INSTANCE;
+		return MercatorPower2MapSpace.INSTANCE_256;
 	}
 
 }

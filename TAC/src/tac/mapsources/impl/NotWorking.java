@@ -3,7 +3,7 @@ package tac.mapsources.impl;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.AbstractMapSource;
-import tac.mapsources.mapspace.Power2MapSpace;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 public class NotWorking {
 
@@ -14,7 +14,7 @@ public class NotWorking {
 				+ "DA6B1D212552D6802ED3328E0BB1926";
 
 		public MapSpace getMapSpace() {
-			return Power2MapSpace.INSTANCE;
+			return MercatorPower2MapSpace.INSTANCE_256;
 		}
 
 		public int getMaxZoom() {

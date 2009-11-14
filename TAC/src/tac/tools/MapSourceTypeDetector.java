@@ -15,6 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.impl.UnusedMapSources;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -28,7 +29,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		// testMapSource(Microsoft.MicrosoftVirtualEarth.class, Cities.BERLIN);
+		testMapSource(UnusedMapSources.Turaterkep.class, Cities.BUDAPEST);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

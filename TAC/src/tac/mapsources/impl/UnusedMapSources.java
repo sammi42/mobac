@@ -35,18 +35,14 @@ public class UnusedMapSources {
 	}
 
 	/**
-	 * Uses 512x512 tiles - not fully supported at the moment
-	 * 
-	 * <p>
-	 * Not working: Map scale
-	 * </p>
+	 * Uses 512x512 tiles - not fully supported at the moment!
 	 */
 	public static class Turaterkep extends AbstractMapSource {
 
 		private MapSpace space = new MercatorPower2MapSpace(512);
 
 		public Turaterkep() {
-			super("Turaterkep hiking (Hungary)", 7, 16, "png");
+			super("Turaterkep", 7, 16, "png", TileUpdate.IfNoneMatch);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -59,6 +55,10 @@ public class UnusedMapSources {
 			return space;
 		}
 
-		
+		@Override
+		public String toString() {
+			return "Turaterkep (Hungary, experimental)";
+		}
+
 	}
 }

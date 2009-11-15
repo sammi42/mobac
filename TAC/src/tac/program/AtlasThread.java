@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapDownloadSkippedException;
 import tac.gui.AtlasProgress;
 import tac.gui.AtlasProgress.DownloadControlerListener;
@@ -50,11 +51,31 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 
 	private File atlasDir = null;
 
-	public AtlasThread(AtlasInterface atlasInterface) {
+	public AtlasThread(AtlasInterface atlasInterface) throws AtlasTestException {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
 		this.atlasInterface = atlasInterface;
+		testAtlas();
 		TileStore.getInstance().closeAll(false);
+	}
+
+	private void testAtlas() throws AtlasTestException {
+		try {
+			MapCreator mc = atlasInterface.getOutputFormat().createMapCreatorInstance();
+			for (LayerInterface layer : atlasInterface) {
+				for (MapInterface map : layer) {
+					if (!mc.testMapSpace(map.getMapSource().getMapSpace()))
+						throw new AtlasTestException("The selected atlas output format \""
+								+ atlasInterface.getOutputFormat()
+								+ "\" does not support the map source \"" + map.getMapSource()
+								+ "\"");
+				}
+			}
+		} catch (AtlasTestException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new AtlasTestException(e);
+		}
 	}
 
 	private static synchronized int getNextThreadNum() {
@@ -277,8 +298,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			log.debug("Starting to create atlas from downloaded tiles");
 
 			AtlasOutputFormat aof = atlasInterface.getOutputFormat();
-			MapCreator mc = aof.createMapCreatorInstance(map, tileIndex, atlasDir);
-			mc.createMap();
+			MapCreator mapCreator = aof.createMapCreatorInstance();
+			mapCreator.initialize(map, tileIndex, atlasDir);
+			mapCreator.createMap();
 		} catch (Exception e) {
 			log.error("Error in createMap: " + e.getMessage(), e);
 			throw e;

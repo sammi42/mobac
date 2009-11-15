@@ -28,10 +28,11 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 	protected static final int COORD_KIND_LATTITUDE = 1;
 	protected static final int COORD_KIND_LONGITUDE = 2;
 
-	protected File mapFolder;
+	protected File mapFolder = null;
 
-	public MapCreatorTrekBuddy(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		LayerInterface layer = map.getLayer();
 		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
 	}

@@ -1,12 +1,7 @@
 package tac.program.model;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
-import tac.program.interfaces.MapInterface;
 import tac.program.mapcreators.MapCreator;
 import tac.program.mapcreators.MapCreatorAndNav;
 import tac.program.mapcreators.MapCreatorBigPlanet;
@@ -17,7 +12,6 @@ import tac.program.mapcreators.MapCreatorMaverick;
 import tac.program.mapcreators.MapCreatorOSMTracker;
 import tac.program.mapcreators.MapCreatorOzi;
 import tac.program.mapcreators.MapCreatorTrekBuddyCustom;
-import tac.tar.TarIndex;
 
 @XmlRootElement
 public enum AtlasOutputFormat {
@@ -49,14 +43,10 @@ public enum AtlasOutputFormat {
 		return mapCreatorClass;
 	}
 
-	public MapCreator createMapCreatorInstance(MapInterface map, TarIndex tarTileIndex,
-			File atlasDir) throws SecurityException, NoSuchMethodException,
-			IllegalArgumentException, InstantiationException, IllegalAccessException,
-			InvocationTargetException {
+	public MapCreator createMapCreatorInstance() throws InstantiationException,
+			IllegalAccessException {
 		if (mapCreatorClass == null)
 			return null;
-		Constructor<? extends MapCreator> c = mapCreatorClass.getConstructor(MapInterface.class,
-				TarIndex.class, File.class);
-		return c.newInstance(map, tarTileIndex, atlasDir);
+		return mapCreatorClass.newInstance();
 	}
 }

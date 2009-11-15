@@ -10,22 +10,28 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+
 import tac.exceptions.MapCreationException;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.Utilities;
 import tac.utilities.imageio.PngXxlWriter;
 
-/**
- * 
- */
 public class MapCreatorOzi extends MapCreatorTrekBuddy {
 
-	protected File mapDir;
-	protected String mapName;
+	protected File mapDir = null;
+	protected String mapName = null;
 
-	public MapCreatorOzi(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public boolean testMapSpace(MapSpace mapSpace) {
+		return (mapSpace instanceof MercatorPower2MapSpace);
+	}
+
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		mapDir = new File(atlasDir, map.getLayer().getName());
 		mapName = map.getName();
 	}

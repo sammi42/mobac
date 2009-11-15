@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import tac.exceptions.MapCreationException;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.program.tiledatawriter.TileImageJpegDataWriter;
 import tac.tar.TarIndex;
@@ -50,8 +51,14 @@ public class MapCreatorGarminCustom extends MapCreator {
 
 	protected ZipOutputStream kmzOutputStream = null;
 
-	public MapCreatorGarminCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public boolean testMapSpace(MapSpace mapSpace) {
+		return (mapSpace instanceof MercatorPower2MapSpace);
+	}
+
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		mapDir = new File(atlasDir, map.getLayer().getName());
 		mapName = map.getName();
 		imageFileName = "files/" + mapName + ".jpg";

@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.InvalidNameException;
 import tac.gui.actions.ShowHelpAction;
 import tac.gui.atlastree.JAtlasTree;
@@ -539,7 +540,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private class CreateAtlasButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent event) {
 			if (!jAtlasTree.testAtlasContentValid())
 				return;
 			if (jAtlasTree.getAtlas().calculateTilesToDownload() > 3000000) {
@@ -559,9 +560,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 				AtlasInterface atlasToCreate = jAtlasTree.getAtlas().deepClone();
 				Thread atlasThread = new AtlasThread(atlasToCreate);
 				atlasThread.start();
-			} catch (Exception exception) {
-				log.error("", exception);
-				TACExceptionHandler.processException(exception);
+			} catch (AtlasTestException e) {
+				JOptionPane.showMessageDialog(null, "<html>" + e.getMessage() + "</html>",
+						"Map incompatible with atlas format", JOptionPane.ERROR_MESSAGE);
+
+			} catch (Exception e) {
+				log.error("", e);
+				TACExceptionHandler.processException(e);
 			}
 		}
 	}

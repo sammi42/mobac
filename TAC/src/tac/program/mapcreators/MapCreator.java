@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
@@ -23,26 +24,38 @@ public abstract class MapCreator {
 
 	protected final Logger log;
 
-	protected final MapInterface map;
-	protected final int xMin;
-	protected final int xMax;
-	protected final int yMin;
-	protected final int yMax;
+	protected MapInterface map;
+	protected int xMin;
+	protected int xMax;
+	protected int yMin;
+	protected int yMax;
 
-	protected final TarIndex tarTileIndex;
-	protected final int zoom;
-	protected final AtlasOutputFormat atlasOutputFormat;
-	protected final MapSource mapSource;
-	protected final int tileSize;
-	protected final TileImageParameters parameters;
-	
+	protected TarIndex tarTileIndex;
+	protected int zoom;
+	protected AtlasOutputFormat atlasOutputFormat;
+	protected MapSource mapSource;
+	protected int tileSize;
+	protected TileImageParameters parameters;
+
 	protected RawTileProvider mapDlTileProvider;
 	protected MapTileWriter mapTileWriter;
 
 	protected AtlasProgress atlasProgress = null;
 
-	public MapCreator(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+	public MapCreator() {
 		log = Logger.getLogger(this.getClass());
+	};
+
+	/**
+	 * Test if the {@link MapCreator} instance supportes the selected
+	 * {@link MapSpace}
+	 * 
+	 * @param mapSpace
+	 * @return <code>true</code> if supported otherwise <code>false</code>
+	 */
+	public abstract boolean testMapSpace(MapSpace mapSpace);
+
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		LayerInterface layer = map.getLayer();
 		this.map = map;
 		this.mapSource = map.getMapSource();

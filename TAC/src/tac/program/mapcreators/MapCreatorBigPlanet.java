@@ -11,7 +11,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+
 import tac.exceptions.MapCreationException;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.jdbc.SQLiteLoader;
@@ -59,8 +62,14 @@ public class MapCreatorBigPlanet extends MapCreator {
 	private Connection conn = null;
 	private PreparedStatement prepStmt;
 
-	public MapCreatorBigPlanet(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public boolean testMapSpace(MapSpace mapSpace) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSpace);
+	}
+
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		atlasDir.delete(); // We don't use the atlas directory
 		databaseFile = new File(atlasDir.getParent(), DATABASE_FILENAME).getAbsolutePath();
 	}

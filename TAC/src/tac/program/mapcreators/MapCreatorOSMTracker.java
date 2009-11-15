@@ -10,8 +10,9 @@ import tac.tar.TarIndex;
  */
 public class MapCreatorOSMTracker extends MapCreatorAndNav {
 
-	public MapCreatorOSMTracker(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		this.additionalFileExt = "";
 	}
 

@@ -6,7 +6,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+
 import tac.exceptions.MapCreationException;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 import tac.utilities.Utilities;
@@ -20,14 +23,20 @@ import tac.utilities.Utilities;
  */
 public class MapCreatorAndNav extends MapCreator {
 
-	private File mapZoomDir;
+	private File mapZoomDir = null;
 
 	protected String additionalFileExt = ".andnav";
 
-	protected String tileType;
+	protected String tileType = null;
 
-	public MapCreatorAndNav(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public boolean testMapSpace(MapSpace mapSpace) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSpace);
+	}
+
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		File mapDir = new File(atlasDir, map.getMapSource().getName());
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
 		tileType = mapSource.getTileType();

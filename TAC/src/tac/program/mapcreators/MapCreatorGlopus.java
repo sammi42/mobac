@@ -14,8 +14,9 @@ import tac.utilities.Utilities;
 
 public class MapCreatorGlopus extends MapCreatorOzi {
 
-	public MapCreatorGlopus(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
+		super.initialize(map, tarTileIndex, atlasDir);
 		String layerName = map.getLayer().getName().replaceAll(" ", "_");
 		mapName = map.getName().replaceAll(" ", "_");
 		mapDir = new File(atlasDir, layerName);

@@ -4,15 +4,15 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+
 import tac.exceptions.MapCreationException;
-import tac.program.interfaces.MapInterface;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.AtlasOutputFormat;
-import tac.tar.TarIndex;
 import tac.utilities.MyMath;
 
 /**
@@ -27,10 +27,11 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	private int realWidth;
 	private int realHeight;
 
-	public MapCreatorTrekBuddyCustom(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super(map, tarTileIndex, atlasDir);
+	@Override
+	public boolean testMapSpace(MapSpace mapSpace) {
+		return (mapSpace instanceof MercatorPower2MapSpace);
 	}
-
+	
 	public void createMap() throws MapCreationException {
 		mapFolder.mkdirs();
 

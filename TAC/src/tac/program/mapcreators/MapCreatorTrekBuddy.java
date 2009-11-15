@@ -80,7 +80,9 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
 		ImageIO.setUseCache(false);
-		BufferedImage emptyImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+		int tileSize = map.getMapSource().getMapSpace().getTileSize();
+		BufferedImage emptyImage = new BufferedImage(tileSize, tileSize,
+				BufferedImage.TYPE_INT_ARGB);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
 		try {
 			ImageIO.write(emptyImage, mapSource.getTileType(), buf);
@@ -94,8 +96,8 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 				checkUserAbort();
 				atlasProgress.incMapCreationProgress();
 				try {
-					String tileFileName = "t_" + (pixelValueX * 256) + "_" + (pixelValueY * 256)
-							+ "." + mapSource.getTileType();
+					String tileFileName = "t_" + (pixelValueX * tileSize) + "_"
+							+ (pixelValueY * tileSize) + "." + mapSource.getTileType();
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null) {
 						mapTileWriter.writeTile(tileFileName, sourceTileData);

@@ -327,6 +327,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		}
 	}
 	
+	public boolean isPaused() {
+		return pauseResumeHandler.isPaused();
+	}
+
 	public PauseResumeHandler getPauseResumeHandler() {
 		return pauseResumeHandler;
 	}
@@ -352,6 +356,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 				djp_.cancel();
 			if (downloadJobDispatcher != null)
 				downloadJobDispatcher.terminateAllWorkerThreads();
+			pauseResumeHandler.resume();
 			this.interrupt();
 		} catch (Exception e) {
 			log.error("Exception thrown in stopDownload()" + e.getMessage());

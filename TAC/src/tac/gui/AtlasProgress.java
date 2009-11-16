@@ -71,6 +71,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		int mapCreationMax = 0;
 		int retryErrors = 0;
 		int permanentErrors = 0;
+		boolean paused = false;
 	}
 
 	private final Data data = new Data();
@@ -467,13 +468,19 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			atlasProgressBar.setValue(data.totalProgress);
 
 			int newPercent = (int) (atlasProgressBar.getPercentComplete() * 100);
-			if (data.totalProgressPercent != newPercent) {
+			boolean pauseState = atlasThread.isPaused();
+			if (data.totalProgressPercent != newPercent || pauseState != data.paused) {
 				data.totalProgressPercent = newPercent;
 				atlasPercent.setText(String.format(TEXT_PERCENT, data.totalProgressPercent));
-				if (data.atlasInterface != null)
-					AtlasProgress.this.setTitle(Integer.toString(data.totalProgressPercent)
-							+ " % - Downloading atlas \"" + data.atlasInterface.getName() + "\"");
+				if (data.atlasInterface != null) {
+					String text = String.format("%d%% - Downloading atlas \"%s\"",
+							data.totalProgressPercent, data.atlasInterface.getName());
+					if (pauseState)
+						text += " [PAUSED]";
+					AtlasProgress.this.setTitle(text);
+				}
 			}
+			data.paused = pauseState;
 
 			long seconds = -1;
 			if (data.totalProgress != 0) {
@@ -580,6 +587,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		public void abortAtlasCreation();
 
 		public void pauseResumeAtlasCreation();
+
+		public boolean isPaused();
 
 	}
 

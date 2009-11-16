@@ -31,7 +31,7 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	public boolean testMapSpace(MapSpace mapSpace) {
 		return (mapSpace instanceof MercatorPower2MapSpace);
 	}
-	
+
 	public void createMap() throws MapCreationException {
 		mapFolder.mkdirs();
 
@@ -56,6 +56,8 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 		} catch (InterruptedException e) {
 			// User has aborted process
 			return;
+		} catch (MapCreationException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(e);
 		}

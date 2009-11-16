@@ -9,6 +9,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.program.AtlasThread;
+import tac.program.PauseResumeHandler;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
@@ -42,6 +43,8 @@ public abstract class MapCreator {
 
 	protected AtlasProgress atlasProgress = null;
 
+	protected PauseResumeHandler pauseResumeHandler = null;
+	
 	public MapCreator() {
 		log = Logger.getLogger(this.getClass());
 	};
@@ -72,7 +75,9 @@ public abstract class MapCreator {
 		Thread t = Thread.currentThread();
 		if (!(t instanceof AtlasThread))
 			throw new RuntimeException("Calling thread must be AtlasThread!");
-		atlasProgress = ((AtlasThread) t).getAtlasProgress();
+		AtlasThread at = (AtlasThread) t;
+		atlasProgress = at.getAtlasProgress();
+		pauseResumeHandler = at.getPauseResumeHandler();
 	}
 
 	/**
@@ -84,6 +89,7 @@ public abstract class MapCreator {
 	protected void checkUserAbort() throws InterruptedException {
 		if (Thread.currentThread().isInterrupted())
 			throw new InterruptedException();
+		pauseResumeHandler.pauseWait();
 	}
 
 	public abstract void createMap() throws MapCreationException;

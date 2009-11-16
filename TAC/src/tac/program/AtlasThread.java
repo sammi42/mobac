@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapDownloadSkippedException;
 import tac.gui.AtlasProgress;
-import tac.gui.AtlasProgress.DownloadControlerListener;
+import tac.gui.AtlasProgress.AtlasCreationController;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.DownloadJobListener;
@@ -32,7 +32,7 @@ import tac.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 
-public class AtlasThread extends Thread implements DownloadJobListener, DownloadControlerListener {
+public class AtlasThread extends Thread implements DownloadJobListener, AtlasCreationController {
 
 	private static int threadNum = 0;
 	private static Logger log = Logger.getLogger(AtlasThread.class);
@@ -42,6 +42,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	private AtlasProgress ap;
 
 	private AtlasInterface atlasInterface;
+	private MapCreator mapCreator = null;
+	private PauseResumeHandler pauseResumeHandler;
 
 	private int activeDownloads = 0;
 	private int jobsProduced = 0;
@@ -57,6 +59,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		this.atlasInterface = atlasInterface;
 		testAtlas();
 		TileStore.getInstance().closeAll(false);
+		pauseResumeHandler = new PauseResumeHandler();
 	}
 
 	private void testAtlas() throws AtlasTestException {
@@ -150,7 +153,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 
 		Settings s = Settings.getInstance();
 
-		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount);
+		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler);
 		try {
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {
@@ -241,7 +244,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 					|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 				Thread.sleep(500);
 				if (!failedMessageAnswered && (jobsRetryError > 50)) {
-					downloadJobDispatcher.pause();
+					pauseResumeHandler.pause();
 					String[] answers = new String[] { "Continue", "Retry", "Skip", "Abort" };
 					String message = "<html>Multiple tile downloads have failed. "
 							+ "Something may be wrong with your connection to the "
@@ -257,7 +260,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 					failedMessageAnswered = true;
 					switch (answer) {
 					case 0: // Continue
-						downloadJobDispatcher.resume();
+						pauseResumeHandler.resume();
 						break;
 					case 1: // Retry
 						djp.cancel();
@@ -298,13 +301,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 			log.debug("Starting to create atlas from downloaded tiles");
 
 			AtlasOutputFormat aof = atlasInterface.getOutputFormat();
-			MapCreator mapCreator = aof.createMapCreatorInstance();
+			mapCreator = aof.createMapCreatorInstance();
 			mapCreator.initialize(map, tileIndex, atlasDir);
 			mapCreator.createMap();
 		} catch (Exception e) {
 			log.error("Error in createMap: " + e.getMessage(), e);
 			throw e;
 		} finally {
+			mapCreator = null;
 			if (tileIndex != null)
 				tileIndex.closeAndDelete();
 			if (tileArchive != null)
@@ -313,11 +317,18 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 		return true;
 	}
 
-	public void pauseResumeDownload() {
-		if (downloadJobDispatcher.isPaused())
-			downloadJobDispatcher.resume();
-		else
-			downloadJobDispatcher.pause();
+	public void pauseResumeAtlasCreation() {
+		if (pauseResumeHandler.isPaused()) {
+			log.debug("Atlas creation resumed");
+			pauseResumeHandler.resume();
+		} else {
+			log.debug("Atlas creation paused");
+			pauseResumeHandler.pause();
+		}
+	}
+	
+	public PauseResumeHandler getPauseResumeHandler() {
+		return pauseResumeHandler;
 	}
 
 	private void createTbaFile(String name) {
@@ -334,7 +345,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, Download
 	/**
 	 * Stop listener from {@link AtlasProgress}
 	 */
-	public void stopDownload() {
+	public void abortAtlasCreation() {
 		try {
 			DownloadJobProducer djp_ = djp;
 			if (djp_ != null)

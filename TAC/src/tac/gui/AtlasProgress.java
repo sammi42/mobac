@@ -75,6 +75,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	private final Data data = new Data();
 
+	private boolean aborted = false;
+
 	private JLabel windowTitle;
 
 	private JLabel title;
@@ -103,7 +105,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JButton abortAtlasDownloadButton;
 	private JButton pauseResumeDownloadButton;
 
-	private DownloadControlerListener downloadControlListener = null;
+	private AtlasCreationController downloadControlListener = null;
 
 	private UpdateTask updateTask = null;
 	private GUIUpdater guiUpdater = null;
@@ -354,17 +356,26 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			public void run() {
 				abortAtlasDownloadButton.setEnabled(false);
 
-				windowTitle.setText("<html><h2>ATLAS CREATION FINISHED SUCCESSFULLY</h2></html>");
+				if (aborted) {
+					windowTitle.setText("<html><h2>ATLAS CREATION HAS BEEN "
+							+ "ABORTED BY USER</h2></html>");
+					setTitle("Atlas creation aborted");
+				} else {
+					windowTitle.setText("<html><h2>ATLAS CREATION FINISHED "
+							+ "SUCCESSFULLY</h2></html>");
+					setTitle("Atlas creation finished successfully");
+				}
 				mapInfo.setText("");
-				setTitle("Atlas creation finished successfully");
 
 				abortAtlasDownloadButton.setVisible(false);
 
 				dismissWindowButton.setToolTipText("Close atlas download progress window");
 				dismissWindowButton.setVisible(true);
 
-				openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
-				openProgramFolderButton.setEnabled(true);
+				if (!aborted) {
+					openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
+					openProgramFolderButton.setEnabled(true);
+				}
 			}
 		});
 	}
@@ -387,11 +398,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		}
 	}
 
-	public DownloadControlerListener getDownloadControlListener() {
+	public AtlasCreationController getDownloadControlListener() {
 		return downloadControlListener;
 	}
 
-	public void setDownloadControlerListener(DownloadControlerListener threadControlListener) {
+	public void setDownloadControlerListener(AtlasCreationController threadControlListener) {
 		this.downloadControlListener = threadControlListener;
 	}
 
@@ -409,13 +420,14 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			closeWindow();
 		} else if (abortAtlasDownloadButton.equals(source)) {
 			updateTask.cancel();
-			if (downloadControlListener != null)
-				downloadControlListener.stopDownload();
-			else
+			if (downloadControlListener != null) {
+				aborted = true;
+				downloadControlListener.abortAtlasCreation();
+			} else
 				dispose();
 		} else if (pauseResumeDownloadButton.equals(source)) {
 			if (downloadControlListener != null)
-				downloadControlListener.pauseResumeDownload();
+				downloadControlListener.pauseResumeAtlasCreation();
 		}
 	}
 
@@ -444,11 +456,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				scheduledCounter--;
 			}
 
-			if (data.map != null)
-				mapInfo
-						.setText("<html>Downloading map \"<b>" + data.map.getName()
-								+ "</b>\" of layer <b>\"" + data.map.getLayer().getName()
-								+ "\"</b></html>");
+			if (data.map != null) {
+				String text = "<html>Downloading map \"<b>" + data.map.getName()
+						+ "</b>\" of layer <b>\"" + data.map.getLayer().getName() + "\"</b></html>";
+				mapInfo.setText(text);
+			}
 
 			// atlas progress
 			atlasProgressBar.setMaximum(data.totalNumberOfTiles);
@@ -556,18 +568,18 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		@Override
 		public void windowClosing(WindowEvent e) {
 			log.debug("Closing event detected for atlas progress window");
-			DownloadControlerListener listener = AtlasProgress.this.downloadControlListener;
+			AtlasCreationController listener = AtlasProgress.this.downloadControlListener;
 			if (listener != null)
-				listener.stopDownload();
+				listener.abortAtlasCreation();
 		}
 
 	}
 
-	public static interface DownloadControlerListener {
+	public static interface AtlasCreationController {
 
-		public void stopDownload();
+		public void abortAtlasCreation();
 
-		public void pauseResumeDownload();
+		public void pauseResumeAtlasCreation();
 
 	}
 

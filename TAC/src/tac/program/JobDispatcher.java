@@ -21,12 +21,12 @@ public class JobDispatcher {
 
 	protected WorkerThread[] workers;
 
-	protected boolean paused = false;
-	protected Object lock = new Object();
+	protected PauseResumeHandler pauseResumeHandler;
 
 	protected BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<Job>();
 
-	public JobDispatcher(int threadCount) {
+	public JobDispatcher(int threadCount, PauseResumeHandler pauseResumeHandler) {
+		this.pauseResumeHandler = pauseResumeHandler;
 		workers = new WorkerThread[threadCount];
 		for (int i = 0; i < threadCount; i++)
 			workers[i] = new WorkerThread(i);
@@ -56,21 +56,6 @@ public class JobDispatcher {
 
 	public void cancelOutstandingJobs() {
 		jobQueue.clear();
-	}
-
-	public boolean isPaused() {
-		return paused;
-	}
-
-	public synchronized void pause() {
-		paused = true;
-	}
-
-	public synchronized void resume() {
-		paused = false;
-		synchronized (lock) {
-			lock.notifyAll();
-		}
 	}
 
 	/**
@@ -152,12 +137,7 @@ public class JobDispatcher {
 		protected void executeJobs() {
 			while (!isInterrupted()) {
 				try {
-					if (paused) {
-						synchronized (lock) {
-							if (paused)
-								lock.wait();
-						}
-					}
+					pauseResumeHandler.pauseWait();
 					idle = true;
 					job = jobQueue.take();
 					idle = false;

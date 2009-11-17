@@ -1,7 +1,7 @@
 package tac.mapsources.impl;
 
 import tac.mapsources.AbstractMapSource;
-import tac.mapsources.MapSourcesTools;
+import tac.mapsources.MapSourceTools;
 
 public class Microsoft {
 
@@ -25,7 +25,7 @@ public class Microsoft {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String tileNum = MapSourcesTools.encodeQuadTree(zoom, tilex, tiley);
+			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 			serverNum = (serverNum + 1) % serverNumMax;
 			return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar + tileNum + "."
 					+ tileType + urlAppend;

@@ -1,6 +1,11 @@
 package tac.mapsources;
 
-public class MapSourcesTools {
+import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+
+public class MapSourceTools {
+
+	private static final Logger log = Logger.getLogger(MapSourceTools.class);
 
 	protected static final char[] NUM_CHAR = { '0', '1', '2', '3' };
 
@@ -26,4 +31,10 @@ public class MapSourcesTools {
 		return new String(tileNum);
 	}
 
+	public static String loadMapUrl(MapSource mapSource, String type) {
+		String url = System.getProperty(mapSource.getClass().getSimpleName() + "." + type);
+		if (url == null)
+			log.error("Unable to load url for " + mapSource.getClass().getSimpleName());
+		return url;
+	}
 }

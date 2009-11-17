@@ -1,6 +1,8 @@
 package tac.mapsources.impl;
 
 import tac.mapsources.AbstractMapSource;
+import tac.mapsources.MapSourceTools;
+import tac.mapsources.UpdatableMapSource;
 
 /**
  * Map sources that do not cover the whole world
@@ -13,10 +15,17 @@ public class RegionalMapSources {
 	 * <a href="docelu.pl">docelu.pl</a>
 	 * </p>
 	 */
-	public static class DoCeluPL extends AbstractMapSource {
+	public static class DoCeluPL extends AbstractMapSource implements UpdatableMapSource {
+
+		private String baseUrl;
 
 		public DoCeluPL() {
 			super("docelu.pl", 2, 16, "png", TileUpdate.LastModified);
+			update();
+		}
+
+		public void update() {
+			baseUrl = MapSourceTools.loadMapUrl(this, "baseurl");
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -26,9 +35,9 @@ public class RegionalMapSources {
 			char[] cy = sy.toCharArray();
 			String szoom = Integer.toHexString(zoom);
 
-			String s = "http://i.wp.pl/m/tiles006/" + szoom + "/" + cx[4] + cy[4] + "/" + cx[3]
-					+ cy[3] + "/" + cx[2] + cy[2] + "/" + cx[1] + cy[1] + "/" + cx[0] + cy[0]
-					+ "/z" + szoom + "x" + sx + "y" + sy + ".png";
+			String s = baseUrl + szoom + "/" + cx[4] + cy[4] + "/" + cx[3] + cy[3] + "/" + cx[2]
+					+ cy[2] + "/" + cx[1] + cy[1] + "/" + cx[0] + cy[0] + "/z" + szoom + "x" + sx
+					+ "y" + sy + ".png";
 			return s;
 		}
 

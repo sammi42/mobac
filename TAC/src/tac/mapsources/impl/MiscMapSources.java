@@ -1,7 +1,7 @@
 package tac.mapsources.impl;
 
 import tac.mapsources.AbstractMapSource;
-import tac.mapsources.MapSourcesTools;
+import tac.mapsources.MapSourceTools;
 
 public class MiscMapSources {
 
@@ -21,7 +21,7 @@ public class MiscMapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 
-			String tileNum = MapSourcesTools.encodeQuadTree(zoom, tilex, tiley);
+			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 			if (tileNum.length() > 12)
 				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/"
 						+ tileNum.substring(12);
@@ -52,7 +52,7 @@ public class MiscMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String tileNum = MapSourcesTools.encodeQuadTree(zoom, tilex, tiley);
+			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 			if (tileNum.length() > 12)
 				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/"
 						+ tileNum.substring(12);

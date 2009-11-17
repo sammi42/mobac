@@ -1,13 +1,11 @@
 package tac.mapsources.impl;
 
-import org.apache.log4j.Logger;
-
 import tac.mapsources.AbstractMapSource;
+import tac.mapsources.MapSourceTools;
 import tac.mapsources.UpdatableMapSource;
 
 public class Google {
 
-	private static final Logger log = Logger.getLogger(Google.class);
 	public static String LANG = "en";
 
 	public static abstract class GoogleSource extends AbstractMapSource implements
@@ -23,10 +21,7 @@ public class Google {
 		}
 
 		public void update() {
-			String url = System.getProperty(this.getClass().getSimpleName() + ".url");
-			if (url == null)
-				log.error("Unable to load url for " + this.getClass().getSimpleName());
-			serverUrl = url;
+			serverUrl = MapSourceTools.loadMapUrl(this, "url");
 		}
 
 		protected int getNextServerNum() {

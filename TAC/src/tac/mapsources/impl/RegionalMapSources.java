@@ -20,7 +20,7 @@ public class RegionalMapSources {
 		private String baseUrl;
 
 		public DoCeluPL() {
-			super("docelu.pl", 2, 16, "png", TileUpdate.LastModified);
+			super("DoCeluPL", 2, 16, "png", TileUpdate.LastModified);
 			update();
 		}
 
@@ -43,7 +43,7 @@ public class RegionalMapSources {
 
 		@Override
 		public String toString() {
-			return getName() + " (Poland only)";
+			return "Docelu.pl (Poland only)";
 		}
 
 	}

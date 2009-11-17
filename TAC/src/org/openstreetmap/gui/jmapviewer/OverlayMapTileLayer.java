@@ -9,11 +9,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 public class OverlayMapTileLayer implements MapTileLayer {
 
 	protected JMapViewer mapViewer;
-	protected MapSource tileSource;
+	protected MapSource mapSource;
 
 	public OverlayMapTileLayer(JMapViewer mapViewer, MapSource tileSource) {
 		this.mapViewer = mapViewer;
-		this.tileSource = tileSource;
+		this.mapSource = tileSource;
 	}
 
 	public void startPainting(MapSource mapSource) {
@@ -23,7 +23,7 @@ public class OverlayMapTileLayer implements MapTileLayer {
 		Tile tile = getTile(tilex, tiley, zoom);
 		if (tile == null)
 			return;
-		tile.paint(g, gx, gy);
+		tile.paintTransparent(g, gx, gy);
 	}
 
 	/**
@@ -40,14 +40,13 @@ public class OverlayMapTileLayer implements MapTileLayer {
 		int max = (1 << zoom);
 		if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max)
 			return null;
-		Tile tile = mapViewer.tileCache.getTile(tileSource, tilex, tiley, zoom);
+		Tile tile = mapViewer.tileCache.getTile(mapSource, tilex, tiley, zoom);
 		if (tile == null) {
-			tile = new Tile(tileSource, tilex, tiley, zoom);
+			tile = new Tile(mapSource, tilex, tiley, zoom);
 			mapViewer.tileCache.addTile(tile);
-			tile.loadPlaceholderFromCache(mapViewer.tileCache);
 		}
 		if (!tile.isLoaded()) {
-			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(tileSource,
+			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(mapSource,
 					tilex, tiley, zoom));
 		}
 		return tile;

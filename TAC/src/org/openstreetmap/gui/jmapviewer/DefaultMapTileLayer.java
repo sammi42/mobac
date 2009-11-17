@@ -10,11 +10,11 @@ public class DefaultMapTileLayer implements MapTileLayer {
 
 	protected JMapViewer mapViewer;
 
-	public DefaultMapTileLayer(JMapViewer mapViewer) {
-		this.mapViewer = mapViewer;
-	}
+	protected MapSource mapSource;
 
-	public void startPainting(MapSource mapSource) {
+	public DefaultMapTileLayer(JMapViewer mapViewer, MapSource mapSource) {
+		this.mapViewer = mapViewer;
+		this.mapSource = mapSource;
 	}
 
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
@@ -38,15 +38,15 @@ public class DefaultMapTileLayer implements MapTileLayer {
 		int max = (1 << zoom);
 		if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max)
 			return null;
-		Tile tile = mapViewer.tileCache.getTile(mapViewer.mapSource, tilex, tiley, zoom);
+		Tile tile = mapViewer.tileCache.getTile(mapSource, tilex, tiley, zoom);
 		if (tile == null) {
-			tile = new Tile(mapViewer.mapSource, tilex, tiley, zoom);
+			tile = new Tile(mapSource, tilex, tiley, zoom);
 			mapViewer.tileCache.addTile(tile);
 			tile.loadPlaceholderFromCache(mapViewer.tileCache);
 		}
 		if (!tile.isLoaded()) {
-			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(
-					mapViewer.mapSource, tilex, tiley, zoom));
+			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(mapSource,
+					tilex, tiley, zoom));
 		}
 		return tile;
 	}

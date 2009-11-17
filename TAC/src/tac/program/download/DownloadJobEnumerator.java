@@ -34,22 +34,11 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 * 	}
 	 * }
 	 * </pre>
+	 * 
+	 * @param map
+	 * @param tileArchive
+	 * @param listener
 	 */
-	public DownloadJobEnumerator(int xMin, int xMax, int yMin, int yMax, int zoom,
-			MapSource mapSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		this.listener = listener;
-		this.xMin = xMin;
-		this.xMax = xMax;
-		this.yMax = yMax;
-		this.zoom = zoom;
-		this.tileArchive = tileArchive;
-		this.mapSource = mapSource;
-		y = yMin;
-		x = xMin;
-
-		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
-	}
-
 	public DownloadJobEnumerator(MapInterface map, TarIndexedArchive tileArchive,
 			DownloadJobListener listener) {
 		this.listener = listener;

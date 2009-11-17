@@ -22,4 +22,18 @@ public class NotUsed {
 		}
 
 	}
+
+	public static class MapPlus extends AbstractMapSource {
+
+		public MapPlus() {
+			super("Map+ (Swiss only)", 7, 16, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			int z = 17 - zoom;
+			return "http://mp1.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
+					+ "/t" + tiley + "l" + tilex + ".jpg";
+		}
+
+	}
 }

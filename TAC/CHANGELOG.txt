@@ -9,14 +9,21 @@
  ~ = Changes   since previous version
 
  1.7: (2009-??-??)
- ~ Tiles tore now uses database instead of tile files in file system
+ ~ Tiles tore now uses database (BerkelyDB) instead of tile files in file 
+    system
  + Old tiles saved in the tile store are checked and updated when used 
     (displayed in map view or used in an atlas). Updating is done via 
     expiration settings - those provided by the server or otherwise user 
     specified.   
  + Atlas output directory can be specified via settings dialog
  + AndNav and OSMTracker: Tile format conversion (JPG <->PNG) implemented
-    including color reduction  
+    including color reduction
+ ~ Docelu.pl can update it's base url like the Google map sources do
+ ~ Pause/resume button now works while map creation (not only while download)
+ + New experimental map source: Turaterkep (Hungary hiking)
+    Uses tiles of size 512x512 (not supported by all atlas formats)        
+ + Multi layer map sources can defined and displayed (download not yet 
+    implemented)
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

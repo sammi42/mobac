@@ -41,7 +41,7 @@ public class Tile {
 		}
 	}
 
-	protected MapSource source;
+	protected MapSource mapSource;
 	protected int xtile;
 	protected int ytile;
 	protected int zoom;
@@ -53,19 +53,19 @@ public class Tile {
 	/**
 	 * Creates a tile with empty image.
 	 * 
-	 * @param source
+	 * @param mapSource
 	 * @param xtile
 	 * @param ytile
 	 * @param zoom
 	 */
-	public Tile(MapSource source, int xtile, int ytile, int zoom) {
+	public Tile(MapSource mapSource, int xtile, int ytile, int zoom) {
 		super();
-		this.source = source;
+		this.mapSource = mapSource;
 		this.xtile = xtile;
 		this.ytile = ytile;
 		this.zoom = zoom;
 		this.image = LOADING_IMAGE;
-		this.key = getTileKey(source, xtile, ytile, zoom);
+		this.key = getTileKey(mapSource, xtile, ytile, zoom);
 	}
 
 	public Tile(MapSource source, int xtile, int ytile, int zoom, BufferedImage image) {
@@ -79,7 +79,7 @@ public class Tile {
 	 * been loaded.
 	 */
 	public void loadPlaceholderFromCache(TileImageCache cache) {
-		int tileSize = source.getMapSpace().getTileSize(); 
+		int tileSize = mapSource.getMapSpace().getTileSize(); 
 		BufferedImage tmpImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = (Graphics2D) tmpImage.getGraphics();
 		// g.drawImage(image, 0, 0, null);
@@ -97,7 +97,7 @@ public class Tile {
 				for (int x = 0; x < factor; x++) {
 					for (int y = 0; y < factor; y++) {
 						Tile tile = cache
-								.getTile(source, xtile_high + x, ytile_high + y, zoom_high);
+								.getTile(mapSource, xtile_high + x, ytile_high + y, zoom_high);
 						if (tile != null && tile.isLoaded()) {
 							paintedTileCount++;
 							tile.paint(g, x * tileSize, y * tileSize);
@@ -121,7 +121,7 @@ public class Tile {
 				int translate_y = (ytile % factor) * tileSize;
 				at.setTransform(scale, 0, 0, scale, -translate_x, -translate_y);
 				g.setTransform(at);
-				Tile tile = cache.getTile(source, xtile_low, ytile_low, zoom_low);
+				Tile tile = cache.getTile(mapSource, xtile_low, ytile_low, zoom_low);
 				if (tile != null && tile.isLoaded()) {
 					tile.paint(g, 0, 0);
 					image = tmpImage;
@@ -132,7 +132,7 @@ public class Tile {
 	}
 
 	public MapSource getSource() {
-		return source;
+		return mapSource;
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class Tile {
 	}
 
 	public String getUrl() {
-		return source.getTileUrl(zoom, xtile, ytile);
+		return mapSource.getTileUrl(zoom, xtile, ytile);
 	}
 
 	/**
@@ -206,7 +206,13 @@ public class Tile {
 			return;
 		g.drawImage(image, x, y, Color.WHITE, null);
 	}
-
+	
+	public void paintTransparent(Graphics g, int x, int y) {
+		if (image == null)
+			return;
+		g.drawImage(image, x, y, null);
+	}
+	
 	@Override
 	public String toString() {
 		return "Tile " + key;

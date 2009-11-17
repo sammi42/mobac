@@ -17,11 +17,19 @@
     </layout>
   </appender>
   
+  <logger name="org.openstreetmap.gui.jmapviewer">
+  	<level value="DEBUG" />
+  </logger>
+  
   <logger name="tac.program">
   	<level value="TRACE" />
   </logger>
   
   <logger name="tac.tilestore">
+  	<level value="TRACE" />
+  </logger>
+  
+  <logger name="tac.program.mapcreators">
   	<level value="TRACE" />
   </logger>
   

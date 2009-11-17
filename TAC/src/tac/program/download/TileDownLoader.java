@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.model.Settings;
@@ -30,7 +31,8 @@ public class TileDownLoader {
 			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
 			UnrecoverableDownloadException {
 
-		int maxTileIndex = 2 << zoom;
+		MapSpace mapSpace = mapSource.getMapSpace();
+		int maxTileIndex = mapSpace.getMaxPixels(zoom) / mapSpace.getTileSize();
 		if (x > maxTileIndex)
 			throw new RuntimeException("Invalid tile index x=" + x + " for zoom " + zoom);
 		if (y > maxTileIndex)

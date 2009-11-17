@@ -1,7 +1,10 @@
 package tac.mapsources.impl;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+
 import tac.mapsources.AbstractMapSource;
 import tac.mapsources.MapSourceTools;
+import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.UpdatableMapSource;
 
 public class Google {
@@ -15,8 +18,9 @@ public class Google {
 
 		public String serverUrl;
 
-		public GoogleSource(String name, int minZoom, int maxZoom, String tileType) {
-			super(name, minZoom, maxZoom, tileType);
+		public GoogleSource(String name, int minZoom, int maxZoom, String tileType,
+				TileUpdate tileUpdate) {
+			super(name, minZoom, maxZoom, tileType, tileUpdate);
 			update();
 		}
 
@@ -45,11 +49,7 @@ public class Google {
 	public static class GoogleMaps extends GoogleSource {
 
 		public GoogleMaps() {
-			super("Google Maps", 0, 19, "png");
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			super("Google Maps", 0, 19, "png", TileUpdate.IfModifiedSince);
 		}
 
 	}
@@ -60,11 +60,7 @@ public class Google {
 	public static class GoogleMapMaker extends GoogleSource {
 
 		public GoogleMapMaker() {
-			super("Google Map Maker", 1, 17, "png");
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			super("Google Map Maker", 1, 17, "png", TileUpdate.IfModifiedSince);
 		}
 
 	}
@@ -72,11 +68,7 @@ public class Google {
 	public static class GoogleTerrain extends GoogleSource {
 
 		public GoogleTerrain() {
-			super("Google Terrain", 0, 15, "jpg");
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			super("Google Terrain", 0, 15, "jpg", TileUpdate.IfModifiedSince);
 		}
 
 	}
@@ -87,11 +79,7 @@ public class Google {
 	public static class GoogleMapsChina extends GoogleSource {
 
 		public GoogleMapsChina() {
-			super("Google Maps China", 0, 19, "png");
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			super("Google Maps China", 0, 19, "png", TileUpdate.IfModifiedSince);
 		}
 
 		@Override
@@ -109,11 +97,7 @@ public class Google {
 	public static class GoogleMapsKorea extends GoogleSource {
 
 		public GoogleMapsKorea() {
-			super("Google Maps Korea", 0, 18, "png");
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.None;
+			super("Google Maps Korea", 0, 18, "png", TileUpdate.None);
 		}
 
 		@Override
@@ -126,11 +110,7 @@ public class Google {
 	public static class GoogleEarth extends GoogleSource {
 
 		public GoogleEarth() {
-			super("Google Earth", 0, 20, "jpg");
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			super("Google Earth", 0, 20, "jpg", TileUpdate.IfModifiedSince);
 		}
 
 	}
@@ -138,18 +118,27 @@ public class Google {
 	public static class GoogleEarthMapsOverlay extends GoogleSource {
 
 		public GoogleEarthMapsOverlay() {
-			super("Google Earth Maps Overlay", 0, 20, "png");
-		}
-
-		@Override
-		public void update() {
-			serverUrl = "http://mt{$servernum}.google.com/mt/v=w2t.92&hl=en&x={$x}&y={$y}&z={$z}";
-		}
-
-		public TileUpdate getTileUpdate() {
-			return TileUpdate.IfModifiedSince;
+			super("Google Earth Maps Overlay", 0, 20, "png", TileUpdate.IfModifiedSince);
 		}
 
 	}
 
+	public static class GoogleHybrid extends GoogleEarthMapsOverlay implements MultiLayerMapSource {
+
+		private final MapSource background = new GoogleEarth();
+
+		public GoogleHybrid() {
+			super();
+		}
+
+		@Override
+		public String toString() {
+			return "Google Hybrid";
+		}
+
+		public MapSource getBackgroundMapSource() {
+			return background;
+		}
+
+	}
 }

@@ -67,7 +67,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	protected JMapController mapSelectionController;
 
 	public PreviewMap() {
-		super(new PreviewTileCache(), 5);
+		super(MapSourcesManager.DEFAULT, new PreviewTileCache(), 5);
 		new DefaultMapController(this);
 		mapSource = MapSourcesManager.DEFAULT;
 		// tileLoader = new OsmTileLoader(this);
@@ -116,7 +116,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	@Override
 	public void setMapSource(MapSource newMapSource) {
-		if (mapSource.equals(newMapSource))
+		if (newMapSource.equals(mapSource))
 			return;
 		log.trace("Preview map source changed from " + mapSource + " to " + newMapSource);
 		super.setMapSource(newMapSource);

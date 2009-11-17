@@ -23,14 +23,14 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
-import tac.mapsources.impl.OsmMapSources;
+import tac.mapsources.MultiLayerMapSource;
 import tac.utilities.Utilities;
 
 /**
@@ -82,25 +82,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	JobDispatcher jobDispatcher;
 
-	/**
-	 * Creates a standard {@link JMapViewer} instance that can be controlled via
-	 * mouse: hold right mouse button for moving, double click left mouse button
-	 * or use mouse wheel for zooming. Loaded tiles are stored the
-	 * {@link MemoryTileCache} and the tile loader uses 4 parallel threads for
-	 * retrieving the tiles.
-	 */
-	public JMapViewer() {
-		this(new MemoryTileCache(), 4);
-		new DefaultMapController(this);
-	}
-
-	public JMapViewer(TileImageCache tileCache, int downloadThreadCount) {
+	public JMapViewer(MapSource defaultMapSource, TileImageCache tileCache, int downloadThreadCount) {
 		super();
 		mapTileLayers = new LinkedList<MapTileLayer>();
 		mapLayers = new LinkedList<MapLayer>();
-		mapSource = new OsmMapSources.Mapnik();
 		tileLoader = new OsmTileLoader(this);
 		this.tileCache = tileCache;
+		this.mapSource = defaultMapSource;
 		jobDispatcher = JobDispatcher.getInstance();
 		mapMarkerList = new LinkedList<MapMarker>();
 		mapMarkersVisible = true;
@@ -109,9 +97,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		setMinimumSize(new Dimension(256, 256));
 		setPreferredSize(new Dimension(400, 400));
 		setDisplayPositionByLatLon(50, 9, 3);
-		mapTileLayers.add(new DefaultMapTileLayer(this));
-		// mapTileLayers.add(new OverlayMapTileLayer(this, new
-		// Google.GoogleEarthMapsOverlay()));
+		setMapSource(defaultMapSource);
 	}
 
 	protected void initializeZoomSlider() {
@@ -270,8 +256,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			x >>= 1;
 			y >>= 1;
 		}
-		
-		// Do not select a zoom level that is unsupported by the current map source
+
+		// Do not select a zoom level that is unsupported by the current map
+		// source
 		newZoom = Math.max(mapSource.getMinZoom(), Math.min(mapSource.getMaxZoom(), newZoom));
 
 		x = Math.min(x2, x1) + Math.abs(x1 - x2) / 2;
@@ -368,8 +355,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int y_max = getHeight();
 
 		// paint the tiles in a spiral, starting from center of the map
-		for (MapTileLayer l : mapTileLayers) 
-			l.startPainting(mapSource);
 		boolean painted = (mapTileLayers.size() > 0);
 		int x = 0;
 		while (painted) {
@@ -580,6 +565,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		jobDispatcher.cancelOutstandingJobs();
 		if (zoom > mapSource.getMaxZoom())
 			setZoom(mapSource.getMaxZoom());
+		mapTileLayers.clear();
+		if (mapSource instanceof MultiLayerMapSource) {
+			MapSource background = ((MultiLayerMapSource) mapSource).getBackgroundMapSource();
+			mapTileLayers.add(new DefaultMapTileLayer(this, background));
+			mapTileLayers.add(new OverlayMapTileLayer(this, mapSource));
+		} else {
+			mapTileLayers.add(new DefaultMapTileLayer(this, mapSource));
+		}
 		repaint();
 	}
 

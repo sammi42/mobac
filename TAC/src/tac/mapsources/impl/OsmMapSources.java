@@ -1,12 +1,18 @@
 package tac.mapsources.impl;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+
 import tac.mapsources.AbstractMapSource;
+import tac.mapsources.MultiLayerMapSource;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
 public class OsmMapSources {
 
 	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
-	protected static final String MAP_HIKING = "http://topo.geofabrik.de/trails/";
+	public static final String MAP_HIKING_TRAILS = "http://topo.geofabrik.de/trails/";
+	public static final String MAP_HIKING_RELIEF = "http://topo.geofabrik.de/relief/";
 	protected static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
@@ -135,9 +141,40 @@ public class OsmMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return MAP_HIKING + zoom + "/" + tilex + "/" + tiley + ".png";
+			return MAP_HIKING_TRAILS + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
+	}
+
+	public static class OsmHikingRelief extends AbstractMapSource {
+
+		public OsmHikingRelief() {
+			super("OSM Hiking Relief", 4, 15, "png", TileUpdate.LastModified);
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking Relief only (Germany only)";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return MAP_HIKING_RELIEF + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
+	public static class OsmHikingMapWithRelief extends OsmHikingMap implements MultiLayerMapSource {
+
+		private MapSource background = new OsmHikingRelief();
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking with Relief";
+		}
+
+		public MapSource getBackgroundMapSource() {
+			return background;
+		}
 	}
 
 	public static class OpenPisteMap extends AbstractMapSource {
@@ -153,6 +190,34 @@ public class OsmMapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return MAP_PISTE + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
+	/**
+	 * Uses 512x512 tiles - not fully supported at the moment!
+	 */
+	public static class Turaterkep extends AbstractMapSource {
+
+		private MapSpace space = new MercatorPower2MapSpace(512);
+
+		public Turaterkep() {
+			super("Turaterkep", 7, 16, "png", TileUpdate.IfNoneMatch);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://turaterkep.hostcity.hu/tiles/" + zoom + "/" + tilex + "/" + tiley
+					+ ".png";
+		}
+
+		@Override
+		public MapSpace getMapSpace() {
+			return space;
+		}
+
+		@Override
+		public String toString() {
+			return "Turaterkep (Hungary, experimental)";
 		}
 
 	}

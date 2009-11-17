@@ -32,9 +32,10 @@ public class MapSourceTools {
 	}
 
 	public static String loadMapUrl(MapSource mapSource, String type) {
-		String url = System.getProperty(mapSource.getClass().getSimpleName() + "." + type);
+		String name = mapSource.getName().replaceAll(" ", "");
+		String url = System.getProperty(name + "." + type);
 		if (url == null)
-			log.error("Unable to load url for " + mapSource.getClass().getSimpleName());
+			log.error("Unable to load url for map source " + mapSource.getClass().getSimpleName());
 		return url;
 	}
 }

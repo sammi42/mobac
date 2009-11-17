@@ -23,6 +23,7 @@ import tac.Main;
 import tac.exceptions.MapSourcesUpdateException;
 import tac.mapsources.impl.LocalhostTestSource;
 import tac.mapsources.impl.Google.GoogleEarth;
+import tac.mapsources.impl.Google.GoogleHybrid;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMaps;
 import tac.mapsources.impl.Google.GoogleMapsChina;
@@ -39,8 +40,10 @@ import tac.mapsources.impl.OsmMapSources.CycleMap;
 import tac.mapsources.impl.OsmMapSources.Mapnik;
 import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
+import tac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
 import tac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import tac.mapsources.impl.OsmMapSources.TilesAtHome;
+import tac.mapsources.impl.OsmMapSources.Turaterkep;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -52,7 +55,6 @@ import tac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
 import tac.mapsources.impl.RegionalMapSources.UmpWawPl;
-import tac.mapsources.impl.UnusedMapSources.Turaterkep;
 import tac.mapsources.impl.WmsSources.TerraserverUSA;
 import tac.program.model.Settings;
 import tac.utilities.Utilities;
@@ -96,16 +98,15 @@ public class MapSourcesManager {
 		MAP_SOURCES = new MapSource[] { //
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
-				new GoogleMapsKorea(), new GoogleEarth(), new GoogleTerrain(), new YahooMaps(),
-				DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
-				new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
-				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-				new OutdooractiveGermany(), new OutdooractiveAustria(),
+				new GoogleMapsKorea(), new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(),
+				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
+				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(),
+				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
+				new MicrosoftHybrid(), new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
 				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
 				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),
-				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade() ,
-				new Turaterkep()};
+				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(), new Turaterkep() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

@@ -155,6 +155,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 					tile.setLoaded(true);
 				}
 			} catch (Exception e) {
+				log.trace("Downloading of tile " + tile + " failed", e);
 				tile.setImage(Tile.ERROR_IMAGE);
 				listener.tileLoadingFinished(tile, false);
 			} finally {

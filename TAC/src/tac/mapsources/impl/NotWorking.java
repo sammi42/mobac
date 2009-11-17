@@ -56,17 +56,30 @@ public class NotWorking {
 	}
 
 	public static class Doculeo extends AbstractMapSource {
-	
+
 		public Doculeo() {
 			super("Doculeo (Poland)", 7, 16, "jpg");
 		}
-	
+
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-	
+
 			// http://ed-pl-maps.osl.basefarm.net/tiles/maps/en_FI/6/35/21.png"
 			return "http://i.wp.pl/m/tiles004/c/%d/%d/00/00/00/zcx00089dy000558.png";
 		}
-	
+
+	}
+
+	public static class OpenArialMap extends AbstractMapSource {
+
+		public OpenArialMap() {
+			super("OpenArialMap", 0, 18, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/" + zoom + "/"
+					+ tilex + "/" + tiley + ".jpg";
+		}
+
 	}
 
 }

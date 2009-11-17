@@ -8,9 +8,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
+import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
@@ -32,8 +33,10 @@ public class MapCreatorMTE extends MapCreator {
 	protected String appendFileExt = "";
 
 	@Override
-	public boolean testMapSpace(MapSpace mapSpace) {
-		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSpace);
+	public boolean testMapSource(MapSource mapSource) {
+		if (mapSource instanceof MultiLayerMapSource)
+			return false;
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 
 	@Override

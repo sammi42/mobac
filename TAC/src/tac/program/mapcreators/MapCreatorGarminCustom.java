@@ -25,11 +25,13 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import tac.exceptions.MapCreationException;
+import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.program.tiledatawriter.TileImageJpegDataWriter;
@@ -52,8 +54,10 @@ public class MapCreatorGarminCustom extends MapCreator {
 	protected ZipOutputStream kmzOutputStream = null;
 
 	@Override
-	public boolean testMapSpace(MapSpace mapSpace) {
-		return (mapSpace instanceof MercatorPower2MapSpace);
+	public boolean testMapSource(MapSource mapSource) {
+		if (mapSource instanceof MultiLayerMapSource)
+			return false;
+		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
 	@Override

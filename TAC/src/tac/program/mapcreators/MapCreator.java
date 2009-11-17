@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
@@ -44,19 +43,19 @@ public abstract class MapCreator {
 	protected AtlasProgress atlasProgress = null;
 
 	protected PauseResumeHandler pauseResumeHandler = null;
-	
+
 	public MapCreator() {
 		log = Logger.getLogger(this.getClass());
 	};
 
 	/**
 	 * Test if the {@link MapCreator} instance supportes the selected
-	 * {@link MapSpace}
+	 * {@link MapSource}
 	 * 
-	 * @param mapSpace
+	 * @param mapSource
 	 * @return <code>true</code> if supported otherwise <code>false</code>
 	 */
-	public abstract boolean testMapSpace(MapSpace mapSpace);
+	public abstract boolean testMapSource(MapSource mapSource);
 
 	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
 		LayerInterface layer = map.getLayer();

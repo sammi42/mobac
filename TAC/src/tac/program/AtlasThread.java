@@ -67,7 +67,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			MapCreator mc = atlasInterface.getOutputFormat().createMapCreatorInstance();
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {
-					if (!mc.testMapSpace(map.getMapSource().getMapSpace()))
+					if (!mc.testMapSource(map.getMapSource()))
 						throw new AtlasTestException("The selected atlas output format \""
 								+ atlasInterface.getOutputFormat()
 								+ "\" does not support the map source \"" + map.getMapSource()
@@ -326,7 +326,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			pauseResumeHandler.pause();
 		}
 	}
-	
+
 	public boolean isPaused() {
 		return pauseResumeHandler.isPaused();
 	}

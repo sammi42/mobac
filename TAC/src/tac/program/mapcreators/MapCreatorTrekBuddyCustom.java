@@ -7,9 +7,10 @@ import java.io.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
+import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.AtlasOutputFormat;
@@ -28,8 +29,10 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	private int realHeight;
 
 	@Override
-	public boolean testMapSpace(MapSpace mapSpace) {
-		return (mapSpace instanceof MercatorPower2MapSpace);
+	public boolean testMapSource(MapSource mapSource) {
+		if (mapSource instanceof MultiLayerMapSource)
+			return false;
+		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
 	public void createMap() throws MapCreationException {

@@ -10,9 +10,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
+import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
@@ -25,8 +26,10 @@ public class MapCreatorOzi extends MapCreatorTrekBuddy {
 	protected String mapName = null;
 
 	@Override
-	public boolean testMapSpace(MapSpace mapSpace) {
-		return (mapSpace instanceof MercatorPower2MapSpace);
+	public boolean testMapSource(MapSource mapSource) {
+		if (mapSource instanceof MultiLayerMapSource)
+			return false;
+		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
 	@Override

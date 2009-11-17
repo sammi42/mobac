@@ -46,10 +46,6 @@ public class TileDownLoader {
 		// if (Math.random()>0.7) throw new
 		// IOException("intentionally download error");
 
-		/**
-		 * If the desired tile already exist in the persistent tilestore and
-		 * settings is to use the tile store
-		 */
 		Settings s = Settings.getInstance();
 		String tileFileName = "y" + y + "x" + x + "." + mapSource.getTileType();
 

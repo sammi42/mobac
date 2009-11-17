@@ -15,6 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.InvalidNameException;
+import tac.mapsources.MultiLayerMapSource;
 import tac.program.JobDispatcher.Job;
 import tac.program.download.DownloadJobEnumerator;
 import tac.program.interfaces.CapabilityDeletable;
@@ -201,7 +202,12 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		int yMax = maxTileCoordinate.y / tileSize;
 		int width = xMax - xMin + 1;
 		int height = yMax - yMin + 1;
-		return width * height;
+		int tileCount = width * height;
+		if (mapSource instanceof MultiLayerMapSource)
+			// We have a map with two layers and for each layer we have to
+			// download the tiles - therefore double the tileCount
+			tileCount *= 2;
+		return tileCount;
 	}
 
 	public boolean checkData() {

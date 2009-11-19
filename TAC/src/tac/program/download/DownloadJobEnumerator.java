@@ -12,16 +12,16 @@ import tac.tar.TarIndexedArchive;
 
 public class DownloadJobEnumerator implements Enumeration<Job> {
 
-	private DownloadJobListener listener;
-	private int xMin;
-	private int xMax;
-	private int yMax;
-	private int zoom;
-	private MapSource mapSource;
-	private TarIndexedArchive tileArchive;
+	final private DownloadJobListener listener;
+	final private int xMin;
+	final private int xMax;
+	final private int yMax;
+	final private int zoom;
+	final private MapSource mapSource;
+	final private TarIndexedArchive tileArchive;
 
 	private int x, y;
-	private DownloadJob nextJob;
+	protected DownloadJob nextJob;
 
 	/**
 	 * This enumerator is the unfolded version for two encapsulated loops:
@@ -41,6 +41,11 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 */
 	public DownloadJobEnumerator(MapInterface map, TarIndexedArchive tileArchive,
 			DownloadJobListener listener) {
+		this(map, map.getMapSource(), tileArchive, listener);
+	}
+
+	public DownloadJobEnumerator(MapInterface map, MapSource mapSource,
+			TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
 		Point maxCoord = map.getMaxTileCoordinate();
@@ -51,7 +56,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		this.yMax = maxCoord.y / tileSize;
 		this.zoom = map.getZoom();
 		this.tileArchive = tileArchive;
-		this.mapSource = map.getMapSource();
+		this.mapSource = mapSource;
 		y = yMin;
 		x = xMin;
 

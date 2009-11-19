@@ -90,7 +90,8 @@ public class MapSourcesTester {
 				System.out.println("OK");
 			} catch (MapSourceTestFailed e) {
 				System.out.println("Failed: " + e.httpResponseCode);
-				log.error("Error: ", e);
+				if (e.httpResponseCode != 404)
+					log.error("Error: ", e);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -129,7 +130,7 @@ public class MapSourcesTester {
 	public static class MapSourceTestFailed extends Exception {
 
 		private static final long serialVersionUID = 1L;
-		
+
 		final int httpResponseCode;
 		final URL url;
 

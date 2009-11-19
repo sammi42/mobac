@@ -15,6 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.impl.Google;
 import tac.mapsources.impl.OsmMapSources;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
@@ -29,7 +30,10 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		testMapSource(OsmMapSources.Turaterkep.class, Cities.BUDAPEST);
+		testMapSource(OsmMapSources.Mapnik.class, Cities.BERLIN);
+		testMapSource(Google.GoogleMaps.class, Cities.BERLIN);
+		testMapSource(Google.GoogleEarth.class, Cities.BERLIN);
+		testMapSource(Google.GoogleEarthMapsOverlay.class, Cities.BERLIN);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,
@@ -95,7 +99,7 @@ public class MapSourceTypeDetector {
 			if (c.getResponseCode() != 200)
 				return;
 
-			// printHeaders();
+			printHeaders();
 
 			String contentType = c.getContentType();
 			System.out.print("Image format          : ");

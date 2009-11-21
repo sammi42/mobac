@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -17,7 +16,7 @@ import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapDownloadSkippedException;
 import tac.gui.AtlasProgress;
 import tac.gui.AtlasProgress.AtlasCreationController;
-import tac.program.JobDispatcher.Job;
+import tac.program.download.DownloadJobProducerThread;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
@@ -37,7 +36,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private static int threadNum = 0;
 	private static Logger log = Logger.getLogger(AtlasThread.class);
 
-	private DownloadJobProducer djp = null;
+	private DownloadJobProducerThread djp = null;
 	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap;
 
@@ -46,7 +45,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private PauseResumeHandler pauseResumeHandler;
 
 	private int activeDownloads = 0;
-	private int jobsProduced = 0;
 	private int jobsCompleted = 0;
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
@@ -208,7 +206,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		jobsCompleted = 0;
 		jobsRetryError = 0;
 		jobsPermanentError = 0;
-		jobsProduced = 0;
 
 		ap.initMapDownload(map);
 		if (currentThread().isInterrupted())
@@ -236,7 +233,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			tileArchiveFile.deleteOnExit();
 			log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
 			tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
-			djp = new DownloadJobProducer(tileArchive, (DownloadableElement) map);
+			djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive,
+					(DownloadableElement) map);
 
 			boolean failedMessageAnswered = false;
 
@@ -351,7 +349,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	 */
 	public void abortAtlasCreation() {
 		try {
-			DownloadJobProducer djp_ = djp;
+			DownloadJobProducerThread djp_ = djp;
 			if (djp_ != null)
 				djp_.cancel();
 			if (downloadJobDispatcher != null)
@@ -398,47 +396,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	public AtlasProgress getAtlasProgress() {
 		return ap;
-	}
-
-	/**
-	 * 
-	 * Creates the jobs for downloading tiles. If the job queue is full it will
-	 * block on {@link JobDispatcher#addJob(Job)}
-	 * 
-	 */
-	public class DownloadJobProducer extends Thread {
-
-		private Logger log = Logger.getLogger(DownloadJobProducer.class);
-
-		Enumeration<Job> jobEnumerator;
-
-		public DownloadJobProducer(TarIndexedArchive tileArchive, DownloadableElement de) {
-			jobEnumerator = de.getDownloadJobs(tileArchive, AtlasThread.this);
-			start();
-		}
-
-		@Override
-		public void run() {
-			try {
-				while (jobEnumerator.hasMoreElements()) {
-					Job job = jobEnumerator.nextElement();
-					downloadJobDispatcher.addJob(job);
-					log.trace("Job added: " + job);
-					jobsProduced++;
-				}
-				log.debug("All download jobs has been generated");
-			} catch (InterruptedException e) {
-				downloadJobDispatcher.cancelOutstandingJobs();
-				log.error("Download job generation interrupted");
-			}
-		}
-
-		public void cancel() {
-			try {
-				interrupt();
-			} catch (Exception e) {
-			}
-		}
 	}
 
 }

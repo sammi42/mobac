@@ -29,7 +29,11 @@ public class ConvertedRawTileProvider implements RawTileProvider {
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
-		byte[] unconvertedTileData = tileProvider.getTileData(x, y);
+		return getTileData(0, x, y);
+	}
+
+	public byte[] getTileData(int layer, int x, int y) throws IOException {
+		byte[] unconvertedTileData = tileProvider.getTileData(layer, x, y);
 		if (unconvertedTileData == null)
 			return null;
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(unconvertedTileData));

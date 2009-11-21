@@ -172,6 +172,11 @@ public class OsmMapSources {
 			return "OpenStreetMap Hiking with Relief";
 		}
 
+		@Override
+		public String getName() {
+			return "OSM Hiking with Relief";
+		}
+
 		public MapSource getBackgroundMapSource() {
 			return background;
 		}

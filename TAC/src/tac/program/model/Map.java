@@ -18,6 +18,7 @@ import tac.exceptions.InvalidNameException;
 import tac.mapsources.MultiLayerMapSource;
 import tac.program.JobDispatcher.Job;
 import tac.program.download.DownloadJobEnumerator;
+import tac.program.download.DownloadJobEnumeratorML;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
@@ -203,10 +204,11 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		int width = xMax - xMin + 1;
 		int height = yMax - yMin + 1;
 		int tileCount = width * height;
-		if (mapSource instanceof MultiLayerMapSource)
+		if (mapSource instanceof MultiLayerMapSource) {
 			// We have a map with two layers and for each layer we have to
 			// download the tiles - therefore double the tileCount
 			tileCount *= 2;
+		}
 		return tileCount;
 	}
 
@@ -270,7 +272,10 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 
 	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
 			DownloadJobListener listener) {
-		return new DownloadJobEnumerator(this, tileArchive, listener);
+		if (mapSource instanceof MultiLayerMapSource)
+			return new DownloadJobEnumeratorML(this, tileArchive, listener);
+		else
+			return new DownloadJobEnumerator(this, tileArchive, listener);
 	}
 
 }

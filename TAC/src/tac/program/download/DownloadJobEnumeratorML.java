@@ -20,7 +20,7 @@ import tac.tar.TarIndexedArchive;
  */
 public class DownloadJobEnumeratorML implements Enumeration<Job> {
 
-	DownloadJobEnumerator[] layerDJE = new DownloadJobEnumerator[1];
+	protected final DownloadJobEnumerator[] layerDJE = new DownloadJobEnumerator[2];
 
 	int activeLayer = 0;
 
@@ -35,17 +35,17 @@ public class DownloadJobEnumeratorML implements Enumeration<Job> {
 			DownloadJobListener listener) {
 		MultiLayerMapSource overlayMapSource = (MultiLayerMapSource) map.getMapSource();
 		MapSource baseMapSource = overlayMapSource.getBackgroundMapSource();
-		layerDJE[0] = new DownloadJobEnumerator(map, baseMapSource, tileArchive, listener);
-		layerDJE[1] = new DownloadJobEnumerator(map, overlayMapSource, tileArchive, listener);
+		layerDJE[0] = new DownloadJobEnumerator(map, baseMapSource, 0, tileArchive, listener);
+		layerDJE[1] = new DownloadJobEnumerator(map, overlayMapSource, 1, tileArchive, listener);
 	}
 
 	public boolean hasMoreElements() {
-		return layerDJE[activeLayer].hasMoreElements();
+		return layerDJE[0].hasMoreElements() || layerDJE[1].hasMoreElements();
 	}
 
 	public Job nextElement() {
 		Job job = layerDJE[activeLayer].nextElement();
-		activeLayer = activeLayer + 1 % 2;
+		activeLayer = (activeLayer + 1) % 2;
 		return job;
 	}
 

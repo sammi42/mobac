@@ -23,11 +23,6 @@ public class DownloadJob implements Job {
 	final TarIndexedArchive tileArchive;
 	final DownloadJobListener listener;
 
-	public DownloadJob(MapSource mapSource, int xValue, int yValue, int zoomValue,
-			TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		this(mapSource, 0, xValue, yValue, zoomValue, tileArchive, listener);
-	}
-
 	public DownloadJob(MapSource mapSource, int layer, int xValue, int yValue, int zoomValue,
 			TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		this.mapSource = mapSource;
@@ -43,7 +38,8 @@ public class DownloadJob implements Job {
 		try {
 			// Thread.sleep(1500);
 			listener.jobStarted();
-			int bytes = TileDownLoader.getImage(xValue, yValue, zoomValue, mapSource, tileArchive);
+			int bytes = TileDownLoader.getImage(layer, xValue, yValue, zoomValue, mapSource,
+					tileArchive);
 			listener.jobFinishedSuccessfully(bytes);
 		} catch (UnrecoverableDownloadException e) {
 			listener.jobFinishedWithError(false);
@@ -71,7 +67,7 @@ public class DownloadJob implements Job {
 
 	@Override
 	public String toString() {
-		return "DownloadJob x=" + xValue + " y=" + yValue + " z=" + zoomValue;
+		return "DownloadJob l=" + layer + " x=" + xValue + " y=" + yValue + " z=" + zoomValue;
 	}
 
 }

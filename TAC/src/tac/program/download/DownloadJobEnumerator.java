@@ -17,6 +17,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	final private int xMax;
 	final private int yMax;
 	final private int zoom;
+	final private int layer;
 	final private MapSource mapSource;
 	final private TarIndexedArchive tileArchive;
 
@@ -41,10 +42,10 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 */
 	public DownloadJobEnumerator(MapInterface map, TarIndexedArchive tileArchive,
 			DownloadJobListener listener) {
-		this(map, map.getMapSource(), tileArchive, listener);
+		this(map, map.getMapSource(), 0, tileArchive, listener);
 	}
 
-	public DownloadJobEnumerator(MapInterface map, MapSource mapSource,
+	public DownloadJobEnumerator(MapInterface map, MapSource mapSource, int layer,
 			TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
@@ -57,10 +58,11 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		this.zoom = map.getZoom();
 		this.tileArchive = tileArchive;
 		this.mapSource = mapSource;
+		this.layer = layer;
 		y = yMin;
 		x = xMin;
 
-		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, layer, x, y, zoom, tileArchive, listener);
 	}
 
 	public boolean hasMoreElements() {
@@ -78,7 +80,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 				return job;
 			}
 		}
-		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, layer, x, y, zoom, tileArchive, listener);
 		return job;
 	}
 }

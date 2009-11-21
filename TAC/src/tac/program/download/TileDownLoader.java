@@ -11,6 +11,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.UnrecoverableDownloadException;
+import tac.program.mapcreators.MapDownloadedTileProcessor;
 import tac.program.model.Settings;
 import tac.tar.TarIndexedArchive;
 import tac.tilestore.TileStore;
@@ -27,7 +28,7 @@ public class TileDownLoader {
 
 	private static Settings settings = Settings.getInstance();
 
-	public static int getImage(int x, int y, int zoom, MapSource mapSource,
+	public static int getImage(int layer, int x, int y, int zoom, MapSource mapSource,
 			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
 			UnrecoverableDownloadException {
 
@@ -47,7 +48,8 @@ public class TileDownLoader {
 		// IOException("intentionally download error");
 
 		Settings s = Settings.getInstance();
-		String tileFileName = "y" + y + "x" + x + "." + mapSource.getTileType();
+		String tileFileName = String.format(MapDownloadedTileProcessor.TILE_FILENAME_PATTERN,
+				layer, x, y, mapSource.getTileType());
 
 		TileStoreEntry tile = null;
 		if (s.tileStoreEnabled) {

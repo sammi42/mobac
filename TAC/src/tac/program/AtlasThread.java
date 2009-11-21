@@ -311,7 +311,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			mapCreator = null;
 			if (tileIndex != null)
 				tileIndex.closeAndDelete();
-			if (tileArchive != null)
+			else if (tileArchive != null)
 				tileArchive.delete();
 		}
 		return true;

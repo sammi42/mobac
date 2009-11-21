@@ -2,7 +2,6 @@ package tac.program;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -126,9 +125,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	protected void createAtlas() throws InterruptedException, IOException {
 
-		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-		String atlasDirName = atlasInterface.getName() + "_" + sdf.format(date);
+		String atlasDirName = atlasInterface.getName() + "_" + sdf.format(new Date());
 		File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
 
 		atlasDir = new File(atlasOutputDir, atlasDirName);
@@ -182,10 +180,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 		switch (atlasInterface.getOutputFormat()) {
 		case TaredAtlas:
-			AtlasTarCreator.createAtlasCrTarArchive(atlasDir);
+			TrekBuddyAtlasFormatCreator.createAtlasTarArchive(atlasDir, "cr");
 			break;
 		case UntaredAtlas:
-			createTbaFile("cr");
+			TrekBuddyAtlasFormatCreator.createAtlasTbaFile(atlasDir, "cr");
 			break;
 		}
 
@@ -331,17 +329,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	public PauseResumeHandler getPauseResumeHandler() {
 		return pauseResumeHandler;
-	}
-
-	private void createTbaFile(String name) {
-		File crtba = new File(atlasDir.getAbsolutePath(), name + ".tba");
-		try {
-			FileWriter fw = new FileWriter(crtba);
-			fw.write("Atlas 1.0\r\n");
-			fw.close();
-		} catch (IOException e) {
-			log.error("", e);
-		}
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package tac.program;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +17,16 @@ import tac.utilities.Utilities;
  * Atlas format description</a>
  * 
  */
-public class AtlasTarCreator {
+public class TrekBuddyAtlasFormatCreator {
 
-	private static Logger log = Logger.getLogger(AtlasTarCreator.class);
+	private static Logger log = Logger.getLogger(TrekBuddyAtlasFormatCreator.class);
 
-	public static void createAtlasCrTarArchive(File atlasDir) {
+	/**
+	 * 
+	 * @param atlasDir
+	 * @param name 
+	 */
+	public static void createAtlasTarArchive(File atlasDir, String name) {
 		log.trace("Creating cr.tar for atlas in dir \"" + atlasDir.getPath() + "\"");
 
 		File[] atlasLayerDirs = Utilities.listSubDirectories(atlasDir);
@@ -29,11 +35,11 @@ public class AtlasTarCreator {
 			Utilities.addSubDirectories(atlasMapDirs, dir, 0);
 
 		TarArchive ta = null;
-		File crFile = new File(atlasDir, "cr.tar");
+		File crFile = new File(atlasDir, name + ".tar");
 		try {
 			ta = new TarArchive(crFile, atlasDir);
 
-			ta.writeFileFromData("cr.tba", "Atlas 1.0\r\n".getBytes());
+			ta.writeFileFromData(name + ".tba", "Atlas 1.0\r\n".getBytes());
 
 			for (File mapDir : atlasMapDirs) {
 				ta.writeFile(mapDir);
@@ -53,4 +59,14 @@ public class AtlasTarCreator {
 		}
 	}
 
+	public static void createAtlasTbaFile(File atlasDir, String name) {
+		File crtba = new File(atlasDir.getAbsolutePath(), name + ".tba");
+		try {
+			FileWriter fw = new FileWriter(crtba);
+			fw.write("Atlas 1.0\r\n");
+			fw.close();
+		} catch (IOException e) {
+			log.error("", e);
+		}
+	}
 }

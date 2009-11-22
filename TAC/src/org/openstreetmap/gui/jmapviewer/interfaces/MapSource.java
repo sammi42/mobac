@@ -1,5 +1,8 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -74,19 +77,22 @@ public interface MapSource {
 	public String getName();
 
 	/**
-	 * Constructs the tile url. Each tile referenced by an url has to be of size
-	 * 256 pixel * 256 pixel. Other dimensions are not supported.
+	 * Constructs the tile url connection. If necessary the url connection can
+	 * be prepared with cookies or other http specific headers which are
+	 * required by the http server.
 	 * 
-	 * @param zoom 
+	 * @param zoom
 	 * @param tilex
 	 *            tile number on x-axis for the specified <code>zoom</code>
 	 *            level
 	 * @param tiley
 	 *            tile number on y-axis for the specified <code>zoom</code>
 	 *            level
-	 * @return fully qualified url for downloading the specified tile image
+	 * @return the initialized urlConnection for downloading the specified tile
+	 *         image
 	 */
-	public String getTileUrl(int zoom, int tilex, int tiley);
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
+			throws IOException;
 
 	/**
 	 * Specifies the tile image type. For tiles rendered by Mapnik or
@@ -101,6 +107,6 @@ public interface MapSource {
 	 * purposes it can be sometimes useful to deactivate local storing of tiles.
 	 */
 	public boolean allowFileStore();
-	
+
 	public MapSpace getMapSpace();
 }

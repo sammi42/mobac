@@ -1,10 +1,14 @@
 package tac.mapsources;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 
@@ -56,6 +60,14 @@ public class CustomMapSource implements MapSource {
 
 	public String getTileType() {
 		return tileType;
+	}
+
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
+			throws IOException {
+		String url = getTileUrl(zoom, tilex, tiley);
+		if (url == null)
+			return null;
+		return (HttpURLConnection) new URL(url).openConnection();
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {

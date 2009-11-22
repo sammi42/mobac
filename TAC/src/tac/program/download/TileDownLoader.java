@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -98,14 +97,12 @@ public class TileDownLoader {
 	 */
 	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, MapSource mapSource)
 			throws UnrecoverableDownloadException, IOException, InterruptedException {
-		String url = mapSource.getTileUrl(zoom, x, y);
-		if (url == null)
+		HttpURLConnection huc = mapSource.getTileUrlConnection(zoom, x, y);
+		if (huc == null)
 			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
 					+ " is not a valid tile in map source " + mapSource);
 
-		log.trace("Downloading " + url);
-		URL u = new URL(url);
-		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+		log.trace("Downloading " + huc.getURL());
 
 		huc.setRequestMethod("GET");
 
@@ -139,15 +136,13 @@ public class TileDownLoader {
 		final int y = tile.getY();
 		final int zoom = tile.getZoom();
 
-		String url = mapSource.getTileUrl(zoom, x, y);
-		if (url == null)
+		HttpURLConnection conn = mapSource.getTileUrlConnection(zoom, x, y);
+		if (conn == null)
 			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
 					+ " is not a valid tile in map source " + mapSource);
 
 		if (log.isTraceEnabled())
 			log.trace(String.format("Checking %s %s", mapSource.getName(), tile));
-		URL u = new URL(url);
-		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 
 		conn.setRequestMethod("GET");
 

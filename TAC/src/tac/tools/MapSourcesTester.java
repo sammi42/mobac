@@ -117,8 +117,7 @@ public class MapSourcesTester {
 		int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
 		int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
 
-		URL url = new URL(mapSource.getTileUrl(zoom, tilex, tiley));
-		HttpURLConnection c = (HttpURLConnection) url.openConnection();
+		HttpURLConnection c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
 		c.addRequestProperty("User-agent", Settings.getInstance().getUserAgent());
 		c.connect();
 		c.disconnect();

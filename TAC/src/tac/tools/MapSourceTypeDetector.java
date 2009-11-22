@@ -90,9 +90,8 @@ public class MapSourceTypeDetector {
 			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
 			int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
 
-			url = new URL(mapSource.getTileUrl(zoom, tilex, tiley));
-			System.out.println("Sample url: " + url);
-			c = (HttpURLConnection) url.openConnection();
+			c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
+			System.out.println("Sample url: " + c.getURL());
 			System.out.println("Connecting...");
 			c.connect();
 			System.out.println("Connection established - response HTTP " + c.getResponseCode());

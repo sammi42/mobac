@@ -5,7 +5,6 @@ package org.openstreetmap.gui.jmapviewer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -207,9 +206,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		 * @throws IOException
 		 */
 		protected boolean isOsmTileNewer(long fileAge) throws IOException {
-			URL url;
-			url = new URL(tile.getUrl());
-			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+			HttpURLConnection urlConn = tile.getUrlConnection();
 			urlConn.setRequestMethod("HEAD");
 			urlConn.setReadTimeout(30000); // 30 seconds read timeout
 			long lastModified = urlConn.getLastModified();
@@ -219,9 +216,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		}
 
 		protected boolean hasOsmTileETag(String eTag) throws IOException {
-			URL url;
-			url = new URL(tile.getUrl());
-			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+			HttpURLConnection urlConn = tile.getUrlConnection();
 			urlConn.setRequestMethod("HEAD");
 			urlConn.setReadTimeout(30000); // 30 seconds read timeout
 			String osmETag = urlConn.getHeaderField("ETag");

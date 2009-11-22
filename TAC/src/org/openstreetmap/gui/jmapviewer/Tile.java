@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 import javax.imageio.ImageIO;
 
@@ -187,8 +188,8 @@ public class Tile {
 		this.loaded = loaded;
 	}
 
-	public String getUrl() {
-		return mapSource.getTileUrl(zoom, xtile, ytile);
+	public HttpURLConnection getUrlConnection() throws IOException {
+		return mapSource.getTileUrlConnection(zoom, xtile, ytile);
 	}
 
 	/**

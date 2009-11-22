@@ -1,5 +1,9 @@
 package tac.mapsources;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
@@ -28,6 +32,17 @@ public abstract class AbstractMapSource implements MapSource {
 		this.tileType = tileType;
 		this.tileUpdate = tileUpdate;
 	}
+
+	
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
+			throws IOException {
+		String url = getTileUrl(zoom, tilex, tiley);
+		if (url == null)
+			return null;
+		return (HttpURLConnection) new URL(url).openConnection();
+	}
+
+	protected abstract String getTileUrl(int zoom, int tilex, int tiley);
 
 	public int getMaxZoom() {
 		return maxZoom;

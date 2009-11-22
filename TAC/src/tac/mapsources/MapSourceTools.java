@@ -2,6 +2,7 @@ package tac.mapsources;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class MapSourceTools {
 
@@ -37,5 +38,26 @@ public class MapSourceTools {
 		if (url == null)
 			log.error("Unable to load url for map source " + mapSource.getClass().getSimpleName());
 		return url;
+	}
+
+	/**
+	 * 
+	 * @param mapSource
+	 * @param zoom
+	 * @param tilex
+	 * @param tiley
+	 * @return <code>double[] {lon_min , lat_min , lon_max , lat_max}</code>
+	 */
+	public static double[] calculateLatLon(MapSource mapSource, int zoom, int tilex, int tiley) {
+		MapSpace mapSpace = mapSource.getMapSpace();
+		int tileSize = mapSpace.getTileSize();
+		double[] result = new double[4];
+		tilex *= tileSize;
+		tiley *= tileSize;
+		result[0] = mapSpace.cXToLon(tilex, zoom); // lon_min
+		result[1] = mapSpace.cYToLat(tiley + tileSize, zoom); // lat_max
+		result[2] = mapSpace.cXToLon(tilex + tileSize, zoom); // lon_min
+		result[3] = mapSpace.cYToLat(tiley, zoom); // lat_max
+		return result;
 	}
 }

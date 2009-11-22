@@ -37,7 +37,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	private DownloadJobProducerThread djp = null;
 	private JobDispatcher downloadJobDispatcher;
-	private AtlasProgress ap;
+	private AtlasProgress ap; // The GUI showing the progress
 
 	private AtlasInterface atlasInterface;
 	private MapCreator mapCreator = null;

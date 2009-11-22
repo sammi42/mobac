@@ -42,7 +42,3 @@ Géoportail
 	http://www.geoportail.fr/5069711/visu2D/afficher-en-2d.htm
 	Reason: Incompatible zoom levels
 	
-http://turaterkep.hostcity.hu/
-	http://turaterkep.hostcity.hu/
-	Reason: Wrong tile size (512x512)
-	

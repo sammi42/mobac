@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.mapcreators.MapDownloadedTileProcessor;
@@ -135,7 +136,28 @@ public class TileDownLoader {
 		final int x = tile.getX();
 		final int y = tile.getY();
 		final int zoom = tile.getZoom();
+		final TileUpdate tileUpdate = mapSource.getTileUpdate();
 
+		switch (tileUpdate) {
+		case ETag: {
+			boolean unchanged = hasTileETag(tile, mapSource);
+			if (unchanged) {
+				if (log.isTraceEnabled())
+					log.trace("Data unchanged on server (eTag): " + mapSource + " " + tile);
+				return null;
+			}
+			break;
+		}
+		case LastModified: {
+			boolean isNewer = isTileNewer(tile, mapSource);
+			if (!isNewer) {
+				if (log.isTraceEnabled())
+					log.trace("Data unchanged on server (LastModified): " + mapSource + " " + tile);
+				return null;
+			}
+			break;
+		}
+		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(zoom, x, y);
 		if (conn == null)
 			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
@@ -148,7 +170,7 @@ public class TileDownLoader {
 
 		boolean conditionalRequest = false;
 
-		switch (mapSource.getTileUpdate()) {
+		switch (tileUpdate) {
 		case IfNoneMatch: {
 			if (tile.geteTag() != null) {
 				conn.setRequestProperty("If-None-Match", tile.geteTag());
@@ -234,5 +256,43 @@ public class TileDownLoader {
 		if (bout.size() == 0)
 			return null;
 		return bout.toByteArray();
+	}
+
+	/**
+	 * Performs a <code>HEAD</code> request for retrieving the
+	 * <code>LastModified</code> header value.
+	 */
+	protected static boolean isTileNewer(TileStoreEntry tile, MapSource mapSource)
+			throws IOException {
+		long oldLastModified = tile.getTimeLastModified();
+		if (oldLastModified <= 0) {
+			log.warn("Tile age comparison not possible: "
+					+ "tile in tilestore does not contain lastModified attribute");
+			return true;
+		}
+		HttpURLConnection urlConn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
+				tile.getY());
+		urlConn.setRequestMethod("HEAD");
+		long newLastModified = urlConn.getLastModified();
+		if (newLastModified == 0)
+			return true;
+		return (newLastModified > oldLastModified);
+	}
+
+	protected static boolean hasTileETag(TileStoreEntry tile, MapSource mapSource)
+			throws IOException {
+		String eTag = tile.geteTag();
+		if (eTag == null || eTag.length() == 0) {
+			log.warn("ETag check not possible: "
+					+ "tile in tilestore does not contain ETag attribute");
+			return true;
+		}
+		HttpURLConnection urlConn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
+				tile.getY());
+		urlConn.setRequestMethod("HEAD");
+		String onlineETag = urlConn.getHeaderField("ETag");
+		if (onlineETag == null || onlineETag.length() == 0)
+			return true;
+		return (onlineETag.equals(eTag));
 	}
 }

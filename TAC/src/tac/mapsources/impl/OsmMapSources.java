@@ -67,7 +67,7 @@ public class OsmMapSources {
 		public CycleMap() {
 			super("OSM Cycle Map");
 			this.maxZoom = 17;
-			this.tileUpdate = TileUpdate.LastModified;
+			this.tileUpdate = TileUpdate.ETag;
 		}
 
 		@Override

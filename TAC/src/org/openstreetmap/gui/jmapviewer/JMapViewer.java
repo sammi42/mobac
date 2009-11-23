@@ -76,7 +76,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 */
 	protected int zoom;
 
-	protected JSlider zoomSlider;
+	protected JSlider zoomSlider = new JSlider(0, 0);
 	protected JButton zoomInButton;
 	protected JButton zoomOutButton;
 
@@ -88,20 +88,18 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		mapLayers = new LinkedList<MapLayer>();
 		tileLoader = new OsmTileLoader(this);
 		this.tileCache = tileCache;
-		this.mapSource = defaultMapSource;
 		jobDispatcher = JobDispatcher.getInstance();
 		mapMarkerList = new LinkedList<MapMarker>();
 		mapMarkersVisible = true;
 		setLayout(null);
+		setMapSource(defaultMapSource);
 		initializeZoomSlider();
 		setMinimumSize(new Dimension(256, 256));
 		setPreferredSize(new Dimension(400, 400));
 		setDisplayPositionByLatLon(50, 9, 3);
-		setMapSource(defaultMapSource);
 	}
 
 	protected void initializeZoomSlider() {
-		zoomSlider = new JSlider(MIN_ZOOM, mapSource.getMaxZoom());
 		zoomSlider.setOrientation(JSlider.VERTICAL);
 		zoomSlider.setBounds(10, 10, 30, 150);
 		zoomSlider.setOpaque(false);

@@ -297,4 +297,15 @@ public class RegionalMapSources {
 		}
 	}
 
+	public static class NearMap extends AbstractMapSource {
+		public NearMap() {
+			super("NearMap Australia", 0, 21, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://www.nearmap.com/maps/hl=en&nml=Vert&z=" + zoom + "&x=" + tilex + "&y="
+					+ tiley;
+		}
+
+	}
 }

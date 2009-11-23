@@ -22,7 +22,7 @@
   </logger>
   
   <logger name="tac.program">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
   
   <logger name="tac.tilestore">

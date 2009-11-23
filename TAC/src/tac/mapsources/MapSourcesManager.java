@@ -51,6 +51,7 @@ import tac.mapsources.impl.RegionalMapSources.EmapaPl;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
+import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
@@ -106,7 +107,8 @@ public class MapSourcesManager {
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
 				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
 				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),
-				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(), new Turaterkep() };
+				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
+				new Turaterkep(), new NearMap() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

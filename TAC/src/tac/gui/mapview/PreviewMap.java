@@ -61,7 +61,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	private int gridZoom = -1;
 	private int gridSize;
 
-	public LinkedList<MapEventListener> mapEventListeners = new LinkedList<MapEventListener>();
+	protected LinkedList<MapEventListener> mapEventListeners = new LinkedList<MapEventListener>();
 
 	protected JMapController mapKeyboardController;
 	protected JMapController mapSelectionController;
@@ -120,6 +120,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			return;
 		log.trace("Preview map source changed from " + mapSource + " to " + newMapSource);
 		super.setMapSource(newMapSource);
+		if (mapEventListeners == null)
+			return;
 		for (MapEventListener listener : mapEventListeners)
 			listener.mapSourceChanged(mapSource);
 	}

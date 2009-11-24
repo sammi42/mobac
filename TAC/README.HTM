@@ -13,19 +13,18 @@ h1,h2,h3 {
 	font-style: italic;
 	font-family: Helvetica, Arial, sans-serif;
 }
-
-h2 {
-	margin-left: 20px;
-}
-
-h3 {
-	margin-left: 70px;
-}
-
 h1 {
 	border-bottom: solid thin black;
 }
-
+h2 {
+	margin-left: 20px;
+}
+h3 {
+	margin-left: 50px;
+}
+h4 {
+	margin-left: 80px;
+}
 pre {
 	margin-left: 140px;
 }
@@ -51,20 +50,23 @@ TAC is an open source project hosted on SourceForge.net: <br>
 	<li><a href="#Requirements">Requirements</a></li>
 	<li><a href="#Installation">Installation</a></li>
 	<li><a href="#Start">Application start</a></li>
-	<li><a href="#TrekBuddy">Creating and using atlases with
-	TrekBuddy</a></li>
-	<li><a href="#MTE">Creating and using atlases with Mobile
-	Trail Explorer (MTE)</a></li>
-	<li><a href="#Maverick">Creating and using atlases with
-	Maverick</a></li>
-	<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
-	<li><a href="#OSMTracker">Creating atlases for OSMTracker</a></li>
-	<li><a href="#BigPlanet">Creating and using atlases with
-	BigPlanet / RMaps</a></li>
-	<li><a href="#Ozi">Creating and using atlases with OziExplorer
-	/ large PNG image</a></li>
-	<li><a href="#Glopus">Creating and using atlases with Glopus</a></li>
-	<li><a href="#GarminCustom">Creating Garmin Custom Maps</a></li>
+	<li><a href="#AtlasFormats">The different atlas formats</a></li>
+	<ul>
+		<li><a href="#TrekBuddy">Creating and using atlases with
+		TrekBuddy</a></li>
+		<li><a href="#MTE">Creating and using atlases with Mobile
+		Trail Explorer (MTE)</a></li>
+		<li><a href="#Maverick">Creating and using atlases with
+		Maverick</a></li>
+		<li><a href="#AndNav">Creating and using atlases with AndNav</a></li>
+		<li><a href="#OSMTracker">Creating atlases for OSMTracker</a></li>
+		<li><a href="#BigPlanet">Creating and using atlases with
+		BigPlanet / RMaps</a></li>
+		<li><a href="#Ozi">Creating and using atlases with
+		OziExplorer / large PNG image</a></li>
+		<li><a href="#Glopus">Creating and using atlases with Glopus</a></li>
+		<li><a href="#GarminCustom">Creating Garmin Custom Maps</a></li>
+	</ul>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
 	<li><a href="#Limitations">Known problems and limitations</a></li>
 	<li><a href="#AdvancedUsers">Details for advanced users</a></li>
@@ -111,8 +113,11 @@ a Windows environment or the <tt>start.sh</tt> under a Linux / Unix
 environment. At the first application start all necessary files and
 folders are automatically created by the application.</p>
 
-<h2><a name="TrekBuddy">Creating and using atlases with
-TrekBuddy</a></h2>
+<hr />
+
+<h2><a name="AtlasFormats">The different atlas formats</a></h2>
+<h3><a name="TrekBuddy">Creating and using atlases with
+TrekBuddy</a></h3>
 <p>For creating atlases compatible with TrekBuddy you have to select
 <b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
 in section <b>Atlas settings</b> on the left side of the main window.</p>
@@ -128,8 +133,8 @@ atlas with TrekBuddy copy the whole directory onto your J2ME device and
 open <tt>cr.tar</tt>/<tt>cr.tba</tt> (in the atlas root directory) in
 TrekBuddy as atlas.</p>
 
-<h2><a name="MTE">Creating and using atlases with Mobile Trail
-Explorer (MTE)</a></h2>
+<h3><a name="MTE">Creating and using atlases with Mobile Trail
+Explorer (MTE)</a></h3>
 <p>For creating atlases compatible with Mobile Trail Explorer you
 have to select <b>Mobile Trail Explorer</b> as format in section <b>Atlas
 settings</b> on the left side of the main window. <br>
@@ -144,7 +149,7 @@ atlases for Mobile Trail Explorer:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2><a name="Maverick">Creating and using atlases with Maverick</a></h2>
+<h3><a name="Maverick">Creating and using atlases with Maverick</a></h3>
 <p>For creating atlases compatible with Maverick you have to select
 <b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
 on the left side of the main window. <br>
@@ -157,7 +162,7 @@ AndNav:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2><a name="AndNav">Creating and using atlases with AndNav</a></h2>
+<h3><a name="AndNav">Creating and using atlases with AndNav</a></h3>
 <p>For creating atlases compatible with AndNav you have to select <b>AndNav
 atlas format</b> as format in section <b>Atlas settings</b> on the left side
 of the main window. <br>
@@ -169,7 +174,7 @@ the following settings are ignored when creating atlases for AndNav:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2><a name="OSMTracker">Creating atlases for OSMTracker</a></h2>
+<h3><a name="OSMTracker">Creating atlases for OSMTracker</a></h3>
 <p>For creating atlases compatible with OSMTracker you have to
 select <b>OSMTracker tile storage</b> as format in section <b>Atlas
 settings</b> on the left side of the main window. <br>
@@ -182,8 +187,8 @@ OSMTracker:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 
-<h2><a name="BigPlanet">Creating and using atlases with
-BigPlanet / RMaps</a></h2>
+<h3><a name="BigPlanet">Creating and using atlases with
+BigPlanet / RMaps</a></h3>
 <p>For creating offline atlases compatible with <a
 	href="http://code.google.com/p/bigplanet/">BigPlanet-Maps</a> and <a
 	href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>
@@ -205,7 +210,7 @@ using this output format:</p>
 	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
 	output directory.</li>
 </ul>
-<h3><a name="SQLite">SQLite native library</a></h3>
+<h4><a name="SQLite">SQLite native library</a></h4>
 <p>The BigPlanet atlas format uses a SQLite database for storing the
 tiles. For creating SQLite database an additional native library is
 required. The correspondant Java classes are alread part of TrekBuddy
@@ -231,8 +236,8 @@ make
 su -c "make install"
 </pre>
 
-<h2><a name="Ozi">Creating and using atlases with OziExplorer /
-large PNG image export</a></h2>
+<h3><a name="Ozi">Creating and using atlases with OziExplorer /
+large PNG image export</a></h3>
 <p>For creating atlases compatible with OziExplorer you have to
 select <b>OziExplorer (PNG &amp; MAP)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
@@ -258,7 +263,7 @@ algorithms which can lead to the situation that you can create very
 large map images - but OziExplorer and other image viewers are not able
 to open the image.</p>
 
-<h2><a name="Glopus">Creating and using atlases with Glopus</a></h2>
+<h3><a name="Glopus">Creating and using atlases with Glopus</a></h3>
 <p>For creating atlases compatible with OziExplorer you have to
 select <b>Glopus (PNG &amp; KAL)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
@@ -271,7 +276,7 @@ when creating atlases:</p>
 per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
 file per defined map.</p>
 
-<h2><a name="GarminCustom">Creating Garmin Custom Maps</a></h2>
+<h3><a name="GarminCustom">Creating Garmin Custom Maps</a></h3>
 <p>For creating atlases of Creating Garmin Custom Maps you have to
 select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
@@ -288,6 +293,9 @@ will be automatically scaled down to fit into this size. For more
 details about the Garmin Custom Map please visit the <a
 	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
 Forums</a>.</p>
+
+<hr />
+
 <h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other
 enhancement ideas for TrekBuddy Atlas Creator feel free to open an <a

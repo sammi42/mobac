@@ -4,4 +4,4 @@
 # the JVM. With the below settings the heap size (Available memory for the application)
 # will range from 64 megabyte up to 512 megabyte.
 
-java -Xmx512M -jar TrekBuddy_Atlas_Creator.jar
+java -Xms64m -Xmx512M -jar TrekBuddy_Atlas_Creator.jar

@@ -33,6 +33,9 @@ public class GpxMapController extends JMapController implements MouseListener {
 			p.x += tl.x;
 			p.y += tl.y;
 			MapSpace mapSpace = map.getMapSource().getMapSpace();
+			int maxPixel = mapSpace.getMaxPixels(map.getZoom());
+			if (p.x < 0 || p.x > maxPixel || p.y < 0 || p.y > maxPixel)
+				return; // outside of world region
 			double lon = mapSpace.cXToLon(p.x, map.getZoom());
 			double lat = mapSpace.cYToLat(p.y, map.getZoom());
 			String name = JOptionPane

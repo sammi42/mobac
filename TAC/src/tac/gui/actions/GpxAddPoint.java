@@ -14,24 +14,28 @@ import tac.gui.panels.JGpxPanel.ListModelEntry;
 public class GpxAddPoint implements ActionListener {
 
 	JGpxPanel panel;
+	
+	static GpxMapController mapController = null;
 
 	public GpxAddPoint(JGpxPanel panel) {
 		super();
 		this.panel = panel;
 	}
 
-	public void actionPerformed(ActionEvent event) {
+	public synchronized void actionPerformed(ActionEvent event) {
 		ListModelEntry entry = panel.getSelectedEntry();
 		if (entry == null) {
 			int answer = JOptionPane.showConfirmDialog(null, "No GPX file selected.\n"
 					+ "Do you want to create a new GPX file?", "Add point to new GPX file?",
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (answer!= JOptionPane.YES_OPTION)
+			if (answer != JOptionPane.YES_OPTION)
 				return;
 			entry = new GpxNew(panel).newGpx();
 		}
 		PreviewMap map = MainGUI.getMainGUI().previewMap;
 		map.getMapSelectionController().disable();
-		new GpxMapController(map, entry, true);
+		if (mapController == null)
+			mapController = new GpxMapController(map, entry, false);
+		mapController.enable();
 	}
 }

@@ -130,11 +130,14 @@ public class JobDispatcher {
 
 		@Override
 		public void run() {
-			executeJobs();
+			try {
+				executeJobs();
+			} catch (InterruptedException e) {
+			}
 			log.trace("Thread is terminating");
 		}
 
-		protected void executeJobs() {
+		protected void executeJobs() throws InterruptedException {
 			while (!isInterrupted()) {
 				try {
 					pauseResumeHandler.pauseWait();
@@ -153,6 +156,10 @@ public class JobDispatcher {
 					if (e instanceof InterruptedException)
 						return;
 					log.error("Unknown error occured while executing the job: ", e);
+				} catch (OutOfMemoryError e) {
+					log.error("", e);
+					Thread.sleep(5000);
+					System.gc();
 				}
 			}
 		}

@@ -34,21 +34,20 @@ public class PreviewTileCache extends MemoryTileCache implements NotificationLis
 	 * minimum of 25 cached tiles.
 	 */
 	public void handleNotification(Notification notification, Object handback) {
-		log.finer("Memory notification: " + notification.toString());
-		String type = notification.getType();
-		if (!MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED.equals(type))
+		log.trace("Memory notification: " + notification.toString());
+		if (!MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED.equals(notification.getType()))
 			return;
 		synchronized (lruTiles) {
 			int count_half = lruTiles.getElementCount() / 2;
 			count_half = Math.max(25, count_half);
-			log.fine("memory low - freeing cached tiles: " + lruTiles.getElementCount() + " -> "
+			log.warn("memory low - freeing cached tiles: " + lruTiles.getElementCount() + " -> "
 					+ count_half);
 			try {
 				while (lruTiles.getElementCount() > count_half) {
 					removeEntry(lruTiles.getLastElement());
 				}
 			} catch (Exception e) {
-				log.warning(e.getMessage());
+				log.error("", e);
 			}
 		}
 	}

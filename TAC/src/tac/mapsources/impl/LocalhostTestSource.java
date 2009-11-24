@@ -4,8 +4,11 @@ import tac.mapsources.AbstractMapSource;
 
 public class LocalhostTestSource extends AbstractMapSource {
 
-	public LocalhostTestSource() {
-		super("Localhost test", 0, 22, "png");
+	private boolean allowStore;
+	
+	public LocalhostTestSource(String name, boolean allowStore) {
+		super(name, 0, 22, "png");
+		this.allowStore = allowStore;
 	}
 	
 	public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -14,7 +17,7 @@ public class LocalhostTestSource extends AbstractMapSource {
 
 	@Override
 	public boolean allowFileStore() {
-		return false;
+		return allowStore;
 	}
 
 	

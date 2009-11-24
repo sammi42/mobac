@@ -11,10 +11,12 @@ import java.util.TreeMap;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.TileStoreException;
 import tac.tilestore.TileStore;
 import tac.tilestore.TileStoreEntry;
 import tac.tilestore.TileStoreInfo;
 import tac.tilestore.berkeleydb.TileDbEntry.TileDbKey;
+import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 import tac.utilities.file.DeleteFileFilter;
 import tac.utilities.file.DirInfoFileFilter;
@@ -23,7 +25,6 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.EnvironmentLockedException;
-import com.sleepycat.je.Transaction;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
@@ -42,8 +43,11 @@ public class BerkeleyDbTileStore extends TileStore {
 		tileDbMap = new TreeMap<String, TileDatabase>();
 
 		envConfig = new EnvironmentConfig();
-		envConfig.setTransactional(true);
+		envConfig.setTransactional(false);
+		envConfig.setLocking(true);
+		envConfig.setExceptionListener(TACExceptionHandler.getInstance());
 		envConfig.setAllowCreate(true);
+		envConfig.setCachePercent(35);
 	}
 
 	@Override
@@ -72,7 +76,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			}
 		} catch (Exception e) {
 			log.error("Error creating tile store db \"" + mapSource.getName() + "\"", e);
-			throw new DatabaseException(e);
+			throw new TileStoreException(e);
 		}
 	}
 
@@ -313,10 +317,10 @@ public class BerkeleyDbTileStore extends TileStore {
 				Utilities.mkDirs(storeDir);
 
 				env = new Environment(storeDir, envConfig);
-
+				
 				StoreConfig storeConfig = new StoreConfig();
 				storeConfig.setAllowCreate(true);
-				storeConfig.setTransactional(true);
+				storeConfig.setTransactional(false);
 				store = new EntityStore(env, "TilesEntityStore", storeConfig);
 
 				tileIndex = store.getPrimaryIndex(TileDbKey.class, TileDbEntry.class);
@@ -340,13 +344,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			try {
 				t.pauseInterrupt();
-				Transaction txn = env.beginTransaction(null, null);
-				try {
-					tileIndex.put(txn, tile);
-				} finally {
-					txn.commitSync();
-					env.sync();
-				}
+				tileIndex.put(tile);
 			} finally {
 				if (t.interruptedWhilePaused())
 					close();

@@ -29,7 +29,10 @@ import tac.mapsources.MapSourcesManager;
 import tac.program.Logging;
 import tac.program.TACInfo;
 
-public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
+import com.sleepycat.je.ExceptionEvent;
+import com.sleepycat.je.ExceptionListener;
+
+public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, ExceptionListener {
 
 	private static final TACExceptionHandler instance = new TACExceptionHandler();
 
@@ -66,6 +69,12 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 	public static void processException(Thread t, Throwable e) {
 		log.error("Uncaught exception: ", e);
+		showExceptionDialog(e);
+	}
+
+	public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
+		Exception e = paramExceptionEvent.getException();
+		log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
 		showExceptionDialog(e);
 	}
 

@@ -33,7 +33,6 @@ public abstract class AbstractMapSource implements MapSource {
 		this.tileUpdate = tileUpdate;
 	}
 
-	
 	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
 			throws IOException {
 		String url = getTileUrl(zoom, tilex, tiley);
@@ -75,6 +74,23 @@ public abstract class AbstractMapSource implements MapSource {
 
 	public MapSpace getMapSpace() {
 		return MercatorPower2MapSpace.INSTANCE_256;
+	}
+
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof MapSource))
+			return false;
+		MapSource other = (MapSource) obj;
+		return other.getName().equals(getName());
 	}
 
 }

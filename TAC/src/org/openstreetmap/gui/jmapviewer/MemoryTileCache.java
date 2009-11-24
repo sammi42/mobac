@@ -3,10 +3,10 @@ package org.openstreetmap.gui.jmapviewer;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.util.Hashtable;
-import java.util.logging.Logger;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 
 /**
  * {@link TileImageCache} implementation that stores all {@link Tile} objects in
@@ -17,7 +17,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  */
 public class MemoryTileCache implements TileImageCache {
 
-    protected static final Logger log = Logger.getLogger(MemoryTileCache.class.getName());
+    protected static final Logger log = Logger.getLogger(MemoryTileCache.class); 
 
     /**
      * Default cache size
@@ -65,7 +65,7 @@ public class MemoryTileCache implements TileImageCache {
                     removeEntry(lruTiles.getLastElement());
                 }
             } catch (Exception e) {
-                log.warning(e.getMessage());
+                log.warn("",e);
             }
         }
     }

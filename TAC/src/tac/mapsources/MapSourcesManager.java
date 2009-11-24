@@ -92,7 +92,10 @@ public class MapSourcesManager {
 	public static final MapSource DEFAULT = new Mapnik();
 	private static MapSource[] MAP_SOURCES;
 
-	private static MapSource LOCALHOST_TEST_MAPSOURCE = new LocalhostTestSource();
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource(
+			"Localhost (stored)", true);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource(
+			"Localhost (unstored)", false);
 
 	static {
 		loadMapSourceProperties();
@@ -113,8 +116,10 @@ public class MapSourcesManager {
 
 	public static Vector<MapSource> getAllMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
-		if (Settings.getInstance().isDevModeEnabled())
-			mapSources.add(new LocalhostTestSource());
+		if (Settings.getInstance().isDevModeEnabled()) {
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_OFF);
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_ON);
+		}
 		for (MapSource ms : MAP_SOURCES)
 			mapSources.add(ms);
 		for (MapSource ms : Settings.getInstance().customMapSources)
@@ -124,8 +129,10 @@ public class MapSourcesManager {
 
 	public static Vector<MapSource> getEnabledMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
-		if (Settings.getInstance().isDevModeEnabled())
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE);
+		if (Settings.getInstance().isDevModeEnabled()) {
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_OFF);
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_ON);
+		}
 		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance()
 				.getDisabledMapSources());
 		for (MapSource ms : MAP_SOURCES) {
@@ -150,9 +157,12 @@ public class MapSourcesManager {
 			if (ms.getName().equals(name))
 				return ms;
 		}
-		if (Settings.getInstance().isDevModeEnabled()
-				&& LOCALHOST_TEST_MAPSOURCE.getName().equals(name))
-			return LOCALHOST_TEST_MAPSOURCE;
+		if (Settings.getInstance().isDevModeEnabled()) {
+			if (LOCALHOST_TEST_MAPSOURCE_STORE_ON.getName().equals(name))
+				return LOCALHOST_TEST_MAPSOURCE_STORE_ON;
+			if (LOCALHOST_TEST_MAPSOURCE_STORE_OFF.getName().equals(name))
+				return LOCALHOST_TEST_MAPSOURCE_STORE_OFF;
+		}
 		return null;
 	}
 

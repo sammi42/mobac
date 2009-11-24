@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapDownloadSkippedException;
@@ -151,8 +152,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler);
 		try {
+			MapSource lastMapSource = null;
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {
+					if (!map.getMapSource().equals(lastMapSource)) {
+						// Clean up database system: close unnecessary databases
+						//TileStore.getInstance().closeAll(false);
+					}
 					try {
 						while (!createMap(map))
 							;

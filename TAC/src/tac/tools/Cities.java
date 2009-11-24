@@ -12,6 +12,6 @@ public class Cities {
 	public static final EastNorthCoordinate VIENNA = new EastNorthCoordinate(48.20, 16.37);
 	public static final EastNorthCoordinate BRATISLAVA = new EastNorthCoordinate(48.154, 17.14);
 	public static final EastNorthCoordinate SEOUL = new EastNorthCoordinate(37.55, 126.98);
-	public static final EastNorthCoordinate SYDNEY = new EastNorthCoordinate(-33.85, 151.2);
+	public static final EastNorthCoordinate SYDNEY = new EastNorthCoordinate(-33.8, 151.3);
 	public static final EastNorthCoordinate BUDAPEST = new EastNorthCoordinate(47.47, 19.05);
 }

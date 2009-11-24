@@ -1,13 +1,6 @@
 package tac.tools;
 
-import static tac.tools.Cities.BANGALORE;
 import static tac.tools.Cities.BERLIN;
-import static tac.tools.Cities.BRATISLAVA;
-import static tac.tools.Cities.PRAHA;
-import static tac.tools.Cities.SEOUL;
-import static tac.tools.Cities.SHANGHAI;
-import static tac.tools.Cities.VIENNA;
-import static tac.tools.Cities.WARSZAWA;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -31,6 +24,7 @@ import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
+import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Settings;
@@ -55,15 +49,16 @@ public class MapSourcesTester {
 
 	static {
 		testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
-		testCoordinates.put(GoogleMapMaker.class, BANGALORE);
-		testCoordinates.put(Cykloatlas.class, PRAHA);
-		testCoordinates.put(GoogleMapsChina.class, SHANGHAI);
-		testCoordinates.put(GoogleMapsKorea.class, SEOUL);
-		testCoordinates.put(DoCeluPL.class, WARSZAWA);
-		testCoordinates.put(AustrianMap.class, VIENNA);
-		testCoordinates.put(FreemapSlovakia.class, BRATISLAVA);
-		testCoordinates.put(FreemapSlovakiaHiking.class, BRATISLAVA);
-		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, BRATISLAVA);
+		testCoordinates.put(GoogleMapMaker.class, Cities.BANGALORE);
+		testCoordinates.put(Cykloatlas.class, Cities.PRAHA);
+		testCoordinates.put(GoogleMapsChina.class, Cities.SHANGHAI);
+		testCoordinates.put(GoogleMapsKorea.class, Cities.SEOUL);
+		testCoordinates.put(DoCeluPL.class, Cities.WARSZAWA);
+		testCoordinates.put(AustrianMap.class, Cities.VIENNA);
+		testCoordinates.put(FreemapSlovakia.class, Cities.BRATISLAVA);
+		testCoordinates.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
+		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);
+		testCoordinates.put(NearMap.class, Cities.SYDNEY);
 	}
 
 	public static void main(String[] args) {

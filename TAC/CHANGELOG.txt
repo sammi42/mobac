@@ -22,8 +22,10 @@
  ~ Pause/resume button now works while map creation (not only while download)
  + New experimental map source: Turaterkep (Hungary hiking)
     Uses tiles of size 512x512 (not supported by all atlas formats)        
- + Multi layer map sources can defined and displayed (download not yet 
+ + Multi layer map sources can be defined and displayed (download not yet 
     implemented)
+ + New map: NearMap Australia (high-resolution aerial images for Australia)
+ ! GPX addWpt: Multiple way points added by one mouse click fixed   
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

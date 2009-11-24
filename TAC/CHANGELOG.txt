@@ -25,7 +25,9 @@
  + Multi layer map sources can be defined and displayed (download not yet 
     implemented)
  + New map: NearMap Australia (high-resolution aerial images for Australia)
- ! GPX addWpt: Multiple way points added by one mouse click fixed   
+ ! GPX addWpt: Multiple way points added by one mouse click fixed
+ ! Start.sh/Start.cmd Java max heap setting was ignored by Java because of 
+    the position at the end of the command line   
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

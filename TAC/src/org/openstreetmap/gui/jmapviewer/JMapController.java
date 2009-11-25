@@ -40,6 +40,7 @@ public abstract class JMapController {
 			map.addMouseWheelListener((MouseWheelListener) this);
 		if (this instanceof MouseMotionListener)
 			map.addMouseMotionListener((MouseMotionListener) this);
+		this.enabled = true;
 	}
 
 	public void disable() {
@@ -51,5 +52,6 @@ public abstract class JMapController {
 			map.removeMouseWheelListener((MouseWheelListener) this);
 		if (this instanceof MouseMotionListener)
 			map.removeMouseMotionListener((MouseMotionListener) this);
+		this.enabled = false;
 	}
 }

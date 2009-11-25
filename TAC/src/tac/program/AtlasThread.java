@@ -157,7 +157,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 				for (MapInterface map : layer) {
 					if (!map.getMapSource().equals(lastMapSource)) {
 						// Clean up database system: close unnecessary databases
-						//TileStore.getInstance().closeAll(false);
+						TileStore.getInstance().closeAll(false);
 					}
 					try {
 						while (!createMap(map))
@@ -168,12 +168,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 						// Do nothing and continue with next map
 					} catch (Exception e) {
 						log.error("", e);
-						TACExceptionHandler.processException(e);
-						// JOptionPane.showMessageDialog(null,
-						// "An error occured: " + e.getMessage()
-						// + "\n[" + e.getClass().getSimpleName() + "]\n\n"
-						// + "Press OK to continue atlas creation.", "Error",
-						// JOptionPane.ERROR_MESSAGE);
+						//TACExceptionHandler.processException(e);
+						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
+								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
+								+ "Press OK to continue atlas creation.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}

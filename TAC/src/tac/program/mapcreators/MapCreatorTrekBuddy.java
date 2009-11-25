@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.text.DecimalFormat;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
@@ -203,27 +203,20 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 		sbMap.append("Magnetic Variation,,,E\r\n");
 		sbMap.append("Map Projection,Mercator,PolyCal,No," + "AutoCalOnly,No,BSBUseWPX,No\r\n");
 
-		sbMap.append("Point01,xy,    0,    0,in, deg,"
-				+ getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point02,xy," + (width - 1) + ",0,in, deg,"
-				+ getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point03,xy," + (width - 1) + "," + (height - 1) + ",in, deg,"
-				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		sbMap.append("Point04,xy,    0," + (height - 1) + ",in, deg,"
-				+ getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE) + ","
-				+ getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE)
-				+ ", grid,   ,           ,           ,N\r\n");
-		String emptyPointLine = "Point%02d,xy,     ,     ,"
-				+ "in, deg,    ,        ,N,    ,        ,W, "
-				+ "grid,   ,           ,           ,N\r\n";
+		String latMax = getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE);
+		String latMin = getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE);
+		String lonMax = getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE);
+		String lonMin = getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE);
+
+		String pointLine = "Point%02d,xy, %4s, %4s,in, deg, %1s, %1s, grid," + " , , ,N\r\n";
+
+		sbMap.append(String.format(pointLine, 1, 0, 0, latMax, lonMin));
+		sbMap.append(String.format(pointLine, 2, width - 1, 0, latMax, lonMax));
+		sbMap.append(String.format(pointLine, 3, width - 1, height - 1, latMin, lonMax));
+		sbMap.append(String.format(pointLine, 4, 0, height - 1, latMin, lonMin));
+
 		for (int i = 5; i <= 30; i++) {
-			String s = String.format(emptyPointLine, new Object[] { i });
+			String s = String.format(pointLine, i, "", "", "", "");
 			sbMap.append(s);
 		}
 		sbMap.append("Projection Setup,,,,,,,,,,\r\n");
@@ -233,44 +226,42 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 
 		sbMap.append("MM0,Yes\r\n");
 		sbMap.append("MMPNUM,4\r\n");
-		sbMap.append("MMPXY,1,0,0\r\n");
-		sbMap.append("MMPXY,2," + (width - 1) + ",0\r\n");
-		sbMap.append("MMPXY,3," + (width - 1) + "," + (height - 1) + "\r\n");
-		sbMap.append("MMPXY,4,0," + (height - 1) + "\r\n");
 
-		DecimalFormat df6eng = Utilities.FORMAT_6_DEC_ENG;
-		sbMap.append("MMPLL,1,  " + df6eng.format(longitudeMin) + "," + df6eng.format(latitudeMax)
-				+ "\r\n");
-		sbMap.append("MMPLL,2,  " + df6eng.format(longitudeMax) + "," + df6eng.format(latitudeMax)
-				+ "\r\n");
-		sbMap.append("MMPLL,3,  " + df6eng.format(longitudeMax) + "," + df6eng.format(latitudeMin)
-				+ "\r\n");
-		sbMap.append("MMPLL,4,  " + df6eng.format(longitudeMin) + "," + df6eng.format(latitudeMin)
-				+ "\r\n");
+		String mmpxLine = "MMPXY, %d, %5d, %5d\r\n";
 
-		sbMap.append("IWH,Map Image Width/Height," + width + "," + height + "\r\n");
+		sbMap.append(String.format(mmpxLine, 1, 0, 0));
+		sbMap.append(String.format(mmpxLine, 2, width - 1, 0));
+		sbMap.append(String.format(mmpxLine, 3, width - 1, height - 1));
+		sbMap.append(String.format(mmpxLine, 4, 0, height - 1));
+
+		String mpllLine = "MMPLL, %d, %2.6f, %2.6f\r\n";
+
+		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 1, longitudeMin, latitudeMax));
+		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 2, longitudeMax, latitudeMax));
+		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 3, longitudeMax, latitudeMin));
+		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 4, longitudeMin, latitudeMin));
+
+		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");
 
 		return sbMap.toString();
 	}
 
 	private static String getDegMinFormat(double coord, int COORD_KIND) {
 
-		boolean neg = coord < 0.0 ? true : false;
+		boolean neg = (coord < 0.0);
+		coord = Math.abs(coord);
 		int deg = (int) coord;
 		double min = (coord - deg) * 60;
 
-		StringBuffer sbOut = new StringBuffer();
-		sbOut.append((int) Math.abs(deg));
-		sbOut.append(",");
-		sbOut.append(Utilities.FORMAT_6_DEC_ENG.format(Math.abs(min)));
-		sbOut.append(",");
+		String degMinFormat = "%d, %3.6f, %c";
 
-		if (COORD_KIND == COORD_KIND_LATTITUDE) {
-			sbOut.append(neg ? "S" : "N");
-		} else {
-			sbOut.append(neg ? "W" : "E");
-		}
-		return sbOut.toString();
+		char dirC;
+		if (COORD_KIND == COORD_KIND_LATTITUDE)
+			dirC = (neg ? 'S' : 'N');
+		else
+			dirC = (neg ? 'W' : 'E');
+
+		return String.format(Locale.ENGLISH, degMinFormat, deg, min, dirC);
 	}
 
 }

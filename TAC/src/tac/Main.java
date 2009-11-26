@@ -9,6 +9,7 @@ import tac.program.EnvironmentSetup;
 import tac.program.Logging;
 import tac.program.TACInfo;
 import tac.program.model.Settings;
+import tac.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
 
 /**
@@ -25,6 +26,7 @@ public class Main {
 			DirectoryManager.initialize();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
+			TileStore.initialize();
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					MainGUI.createMainGui();

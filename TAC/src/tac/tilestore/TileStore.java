@@ -3,9 +3,12 @@ package tac.tilestore;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.TileStoreException;
 import tac.program.DirectoryManager;
 import tac.program.model.Settings;
 import tac.tilestore.berkeleydb.BerkeleyDbTileStore;
@@ -18,14 +21,21 @@ public abstract class TileStore {
 
 	protected File tileStoreDir;
 
-	public static TileStore getInstance() {
-		if (INSTANCE != null)
-			return INSTANCE;
-		synchronized (TileStore.class) {
-			if (INSTANCE != null)
-				return INSTANCE;
+	public static void initialize() {
+		try {
 			INSTANCE = new BerkeleyDbTileStore();
+		} catch (TileStoreException e) {
+			String errMsg = "Multiple instances of TrekBuddy Atlas Creator are trying "
+					+ "to access the same tile store.\n"
+					+ "The tile store can only be used by used by one instance at a time.\n"
+					+ "Please close the other instance and try again.";
+			JOptionPane.showMessageDialog(null, errMsg, "Multiple instances of TrekBuddy "
+					+ "Atlas Creator running", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
+	}
+
+	public static TileStore getInstance() {
 		return INSTANCE;
 	}
 

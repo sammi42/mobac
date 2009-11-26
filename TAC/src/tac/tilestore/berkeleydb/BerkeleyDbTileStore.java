@@ -2,6 +2,9 @@ package tac.tilestore.berkeleydb;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,12 +37,20 @@ import com.sleepycat.persist.StoreConfig;
  */
 public class BerkeleyDbTileStore extends TileStore {
 
+	/**
+	 * Max count of tile stores opened
+	 */
+	private final int MAX_CONCURRENT_ENVIRONMENTS = 5;
+
 	private EnvironmentConfig envConfig;
 
 	private Map<String, TileDatabase> tileDbMap;
 
-	public BerkeleyDbTileStore() {
+	private FileLock tileStoreLock = null;
+
+	public BerkeleyDbTileStore() throws TileStoreException {
 		super();
+		acquireTileStoreLock();
 		tileDbMap = new TreeMap<String, TileDatabase>();
 
 		envConfig = new EnvironmentConfig();
@@ -47,7 +58,35 @@ public class BerkeleyDbTileStore extends TileStore {
 		envConfig.setLocking(true);
 		envConfig.setExceptionListener(TACExceptionHandler.getInstance());
 		envConfig.setAllowCreate(true);
-		envConfig.setCachePercent(35);
+		envConfig.setSharedCache(true);
+		envConfig.setCachePercent(50);
+	}
+
+	protected void acquireTileStoreLock() throws TileStoreException {
+		try {
+			// Get a file channel for the file
+			File file = new File(tileStoreDir, "lock");
+			FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
+
+			// Use the file channel to create a lock on the file.
+			// This method blocks until it can retrieve the lock.
+
+			// Try acquiring the lock without blocking. This method returns
+			// null or throws an exception if the file is already locked.
+			tileStoreLock = channel.tryLock();
+			if (tileStoreLock == null)
+				throw new TileStoreException("Unable to obtain tile store lock - "
+						+ "another instance of TrekBuddy Atlas Creator is running!");
+
+			// // Release the lock
+			// lock.release();
+			//	    
+			// // Close the file
+			// channel.close();
+		} catch (Exception e) {
+			log.error("", e);
+			throw new TileStoreException(e.getMessage(), e.getCause());
+		}
 	}
 
 	@Override
@@ -230,7 +269,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	protected void cleanupDatabases() {
-		if (tileDbMap.size() < 3)
+		if (tileDbMap.size() < MAX_CONCURRENT_ENVIRONMENTS)
 			return;
 		synchronized (tileDbMap) {
 			List<TileDatabase> list = new ArrayList<TileDatabase>(tileDbMap.values());
@@ -255,12 +294,17 @@ public class BerkeleyDbTileStore extends TileStore {
 				log.debug("Closing all tile databases...");
 				synchronized (tileDbMap) {
 					for (TileDatabase db : tileDbMap.values()) {
-						db.purge();
 						db.close(false);
 					}
 					tileDbMap.clear();
-					if (shutdown)
+					if (shutdown) {
 						tileDbMap = null;
+						try {
+							tileStoreLock.release();
+						} catch (IOException e) {
+							log.error("", e);
+						}
+					}
 				}
 				log.debug("All tile databases has been closed");
 			}
@@ -317,7 +361,7 @@ public class BerkeleyDbTileStore extends TileStore {
 				Utilities.mkDirs(storeDir);
 
 				env = new Environment(storeDir, envConfig);
-				
+
 				StoreConfig storeConfig = new StoreConfig();
 				storeConfig.setAllowCreate(true);
 				storeConfig.setTransactional(false);

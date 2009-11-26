@@ -15,5 +15,5 @@ public class TileStoreException extends DatabaseException {
 	public TileStoreException(String message, Throwable t) {
 		super(message, t);
 	}
-
+	
 }

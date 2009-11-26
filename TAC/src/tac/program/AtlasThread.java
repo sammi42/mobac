@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapDownloadSkippedException;
@@ -152,13 +151,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler);
 		try {
-			MapSource lastMapSource = null;
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {
-					if (!map.getMapSource().equals(lastMapSource)) {
-						// Clean up database system: close unnecessary databases
-						TileStore.getInstance().closeAll(false);
-					}
 					try {
 						while (!createMap(map))
 							;
@@ -168,7 +162,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 						// Do nothing and continue with next map
 					} catch (Exception e) {
 						log.error("", e);
-						//TACExceptionHandler.processException(e);
+						// TACExceptionHandler.processException(e);
 						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
 								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
 								+ "Press OK to continue atlas creation.", "Error",

@@ -24,7 +24,7 @@ public class PreviewTileCache extends MemoryTileCache implements NotificationLis
 		for (MemoryPoolMXBean memPool : ManagementFactory.getMemoryPoolMXBeans()) {
 			if (memPool.isUsageThresholdSupported()) {
 				MemoryUsage memUsage = memPool.getUsage();
-				memPool.setUsageThreshold((long) (memUsage.getMax() * 0.9));
+				memPool.setUsageThreshold((long) (memUsage.getMax() * 0.95));
 			}
 		}
 	}

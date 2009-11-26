@@ -300,7 +300,7 @@ public class SettingsGUI extends JDialog {
 	private void addTileStorePanel() {
 		JPanel backGround = createNewTab("Tile store");
 
-		tileStoreEnabled = new JCheckBox("Enable tile store for atlas download");
+		tileStoreEnabled = new JCheckBox("Enable tile store for map preview and atlas download");
 
 		JPanel tileStorePanel = new JPanel(new BorderLayout());
 		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));

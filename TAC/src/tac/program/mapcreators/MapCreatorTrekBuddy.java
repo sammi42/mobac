@@ -61,8 +61,8 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 		MapSpace mapSpace = mapSource.getMapSpace();
 
 		double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
-		double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
-		double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
+		double longitudeMax = mapSpace.cXToLon(xMax * tileSize, zoom);
+		double latitudeMin = mapSpace.cYToLat(yMax * tileSize, zoom);
 		double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
 
 		int width = (xMax - xMin + 1) * tileSize;

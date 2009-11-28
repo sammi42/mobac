@@ -15,7 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
-import tac.mapsources.impl.RegionalMapSources;
+import tac.mapsources.impl.MiscMapSources;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 
@@ -29,7 +29,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		testMapSource(RegionalMapSources.NearMap.class, Cities.SYDNEY);
+		testMapSource(MiscMapSources.Yandex.class, Cities.MOSCOW);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

@@ -18,6 +18,7 @@ import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMapsChina;
 import tac.mapsources.impl.Google.GoogleMapsKorea;
+import tac.mapsources.impl.MiscMapSources.Yandex;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -59,6 +60,7 @@ public class MapSourcesTester {
 		testCoordinates.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
 		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);
 		testCoordinates.put(NearMap.class, Cities.SYDNEY);
+		testCoordinates.put(Yandex.class, Cities.MOSCOW);
 	}
 
 	public static void main(String[] args) {

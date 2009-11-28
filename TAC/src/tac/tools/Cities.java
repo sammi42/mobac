@@ -5,6 +5,7 @@ import tac.program.model.EastNorthCoordinate;
 public class Cities {
 	public static final EastNorthCoordinate NEY_YORK = new EastNorthCoordinate(40.75, -73.88);
 	public static final EastNorthCoordinate BERLIN = new EastNorthCoordinate(52.50, 13.39);
+	public static final EastNorthCoordinate MOSCOW = new EastNorthCoordinate(55.75, 37.63);
 	public static final EastNorthCoordinate PRAHA = new EastNorthCoordinate(50.00, 14.41);
 	public static final EastNorthCoordinate BANGALORE = new EastNorthCoordinate(12.95, 77.616667);
 	public static final EastNorthCoordinate SHANGHAI = new EastNorthCoordinate(31.2333, 121.4666);

@@ -91,4 +91,32 @@ public class MiscMapSources {
 
 	}
 
+	public static class Yandex extends AbstractMapSource {
+
+		int SERVER_NUM = 1;
+
+		String urlPattern;
+		
+		public Yandex() {
+			super("Yandex", 1, 17, "png", TileUpdate.IfModifiedSince);
+			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			SERVER_NUM = (SERVER_NUM % 3) + 3;
+			String tmp = urlPattern;
+			tmp = tmp.replace("{$servernum}", Integer.toString(SERVER_NUM));
+			tmp = tmp.replace("{$x}", Integer.toString(tilex));
+			tmp = tmp.replace("{$y}", Integer.toString(tiley));
+			tmp = tmp.replace("{$z}", Integer.toString(zoom));
+			return tmp;
+		}
+
+		@Override
+		public String toString() {
+			return "Yandex.ru (Russia)";
+		}
+
+		
+	}
 }

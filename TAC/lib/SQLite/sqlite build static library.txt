@@ -1,0 +1,9 @@
+gcc -static
+
+	gcc -shared -Wl,-soname,libsqlite_jni.so -o .libs/libsqlite_jni.so sqlite_jni.o dummy.o /usr/lib/libsqlite3.a -lc
+
+
+amd64: Download sqlite3 source code and compile yourself:
+gcc -fPIC -m64 -c sqlite3.c
+
+	gcc -shared -Wl -o .libs/libsqlite_jni.so sqlite_jni.o dummy.o sqlite3.o -lc

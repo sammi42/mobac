@@ -42,3 +42,6 @@ Géoportail
 	http://www.geoportail.fr/5069711/visu2D/afficher-en-2d.htm
 	Reason: Incompatible zoom levels
 	
+Asplan Viak Internet AS
+	http://kart.kystverket.no/advanced_default.aspx?lang=eng
+	Reason: Unsupported projection: "Universal Transverse Mercator" (UTM)  

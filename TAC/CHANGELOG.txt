@@ -28,7 +28,7 @@
  ! GPX addWpt: Multiple way points added by one mouse click fixed
  ! Start.sh/Start.cmd Java max heap setting was ignored by Java because of 
     the position at the end of the command line   
- ! #2904937 1px map calibration bug
+ ! #2904937 and #2905182 1px map calibration bug
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

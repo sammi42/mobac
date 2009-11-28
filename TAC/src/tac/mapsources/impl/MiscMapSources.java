@@ -91,14 +91,14 @@ public class MiscMapSources {
 
 	}
 
-	public static class Yandex extends AbstractMapSource {
+	public static class YandexMap extends AbstractMapSource {
 
 		int SERVER_NUM = 1;
 
 		String urlPattern;
 		
-		public Yandex() {
-			super("Yandex", 1, 17, "png", TileUpdate.IfModifiedSince);
+		public YandexMap() {
+			super("YandexMap", 1, 17, "png", TileUpdate.IfModifiedSince);
 			urlPattern = MapSourceTools.loadMapUrl(this, "url");
 		}
 
@@ -114,9 +114,37 @@ public class MiscMapSources {
 
 		@Override
 		public String toString() {
-			return "Yandex.ru (Russia)";
+			return "Yandex Map (Russia)";
 		}
-
 		
 	}
+
+	public static class YandexSat extends AbstractMapSource {
+
+		int SERVER_NUM = 1;
+
+		String urlPattern;
+		
+		public YandexSat() {
+			super("YandexSat", 1, 18, "jpg", TileUpdate.IfModifiedSince);
+			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			SERVER_NUM = (SERVER_NUM % 3) + 3;
+			String tmp = urlPattern;
+			tmp = tmp.replace("{$servernum}", Integer.toString(SERVER_NUM));
+			tmp = tmp.replace("{$x}", Integer.toString(tilex));
+			tmp = tmp.replace("{$y}", Integer.toString(tiley));
+			tmp = tmp.replace("{$z}", Integer.toString(zoom));
+			return tmp;
+		}
+
+		@Override
+		public String toString() {
+			return "Yandex Sat (Russia)";
+		}
+		
+	}
+
 }

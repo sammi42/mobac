@@ -29,7 +29,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		testMapSource(MiscMapSources.Yandex.class, Cities.MOSCOW);
+		testMapSource(MiscMapSources.YandexSat.class, Cities.MOSCOW);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

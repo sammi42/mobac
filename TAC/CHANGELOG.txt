@@ -30,6 +30,7 @@
     the position at the end of the command line   
  ! #2904937 and #2905182 1px map calibration bug
  + New map sources: Yandex Maps & Sat (Russia) 
+ + New map source: Humbermedia Bavaria 
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

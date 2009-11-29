@@ -11,7 +11,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jai_codec.jar"/>
 	<classpathentry kind="lib" path="lib/Tidy.jar"/>
-	<classpathentry kind="lib" path="lib/je-3.3.87.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite.jar"/>
+	<classpathentry kind="lib" path="lib/je-3.3.87.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

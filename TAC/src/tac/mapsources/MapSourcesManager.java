@@ -51,6 +51,7 @@ import tac.mapsources.impl.RegionalMapSources.EmapaPl;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
+import tac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
@@ -112,7 +113,8 @@ public class MapSourcesManager {
 				new Cykloatlas(), new YandexMap(), new YandexSat(), new TerraserverUSA(),
 				new UmpWawPl(), new DoCeluPL(), new EmapaPl(), new AustrianMap(),
 				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
-				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap() };
+				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
+				new HubermediaBavaria() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

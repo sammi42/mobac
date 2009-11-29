@@ -60,4 +60,22 @@ public class MapSourceTools {
 		result[3] = mapSpace.cYToLat(tiley, zoom); // lat_max
 		return result;
 	}
+
+	public static String formatMapUrl(String mapUrl, int zoom, int tilex, int tiley) {
+		String tmp = mapUrl;
+		tmp = tmp.replace("{$x}", Integer.toString(tilex));
+		tmp = tmp.replace("{$y}", Integer.toString(tiley));
+		tmp = tmp.replace("{$z}", Integer.toString(zoom));
+		return tmp;
+	}
+
+	public static String formatMapUrl(String mapUrl, int serverNum, int zoom, int tilex, int tiley) {
+		String tmp = mapUrl;
+		tmp = tmp.replace("{$servernum}", Integer.toString(serverNum));
+		tmp = tmp.replace("{$x}", Integer.toString(tilex));
+		tmp = tmp.replace("{$y}", Integer.toString(tiley));
+		tmp = tmp.replace("{$z}", Integer.toString(zoom));
+		return tmp;
+	}
+
 }

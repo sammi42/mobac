@@ -1,6 +1,7 @@
 package tac.mapsources.impl;
 
 import tac.mapsources.AbstractMapSource;
+import tac.mapsources.MapSourceTools;
 
 public class NotUsed {
 
@@ -33,6 +34,24 @@ public class NotUsed {
 			int z = 17 - zoom;
 			return "http://mp1.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
 					+ "/t" + tiley + "l" + tilex + ".jpg";
+		}
+
+	}
+
+	/**
+	 * hubermedia http://maps.hubermedia.de/
+	 */
+	public static class Hubermedia extends AbstractMapSource {
+
+		String mapUrl;
+
+		public Hubermedia() {
+			super("Hubermedia", 12, 15, "png", TileUpdate.IfNoneMatch);
+			mapUrl = "http://t1.hubermedia.de/TK50/AT/Kompass_Neu//Z{$z}/{$y}/{$x}.png";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return MapSourceTools.formatMapUrl(mapUrl, zoom, tilex, tiley);
 		}
 
 	}

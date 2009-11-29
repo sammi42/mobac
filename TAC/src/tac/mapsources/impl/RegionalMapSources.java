@@ -308,4 +308,38 @@ public class RegionalMapSources {
 		}
 
 	}
+
+	/**
+	 * Hubermedia Bavaria map http://maps.hubermedia.de/
+	 */
+	public static class HubermediaBavaria extends AbstractMapSource {
+
+		String[] mapUrls;
+
+		int serverNum = 0;
+
+		public HubermediaBavaria() {
+			super("Hubermedia Bavaria", 10, 16, "png", TileUpdate.IfNoneMatch);
+			mapUrls = new String[17];
+
+			mapUrls[10] = "http://t0.hubermedia.de/TK500/DE/Bayern/";
+			mapUrls[11] = mapUrls[10];
+			mapUrls[12] = "http://t{$servernum}.wms.hubermedia.de/tk200/de/bayern//Z{$z}/{$y}/{$x}.png";
+			mapUrls[13] = "http://t{$servernum}.hubermedia.de/TK50/DE/Bayern//Z{$z}/{$y}/{$x}.png";
+			mapUrls[14] = mapUrls[13];
+			mapUrls[15] = "http://t{$servernum}.hubermedia.de/TK25/DE/Bayern//Z{$z}/{$y}/{$x}.png";
+			mapUrls[16] = "http://t{$servernum}.hubermedia.de/DOK/DE/Bayern//Z{$z}/{$y}/{$x}.png";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			serverNum = (serverNum + 1) % 3;
+			if (zoom >= 12) {
+				return MapSourceTools.formatMapUrl(mapUrls[zoom], serverNum, zoom, tilex, tiley);
+			} else {
+				String tc = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
+				return mapUrls[zoom] + zoom + "/" + tc + ".png";
+			}
+		}
+	}
+
 }

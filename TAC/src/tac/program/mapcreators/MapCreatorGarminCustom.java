@@ -39,7 +39,7 @@ import tac.tar.TarIndex;
 import tac.utilities.Utilities;
 import tac.utilities.stream.ArrayOutputStream;
 
-public class MapCreatorGarminCustom extends MapCreator {
+public class MapCreatorGarminCustom extends AtlasCreator {
 
 	/**
 	 * Each jpeg should be less than 3MB.
@@ -61,8 +61,8 @@ public class MapCreatorGarminCustom extends MapCreator {
 	}
 
 	@Override
-	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super.initialize(map, tarTileIndex, atlasDir);
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
 		mapDir = new File(atlasDir, map.getLayer().getName());
 		mapName = map.getName();
 		imageFileName = "files/" + mapName + ".jpg";

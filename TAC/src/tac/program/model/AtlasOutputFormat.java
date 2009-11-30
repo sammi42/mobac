@@ -2,7 +2,7 @@ package tac.program.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import tac.program.mapcreators.MapCreator;
+import tac.program.mapcreators.AtlasCreator;
 import tac.program.mapcreators.MapCreatorAndNav;
 import tac.program.mapcreators.MapCreatorBigPlanet;
 import tac.program.mapcreators.MapCreatorGarminCustom;
@@ -28,25 +28,30 @@ public enum AtlasOutputFormat {
 	GarminCustom("Garmin Custom Map (KMZ)", MapCreatorGarminCustom.class);
 
 	private final String displayName;
-	private Class<? extends MapCreator> mapCreatorClass;
+	private Class<? extends AtlasCreator> atlasCreatorClass;
 
-	private AtlasOutputFormat(String displayName, Class<? extends MapCreator> mapCreatorClass) {
+	private AtlasOutputFormat(String displayName, Class<? extends AtlasCreator> mapCreatorClass) {
 		this.displayName = displayName;
-		this.mapCreatorClass = mapCreatorClass;
+		this.atlasCreatorClass = mapCreatorClass;
 	}
 
 	public String toString() {
 		return displayName;
 	}
 
-	public Class<? extends MapCreator> getMapCreatorClass() {
-		return mapCreatorClass;
+	public Class<? extends AtlasCreator> getMapCreatorClass() {
+		return atlasCreatorClass;
 	}
 
-	public MapCreator createMapCreatorInstance() throws InstantiationException,
-			IllegalAccessException {
-		if (mapCreatorClass == null)
+	public AtlasCreator createAtlasCreatorInstance() {
+		if (atlasCreatorClass == null)
 			return null;
-		return mapCreatorClass.newInstance();
+		try {
+			return atlasCreatorClass.newInstance();
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -42,7 +42,7 @@ import tac.utilities.jdbc.SQLiteLoader;
  * RMaps.
  * <p>
  */
-public class MapCreatorBigPlanet extends MapCreator {
+public class MapCreatorBigPlanet extends AtlasCreator {
 
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
@@ -71,8 +71,8 @@ public class MapCreatorBigPlanet extends MapCreator {
 	}
 
 	@Override
-	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super.initialize(map, tarTileIndex, atlasDir);
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
 		atlasDir.delete(); // We don't use the atlas directory
 		databaseFile = new File(atlasDir.getParent(), DATABASE_FILENAME).getAbsolutePath();
 	}

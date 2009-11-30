@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import tac.program.mapcreators.MapCreator;
+import tac.program.mapcreators.AtlasCreator;
 import tac.utilities.Utilities;
 
 /**
@@ -31,7 +31,7 @@ public class TarTmiArchive extends TarArchive {
 			tmiFilename = tmiFilename.substring(0, tmiFilename.length() - 4);
 
 		tmiWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmiFilename
-				+ ".tmi"), MapCreator.TEXT_FILE_CHARSET));
+				+ ".tmi"), AtlasCreator.TEXT_FILE_CHARSET));
 	}
 
 	@Override

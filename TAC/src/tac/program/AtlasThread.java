@@ -3,8 +3,6 @@ package tac.program;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -21,14 +19,12 @@ import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
-import tac.program.mapcreators.MapCreator;
-import tac.program.model.AtlasOutputFormat;
+import tac.program.mapcreators.AtlasCreator;
 import tac.program.model.Settings;
 import tac.tar.TarIndex;
 import tac.tar.TarIndexedArchive;
 import tac.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
-import tac.utilities.Utilities;
 
 public class AtlasThread extends Thread implements DownloadJobListener, AtlasCreationController {
 
@@ -40,7 +36,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private AtlasProgress ap; // The GUI showing the progress
 
 	private AtlasInterface atlasInterface;
-	private MapCreator mapCreator = null;
+	private AtlasCreator atlasCreator = null;
 	private PauseResumeHandler pauseResumeHandler;
 
 	private int activeDownloads = 0;
@@ -48,12 +44,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	private File atlasDir = null;
-
 	public AtlasThread(AtlasInterface atlasInterface) throws AtlasTestException {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
 		this.atlasInterface = atlasInterface;
+		atlasCreator = atlasInterface.getOutputFormat().createAtlasCreatorInstance();
 		testAtlas();
 		TileStore.getInstance().closeAll(false);
 		pauseResumeHandler = new PauseResumeHandler();
@@ -61,10 +56,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	private void testAtlas() throws AtlasTestException {
 		try {
-			MapCreator mc = atlasInterface.getOutputFormat().createMapCreatorInstance();
 			for (LayerInterface layer : atlasInterface) {
 				for (MapInterface map : layer) {
-					if (!mc.testMapSource(map.getMapSource()))
+					if (!atlasCreator.testMapSource(map.getMapSource()))
 						throw new AtlasTestException("The selected atlas output format \""
 								+ atlasInterface.getOutputFormat()
 								+ "\" does not support the map source \"" + map.getMapSource()
@@ -89,7 +83,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		ap.setDownloadControlerListener(this);
 		try {
 			createAtlas();
-			ap.atlasCreationFinished();
 			log.info("Altas creation finished");
 		} catch (OutOfMemoryError e) {
 			System.gc();
@@ -125,17 +118,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	protected void createAtlas() throws InterruptedException, IOException {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-		String atlasDirName = atlasInterface.getName() + "_" + sdf.format(new Date());
-		File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
-
-		atlasDir = new File(atlasOutputDir, atlasDirName);
-		Utilities.mkDirs(atlasDir);
-
 		/***
 		 * In this section of code below, atlas is created.
 		 **/
-
 		long totalNrOfTiles = atlasInterface.calculateTilesToDownload();
 
 		if (totalNrOfTiles > Integer.MAX_VALUE) {
@@ -143,6 +128,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+
+		atlasCreator.startAtlasCreation(atlasInterface);
 
 		ap.init(atlasInterface);
 		ap.setVisible(true);
@@ -175,18 +162,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			if (djp != null)
 				djp.cancel();
 			downloadJobDispatcher.terminateAllWorkerThreads();
+			atlasCreator.finishAtlasCreation();
+			ap.atlasCreationFinished();
 		}
 
-		switch (atlasInterface.getOutputFormat()) {
-		case TaredAtlas:
-			TrekBuddyAtlasFormatCreator.createAtlasTarArchive(atlasDir, "cr");
-			break;
-		case UntaredAtlas:
-			TrekBuddyAtlasFormatCreator.createAtlasTbaFile(atlasDir, "cr");
-			break;
-		}
-
-		ap.atlasCreationFinished();
 	}
 
 	/**
@@ -295,15 +274,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			downloadJobDispatcher.cancelOutstandingJobs();
 			log.debug("Starting to create atlas from downloaded tiles");
 
-			AtlasOutputFormat aof = atlasInterface.getOutputFormat();
-			mapCreator = aof.createMapCreatorInstance();
-			mapCreator.initialize(map, tileIndex, atlasDir);
-			mapCreator.createMap();
+			atlasCreator.initializeMap(map, tileIndex);
+			atlasCreator.createMap();
 		} catch (Exception e) {
 			log.error("Error in createMap: " + e.getMessage(), e);
 			throw e;
 		} finally {
-			mapCreator = null;
 			if (tileIndex != null)
 				tileIndex.closeAndDelete();
 			else if (tileArchive != null)

@@ -1,7 +1,5 @@
 package tac.program.mapcreators;
 
-import java.io.File;
-
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 
@@ -11,8 +9,8 @@ import tac.tar.TarIndex;
 public class MapCreatorOSMTracker extends MapCreatorAndNav {
 
 	@Override
-	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super.initialize(map, tarTileIndex, atlasDir);
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
 		this.additionalFileExt = "";
 	}
 

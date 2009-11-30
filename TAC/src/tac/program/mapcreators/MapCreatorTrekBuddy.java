@@ -5,10 +5,13 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
@@ -16,6 +19,7 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.MapCreationException;
+import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarArchive;
@@ -23,16 +27,31 @@ import tac.tar.TarIndex;
 import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
 
-public abstract class MapCreatorTrekBuddy extends MapCreator {
+public abstract class MapCreatorTrekBuddy extends AtlasCreator {
 
 	protected static final int COORD_KIND_LATTITUDE = 1;
 	protected static final int COORD_KIND_LONGITUDE = 2;
 
 	protected File mapFolder = null;
 
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+		super.startAtlasCreation(atlas);
+	}
+
+	public void finishAtlasCreation() {
+		switch (atlas.getOutputFormat()) {
+		case TaredAtlas:
+			createAtlasTarArchive("cr");
+			break;
+		case UntaredAtlas:
+			createAtlasTbaFile("cr");
+			break;
+		}
+	}
+
 	@Override
-	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super.initialize(map, tarTileIndex, atlasDir);
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
 		LayerInterface layer = map.getLayer();
 		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
 	}
@@ -64,7 +83,7 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 		double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize - 1, zoom);
 		double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize - 1, zoom);
 		double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
-		
+
 		int width = (xMax - xMin + 1) * tileSize;
 		int height = (yMax - yMin + 1) * tileSize;
 
@@ -244,6 +263,54 @@ public abstract class MapCreatorTrekBuddy extends MapCreator {
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");
 
 		return sbMap.toString();
+	}
+
+	/**
+	 * 
+	 * @param name
+	 */
+	public void createAtlasTarArchive(String name) {
+		log.trace("Creating cr.tar for atlas in dir \"" + atlasDir.getPath() + "\"");
+
+		File[] atlasLayerDirs = Utilities.listSubDirectories(atlasDir);
+		List<File> atlasMapDirs = new LinkedList<File>();
+		for (File dir : atlasLayerDirs)
+			Utilities.addSubDirectories(atlasMapDirs, dir, 0);
+
+		TarArchive ta = null;
+		File crFile = new File(atlasDir, name + ".tar");
+		try {
+			ta = new TarArchive(crFile, atlasDir);
+
+			ta.writeFileFromData(name + ".tba", "Atlas 1.0\r\n".getBytes());
+
+			for (File mapDir : atlasMapDirs) {
+				ta.writeFile(mapDir);
+				File mapFile = new File(mapDir, mapDir.getName() + ".map");
+				ta.writeFile(mapFile);
+				try {
+					mapFile.delete();
+				} catch (Exception e) {
+				}
+			}
+			ta.writeEndofArchive();
+		} catch (IOException e) {
+			log.error("Failed writing tar file \"" + crFile.getPath() + "\"", e);
+		} finally {
+			if (ta != null)
+				ta.close();
+		}
+	}
+
+	public void createAtlasTbaFile(String name) {
+		File crtba = new File(atlasDir.getAbsolutePath(), name + ".tba");
+		try {
+			FileWriter fw = new FileWriter(crtba);
+			fw.write("Atlas 1.0\r\n");
+			fw.close();
+		} catch (IOException e) {
+			log.error("", e);
+		}
 	}
 
 	private static String getDegMinFormat(double coord, int COORD_KIND) {

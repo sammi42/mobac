@@ -25,7 +25,7 @@ import tac.utilities.Utilities;
  * uses a separate directory for each used map source and inside one directory
  * for each zoom level.
  */
-public class MapCreatorMTE extends MapCreator {
+public class MapCreatorMTE extends AtlasCreator {
 
 	private File mapDir = null;
 	private File mapZoomDir = null;
@@ -40,9 +40,10 @@ public class MapCreatorMTE extends MapCreator {
 	}
 
 	@Override
-	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super.initialize(map, tarTileIndex, atlasDir);
-		mapDir = new File(atlasDir, map.getMapSource().getName());
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
+		String mapName = map.getMapSource().getName().replaceAll(" ", "_");
+		mapDir = new File(atlasDir, mapName);
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
 	}
 

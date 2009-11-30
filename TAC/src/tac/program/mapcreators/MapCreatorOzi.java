@@ -33,8 +33,8 @@ public class MapCreatorOzi extends MapCreatorTrekBuddy {
 	}
 
 	@Override
-	public void initialize(MapInterface map, TarIndex tarTileIndex, File atlasDir) {
-		super.initialize(map, tarTileIndex, atlasDir);
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
 		mapDir = new File(atlasDir, map.getLayer().getName());
 		mapName = map.getName();
 	}

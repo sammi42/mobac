@@ -31,6 +31,8 @@
  ! #2904937 and #2905182 1px map calibration bug
  + New map sources: Yandex Maps & Sat (Russia) 
  + New map source: Humbermedia Bavaria 
+ + New atlas format: Mobile Trail Explorer Cache (writes single MTECache file
+    per atlas)
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

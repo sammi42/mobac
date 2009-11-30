@@ -328,7 +328,7 @@ public class Utilities {
 	 */
 	public static byte[] getInputBytes(InputStream in) throws IOException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(in.available());
-		byte[] b = new byte[1024];
+		byte[] b = new byte[4096];
 		int read = 0;
 		read = in.read(b);
 		while (read >= 0) {

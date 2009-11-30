@@ -8,6 +8,7 @@ import tac.program.mapcreators.MapCreatorBigPlanet;
 import tac.program.mapcreators.MapCreatorGarminCustom;
 import tac.program.mapcreators.MapCreatorGlopus;
 import tac.program.mapcreators.MapCreatorMTE;
+import tac.program.mapcreators.MapCreatorMTECache;
 import tac.program.mapcreators.MapCreatorMaverick;
 import tac.program.mapcreators.MapCreatorOSMTracker;
 import tac.program.mapcreators.MapCreatorOzi;
@@ -19,6 +20,7 @@ public enum AtlasOutputFormat {
 	TaredAtlas("TrekBuddy tared atlas", MapCreatorTrekBuddyCustom.class), // 
 	UntaredAtlas("TrekBuddy untared atlas", MapCreatorTrekBuddyCustom.class), //
 	MTE("Mobile Trail Explorer", MapCreatorMTE.class), //
+	MTECache("Mobile Trail Explorer Cache", MapCreatorMTECache.class), //
 	AndNav("AndNav atlas format", MapCreatorAndNav.class), //
 	Maverick("Maverick atlas format", MapCreatorMaverick.class), //
 	OSMTracker("OSMTracker tile storage", MapCreatorOSMTracker.class), //

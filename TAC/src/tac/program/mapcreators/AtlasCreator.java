@@ -79,7 +79,7 @@ public abstract class AtlasCreator {
 		Utilities.mkDirs(atlasDir);
 	}
 
-	public void finishAtlasCreation() {
+	public void finishAtlasCreation() throws IOException {
 	}
 
 	/**

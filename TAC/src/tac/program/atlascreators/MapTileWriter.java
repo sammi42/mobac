@@ -1,4 +1,4 @@
-package tac.program.mapcreators;
+package tac.program.atlascreators;
 
 import java.io.IOException;
 

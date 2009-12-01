@@ -1,4 +1,4 @@
-package tac.program.mapcreators;
+package tac.program.atlascreators;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,9 @@ import tac.gui.AtlasProgress;
 import tac.mapsources.MultiLayerMapSource;
 import tac.program.AtlasThread;
 import tac.program.PauseResumeHandler;
+import tac.program.atlascreators.tileprovider.DownloadedTileProvider;
+import tac.program.atlascreators.tileprovider.MultiLayerTileProvider;
+import tac.program.atlascreators.tileprovider.TileProvider;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
@@ -105,7 +108,7 @@ public abstract class AtlasCreator {
 		this.tarTileIndex = tarTileIndex;
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
-		mapDlTileProvider = new MapDownloadedTileProcessor(tarTileIndex, mapSource);
+		mapDlTileProvider = new DownloadedTileProvider(tarTileIndex, mapSource);
 		if (map.getMapSource() instanceof MultiLayerMapSource)
 			mapDlTileProvider = new MultiLayerTileProvider(map.getMapSource(), mapDlTileProvider, 2);
 		Thread t = Thread.currentThread();

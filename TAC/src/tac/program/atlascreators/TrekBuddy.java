@@ -33,6 +33,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 	protected static final int COORD_KIND_LONGITUDE = 2;
 
 	protected File mapFolder = null;
+	protected MapTileWriter mapTileWriter;
 
 	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
 		super.startAtlasCreation(atlas);
@@ -132,6 +133,14 @@ public abstract class TrekBuddy extends AtlasCreator {
 			}
 			pixelValueX++;
 		}
+	}
+
+	public interface MapTileWriter {
+
+		public void writeTile(String tileFileName, byte[] tileData) throws IOException;
+
+		public void finalizeMap();
+
 	}
 
 	public class TarTileWriter implements MapTileWriter {

@@ -85,7 +85,6 @@ public class BigPlanetSql extends AtlasCreator {
 			throw new MapCreationException(SQLiteLoader.MSG_SQLITE_MISSING, e);
 		}
 		try {
-			mapTileWriter = null;
 			initializeDB();
 			createTiles();
 			conn.close();

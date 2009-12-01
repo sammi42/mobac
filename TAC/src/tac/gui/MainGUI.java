@@ -164,7 +164,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		// zoom slider
 		zoomSlider = new JSlider(JMapViewer.MIN_ZOOM, previewMap.getMapSource().getMaxZoom());
 		zoomSlider.setOrientation(JSlider.HORIZONTAL);
-		zoomSlider.setSize(20, zoomSlider.getPreferredSize().height);
+		zoomSlider.setMinimumSize(new Dimension(50, 10));
+		zoomSlider.setSize(50, zoomSlider.getPreferredSize().height);
 		zoomSlider.addChangeListener(new ZoomSliderListener());
 		zoomSlider.setOpaque(false);
 
@@ -337,16 +338,16 @@ public class MainGUI extends JFrame implements MapEventListener {
 		topControls.add(zoomSlider, GBC.std().insets(0, 5, 0, 0));
 		topControls.add(zoomLevelText, GBC.std().insets(0, 5, 0, 0));
 		topControls.add(gridZoomCombo, GBC.std().insets(10, 5, 0, 0));
-		topControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		topControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+		topControls.add(Box.createHorizontalGlue(), GBC.std().fillH());
 		topControls.add(helpButton, GBC.std().insets(10, 5, 5, 0));
 		mapControlPanel.add(topControls, BorderLayout.NORTH);
 
 		// bottom panel
-		JPanel bottomControls = new JPanel(new GridBagLayout());
-		bottomControls.setOpaque(false);
-		bottomControls.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		mapControlPanel.add(bottomControls, BorderLayout.SOUTH);
+		// JPanel bottomControls = new JPanel(new GridBagLayout());
+		// bottomControls.setOpaque(false);
+		// bottomControls.add(Box.createHorizontalGlue(),
+		// GBC.std().fill(GBC.HORIZONTAL));
+		// mapControlPanel.add(bottomControls, BorderLayout.SOUTH);
 
 		return mapControlPanel;
 	}

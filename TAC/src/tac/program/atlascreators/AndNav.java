@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import tac.program.interfaces.MapInterface;
@@ -33,8 +32,6 @@ public class AndNav extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 
@@ -60,7 +57,6 @@ public class AndNav extends AtlasCreator {
 
 		// This means there should not be any resizing of the tiles.
 		try {
-			mapTileWriter = new AndNavTileWriter();
 			createTiles();
 		} catch (InterruptedException e) {
 			// User has aborted process
@@ -86,28 +82,19 @@ public class AndNav extends AtlasCreator {
 				try {
 					String tileFileName = x + "/" + y + "." + tileType + additionalFileExt;
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null)
-						mapTileWriter.writeTile(tileFileName, sourceTileData);
+					if (sourceTileData != null) {
+						File f = new File(mapZoomDir, tileFileName);
+						FileOutputStream out = new FileOutputStream(f);
+						try {
+							out.write(sourceTileData);
+						} finally {
+							Utilities.closeStream(out);
+						}
+					}
 				} catch (IOException e) {
 					log.error("", e);
 				}
 			}
-		}
-	}
-
-	protected class AndNavTileWriter implements MapTileWriter {
-
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
-			File f = new File(mapZoomDir, tileFileName);
-			FileOutputStream out = new FileOutputStream(f);
-			try {
-				out.write(tileData);
-			} finally {
-				Utilities.closeStream(out);
-			}
-		}
-
-		public void finalizeMap() {
 		}
 	}
 

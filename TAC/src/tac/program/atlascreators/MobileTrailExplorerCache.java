@@ -1,9 +1,6 @@
 package tac.program.atlascreators;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,10 +14,11 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
+import tac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.MapInterface;
+import tac.program.model.TileImageFormat;
 import tac.tar.TarIndex;
 
 /**
@@ -35,13 +33,8 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	protected long lastTileOffset = 0;
 	protected Set<String> availableTileList = new HashSet<String>();
 
-	protected SimpleMTECacheTileWriter mteCacheWriter = null;
-
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
-
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 
@@ -66,11 +59,10 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 
 	public void createMap() throws MapCreationException {
 		try {
-			if ("png".equalsIgnoreCase(mapSource.getTileType()))
-				mteCacheWriter = new SimpleMTECacheTileWriter();
-			else
+			if (!"png".equalsIgnoreCase(mapSource.getTileType()))
 				// If the tile image format is not png we have to convert it
-				mteCacheWriter = new PngMTECacheTileWriter();
+				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider,
+						TileImageFormat.PNG);
 			createTiles();
 		} catch (InterruptedException e) {
 			// User has aborted process
@@ -91,7 +83,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 				try {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null)
-						mteCacheWriter.writeTile(mapName, sourceTileData, x, y, zoom);
+						writeTile(mapName, sourceTileData, x, y, zoom);
 				} catch (IOException e) {
 					log.error("", e);
 				}
@@ -99,59 +91,38 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 		}
 	}
 
-	/**
-	 * Simply writes the tileData to the specified file
-	 */
-	protected class SimpleMTECacheTileWriter {
+	protected boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom)
+			throws IOException {
+		String url = "not used";
+		String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
 
-		public boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom)
-				throws IOException {
-			String url = "not used";
-			String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
-
-			if (availableTileList.contains(cacheKey))
-				return false;
-
-			cacheOutStream.writeInt(x);
-			cacheOutStream.writeInt(y);
-			cacheOutStream.writeInt(zoom);
-
-			byte[] urlBytes = url.getBytes();
-			cacheOutStream.writeShort(urlBytes.length);
-			cacheOutStream.write(urlBytes);
-
-			byte[] keyBytes = cacheKey.getBytes();
-			cacheOutStream.writeShort(keyBytes.length);
-			cacheOutStream.write(keyBytes);
-			// Logger.debug(Long.toString(lastTileOffset));
-			cacheOutStream.writeLong(lastTileOffset);
-
-			lastTileOffset += 12 + // x, y and z
-					2 + urlBytes.length + // strings and their lengths
-					2 + keyBytes.length + 8 + // tile offset (long)
-					4 + // image byte array length (int)
-					tileData.length;
-
-			cacheOutStream.writeInt(tileData.length);
-			cacheOutStream.write(tileData);
-			return true;
+		if (availableTileList.contains(cacheKey)) {
+			log.warn("Map tile already in cache: " + cacheKey + " -> ignoring");
+			return false;
 		}
 
-	}
+		cacheOutStream.writeInt(x);
+		cacheOutStream.writeInt(y);
+		cacheOutStream.writeInt(zoom);
 
-	/**
-	 * Converts the image to be saved to png.
-	 */
-	protected class PngMTECacheTileWriter extends SimpleMTECacheTileWriter {
+		byte[] urlBytes = url.getBytes();
+		cacheOutStream.writeShort(urlBytes.length);
+		cacheOutStream.write(urlBytes);
 
-		@Override
-		public boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom)
-				throws IOException {
-			BufferedImage image = ImageIO.read(new ByteArrayInputStream(tileData));
-			ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
-			ImageIO.write(image, "png", buf);
-			return super.writeTile(cache, buf.toByteArray(), x, y, zoom);
-		}
+		byte[] keyBytes = cacheKey.getBytes();
+		cacheOutStream.writeShort(keyBytes.length);
+		cacheOutStream.write(keyBytes);
+		cacheOutStream.writeLong(lastTileOffset);
+
+		lastTileOffset += 12 + // x, y and z
+				2 + urlBytes.length + // strings and their lengths
+				2 + keyBytes.length + 8 + // tile offset (long)
+				4 + // image byte array length (int)
+				tileData.length;
+
+		cacheOutStream.writeInt(tileData.length);
+		cacheOutStream.write(tileData);
+		return true;
 	}
 
 }

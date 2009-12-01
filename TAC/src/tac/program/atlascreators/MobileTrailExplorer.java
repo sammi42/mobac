@@ -1,7 +1,5 @@
 package tac.program.atlascreators;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,9 +9,10 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
+import tac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import tac.program.interfaces.MapInterface;
+import tac.program.model.TileImageFormat;
 import tac.tar.TarIndex;
 import tac.utilities.Utilities;
 
@@ -34,8 +33,6 @@ public class MobileTrailExplorer extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 
@@ -55,11 +52,10 @@ public class MobileTrailExplorer extends AtlasCreator {
 			throw new MapCreationException(e1);
 		}
 		try {
-			if ("png".equalsIgnoreCase(mapSource.getTileType()))
-				mapTileWriter = new SimpleFileTileWriter();
-			else
+			if (!"png".equalsIgnoreCase(mapSource.getTileType()))
 				// If the tile image format is not png we have to convert it
-				mapTileWriter = new PngFileTileWriter();
+				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider,
+						TileImageFormat.PNG);
 			createTiles();
 		} catch (InterruptedException e) {
 			// User has aborted process
@@ -85,46 +81,19 @@ public class MobileTrailExplorer extends AtlasCreator {
 				try {
 					String tileFileName = x + "/" + y + ".png";
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null)
-						mapTileWriter.writeTile(tileFileName, sourceTileData);
+					if (sourceTileData != null) {
+						File f = new File(mapZoomDir, tileFileName);
+						FileOutputStream out = new FileOutputStream(f);
+						try {
+							out.write(sourceTileData);
+						} finally {
+							Utilities.closeStream(out);
+						}
+					}
 				} catch (IOException e) {
 					log.error("", e);
 				}
 			}
-		}
-	}
-
-	/**
-	 * Simply writes the tileData to the specified file
-	 */
-	protected class SimpleFileTileWriter implements MapTileWriter {
-
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
-			File f = new File(mapZoomDir, tileFileName);
-			FileOutputStream out = new FileOutputStream(f);
-			try {
-				out.write(tileData);
-			} finally {
-				Utilities.closeStream(out);
-			}
-		}
-
-		public void finalizeMap() {
-		}
-	}
-
-	/**
-	 * Converts the image to be saved to png.
-	 */
-	protected class PngFileTileWriter implements MapTileWriter {
-
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
-			BufferedImage image = ImageIO.read(new ByteArrayInputStream(tileData));
-			File f = new File(mapZoomDir, tileFileName);
-			ImageIO.write(image, "png", f);
-		}
-
-		public void finalizeMap() {
 		}
 	}
 

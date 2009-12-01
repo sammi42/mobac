@@ -31,7 +31,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.program.tiledatawriter.TileImageJpegDataWriter;
@@ -55,8 +54,6 @@ public class GarminCustom extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
@@ -102,19 +99,27 @@ public class GarminCustom extends AtlasCreator {
 		int mapWidth = (xMax - xMin + 1) * tileSize;
 		int mapHeight = (yMax - yMin + 1) * tileSize;
 
-		int imageWith = Math.min(1024, mapWidth);
-		int imageheight = Math.min(1024, mapHeight);
-
-		BufferedImage tileImage = new BufferedImage(imageWith, imageheight,
-				BufferedImage.TYPE_3BYTE_BGR);
+		int imageWidth = Math.min(1024, mapWidth);
+		int imageHeight = Math.min(1024, mapHeight);
 
 		int len = Math.max(mapWidth, mapHeight);
+		double scaleFactor = 1.0;
+		if (len > 1024) {
+			scaleFactor = 1024d / len;
+			if (imageWidth != imageHeight) {
+				// Map is not rectangle -> adapt height or width
+				if (imageWidth > imageHeight)
+					imageHeight = (int) (scaleFactor * mapHeight);
+				else
+					imageWidth = (int) (scaleFactor * mapWidth);
+			}
+		}
+		BufferedImage tileImage = new BufferedImage(imageWidth, imageHeight,
+				BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics = tileImage.createGraphics();
 		try {
-			if (len > 1024) {
-				double scaleFactor = 1024d / len;
+			if (len > 1024)
 				graphics.setTransform(AffineTransform.getScaleInstance(scaleFactor, scaleFactor));
-			}
 			int lineY = 0;
 			for (int y = yMin; y <= yMax; y++) {
 				int lineX = 0;

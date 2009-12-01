@@ -26,7 +26,7 @@ public class ConvertedRawTileProvider extends FilterTileProvider {
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
-		return getTileData(0, x, y);
+		return getTileData(x, y, 0);
 	}
 
 	public byte[] getTileData(int x, int y, int layer) throws IOException {

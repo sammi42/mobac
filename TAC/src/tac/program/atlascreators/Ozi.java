@@ -3,7 +3,6 @@ package tac.program.atlascreators;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
@@ -27,8 +25,6 @@ public class Ozi extends TrekBuddy {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
@@ -95,12 +91,9 @@ public class Ozi extends TrekBuddy {
 						checkUserAbort();
 						atlasProgress.incMapCreationProgress();
 						try {
-							byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-							if (sourceTileData != null) {
-								BufferedImage tile = ImageIO.read(new ByteArrayInputStream(
-										sourceTileData));
+							BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
+							if (tile != null)
 								graphics.drawImage(tile, lineX, 0, Color.WHITE, null);
-							}
 						} catch (IOException e) {
 							log.error("", e);
 						}

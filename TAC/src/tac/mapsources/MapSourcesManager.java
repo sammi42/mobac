@@ -42,6 +42,7 @@ import tac.mapsources.impl.OsmMapSources.CycleMap;
 import tac.mapsources.impl.OsmMapSources.Mapnik;
 import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import tac.mapsources.impl.OsmMapSources.OsmHikingMap;
+import tac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
 import tac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import tac.mapsources.impl.OsmMapSources.TilesAtHome;
 import tac.mapsources.impl.OsmMapSources.Turaterkep;
@@ -104,10 +105,9 @@ public class MapSourcesManager {
 		MAP_SOURCES = new MapSource[] { //
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
-				new GoogleMapsKorea(), new GoogleEarth(),  new GoogleHybrid(), 
-				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
-				new OsmHikingMap(),
-				/* new OsmHikingMapWithRelief(), */new OsmPublicTransport(), new OpenPisteMap(),
+				new GoogleMapsKorea(), new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(),
+				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
+				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(),
 				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
 				new MicrosoftHybrid(), new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),

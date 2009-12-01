@@ -63,7 +63,6 @@ public abstract class AtlasCreator {
 	protected TileImageParameters parameters;
 
 	protected TileProvider mapDlTileProvider;
-	protected MapTileWriter mapTileWriter;
 
 	protected AtlasProgress atlasProgress = null;
 

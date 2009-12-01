@@ -10,6 +10,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
+import tac.mapsources.MultiLayerMapSource;
 import tac.program.AtlasThread;
 import tac.program.PauseResumeHandler;
 import tac.program.interfaces.AtlasInterface;
@@ -58,7 +59,7 @@ public abstract class AtlasCreator {
 	protected int tileSize;
 	protected TileImageParameters parameters;
 
-	protected RawTileProvider mapDlTileProvider;
+	protected TileProvider mapDlTileProvider;
 	protected MapTileWriter mapTileWriter;
 
 	protected AtlasProgress atlasProgress = null;
@@ -105,6 +106,8 @@ public abstract class AtlasCreator {
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
 		mapDlTileProvider = new MapDownloadedTileProcessor(tarTileIndex, mapSource);
+		if (map.getMapSource() instanceof MultiLayerMapSource)
+			mapDlTileProvider = new MultiLayerTileProvider(map.getMapSource(), mapDlTileProvider, 2);
 		Thread t = Thread.currentThread();
 		if (!(t instanceof AtlasThread))
 			throw new RuntimeException("Calling thread must be AtlasThread!");

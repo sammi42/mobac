@@ -1,7 +1,6 @@
 package tac.program.mapcreators;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -11,18 +10,16 @@ import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.TileImageFormat;
 
 /**
- * Loads a tile from the underlying {@link RawTileProvider}, loads the tile to
+ * Loads a tile from the underlying {@link TileProvider}, loads the tile to
  * memory, converts it to the desired {@link TileImageFormat} and returns the
  * binary representation of the image in the specified format.
  */
-public class ConvertedRawTileProvider implements RawTileProvider {
-
-	private RawTileProvider tileProvider;
+public class ConvertedRawTileProvider extends FilterTileProvider {
 
 	private TileImageDataWriter writer;
 
-	public ConvertedRawTileProvider(RawTileProvider tileProvider, TileImageFormat tileImageFormat) {
-		this.tileProvider = tileProvider;
+	public ConvertedRawTileProvider(TileProvider tileProvider, TileImageFormat tileImageFormat) {
+		super(tileProvider);
 		writer = tileImageFormat.getDataWriter();
 		writer.initialize();
 		ImageIO.setUseCache(false);
@@ -32,11 +29,10 @@ public class ConvertedRawTileProvider implements RawTileProvider {
 		return getTileData(0, x, y);
 	}
 
-	public byte[] getTileData(int layer, int x, int y) throws IOException {
-		byte[] unconvertedTileData = tileProvider.getTileData(layer, x, y);
-		if (unconvertedTileData == null)
+	public byte[] getTileData(int x, int y, int layer) throws IOException {
+		RenderedImage image = getTileImage(x, y, layer);
+		if (image == null)
 			return null;
-		BufferedImage image = ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
 		writer.processImage(image, buffer);
 		return buffer.toByteArray();

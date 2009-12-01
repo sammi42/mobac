@@ -2,7 +2,6 @@ package tac.program.mapcreators;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
@@ -10,7 +9,6 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.AtlasOutputFormat;
@@ -30,8 +28,8 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
+		// if (mapSource instanceof MultiLayerMapSource)
+		// return false;
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
@@ -172,9 +170,11 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 			for (int y = yTileOffset; y < realHeight; y += tileSize) {
 				try {
 					BufferedImage orgTileImage = loadOriginalMapTile(xTile, yTile);
-					if (orgTileImage != null)
-						graphics.drawImage(orgTileImage, xTileOffset, yTileOffset, orgTileImage
-								.getWidth(), orgTileImage.getHeight(), null);
+					if (orgTileImage != null) {
+						int w = orgTileImage.getWidth();
+						int h = orgTileImage.getHeight();
+						graphics.drawImage(orgTileImage, xTileOffset, yTileOffset, w, h, null);
+					}
 				} catch (Exception e) {
 					log.error("Error while painting sub-tile", e);
 				}
@@ -195,9 +195,6 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 	private int cachePos = 0;
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		byte[] sourceTileData = mapDlTileProvider.getTileData(xTile, yTile);
-		if (sourceTileData == null)
-			return null;
 		for (CachedTile ct : cache) {
 			if (ct == null)
 				continue;
@@ -207,7 +204,9 @@ public class MapCreatorTrekBuddyCustom extends MapCreatorTrekBuddy {
 			}
 		}
 		// log.trace("cache miss");
-		BufferedImage image = ImageIO.read(new ByteArrayInputStream(sourceTileData));
+		BufferedImage image = mapDlTileProvider.getTileImage(xTile, yTile);
+		if (image == null)
+			return null;
 		cache[cachePos] = new CachedTile(image, xTile, yTile);
 		cachePos = (cachePos + 1) % cache.length;
 		return image;

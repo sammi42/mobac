@@ -23,6 +23,7 @@ import tac.Main;
 import tac.exceptions.MapSourcesUpdateException;
 import tac.mapsources.impl.LocalhostTestSource;
 import tac.mapsources.impl.Google.GoogleEarth;
+import tac.mapsources.impl.Google.GoogleHybrid;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMaps;
 import tac.mapsources.impl.Google.GoogleMapsChina;
@@ -103,7 +104,7 @@ public class MapSourcesManager {
 		MAP_SOURCES = new MapSource[] { //
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
-				new GoogleMapsKorea(), new GoogleEarth(), /* new GoogleHybrid(), */
+				new GoogleMapsKorea(), new GoogleEarth(),  new GoogleHybrid(), 
 				new GoogleTerrain(), new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(),
 				new OsmHikingMap(),
 				/* new OsmHikingMapWithRelief(), */new OsmPublicTransport(), new OpenPisteMap(),

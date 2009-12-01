@@ -49,7 +49,7 @@ public class TileDownLoader {
 
 		Settings s = Settings.getInstance();
 		String tileFileName = String.format(MapDownloadedTileProcessor.TILE_FILENAME_PATTERN,
-				layer, x, y, mapSource.getTileType());
+				layer, x, y);
 
 		TileStoreEntry tile = null;
 		if (s.tileStoreEnabled) {

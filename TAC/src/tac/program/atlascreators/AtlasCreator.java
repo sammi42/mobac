@@ -45,9 +45,21 @@ public abstract class AtlasCreator {
 
 	protected final Logger log;
 
+	/************************************************************/
+	/** atlas specific fields **/
+	/************************************************************/
+
 	protected AtlasInterface atlas;
 
 	protected File atlasDir;
+
+	protected AtlasProgress atlasProgress = null;
+
+	protected PauseResumeHandler pauseResumeHandler = null;
+
+	/************************************************************/
+	/** map specific fields **/
+	/************************************************************/
 
 	protected MapInterface map;
 	protected int xMin;
@@ -64,14 +76,16 @@ public abstract class AtlasCreator {
 
 	protected TileProvider mapDlTileProvider;
 
-	protected AtlasProgress atlasProgress = null;
-
-	protected PauseResumeHandler pauseResumeHandler = null;
-
-	public AtlasCreator() {
+	/**
+	 * Default constructor - initializes the logging environment
+	 */
+	protected AtlasCreator() {
 		log = Logger.getLogger(this.getClass());
 	};
 
+	/**
+	 * @see AtlasCreator
+	 */
 	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
 		this.atlas = atlas;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
@@ -82,18 +96,25 @@ public abstract class AtlasCreator {
 		Utilities.mkDirs(atlasDir);
 	}
 
+	/**
+	 * @see AtlasCreator
+	 */
 	public void finishAtlasCreation() throws IOException {
 	}
 
 	/**
-	 * Test if the {@link AtlasCreator} instance supportes the selected
+	 * Test if the {@link AtlasCreator} instance supports the selected
 	 * {@link MapSource}
 	 * 
 	 * @param mapSource
 	 * @return <code>true</code> if supported otherwise <code>false</code>
+	 * @see AtlasCreator
 	 */
 	public abstract boolean testMapSource(MapSource mapSource);
 
+	/**
+	 * @see AtlasCreator
+	 */
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		LayerInterface layer = map.getLayer();
 		this.map = map;
@@ -119,6 +140,19 @@ public abstract class AtlasCreator {
 	}
 
 	/**
+	 * @see AtlasCreator
+	 */
+	public abstract void createMap() throws MapCreationException;
+
+	/**
+	 * Usually called within {@link #createMap()}.
+	 * 
+	 * @throws InterruptedException
+	 * @throws MapCreationException
+	 */
+	protected abstract void createTiles() throws InterruptedException, MapCreationException;
+
+	/**
 	 * Checks if the user has aborted atlas creation and if <code>true</code> an
 	 * {@link InterruptedException} is thrown.
 	 * 
@@ -129,9 +163,5 @@ public abstract class AtlasCreator {
 			throw new InterruptedException();
 		pauseResumeHandler.pauseWait();
 	}
-
-	public abstract void createMap() throws MapCreationException;
-
-	protected abstract void createTiles() throws InterruptedException, MapCreationException;
 
 }

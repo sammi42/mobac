@@ -11,7 +11,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
 import tac.exceptions.UnrecoverableDownloadException;
-import tac.program.mapcreators.MapDownloadedTileProcessor;
+import tac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import tac.program.model.Settings;
 import tac.tar.TarIndexedArchive;
 import tac.tilestore.TileStore;
@@ -48,7 +48,7 @@ public class TileDownLoader {
 		// IOException("intentionally download error");
 
 		Settings s = Settings.getInstance();
-		String tileFileName = String.format(MapDownloadedTileProcessor.TILE_FILENAME_PATTERN,
+		String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN,
 				layer, x, y);
 
 		TileStoreEntry tile = null;

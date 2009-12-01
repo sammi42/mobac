@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import tac.program.mapcreators.AtlasCreator;
+import tac.program.atlascreators.AtlasCreator;
 import tac.utilities.Utilities;
 
 /**

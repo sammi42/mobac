@@ -2,32 +2,32 @@ package tac.program.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import tac.program.mapcreators.AtlasCreator;
-import tac.program.mapcreators.MapCreatorAndNav;
-import tac.program.mapcreators.MapCreatorBigPlanet;
-import tac.program.mapcreators.MapCreatorGarminCustom;
-import tac.program.mapcreators.MapCreatorGlopus;
-import tac.program.mapcreators.MapCreatorMTE;
-import tac.program.mapcreators.MapCreatorMTECache;
-import tac.program.mapcreators.MapCreatorMaverick;
-import tac.program.mapcreators.MapCreatorOSMTracker;
-import tac.program.mapcreators.MapCreatorOzi;
-import tac.program.mapcreators.MapCreatorTrekBuddyCustom;
+import tac.program.atlascreators.AtlasCreator;
+import tac.program.atlascreators.AndNav;
+import tac.program.atlascreators.BigPlanetSql;
+import tac.program.atlascreators.GarminCustom;
+import tac.program.atlascreators.Glopus;
+import tac.program.atlascreators.MobileTrailExplorer;
+import tac.program.atlascreators.MobileTrailExplorerCache;
+import tac.program.atlascreators.Maverick;
+import tac.program.atlascreators.OSMTracker;
+import tac.program.atlascreators.Ozi;
+import tac.program.atlascreators.TrekBuddyCustom;
 
 @XmlRootElement
 public enum AtlasOutputFormat {
 
-	TaredAtlas("TrekBuddy tared atlas", MapCreatorTrekBuddyCustom.class), // 
-	UntaredAtlas("TrekBuddy untared atlas", MapCreatorTrekBuddyCustom.class), //
-	MTE("Mobile Trail Explorer", MapCreatorMTE.class), //
-	MTECache("Mobile Trail Explorer Cache", MapCreatorMTECache.class), //
-	AndNav("AndNav atlas format", MapCreatorAndNav.class), //
-	Maverick("Maverick atlas format", MapCreatorMaverick.class), //
-	OSMTracker("OSMTracker tile storage", MapCreatorOSMTracker.class), //
-	BigPlanet("BigPlanet SQLite", MapCreatorBigPlanet.class), //
-	OziPng("OziExplorer (PNG & MAP)", MapCreatorOzi.class), //
-	Glopus("Glopus (PNG & KAL)", MapCreatorGlopus.class), // 
-	GarminCustom("Garmin Custom Map (KMZ)", MapCreatorGarminCustom.class);
+	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
+	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
+	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
+	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
+	AndNav("AndNav atlas format", AndNav.class), //
+	Maverick("Maverick atlas format", Maverick.class), //
+	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
+	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
+	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
+	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
+	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class);
 
 	private final String displayName;
 	private Class<? extends AtlasCreator> atlasCreatorClass;

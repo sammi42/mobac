@@ -701,6 +701,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	public void mapSourceChanged(MapSource newMapSource) {
+		calculateNrOfTilesToDownload();
 		if (newMapSource.equals(mapSourceCombo.getSelectedItem()))
 			return;
 		mapSourceCombo.setSelectedItem(newMapSource);
@@ -708,7 +709,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void setSelectionByEnteredCoordinates() {
 		coordinatesPanel.correctMinMax();
-		MapSelection ms = coordinatesPanel.getMapSelection(previewMap.getMapSource().getMapSpace());
+		MapSelection ms = coordinatesPanel.getMapSelection(previewMap.getMapSource());
 		if (ms.isAreaSelected()) {
 			mapSelectionMax = ms.getBottomRightPixelCoordinate();
 			mapSelectionMin = ms.getTopLeftPixelCoordinate();
@@ -721,8 +722,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private MapSelection getMapSelectionCoordinates() {
 		if (mapSelectionMax == null || mapSelectionMin == null)
 			return null;
-		return new MapSelection(previewMap.getMapSource().getMapSpace(), mapSelectionMax,
-				mapSelectionMin);
+		return new MapSelection(previewMap.getMapSource(), mapSelectionMax, mapSelectionMin);
 	}
 
 	private String validateInput() {

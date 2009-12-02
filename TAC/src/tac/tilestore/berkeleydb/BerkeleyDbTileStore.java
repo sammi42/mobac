@@ -40,7 +40,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	/**
 	 * Max count of tile stores opened
 	 */
-	private final int MAX_CONCURRENT_ENVIRONMENTS = 5;
+	private static final int MAX_CONCURRENT_ENVIRONMENTS = 5;
 
 	private EnvironmentConfig envConfig;
 

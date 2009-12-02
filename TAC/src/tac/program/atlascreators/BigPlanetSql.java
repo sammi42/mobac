@@ -16,7 +16,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
+import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.MapInterface;
+import tac.program.model.Settings;
 import tac.tar.TarIndex;
 import tac.utilities.jdbc.SQLiteLoader;
 
@@ -71,10 +73,15 @@ public class BigPlanetSql extends AtlasCreator {
 	}
 
 	@Override
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+		this.atlas = atlas;
+		atlasDir = Settings.getInstance().getAtlasOutputDirectory();
+	}
+
+	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		atlasDir.delete(); // We don't use the atlas directory
-		databaseFile = new File(atlasDir.getParent(), DATABASE_FILENAME).getAbsolutePath();
+		databaseFile = new File(atlasDir, DATABASE_FILENAME).getAbsolutePath();
 	}
 
 	@Override

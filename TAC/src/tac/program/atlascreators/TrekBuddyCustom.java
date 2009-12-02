@@ -13,11 +13,12 @@ import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.AtlasOutputFormat;
 import tac.utilities.MyMath;
+import tac.utilities.Utilities;
 
 /**
- * Extends the {@link TrekBuddy} so that custom tiles are written.
- * Custom tiles can have a size different of 255x255 pixels), a different color
- * depth and a different image type (jpg/png).
+ * Extends the {@link TrekBuddy} so that custom tiles are written. Custom tiles
+ * can have a size different of 255x255 pixels), a different color depth and a
+ * different image type (jpg/png).
  * 
  * @author r_x
  */
@@ -34,13 +35,13 @@ public class TrekBuddyCustom extends TrekBuddy {
 	}
 
 	public void createMap() throws MapCreationException {
-		mapFolder.mkdirs();
-
-		// write the .map file containing the calibration points
-		writeMapFile();
-
-		// This means there should not be any resizing of the tiles.
 		try {
+			Utilities.mkDirs(mapFolder);
+
+			// write the .map file containing the calibration points
+			writeMapFile();
+
+			// This means there should not be any resizing of the tiles.
 			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
 				mapTileWriter = new TarTileWriter();
 			else

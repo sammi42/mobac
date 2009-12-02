@@ -39,7 +39,7 @@ import tac.utilities.Utilities;
 public class Settings {
 
 	private static Logger log = Logger.getLogger(Settings.class);
-	private static Settings instance;
+	private static Settings instance = new Settings();
 
 	public static final File FILE = new File(getUserDir(), "settings.xml");
 
@@ -172,14 +172,7 @@ public class Settings {
 	}
 
 	public static Settings getInstance() {
-		if (instance != null)
-			return instance;
-		synchronized (Settings.class) {
-			if (instance == null) {
-				instance = new Settings();
-			}
-			return instance;
-		}
+		return instance;
 	}
 
 	public static void load() throws JAXBException {

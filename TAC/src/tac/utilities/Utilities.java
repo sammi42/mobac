@@ -283,28 +283,6 @@ public class Utilities {
 		}
 	}
 
-	/**
-	 * Deletes a directory including files and subdirectories.
-	 * 
-	 * @param path
-	 * @return
-	 */
-	public static boolean deleteDirectory(File path) {
-
-		if (path.isDirectory()) {
-			File[] files = path.listFiles();
-
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					deleteDirectory(files[i]);
-				} else {
-					files[i].delete();
-				}
-			}
-		}
-		return (path.delete());
-	}
-
 	public static byte[] getFileBytes(File file) throws IOException {
 		int size = (int) file.length();
 		byte[] buffer = new byte[size];

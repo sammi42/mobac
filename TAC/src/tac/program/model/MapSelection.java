@@ -3,8 +3,10 @@ package tac.program.model;
 import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import tac.mapsources.MultiLayerMapSource;
 import tac.program.interfaces.MapInterface;
 
 public class MapSelection {
@@ -14,6 +16,7 @@ public class MapSelection {
 	public static final int LON_MAX = 179;
 	public static final int LON_MIN = -179;
 
+	private final MapSource mapSource;
 	private final MapSpace mapSpace;
 	private final int mapSourceTileSize;
 	private final int zoom;
@@ -22,9 +25,10 @@ public class MapSelection {
 	private int maxTileCoordinate_x;
 	private int maxTileCoordinate_y;
 
-	public MapSelection(MapSpace mapSpace, EastNorthCoordinate max, EastNorthCoordinate min) {
+	public MapSelection(MapSource mapSource, EastNorthCoordinate max, EastNorthCoordinate min) {
 		super();
-		this.mapSpace = mapSpace;
+		this.mapSource = mapSource;
+		this.mapSpace = mapSource.getMapSpace();
 		mapSourceTileSize = this.mapSpace.getTileSize();
 		zoom = JMapViewer.MAX_ZOOM;
 		int x1 = mapSpace.cLonToX(min.lon, zoom);
@@ -35,30 +39,32 @@ public class MapSelection {
 	}
 
 	public MapSelection(MapInterface map) {
-		this(map.getMapSource().getMapSpace(), map.getMaxTileCoordinate(), map
-				.getMinTileCoordinate(), map.getZoom());
+		this(map.getMapSource(), map.getMaxTileCoordinate(), map.getMinTileCoordinate(), map
+				.getZoom());
 	}
 
 	/**
-	 * @param mapSpace
+	 * @param mapSource
 	 * @param p1
 	 *            tile coordinate
 	 * @param p2
 	 *            tile coordinate
 	 * @param zoom
 	 */
-	public MapSelection(MapSpace mapSpace, Point p1, Point p2, int zoom) {
+	public MapSelection(MapSource mapSource, Point p1, Point p2, int zoom) {
 		super();
-		this.mapSpace = mapSpace;
+		this.mapSource = mapSource;
+		this.mapSpace = mapSource.getMapSpace();
 		mapSourceTileSize = mapSpace.getTileSize();
 		this.zoom = zoom;
 		setCoordinates(p1.x, p2.x, p1.y, p2.y);
 	}
 
-	public MapSelection(MapSpace mapSpace, MercatorPixelCoordinate c1, MercatorPixelCoordinate c2) {
+	public MapSelection(MapSource mapSource, MercatorPixelCoordinate c1, MercatorPixelCoordinate c2) {
 		if (c1.getZoom() != c2.getZoom())
 			throw new RuntimeException("Different zoom levels - unsuported!");
-		this.mapSpace = mapSpace;
+		this.mapSource = mapSource;
+		this.mapSpace = mapSource.getMapSpace();
 		mapSourceTileSize = mapSpace.getTileSize();
 		this.zoom = c1.getZoom();
 		setCoordinates(c1.getX(), c2.getX(), c1.getY(), c2.getY());
@@ -194,7 +200,10 @@ public class MapSelection {
 		Point min = getTopLeftTileNumber(zoom);
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
-		return width * height;
+		long tileCount = width * height;
+		if (mapSource instanceof MultiLayerMapSource)
+			tileCount *= 2;
+		return tileCount;
 	}
 
 	public long[] calculateNrOfTilesEx(int zoom) {
@@ -202,7 +211,10 @@ public class MapSelection {
 		Point min = getTopLeftTileNumber(zoom);
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
-		return new long[] { width * height, width, height };
+		long tileCount = width * height;
+		if (mapSource instanceof MultiLayerMapSource)
+			tileCount *= 2;
+		return new long[] { tileCount, width, height };
 	}
 
 	@Override

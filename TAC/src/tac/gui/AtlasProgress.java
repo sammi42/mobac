@@ -444,9 +444,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			// If there is still at least one scheduled update request to be
 			// executed we don't have add another one as this can result in an
 			// to overloaded swing invocation queue.
-			if (scheduledCounter > 0)
-				return;
 			synchronized (this) {
+				if (scheduledCounter > 0)
+					return;
 				scheduledCounter++;
 			}
 			SwingUtilities.invokeLater(this);

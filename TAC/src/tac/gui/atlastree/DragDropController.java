@@ -24,11 +24,16 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.log4j.Logger;
+
 import tac.exceptions.InvalidNameException;
 import tac.program.interfaces.LayerInterface;
+import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasTreeModel;
 
 public class DragDropController {
+
+	static Logger log = Logger.getLogger(DragDropController.class);
 
 	public DragDropController(JAtlasTree atlasTree) {
 		super();
@@ -44,9 +49,6 @@ public class DragDropController {
 		final DragGestureRecognizer recognizer;
 		final DragSource source;
 
-		Transferable transferable;
-		TreeNode oldNode;
-
 		public AtlasDragSource() {
 			source = new DragSource();
 			recognizer = source.createDefaultDragGestureRecognizer(atlasTree,
@@ -55,14 +57,13 @@ public class DragDropController {
 
 		public void dragGestureRecognized(DragGestureEvent dge) {
 			TreePath path = atlasTree.getSelectionPath();
-			if ((path == null) || (path.getPathCount() <= 1)) {
+			if ((path == null) || (path.getPathCount() <= 1))
 				// We can't move the root node or an empty selection
 				return;
-			}
-			oldNode = (TreeNode) path.getLastPathComponent();
-			if (!(oldNode instanceof LayerInterface))
-				return; // Only layers can be dragged
-			transferable = new NodeTransferWrapper(oldNode);
+			TreeNode oldNode = (TreeNode) path.getLastPathComponent();
+			if (!(oldNode instanceof LayerInterface || oldNode instanceof MapInterface))
+				return;
+			Transferable transferable = new NodeTransferWrapper(oldNode);
 			source.startDrag(dge, DragSource.DefaultMoveNoDrop, transferable, this);
 		}
 
@@ -104,11 +105,23 @@ public class DragDropController {
 		}
 
 		public synchronized void dragOver(DropTargetDragEvent dtde) {
-			TreeNode node = getNodeForEvent(dtde);
-			if (node instanceof LayerInterface)
-				dtde.acceptDrag(dtde.getDropAction());
-			else
+			try {
+				Transferable t = dtde.getTransferable();
+				Object o = t.getTransferData(NodeTransferWrapper.ATLAS_OBJECT_FLAVOR);
+				TreeNode node = getNodeForEvent(dtde);
+				if (o instanceof LayerInterface && node instanceof LayerInterface) {
+					dtde.acceptDrag(dtde.getDropAction());
+					return;
+				}
+				if (o instanceof MapInterface && node instanceof LayerInterface
+						|| node instanceof MapInterface) {
+					dtde.acceptDrag(dtde.getDropAction());
+					return;
+				}
 				dtde.rejectDrag();
+			} catch (Exception e) {
+				log.error("", e);
+			}
 		}
 
 		public void dropActionChanged(DropTargetDragEvent dtde) {
@@ -117,7 +130,7 @@ public class DragDropController {
 		public synchronized void drop(DropTargetDropEvent dtde) {
 			try {
 				TreeNode sourceNode = (TreeNode) dtde.getTransferable().getTransferData(
-						NodeTransferWrapper.FLAVOR);
+						NodeTransferWrapper.ATLAS_OBJECT_FLAVOR);
 
 				Point pt = dtde.getLocation();
 				DropTargetContext dtc = dtde.getDropTargetContext();
@@ -129,26 +142,47 @@ public class DragDropController {
 					dtde.rejectDrop();
 					return;
 				}
-				LayerInterface sourceLayer = (LayerInterface) sourceNode;
-				LayerInterface targetLayer = (LayerInterface) targetNode;
-				int answer = JOptionPane.showConfirmDialog(null,
-						"Are you sure you want to merge the maps of layer\n" + "\""
-								+ sourceLayer.getName() + "\" into layer " + "\""
-								+ targetLayer.getName() + "\"?", "Confirm layer merging",
-						JOptionPane.YES_NO_OPTION);
-				if (answer == JOptionPane.YES_OPTION) {
-					try {
-						((AtlasTreeModel) atlasTree.getModel()).mergeLayers(sourceLayer,
-								targetLayer);
-					} catch (InvalidNameException e) {
-						JOptionPane.showMessageDialog(null, e.getMessage(), "Layer merging failed",
-								JOptionPane.ERROR_MESSAGE);
-						throw e;
-					}
-				}
+				AtlasTreeModel atlasTreeModel = (AtlasTreeModel) atlasTree.getModel();
+				if (sourceNode instanceof LayerInterface && targetNode instanceof LayerInterface)
+					mergeLayers(atlasTreeModel, (LayerInterface) sourceNode,
+							(LayerInterface) targetNode);
+
+				if (targetNode instanceof MapInterface)
+					// We can not make a map child of another map
+					// -> use it's layer instead
+					targetNode = targetNode.getParent();
+
+				if (sourceNode instanceof MapInterface && targetNode instanceof LayerInterface)
+					moveMap(atlasTreeModel, (MapInterface) sourceNode, (LayerInterface) targetNode);
+
 			} catch (Exception e) {
+				log.error("", e);
+				atlasTree.getTreeModel().notifyStructureChanged();
 				dtde.rejectDrop();
 			}
+		}
+
+		protected void mergeLayers(AtlasTreeModel atlasTreeModel, LayerInterface sourceLayer,
+				LayerInterface targetLayer) throws InvalidNameException {
+			int answer = JOptionPane.showConfirmDialog(null,
+					"Are you sure you want to merge the maps of layer\n" + "\""
+							+ sourceLayer.getName() + "\" into layer " + "\""
+							+ targetLayer.getName() + "\"?", "Confirm layer merging",
+					JOptionPane.YES_NO_OPTION);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+			try {
+				atlasTreeModel.mergeLayers(sourceLayer, targetLayer);
+			} catch (InvalidNameException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Layer merging failed",
+						JOptionPane.ERROR_MESSAGE);
+				throw e;
+			}
+		}
+
+		protected void moveMap(AtlasTreeModel atlasTreeModel, MapInterface map,
+				LayerInterface targetLayer) throws InvalidNameException {
+			atlasTreeModel.moveMap(map, targetLayer);
 		}
 
 		private TreeNode getNodeForEvent(DropTargetDragEvent dtde) {

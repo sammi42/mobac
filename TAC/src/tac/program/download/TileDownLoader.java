@@ -20,6 +20,8 @@ import tac.utilities.Utilities;
 
 public class TileDownLoader {
 
+	public static String ACCEPT = "text/html, image/png, image/jpeg, image/gif, */*;q=0.1";
+
 	static {
 		System.setProperty("http.maxConnections", "15");
 	}
@@ -110,6 +112,7 @@ public class TileDownLoader {
 		Settings s = Settings.getInstance();
 		huc.setConnectTimeout(1000 * s.connectionTimeout);
 		huc.addRequestProperty("User-agent", s.getUserAgent());
+		huc.setRequestProperty("Accept", ACCEPT);
 		huc.connect();
 
 		int code = huc.getResponseCode();
@@ -190,6 +193,7 @@ public class TileDownLoader {
 		Settings s = Settings.getInstance();
 		conn.setConnectTimeout(1000 * s.connectionTimeout);
 		conn.addRequestProperty("User-agent", s.getUserAgent());
+		conn.setRequestProperty("Accept", ACCEPT);
 		conn.connect();
 
 		int code = conn.getResponseCode();
@@ -270,10 +274,11 @@ public class TileDownLoader {
 					+ "tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
-		HttpURLConnection urlConn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
+		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
 				tile.getY());
-		urlConn.setRequestMethod("HEAD");
-		long newLastModified = urlConn.getLastModified();
+		conn.setRequestMethod("HEAD");
+		conn.setRequestProperty("Accept", ACCEPT);
+		long newLastModified = conn.getLastModified();
 		if (newLastModified == 0)
 			return true;
 		return (newLastModified > oldLastModified);
@@ -287,10 +292,11 @@ public class TileDownLoader {
 					+ "tile in tilestore does not contain ETag attribute");
 			return true;
 		}
-		HttpURLConnection urlConn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
+		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
 				tile.getY());
-		urlConn.setRequestMethod("HEAD");
-		String onlineETag = urlConn.getHeaderField("ETag");
+		conn.setRequestMethod("HEAD");
+		conn.setRequestProperty("Accept", ACCEPT);
+		String onlineETag = conn.getHeaderField("ETag");
 		if (onlineETag == null || onlineETag.length() == 0)
 			return true;
 		return (onlineETag.equals(eTag));

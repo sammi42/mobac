@@ -11,8 +11,8 @@ import tac.program.interfaces.AtlasObject;
 
 public class NodeTransferWrapper implements Transferable {
 
-	public static final DataFlavor FLAVOR = new DataFlavor(AtlasObject.class, "AtlasObject");
-	public static final DataFlavor[] FLAVORS = new DataFlavor[] { FLAVOR };
+	public static final DataFlavor ATLAS_OBJECT_FLAVOR = new DataFlavor(AtlasObject.class, "AtlasObject");
+	public static final DataFlavor[] FLAVORS = new DataFlavor[] { ATLAS_OBJECT_FLAVOR };
 
 	private TreeNode node;
 
@@ -21,7 +21,7 @@ public class NodeTransferWrapper implements Transferable {
 	}
 
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		if (!FLAVOR.equals(flavor))
+		if (!ATLAS_OBJECT_FLAVOR.equals(flavor))
 			throw new UnsupportedFlavorException(flavor);
 		return node;
 	}
@@ -31,7 +31,7 @@ public class NodeTransferWrapper implements Transferable {
 	}
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		return FLAVOR.equals(flavor);
+		return ATLAS_OBJECT_FLAVOR.equals(flavor);
 	}
 
 }

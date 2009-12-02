@@ -22,8 +22,6 @@ public class OsmTileLoader implements TileLoaderJobCreator {
 
 	private static final Logger log = Logger.getLogger(OsmTileLoader.class);
 
-	public static String ACCEPT = "text/html, image/png, image/jpeg, image/gif, */*";
-
 	protected TileLoaderListener listener;
 
 	public OsmTileLoader(TileLoaderListener listener) {

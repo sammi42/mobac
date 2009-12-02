@@ -57,22 +57,17 @@ public class AtlasTreeModel implements TreeModel {
 	 * @param node
 	 */
 	public void notifyNodeDelete(TreeNode node) {
+		TreeNode parent = node.getParent();
 		Object[] children = new Object[] { node };
-		int[] childrenIdx = new int[] { node.getParent().getIndex(node) };
-		if (childrenIdx[0] == -1) {
+		int childrenIdx = parent.getIndex(node);
+		if (childrenIdx == -1) {
 			// A problem detected - use fall back solution
 			notifyStructureChanged();
 			return;
 		}
+		TreePath path = getNodePath(parent);
 
-		TreeNode n = node;
-		LinkedList<TreeNode> path = new LinkedList<TreeNode>();
-		n = n.getParent();
-		while (n != null) {
-			path.addFirst(n);
-			n = n.getParent();
-		}
-		TreeModelEvent event = new TreeModelEvent(this, path.toArray(), childrenIdx, children);
+		TreeModelEvent event = new TreeModelEvent(this, path, new int[] { childrenIdx }, children);
 		for (TreeModelListener l : listeners)
 			l.treeNodesRemoved(event);
 	}
@@ -82,24 +77,37 @@ public class AtlasTreeModel implements TreeModel {
 			l.treeStructureChanged(event);
 	}
 
+	protected void notifyNodeInsert(TreeNode insertedNode) {
+		TreeNode parent = insertedNode.getParent();
+		TreePath path = getNodePath(parent);
+		TreeNode[] childs = new TreeNode[] { insertedNode };
+		int childId = parent.getIndex(insertedNode);
+		assert (childId <= 0);
+		TreeModelEvent event = new TreeModelEvent(this, path, new int[] { childId }, childs);
+		for (TreeModelListener l : listeners)
+			l.treeNodesInserted(event);
+	}
+
+	public TreePath getNodePath(TreeNode node) {
+		LinkedList<TreeNode> path = new LinkedList<TreeNode>();
+		TreeNode n = node;
+		while (n != null) {
+			path.addFirst(n);
+			n = n.getParent();
+		}
+		return new TreePath(path.toArray());
+	}
+
 	public Object getChild(Object parent, int index) {
-		if (parent instanceof AtlasInterface)
-			return ((AtlasInterface) parent).getLayer(index);
-		if (parent instanceof LayerInterface)
-			return ((LayerInterface) parent).getMap(index);
-		return null;
+		return ((TreeNode) parent).getChildAt(index);
 	}
 
 	public int getChildCount(Object parent) {
-		if (parent instanceof AtlasInterface)
-			return ((AtlasInterface) parent).getLayerCount();
-		if (parent instanceof LayerInterface)
-			return ((LayerInterface) parent).getMapCount();
-		return 0;
+		return ((TreeNode) parent).getChildCount();
 	}
 
 	public int getIndexOfChild(Object parent, Object child) {
-		return 0;
+		return ((TreeNode) parent).getIndex((TreeNode) child);
 	}
 
 	public Object getRoot() {
@@ -107,9 +115,7 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public boolean isLeaf(Object node) {
-		if (node instanceof MapInterface)
-			return true;
-		return false;
+		return ((TreeNode) node).isLeaf();
 	}
 
 	public void valueForPathChanged(TreePath path, Object newValue) {
@@ -165,6 +171,13 @@ public class AtlasTreeModel implements TreeModel {
 		}
 		notifyNodeDelete((TreeNode) source);
 		notifyStructureChanged((TreeNode) target);
+	}
+
+	public void moveMap(MapInterface map, LayerInterface targetLayer) {
+		notifyNodeDelete((TreeNode) map);
+		map.delete();
+		targetLayer.addMap(map);
+		notifyNodeInsert((TreeNode) map);
 	}
 
 	public AtlasInterface getAtlas() {

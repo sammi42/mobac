@@ -29,7 +29,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesManager.loadMapSourceProperties();
-		testMapSource(RegionalMapSources.HubermediaBavaria.class, Cities.MUNICH);
+		testMapSource(RegionalMapSources.StatkartToporaster2.class, Cities.OSLO);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

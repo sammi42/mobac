@@ -342,4 +342,94 @@ public class RegionalMapSources {
 		}
 	}
 
+	/**
+	 * 
+	 * http://www.statkart.no/
+	 * 
+	 * <p>
+	 * There is a limit of 10 000 cache-tiler per end user (unique IP address)
+	 * per day. This restriction is therefore not associated with the individual
+	 * application.
+	 * </p>
+	 * 
+	 * <table border="1">
+	 * <tr>
+	 * <th>Service Name</th>
+	 * <th>Underlying WMS service</th>
+	 * <th>Teams from WMS</th>
+	 * <th>Maximum zoom level</th>
+	 * </tr>
+	 * <tr>
+	 * <td>kartdata2</td>
+	 * <td>Kartdata2 WMS</td>
+	 * <td>all</td>
+	 * <td>12</td>
+	 * </tr>
+	 * <tr>
+	 * <td>sjo_hovedkart2</td>
+	 * <td>See chart master map series 2 WMS</td>
+	 * <td>all</td>
+	 * <td>17</td>
+	 * </tr>
+	 * <tr>
+	 * <td>topo2</td>
+	 * <td>Norway Topographic map 2 WMS</td>
+	 * <td>all</td>
+	 * <td>17
+	 * <tr>
+	 * <td>topo2graatone</td>
+	 * <td>Norway Topographic map 2 grayscale WMS</td>
+	 * <td>all</td>
+	 * <td>17</td>
+	 * </tr>
+	 * <tr>
+	 * <td>toporaster2</td>
+	 * <td>Topographic raster map 2 WMS</td>
+	 * <td>all</td>
+	 * <td>17</td>
+	 * </tr>
+	 * <tr>
+	 * <td>Europe</td>
+	 * <td>Europe Map WMS</td>
+	 * <td>all</td>
+	 * <td>17</td>
+	 * </tr>
+	 * </table> {@link http
+	 * ://www.statkart.no/?module=Articles;action=Article.publicShow;ID=14165}
+	 */
+	public static class StatkartTopo2 extends AbstractMapSource {
+
+		final String service;
+
+		public StatkartTopo2() {
+			this("topo2", "Statkart Topo 2", 0, 17, "png", TileUpdate.None);
+		}
+
+		public StatkartTopo2(String service, String name, int minZoom, int maxZoom,
+				String tileType, TileUpdate tileUpdate) {
+			super(name, minZoom, maxZoom, tileType, tileUpdate);
+			this.service = service;
+		}
+
+		@Override
+		public String toString() {
+			return getName() + " (Norway)";
+		}
+
+		@Override
+		protected String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=" + service
+					+ "&zoom=" + zoom + "&x=" + tilex + "&y=" + tiley;
+		}
+
+	}
+
+	public static class StatkartToporaster2 extends StatkartTopo2 {
+
+		public StatkartToporaster2() {
+			super("toporaster2", "Statkart Toporaster 2", 0, 17, "png", TileUpdate.None);
+		}
+
+	}
+
 }

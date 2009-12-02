@@ -58,6 +58,8 @@ import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
+import tac.mapsources.impl.RegionalMapSources.StatkartTopo2;
+import tac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import tac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import tac.mapsources.impl.WmsSources.TerraserverUSA;
 import tac.program.model.Settings;
@@ -115,7 +117,7 @@ public class MapSourcesManager {
 				new UmpWawPl(), new DoCeluPL(), new EmapaPl(), new AustrianMap(),
 				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
-				new HubermediaBavaria() };
+				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

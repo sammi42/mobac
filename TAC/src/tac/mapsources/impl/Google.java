@@ -132,6 +132,11 @@ public class Google {
 		}
 
 		@Override
+		public String getName() {
+			return "Google Hybrid";
+		}
+
+		@Override
 		public String toString() {
 			return "Google Hybrid";
 		}

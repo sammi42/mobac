@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
+import tac.mapsources.MultiLayerMapSource;
 import tac.program.jaxb.MapSourceAdapter;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
@@ -109,4 +110,15 @@ public interface MapSource {
 	public boolean allowFileStore();
 
 	public MapSpace getMapSpace();
+
+	/**
+	 * Returns the tile store name. Usually this is identically to
+	 * {@link #getName()} - only for {@link MultiLayerMapSource} this is usually
+	 * a different name as the name refers to both layers and the store name
+	 * only to the current overlay.
+	 * 
+	 * @return store name used for identifying the tile store on disk (offline
+	 *         cache)
+	 */
+	public String getStoreName();
 }

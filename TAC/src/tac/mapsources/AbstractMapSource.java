@@ -55,6 +55,10 @@ public abstract class AbstractMapSource implements MapSource {
 		return name;
 	}
 
+	public String getStoreName() {
+		return name;
+	}
+
 	@Override
 	public String toString() {
 		return name;

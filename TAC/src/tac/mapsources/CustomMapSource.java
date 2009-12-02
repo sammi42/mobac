@@ -58,6 +58,10 @@ public class CustomMapSource implements MapSource {
 		return name;
 	}
 
+	public String getStoreName() {
+		return name;
+	}
+
 	public String getTileType() {
 		return tileType;
 	}

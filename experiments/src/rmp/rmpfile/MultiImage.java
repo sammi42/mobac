@@ -141,7 +141,7 @@ public class MultiImage implements CalibratedImage {
 
 		/* --- Free resources if we have more then max images loaded --- */
 		while (this.lastImages.size() > this.activeImageMax) {
-			((CalibratedImage2) this.lastImages.remove(0)).releaseResources();
+			this.lastImages.remove(0);
 		}
 
 		return result;

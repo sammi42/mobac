@@ -1,5 +1,6 @@
 package rmp;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -16,8 +17,10 @@ import rmp.rmpfile.entries.Bmp4bit;
 import rmp.rmpfile.entries.RmpIni;
 import rmp.rmpmaker.TacTile;
 import tac.exceptions.MapCreationException;
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.atlascreators.AtlasCreator;
 import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.tar.TarIndex;
 
@@ -27,12 +30,24 @@ public class MagellanRmp extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		return true;
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 
 	@Override
 	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
 		super.startAtlasCreation(atlas);
+		int mapCount = 0;
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				mapCount++;
+				Point max = map.getMaxTileCoordinate();
+				Point min = map.getMinTileCoordinate();
+				if (max.x - min.x > 18000 || max.y - min.y > 18000)
+					throw new IOException("Map too large. Max size 18000x18000");
+			}
+		}
+		if (mapCount > 5)
+			throw new IOException("Too many maps in atlas. Max map count = 5");
 	}
 
 	@Override

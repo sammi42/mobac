@@ -8,7 +8,6 @@ package rmp.rmpfile.entries;
 
 import rmp.interfaces.RmpFileEntry;
 
-
 /**
  * General class for storing the content of a rmp file
  * 
@@ -38,7 +37,7 @@ public class GeneralRmpFileEntry implements RmpFileEntry {
 
 	@Override
 	public String toString() {
-		return "GeneralRmpFileEntry [content-len=" + content.length + ", " + filename + "."
-				+ extension + "]";
+		return "GeneralRmpFileEntry \"" + filename + "." + extension + "\" content-len="
+				+ content.length;
 	}
 }

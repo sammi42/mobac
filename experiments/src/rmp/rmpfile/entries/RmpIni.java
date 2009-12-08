@@ -61,7 +61,7 @@ public class RmpIni implements RmpFileEntry {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " " + getFileName() + "." + getFileExtension();
+		return this.getClass().getSimpleName() + " size=" + rmpIni.length;
 	}
 
 }

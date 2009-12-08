@@ -88,7 +88,11 @@ public class TacTile implements CalibratedImage2 {
 		imageBuffer = new BufferedImage(src_image.getWidth(), src_image.getHeight(),
 				BufferedImage.TYPE_INT_RGB);
 		graphics = imageBuffer.createGraphics();
-		graphics.drawImage(src_image, 0, 0, null);
+		try {
+			graphics.drawImage(src_image, 0, 0, null);
+		} finally {
+			graphics.dispose();
+		}
 		src_graph = imageBuffer.getRaster();
 
 		/*
@@ -133,10 +137,6 @@ public class TacTile implements CalibratedImage2 {
 				dst_graph.setPixel(x, y, pixel);
 			}
 		}
-	}
-
-	public void releaseResources() {
-		image = null;
 	}
 
 	public BoundingRect getBoundingRect() {

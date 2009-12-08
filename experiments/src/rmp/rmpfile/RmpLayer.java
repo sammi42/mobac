@@ -8,7 +8,6 @@ package rmp.rmpfile;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +20,7 @@ import rmp.interfaces.CalibratedImage;
 import rmp.interfaces.RmpFileEntry;
 import rmp.rmpfile.entries.GeneralRmpFileEntry;
 import rmp.rmpmaker.BoundingRect;
+import tac.utilities.Utilities;
 
 /**
  * Class for building a TLM file from image and writing the file to a stream
@@ -145,13 +145,13 @@ public class RmpLayer {
 	 *            image
 	 */
 	private void addImage(int x, int y, BufferedImage image) {
-		log.debug(String.format("addImage(x%d,y%d,w%d,h%d)", x, y, image.getWidth(), image
+		log.trace(String.format("addImage(x%d,y%d,w%d,h%d)", x, y, image.getWidth(), image
 				.getHeight()));
 		ByteArrayOutputStream bos;
 		Tiledata tld;
 
 		/* --- Convert to the image to JPG file format --- */
-		bos = new ByteArrayOutputStream();
+		bos = new ByteArrayOutputStream(8192);
 		try {
 			ImageIO.write(image, "jpg", bos);
 		} catch (IOException e) {
@@ -160,13 +160,12 @@ public class RmpLayer {
 
 		/* --- Create tiledata --- */
 		byte[] data = bos.toByteArray();
-		FileOutputStream fo;
+
 		try {
-			fo = new FileOutputStream(String.format("E:/TritonMap/jpg/%d_%d.jpg", x, y));
-			fo.write(data);
-			fo.close();
+			// TODO: Remove
+			Utilities.saveBytes(String.format("E:/TritonMap/jpg/%d_%d.jpg", x, y), data);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("", e);
 		}
 		tld = new Tiledata();
 		tld.jpegFile = data;

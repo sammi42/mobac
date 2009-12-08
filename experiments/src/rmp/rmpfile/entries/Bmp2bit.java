@@ -1,5 +1,7 @@
 package rmp.rmpfile.entries;
 
+import rmp.interfaces.RmpFileEntry;
+
 
 public class Bmp2bit implements RmpFileEntry {
 	private static final byte[] content = { 73, 99, 111, 110, 32, 102, 105, 108, 101, 32, 118, 101,

@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
+import rmp.interfaces.CalibratedImage;
+import rmp.interfaces.CalibratedImage2;
 import rmp.rmpmaker.BoundingRect;
-import rmp.rmpmaker.CalibratedImage;
-import rmp.rmpmaker.CalibratedImage2;
 
 /**
  * CalibratedImage that gets its data from a set of other CalibratedImage2

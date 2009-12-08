@@ -4,7 +4,7 @@
  *
  * ********************************************* */
 
-package rmp.rmpfile.entries;
+package rmp.interfaces;
 
 /**
  * Interface for all files that are stored in a RMP file

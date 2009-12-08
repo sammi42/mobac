@@ -6,6 +6,8 @@
 
 package rmp.rmpfile.entries;
 
+import rmp.interfaces.RmpFileEntry;
+
 
 /**
  * General class for storing the content of a rmp file

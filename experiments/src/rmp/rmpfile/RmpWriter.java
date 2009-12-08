@@ -13,21 +13,21 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import rmp.rmpfile.entries.RmpFileEntry;
+import rmp.interfaces.RmpFileEntry;
 
 /**
  * Class that writes files in RMP archive format
  * 
  */
-public class RmpPacker {
-	private static final Logger log = Logger.getLogger(RmpPacker.class);
+public class RmpWriter {
+	private static final Logger log = Logger.getLogger(RmpWriter.class);
 
 	private ArrayList<RmpFileEntry> entries;
 
 	/**
 	 * Constructor
 	 */
-	public RmpPacker() {
+	public RmpWriter() {
 		entries = new ArrayList<RmpFileEntry>();
 	}
 
@@ -58,8 +58,8 @@ public class RmpPacker {
 		ChecksumOutputStream co = new ChecksumOutputStream(fo);
 
 		/* --- Write header with number of files --- */
-		Tools.writeValue(co, entries.size(), 4);
-		Tools.writeValue(co, entries.size(), 4);
+		RmpTools.writeValue(co, entries.size(), 4);
+		RmpTools.writeValue(co, entries.size(), 4);
 
 		/* --- Write the directory --- */
 		offset = entries.size() * 24 + 40;
@@ -68,10 +68,10 @@ public class RmpPacker {
 
 			log.trace("Entry: " + rmpEntry);
 			/* --- Write directory entry --- */
-			Tools.writeFixedString(co, rmpEntry.getFileName(), 9);
-			Tools.writeFixedString(co, rmpEntry.getFileExtension(), 7);
-			Tools.writeValue(co, offset, 4);
-			Tools.writeValue(co, rmpEntry.getFileContent().length, 4);
+			RmpTools.writeFixedString(co, rmpEntry.getFileName(), 9);
+			RmpTools.writeFixedString(co, rmpEntry.getFileExtension(), 7);
+			RmpTools.writeValue(co, offset, 4);
+			RmpTools.writeValue(co, rmpEntry.getFileContent().length, 4);
 
 			/* --- Calculate offset of next file. File length is always even --- */
 			offset += rmpEntry.getFileContent().length;
@@ -85,7 +85,7 @@ public class RmpPacker {
 		co = new ChecksumOutputStream(fo);
 
 		/* --- Write the directory-end marker --- */
-		Tools.writeFixedString(co, "MAGELLAN", 30);
+		RmpTools.writeFixedString(co, "MAGELLAN", 30);
 
 		/* --- Write the files --- */
 		for (RmpFileEntry file : entries) {
@@ -96,7 +96,7 @@ public class RmpPacker {
 		}
 
 		/* --- Write the trailer --- */
-		Tools.writeFixedString(co, "MAGELLAN", 8);
+		RmpTools.writeFixedString(co, "MAGELLAN", 8);
 
 		/* --- Write checksum --- */
 		co.writeChecksum();

@@ -11,7 +11,8 @@ import java.io.PrintStream;
 
 import org.apache.log4j.Logger;
 
-import rmp.rmpmaker.ImageProcessor;
+import rmp.interfaces.RmpFileEntry;
+import rmp.rmpfile.RmpTools;
 
 /**
  * Instance of the rmp.ini file
@@ -37,7 +38,7 @@ public class RmpIni implements RmpFileEntry {
 		ps.print("[T_Layers]\r\n");
 
 		for (i = 0; i < count; i++) {
-			String layerName = ImageProcessor.buildTileName(layername, i);
+			String layerName = RmpTools.buildTileName(layername, i);
 			log.trace("layer name: " + layerName);
 			ps.print(i + "=" + layerName + "\r\n");
 		}

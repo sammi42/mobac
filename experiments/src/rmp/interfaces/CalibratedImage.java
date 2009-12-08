@@ -4,9 +4,11 @@
  *
  * ********************************************* */
 
-package rmp.rmpmaker;
+package rmp.interfaces;
 
 import java.awt.image.BufferedImage;
+
+import rmp.rmpmaker.BoundingRect;
 
 /**
  * Interface for Calibrated Images

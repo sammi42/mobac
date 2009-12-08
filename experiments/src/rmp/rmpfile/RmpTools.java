@@ -8,10 +8,11 @@ package rmp.rmpfile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Tools {
+public class RmpTools {
 
 	/**
 	 * Copies the given value into the stream as binary value, with least
@@ -35,7 +36,7 @@ public class Tools {
 	}
 
 	/**
-	 * Writes the given string into the stream. The strign is written with a
+	 * Writes the given string into the stream. The string is written with a
 	 * fixed length. If the length is longer than the string, then 00 bytes are
 	 * written
 	 * 
@@ -94,5 +95,46 @@ public class Tools {
 
 		/* --- Write result into output stream --- */
 		os.write(b);
+	}
+
+	/**
+	 * Build an image name from a filename. The image name is the name of the
+	 * file without path and extension . The length of the name is limited to 8
+	 * chars. We use only 6 chars, so we can use 99 images
+	 */
+	public static String buildImageName(File filename) {
+		int index;
+	
+		String name = filename.getName();
+	
+		/* --- Remove the extension --- */
+		index = name.indexOf('.');
+		if (index != -1)
+			name = name.substring(0, index);
+	
+		/* --- Limit the filename to 8 chars --- */
+		if (name.length() > 8)
+			name = name.substring(0, 8);
+	
+		return name.toLowerCase();
+	}
+
+	/**
+	 * Builds a tile name from a basename and an index.
+	 */
+	public static String buildTileName(String basename, int index) {
+		String indexstr;
+	
+		/* --- Convert the index number to a string --- */
+		indexstr = String.valueOf(index);
+	
+		/*
+		 * --- cut the basename so that basename+index is not longer than 8
+		 * chars ---
+		 */
+		if (indexstr.length() + basename.length() > 8)
+			basename = basename.substring(0, 8 - indexstr.length());
+	
+		return basename + indexstr;
 	}
 }

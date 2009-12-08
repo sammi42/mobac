@@ -5,26 +5,26 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-public class OsmTile implements CalibratedImage2 {
-	private static final Logger log = Logger.getLogger(OsmTile.class);
-	private int tilex;
-	private int tiley;
-	private int zoom;
-	private String host;
+import rmp.interfaces.CalibratedImage2;
+import tac.program.atlascreators.tileprovider.TileProvider;
+
+public class TacTile implements CalibratedImage2 {
+	private static final Logger log = Logger.getLogger(TacTile.class);
+
+	private final TileProvider tileProvider;
+	private final int tilex;
+	private final int tiley;
+	private final int zoom;
 	private BufferedImage image;
 
-	public OsmTile(int x, int y, int zoom, String host) {
+	public TacTile(TileProvider tileProvider, int x, int y, int zoom) {
+		this.tileProvider = tileProvider;
 		this.tilex = x;
 		this.tiley = y;
 		this.zoom = zoom;
-		this.host = host;
-
 		image = null;
 	}
 
@@ -40,43 +40,13 @@ public class OsmTile implements CalibratedImage2 {
 		return image;
 	}
 
-	/**
-	 * Get the image that is associated with the tile. If there is no such
-	 * image, then a black one is created.
-	 * <P>
-	 * 
-	 * The image is buffered as long as the release function is not called
-	 */
 	private BufferedImage loadImage() {
-		String filename;
-		int maxtile;
-
-		/* --- Build path and name of the image file --- */
-		filename = String.format("%d/%d/%d.png", zoom, tilex, tiley);
-		log.debug("loadImage " + filename);
-		/*
-		 * --- Create a black image if the coordinates are outside the maximum
-		 * ---
-		 */
-		maxtile = (int) Math.pow(2, zoom);
-		if (tilex >= maxtile || tiley >= maxtile)
-			image = createBlack(256, 256);
-
-		/* --- Load file from the host service --- */
 		try {
-			if (image == null)
-				image = ImageIO.read(new URL(host + filename));
+			image = tileProvider.getTileImage(tilex, tiley);
 		} catch (IOException e) {
-			/* --- Create a black image --- */
+			log.error("", e);
 			image = createBlack(256, 256);
-
-			/* --- Write filename into the image --- */
-			Graphics graph = image.getGraphics();
-			graph.setColor(Color.WHITE);
-			graph.drawString(filename, 10, 120);
-			graph.drawRect(0, 0, 255, 255);
 		}
-
 		return image;
 	}
 
@@ -86,18 +56,10 @@ public class OsmTile implements CalibratedImage2 {
 	 * @return image of black square
 	 */
 	private BufferedImage createBlack(int width, int height) {
-		BufferedImage img;
-
-		// Create an image that does not support transparency
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-		/* --- Create a graphics context from the image --- */
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics graph = img.getGraphics();
-
-		/* --- Fill it with black --- */
 		graph.setColor(Color.BLACK);
 		graph.fillRect(0, 0, width, height);
-
 		return img;
 	}
 
@@ -203,7 +165,7 @@ public class OsmTile implements CalibratedImage2 {
 
 	@Override
 	public String toString() {
-		return String.format("OsmTile x/y/z [%d/%d/%d]", tilex, tiley, zoom);
+		return String.format("TacTile x/y/z [%d/%d/%d]", tilex, tiley, zoom);
 	}
 
 }

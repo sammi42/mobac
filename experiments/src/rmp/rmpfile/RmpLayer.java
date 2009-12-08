@@ -10,17 +10,17 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-import rmp.gui.osm.BackgroundInfo;
+import rmp.interfaces.CalibratedImage;
+import rmp.interfaces.RmpFileEntry;
 import rmp.rmpfile.entries.GeneralRmpFileEntry;
-import rmp.rmpfile.entries.RmpFileEntry;
 import rmp.rmpmaker.BoundingRect;
-import rmp.rmpmaker.CalibratedImage;
 
 /**
  * Class for building a TLM file from image and writing the file to a stream
@@ -29,7 +29,7 @@ import rmp.rmpmaker.CalibratedImage;
 public class RmpLayer {
 	private static final Logger log = Logger.getLogger(RmpLayer.class);
 
-	private ArrayList<Tiledata> tiles;
+	private List<Tiledata> tiles;
 	private byte[] A00File;
 	private byte[] TLMFile;
 
@@ -39,7 +39,7 @@ public class RmpLayer {
 	public RmpLayer() {
 		A00File = null;
 		TLMFile = null;
-		tiles = new ArrayList<Tiledata>();
+		tiles = new LinkedList<Tiledata>();
 	}
 
 	/**
@@ -62,16 +62,14 @@ public class RmpLayer {
 	 * 
 	 * @param si
 	 *            image to geht data from
-	 * @param info
-	 *            info object to show progress status
 	 * @param layer
 	 *            Layer number - for status output only
 	 * @return TLM instance
 	 * @throws InterruptedException
 	 */
-	public static RmpLayer createFromSimpleImage(CalibratedImage si, BackgroundInfo info, int layer)
+	public static RmpLayer createFromImage(CalibratedImage si, int layer)
 			throws InterruptedException {
-		log.debug(String.format("createFromSimpleImage(\n\t%s\n\t%s\n\t%d)", si, info, layer));
+		log.debug(String.format("createFromSimpleImage(\n\t%s\n\t%d)", si, layer));
 
 		RmpLayer result;
 		double tile_width, tile_height;
@@ -118,11 +116,10 @@ public class RmpLayer {
 					throw new InterruptedException();
 				String text = String.format("Create tile %d layer=%d", count, layer);
 				log.debug(text);
-				info.setActionText(text);
 
 				/* --- Create tile --- */
-				img = si.getSubImage(new BoundingRect(y * tile_height - 90, (y + 1) * tile_height - 90, x * tile_width
-						- 180, (x + 1) * tile_width - 180), 256, 256);
+				img = si.getSubImage(new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
+						- 90, x * tile_width - 180, (x + 1) * tile_width - 180), 256, 256);
 				result.addImage((int) x, (int) y, img);
 			}
 		}
@@ -131,7 +128,8 @@ public class RmpLayer {
 		result.buildA00File();
 
 		/* --- Build the TLM file --- */
-		result.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect.getNorth(), rect.getSouth());
+		result.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect
+				.getNorth(), rect.getSouth());
 
 		return result;
 	}
@@ -147,7 +145,8 @@ public class RmpLayer {
 	 *            image
 	 */
 	private void addImage(int x, int y, BufferedImage image) {
-		log.debug(String.format("addImage(x%d,y%d,w%d,h%d)", x, y, image.getWidth(), image.getHeight()));
+		log.debug(String.format("addImage(x%d,y%d,w%d,h%d)", x, y, image.getWidth(), image
+				.getHeight()));
 		ByteArrayOutputStream bos;
 		Tiledata tld;
 
@@ -194,7 +193,7 @@ public class RmpLayer {
 
 		try {
 			/* --- Number of tiles --- */
-			Tools.writeValue(bos, tiles.size(), 4);
+			RmpTools.writeValue(bos, tiles.size(), 4);
 
 			/* --- The tiles --- */
 			for (i = 0; i < tiles.size(); i++) {
@@ -202,7 +201,7 @@ public class RmpLayer {
 				tile = tiles.get(i);
 				tile.totalOffset = totaloffset;
 				totaloffset += tile.jpegFile.length + 4;
-				Tools.writeValue(bos, tile.jpegFile.length, 4);
+				RmpTools.writeValue(bos, tile.jpegFile.length, 4);
 				bos.write(tile.jpegFile);
 
 				/* --- Remove image from tiledata to save memory --- */
@@ -226,9 +225,7 @@ public class RmpLayer {
 		int count;
 		int containers;
 		int tiles_per_container;
-		int i;
 		int tile_count;
-		int container_number;
 		TileContainer result;
 
 		/*
@@ -244,9 +241,8 @@ public class RmpLayer {
 
 		/* --- Create containers --- */
 		container = new TileContainer[containers];
-		for (container_number = 0; container_number < containers; container_number++)
-			container[container_number] = new TileContainer(container_number < 1 ? container_number
-					: container_number + 1);
+		for (int i = 0; i < containers; i++)
+			container[i] = new TileContainer(i < 1 ? i : i + 1);
 
 		/*
 		 * --- We need an index container if there is more than one container.
@@ -259,8 +255,8 @@ public class RmpLayer {
 
 		/* --- Place the tiles into the container --- */
 		tile_count = 0;
-		container_number = 0;
-		for (i = 0; i < tiles.size(); i++) {
+		int container_number = 0;
+		for (int i = 0; i < tiles.size(); i++) {
 			/*
 			 * --- Starting with the second container, the first element is
 			 * moved to the index container ---
@@ -283,7 +279,7 @@ public class RmpLayer {
 				if (containers != container_number)
 					tiles_per_container = (count - (i + 1)) / (containers - container_number);
 			}
-		} // for i
+		}
 
 		/*
 		 * --- If we have multiple containers, then the index container is the
@@ -299,8 +295,8 @@ public class RmpLayer {
 	/**
 	 * Create the TLM file from the TileContainer infos
 	 */
-	private void buildTLMFile(double tile_width, double tile_height, double left, double right, double top,
-			double bottom) {
+	private void buildTLMFile(double tile_width, double tile_height, double left, double right,
+			double top, double bottom) {
 		ByteArrayOutputStream bos;
 		int size;
 		TileContainer container;
@@ -313,47 +309,47 @@ public class RmpLayer {
 
 		try {
 			/* --- header --- */
-			Tools.writeValue(bos, 1, 4); // Start of block
-			Tools.writeValue(bos, container.getTileCount(), 4); // Number of
+			RmpTools.writeValue(bos, 1, 4); // Start of block
+			RmpTools.writeValue(bos, container.getTileCount(), 4); // Number of
 			// tiles in
 			// files
-			Tools.writeValue(bos, 256, 2); // Hor. size of tile in pixel
-			Tools.writeValue(bos, 256, 2); // Vert. size of tile in pixel
-			Tools.writeValue(bos, 1, 4); // Start of block
-			Tools.writeDouble(bos, tile_height); // Height of tile in degree
-			Tools.writeDouble(bos, tile_width); // Tile width in degree
-			Tools.writeDouble(bos, left); // Frame
-			Tools.writeDouble(bos, top); // Frame
-			Tools.writeDouble(bos, right); // Frame
-			Tools.writeDouble(bos, bottom); // Frame
+			RmpTools.writeValue(bos, 256, 2); // Hor. size of tile in pixel
+			RmpTools.writeValue(bos, 256, 2); // Vert. size of tile in pixel
+			RmpTools.writeValue(bos, 1, 4); // Start of block
+			RmpTools.writeDouble(bos, tile_height); // Height of tile in degree
+			RmpTools.writeDouble(bos, tile_width); // Tile width in degree
+			RmpTools.writeDouble(bos, left); // Frame
+			RmpTools.writeDouble(bos, top); // Frame
+			RmpTools.writeDouble(bos, right); // Frame
+			RmpTools.writeDouble(bos, bottom); // Frame
 
-			Tools.writeValue(bos, 0, 88); // Filler
+			RmpTools.writeValue(bos, 0, 88); // Filler
 
-			Tools.writeValue(bos, 256, 2); // Tile size ????
-			Tools.writeValue(bos, 0, 2); // Filler
+			RmpTools.writeValue(bos, 256, 2); // Tile size ????
+			RmpTools.writeValue(bos, 0, 2); // Filler
 
 			size = 256 + 1940 + 3 * 1992;
 			size += container.getContainerCount() * 1992;
 			if (container.getContainerCount() != 1)
 				size += 1992;
-			Tools.writeValue(bos, size, 4); // File size
+			RmpTools.writeValue(bos, size, 4); // File size
 
-			Tools.writeValue(bos, 0, 96); // Filler
+			RmpTools.writeValue(bos, 0, 96); // Filler
 
-			Tools.writeValue(bos, 1, 4); // Start of block
-			Tools.writeValue(bos, 99, 4); // Number of tiles in block
-			Tools.writeValue(bos, 0x0f5c + ((container.getContainerCount() == 1) ? 0 : 1992), 4); // offset
+			RmpTools.writeValue(bos, 1, 4); // Start of block
+			RmpTools.writeValue(bos, 99, 4); // Number of tiles in block
+			RmpTools.writeValue(bos, 0x0f5c + ((container.getContainerCount() == 1) ? 0 : 1992), 4); // offset
 			// for
 			// first
 			// block
 
-			Tools.writeValue(bos, 0, 3920); // Filler
+			RmpTools.writeValue(bos, 0, 3920); // Filler
 
 			/* --- Write the Tiledata --- */
 			container.writeTree(bos);
 
 			/* --- Add two empty blocks --- */
-			Tools.writeValue(bos, 0, 1992 * 2);
+			RmpTools.writeValue(bos, 0, 1992 * 2);
 
 			/* --- Get the file data --- */
 			TLMFile = bos.toByteArray();

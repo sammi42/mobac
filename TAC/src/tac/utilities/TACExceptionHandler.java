@@ -72,6 +72,27 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		showExceptionDialog(e);
 	}
 
+	public static void processException(Thread t, Throwable e, AWTEvent newEvent) {
+		String eventText = newEvent.toString();
+		log.error("Uncaught exception on processing event " + eventText, e);
+		if (eventText.length() > 100) {
+			String[] parts = eventText.split(",");
+			StringWriter sw = new StringWriter(eventText.length() + 20);
+			sw.write(parts[0]);
+			int len = parts[0].length();
+			for (int i = 1; i < parts.length; i++) {
+				String s = parts[i];
+				if (s.length() + len > 80) {
+					sw.write("\n\t");
+					len = 0;
+				}
+				sw.write(s);
+			}
+			eventText = "Event: " + sw.toString();
+		}
+		showExceptionDialog(e, eventText);
+	}
+
 	public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
 		Exception e = paramExceptionEvent.getException();
 		log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
@@ -87,6 +108,10 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	}
 
 	public static void showExceptionDialog(Throwable e) {
+		showExceptionDialog(e, null);
+	}
+
+	public static void showExceptionDialog(Throwable e, String additionalInfo) {
 		String exceptionName = e.getClass().getSimpleName();
 		try {
 			StringBuilder sb = new StringBuilder(1024);
@@ -108,6 +133,9 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			}
 			sb.append("\nMapsources rev: "
 					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
+
+			if (additionalInfo != null)
+				sb.append("\n\n" + additionalInfo);
 
 			sb.append("\n\nError hierarchy:");
 			Throwable tmp = e;

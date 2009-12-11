@@ -63,7 +63,7 @@ public class BoundingRect {
 
 	@Override
 	public String toString() {
-		return String.format("BoundingRect [N=%2.6f, S==%2.6f, W=%2.6f, E=%2.6f]", north, south,
+		return String.format("BoundingRect [N=%2.4f, S==%2.4f, W=%2.4f, E=%2.4f]", north, south,
 				west, east);
 	}
 

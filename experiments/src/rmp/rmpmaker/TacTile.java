@@ -34,10 +34,12 @@ public class TacTile implements CalibratedImage {
 		int x = tilex * tileSize;
 		int y = tiley * tileSize;
 		double north = mapSpace.cYToLat(y, zoom);
-		double south = mapSpace.cYToLat(y + tileSize, zoom);
+		double south = mapSpace.cYToLat(y + tileSize - 1, zoom);
 		double west = mapSpace.cXToLon(x, zoom);
-		double east = mapSpace.cXToLon(x + tileSize, zoom);
-		boundingRect = new BoundingRect(north, south, west, east);
+		double east = mapSpace.cXToLon(x + tileSize - 1, zoom);
+
+		// north and south have to be negated - this really strange!
+		boundingRect = new BoundingRect(-north, -south, west, east);
 		log.trace(this.toString());
 	}
 
@@ -81,9 +83,7 @@ public class TacTile implements CalibratedImage {
 		WritableRaster src_graph, dst_graph;
 		BoundingRect src_area;
 		int maxx, maxy;
-		int x, y;
 		double src_c_x, src_c_y;
-		double help;
 		int pix_x, pix_y;
 		BufferedImage imageBuffer;
 		Graphics graphics;
@@ -94,8 +94,6 @@ public class TacTile implements CalibratedImage {
 
 		/* --- Get Graphics context --- */
 		src_image = getImage();
-		dst_graph = dest_image.getRaster();
-		src_graph = src_image.getRaster();
 
 		/* --- Convert it to RGB color space --- */
 		imageBuffer = new BufferedImage(src_image.getWidth(), src_image.getHeight(),
@@ -107,6 +105,7 @@ public class TacTile implements CalibratedImage {
 			graphics.dispose();
 		}
 		src_graph = imageBuffer.getRaster();
+		dst_graph = dest_image.getRaster();
 
 		/*
 		 * --- Iterate over all pixels of the destination image. Unfortunately
@@ -116,30 +115,28 @@ public class TacTile implements CalibratedImage {
 		 */
 		maxx = dest_image.getWidth();
 		maxy = dest_image.getHeight();
-		for (y = 0; y < maxy; y++) {
+		for (int y = 0; y < maxy; y++) {
 
 			/* --- Calculate the y-coordinate of the current line --- */
 			src_c_y = dest_area.getNorth() + (dest_area.getSouth() - dest_area.getNorth()) * y
 					/ maxy;
 
 			/* --- Calculate the pixel line of the source image --- */
-			help = (src_c_y - src_area.getNorth()) * 256
-					/ (src_area.getSouth() - src_area.getNorth()) + 0.5;
-			pix_y = (int) help;
+			pix_y = (int) ((src_c_y - src_area.getNorth()) * 256
+					/ (src_area.getSouth() - src_area.getNorth()) + 0.5);
 
 			/* --- Ignore line that are out of the source area --- */
 			if (pix_y < 0 || pix_y > 255)
 				continue;
 
-			for (x = 0; x < maxx; x++) {
+			for (int x = 0; x < maxx; x++) {
 				/* --- Calculate the x-coordinate of the current row --- */
 				src_c_x = dest_area.getWest() + (dest_area.getEast() - dest_area.getWest()) * x
 						/ maxx;
 
 				/* --- Calculate the pixel row of the source image --- */
-				help = (src_c_x - src_area.getWest()) * 256
-						/ (src_area.getEast() - src_area.getWest()) + 0.5;
-				pix_x = (int) help;
+				pix_x = (int) ((src_c_x - src_area.getWest()) * 256
+						/ (src_area.getEast() - src_area.getWest()) + 0.5);
 
 				/* --- Ignore the row if it is outside the source area --- */
 				if (pix_x < 0 || pix_x > 255)

@@ -2,15 +2,18 @@ package rmp.rmpfile;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import rmp.interfaces.CalibratedImage;
-import rmp.interfaces.CalibratedImage2;
 import rmp.rmpmaker.BoundingRect;
+import rmp.rmpmaker.TacTile;
+import tac.program.interfaces.MapInterface;
 
 /**
  * CalibratedImage that gets its data from a set of other CalibratedImage2
@@ -20,37 +23,31 @@ public class MultiImage implements CalibratedImage {
 
 	private static final Logger log = Logger.getLogger(MultiImage.class);
 
-	private CalibratedImage2[] images;
-	private BoundingRect bounds;
-	private int imageWidth;
-	private int imageHeight;
-	private ArrayList<CalibratedImage2> lastImages;
+	private static final int HIT_NOHIT = 0;
+	private static final int HIT_OVERLAP = 1;
+	private static final int HIT_FULLHIT = 2;
+
+	private final TacTile[] images;
+	private final BoundingRect bounds;
+	private final int imageWidth;
+	private final int imageHeight;
+	private final List<TacTile> lastImages;
+
 	private int activeImageMax;
 
-	public MultiImage(CalibratedImage2[] images) {
+	public MultiImage(TacTile[] images, MapInterface map) {
 		log.debug("New instance: images count " + images.length + "\n\t" + Arrays.toString(images));
 		this.images = images;
 
-		this.lastImages = new ArrayList<CalibratedImage2>();
+		this.lastImages = new LinkedList<TacTile>();
 
 		/* --- Collect the extremes of the coordinates --- */
-		buildBoundingRect();
-
-		/*
-		 * --- We cannot calculate the exact size of the image in pixel, so we
-		 * have to guess a bit from the resolution of one part
-		 */
-
-		BoundingRect part_bounds = images[0].getBoundingRect();
-		double help = images[0].getImageWidth() * (this.bounds.getEast() - this.bounds.getWest())
-				/ (part_bounds.getEast() - part_bounds.getWest());
-		this.imageWidth = (int) help;
-
-		help = images[0].getImageHeight() * (this.bounds.getSouth() - this.bounds.getNorth())
-				/ (part_bounds.getSouth() - part_bounds.getNorth());
-		this.imageHeight = (int) help;
-
-		this.activeImageMax = 4;
+		bounds = buildBoundingRect();
+		Point max = map.getMaxTileCoordinate();
+		Point min = map.getMinTileCoordinate();
+		imageWidth = max.x - min.x;
+		imageHeight = max.y - min.y;
+		activeImageMax = 64;
 	}
 
 	/**
@@ -67,42 +64,26 @@ public class MultiImage implements CalibratedImage {
 		this.activeImageMax = activeImageMax;
 	}
 
-	private void buildBoundingRect() {
+	private BoundingRect buildBoundingRect() {
 		double north = 90.0D;
 		double south = -90.0D;
 		double west = 180.0D;
 		double east = -180.0D;
 
-		for (int i = 0; i < this.images.length; ++i) {
-			BoundingRect part_bounds = this.images[i].getBoundingRect();
+		for (TacTile tile : images) {
+			BoundingRect part_bounds = tile.getBoundingRect();
 
-			if (part_bounds.getWest() < west) {
-				west = part_bounds.getWest();
-			}
-			if (part_bounds.getEast() > east) {
-				east = part_bounds.getEast();
-			}
-			if (part_bounds.getNorth() < north) {
-				north = part_bounds.getNorth();
-			}
-			if (part_bounds.getSouth() > south) {
-				south = part_bounds.getSouth();
-			}
+			west = Math.min(west, part_bounds.getWest());
+			east = Math.max(east, part_bounds.getEast());
+			north = Math.min(north, part_bounds.getNorth());
+			south = Math.max(south, part_bounds.getSouth());
 		}
 
-		this.bounds = new BoundingRect(north, south, west, east);
+		return new BoundingRect(north, south, west, east);
 	}
 
 	public BoundingRect getBoundingRect() {
 		return this.bounds;
-	}
-
-	public int getImageHeight() {
-		return this.imageHeight;
-	}
-
-	public int getImageWidth() {
-		return this.imageWidth;
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height) {
@@ -116,34 +97,37 @@ public class MultiImage implements CalibratedImage {
 		result = new BufferedImage(width, height, 1);
 
 		Graphics2D graph = result.createGraphics();
-		graph.setColor(new Color(255, 255, 255));
-		graph.fillRect(0, 0, width, height);
+		try {
+			graph.setColor(new Color(255, 255, 255));
+			graph.fillRect(0, 0, width, height);
 
-		int i = 0;
-		do {
-			hit = hitType(this.images[i].getBoundingRect(), area);
+			int i = 0;
+			do {
+				hit = hitType(this.images[i].getBoundingRect(), area);
+				log.trace("HIT: " + hit + " " + this.images[i]);
 
-			if (hit != 0) {
-				this.images[i].getSubImage(area, result);
+				if (hit != HIT_NOHIT) {
+					this.images[i].drawSubImage(area, result);
 
-				for (int last = 0; (last < this.lastImages.size()) && (!(found)); ++last) {
-					if (this.lastImages.get(last) == this.images[i]) {
-						found = true;
+					for (int last = 0; (last < this.lastImages.size()); ++last) {
+						if (this.lastImages.get(last) == this.images[i]) {
+							found = true;
+							break;
+						}
 					}
+					if (!found)
+						this.lastImages.add(this.images[i]);
 				}
-				if (!(found))
-					this.lastImages.add(this.images[i]);
+				++i;
+			} while (hit != HIT_FULLHIT && i < images.length);
+
+			/* --- Free resources if we have more then max images loaded --- */
+			while (this.lastImages.size() > this.activeImageMax) {
+				this.lastImages.remove(0);
 			}
-			++i;
-			if (i >= this.images.length)
-				break;
-		} while (hit != 2);
-
-		/* --- Free resources if we have more then max images loaded --- */
-		while (this.lastImages.size() > this.activeImageMax) {
-			this.lastImages.remove(0);
+		} finally {
+			graph.dispose();
 		}
-
 		return result;
 	}
 
@@ -153,39 +137,46 @@ public class MultiImage implements CalibratedImage {
 	 * @return 0=no hit, 1=overlap, 2=full hit
 	 */
 	private int hitType(BoundingRect big, BoundingRect small) {
-		int hit = 0;
+		int hit = HIT_NOHIT;
 
 		/* --- Count the number of hits --- */
-		if (small.getWest() >= big.getWest() && small.getWest() <= big.getEast() && small.getNorth() >= big.getNorth()
-				&& small.getNorth() <= big.getSouth())
+		if (small.getWest() >= big.getWest() && small.getWest() <= big.getEast()
+				&& small.getNorth() >= big.getNorth() && small.getNorth() <= big.getSouth())
 			hit++;
 
-		if (small.getEast() >= big.getWest() && small.getEast() <= big.getEast() && small.getNorth() >= big.getNorth()
-				&& small.getNorth() <= big.getSouth())
+		if (small.getEast() >= big.getWest() && small.getEast() <= big.getEast()
+				&& small.getNorth() >= big.getNorth() && small.getNorth() <= big.getSouth())
 			hit++;
 
-		if (small.getWest() >= big.getWest() && small.getWest() <= big.getEast() && small.getSouth() >= big.getNorth()
-				&& small.getSouth() <= big.getSouth())
+		if (small.getWest() >= big.getWest() && small.getWest() <= big.getEast()
+				&& small.getSouth() >= big.getNorth() && small.getSouth() <= big.getSouth())
 			hit++;
 
-		if (small.getEast() >= big.getWest() && small.getEast() <= big.getEast() && small.getSouth() >= big.getNorth()
-				&& small.getSouth() <= big.getSouth())
+		if (small.getEast() >= big.getWest() && small.getEast() <= big.getEast()
+				&& small.getSouth() >= big.getNorth() && small.getSouth() <= big.getSouth())
 			hit++;
 
 		/* --- Correct the result 0-4 to 0-2 --- */
 		if (hit == 4)
-			hit = 2;
-		else if (hit != 0)
-			hit = 1;
+			return HIT_FULLHIT;
+		if (hit != 0)
+			return HIT_OVERLAP;
+		return HIT_NOHIT;
+	}
 
-		return hit;
+	public int getImageHeight() {
+		return imageHeight;
+	}
+
+	public int getImageWidth() {
+		return imageWidth;
 	}
 
 	@Override
 	public String toString() {
-		return "MultiImage [activeImageMax=" + activeImageMax + ", bounds=" + bounds + ", imageHeight=" + imageHeight
-				+ ", imageWidth=" + imageWidth + ", images=" + Arrays.toString(images) + ", lastImages=" + lastImages
-				+ "]";
+		return "MultiImage [activeImageMax=" + activeImageMax + ", bounds=" + bounds
+				+ ", imageHeight=" + imageHeight + ", imageWidth=" + imageWidth + ", images="
+				+ Arrays.toString(images) + ", lastImages=" + lastImages + "]";
 	}
 
 }

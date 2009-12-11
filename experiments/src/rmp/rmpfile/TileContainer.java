@@ -15,28 +15,19 @@ import java.util.ArrayList;
  * 
  */
 public class TileContainer {
-	int number;
-	TileContainer previous;
-	ArrayList<Tiledata> tiles;
-	ArrayList<TileContainer> followUps;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param nr
-	 */
-	public TileContainer(int nr) {
-		number = nr;
-		previous = null;
-		tiles = new ArrayList<Tiledata>(100);
-		followUps = new ArrayList<TileContainer>();
+	private final TileContainer previous;
+	private final ArrayList<Tiledata> tiles;
+	private final ArrayList<TileContainer> followUps;
+
+	public TileContainer() {
+		this(null);
 	}
 
-	/**
-	 * Set the number of the container that is in the sort order before this
-	 */
-	public void setPrevious(TileContainer previous) {
+	public TileContainer(TileContainer previous) {
 		this.previous = previous;
+		tiles = new ArrayList<Tiledata>(100);
+		followUps = new ArrayList<TileContainer>();
 	}
 
 	/**

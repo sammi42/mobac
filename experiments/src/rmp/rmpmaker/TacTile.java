@@ -7,11 +7,12 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import rmp.interfaces.CalibratedImage2;
+import rmp.interfaces.CalibratedImage;
 import tac.program.atlascreators.tileprovider.TileProvider;
 
-public class TacTile implements CalibratedImage2 {
+public class TacTile implements CalibratedImage {
 	private static final Logger log = Logger.getLogger(TacTile.class);
 
 	private final TileProvider tileProvider;
@@ -20,12 +21,25 @@ public class TacTile implements CalibratedImage2 {
 	private final int zoom;
 	private BufferedImage image;
 
-	public TacTile(TileProvider tileProvider, int x, int y, int zoom) {
+	private BoundingRect boundingRect;
+
+	public TacTile(TileProvider tileProvider, MapSpace mapSpace, int tilex, int tiley, int zoom) {
 		this.tileProvider = tileProvider;
-		this.tilex = x;
-		this.tiley = y;
+		this.tilex = tilex;
+		this.tiley = tiley;
 		this.zoom = zoom;
 		image = null;
+
+//		int tileSize = mapSpace.getTileSize();
+//		int x = tilex * tileSize;
+//		int y = tiley * tileSize;
+//		double north = mapSpace.cYToLat(y, zoom);
+//		double south = mapSpace.cYToLat(y + tileSize - 1, zoom);
+//		double west = mapSpace.cXToLon(x, zoom);
+//		double east = mapSpace.cXToLon(x + tileSize - 1, zoom);
+//		boundingRect = new BoundingRect(north, south, west, east);
+		boundingRect = new BoundingRectOsm(tilex, tiley, 256, 256, zoom);
+		log.trace(this.toString());
 	}
 
 	/**
@@ -63,7 +77,7 @@ public class TacTile implements CalibratedImage2 {
 		return img;
 	}
 
-	public void getSubImage(BoundingRect dest_area, BufferedImage dest_image) {
+	public void drawSubImage(BoundingRect dest_area, BufferedImage dest_image) {
 		BufferedImage src_image;
 		WritableRaster src_graph, dst_graph;
 		BoundingRect src_area;
@@ -140,7 +154,7 @@ public class TacTile implements CalibratedImage2 {
 	}
 
 	public BoundingRect getBoundingRect() {
-		return new BoundingRectOsm(tilex, tiley, 256, 256, zoom);
+		return boundingRect;
 	}
 
 	public int getImageHeight() {
@@ -158,14 +172,14 @@ public class TacTile implements CalibratedImage2 {
 
 		result = createBlack(width, height);
 
-		getSubImage(area, result);
+		drawSubImage(area, result);
 
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("TacTile x/y/z [%d/%d/%d]", tilex, tiley, zoom);
+		return String.format("TacTile x/y/z [%d/%d/%d] = %s", tilex, tiley, zoom, boundingRect);
 	}
 
 }

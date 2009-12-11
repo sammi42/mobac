@@ -7,13 +7,17 @@
 package rmp.rmpfile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
 import rmp.interfaces.RmpFileEntry;
+import rmp.rmpfile.entries.RmpIni;
+import tac.utilities.Utilities;
+import tac.utilities.stream.RandomAccessFileOutputStream;
 
 /**
  * Class that writes files in RMP archive format
@@ -22,86 +26,116 @@ import rmp.interfaces.RmpFileEntry;
 public class RmpWriter {
 	private static final Logger log = Logger.getLogger(RmpWriter.class);
 
-	private ArrayList<RmpFileEntry> entries;
+	private final ArrayList<EntryInfo> entries = new ArrayList<EntryInfo>();
+	private final RandomAccessFile rmpOutputFile;
+	private int projectedEntryCount;
+
+	private ChecksumOutputStream entryOut;
 
 	/**
-	 * Constructor
+	 * @param imageName
+	 * @param layerCount
+	 *            projected number of layers that will be written to this rmp
+	 *            file
+	 * @param rmpFile
+	 * @throws IOException
 	 */
-	public RmpWriter() {
-		entries = new ArrayList<RmpFileEntry>();
+	public RmpWriter(String imageName, int layerCount, File rmpFile) throws IOException {
+		// We only use one A00 entry per map/layer - therefore we can
+		// pre-calculate the number of entries:
+		// RmpIni + (TLM & A00) per layer + Bmp2Bit + Bmp4bit
+		this.projectedEntryCount = (3 + (2 * layerCount));
+		if (rmpFile.exists())
+			Utilities.deleteFile(rmpFile);
+		log.debug("Writing data to " + rmpFile.getAbsolutePath());
+		rmpOutputFile = new RandomAccessFile(rmpFile, "rw");
+		// Calculate offset to the directory end
+		int directoryEndOffset = projectedEntryCount * 24 + 10;
+		rmpOutputFile.seek(directoryEndOffset);
+		entryOut = new ChecksumOutputStream(new RandomAccessFileOutputStream(rmpOutputFile));
+		/* --- Write the directory-end marker --- */
+		RmpTools.writeFixedString(entryOut, "MAGELLAN", 30);
+
+		RmpIni rmpIni = new RmpIni(imageName, layerCount);
+
+		/* --- Create packer and fill it with content --- */
+		writeFileEntry(rmpIni);
+	}
+
+	public void writeFileEntry(RmpFileEntry entry) throws IOException {
+		EntryInfo info = new EntryInfo();
+		info.name = entry.getFileName();
+		info.extendsion = entry.getFileExtension();
+		info.offset = (int) rmpOutputFile.getFilePointer();
+		byte[] data = entry.getFileContent();
+		info.length = data.length;
+		entryOut.write(data);
+		if ((info.length % 2) != 0)
+			entryOut.write(0);
+		entries.add(info);
 	}
 
 	/**
-	 * Add a file to the archive
+	 * Writes the directory of the archive into the rmp file
 	 * 
-	 * @param file
-	 *            file to add
-	 */
-	public void addFile(RmpFileEntry file) {
-		entries.add(file);
-	}
-
-	/**
-	 * Writes the content of the archive into a file
-	 * 
-	 * @param path
-	 *            Path for file to write
 	 * @throws IOException
 	 *             Error accessing disk
 	 */
-	public void writeToDisk(File path) throws IOException {
-		log.debug("Writing RMP to " + path.getAbsolutePath());
-		int offset;
+	public void writeDirectory() throws IOException {
+		if (projectedEntryCount != entries.size())
+			throw new RuntimeException("Entry count does not correspond "
+					+ "to the projected layer count");
+
+		// Finalize the list of written entries
+		RmpTools.writeFixedString(entryOut, "MAGELLAN", 8);
+		entryOut.writeChecksum();
+
+		log.debug("Finished writing entries, updating directory");
 
 		/* --- Create file --- */
-		FileOutputStream fo = new FileOutputStream(path);
-		ChecksumOutputStream co = new ChecksumOutputStream(fo);
+		rmpOutputFile.seek(0);
+		OutputStream out = new RandomAccessFileOutputStream(rmpOutputFile);
+		ChecksumOutputStream cout = new ChecksumOutputStream(out);
 
 		/* --- Write header with number of files --- */
-		RmpTools.writeValue(co, entries.size(), 4);
-		RmpTools.writeValue(co, entries.size(), 4);
+		RmpTools.writeValue(cout, entries.size(), 4);
+		RmpTools.writeValue(cout, entries.size(), 4);
 
 		/* --- Write the directory --- */
-		offset = entries.size() * 24 + 40;
 		log.debug("Writing directory: " + entries.size() + " entries");
-		for (RmpFileEntry rmpEntry : entries) {
+		for (EntryInfo entryInfo : entries) {
 
-			log.trace("Entry: " + rmpEntry);
+			log.trace("Entry: " + entryInfo);
 			/* --- Write directory entry --- */
-			RmpTools.writeFixedString(co, rmpEntry.getFileName(), 9);
-			RmpTools.writeFixedString(co, rmpEntry.getFileExtension(), 7);
-			RmpTools.writeValue(co, offset, 4);
-			RmpTools.writeValue(co, rmpEntry.getFileContent().length, 4);
-
-			/* --- Calculate offset of next file. File length is always even --- */
-			offset += rmpEntry.getFileContent().length;
-			if ((rmpEntry.getFileContent().length % 2) != 0)
-				offset += 1;
+			RmpTools.writeFixedString(cout, entryInfo.name, 9);
+			RmpTools.writeFixedString(cout, entryInfo.extendsion, 7);
+			RmpTools.writeValue(cout, entryInfo.offset, 4);
+			RmpTools.writeValue(cout, entryInfo.length, 4);
 		}
 
-		/* --- Write the header checksum --- */
-		co.writeChecksum();
+		/* --- Write the header checksum (2 bytes) --- */
+		cout.writeChecksum();
 
-		co = new ChecksumOutputStream(fo);
+	}
 
-		/* --- Write the directory-end marker --- */
-		RmpTools.writeFixedString(co, "MAGELLAN", 30);
+	public void close() {
+		try {
+			rmpOutputFile.close();
+		} catch (Exception e) {
+			log.error("", e);
+		}
+	}
 
-		/* --- Write the files --- */
-		for (RmpFileEntry file : entries) {
-			co.write(file.getFileContent());
-			/* --- Add a 0 byte if length of file is not even --- */
-			if ((file.getFileContent().length % 2) != 0)
-				co.write(0);
+	private static class EntryInfo {
+		String name;
+		String extendsion;
+		int offset;
+		int length;
+
+		@Override
+		public String toString() {
+			return "\"" + name + "." + extendsion + "\" offset=" + offset + " length=" + length;
 		}
 
-		/* --- Write the trailer --- */
-		RmpTools.writeFixedString(co, "MAGELLAN", 8);
-
-		/* --- Write checksum --- */
-		co.writeChecksum();
-
-		/* --- Close file --- */
-		co.close();
 	}
 }

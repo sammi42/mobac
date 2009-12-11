@@ -61,7 +61,7 @@ public class ChecksumOutputStream extends OutputStream {
 	}
 
 	/**
-	 * Writes the current checksum to the output stream
+	 * Writes the current checksum (2 bytes) to the output stream
 	 */
 	public void writeChecksum() throws IOException {
 		nextStream.write((checksum >> 8) & 0xFF);

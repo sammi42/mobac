@@ -20,6 +20,8 @@ import rmp.interfaces.CalibratedImage;
 import rmp.interfaces.RmpFileEntry;
 import rmp.rmpfile.entries.GeneralRmpFileEntry;
 import rmp.rmpmaker.BoundingRect;
+import tac.exceptions.MapCreationException;
+import tac.program.model.Settings;
 import tac.utilities.Utilities;
 
 /**
@@ -61,26 +63,22 @@ public class RmpLayer {
 	 * calibrated image
 	 * 
 	 * @param si
-	 *            image to geht data from
+	 *            image to get data from
 	 * @param layer
 	 *            Layer number - for status output only
 	 * @return TLM instance
 	 * @throws InterruptedException
+	 * @throws MapCreationException
 	 */
 	public static RmpLayer createFromImage(CalibratedImage si, int layer)
-			throws InterruptedException {
+			throws InterruptedException, MapCreationException {
 		log.debug(String.format("createFromSimpleImage(\n\t%s\n\t%d)", si, layer));
 
 		RmpLayer result;
 		double tile_width, tile_height;
-		double pos_hor, pos_ver;
 		BoundingRect rect;
 		BufferedImage img;
 		int count = 0;
-
-		/* --- Check that the image does not exceed the maximum size --- */
-		if (si.getImageHeight() > 18000 || si.getImageWidth() > 18000)
-			throw new IllegalArgumentException("Tlm.ExceedSize");
 
 		/* --- Create instance --- */
 		result = new RmpLayer();
@@ -96,17 +94,15 @@ public class RmpLayer {
 		 * --- Check the theoretical maximum of horizontal and vertical position
 		 * ---
 		 */
-		pos_hor = 360 / tile_width;
-		pos_ver = 180 / tile_height;
+		double pos_hor = 360 / tile_width;
+		double pos_ver = 180 / tile_height;
 		if (pos_hor > 0xFFFF || pos_ver >= 0xFFFF)
-			throw new IllegalArgumentException("Tlm.ExceedResolution");
+			throw new MapCreationException(
+					"Map resolution too high - please select a lower zoom level");
 
 		/* --- Calculate the positions of the upper left tile --- */
-		pos_hor = Math.floor((rect.getWest() + 180) / tile_width);
-		pos_ver = Math.floor((rect.getNorth() + 90) / tile_height);
-
-		int x_start = (int) pos_hor;
-		int y_start = (int) pos_ver;
+		int x_start = (int) Math.floor((rect.getWest() + 180) / tile_width);
+		int y_start = (int) Math.floor((rect.getNorth() + 90) / tile_height);
 
 		/* --- Create the tiles --- */
 		for (int x = x_start; x * tile_width - 180 < rect.getEast(); x++) {
@@ -114,8 +110,8 @@ public class RmpLayer {
 				count++;
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
-				String text = String.format("Create tile %d layer=%d", count, layer);
-				log.debug(text);
+				if (log.isTraceEnabled())
+					log.trace(String.format("Create tile %d layer=%d", count, layer));
 
 				/* --- Create tile --- */
 				img = si.getSubImage(new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
@@ -161,12 +157,10 @@ public class RmpLayer {
 		/* --- Create tiledata --- */
 		byte[] data = bos.toByteArray();
 
-		try {
-			// TODO: Remove
-			Utilities.saveBytes(String.format("E:/TritonMap/jpg/%d_%d.jpg", x, y), data);
-		} catch (IOException e) {
-			log.error("", e);
-		}
+		// TODO: Remove
+		if (Settings.getInstance().isDevModeEnabled())
+			Utilities.saveBytesEx(String.format("E:/TritonMap/jpg/%d_%d.jpg", x, y), data);
+
 		tld = new Tiledata();
 		tld.jpegFile = data;
 		tld.posx = x;
@@ -220,40 +214,34 @@ public class RmpLayer {
 	 */
 	private TileContainer buildTileTree() {
 		TileContainer[] container;
-		TileContainer index_container = null;
-		int count;
-		int containers;
-		int tiles_per_container;
-		int tile_count;
-		TileContainer result;
+		TileContainer indexContainer = null;
+		int containerCount;
 
 		/*
 		 * --- Calculate the number of tiles and tiles per container. 99 would
 		 * be possible but we limit ourselves to 80 - That's enough ---
 		 */
-		count = tiles.size();
-		containers = count / 80;
+		int count = tiles.size();
+		containerCount = count / 80;
 		if (count % 80 != 0)
-			containers++;
+			containerCount++;
 
-		tiles_per_container = count / containers;
+		int tilesPerContainer = count / containerCount;
 
 		/* --- Create containers --- */
-		container = new TileContainer[containers];
-		for (int i = 0; i < containers; i++)
-			container[i] = new TileContainer(i < 1 ? i : i + 1);
+		container = new TileContainer[containerCount];
+		for (int i = 0; i < containerCount; i++)
+			container[i] = new TileContainer();
 
 		/*
 		 * --- We need an index container if there is more than one container.
 		 * Container 0 is the previous of the index container ---
 		 */
-		if (containers > 1) {
-			index_container = new TileContainer(1);
-			index_container.setPrevious(container[0]);
-		}
+		if (containerCount > 1)
+			indexContainer = new TileContainer(container[0]);
 
 		/* --- Place the tiles into the container --- */
-		tile_count = 0;
+		int tile_count = 0;
 		int container_number = 0;
 		for (int i = 0; i < tiles.size(); i++) {
 			/*
@@ -261,13 +249,13 @@ public class RmpLayer {
 			 * moved to the index container ---
 			 */
 			if (tile_count == 0 && container_number != 0)
-				index_container.addTile(tiles.get(i), container[container_number]);
+				indexContainer.addTile(tiles.get(i), container[container_number]);
 			else
 				container[container_number].addTile(tiles.get(i), null);
 
 			/* --- Switch to next container if we reach end of container --- */
 			tile_count++;
-			if (tile_count == tiles_per_container) {
+			if (tile_count == tilesPerContainer) {
 				container_number++;
 				tile_count = 0;
 
@@ -275,8 +263,8 @@ public class RmpLayer {
 				 * --- Recalculate the number of tiles per container because of
 				 * rounding issues
 				 */
-				if (containers != container_number)
-					tiles_per_container = (count - (i + 1)) / (containers - container_number);
+				if (containerCount != container_number)
+					tilesPerContainer = (count - (i + 1)) / (containerCount - container_number);
 			}
 		}
 
@@ -284,11 +272,10 @@ public class RmpLayer {
 		 * --- If we have multiple containers, then the index container is the
 		 * result, otherwise the single container.
 		 */
-		result = index_container;
-		if (result == null)
-			result = container[0];
-
-		return result;
+		if (indexContainer == null)
+			return container[0];
+		else
+			return indexContainer;
 	}
 
 	/**

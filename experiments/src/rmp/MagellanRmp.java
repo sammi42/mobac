@@ -3,10 +3,9 @@ package rmp;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import rmp.rmpfile.MultiImage;
 import rmp.rmpfile.RmpLayer;
@@ -14,7 +13,6 @@ import rmp.rmpfile.RmpTools;
 import rmp.rmpfile.RmpWriter;
 import rmp.rmpfile.entries.Bmp2bit;
 import rmp.rmpfile.entries.Bmp4bit;
-import rmp.rmpfile.entries.RmpIni;
 import rmp.rmpmaker.TacTile;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
@@ -26,7 +24,9 @@ import tac.tar.TarIndex;
 
 public class MagellanRmp extends AtlasCreator {
 
-	List<RmpLayer> layers = new LinkedList<RmpLayer>();
+	RmpWriter rmpWriter = null;
+	String imageName = null;
+	int layerNum = 0;
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
@@ -51,6 +51,8 @@ public class MagellanRmp extends AtlasCreator {
 		}
 		if (mapCount > 5)
 			throw new IOException("Too many maps in atlas. Max map count = 5");
+		imageName = RmpTools.buildImageName(atlas.getName());
+		rmpWriter = new RmpWriter(imageName, mapCount, new File(atlasDir, imageName + ".rmp"));
 	}
 
 	@Override
@@ -71,52 +73,46 @@ public class MagellanRmp extends AtlasCreator {
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		int count = (xMax - xMin + 1) * (yMax - yMin + 1);
-		atlasProgress.initMapCreation(count);
+		int progressStep = count;
+		atlasProgress.initMapCreation(count + progressStep + 10);
 		TacTile[] images = new TacTile[count];
 
 		int lineX = 0;
 		int i = 0;
+		MapSpace mapSpace = map.getMapSource().getMapSpace();
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {
 				checkUserAbort();
 				atlasProgress.incMapCreationProgress();
-				images[i++] = new TacTile(mapDlTileProvider, x, y, zoom);
+				images[i++] = new TacTile(mapDlTileProvider, mapSpace, x, y, zoom);
 				lineX += tileSize;
 			}
 		}
-		MultiImage layerImage = new MultiImage(images);
-		layerImage.setActiveImageMax(64);
-		layers.add(RmpLayer.createFromImage(layerImage, layers.size()));
+		MultiImage layerImage = new MultiImage(images, map);
+		RmpLayer layer = RmpLayer.createFromImage(layerImage, layerNum);
+		atlasProgress.incMapCreationProgress(progressStep);
+		checkUserAbort();
+		String layerName = RmpTools.buildTileName(imageName, layerNum);
+		try {
+			rmpWriter.writeFileEntry(layer.getTLMFile(layerName));
+			rmpWriter.writeFileEntry(layer.getA00File(layerName));
+			atlasProgress.incMapCreationProgress(10);
+		} catch (IOException e) {
+			throw new MapCreationException(e);
+		}
+		layerNum++;
 	}
 
 	@Override
 	public void finishAtlasCreation() throws IOException {
-		String image_name = RmpTools.buildImageName(new File(atlas.getName()));
-
-		/* --- Create RMP.ini --- */
-		RmpIni rmp_ini = new RmpIni(image_name, layers.size());
-
-		/* --- Create packer and fill it with content --- */
-		RmpWriter packer = new RmpWriter();
-		packer.addFile(rmp_ini);
-
-		int layerNum = 0;
-		while (layers.size() > 0) {
-			String layerName = RmpTools.buildTileName(image_name, layerNum++);
-			RmpLayer layer = layers.get(0);
-			log.trace("Adding layer: " + layerName);
-			packer.addFile(layer.getTLMFile(layerName));
-			packer.addFile(layer.getA00File(layerName));
-
-			/* --- Free resources --- */
-			layers.remove(0);
+		try {
+			rmpWriter.writeFileEntry(new Bmp2bit());
+			rmpWriter.writeFileEntry(new Bmp4bit());
+			rmpWriter.writeDirectory();
+		} finally {
+			rmpWriter.close();
+			rmpWriter = null;
 		}
-
-		packer.addFile(new Bmp2bit());
-		packer.addFile(new Bmp4bit());
-
-		/* --- Write to disk --- */
-		packer.writeToDisk(new File(atlasDir, image_name + ".rmp"));
 	}
 
 }

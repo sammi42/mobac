@@ -14,20 +14,18 @@
 
 package rmp.rmpmaker;
 
-
 /**
  * Coordinates of a bounding box around osm tiles
  * 
  */
 public class BoundingRectOsm extends BoundingRect {
-	public BoundingRectOsm(final double x, final double y, final double cx, final double cy,
-			final int zoom) {
+	public BoundingRectOsm(final int x, final int y, final int cx, final int cy, final int zoom) {
 		super(0, 0, 0, 0);
 
-		setNorth(0 - tile2lat(y, zoom));
-		setSouth(0 - tile2lat(y + (cy / 256), zoom));
+		setNorth(-tile2lat(y, zoom));
+		setSouth(-tile2lat(y + (cy / 256.0), zoom));
 		setWest(tile2lon(x, zoom));
-		setEast(tile2lon(x + (cx / 256), zoom));
+		setEast(tile2lon(x + (cx / 256.0), zoom));
 	}
 
 	static private double tile2lon(double x, int z) {
@@ -35,6 +33,8 @@ public class BoundingRectOsm extends BoundingRect {
 	}
 
 	static private double tile2lat(double y, int z) {
+		// This computation is really strange - OSM uses Mercator projection but
+		// this definitely not a transformation MercatorXY to Lat/Lon!?
 		double n = Math.PI - ((2.0 * Math.PI * y) / Math.pow(2.0, z));
 		return 180.0 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
 	}

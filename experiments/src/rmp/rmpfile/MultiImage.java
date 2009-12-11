@@ -36,7 +36,6 @@ public class MultiImage implements CalibratedImage {
 	private int activeImageMax;
 
 	public MultiImage(TacTile[] images, MapInterface map) {
-		log.debug("New instance: images count " + images.length + "\n\t" + Arrays.toString(images));
 		this.images = images;
 
 		this.lastImages = new LinkedList<TacTile>();
@@ -65,18 +64,18 @@ public class MultiImage implements CalibratedImage {
 	}
 
 	private BoundingRect buildBoundingRect() {
-		double north = 90.0D;
-		double south = -90.0D;
-		double west = 180.0D;
-		double east = -180.0D;
+		double north = -90.0;
+		double south = 90.0;
+		double west = 180.0;
+		double east = -180.0;
 
 		for (TacTile tile : images) {
 			BoundingRect part_bounds = tile.getBoundingRect();
 
 			west = Math.min(west, part_bounds.getWest());
 			east = Math.max(east, part_bounds.getEast());
-			north = Math.min(north, part_bounds.getNorth());
-			south = Math.max(south, part_bounds.getSouth());
+			north = Math.max(north, part_bounds.getNorth());
+			south = Math.min(south, part_bounds.getSouth());
 		}
 
 		return new BoundingRect(north, south, west, east);
@@ -141,19 +140,19 @@ public class MultiImage implements CalibratedImage {
 
 		/* --- Count the number of hits --- */
 		if (small.getWest() >= big.getWest() && small.getWest() <= big.getEast()
-				&& small.getNorth() >= big.getNorth() && small.getNorth() <= big.getSouth())
+				&& small.getNorth() <= big.getNorth() && small.getNorth() >= big.getSouth())
 			hit++;
 
 		if (small.getEast() >= big.getWest() && small.getEast() <= big.getEast()
-				&& small.getNorth() >= big.getNorth() && small.getNorth() <= big.getSouth())
+				&& small.getNorth() <= big.getNorth() && small.getNorth() >= big.getSouth())
 			hit++;
 
 		if (small.getWest() >= big.getWest() && small.getWest() <= big.getEast()
-				&& small.getSouth() >= big.getNorth() && small.getSouth() <= big.getSouth())
+				&& small.getSouth() <= big.getNorth() && small.getSouth() >= big.getSouth())
 			hit++;
 
 		if (small.getEast() >= big.getWest() && small.getEast() <= big.getEast()
-				&& small.getSouth() >= big.getNorth() && small.getSouth() <= big.getSouth())
+				&& small.getSouth() <= big.getNorth() && small.getSouth() >= big.getSouth())
 			hit++;
 
 		/* --- Correct the result 0-4 to 0-2 --- */
@@ -174,9 +173,7 @@ public class MultiImage implements CalibratedImage {
 
 	@Override
 	public String toString() {
-		return "MultiImage [activeImageMax=" + activeImageMax + ", bounds=" + bounds
-				+ ", imageHeight=" + imageHeight + ", imageWidth=" + imageWidth + ", images="
-				+ Arrays.toString(images) + ", lastImages=" + lastImages + "]";
+		return "MultiImage [bounds=" + bounds + "\n\timages=" + Arrays.toString(images) + "]";
 	}
 
 }

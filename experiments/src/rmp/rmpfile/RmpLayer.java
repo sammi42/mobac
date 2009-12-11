@@ -88,7 +88,8 @@ public class RmpLayer {
 
 		/* --- Calculate tile dimensions --- */
 		tile_width = (rect.getEast() - rect.getWest()) * 256 / si.getImageWidth();
-		tile_height = (rect.getSouth() - rect.getNorth()) * 256 / si.getImageHeight();
+		tile_height = (rect.getNorth() - rect.getSouth()) * 256 / si.getImageHeight();
+		assert (tile_height > 0 && tile_width > 0);
 
 		/*
 		 * --- Check the theoretical maximum of horizontal and vertical position
@@ -106,7 +107,7 @@ public class RmpLayer {
 
 		/* --- Create the tiles --- */
 		for (int x = x_start; x * tile_width - 180 < rect.getEast(); x++) {
-			for (int y = y_start; y * tile_height - 90 < rect.getSouth(); y++) {
+			for (int y = y_start; y * tile_height - 90 >= rect.getSouth(); y--) {
 				count++;
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
@@ -114,8 +115,11 @@ public class RmpLayer {
 					log.trace(String.format("Create tile %d layer=%d", count, layer));
 
 				/* --- Create tile --- */
-				img = si.getSubImage(new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
-						- 90, x * tile_width - 180, (x + 1) * tile_width - 180), 256, 256);
+				double south = y * tile_height - 90;
+				double north = south + tile_height;
+				double west = x * tile_width - 180;
+				double east = (x + 1) * tile_width - 180;
+				img = si.getSubImage(new BoundingRect(north, south, west, east), 256, 256);
 				result.addImage((int) x, (int) y, img);
 			}
 		}

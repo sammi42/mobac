@@ -30,15 +30,14 @@ public class TacTile implements CalibratedImage {
 		this.zoom = zoom;
 		image = null;
 
-//		int tileSize = mapSpace.getTileSize();
-//		int x = tilex * tileSize;
-//		int y = tiley * tileSize;
-//		double north = mapSpace.cYToLat(y, zoom);
-//		double south = mapSpace.cYToLat(y + tileSize - 1, zoom);
-//		double west = mapSpace.cXToLon(x, zoom);
-//		double east = mapSpace.cXToLon(x + tileSize - 1, zoom);
-//		boundingRect = new BoundingRect(north, south, west, east);
-		boundingRect = new BoundingRectOsm(tilex, tiley, 256, 256, zoom);
+		int tileSize = mapSpace.getTileSize();
+		int x = tilex * tileSize;
+		int y = tiley * tileSize;
+		double north = mapSpace.cYToLat(y, zoom);
+		double south = mapSpace.cYToLat(y + tileSize, zoom);
+		double west = mapSpace.cXToLon(x, zoom);
+		double east = mapSpace.cXToLon(x + tileSize, zoom);
+		boundingRect = new BoundingRect(north, south, west, east);
 		log.trace(this.toString());
 	}
 

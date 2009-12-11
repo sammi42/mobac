@@ -401,4 +401,54 @@ public class Utilities {
 			return f.getParentFile();
 		}
 	}
+
+	/**
+	 * Saves <code>data</code> to the file specified by <code>filename</code>.
+	 * 
+	 * @param filename
+	 * @param data
+	 * @throws IOException
+	 */
+	public static void saveBytes(String filename, byte[] data) throws IOException {
+		FileOutputStream fo = null;
+		try {
+			fo = new FileOutputStream(filename);
+			fo.write(data);
+		} finally {
+			closeStream(fo);
+		}
+	}
+
+	/**
+	 * Saves <code>data</code> to the file specified by <code>filename</code>.
+	 * 
+	 * @param filename
+	 * @param data
+	 * @return Data has been saved successfully?
+	 */
+	public static boolean saveBytesEx(String filename, byte[] data) {
+		FileOutputStream fo = null;
+		try {
+			fo = new FileOutputStream(filename);
+			fo.write(data);
+			return true;
+		} catch (IOException e) {
+			return false;
+		} finally {
+			closeStream(fo);
+		}
+	}
+
+	/**
+	 * Tries to delete a file or directory and throws an {@link IOException} if
+	 * that fails.
+	 * 
+	 * @param fileToDelete
+	 * @throws IOException
+	 *             Thrown if <code>fileToDelete</code> can not be deleted.
+	 */
+	public static void deleteFile(File fileToDelete) throws IOException {
+		if (!fileToDelete.delete())
+			throw new IOException("Deleting of \"" + fileToDelete + "\" failed.");
+	}
 }

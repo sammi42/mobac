@@ -2,14 +2,15 @@ package tac.program.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import tac.program.atlascreators.AtlasCreator;
 import tac.program.atlascreators.AndNav;
+import tac.program.atlascreators.AtlasCreator;
 import tac.program.atlascreators.BigPlanetSql;
 import tac.program.atlascreators.GarminCustom;
 import tac.program.atlascreators.Glopus;
+import tac.program.atlascreators.MagellanRmp;
+import tac.program.atlascreators.Maverick;
 import tac.program.atlascreators.MobileTrailExplorer;
 import tac.program.atlascreators.MobileTrailExplorerCache;
-import tac.program.atlascreators.Maverick;
 import tac.program.atlascreators.OSMTracker;
 import tac.program.atlascreators.Ozi;
 import tac.program.atlascreators.TrekBuddyCustom;
@@ -27,7 +28,8 @@ public enum AtlasOutputFormat {
 	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
-	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class);
+	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
+	Rmp("Magellan (RMP)", MagellanRmp.class);
 
 	private final String displayName;
 	private Class<? extends AtlasCreator> atlasCreatorClass;

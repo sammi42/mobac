@@ -65,7 +65,8 @@ public class MultiImage implements CalibratedImage {
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height) {
-		log.debug(String.format("getSubImage %d %d %s", width, height, area));
+		if (log.isTraceEnabled())
+			log.trace(String.format("getSubImage %d %d %s", width, height, area));
 
 		int hit = 0;
 
@@ -80,7 +81,7 @@ public class MultiImage implements CalibratedImage {
 			do {
 				TacTile image = images[i];
 				hit = hitType(image.getBoundingRect(), area);
-				log.trace("HIT: " + hit + " " + this.images[i]);
+				// log.trace("HIT: " + hit + " " + this.images[i]);
 
 				if (hit != HIT_NOHIT) {
 					image.drawSubImage(area, result);

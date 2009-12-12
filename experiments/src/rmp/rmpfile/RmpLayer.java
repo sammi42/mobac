@@ -16,11 +16,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-import rmp.interfaces.CalibratedImage;
 import rmp.interfaces.RmpFileEntry;
 import rmp.rmpfile.entries.GeneralRmpFileEntry;
-import rmp.rmpmaker.BoundingRect;
-import tac.exceptions.MapCreationException;
 import tac.program.model.Settings;
 import tac.utilities.Utilities;
 
@@ -59,78 +56,6 @@ public class RmpLayer {
 	}
 
 	/**
-	 * Create a new instance of a TLM file and fill it with the data of a
-	 * calibrated image
-	 * 
-	 * @param si
-	 *            image to get data from
-	 * @param layer
-	 *            Layer number - for status output only
-	 * @return TLM instance
-	 * @throws InterruptedException
-	 * @throws MapCreationException
-	 */
-	public static RmpLayer createFromImage(CalibratedImage si, int layer)
-			throws InterruptedException, MapCreationException {
-		log.debug(String.format("createFromSimpleImage(\n\t%s\n\t%d)", si, layer));
-
-		RmpLayer result;
-		double tile_width, tile_height;
-		BoundingRect rect;
-		BufferedImage img;
-		int count = 0;
-
-		/* --- Create instance --- */
-		result = new RmpLayer();
-
-		/* --- Get the coordinate space of the image --- */
-		rect = si.getBoundingRect();
-
-		/* --- Calculate tile dimensions --- */
-		tile_width = (rect.getEast() - rect.getWest()) * 256 / si.getImageWidth();
-		tile_height = (rect.getSouth() - rect.getNorth()) * 256 / si.getImageHeight();
-
-		/*
-		 * --- Check the theoretical maximum of horizontal and vertical position
-		 * ---
-		 */
-		double pos_hor = 360 / tile_width;
-		double pos_ver = 180 / tile_height;
-		if (pos_hor > 0xFFFF || pos_ver >= 0xFFFF)
-			throw new MapCreationException(
-					"Map resolution too high - please select a lower zoom level");
-
-		/* --- Calculate the positions of the upper left tile --- */
-		int x_start = (int) Math.floor((rect.getWest() + 180) / tile_width);
-		int y_start = (int) Math.floor((rect.getNorth() + 90) / tile_height);
-
-		/* --- Create the tiles --- */
-		for (int x = x_start; x * tile_width - 180 < rect.getEast(); x++) {
-			for (int y = y_start; y * tile_height - 90 < rect.getSouth(); y++) {
-				count++;
-				if (Thread.currentThread().isInterrupted())
-					throw new InterruptedException();
-				if (log.isTraceEnabled())
-					log.trace(String.format("Create tile %d layer=%d", count, layer));
-
-				/* --- Create tile --- */
-				img = si.getSubImage(new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
-						- 90, x * tile_width - 180, (x + 1) * tile_width - 180), 256, 256);
-				result.addImage((int) x, (int) y, img);
-			}
-		}
-
-		/* --- Build A00 file --- */
-		result.buildA00File();
-
-		/* --- Build the TLM file --- */
-		result.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect
-				.getNorth(), rect.getSouth());
-
-		return result;
-	}
-
-	/**
 	 * Adds an image to the internal list of tiles
 	 * 
 	 * @param x
@@ -140,7 +65,7 @@ public class RmpLayer {
 	 * @param image
 	 *            image
 	 */
-	private void addImage(int x, int y, BufferedImage image) {
+	public void addImage(int x, int y, BufferedImage image) {
 		log.trace(String.format("addImage(x%d,y%d,w%d,h%d)", x, y, image.getWidth(), image
 				.getHeight()));
 		ByteArrayOutputStream bos;
@@ -175,7 +100,7 @@ public class RmpLayer {
 	 * component in the tiledata which means that this function must be called
 	 * before building the tile tree
 	 */
-	private void buildA00File() {
+	public void buildA00File() {
 		ByteArrayOutputStream bos;
 		int totaloffset = 4;
 		int i;
@@ -281,7 +206,7 @@ public class RmpLayer {
 	/**
 	 * Create the TLM file from the TileContainer infos
 	 */
-	private void buildTLMFile(double tile_width, double tile_height, double left, double right,
+	public void buildTLMFile(double tile_width, double tile_height, double left, double right,
 			double top, double bottom) {
 		ByteArrayOutputStream bos;
 		int size;

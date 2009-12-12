@@ -1,18 +1,21 @@
 package rmp;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import rmp.interfaces.CalibratedImage;
 import rmp.rmpfile.MultiImage;
 import rmp.rmpfile.RmpLayer;
 import rmp.rmpfile.RmpTools;
 import rmp.rmpfile.RmpWriter;
 import rmp.rmpfile.entries.Bmp2bit;
 import rmp.rmpfile.entries.Bmp4bit;
+import rmp.rmpmaker.BoundingRect;
 import rmp.rmpmaker.TacTile;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
@@ -73,8 +76,7 @@ public class MagellanRmp extends AtlasCreator {
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		int count = (xMax - xMin + 1) * (yMax - yMin + 1);
-		int progressStep = count;
-		atlasProgress.initMapCreation(count + progressStep + 10);
+		atlasProgress.initMapCreation(1000);
 		TacTile[] images = new TacTile[count];
 
 		int lineX = 0;
@@ -83,20 +85,19 @@ public class MagellanRmp extends AtlasCreator {
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {
 				checkUserAbort();
-				atlasProgress.incMapCreationProgress();
 				images[i++] = new TacTile(mapDlTileProvider, mapSpace, x, y, zoom);
 				lineX += tileSize;
 			}
 		}
+		atlasProgress.setMapCreationProgress(100);
 		MultiImage layerImage = new MultiImage(images, map);
-		RmpLayer layer = RmpLayer.createFromImage(layerImage, layerNum);
-		atlasProgress.incMapCreationProgress(progressStep);
+		RmpLayer layer = createLayer(layerImage, layerNum);
 		checkUserAbort();
 		String layerName = RmpTools.buildTileName(imageName, layerNum);
 		try {
 			rmpWriter.writeFileEntry(layer.getTLMFile(layerName));
 			rmpWriter.writeFileEntry(layer.getA00File(layerName));
-			atlasProgress.incMapCreationProgress(10);
+			atlasProgress.setMapCreationProgress(1000);
 		} catch (IOException e) {
 			throw new MapCreationException(e);
 		}
@@ -113,6 +114,79 @@ public class MagellanRmp extends AtlasCreator {
 			rmpWriter.close();
 			rmpWriter = null;
 		}
+	}
+
+	/**
+	 * Create a new instance of a TLM file and fill it with the data of a
+	 * calibrated image
+	 * 
+	 * @param si
+	 *            image to get data from
+	 * @param layer
+	 *            Layer number - for status output only
+	 * @return TLM instance
+	 * @throws InterruptedException
+	 * @throws MapCreationException
+	 */
+	public RmpLayer createLayer(CalibratedImage si, int layer) throws InterruptedException,
+			MapCreationException {
+
+		int count = 0;
+
+		/* --- Create instance --- */
+		RmpLayer result = new RmpLayer();
+
+		/* --- Get the coordinate space of the image --- */
+		BoundingRect rect = si.getBoundingRect();
+
+		/* --- Calculate tile dimensions --- */
+		double tile_width = (rect.getEast() - rect.getWest()) * 256 / si.getImageWidth();
+		double tile_height = (rect.getSouth() - rect.getNorth()) * 256 / si.getImageHeight();
+
+		/*
+		 * --- Check the theoretical maximum of horizontal and vertical position
+		 * ---
+		 */
+		double pos_hor = 360 / tile_width;
+		double pos_ver = 180 / tile_height;
+		if (pos_hor > 0xFFFF || pos_ver >= 0xFFFF)
+			throw new MapCreationException(
+					"Map resolution too high - please select a lower zoom level");
+
+		/* --- Calculate the positions of the upper left tile --- */
+		int x_start = (int) Math.floor((rect.getWest() + 180) / tile_width);
+		int y_start = (int) Math.floor((rect.getNorth() + 90) / tile_height);
+
+		double x_end = (rect.getEast() + 180.0) / tile_width;
+		double y_end = (rect.getSouth() + 90.0) / tile_height;
+
+		double x_count = (x_end - x_start) / 800.0;
+		/* --- Create the tiles --- */
+		for (int x = x_start; x < x_end; x++) {
+			for (int y = y_start; y < y_end; y++) {
+				count++;
+				if (Thread.currentThread().isInterrupted())
+					throw new InterruptedException();
+				if (log.isTraceEnabled())
+					log.trace(String.format("Create tile %d layer=%d", count, layer));
+
+				/* --- Create tile --- */
+				BoundingRect subrect = new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
+						- 90, x * tile_width - 180, (x + 1) * tile_width - 180);
+				BufferedImage img = si.getSubImage(subrect, 256, 256);
+				result.addImage((int) x, (int) y, img);
+			}
+			atlasProgress.setMapCreationProgress(100 + (int) ((x - x_start) / x_count));
+		}
+
+		/* --- Build A00 file --- */
+		result.buildA00File();
+
+		/* --- Build the TLM file --- */
+		result.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect
+				.getNorth(), rect.getSouth());
+
+		return result;
 	}
 
 }

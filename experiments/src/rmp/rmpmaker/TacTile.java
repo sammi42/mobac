@@ -129,6 +129,8 @@ public class TacTile implements CalibratedImage {
 			if (pix_y < 0 || pix_y > 255)
 				continue;
 
+			//log.trace("scale factor y: " + (pix_y / (double) y));
+
 			for (int x = 0; x < maxx; x++) {
 				/* --- Calculate the x-coordinate of the current row --- */
 				src_c_x = dest_area.getWest() + (dest_area.getEast() - dest_area.getWest()) * x

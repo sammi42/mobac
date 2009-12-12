@@ -18,8 +18,6 @@ import org.apache.log4j.Logger;
 
 import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
 import tac.program.atlascreators.impl.rmp.rmpfile.GeneralRmpFileEntry;
-import tac.program.model.Settings;
-import tac.utilities.Utilities;
 
 /**
  * Class for building a TLM file from image and writing the file to a stream
@@ -82,9 +80,9 @@ public class RmpLayer {
 		/* --- Create tiledata --- */
 		byte[] data = bos.toByteArray();
 
-		// TODO: Remove
-		if (Settings.getInstance().isDevModeEnabled())
-			Utilities.saveBytesEx(String.format("E:/TritonMap/jpg/%d_%d.jpg", x, y), data);
+		// if (Settings.getInstance().isDevModeEnabled())
+		// Utilities.saveBytesEx(String.format("E:/TritonMap/jpg/%d_%d.jpg", x,
+		// y), data);
 
 		tld = new Tiledata();
 		tld.jpegFile = data;

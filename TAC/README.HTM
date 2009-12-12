@@ -6,12 +6,12 @@
 <style type="text/css">
 body {
 	margin-left: 10px;
+	font-family: Helvetica, Arial, sans-serif;
 }
 
 h1,h2,h3 {
 	color: #0000CC;
 	font-style: italic;
-	font-family: Helvetica, Arial, sans-serif;
 }
 
 h1 {
@@ -34,11 +34,11 @@ pre {
 	margin-left: 140px;
 }
 
-p,li {
+p,ul {
 	font-size: 110%;
-	font-family: Helvetica, Arial, sans-serif;
 	margin-left: 100px;
 }
+
 </style>
 </head>
 <body>
@@ -49,14 +49,14 @@ TAC is an open source project hosted on SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
 </p>
 <h2>Table of contents</h2>
-<ul>
+<ul style="margin-left: 50px;">
 	<li><a href="#License">License</a></li>
 	<li><a href="#Description">Description</a></li>
 	<li><a href="#Requirements">Requirements</a></li>
 	<li><a href="#Installation">Installation</a></li>
 	<li><a href="#Start">Application start</a></li>
-	<li><a href="#AtlasFormats">The different atlas formats</a></li>
-	<ul>
+	<li><a href="#AtlasFormats">The different atlas formats</a>
+	<ul style="margin-left: 10px;">
 		<li><a href="#TrekBuddy">Creating and using atlases with
 		TrekBuddy</a></li>
 		<li><a href="#MTE">Creating and using atlases with Mobile
@@ -70,8 +70,10 @@ TAC is an open source project hosted on SourceForge.net: <br>
 		<li><a href="#Ozi">Creating and using atlases with
 		OziExplorer / large PNG image</a></li>
 		<li><a href="#Glopus">Creating and using atlases with Glopus</a></li>
-		<li><a href="#GarminCustom">Creating Garmin Custom Maps</a></li>
+		<li><a href="#GarminCustom">Creating Garmin Custom maps</a></li>
+		<li><a href="#Magellan">Creating Magellan RMP atlases</a></li>
 	</ul>
+	</li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
 	<li><a href="#Limitations">Known problems and limitations</a></li>
 	<li><a href="#AdvancedUsers">Details for advanced users</a></li>
@@ -118,7 +120,7 @@ a Windows environment or the <tt>start.sh</tt> under a Linux / Unix
 environment. At the first application start all necessary files and
 folders are automatically created by the application.</p>
 
-<hr />
+<hr>
 
 <h2><a name="AtlasFormats">The different atlas formats</a></h2>
 <h3><a name="TrekBuddy">Creating and using atlases with
@@ -281,8 +283,8 @@ when creating atlases:</p>
 per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
 file per defined map.</p>
 
-<h3><a name="GarminCustom">Creating Garmin Custom Maps</a></h3>
-<p>For creating atlases of Creating Garmin Custom Maps you have to
+<h3><a name="GarminCustom">Creating Garmin Custom maps</a></h3>
+<p>For creating atlases of Creating Garmin Custom maps you have to
 select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
 <p>Using this atlas output format the following features are ignored
@@ -290,16 +292,34 @@ when creating atlases:</p>
 <ul>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
 </ul>
-<p>The output format of an "atlas" for Glopus is one subdirectory
-per layer and within this subdirectory each map in form of one <tt>KMZ</tt>
-file containing one <tt>JPG</tt> file. The Garmin Custom Map format
-defines a maximum image size of 1024x1024 pixels. If a map is larger it
-will be automatically scaled down to fit into this size. For more
-details about the Garmin Custom Map please visit the <a
+<p>The output format of an "atlas" for Garmin Custom maps is one
+subdirectory per layer and within this subdirectory each map in form of
+one <tt>KMZ</tt> file containing one <tt>JPG</tt> file. The Garmin
+Custom Map format defines a maximum image size of 1024x1024 pixels. If a
+map is larger it will be automatically scaled down to fit into this
+size. For more details about the Garmin Custom Map please visit the <a
 	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
 Forums</a>.</p>
 
-<hr />
+<h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
+<p>For creating atlases of Creating Garmin Custom Maps you have to
+select <b>Magellan (RMP)</b> as format in section <b>Atlas settings</b>
+on the left side of the main window.</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<p>Additionally the following limitations apply:</p>
+<ul>
+	<li>The maximum map count per atlas is 5.</li>
+	<li>There is a maximum resolution at about zoom level 15.</li>
+</ul>
+<p>The output format of an "atlas" for Magellan is one RMP file in
+the atlas directory. You can directly load this file in Magellan
+VantagePoint or transfer it onto your device.</p>
+
+<hr>
 
 <h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other

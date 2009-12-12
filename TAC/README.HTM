@@ -38,7 +38,6 @@ p,ul {
 	font-size: 110%;
 	margin-left: 100px;
 }
-
 </style>
 </head>
 <body>
@@ -143,10 +142,18 @@ TrekBuddy as atlas.</p>
 <h3><a name="MTE">Creating and using atlases with Mobile Trail
 Explorer (MTE)</a></h3>
 <p>For creating atlases compatible with Mobile Trail Explorer you
-have to select <b>Mobile Trail Explorer</b> as format in section <b>Atlas
+have to select <b>Mobile Trail Explorer Cache</b> as format in section <b>Atlas
 settings</b> on the left side of the main window. <br>
 If a map source uses an image format different to PNG the tiles will be
 automatically converted to the PNG format.<br>
+The output is one <tt>MTEFileCache</tt> file per atlas which contains
+all maps. An existing cache file can not be updated. If you want to add
+maps to an existing <tt>MTEFileCache</tt> please use the atlas format <b>Mobile
+Trail Explorer</b> which creates a file structure identical to
+JTileDownloader and then process the maps using <a
+	href="http://code.google.com/p/mobile-trail-explorer/wiki/CacheCreator">MTE
+CacheCreator</a>.<br>
+</br>
 As atlases for Mobile Trail Explorer does not support all features
 provided by TrekBuddy the following settings are ignored when creating
 atlases for Mobile Trail Explorer:</p>
@@ -155,6 +162,7 @@ atlases for Mobile Trail Explorer:</p>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
+<p></p>
 
 <h3><a name="Maverick">Creating and using atlases with Maverick</a></h3>
 <p>For creating atlases compatible with Maverick you have to select

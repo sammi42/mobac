@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
+import tac.mapsources.MapSourceTools;
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google.GoogleEarth;
 import tac.mapsources.impl.Google.GoogleEarthMapsOverlay;
@@ -81,7 +82,17 @@ public class GoogleUrlUpdater {
 
 		g.testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8",
-				GoogleMapsKorea.class, false));
+				GoogleMapsKorea.class, false) {
+
+			@Override
+			protected String processFoundUrl(String url) {
+				if (url.endsWith("&") && url.indexOf("gmaptiles.co.kr") > 0)
+					return url + "x=0&y=0&z=0";
+				else
+					return url;
+			}
+
+		});
 
 		g.testMapSource(new UpdateableMapSource("", GoogleMapMaker.class) {
 
@@ -216,7 +227,7 @@ public class GoogleUrlUpdater {
 
 			// System.out.println(urls.size());
 
-			HashSet<String> tileUrlCandidates = new HashSet<String>();
+			HashSet<UrlString> tileUrlCandidates = new HashSet<UrlString>();
 
 			for (String imgUrl : urls) {
 				try {
@@ -228,6 +239,8 @@ public class GoogleUrlUpdater {
 
 					// System.out.println(imgUrl);
 
+					imgUrl = ums.processFoundUrl(imgUrl);
+
 					URL tileUrl = new URL(imgUrl);
 
 					String host = tileUrl.getHost();
@@ -237,24 +250,25 @@ public class GoogleUrlUpdater {
 					path = path.replaceFirst("x=\\d+", "x={\\$x}");
 					path = path.replaceFirst("y=\\d+", "y={\\$y}");
 					path = path.replaceFirst("z=\\d+", "z={\\$z}");
-					path = path.replaceFirst("hl=[^&]+", "hl={\\$lang}");
-					path = path.replaceFirst("&s=\\w*", "");
 
 					if (path.equalsIgnoreCase(tileUrl.getPath()))
 						continue; // Nothing was replaced
-					// remove Galileo
+
+					path = path.replaceFirst("hl=[^&]+", "hl={\\$lang}");
+					path = path.replaceFirst("&s=[Galieo]*", "");
+
 					String candidate = "http://" + host + path;
-					tileUrlCandidates.add(candidate);
+
+					tileUrlCandidates.add(new UrlString(candidate));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
 			}
 
 			if (tileUrlCandidates.size() == 0)
 				return null;
 			if (tileUrlCandidates.size() == 1)
-				return tileUrlCandidates.iterator().next();
+				return tileUrlCandidates.iterator().next().url;
 
 			// We have more than one candidate - therefore we have to decide
 			// which one to take. We compare each candidate for similarity with
@@ -262,23 +276,21 @@ public class GoogleUrlUpdater {
 
 			Levenshtein similarityAlgo = new Levenshtein();
 			MapSource mapSource = ums.mapSourceClass.newInstance();
-			String currentUrl = mapSource.getTileUrlConnection(0, 0, 0).getURL().toString();
+			String currentUrl = MapSourceTools.loadMapUrl(mapSource, "url");
 
-			String[] candidates = new String[0];
-			candidates = tileUrlCandidates.toArray(candidates);
-			float[] similarity = similarityAlgo.batchCompareSet(candidates, currentUrl);
+			ArrayList<UrlString> candidateList = new ArrayList<UrlString>(tileUrlCandidates);
+			for (UrlString us : candidateList) {
+				us.f = similarityAlgo.getSimilarity(us.url, currentUrl);
+			}
+			Collections.sort(candidateList);
 
-			ArrayList<SimString> result = new ArrayList<SimString>();
-			for (int i = 0; i < similarity.length; i++)
-				result.add(new SimString(candidates[i], similarity[i]));
-			Collections.sort(result);
-
-			System.out.println("\n" + mapSource.getStoreName() + " number of possible URLs found: "
-					+ result.size());
-			System.out.println(String.format("%2.2f %s", 1.0, currentUrl));
-			for (SimString s : result)
-				System.out.println(s);
-			return result.get(0).s;
+			// System.out.println("\n" + mapSource.getStoreName() +
+			// " number of possible URLs found: "
+			// + candidateList.size());
+			// System.out.println("ORG  " + currentUrl);
+			// for (UrlString s : candidateList)
+			// System.out.println(s);
+			return candidateList.get(0).url;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -356,6 +368,9 @@ public class GoogleUrlUpdater {
 			return g.getUpdatedUrl(this, updateUrl, useImgSrcUrlsOnly);
 		}
 
+		protected String processFoundUrl(String url) {
+			return url;
+		}
 	}
 
 	public static class NullPrintWriter extends PrintWriter {
@@ -378,24 +393,49 @@ public class GoogleUrlUpdater {
 		}
 	}
 
-	public static class SimString implements Comparable<SimString> {
-		public final String s;
-		public final float f;
+	public static class UrlString implements Comparable<UrlString> {
+		public final String url;
+		public float f;
 
-		public SimString(String s, float f) {
+		public UrlString(String url) {
 			super();
-			this.s = s;
-			this.f = f;
+			this.url = url;
 		}
 
-		public int compareTo(SimString o) {
-			return Float.compare(o.f, f);
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((url == null) ? 0 : url.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			UrlString other = (UrlString) obj;
+			if (url == null) {
+				if (other.url != null)
+					return false;
+			} else if (!url.equals(other.url))
+				return false;
+			return true;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("%2.2f %s", f, s);
+			return String.format("%2.2f %s", f, url);
+		}
+
+		public int compareTo(UrlString o) {
+			return Float.compare(o.f, f);
 		}
 
 	}
+
 }

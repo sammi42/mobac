@@ -13,6 +13,7 @@ import tac.program.atlascreators.MobileTrailExplorer;
 import tac.program.atlascreators.MobileTrailExplorerCache;
 import tac.program.atlascreators.OSMTracker;
 import tac.program.atlascreators.Ozi;
+import tac.program.atlascreators.TTQV;
 import tac.program.atlascreators.TrekBuddyCustom;
 
 @XmlRootElement
@@ -29,7 +30,8 @@ public enum AtlasOutputFormat {
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
-	Rmp("Magellan (RMP)", MagellanRmp.class);
+	Rmp("Magellan (RMP)", MagellanRmp.class), //
+	Ttqv("Touratech TTQV", TTQV.class);
 
 	private final String displayName;
 	private Class<? extends AtlasCreator> atlasCreatorClass;

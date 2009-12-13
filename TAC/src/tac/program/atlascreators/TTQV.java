@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
@@ -52,6 +54,8 @@ public class TTQV extends Ozi {
 
 			int width = (xMax - xMin + 1) * tileSize;
 			int height = (yMax - yMin + 1) * tileSize;
+			double scale = ((latitudeMax - latitudeMin) * (longitudeMax - longitudeMin))
+					/ (width * height);
 
 			String nsowLine = "%s = 6 = %2.6f\r\n";
 			String cLine = "c%d_%s = 7 =  %2.6f\r\n";
@@ -64,7 +68,8 @@ public class TTQV extends Ozi {
 			mapWriter.write(String.format(Locale.ENGLISH, nsowLine, "sued", latitudeMin));
 			mapWriter.write(String.format(Locale.ENGLISH, nsowLine, "ost", longitudeMax));
 			mapWriter.write(String.format(Locale.ENGLISH, nsowLine, "west", longitudeMin));
-			mapWriter.write("scale_area = 6 =  4.066159e-009\r\n");
+			NumberFormat nf = new DecimalFormat("0.000000E000", Utilities.DFS_ENG);
+			mapWriter.write("scale_area = 6 =  " + nf.format(scale).toLowerCase() + "\r\n");
 			mapWriter.write("proj_mode = 10 = proj\r\n");
 			mapWriter.write("projparams = 10 = proj=merc lon_0=-\r\n");
 			mapWriter.write("datum1 = 10 = WGS 84# 6378137# 298.257223563# 0# 0# 0#\r\n");

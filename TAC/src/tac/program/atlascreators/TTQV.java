@@ -42,7 +42,7 @@ public class TTQV extends Ozi {
 	private void writeCalFile() {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, mapName + ".cal"));
+			fout = new FileOutputStream(new File(mapDir, mapName + "_png.cal"));
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
 			MapSpace mapSpace = mapSource.getMapSpace();

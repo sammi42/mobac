@@ -219,10 +219,20 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			try {
 				super.dispatchEvent(newEvent);
 			} catch (Throwable e) {
+				if (e instanceof ArrayIndexOutOfBoundsException) {
+					StackTraceElement[] st = e.getStackTrace();
+					if (st.length > 0) {
+						if ("sun.font.FontDesignMetrics".equals(st[0].getClassName())) {
+							log.error("Ignored JRE bug exception " + e.getMessage()
+									+ " caused by : " + st[0]);
+							// This is a known JRE bug - we just ignore it
+							return;
+						}
+					}
+				}
 				TACExceptionHandler.processException(Thread.currentThread(), e);
 			}
 		}
-
 	}
 
 	public static void main(String[] args) {

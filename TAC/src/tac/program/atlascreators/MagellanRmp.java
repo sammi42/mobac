@@ -90,10 +90,9 @@ public class MagellanRmp extends AtlasCreator {
 		}
 		atlasProgress.setMapCreationProgress(100);
 		MultiImage layerImage = new MultiImage(images, map);
-		RmpLayer layer = createLayer(layerImage, layerNum);
-		checkUserAbort();
-		String layerName = RmpTools.buildTileName(imageName, layerNum);
 		try {
+			RmpLayer layer = createLayer(layerImage, layerNum);
+			String layerName = RmpTools.buildTileName(imageName, layerNum);
 			rmpWriter.writeFileEntry(layer.getTLMFile(layerName));
 			rmpWriter.writeFileEntry(layer.getA00File(layerName));
 			atlasProgress.setMapCreationProgress(1000);
@@ -126,9 +125,10 @@ public class MagellanRmp extends AtlasCreator {
 	 * @return TLM instance
 	 * @throws InterruptedException
 	 * @throws MapCreationException
+	 * @throws IOException
 	 */
 	public RmpLayer createLayer(CalibratedImage si, int layer) throws InterruptedException,
-			MapCreationException {
+			MapCreationException, IOException {
 
 		int count = 0;
 
@@ -164,8 +164,7 @@ public class MagellanRmp extends AtlasCreator {
 		for (int x = x_start; x < x_end; x++) {
 			for (int y = y_start; y < y_end; y++) {
 				count++;
-				if (Thread.currentThread().isInterrupted())
-					throw new InterruptedException();
+				checkUserAbort();
 				if (log.isTraceEnabled())
 					log.trace(String.format("Create tile %d layer=%d", count, layer));
 

@@ -62,8 +62,9 @@ public class RmpLayer {
 	 *            Y-position
 	 * @param image
 	 *            image
+	 * @throws IOException 
 	 */
-	public void addImage(int x, int y, BufferedImage image) {
+	public void addImage(int x, int y, BufferedImage image) throws IOException {
 		log.trace(String.format("addImage(x%d,y%d,w%d,h%d)", x, y, image.getWidth(), image
 				.getHeight()));
 		ByteArrayOutputStream bos;
@@ -71,11 +72,7 @@ public class RmpLayer {
 
 		/* --- Convert to the image to JPG file format --- */
 		bos = new ByteArrayOutputStream(8192);
-		try {
-			ImageIO.write(image, "jpg", bos);
-		} catch (IOException e) {
-			log.error("", e);
-		}
+		ImageIO.write(image, "jpg", bos);
 
 		/* --- Create tiledata --- */
 		byte[] data = bos.toByteArray();
@@ -97,8 +94,10 @@ public class RmpLayer {
 	 * therefore this operation cannot be repeated. It also sets the offset
 	 * component in the tiledata which means that this function must be called
 	 * before building the tile tree
+	 * 
+	 * @throws IOException
 	 */
-	public void buildA00File() {
+	public void buildA00File() throws IOException {
 		ByteArrayOutputStream bos;
 		int totaloffset = 4;
 		int i;
@@ -107,29 +106,25 @@ public class RmpLayer {
 		/* --- Create stream to write to --- */
 		bos = new ByteArrayOutputStream(65536);
 
-		try {
-			/* --- Number of tiles --- */
-			RmpTools.writeValue(bos, tiles.size(), 4);
+		/* --- Number of tiles --- */
+		RmpTools.writeValue(bos, tiles.size(), 4);
 
-			/* --- The tiles --- */
-			for (i = 0; i < tiles.size(); i++) {
-				/* --- Write tile into stream and calculate offset --- */
-				tile = tiles.get(i);
-				tile.totalOffset = totaloffset;
-				totaloffset += tile.jpegFile.length + 4;
-				RmpTools.writeValue(bos, tile.jpegFile.length, 4);
-				bos.write(tile.jpegFile);
+		/* --- The tiles --- */
+		for (i = 0; i < tiles.size(); i++) {
+			/* --- Write tile into stream and calculate offset --- */
+			tile = tiles.get(i);
+			tile.totalOffset = totaloffset;
+			totaloffset += tile.jpegFile.length + 4;
+			RmpTools.writeValue(bos, tile.jpegFile.length, 4);
+			bos.write(tile.jpegFile);
 
-				/* --- Remove image from tiledata to save memory --- */
-				tile.jpegFile = null;
-			}
-
-			/* --- Get the whole A00 file as byte array --- */
-			A00File = bos.toByteArray();
-			log.debug("A00File size: " + A00File.length);
-		} catch (IOException e) {
-			log.error("", e);
+			/* --- Remove image from tiledata to save memory --- */
+			tile.jpegFile = null;
 		}
+
+		/* --- Get the whole A00 file as byte array --- */
+		A00File = bos.toByteArray();
+		log.debug("A00File size: " + A00File.length);
 	}
 
 	/**

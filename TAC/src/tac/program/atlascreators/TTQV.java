@@ -39,7 +39,7 @@ public class TTQV extends Ozi {
 		}
 	}
 
-	private void writeCalFile() {
+	private void writeCalFile() throws MapCreationException {
 		FileOutputStream fout = null;
 		try {
 			fout = new FileOutputStream(new File(mapDir, mapName + "_png.cal"));
@@ -103,7 +103,7 @@ public class TTQV extends Ozi {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			log.error("", e);
+			throw new MapCreationException(e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

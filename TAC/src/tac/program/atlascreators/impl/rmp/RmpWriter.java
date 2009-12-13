@@ -84,7 +84,8 @@ public class RmpWriter {
 	public void writeDirectory() throws IOException {
 		if (projectedEntryCount != entries.size())
 			throw new RuntimeException("Entry count does not correspond "
-					+ "to the projected layer count");
+					+ "to the projected layer count: \nProjected: " + projectedEntryCount
+					+ "\nPresent:" + entries.size());
 
 		// Finalize the list of written entries
 		RmpTools.writeFixedString(entryOut, "MAGELLAN", 8);

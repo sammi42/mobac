@@ -146,11 +146,11 @@ public class MagellanRmp extends AtlasCreator {
 		 * --- Check the theoretical maximum of horizontal and vertical position
 		 * ---
 		 */
-		double pos_hor = 360 / tile_width;
-		double pos_ver = 180 / tile_height;
-		if (pos_hor > 0xFFFF || pos_ver >= 0xFFFF)
-			throw new MapCreationException(
-					"Map resolution too high - please select a lower zoom level");
+		// double pos_hor = 360 / tile_width;
+		// double pos_ver = 180 / tile_height;
+		// if (pos_hor > 0xFFFF || pos_ver >= 0xFFFF)
+		// throw new MapCreationException(
+		// "Map resolution too high - please select a lower zoom level");
 
 		/* --- Calculate the positions of the upper left tile --- */
 		int x_start = (int) Math.floor((rect.getWest() + 180) / tile_width);

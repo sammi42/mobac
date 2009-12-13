@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,13 +33,16 @@ import org.w3c.tidy.Tidy;
 
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google.GoogleEarth;
+import tac.mapsources.impl.Google.GoogleEarthMapsOverlay;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMaps;
 import tac.mapsources.impl.Google.GoogleMapsChina;
+import tac.mapsources.impl.Google.GoogleMapsKorea;
 import tac.mapsources.impl.Google.GoogleTerrain;
 import tac.program.Logging;
 import tac.tools.MapSourcesTester.MapSourceTestFailed;
 import tac.utilities.Utilities;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 public class GoogleUrlUpdater {
 
@@ -71,9 +75,13 @@ public class GoogleUrlUpdater {
 				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2", GoogleEarth.class));
 		g.testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2", GoogleTerrain.class));
-		// g.testMapSource(new UpdateableMapSource(
-		// "http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8",
-		// GoogleMapsKorea.class, false));
+		g.testMapSource(new UpdateableMapSource(
+				"http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&t=h&z=4",
+				GoogleEarthMapsOverlay.class));
+
+		g.testMapSource(new UpdateableMapSource(
+				"http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8",
+				GoogleMapsKorea.class, false));
 
 		g.testMapSource(new UpdateableMapSource("", GoogleMapMaker.class) {
 
@@ -128,7 +136,10 @@ public class GoogleUrlUpdater {
 		if (oldUrlTemplate == null)
 			throw new RuntimeException(ums.mapSourceClass + " " + key);
 		String newUrlTemplate = ums.getUpdatedUrl(this);
-		if (!oldUrlTemplate.equals(newUrlTemplate)) {
+		if (newUrlTemplate == null) {
+			System.out.println(ums.mapSourceClass.getSimpleName());
+			System.out.println(" failed to extract url");
+		} else if (!oldUrlTemplate.equals(newUrlTemplate)) {
 			try {
 				System.setProperty(key, newUrlTemplate);
 				MapSourcesTester.testMapSource(ums.mapSourceClass);
@@ -193,7 +204,8 @@ public class GoogleUrlUpdater {
 		return list;
 	}
 
-	public String getUpdatedUrl(String serviceUrl, boolean useImgSrcUrlsOnly) {
+	public String getUpdatedUrl(UpdateableMapSource ums, String serviceUrl,
+			boolean useImgSrcUrlsOnly) {
 
 		try {
 			List<String> urls;
@@ -209,43 +221,64 @@ public class GoogleUrlUpdater {
 			for (String imgUrl : urls) {
 				try {
 					// filter out images with relative path
-					if (imgUrl.toLowerCase().startsWith("http://")) {
-						imgUrl = imgUrl.replaceAll("\\\\x26", "&");
-						imgUrl = imgUrl.replaceAll("\\\\x3d", "=");
+					if (!imgUrl.toLowerCase().startsWith("http://"))
+						continue;
+					imgUrl = imgUrl.replaceAll("\\\\x26", "&");
+					imgUrl = imgUrl.replaceAll("\\\\x3d", "=");
 
-						//System.out.println(imgUrl);
+					// System.out.println(imgUrl);
 
-						URL tileUrl = new URL(imgUrl);
+					URL tileUrl = new URL(imgUrl);
 
-						String host = tileUrl.getHost();
-						host = host.replaceFirst("[0-3]", "{\\$servernum}");
+					String host = tileUrl.getHost();
+					host = host.replaceFirst("[0-3]", "{\\$servernum}");
 
-						String path = tileUrl.getPath();
-						path = path.replaceFirst("x=\\d+", "x={\\$x}");
-						path = path.replaceFirst("y=\\d+", "y={\\$y}");
-						path = path.replaceFirst("z=\\d+", "z={\\$z}");
-						path = path.replaceFirst("hl=[^&]+", "hl={\\$lang}");
-						path = path.replaceFirst("&s=\\w*", "");
+					String path = tileUrl.getPath();
+					path = path.replaceFirst("x=\\d+", "x={\\$x}");
+					path = path.replaceFirst("y=\\d+", "y={\\$y}");
+					path = path.replaceFirst("z=\\d+", "z={\\$z}");
+					path = path.replaceFirst("hl=[^&]+", "hl={\\$lang}");
+					path = path.replaceFirst("&s=\\w*", "");
 
-						if (path.equalsIgnoreCase(tileUrl.getPath()))
-							continue; // Nothing was replaced
-						// remove Galileo
-						String candidate = "http://" + host + path;
-						tileUrlCandidates.add(candidate);
-					}
+					if (path.equalsIgnoreCase(tileUrl.getPath()))
+						continue; // Nothing was replaced
+					// remove Galileo
+					String candidate = "http://" + host + path;
+					tileUrlCandidates.add(candidate);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 			}
-			// System.out.println("Number of possible URLs found: " +
-			// tileUrlCandidates.size());
-			String c1 = null;
-			for (String c : tileUrlCandidates) {
-				// System.out.println(c);
-				c1 = c;
-			}
-			return c1;
+
+			if (tileUrlCandidates.size() == 0)
+				return null;
+			if (tileUrlCandidates.size() == 1)
+				return tileUrlCandidates.iterator().next();
+
+			// We have more than one candidate - therefore we have to decide
+			// which one to take. We compare each candidate for similarity with
+			// the old url. Hopefully this will always get the right one...
+
+			Levenshtein similarityAlgo = new Levenshtein();
+			MapSource mapSource = ums.mapSourceClass.newInstance();
+			String currentUrl = mapSource.getTileUrlConnection(0, 0, 0).getURL().toString();
+
+			String[] candidates = new String[0];
+			candidates = tileUrlCandidates.toArray(candidates);
+			float[] similarity = similarityAlgo.batchCompareSet(candidates, currentUrl);
+
+			ArrayList<SimString> result = new ArrayList<SimString>();
+			for (int i = 0; i < similarity.length; i++)
+				result.add(new SimString(candidates[i], similarity[i]));
+			Collections.sort(result);
+
+			System.out.println("\n" + mapSource.getStoreName() + " number of possible URLs found: "
+					+ result.size());
+			System.out.println(String.format("%2.2f %s", 1.0, currentUrl));
+			for (SimString s : result)
+				System.out.println(s);
+			return result.get(0).s;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -301,10 +334,10 @@ public class GoogleUrlUpdater {
 	}
 
 	public static class UpdateableMapSource {
-		public String updateUrl;
-		public String key;
-		public Class<? extends MapSource> mapSourceClass;
-		private boolean useImgSrcUrlsOnly;
+		public final String updateUrl;
+		public final String key;
+		public final Class<? extends MapSource> mapSourceClass;
+		public final boolean useImgSrcUrlsOnly;
 
 		public UpdateableMapSource(String updateUrl, Class<? extends MapSource> mapSourceClass) {
 			this(updateUrl, mapSourceClass, true);
@@ -320,7 +353,7 @@ public class GoogleUrlUpdater {
 		}
 
 		public String getUpdatedUrl(GoogleUrlUpdater g) {
-			return g.getUpdatedUrl(updateUrl, useImgSrcUrlsOnly);
+			return g.getUpdatedUrl(this, updateUrl, useImgSrcUrlsOnly);
 		}
 
 	}
@@ -343,5 +376,26 @@ public class GoogleUrlUpdater {
 				}
 			});
 		}
+	}
+
+	public static class SimString implements Comparable<SimString> {
+		public final String s;
+		public final float f;
+
+		public SimString(String s, float f) {
+			super();
+			this.s = s;
+			this.f = f;
+		}
+
+		public int compareTo(SimString o) {
+			return Float.compare(o.f, f);
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%2.2f %s", f, s);
+		}
+
 	}
 }

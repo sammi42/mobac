@@ -3,9 +3,11 @@ package tac.tools;
 import static tac.tools.Cities.BERLIN;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.xml.bind.JAXBException;
 
@@ -15,6 +17,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MultiLayerMapSource;
+import tac.mapsources.impl.LocalhostTestSource;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMapsChina;
 import tac.mapsources.impl.Google.GoogleMapsKorea;
@@ -26,6 +30,7 @@ import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
+import tac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import tac.program.Logging;
@@ -48,10 +53,13 @@ public class MapSourcesTester {
 
 	public static final EastNorthCoordinate C_DEFAULT = BERLIN;
 
-	private static HashMap<Class<?>, EastNorthCoordinate> testCoordinates;
+	private static HashMap<Class<? extends MapSource>, EastNorthCoordinate> testCoordinates;
+
+	private static HashSet<String> testedMapSources;
 
 	static {
-		testCoordinates = new HashMap<Class<?>, EastNorthCoordinate>();
+		testCoordinates = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
+		testedMapSources = new HashSet<String>();
 		testCoordinates.put(GoogleMapMaker.class, Cities.BANGALORE);
 		testCoordinates.put(Cykloatlas.class, Cities.PRAHA);
 		testCoordinates.put(GoogleMapsChina.class, Cities.SHANGHAI);
@@ -64,6 +72,7 @@ public class MapSourcesTester {
 		testCoordinates.put(NearMap.class, Cities.SYDNEY);
 		testCoordinates.put(YandexMap.class, Cities.MOSCOW);
 		testCoordinates.put(YandexSat.class, Cities.MOSCOW);
+		testCoordinates.put(HubermediaBavaria.class, Cities.MUNICH);
 		testCoordinates.put(StatkartTopo2.class, Cities.OSLO);
 	}
 
@@ -80,34 +89,50 @@ public class MapSourcesTester {
 		MapSourcesManager.loadMapSourceProperties();
 
 		for (MapSource mapSource : MapSourcesManager.getAllMapSources()) {
+			if (mapSource instanceof LocalhostTestSource)
+				continue;
 			try {
-				String name = mapSource.toString();
+				String name = mapSource.getStoreName();
 				StringBuilder sb = new StringBuilder(40);
 				sb.append(name);
 				while (sb.length() < 40)
 					sb.append('.');
 				System.out.print(sb.toString() + ": ");
-				testMapSource(mapSource);
-				System.out.println("OK");
+				if (testMapSource(mapSource))
+					System.out.println("OK");
+				else
+					System.out.println("Skipped");
 			} catch (MapSourceTestFailed e) {
 				System.out.println("Failed: " + e.httpResponseCode);
 				if (e.httpResponseCode != 404)
 					log.error("Error: ", e);
+			} catch (ConnectException e) {
+				System.out.println(e);
 			} catch (Exception e) {
 				System.out.println(e);
+				log.error("", e);
 			}
 		}
 	}
 
-	public static void testMapSource(Class<? extends MapSource> mapSourceClass) throws Exception {
-		testMapSource(mapSourceClass.newInstance());
+	public static boolean testMapSource(Class<? extends MapSource> mapSourceClass) throws Exception {
+		MapSource mapSource = mapSourceClass.newInstance();
+		boolean b = testMapSource(mapSource);
+		if (mapSource instanceof MultiLayerMapSource)
+			b |= testMapSource(((MultiLayerMapSource) mapSource).getBackgroundMapSource());
+		return b;
 	}
 
-	public static void testMapSource(MapSource mapSource) throws Exception {
-		EastNorthCoordinate coordinate = testCoordinates.get(mapSource.getClass());
+	public static boolean testMapSource(MapSource mapSource) throws Exception {
+		Class<? extends MapSource> mc = mapSource.getClass();
+		if (testedMapSources.contains(mapSource.getStoreName()))
+			return false; // map source already tested
+		testedMapSources.add(mapSource.getStoreName());
+		EastNorthCoordinate coordinate = testCoordinates.get(mc);
 		if (coordinate == null)
 			coordinate = C_DEFAULT;
 		testMapSource(mapSource, coordinate);
+		return true;
 	}
 
 	public static void testMapSource(MapSource mapSource, EastNorthCoordinate coordinate)

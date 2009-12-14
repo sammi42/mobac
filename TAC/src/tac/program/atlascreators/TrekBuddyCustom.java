@@ -90,8 +90,8 @@ public class TrekBuddyCustom extends TrekBuddy {
 		int xEnd = xMax * tileSize + (tileSize - 1);
 		int yEnd = yMax * tileSize + (tileSize - 1);
 
-		int mergedWidth = xEnd - xStart;
-		int mergedHeight = yEnd - yStart;
+		int mergedWidth = xEnd - xStart + 1;
+		int mergedHeight = yEnd - yStart + 1;
 
 		// Reduce tile size of overall map height/width is smaller that one tile
 		realWidth = parameters.getWidth();

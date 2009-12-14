@@ -22,7 +22,17 @@
  */
 package tac.utilities.imageio;
 
-import static tac.utilities.imageio.PngConstants.*;
+import static tac.utilities.imageio.PngConstants.COLOR_PALETTE;
+import static tac.utilities.imageio.PngConstants.COMPRESSION_DEFLATE;
+import static tac.utilities.imageio.PngConstants.FILTER_SET_1;
+import static tac.utilities.imageio.PngConstants.FILTER_TYPE_NONE;
+import static tac.utilities.imageio.PngConstants.IDAT;
+import static tac.utilities.imageio.PngConstants.IEND;
+import static tac.utilities.imageio.PngConstants.IHDR;
+import static tac.utilities.imageio.PngConstants.INTERLACE_NONE;
+import static tac.utilities.imageio.PngConstants.PLTE;
+import static tac.utilities.imageio.PngConstants.SIGNATURE;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -137,10 +147,11 @@ public class Png4BitWriter {
 			// Get the samples for the next line - each byte is one sample/pixel
 			samples = image.getRaster().getPixels(0, line, width, 1, samples);
 			int sx = 0;
+			int iMax = samples.length - 2;
 			for (int i = 0; i < samples.length; i += 2) {
 				// Now we are packing two samples of 4 bit into one byte
 				int sample1 = samples[i];
-				int sample2 = samples[i + 1];
+				int sample2 = (i <= iMax) ? samples[i + 1] : 0;
 				int s1 = sample1 & 0x0F;
 				int s2 = sample2 & 0x0F;
 				if ((s1 != sample1) || (s2 != sample2))

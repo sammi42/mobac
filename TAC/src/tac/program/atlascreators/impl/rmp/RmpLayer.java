@@ -169,6 +169,13 @@ public class RmpLayer {
 		int size;
 		TileContainer container;
 
+		// calculate offset of each tile in A00 file
+		int totaloffset = 4;
+		for (Tiledata tile : tiles) {
+			tile.totalOffset = totaloffset;
+			totaloffset += tile.jpegFile.length + 4;
+		}
+
 		/* --- Build the tile container --- */
 		container = buildTileTree();
 
@@ -178,8 +185,7 @@ public class RmpLayer {
 		/* --- header --- */
 		RmpTools.writeValue(bos, 1, 4); // Start of block
 		RmpTools.writeValue(bos, container.getTileCount(), 4); // Number of
-		// tiles in
-		// files
+		// tiles in files
 		RmpTools.writeValue(bos, 256, 2); // Hor. size of tile in pixel
 		RmpTools.writeValue(bos, 256, 2); // Vert. size of tile in pixel
 		RmpTools.writeValue(bos, 1, 4); // Start of block
@@ -205,10 +211,8 @@ public class RmpLayer {
 
 		RmpTools.writeValue(bos, 1, 4); // Start of block
 		RmpTools.writeValue(bos, 99, 4); // Number of tiles in block
-		RmpTools.writeValue(bos, 0x0f5c + ((container.getContainerCount() == 1) ? 0 : 1992), 4); // offset
-		// for
-		// first
-		// block
+		int firstBlockOffset = 0x0f5c + ((container.getContainerCount() == 1) ? 0 : 1992);
+		RmpTools.writeValue(bos, firstBlockOffset, 4); // offset for first block
 
 		RmpTools.writeValue(bos, 0, 3920); // Filler
 
@@ -241,15 +245,11 @@ public class RmpLayer {
 
 		public void writeFileContent(OutputStream os) throws IOException {
 			BufferedOutputStream bos = new BufferedOutputStream(os, 32768);
-			int totaloffset = 4;
 			/* --- Number of tiles --- */
 			RmpTools.writeValue(bos, tiles.size(), 4);
 
 			/* --- The tiles --- */
 			for (Tiledata tile : tiles) {
-				/* --- Write tile into stream and calculate offset --- */
-				tile.totalOffset = totaloffset;
-				totaloffset += tile.jpegFile.length + 4;
 				RmpTools.writeValue(bos, tile.jpegFile.length, 4);
 				bos.write(tile.jpegFile);
 

@@ -3,6 +3,7 @@ package tac.program.atlascreators;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -72,9 +73,11 @@ public class TrekBuddyCustom extends TrekBuddy {
 	 * tile (256x256) will be loaded and painted multiple times. Therefore this
 	 * implementation needs much more CPU power as each original tile is loaded
 	 * at least once and each generated tile has to be saved.
+	 * 
+	 * @throws MapCreationException
 	 */
 	@Override
-	protected void createTiles() throws InterruptedException {
+	protected void createTiles() throws InterruptedException, MapCreationException {
 		log.debug("Starting map creation using custom parameters: " + parameters);
 
 		// left upper point on the map in pixels
@@ -137,8 +140,8 @@ public class TrekBuddyCustom extends TrekBuddy {
 						graphics.dispose();
 						tileImageDataWriter.processImage(tileImage, buf);
 						mapTileWriter.writeTile(tileFileName, buf.toByteArray());
-					} catch (Exception e) {
-						log.error("Error writing tile image: ", e);
+					} catch (IOException e) {
+						throw new MapCreationException("Error writing tile image: ", e);
 					}
 
 					xRelPos += realWidth;

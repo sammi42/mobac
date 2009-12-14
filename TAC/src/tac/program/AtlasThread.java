@@ -150,10 +150,16 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 					} catch (Exception e) {
 						log.error("", e);
 						// TACExceptionHandler.processException(e);
-						JOptionPane.showMessageDialog(null, "An error occured: " + e.getMessage()
-								+ "\n[" + e.getClass().getSimpleName() + "]\n\n"
-								+ "Press OK to continue atlas creation.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						String[] options = { "Continue", "Abort", "Show error report" };
+						int a = JOptionPane.showOptionDialog(null, "An error occured: "
+								+ e.getMessage() + "\n[" + e.getClass().getSimpleName() + "]\n\n",
+								"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+						switch (a) {
+						case 2:
+							TACExceptionHandler.processException(e);
+						case 1:
+							throw new InterruptedException();
+						}
 					}
 				}
 			}

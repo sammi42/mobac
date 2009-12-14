@@ -26,10 +26,10 @@
   </logger>
   
   <logger name="tac.tilestore">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
   
-  <logger name="tac.program.mapcreators">
+  <logger name="tac.program.atlascreators">
   	<level value="TRACE" />
   </logger>
   
@@ -43,7 +43,7 @@
     <priority value="TRACE" /> 
     -->
     <!-- By default we use log level/priority "DEBUG" -->
-    <priority value="DEBUG" />
+    <priority value="TRACE" />
     <appender-ref ref="console" />
     <appender-ref ref="file" />
   </root>

@@ -29,6 +29,8 @@ public class MultiImage implements CalibratedImage {
 	private final int imageWidth;
 	private final int imageHeight;
 
+	private int firstHit = 0;
+
 	public MultiImage(TacTile[] images, MapInterface map) {
 		this.images = images;
 
@@ -77,13 +79,32 @@ public class MultiImage implements CalibratedImage {
 			graph.setColor(new Color(255, 255, 255));
 			graph.fillRect(0, 0, width, height);
 
-			int i = 0;
+			/*
+			 * Optimization: We know that the images are sorted and that
+			 * #getSubImage(..) is executed column wise. Therefore we have a
+			 * sliding window in the images array that contains all our relevant
+			 * images (as well as some unneeded).
+			 * 
+			 * Start of the sliding window: image[firstHit]
+			 * 
+			 * End of the sliding window: image[i].getBoundingRect().getWest() >
+			 * area.getEast()
+			 */
+			int i = firstHit;
+			boolean isFirstHit = true;
 			do {
 				TacTile image = images[i];
+				if (image.getBoundingRect().getWest() > area.getEast())
+					break;
 				hit = hitType(image.getBoundingRect(), area);
+
 				// log.trace("HIT: " + hit + " " + this.images[i]);
 
 				if (hit != HIT_NOHIT) {
+					if (isFirstHit) {
+						firstHit = i;
+						isFirstHit = false;
+					}
 					image.drawSubImage(area, result);
 				}
 				++i;

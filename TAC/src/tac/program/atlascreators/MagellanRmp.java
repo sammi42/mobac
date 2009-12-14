@@ -78,17 +78,17 @@ public class MagellanRmp extends AtlasCreator {
 		atlasProgress.initMapCreation(1000);
 		TacTile[] images = new TacTile[count];
 
-		int lineX = 0;
 		int i = 0;
 		MapSpace mapSpace = map.getMapSource().getMapSpace();
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {
 				checkUserAbort();
 				images[i++] = new TacTile(mapDlTileProvider, mapSpace, x, y, zoom);
-				lineX += tileSize;
 			}
 		}
 		atlasProgress.setMapCreationProgress(100);
+		// Note: MultiImage relies on the fact, that the image array is sorted
+		// on the left border (west coordinate / x coordinate)  
 		MultiImage layerImage = new MultiImage(images, map);
 		try {
 			RmpLayer layer = createLayer(layerImage, layerNum);
@@ -169,7 +169,10 @@ public class MagellanRmp extends AtlasCreator {
 		double y_end = (rect.getSouth() + 90.0) / tile_height;
 
 		double x_count = (x_end - x_start) / 800.0;
-		/* --- Create the tiles --- */
+		/*
+		 * Create the tiles - process works column wise, starting on the top
+		 * left corner of the destination area.
+		 */
 		for (int x = x_start; x < x_end; x++) {
 			for (int y = y_start; y < y_end; y++) {
 				count++;

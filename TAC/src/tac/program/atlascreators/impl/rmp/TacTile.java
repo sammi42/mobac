@@ -40,7 +40,6 @@ public class TacTile implements CalibratedImage {
 
 		// north and south have to be negated - this really strange!
 		boundingRect = new BoundingRect(-north, -south, west, east);
-		log.trace(this.toString());
 	}
 
 	/**

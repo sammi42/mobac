@@ -42,9 +42,9 @@ public class MagellanRmp extends AtlasCreator {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				mapCount++;
-				if (map.getZoom() > 15)
-					throw new IOException("resolution too high - "
-							+ "highest possible zoom level is 15");
+				// if (map.getZoom() > 15)
+				// throw new IOException("resolution too high - "
+				// + "highest possible zoom level is 15");
 				Point max = map.getMaxTileCoordinate();
 				Point min = map.getMinTileCoordinate();
 				if (max.x - min.x > 18000 || max.y - min.y > 18000)
@@ -104,6 +104,8 @@ public class MagellanRmp extends AtlasCreator {
 
 	@Override
 	public void finishAtlasCreation() throws IOException {
+		if (rmpWriter == null)
+			return; // Creation already aborted
 		try {
 			rmpWriter.writeFileEntry(new Bmp2bit());
 			rmpWriter.writeFileEntry(new Bmp4bit());
@@ -112,6 +114,13 @@ public class MagellanRmp extends AtlasCreator {
 			rmpWriter.close();
 			rmpWriter = null;
 		}
+	}
+
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		super.abortAtlasCreation();
+		rmpWriter.delete();
+		rmpWriter = null;
 	}
 
 	/**
@@ -176,9 +185,6 @@ public class MagellanRmp extends AtlasCreator {
 			}
 			atlasProgress.setMapCreationProgress(100 + (int) ((x - x_start) / x_count));
 		}
-
-		/* --- Build A00 file --- */
-		result.buildA00File();
 
 		/* --- Build the TLM file --- */
 		result.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect

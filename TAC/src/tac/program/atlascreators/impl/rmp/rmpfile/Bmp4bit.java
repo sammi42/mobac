@@ -1,8 +1,6 @@
 package tac.program.atlascreators.impl.rmp.rmpfile;
 
-import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
-
-public class Bmp4bit implements RmpFileEntry {
+public class Bmp4bit extends GeneralRmpFileEntry {
 	private static final byte[] content = { 73, 99, 111, 110, 32, 102, 105, 108, 101, 32, 118, 101,
 			114, 115, 105, 111, 110, 32, 49, 46, 48, 46, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0,
 			0, 1, 0, 0, 60, 0, 0, 0, -16, -1, -1, 127, 88, 1, 0, 0, -15, -1, -1, 127, -12, 1, 0, 0,
@@ -29,16 +27,8 @@ public class Bmp4bit implements RmpFileEntry {
 			98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 0, -1, -1, -1, -1, -1,
 			-1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1 };
 
-	public byte[] getFileContent() {
-		return content;
-	}
-
-	public String getFileExtension() {
-		return "ics";
-	}
-
-	public String getFileName() {
-		return "bmp4bit";
+	public Bmp4bit() {
+		super(content, "bmp4bit", "ics");
 	}
 
 	@Override

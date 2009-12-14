@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
+import tac.exceptions.MapCreationException;
 import tac.program.atlascreators.impl.rmp.interfaces.CalibratedImage;
 import tac.program.interfaces.MapInterface;
 
@@ -29,7 +30,6 @@ public class MultiImage implements CalibratedImage {
 	private final int imageHeight;
 
 	public MultiImage(TacTile[] images, MapInterface map) {
-		log.debug("New instance: images count " + images.length + "\n\t" + Arrays.toString(images));
 		this.images = images;
 
 		/* --- Collect the extremes of the coordinates --- */
@@ -38,6 +38,7 @@ public class MultiImage implements CalibratedImage {
 		Point min = map.getMinTileCoordinate();
 		imageWidth = max.x - min.x;
 		imageHeight = max.y - min.y;
+		log.debug("Created with " + images.length + "images; bounds = " + bounds);
 	}
 
 	private BoundingRect buildBoundingRect() {
@@ -62,7 +63,8 @@ public class MultiImage implements CalibratedImage {
 		return this.bounds;
 	}
 
-	public BufferedImage getSubImage(BoundingRect area, int width, int height) {
+	public BufferedImage getSubImage(BoundingRect area, int width, int height)
+			throws MapCreationException {
 		if (log.isTraceEnabled())
 			log.trace(String.format("getSubImage %d %d %s", width, height, area));
 
@@ -86,6 +88,8 @@ public class MultiImage implements CalibratedImage {
 				}
 				++i;
 			} while (hit != HIT_FULLHIT && i < images.length);
+		} catch (Throwable t) {
+			throw new MapCreationException(t);
 		} finally {
 			graph.dispose();
 		}

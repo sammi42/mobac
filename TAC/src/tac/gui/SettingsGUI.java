@@ -199,7 +199,7 @@ public class SettingsGUI extends JDialog {
 		JPanel googlePanel = new JPanel(new GridBagLayout());
 		googlePanel.setBorder(BorderFactory.createTitledBorder("Google Maps"));
 
-		String[] languages = new String[] { "en", "de", "zh-CN" };
+		String[] languages = new String[] { "en", "de", "ru", "zh-CN" };
 		googleLang = new JComboBox(languages);
 		googleLang.setEditable(true);
 
@@ -743,7 +743,7 @@ public class SettingsGUI extends JDialog {
 	public static void main(String[] args) {
 		StartTAC.setLookAndFeel();
 		Logging.configureConsoleLogging();
-		
+
 		new SettingsGUI(null);
 	}
 }

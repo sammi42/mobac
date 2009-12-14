@@ -181,7 +181,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 						+ "permanent error.</html>");
 		downloadErrorsValue = new JLabel();
 		downloadErrorsValue.setToolTipText(downloadErrors.getToolTipText());
-		totalDownloadTime = new JLabel("Total download time");
+		totalDownloadTime = new JLabel("Total creation time");
 		totalDownloadTimeValue = new JLabel();
 
 		abortAtlasDownloadButton = new JButton("Abort Download");
@@ -536,7 +536,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			nrOfDownloadedBytesValue.setText(": "
 					+ Utilities.formatBytes(data.numberOfDownloadedBytes));
 
-			// total download time
+			// total creation time
 			String timeString = "";
 
 			seconds = 0;

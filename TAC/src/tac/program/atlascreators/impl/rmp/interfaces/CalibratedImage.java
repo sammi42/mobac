@@ -8,6 +8,7 @@ package tac.program.atlascreators.impl.rmp.interfaces;
 
 import java.awt.image.BufferedImage;
 
+import tac.exceptions.MapCreationException;
 import tac.program.atlascreators.impl.rmp.BoundingRect;
 
 /**
@@ -60,7 +61,8 @@ public interface CalibratedImage {
 	 * @param height
 	 *            height of the image to return in pixel
 	 * @return subimage from given bounding rectangle
+	 * @throws MapCreationException
 	 */
-	public BufferedImage getSubImage(BoundingRect area, int width, int height);
+	public BufferedImage getSubImage(BoundingRect area, int width, int height) throws MapCreationException;
 
 }

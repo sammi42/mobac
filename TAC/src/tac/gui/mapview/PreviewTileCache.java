@@ -40,6 +40,8 @@ public class PreviewTileCache extends MemoryTileCache implements NotificationLis
 		synchronized (lruTiles) {
 			int count_half = lruTiles.getElementCount() / 2;
 			count_half = Math.max(25, count_half);
+			if (lruTiles.getElementCount() <= count_half)
+				return;
 			log.warn("memory low - freeing cached tiles: " + lruTiles.getElementCount() + " -> "
 					+ count_half);
 			try {

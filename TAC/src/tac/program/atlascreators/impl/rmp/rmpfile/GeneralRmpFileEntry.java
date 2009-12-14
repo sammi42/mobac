@@ -6,6 +6,9 @@
 
 package tac.program.atlascreators.impl.rmp.rmpfile;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
 
 /**
@@ -13,9 +16,9 @@ import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
  * 
  */
 public class GeneralRmpFileEntry implements RmpFileEntry {
-	private byte[] content;
-	private String filename;
-	private String extension;
+	protected final byte[] content;
+	protected final String filename;
+	protected final String extension;
 
 	public GeneralRmpFileEntry(byte[] content, String filename, String extension) {
 		this.content = content;
@@ -23,8 +26,8 @@ public class GeneralRmpFileEntry implements RmpFileEntry {
 		this.extension = extension;
 	}
 
-	public byte[] getFileContent() {
-		return content;
+	public void writeFileContent(OutputStream os) throws IOException {
+		os.write(content);
 	}
 
 	public String getFileExtension() {

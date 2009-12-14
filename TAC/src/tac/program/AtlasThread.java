@@ -163,12 +163,16 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 					}
 				}
 			}
+		} catch (Error e) {
+			atlasCreator.abortAtlasCreation();
+			throw e;
 		} finally {
 			// In case of an abort: Stop create new download jobs
 			if (djp != null)
 				djp.cancel();
 			downloadJobDispatcher.terminateAllWorkerThreads();
-			atlasCreator.finishAtlasCreation();
+			if (!atlasCreator.isAborted())
+				atlasCreator.finishAtlasCreation();
 			ap.atlasCreationFinished();
 		}
 
@@ -282,7 +286,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 			atlasCreator.initializeMap(map, tileIndex);
 			atlasCreator.createMap();
-		} catch (Exception e) {
+		} catch (Error e) {
 			log.error("Error in createMap: " + e.getMessage(), e);
 			throw e;
 		} finally {

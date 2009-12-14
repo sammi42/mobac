@@ -12,7 +12,6 @@ import java.io.PrintStream;
 import org.apache.log4j.Logger;
 
 import tac.program.atlascreators.impl.rmp.RmpTools;
-import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
 
 /**
  * Instance of the rmp.ini file
@@ -20,13 +19,15 @@ import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
  * @author Andreas
  * 
  */
-public class RmpIni implements RmpFileEntry {
+public class RmpIni extends GeneralRmpFileEntry {
 
 	private static final Logger log = Logger.getLogger(RmpIni.class);
 
-	byte[] rmpIni;
-
 	public RmpIni(String layername, int count) {
+		super(generateContent(layername, count), "rmp", "ini");
+	}
+
+	private static byte[] generateContent(String layername, int count) {
 		ByteArrayOutputStream bos;
 		PrintStream ps;
 		int i;
@@ -43,25 +44,12 @@ public class RmpIni implements RmpFileEntry {
 			ps.print(i + "=" + layerName + "\r\n");
 		}
 		ps.flush();
-
-		rmpIni = bos.toByteArray();
-	}
-
-	public byte[] getFileContent() {
-		return rmpIni;
-	}
-
-	public String getFileExtension() {
-		return "ini";
-	}
-
-	public String getFileName() {
-		return "rmp";
+		return bos.toByteArray();
 	}
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " size=" + rmpIni.length;
+		return this.getClass().getSimpleName() + " size=" + content.length;
 	}
 
 }

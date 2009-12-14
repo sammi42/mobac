@@ -76,6 +76,8 @@ public abstract class AtlasCreator {
 
 	protected TileProvider mapDlTileProvider;
 
+	private boolean aborted = false;
+
 	/**
 	 * Default constructor - initializes the logging environment
 	 */
@@ -100,6 +102,14 @@ public abstract class AtlasCreator {
 	 * @see AtlasCreator
 	 */
 	public void finishAtlasCreation() throws IOException {
+	}
+
+	public void abortAtlasCreation() throws IOException {
+		this.aborted  = true;
+	}
+
+	public boolean isAborted() {
+		return aborted;
 	}
 
 	/**

@@ -27,6 +27,7 @@ public class RmpWriter {
 	private static final Logger log = Logger.getLogger(RmpWriter.class);
 
 	private final ArrayList<EntryInfo> entries = new ArrayList<EntryInfo>();
+	private final File rmpFile;
 	private final RandomAccessFile rmpOutputFile;
 	private int projectedEntryCount;
 
@@ -41,6 +42,7 @@ public class RmpWriter {
 	 * @throws IOException
 	 */
 	public RmpWriter(String imageName, int layerCount, File rmpFile) throws IOException {
+		this.rmpFile = rmpFile;
 		// We only use one A00 entry per map/layer - therefore we can
 		// pre-calculate the number of entries:
 		// RmpIni + (TLM & A00) per layer + Bmp2Bit + Bmp4bit
@@ -67,12 +69,12 @@ public class RmpWriter {
 		info.name = entry.getFileName();
 		info.extendsion = entry.getFileExtension();
 		info.offset = (int) rmpOutputFile.getFilePointer();
-		byte[] data = entry.getFileContent();
-		info.length = data.length;
-		entryOut.write(data);
+		entry.writeFileContent(entryOut);
+		info.length = ((int) rmpOutputFile.getFilePointer()) - info.offset;
 		if ((info.length % 2) != 0)
 			entryOut.write(0);
 		entries.add(info);
+		log.debug("Written data of entry " + entry + " bytes=" + info.length);
 	}
 
 	/**
@@ -125,6 +127,11 @@ public class RmpWriter {
 		} catch (Exception e) {
 			log.error("", e);
 		}
+	}
+
+	public void delete() {
+		close();
+		rmpFile.delete();
 	}
 
 	private static class EntryInfo {

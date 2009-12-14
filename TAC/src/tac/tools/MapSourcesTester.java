@@ -5,6 +5,7 @@ import static tac.tools.Cities.BERLIN;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import tac.mapsources.impl.Google.GoogleMapsChina;
 import tac.mapsources.impl.Google.GoogleMapsKorea;
 import tac.mapsources.impl.MiscMapSources.YandexMap;
 import tac.mapsources.impl.MiscMapSources.YandexSat;
+import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -34,6 +36,7 @@ import tac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import tac.program.Logging;
+import tac.program.download.TileDownLoader;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Settings;
 
@@ -73,6 +76,7 @@ public class MapSourcesTester {
 		testCoordinates.put(YandexMap.class, Cities.MOSCOW);
 		testCoordinates.put(YandexSat.class, Cities.MOSCOW);
 		testCoordinates.put(HubermediaBavaria.class, Cities.MUNICH);
+		testCoordinates.put(OpenPisteMap.class, Cities.MUNICH);
 		testCoordinates.put(StatkartTopo2.class, Cities.OSLO);
 	}
 
@@ -107,6 +111,8 @@ public class MapSourcesTester {
 				if (e.httpResponseCode != 404)
 					log.error("Error: ", e);
 			} catch (ConnectException e) {
+				System.out.println(e);
+			} catch (SocketTimeoutException e) {
 				System.out.println(e);
 			} catch (Exception e) {
 				System.out.println(e);
@@ -144,7 +150,10 @@ public class MapSourcesTester {
 		int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
 
 		HttpURLConnection c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
+		c.setReadTimeout(10000);
 		c.addRequestProperty("User-agent", Settings.getInstance().getUserAgent());
+		c.setRequestProperty("Accept", TileDownLoader.ACCEPT);
+
 		c.connect();
 		c.disconnect();
 		if (c.getResponseCode() != 200) {

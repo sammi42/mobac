@@ -200,6 +200,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// atlas output format
 		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
+		atlasOutputFormatCombo.setMaximumRowCount(15);
 		atlasOutputFormatCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				applyAtlasOutputFormat();

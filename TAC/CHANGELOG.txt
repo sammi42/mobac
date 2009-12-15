@@ -37,6 +37,7 @@
     tiles per day and IP)
  + Drag & Drop for maps in "Atlas content" tree 
  + New atlas format: Magellan RMP / VantagePoint
+ + New atlas format: Touratech TTQV
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

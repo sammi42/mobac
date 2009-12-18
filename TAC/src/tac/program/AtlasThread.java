@@ -163,6 +163,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 					}
 				}
 			}
+		} catch (InterruptedException e) {
+			atlasCreator.abortAtlasCreation();
+			throw e;
 		} catch (Error e) {
 			atlasCreator.abortAtlasCreation();
 			throw e;

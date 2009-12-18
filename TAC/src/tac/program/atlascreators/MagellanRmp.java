@@ -51,8 +51,8 @@ public class MagellanRmp extends AtlasCreator {
 					throw new IOException("Map too large. Max size 18000x18000");
 			}
 		}
-		if (mapCount > 5)
-			throw new IOException("Too many maps in atlas. Max map count = 5");
+		// if (mapCount > 5)
+		// throw new IOException("Too many maps in atlas. Max map count = 5");
 		imageName = RmpTools.buildImageName(atlas.getName());
 		rmpWriter = new RmpWriter(imageName, mapCount, new File(atlasDir, imageName + ".rmp"));
 	}
@@ -88,7 +88,7 @@ public class MagellanRmp extends AtlasCreator {
 		}
 		atlasProgress.setMapCreationProgress(100);
 		// Note: MultiImage relies on the fact, that the image array is sorted
-		// on the left border (west coordinate / x coordinate)  
+		// on the left border (west coordinate / x coordinate)
 		MultiImage layerImage = new MultiImage(images, map);
 		try {
 			RmpLayer layer = createLayer(layerImage, layerNum);

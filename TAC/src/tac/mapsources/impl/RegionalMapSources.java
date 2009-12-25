@@ -432,4 +432,22 @@ public class RegionalMapSources {
 
 	}
 
+	public static class EniroCom extends AbstractMapSource {
+
+		public EniroCom() {
+			super("Eniro.com", 0, 20, "png", TileUpdate.IfModifiedSince);
+		}
+
+		@Override
+		public String toString() {
+			return "Eniro (Sweden, Norway, Finland)";
+		}
+
+		@Override
+		protected String getTileUrl(int zoom, int tilex, int tiley) {
+			int y = (1 << zoom) - 1 - tiley;
+			return "http://map.eniro.com/geowebcache/service/tms1.0.0/map/" + zoom + "/" + tilex
+					+ "/" + y + ".png";
+		}
+	}
 }

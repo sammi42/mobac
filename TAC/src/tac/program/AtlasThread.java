@@ -230,7 +230,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
 					|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 				Thread.sleep(500);
-				if (!failedMessageAnswered && (jobsRetryError > 50)) {
+				if (!failedMessageAnswered && (jobsRetryError > 50) && !ap.ignoreDownloadErrors()) {
 					pauseResumeHandler.pause();
 					String[] answers = new String[] { "Continue", "Retry", "Skip", "Abort" };
 					String message = "<html>Multiple tile downloads have failed. "
@@ -364,7 +364,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 				ap.incMapDownloadProgress();
 			}
 		}
-		Toolkit.getDefaultToolkit().beep();
+		if (!ap.ignoreDownloadErrors())
+			Toolkit.getDefaultToolkit().beep();
 		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
 		ap.updateGUI();
 	}

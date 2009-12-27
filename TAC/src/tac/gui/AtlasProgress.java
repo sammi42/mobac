@@ -14,6 +14,7 @@ import java.util.TimerTask;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -101,6 +102,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JLabel totalDownloadTime;
 	private JLabel totalDownloadTimeValue;
 
+	private JCheckBox ignoreDlErrors;
 	private JButton dismissWindowButton;
 	private JButton openProgramFolderButton;
 	private JButton abortAtlasDownloadButton;
@@ -184,6 +186,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		totalDownloadTime = new JLabel("Total creation time");
 		totalDownloadTimeValue = new JLabel();
 
+		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically");
 		abortAtlasDownloadButton = new JButton("Abort Download");
 		abortAtlasDownloadButton.setToolTipText("Abort current Atlas download");
 		dismissWindowButton = new JButton("Close Window");
@@ -194,7 +197,6 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		openProgramFolderButton.setEnabled(false);
 		pauseResumeDownloadButton = new JButton("Pause/Resume");
 
-		GBC gbcStd = GBC.std();
 		GBC gbcRIF = GBC.std().insets(0, 0, 20, 0).fill(GBC.HORIZONTAL);
 		GBC gbcEol = GBC.eol();
 		GBC gbcEolFill = GBC.eol().fill(GBC.HORIZONTAL);
@@ -238,8 +240,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		infoPanel.add(totalDownloadTimeValue, gbci.toggleEol());
 
 		JPanel bottomPanel = new JPanel(new GridBagLayout());
-
-		bottomPanel.add(infoPanel, gbcStd);
+		bottomPanel.add(infoPanel, GBC.std().gridheight(2));
+		bottomPanel.add(ignoreDlErrors, GBC.eol().anchor(GBC.EAST));
 
 		GBC gbcRight = GBC.std().anchor(GBC.SOUTHEAST).insets(5, 0, 0, 0);
 		bottomPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
@@ -251,11 +253,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		background.add(bottomPanel, gbcEolFillI);
 
 		JPanel borderPanel = new JPanel(new GridBagLayout());
-		// borderPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 		borderPanel.add(background, GBC.std().insets(10, 10, 10, 10).fill());
 
 		add(borderPanel, GBC.std().fill());
-		// setUndecorated(true);
 
 		abortAtlasDownloadButton.addActionListener(this);
 		dismissWindowButton.addActionListener(this);
@@ -323,6 +323,10 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public void addDownloadedBytes(int bytes) {
 		data.numberOfDownloadedBytes += bytes;
+	}
+
+	public boolean ignoreDownloadErrors() {
+		return ignoreDlErrors.isSelected();
 	}
 
 	private String formatRemainingTime(long seconds) {

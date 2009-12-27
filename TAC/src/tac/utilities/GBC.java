@@ -78,6 +78,11 @@ public class GBC extends GridBagConstraints {
 		return this;
 	}
 
+	public GBC gridheight(int value) {
+		gridheight = value;
+		return this;
+	}
+
 	public GBC gridx(int value) {
 		gridx = value;
 		return this;

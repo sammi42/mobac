@@ -36,7 +36,7 @@
 			<fileset dir="lib" includes="je-*.jar" />
 			<fileset dir="lib" includes="sqlite.jar" />
 		</path>
-		<!-- Compile the starter class for Java 1.4 (shows an verbose --> 
+		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
 		<javac srcdir="src" destdir="build" target="1.4" source="1.4" debug="true">
 			<classpath refid="maincp" />
@@ -78,8 +78,7 @@
 	</target>
 
 	<target name="shrink" depends="create_jar" description="Removes unused classes from compiled jar">
-		<taskdef resource="proguard/ant/task.properties"
-		         classpath="lib/proguard.jar" />
+		<taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
 		<move file="${jar.name}" tofile="build/temp.jar" overwrite="true" />
 		<proguard>
 			-libraryjars ${java.home}/lib/rt.jar
@@ -174,17 +173,19 @@
 	<target name="create_release_src" description="Packs all necessary files for the source code release into one zip archive">
 		<zip destfile="${zip_src.name}" update="false">
 			<fileset dir="./">
-				<include name="src/tac/**" />
+				<include name="src/**" />
+				<exclude name="src/_test/**" />
+				<exclude name="src/test/**" />
+				<exclude name="src/tac/tools/**" />
 				<include name="log4j.xml" />
 				<include name="build.xml" />
 				<include name="gpl.txt" />
 				<include name="README.HTM" />
 				<include name="README-DEV.HTM" />
 				<include name="CHANGELOG.txt" />
-				<include name="TODO.txt" />
 				<include name="start.*" />
 				<include name="lib/log4j-1.2.15.jar" />
-				<include name="lib/Tidy.jar" />
+				<include name="lib/je-*.jar" />
 				<include name="lib/jai_*.jar" />
 				<include name="lib/sqlite.jar" />
 				<include name="lib/proguard.jar" />

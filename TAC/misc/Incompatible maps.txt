@@ -44,4 +44,5 @@ Géoportail
 	
 Asplan Viak Internet AS
 	http://kart.kystverket.no/advanced_default.aspx?lang=eng
-	Reason: Unsupported projection: "Universal Transverse Mercator" (UTM)  
+	Reason: Unsupported projection: "Universal Transverse Mercator" (UTM)
+	

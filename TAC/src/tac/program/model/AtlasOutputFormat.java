@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import tac.program.atlascreators.AndNav;
 import tac.program.atlascreators.AtlasCreator;
 import tac.program.atlascreators.BigPlanetSql;
+import tac.program.atlascreators.CacheWolf;
 import tac.program.atlascreators.GarminCustom;
 import tac.program.atlascreators.Glopus;
 import tac.program.atlascreators.MagellanRmp;
@@ -31,7 +32,8 @@ public enum AtlasOutputFormat {
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
-	Ttqv("Touratech TTQV", TTQV.class);
+	Ttqv("Touratech TTQV", TTQV.class), //
+	CacheWolf("CacheWolf WFL", CacheWolf.class);
 
 	private final String displayName;
 	private Class<? extends AtlasCreator> atlasCreatorClass;

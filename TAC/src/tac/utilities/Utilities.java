@@ -77,6 +77,17 @@ public class Utilities {
 		}
 	}
 
+	public static String loadTextResource(String resourcePath) throws IOException {
+		DataInputStream in = new DataInputStream(Main.class.getResourceAsStream("resources/"
+				+ resourcePath));
+		byte[] buf;
+		buf = new byte[in.available()];
+		in.readFully(buf);
+		in.close();
+		String text = new String(buf, "UTF-8");
+		return text;
+	}
+
 	/**
 	 * 
 	 * @param imageName

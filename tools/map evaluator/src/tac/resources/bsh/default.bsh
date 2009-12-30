@@ -1,0 +1,7 @@
+/**
+ OpenStreetMap Example:
+ Input parameters for this script: "zoom", "x" and "y"
+**/
+String getTileUrl( int zoom, int x, int y ) {
+   return "http://tah.openstreetmap.org/Tiles/tile/" + zoom + "/" + x + "/" + y + ".png";    
+} 

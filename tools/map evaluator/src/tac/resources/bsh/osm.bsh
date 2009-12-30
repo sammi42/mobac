@@ -1,0 +1,11 @@
+/**
+ OpenStreetMap Example:
+ Input parameters for this script: "zoom", "x" and "y"
+**/
+String getTileUrl( int zoom, int x, int y ) {
+  baseUrl = "http://tah.openstreetmap.org/Tiles/tile/"; // Tiles@Home map source
+  
+  // Uncomment the following line to change the base url to Mapnik map source
+  //baseUrl = "http://tile.openstreetmap.org/";
+  return baseUrl + zoom + "/" + x + "/" + y + ".png";    
+} 

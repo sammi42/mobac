@@ -25,8 +25,6 @@ import tac.mapsources.impl.Google.GoogleMapsChina;
 import tac.mapsources.impl.Google.GoogleMapsKorea;
 import tac.mapsources.impl.MiscMapSources.MultimapCom;
 import tac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
-import tac.mapsources.impl.MiscMapSources.YandexMap;
-import tac.mapsources.impl.MiscMapSources.YandexSat;
 import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import tac.mapsources.impl.OsmMapSources.Turaterkep;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
@@ -79,8 +77,6 @@ public class MapSourcesTester {
 		testCoordinates.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
 		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);
 		testCoordinates.put(NearMap.class, Cities.SYDNEY);
-		testCoordinates.put(YandexMap.class, Cities.MOSCOW);
-		testCoordinates.put(YandexSat.class, Cities.MOSCOW);
 		testCoordinates.put(HubermediaBavaria.class, Cities.MUNICH);
 		testCoordinates.put(OpenPisteMap.class, Cities.MUNICH);
 		testCoordinates.put(StatkartTopo2.class, Cities.OSLO);

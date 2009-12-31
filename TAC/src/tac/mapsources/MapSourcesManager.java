@@ -36,8 +36,6 @@ import tac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import tac.mapsources.impl.MiscMapSources.MultimapCom;
 import tac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import tac.mapsources.impl.MiscMapSources.YahooMaps;
-import tac.mapsources.impl.MiscMapSources.YandexMap;
-import tac.mapsources.impl.MiscMapSources.YandexSat;
 import tac.mapsources.impl.OsmMapSources.CycleMap;
 import tac.mapsources.impl.OsmMapSources.Mapnik;
 import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
@@ -115,7 +113,7 @@ public class MapSourcesManager {
 				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
 				new MicrosoftHybrid(), new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
-				new Cykloatlas(), new YandexMap(), new YandexSat(), new TerraserverUSA(),
+				new Cykloatlas(), new TerraserverUSA(),
 				new UmpWawPl(), new DoCeluPL(), new EmapaPl(), new AustrianMap(),
 				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),

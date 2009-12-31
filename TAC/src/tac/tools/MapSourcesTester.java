@@ -23,9 +23,12 @@ import tac.mapsources.impl.LocalhostTestSource;
 import tac.mapsources.impl.Google.GoogleMapMaker;
 import tac.mapsources.impl.Google.GoogleMapsChina;
 import tac.mapsources.impl.Google.GoogleMapsKorea;
+import tac.mapsources.impl.MiscMapSources.MultimapCom;
+import tac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import tac.mapsources.impl.MiscMapSources.YandexMap;
 import tac.mapsources.impl.MiscMapSources.YandexSat;
 import tac.mapsources.impl.OsmMapSources.OpenPisteMap;
+import tac.mapsources.impl.OsmMapSources.Turaterkep;
 import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -33,6 +36,7 @@ import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import tac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
+import tac.mapsources.impl.RegionalMapSources.MapplusCh;
 import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import tac.program.Logging;
@@ -67,6 +71,8 @@ public class MapSourcesTester {
 		testCoordinates.put(Cykloatlas.class, Cities.PRAHA);
 		testCoordinates.put(GoogleMapsChina.class, Cities.SHANGHAI);
 		testCoordinates.put(GoogleMapsKorea.class, Cities.SEOUL);
+		testCoordinates.put(MultimapCom.class, Cities.LONDON);
+		testCoordinates.put(MultimapOSUkCom.class, Cities.LONDON);
 		testCoordinates.put(DoCeluPL.class, Cities.WARSZAWA);
 		testCoordinates.put(AustrianMap.class, Cities.VIENNA);
 		testCoordinates.put(FreemapSlovakia.class, Cities.BRATISLAVA);
@@ -78,9 +84,12 @@ public class MapSourcesTester {
 		testCoordinates.put(HubermediaBavaria.class, Cities.MUNICH);
 		testCoordinates.put(OpenPisteMap.class, Cities.MUNICH);
 		testCoordinates.put(StatkartTopo2.class, Cities.OSLO);
+		testCoordinates.put(MapplusCh.class, Cities.BERN);
+		testCoordinates.put(Turaterkep.class, Cities.BUDAPEST);
 	}
 
 	public static void main(String[] args) {
+		HttpURLConnection.setFollowRedirects(false);
 		Logging.configureConsoleLogging();
 		Logger.getRootLogger().setLevel(Level.ERROR);
 		log = Logger.getLogger(MapSourcesTester.class);
@@ -156,6 +165,9 @@ public class MapSourcesTester {
 
 		c.connect();
 		c.disconnect();
+		if (c.getResponseCode() == 302) {
+			log.debug(c.getResponseMessage());
+		}
 		if (c.getResponseCode() != 200) {
 			throw new MapSourceTestFailed(mapSource, c);
 		}
@@ -169,7 +181,10 @@ public class MapSourcesTester {
 		final URL url;
 
 		public MapSourceTestFailed(MapSource mapSource, HttpURLConnection conn) throws IOException {
-			this(mapSource.getClass(), conn.getURL(), conn.getResponseCode());
+			super("MapSource test failed: " + mapSource.getStoreName() + " HTTP "
+					+ conn.getResponseCode());
+			this.url = conn.getURL();
+			this.httpResponseCode = conn.getResponseCode();
 		}
 
 		public MapSourceTestFailed(Class<? extends MapSource> mapSourceClass, URL url,

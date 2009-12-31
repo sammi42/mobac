@@ -1,5 +1,9 @@
 package tac.mapsources.impl;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.Random;
+
 import tac.mapsources.AbstractMapSource;
 import tac.mapsources.MapSourceTools;
 import tac.mapsources.UpdatableMapSource;
@@ -449,5 +453,50 @@ public class RegionalMapSources {
 			return "http://map.eniro.com/geowebcache/service/tms1.0.0/map/" + zoom + "/" + tilex
 					+ "/" + y + ".png";
 		}
+	}
+
+	/**
+	 * http://www.mapplus.ch/
+	 */
+	public static class MapplusCh extends AbstractMapSource {
+
+		String referer;
+
+		private static final char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+				'b', 'c', 'd', 'e', 'f' };
+
+		public MapplusCh() {
+			super("MapplusCh", 7, 16, "jpg", TileUpdate.ETag);
+			char[] sessID = new char[32];
+			Random rnd = new Random();
+			for (int i = 0; i < sessID.length; i++)
+				sessID[i] = hex[rnd.nextInt(hex.length)];
+			// example sessID = "12ea56827487e927d4b202ad48248109";
+			referer = "http://www.mapplus.ch/NeapoljsMapPage.php?uid=public&group=public&sessID="
+					+ new String(sessID);
+		}
+
+		@Override
+		public String toString() {
+			return "Map+ (Switzerland)";
+		}
+
+		@Override
+		protected String getTileUrl(int zoom, int tilex, int tiley) {
+			int z = 17 - zoom;
+			return "http://mp2.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
+					+ "/t" + tiley + "l" + tilex + ".jpg";
+		}
+
+		@Override
+		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
+				throws IOException {
+			HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
+			// http request property "Referer" is required -
+			// otherwise we only get "tranparentpixel.gif"
+			conn.setRequestProperty("Referer", referer);
+			return conn;
+		}
+
 	}
 }

@@ -40,8 +40,9 @@
  + New atlas format: Touratech TTQV
  ! Fixed #2913874: ArrayIndexOutOfBoundsException in PNG 4-bit writer 
  + New map source: Eniro.com (Sweden, Norway, Finland)
- + Checkbox added in atlas progress dialog for ignoring all download errors.  
- + New atlas format: CacheWolf
+ + Checkbox added in atlas progress dialog for ignoring all download errors  
+ + New atlas format: CacheWolf (experimental)
+ + New map source: Mapplus.ch (Switzerland)
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

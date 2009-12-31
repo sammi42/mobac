@@ -55,6 +55,7 @@ import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import tac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
+import tac.mapsources.impl.RegionalMapSources.MapplusCh;
 import tac.mapsources.impl.RegionalMapSources.NearMap;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import tac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
@@ -119,7 +120,7 @@ public class MapSourcesManager {
 				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
 				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2(),
-				new EniroCom() };
+				new EniroCom(), new MapplusCh() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

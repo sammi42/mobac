@@ -17,4 +17,7 @@ public class Cities {
 	public static final EastNorthCoordinate BUDAPEST = new EastNorthCoordinate(47.47, 19.05);
 	public static final EastNorthCoordinate MUNICH = new EastNorthCoordinate(48.13, 11.58);
 	public static final EastNorthCoordinate OSLO = new EastNorthCoordinate(59.91, 10.75);
+	public static final EastNorthCoordinate BERN = new EastNorthCoordinate(46.95, 7.45);
+	public static final EastNorthCoordinate LONDON = new EastNorthCoordinate(51.51, -0.11);
+
 }

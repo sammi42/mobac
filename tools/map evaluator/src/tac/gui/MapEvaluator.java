@@ -40,7 +40,7 @@ public class MapEvaluator extends JFrame {
 	private final LineNumberedPaper mapSourceEditor;
 
 	public MapEvaluator() throws HeadlessException {
-		super("TAC map evaluator");
+		super("TAC map evaluator v0.1 alpha 1");
 		log = Logger.getLogger(this.getClass());
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

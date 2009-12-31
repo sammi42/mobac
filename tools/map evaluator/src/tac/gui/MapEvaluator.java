@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +30,7 @@ import tac.mapsources.impl.Google;
 import tac.mapsources.impl.OsmMapSources;
 import tac.program.DirectoryManager;
 import tac.program.Logging;
+import tac.program.model.Settings;
 import tac.tilestore.TileStore;
 import tac.utilities.Utilities;
 import bsh.EvalError;
@@ -38,9 +40,10 @@ public class MapEvaluator extends JFrame {
 	protected Logger log;
 	private final PreviewMap previewMap;
 	private final LineNumberedPaper mapSourceEditor;
+	private final CookieManager cookieManager = new CookieManager();
 
 	public MapEvaluator() throws HeadlessException {
-		super("TAC map evaluator v0.1 alpha 1");
+		super("TAC Map Evaluator v0.1 alpha 1");
 		log = Logger.getLogger(this.getClass());
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -173,10 +176,20 @@ public class MapEvaluator extends JFrame {
 			}
 		});
 		toolBar.add(button);
+		button = new JButton("Manage Cookies");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				cookieManager.setVisible(true);
+			}
+		});
+		toolBar.add(button);
 	}
 
 	private void exec() {
 		BeanShellMapSource testMapSource = new BeanShellMapSource(mapSourceEditor.getText());
+		cookieManager.updateCookies(testMapSource);
 		try {
 			if (testMapSource.evalTileUrl(0, 0, 0) != null) {
 				previewMap.setMapSource(testMapSource);
@@ -185,11 +198,11 @@ public class MapEvaluator extends JFrame {
 			JOptionPane.showMessageDialog(this, "Error in custom code: result is null",
 					"Error in custom code", JOptionPane.ERROR_MESSAGE);
 		} catch (EvalError e) {
-			log.error("",e);
+			log.error("", e);
 			JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
 					"Error in custom code", JOptionPane.ERROR_MESSAGE);
 		} catch (Error e) {
-			log.error("",e);
+			log.error("", e);
 			JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
 					"Error in custom code", JOptionPane.ERROR_MESSAGE);
 		}
@@ -199,7 +212,14 @@ public class MapEvaluator extends JFrame {
 		StartTAC.setLookAndFeel();
 		Logging.configureConsoleLogging();
 		DirectoryManager.initialize();
-		TileStore.initialize();
-		new MapEvaluator().setVisible(true);
+		try {
+			Settings.load();
+			TileStore.initialize();
+			new MapEvaluator().setVisible(true);
+		} catch (JAXBException e) {
+			JOptionPane.showMessageDialog(null, "Error", e.getLocalizedMessage(),
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
 	}
 }

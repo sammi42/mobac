@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="all" name="Compile and build java classes plus jar archives">
+<project default="all" name="Compile and build java classes plus jar archives" >
 
 	<property name="TAC.dir" value="../TAC" />
 	<property name="jar.name" value="TAC Map Evaluator.jar" />
 	<property name="zip.name" value="TAC Map Evaluator.zip" />
 	<property name="main.class" value="tac.gui.MapEvaluator" />
 
-	<target name="all" depends="clean_build,build,create_jar,create_release" />
+	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />
 
 	<target name="clean_build">
 		<delete includeEmptyDirs="true" failonerror="false">
@@ -24,6 +24,7 @@
 		<javac srcdir="src:${TAC.dir}/src" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<include name="tac/**" />
+			<exclude name="tac/tools/**"/>
 		</javac>
 		<copy todir="build" overwrite="true">
 			<fileset dir="src">
@@ -44,9 +45,18 @@
 				<attribute name="Main-Class" value="${main.class}" />
 				<attribute name="Class-Path" value=". jai_core.jar jai_codec.jar lib/jai_core.jar lib/jai_codec.jar jai_*.jar lib/jai_*.jar" />
 			</manifest>
-			<zipfileset src="lib/bsh-2.0b4.jar" />
-			<zipfileset src="lib/log4j-1.2.15.jar" />
-			<zipfileset src="${TAC.dir}/lib/je-3.3.87.jar" />
+			<zipfileset src="lib/bsh-2.0b4.jar" >
+				<exclude name="bsh/servlet/**" />
+				<exclude name="bsh/util/BeanShellBSFEngine.*"/>
+			</zipfileset>
+			<zipfileset src="lib/log4j-1.2.15.jar" >
+				<exclude name="org/apache/log4j/net/**" />
+				<exclude name="org/apache/log4j/or/jms/**"/>
+				<exclude name="org/apache/log4j/jmx/**"/>
+			</zipfileset>
+			<zipfileset src="${TAC.dir}/lib/je-3.3.87.jar" >
+				<exclude name="com/sleepycat/persist/model/ClassEnhancerTask.*"/>
+			</zipfileset>
 			<zipfileset src="${TAC.dir}/lib/sqlite.jar" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
@@ -55,36 +65,13 @@
 		</jar>
 	</target>
 
-	<target name="shrink" depends="create_jar" description="Removes unused classes from compiled jar">
+	<target name="shrink" description="Removes unused classes from compiled jar">
 		<taskdef resource="proguard/ant/task.properties" classpath="${TAC.dir}/lib/proguard.jar" />
-		<move file="${jar.name}" tofile="build/temp.jar" overwrite="true" />
-		<proguard>
-			-libraryjars ${java.home}/lib/rt.jar
-			-injars     build/temp.jar
-			-outjars    ${jar.name}
-			-keepattributes *Annotation*
+		<proguard obfuscate="false" optimize="false" ignorewarnings="true">
+			<injar file="${jar.name}"/>
+			<libraryjar file="${java.home}/lib/rt.jar"/>
+			<outjar file="build/${jar.name}"/>
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
-			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource$TileUpdate { public *; }
-			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource { public *; }
-			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSpace { public *; }
-			-keep class org.apache.log4j.Layout { public *; }
-			-keep class org.apache.log4j.Level { public *; }
-			-keep class org.apache.log4j.Category { public *; }
-			-keep class org.apache.log4j.Priority { public *; }
-			-keep class org.apache.log4j.spi.LoggingEvent { public *; }
-			-keep class org.apache.log4j.spi.ThrowableInformation { public *; }
-			-keep class org.apache.log4j.spi.LocationInfo { public *; }
-			-keep class org.apache.log4j.PatternLayout { public *; }
-			-keep class org.apache.log4j.FileAppender { public *; }
-			-keep class tac.program.model.package-info
-			-keep class tac.program.model.* { public *; }
-			-keep class tac.program.interfaces.* { public *; }
-			-keep class tac.tar.TarIndex { public *; }
-			-keep class tac.tar.TarIndexedArchive { public *; }
-			-keep class tac.data.gpx.gpx11.* { public *; }
-			-keep class tac.tilestore.berkeleydb.* { *; }
-			-keep class tac.tilestore.TileStoreEntry { public *; }
-			-keep class SQLite.JDBC2z.* { public *; }
 			-keepclassmembers enum * {
 			    public static **[] values();
 			    public static ** valueOf(java.lang.String);
@@ -99,11 +86,10 @@
 			-keepclassmembers class * implements com.sleepycat.persist.evolve.Conversion {
 				boolean equals(java.lang.Object);
 			}
-			-dontwarn
-			-dontoptimize 
-			-dontobfuscate
+			
+			
 		</proguard>
-		<delete file="build/temp.jar" />
+		<move file="build/${jar.name}" tofile="${jar.name}" overwrite="true" />
 	</target>
 
 	<target name="create_release" description="Packs all necessary files for the binary release into one zip archive">

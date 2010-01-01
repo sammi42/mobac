@@ -73,8 +73,8 @@ public class JCoordinateField extends JTextField {
 	public double getCoordinate() throws ParseException {
 		ParsePosition pos = new ParsePosition(0);
 		String text = JCoordinateField.this.getText();
-		Number num = numberFormat.parse(text, pos).doubleValue();
-		if (pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue()))
+		Number num = numberFormat.parse(text, pos);
+		if (num == null || pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue()))
 			throw new ParseException(text, pos.getErrorIndex());
 		return num.doubleValue();
 	}
@@ -82,8 +82,8 @@ public class JCoordinateField extends JTextField {
 	public double getCoordinateOrNaN() {
 		ParsePosition pos = new ParsePosition(0);
 		String text = JCoordinateField.this.getText();
-		Number num = numberFormat.parse(text, pos).doubleValue();
-		if (pos.getErrorIndex() >= 0)
+		Number num = numberFormat.parse(text, pos);
+		if (num == null || pos.getErrorIndex() >= 0)
 			return Double.NaN;
 		return num.doubleValue();
 	}
@@ -121,7 +121,12 @@ public class JCoordinateField extends JTextField {
 			try {
 				ParsePosition pos = new ParsePosition(0);
 				String text = JCoordinateField.this.getText();
-				double d = numberFormat.parse(text, pos).doubleValue();
+				Number num = numberFormat.parse(text, pos);
+				if (num == null) {
+					valid = false;
+					return;
+				}
+				double d = num.doubleValue();
 				valid = (d != Double.NaN) && (d >= min) && (d <= max);
 			} catch (Exception e) {
 				valid = false;

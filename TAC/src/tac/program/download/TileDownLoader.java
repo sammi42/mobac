@@ -10,6 +10,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
+import tac.exceptions.DownloadFailedException;
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import tac.program.model.Settings;
@@ -118,7 +119,7 @@ public class TileDownLoader {
 		int code = huc.getResponseCode();
 
 		if (code != HttpURLConnection.HTTP_OK)
-			throw new IOException("Invaild HTTP response: " + code);
+			throw new DownloadFailedException(code);
 
 		String eTag = huc.getHeaderField("ETag");
 		long timeLastModified = huc.getLastModified();

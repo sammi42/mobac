@@ -2,7 +2,6 @@ package tac.gui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,15 +37,6 @@ public class JDropDownButton extends JButton {
 			}
 		});
 	}
-
-	@Override
-	public void paint(Graphics g) {
-		// TODO Auto-generated method stub
-		System.out.println("");
-		super.paint(g);
-	}
-
-
 
 	public void addDropDownItem(String text, ActionListener l) {
 		JMenuItem item = new JMenuItem(text);

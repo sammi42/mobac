@@ -3,6 +3,7 @@ package tac.program.download;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.DownloadFailedException;
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.JobDispatcher;
 import tac.program.JobDispatcher.Job;
@@ -10,6 +11,8 @@ import tac.program.interfaces.DownloadJobListener;
 import tac.tar.TarIndexedArchive;
 
 public class DownloadJob implements Job {
+
+	private static final int MAX_RETRIES = 1;
 
 	static Logger log = Logger.getLogger(DownloadJob.class);
 
@@ -47,21 +50,28 @@ public class DownloadJob implements Job {
 					+ "failed with an unrecoverable error: " + e.getCause());
 		} catch (InterruptedException e) {
 			throw e;
+		} catch (DownloadFailedException e) {
+			processError(dispatcher, e);
 		} catch (Exception e) {
-			errorCounter++;
-			// Reschedule job to try it later again
-			if (errorCounter < 3) {
-				listener.jobFinishedWithError(true);
-				log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-						+ " failed (times: " + errorCounter + ") - rescheduling download job");
-				dispatcher.addErrorJob(this);
-			} else {
-				listener.jobFinishedWithError(false);
-				log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-						+ "failed again. Retry limit reached, "
-						+ "job will not be rescheduled (no further try)");
-			}
+			processError(dispatcher, e);
 			throw e;
+		}
+	}
+
+	private void processError(JobDispatcher dispatcher, Exception e) {
+		errorCounter++;
+		// Reschedule job to try it later again
+		if (errorCounter <= MAX_RETRIES) {
+			listener.jobFinishedWithError(true);
+			log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
+					+ " failed: \"" + e.getMessage() + "\" (tries: " + errorCounter
+					+ ") - rescheduling download job");
+			dispatcher.addErrorJob(this);
+		} else {
+			listener.jobFinishedWithError(false);
+			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
+					+ " failed again: \"" + e.getMessage() + "\". Retry limit reached, "
+					+ "job will not be rescheduled (no further try)");
 		}
 	}
 

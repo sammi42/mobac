@@ -24,6 +24,11 @@ public class NotWorking {
 			urlPattern = MapSourceTools.loadMapUrl(this, "url");
 		}
 
+		@Override
+		public MapSpace getMapSpace() {
+			return null; //unknown what to return
+		}
+
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			SERVER_NUM = (SERVER_NUM % 3) + 3;
 			String tmp = urlPattern;
@@ -65,6 +70,11 @@ public class NotWorking {
 			tmp = tmp.replace("{$y}", Integer.toString(tiley));
 			tmp = tmp.replace("{$z}", Integer.toString(zoom));
 			return tmp;
+		}
+
+		@Override
+		public MapSpace getMapSpace() {
+			return null; //unknown what to return
 		}
 
 		@Override

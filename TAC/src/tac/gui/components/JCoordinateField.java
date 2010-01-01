@@ -3,13 +3,17 @@ package tac.gui.components;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import tac.utilities.Utilities;
+import tac.utilities.geo.CoordinateDms2Format;
 
 public class JCoordinateField extends JTextField {
 
@@ -18,18 +22,21 @@ public class JCoordinateField extends JTextField {
 	private static final Color ERROR_COLOR = new Color(255, 100, 100);
 
 	private static final String INVALID_TEXT = "<html>Invalid coordinate!<br>"
-			+ "Please enter a number between %f and %f</html>";
+			+ "Please enter a number between %s and %s</html>";
 
 	private JCoordinateListener coordinateListener;
 	private boolean inputIsValid = true;
 
+	private NumberFormat numberFormat;
+
 	private final double min;
 	private final double max;
-	
+
 	public JCoordinateField(double min, double max) {
 		super(10);
 		this.min = min;
 		this.max = max;
+		numberFormat = new CoordinateDms2Format(new DecimalFormatSymbols());
 		coordinateListener = new JCoordinateListener();
 		coordinateListener.checkCoordinate(null);
 	}
@@ -54,7 +61,7 @@ public class JCoordinateField extends JTextField {
 				super.setText("");
 				newValid = false;
 			} else {
-				super.setText(Utilities.FORMAT_6_DEC.format(value));
+				super.setText(numberFormat.format(value));
 			}
 			if (newValid != inputIsValid)
 				coordinateListener.changeValidMode(true);
@@ -64,19 +71,35 @@ public class JCoordinateField extends JTextField {
 	}
 
 	public double getCoordinate() throws ParseException {
-		return Utilities.parseLocaleDouble(getText());
+		ParsePosition pos = new ParsePosition(0);
+		String text = JCoordinateField.this.getText();
+		Number num = numberFormat.parse(text, pos).doubleValue();
+		if (pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue()))
+			throw new ParseException(text, pos.getErrorIndex());
+		return num.doubleValue();
 	}
 
 	public double getCoordinateOrNaN() {
-		try {
-			return Utilities.parseLocaleDouble(getText());
-		} catch (ParseException e) {
+		ParsePosition pos = new ParsePosition(0);
+		String text = JCoordinateField.this.getText();
+		Number num = numberFormat.parse(text, pos).doubleValue();
+		if (pos.getErrorIndex() >= 0)
 			return Double.NaN;
-		}
+		return num.doubleValue();
 	}
 
 	public boolean isInputValid() {
 		return inputIsValid;
+	}
+
+	public NumberFormat getNumberFormat() {
+		return numberFormat;
+	}
+
+	public void setNumberFormat(NumberFormat numberFormat) {
+		double coord = getCoordinateOrNaN();
+		this.numberFormat = numberFormat;
+		setCoordinate(coord);
 	}
 
 	protected class JCoordinateListener implements DocumentListener {
@@ -96,8 +119,10 @@ public class JCoordinateField extends JTextField {
 				return;
 			boolean valid = false;
 			try {
-				double d = Utilities.parseLocaleDouble(JCoordinateField.this.getText());
-				valid = (d >= min) && (d <= max);
+				ParsePosition pos = new ParsePosition(0);
+				String text = JCoordinateField.this.getText();
+				double d = numberFormat.parse(text, pos).doubleValue();
+				valid = (d != Double.NaN) && (d >= min) && (d <= max);
 			} catch (Exception e) {
 				valid = false;
 			}
@@ -108,7 +133,8 @@ public class JCoordinateField extends JTextField {
 		private void changeValidMode(boolean valid) {
 			Color newC = valid ? defaultColor : ERROR_COLOR;
 			JCoordinateField.this.setBackground(newC);
-			String toolTip = valid ? "" : String.format(INVALID_TEXT, new Object[] { min, max });
+			String toolTip = valid ? "" : String.format(INVALID_TEXT, numberFormat.format(min),
+					numberFormat.format(max));
 			JCoordinateField.this.setToolTipText(toolTip);
 			if (toolTip.length() > 0)
 				Utilities.showTooltipNow(JCoordinateField.this);

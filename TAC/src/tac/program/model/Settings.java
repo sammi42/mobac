@@ -76,6 +76,8 @@ public class Settings {
 	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
 	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
+	public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEC_LOCAL;
+	
 	@XmlElement
 	private String atlasOutputDirectory = null;
 	public String tileStoreDirectory;

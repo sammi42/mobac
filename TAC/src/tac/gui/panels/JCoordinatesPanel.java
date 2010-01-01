@@ -1,18 +1,26 @@
 package tac.gui.panels;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.text.ParseException;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.gui.components.FilledLayeredPane;
 import tac.gui.components.JCollapsiblePanel;
 import tac.gui.components.JCoordinateField;
+import tac.gui.components.JDropDownButton;
+import tac.program.model.CoordinateStringFormat;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.MapSelection;
 import tac.program.model.MercatorPixelCoordinate;
@@ -35,6 +43,8 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 	private JCoordinateField lonMaxTextField;
 	private JButton applySelectionButton;
 
+	private CoordinateStringFormat csf = CoordinateStringFormat.DEC_LOCAL;
+
 	public JCoordinatesPanel() {
 		super("Selection coordinates (min/max)", new GridBagLayout());
 		setName(NAME);
@@ -55,22 +65,63 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		JLabel lonMaxLabel = new JLabel("E ", JLabel.CENTER);
 		JLabel latMinLabel = new JLabel("S ", JLabel.CENTER);
 
-		contentContainer.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		contentContainer.add(latMaxLabel, GBC.std().insets(0, 5, 0, 0));
-		contentContainer.add(latMaxTextField, GBC.std().insets(0, 5, 0, 0));
-		contentContainer.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+		JPanel northPanel = new JPanel(new BorderLayout());
+		JLayeredPane layeredPane = new FilledLayeredPane();
+
+		JPanel northInnerPanel = new JPanel();
+		northInnerPanel.add(latMaxLabel);
+		northInnerPanel.add(latMaxTextField);
+
+		JPanel formatButtonPanel = new JPanel(null);
+		formatButtonPanel.setOpaque(false);
+		JDropDownButton formatButton = new JDropDownButton("Fmt");
+		formatButton.setMargin(new Insets(0, 5, 0, 0));
+		formatButton.setBounds(2, 2, 50, 20);
+		formatButtonPanel.add(formatButton);
+		for (CoordinateStringFormat csf : CoordinateStringFormat.values())
+			formatButton.addDropDownItem(new JNumberFormatMenuItem(csf));
+
+		layeredPane.add(northInnerPanel, Integer.valueOf(0));
+		layeredPane.setMinimumSize(northInnerPanel.getMinimumSize());
+		layeredPane.setPreferredSize(northInnerPanel.getPreferredSize());
+		layeredPane.add(formatButtonPanel, Integer.valueOf(2));
+		northPanel.add(layeredPane, BorderLayout.CENTER);
+
+		// northPanel.add(northInnerPanel, BorderLayout.CENTER);
+		contentContainer.add(northPanel, GBC.eol().fillH().insets(0, 5, 0, 0));
 
 		JPanel eastWestPanel = new JPanel(new GridBagLayout());
 		eastWestPanel.add(lonMinLabel, GBC.std());
 		eastWestPanel.add(lonMinTextField, GBC.std());
 		eastWestPanel.add(lonMaxLabel, GBC.std().insets(10, 0, 0, 0));
 		eastWestPanel.add(lonMaxTextField, GBC.std());
-		contentContainer.add(eastWestPanel, GBC.eol().fill().insets(0, 5, 0, 5));
-		contentContainer.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		contentContainer.add(latMinLabel);
-		contentContainer.add(latMinTextField);
-		contentContainer.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
+		contentContainer.add(eastWestPanel, GBC.eol().fill());
+
+		JPanel southPanel = new JPanel();
+		southPanel.add(latMinLabel);
+		southPanel.add(latMinTextField);
+		contentContainer.add(southPanel, GBC.eol().anchor(GBC.CENTER));
 		contentContainer.add(applySelectionButton, GBC.eol().anchor(GBC.CENTER).insets(0, 5, 0, 0));
+	}
+
+	public void setNumberFormat(CoordinateStringFormat csf) {
+		this.csf = csf;
+		NumberFormat numberFormat = csf.getNumberFormat();
+		latMaxTextField.setNumberFormat(numberFormat);
+		latMinTextField.setNumberFormat(numberFormat);
+		lonMaxTextField.setNumberFormat(numberFormat);
+		lonMinTextField.setNumberFormat(numberFormat);
+	}
+
+	public CoordinateStringFormat getNumberFormat() {
+		return csf;
+	}
+
+	protected void setNumberFormat(NumberFormat numberFormat) {
+		latMaxTextField.setNumberFormat(numberFormat);
+		latMinTextField.setNumberFormat(numberFormat);
+		lonMaxTextField.setNumberFormat(numberFormat);
+		lonMinTextField.setNumberFormat(numberFormat);
 	}
 
 	public void setCoordinates(EastNorthCoordinate max, EastNorthCoordinate min) {
@@ -145,4 +196,19 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		applySelectionButton.addActionListener(l);
 	}
 
+	protected class JNumberFormatMenuItem extends JMenuItem implements ActionListener {
+
+		private final CoordinateStringFormat csf;
+
+		public JNumberFormatMenuItem(CoordinateStringFormat csf) {
+			super(csf.getDisplayName());
+			this.csf = csf;
+			addActionListener(this);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			JCoordinatesPanel.this.setNumberFormat(csf);
+		}
+
+	}
 }

@@ -376,6 +376,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		atlasNameTextField.setText(settings.elementName);
 		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoad();
+		coordinatesPanel.setNumberFormat(settings.coordinateNumberFormat);
 
 		tileImageParametersPanel.loadSettings();
 		// mapSourceCombo
@@ -412,6 +413,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			s.elementName = atlasNameTextField.getText();
 			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
+			s.coordinateNumberFormat = coordinatesPanel.getNumberFormat();
 
 			tileImageParametersPanel.saveSettings();
 			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;

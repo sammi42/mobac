@@ -37,8 +37,9 @@ import tac.utilities.file.DirectoryFileFilter;
 public class Utilities {
 
 	public static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
-	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.000000");
-	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.000000", DFS_ENG);
+	public static final DecimalFormatSymbols DFS_LOCAL = new DecimalFormatSymbols();
+	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.######");
+	public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.######", DFS_ENG);
 	public static final DecimalFormat FORMAT_2_DEC = new DecimalFormat("0.00");
 	private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
 	private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");

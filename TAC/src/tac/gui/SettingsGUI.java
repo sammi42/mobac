@@ -280,11 +280,6 @@ public class SettingsGUI extends JDialog {
 		minExpirationTime.addChangeListener(sliderChangeListener);
 		minExpirationPanel.add(minExpirationTime, BorderLayout.CENTER);
 
-		tileStoreInfoPanel = new JPanel(new GridBagLayout());
-		tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
-
-		prepareTileStoreInfoPanel();
-
 		descr = new JLabel("<html>Tiles are updated automatically base on the settings below. "
 				+ "Each map tile has <br>an expiry date that is sometimes provided by "
 				+ "the server. If the server does <br> not provide one, the default expiration "
@@ -305,10 +300,21 @@ public class SettingsGUI extends JDialog {
 		JPanel tileStorePanel = new JPanel(new BorderLayout());
 		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
 		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
+		tileStoreInfoPanel = new JPanel(new GridBagLayout());
+		//tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
+
+		prepareTileStoreInfoPanel();
 
 		backGround.setLayout(new BorderLayout());
 		backGround.add(tileStorePanel, BorderLayout.NORTH);
-		backGround.add(tileStoreInfoPanel, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		tileStoreInfoPanel.setMinimumSize(new Dimension(200,300));
+		//scrollPane.setMinimumSize(new Dimension(100, 100));
+		scrollPane.setPreferredSize(new Dimension(520, 100));
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Information"));
+
+		backGround.add(scrollPane, BorderLayout.CENTER);
 	}
 
 	private synchronized void updateTileStoreInfoPanelAsync() {
@@ -328,6 +334,7 @@ public class SettingsGUI extends JDialog {
 	}
 
 	private void prepareTileStoreInfoPanel() {
+
 		final GridBagConstraints gbc_mapSource = new GridBagConstraints();
 		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
 		gbc_mapSource.anchor = GridBagConstraints.WEST;
@@ -348,8 +355,8 @@ public class SettingsGUI extends JDialog {
 		for (MapSource ts : MapSourcesManager.getAllMapSources()) {
 			if (!tileStore.storeExists(ts))
 				continue;
-			String mapTileCountText = "?";
-			String mapTileSizeText = "?";
+			String mapTileCountText = "  ?  ";
+			String mapTileSizeText = "    ?    ";
 			final JLabel mapSourceNameLabel = new JLabel(ts.toString());
 			final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
 			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);

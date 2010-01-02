@@ -158,7 +158,7 @@ public class RegionalMapSources {
 
 		@Override
 		public String toString() {
-			return getName() + " (Czech Republic only)";
+			return getName() + " (CZ, SK)";
 		}
 
 	}

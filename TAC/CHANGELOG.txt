@@ -43,6 +43,8 @@
  + New atlas format: CacheWolf (experimental)
  + New map source: Mapplus.ch (Switzerland)
  + New atlas format: CacheBox
+ + Coordinate format changeable (deg / deg,min / deg,min,sec)
+ 
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

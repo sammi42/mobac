@@ -43,7 +43,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 	private JCoordinateField lonMaxTextField;
 	private JButton applySelectionButton;
 
-	private CoordinateStringFormat csf = CoordinateStringFormat.DEC_LOCAL;
+	private CoordinateStringFormat csf;
 
 	public JCoordinatesPanel() {
 		super("Selection coordinates (min/max)", new GridBagLayout());

@@ -35,9 +35,6 @@ public class EnvironmentSetup {
 		File atlasFolder = new File(userDir, "atlases");
 		atlasFolder.mkdir();
 
-		File tileStoreFolder = new File(userDir, "tilestore");
-		tileStoreFolder.mkdir();
-
 		if (Settings.FILE.exists() == false) {
 
 			try {

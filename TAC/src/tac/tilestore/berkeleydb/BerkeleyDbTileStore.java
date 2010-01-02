@@ -66,6 +66,13 @@ public class BerkeleyDbTileStore extends TileStore {
 		try {
 			// Get a file channel for the file
 			File file = new File(tileStoreDir, "lock");
+			if (!tileStoreDir.isDirectory())
+				try {
+					Utilities.mkDirs(tileStoreDir);
+				} catch (IOException e) {
+					throw new TileStoreException("Unable to create tile store directory: \""
+							+ tileStoreDir.getPath() + "\"");
+				}
 			FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
 
 			// Use the file channel to create a lock on the file.

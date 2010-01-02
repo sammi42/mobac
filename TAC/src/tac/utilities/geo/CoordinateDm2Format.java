@@ -18,7 +18,7 @@ public class CoordinateDm2Format extends NumberFormat {
 
 	public CoordinateDm2Format(DecimalFormatSymbols dfs) {
 		degFmt = new DecimalFormat("00°", dfs);
-		minFmt = new DecimalFormat("00.00\"", dfs);
+		minFmt = new DecimalFormat("00.00''", dfs);
 		minFmtParser = new DecimalFormat("##.##", dfs);
 	}
 
@@ -39,7 +39,7 @@ public class CoordinateDm2Format extends NumberFormat {
 
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
-		String[] tokens = source.split("[°\\'\\\"]");
+		String[] tokens = source.trim().split("[°\\']");
 		if (tokens.length != 2)
 			return null;
 		try {

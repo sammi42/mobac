@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -146,6 +147,15 @@ public class Utilities {
 	public static void checkForInterruptionRt() throws RuntimeException {
 		if (Thread.currentThread().isInterrupted())
 			throw new RuntimeException(new InterruptedException());
+	}
+
+	public static void closeFile(RandomAccessFile file) {
+		if (file == null)
+			return;
+		try {
+			file.close();
+		} catch (IOException e) {
+		}
 	}
 
 	public static void closeStream(InputStream in) {

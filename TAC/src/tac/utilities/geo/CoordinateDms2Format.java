@@ -44,7 +44,7 @@ public class CoordinateDms2Format extends NumberFormat {
 
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
-		String[] tokens = source.split("[°\\'\\\"]");
+		String[] tokens = source.trim().split("[°\\'\\\"]");
 		if (tokens.length != 3)
 			return null;
 		try {

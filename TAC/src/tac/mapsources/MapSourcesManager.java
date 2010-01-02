@@ -48,7 +48,9 @@ import tac.mapsources.impl.RegionalMapSources.AustrianMap;
 import tac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import tac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import tac.mapsources.impl.RegionalMapSources.EmapaPl;
-import tac.mapsources.impl.RegionalMapSources.EniroCom;
+import tac.mapsources.impl.RegionalMapSources.EniroComAerial;
+import tac.mapsources.impl.RegionalMapSources.EniroComMap;
+import tac.mapsources.impl.RegionalMapSources.EniroComNautical;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import tac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
@@ -113,12 +115,12 @@ public class MapSourcesManager {
 				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
 				new MicrosoftHybrid(), new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
-				new Cykloatlas(), new TerraserverUSA(),
-				new UmpWawPl(), new DoCeluPL(), new EmapaPl(), new AustrianMap(),
-				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
-				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
-				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2(),
-				new EniroCom(), new MapplusCh() };
+				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
+				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),
+				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
+				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
+				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(),
+				new EniroComNautical(), new MapplusCh() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

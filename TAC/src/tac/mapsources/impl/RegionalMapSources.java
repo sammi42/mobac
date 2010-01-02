@@ -436,23 +436,56 @@ public class RegionalMapSources {
 
 	}
 
-	public static class EniroCom extends AbstractMapSource {
+	public static class EniroComMap extends AbstractMapSource {
 
-		public EniroCom() {
-			super("Eniro.com", 0, 20, "png", TileUpdate.IfModifiedSince);
+		private String mapType;
+
+		public EniroComMap() {
+			this("map");
+		}
+
+		protected EniroComMap(String mapType) {
+			super("Eniro.com-" + mapType, 0, 20, "png", TileUpdate.IfModifiedSince);
+			this.mapType = mapType;
 		}
 
 		@Override
 		public String toString() {
-			return "Eniro (Sweden, Norway, Finland)";
+			return "Eniro Map (SE, NO, FI)";
 		}
 
 		@Override
 		protected String getTileUrl(int zoom, int tilex, int tiley) {
 			int y = (1 << zoom) - 1 - tiley;
-			return "http://map.eniro.com/geowebcache/service/tms1.0.0/map/" + zoom + "/" + tilex
-					+ "/" + y + ".png";
+			return "http://map.eniro.com/geowebcache/service/tms1.0.0/" + mapType + "/" + zoom
+					+ "/" + tilex + "/" + y + ".png";
 		}
+	}
+
+	public static class EniroComNautical extends EniroComMap {
+
+		public EniroComNautical() {
+			super("nautical");
+		}
+
+		@Override
+		public String toString() {
+			return "Eniro Nautical (SE, NO, FI)";
+		}
+
+	}
+
+	public static class EniroComAerial extends EniroComMap {
+
+		public EniroComAerial() {
+			super("aerial");
+		}
+
+		@Override
+		public String toString() {
+			return "Eniro Aerial (SE, NO, FI)";
+		}
+
 	}
 
 	/**

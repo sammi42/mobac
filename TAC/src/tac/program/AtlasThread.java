@@ -139,6 +139,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler);
 		try {
 			for (LayerInterface layer : atlasInterface) {
+				atlasCreator.initLayerCreation(layer);
 				for (MapInterface map : layer) {
 					try {
 						while (!createMap(map))
@@ -162,6 +163,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 						}
 					}
 				}
+				atlasCreator.finishLayerCreation();
 			}
 		} catch (InterruptedException e) {
 			atlasCreator.abortAtlasCreation();

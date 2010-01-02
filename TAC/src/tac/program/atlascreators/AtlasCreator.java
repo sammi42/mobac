@@ -98,6 +98,14 @@ public abstract class AtlasCreator {
 		Utilities.mkDirs(atlasDir);
 	}
 
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+
+	}
+
+	public void finishLayerCreation() throws IOException {
+
+	}
+
 	/**
 	 * @see AtlasCreator
 	 */
@@ -105,7 +113,7 @@ public abstract class AtlasCreator {
 	}
 
 	public void abortAtlasCreation() throws IOException {
-		this.aborted  = true;
+		this.aborted = true;
 	}
 
 	public boolean isAborted() {

@@ -10,10 +10,10 @@ public enum CoordinateStringFormat {
 
 	DEG_ENG("Degree (eng)", Utilities.FORMAT_6_DEC_ENG), // 
 	DEG_LOCAL("Degree (local)", Utilities.FORMAT_6_DEC), // 
-	DM2_ENG("Deg Min (eng)", new CoordinateDm2Format(Utilities.DFS_ENG)), //
-	DM2_LOCAL("Deg Min (local)", new CoordinateDm2Format(Utilities.DFS_LOCAL)), //
-	DMS2_ENG("Deg Min Sec (eng)", new CoordinateDms2Format(Utilities.DFS_ENG)), //
-	DMS2_LOCAL("Deg Min Sec (local)", new CoordinateDms2Format(Utilities.DFS_LOCAL));
+	DEG_MIN_ENG("Deg Min (eng)", new CoordinateDm2Format(Utilities.DFS_ENG)), //
+	DEG_MIN_LOCAL("Deg Min (local)", new CoordinateDm2Format(Utilities.DFS_LOCAL)), //
+	DEG_MIN_SEC_ENG("Deg Min Sec (eng)", new CoordinateDms2Format(Utilities.DFS_ENG)), //
+	DEG_MIN_SEC_LOCAL("Deg Min Sec (local)", new CoordinateDms2Format(Utilities.DFS_LOCAL));
 
 	/*
 	 * formatButton.addDropDownItem(new JNumberFormatMenuItem());
@@ -40,5 +40,5 @@ public enum CoordinateStringFormat {
 	public String toString() {
 		return displayName;
 	}
-
+	
 }

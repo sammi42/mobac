@@ -36,6 +36,7 @@ public class CacheBox extends AtlasCreator {
 
 	@Override
 	public void initLayerCreation(LayerInterface layer) throws IOException {
+		nextMapOffsetIndex = 0;
 		packFile = new File(atlasDir, layer.getName() + ".pack");
 		if (packFile.exists())
 			Utilities.deleteFile(packFile);
@@ -45,8 +46,7 @@ public class CacheBox extends AtlasCreator {
 		writeString("", 256); // layer url - unused
 		writeLong(0); // int64 ticks
 		int mapCount = layer.getMapCount();
-		writeInt(mapCount); // int32 number of bounding
-		// boxes / maps
+		writeInt(mapCount); // int32 number of bounding boxes / maps
 
 		long offset = 32 + 128 + 256 + 8 + 4 + 8; // = 436
 		offset += mapCount * 28;
@@ -96,7 +96,6 @@ public class CacheBox extends AtlasCreator {
 
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
-
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
 		ImageIO.setUseCache(false);
@@ -130,9 +129,10 @@ public class CacheBox extends AtlasCreator {
 			for (long tileoffset : moi.tileoffsets)
 				writeLong(tileoffset);
 		}
-
+		offsetInfos = null;
 		packFile = null;
 		packRaFile.close();
+		packRaFile = null;
 	}
 
 	@Override

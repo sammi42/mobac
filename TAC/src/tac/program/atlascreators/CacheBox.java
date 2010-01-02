@@ -104,8 +104,8 @@ public class CacheBox extends AtlasCreator {
 		int i = 0;
 		long[] offsets = activeMapOffsetInfo.tileoffsets;
 
-		for (int x = xMin; x <= xMax; x++) {
-			for (int y = yMin; y <= yMax; y++) {
+		for (int y = yMin; y <= yMax; y++) {
+			for (int x = xMin; x <= xMax; x++) {
 				checkUserAbort();
 				atlasProgress.incMapCreationProgress();
 				try {

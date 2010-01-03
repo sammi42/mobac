@@ -1,30 +1,99 @@
 package tac.mapsources;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import bsh.EvalError;
 import bsh.Interpreter;
 
-public class BeanShellMapSource extends AbstractMapSource {
+public class BeanShellMapSource implements MapSource {
+
+	private static final String AH_ERROR = "Sourced file: inline evaluation of: "
+			+ "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
 
 	private static int NUM = 0;
+	private String name;
 
 	private Logger log = Logger.getLogger(BeanShellMapSource.class);
 
-	private final String code;
+	private final Interpreter i;
 
-	private final List<String> cookies;
+	public BeanShellMapSource(String code) throws EvalError {
+		name = "TestMapSource" + NUM++;
+		i = new Interpreter();
+		i.eval("import java.net.HttpURLConnection;");
+		i.eval(code);
+	}
 
-	public BeanShellMapSource(String code) {
-		super("TestMapSource" + Integer.toString(NUM++), 0, 20, "");
-		this.code = code;
-		cookies = new ArrayList<String>();
+	@Override
+	public synchronized HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
+			throws IOException {
+		HttpURLConnection conn = null;
+		try {
+			String url = (String) i
+					.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
+			conn = (HttpURLConnection) new URL(url).openConnection();
+		} catch (EvalError e) {
+			log.error(e.getClass() + ": " + e.getMessage(), e);
+			throw new IOException(e);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("", e);
+			throw new IOException(e);
+		}
+		try {
+			i.set("conn", conn);
+			i.eval(String.format("addHeaders(conn);", zoom, tilex, tiley));
+		} catch (EvalError e) {
+			String msg = e.getMessage();
+			if (!AH_ERROR.equals(msg)) {
+				log.error(e.getClass() + ": " + e.getMessage(), e);
+				throw new IOException(e);
+			}
+		}
+		return conn;
+	}
+
+	@Override
+	public MapSpace getMapSpace() {
+		return MercatorPower2MapSpace.INSTANCE_256;
+	}
+
+	@Override
+	public int getMaxZoom() {
+		return 20;
+	}
+
+	@Override
+	public int getMinZoom() {
+		return 0;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getStoreName() {
+		return getName();
+	}
+
+	@Override
+	public String getTileType() {
+		return null;
+	}
+
+	@Override
+	public TileUpdate getTileUpdate() {
+		return TileUpdate.None;
 	}
 
 	@Override
@@ -32,40 +101,4 @@ public class BeanShellMapSource extends AbstractMapSource {
 		return false;
 	}
 
-	public List<String> getCookies() {
-		return cookies;
-	}
-
-	@Override
-	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
-			throws IOException {
-		HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
-		StringWriter cookieProp = new StringWriter();
-		boolean first = true;
-		for (String cookie : cookies) {
-			if (first)
-				first = false;
-			else
-				cookieProp.write("; ");
-			cookieProp.write(cookie);
-		}
-		conn.setRequestProperty("Cookie", cookieProp.toString());
-		return conn;
-	}
-
-	@Override
-	public String getTileUrl(int zoom, int tilex, int tiley) {
-		try {
-			return evalTileUrl(zoom, tilex, tiley);
-		} catch (EvalError e) {
-			log.error("", e);
-			return null;
-		}
-	}
-
-	public String evalTileUrl(int zoom, int tilex, int tiley) throws EvalError {
-		Interpreter i = new Interpreter();
-		i.eval(code);
-		return (String) i.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
-	}
 }

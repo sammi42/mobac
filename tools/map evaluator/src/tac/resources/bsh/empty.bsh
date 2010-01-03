@@ -1,0 +1,5 @@
+String getTileUrl( int zoom, int x, int y ) {
+   return "";    
+}
+void addHeaders( java.net.HttpURLConnection conn ) {
+} 

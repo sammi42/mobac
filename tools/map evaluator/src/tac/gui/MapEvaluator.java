@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import tac.StartTAC;
@@ -32,6 +33,7 @@ import tac.program.DirectoryManager;
 import tac.program.Logging;
 import tac.program.model.Settings;
 import tac.tilestore.TileStore;
+import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 import bsh.EvalError;
 
@@ -40,7 +42,6 @@ public class MapEvaluator extends JFrame {
 	protected Logger log;
 	private final PreviewMap previewMap;
 	private final LineNumberedPaper mapSourceEditor;
-	private final CookieManager cookieManager = new CookieManager();
 
 	public MapEvaluator() throws HeadlessException {
 		super("TAC Map Evaluator v0.1 alpha 1");
@@ -82,6 +83,9 @@ public class MapEvaluator extends JFrame {
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					String code = "";
 					switch (a) {
+					case (0):
+						code = Utilities.loadTextResource("bsh/empty.bsh");
+						break;
 					case (1):
 						code = Utilities.loadTextResource("bsh/osm.bsh");
 						break;
@@ -176,41 +180,33 @@ public class MapEvaluator extends JFrame {
 			}
 		});
 		toolBar.add(button);
-		button = new JButton("Manage Cookies");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				cookieManager.setVisible(true);
-			}
-		});
-		toolBar.add(button);
 	}
 
 	private void exec() {
-		BeanShellMapSource testMapSource = new BeanShellMapSource(mapSourceEditor.getText());
-		cookieManager.updateCookies(testMapSource);
 		try {
-			if (testMapSource.evalTileUrl(0, 0, 0) != null) {
+			BeanShellMapSource testMapSource = new BeanShellMapSource(mapSourceEditor.getText());
+			if (testMapSource.getTileUrlConnection(0, 0, 0) != null) {
 				previewMap.setMapSource(testMapSource);
 				return;
 			}
 			JOptionPane.showMessageDialog(this, "Error in custom code: result is null",
 					"Error in custom code", JOptionPane.ERROR_MESSAGE);
-		} catch (EvalError e) {
+		} catch (Exception e) {
 			log.error("", e);
-			JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
-					"Error in custom code", JOptionPane.ERROR_MESSAGE);
-		} catch (Error e) {
-			log.error("", e);
-			JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
-					"Error in custom code", JOptionPane.ERROR_MESSAGE);
+			if (e.getCause() instanceof EvalError) {
+				Throwable cause = e.getCause();
+				JOptionPane.showMessageDialog(this,
+						"Error in custom code: \n" + cause.getMessage(), "Error in custom code",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				TACExceptionHandler.processException(e);
+			}
 		}
 	}
 
 	public static void main(String[] args) {
 		StartTAC.setLookAndFeel();
-		Logging.configureConsoleLogging();
+		Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
 		DirectoryManager.initialize();
 		try {
 			Settings.load();

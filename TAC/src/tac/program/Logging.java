@@ -26,6 +26,9 @@ public class Logging {
 
 	public static final Logger LOG = Logger.getLogger("TAC");
 
+	public static final Layout ADVANCED_LAYOUT = new PatternLayout(
+			"%d{ISO8601} %-5p [%t] %c{1}: %m%n");
+
 	public static void configureLogging() {
 		// We test for the configuration file, if it exists we use it, otherwise
 		// we perform simple logging to the console
@@ -63,17 +66,17 @@ public class Logging {
 	}
 
 	public static void configureDefaultErrorLogging() {
-		configureConsoleLogging(Level.INFO);
+		configureConsoleLogging(Level.INFO, new SimpleLayout());
 		configureLogfileLogging(Level.WARN);
 	}
 
 	public static void configureConsoleLogging() {
-		configureConsoleLogging(Level.ERROR);
+		configureConsoleLogging(Level.ERROR, new SimpleLayout());
 	}
 
-	public static void configureConsoleLogging(Level level) {
+	public static void configureConsoleLogging(Level level, Layout layout) {
 		Logger logger = Logger.getRootLogger();
-		ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout());
+		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 		consoleAppender.setThreshold(level);
 		logger.addAppender(consoleAppender);
 	}

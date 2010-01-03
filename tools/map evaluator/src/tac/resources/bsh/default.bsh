@@ -5,3 +5,7 @@
 String getTileUrl( int zoom, int x, int y ) {
    return "http://tah.openstreetmap.org/Tiles/tile/" + zoom + "/" + x + "/" + y + ".png";    
 } 
+void addHeaders( java.net.HttpURLConnection conn) {
+  conn.addRequestProperty("Cookie","test=12345");
+  conn.addRequestProperty("Referer","http://www.openstreetmap.org");
+} 

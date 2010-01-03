@@ -10,7 +10,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
  */
 public class MapGridLayer implements MapTileLayer {
 
-	private int tileSize;
+	protected int tileSize;
 
 	public void startPainting(MapSource mapSource) {
 		tileSize = mapSource.getMapSpace().getTileSize();

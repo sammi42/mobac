@@ -141,8 +141,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		setLayout(new BorderLayout());
 		add(leftPanel, BorderLayout.WEST);
 		JLayeredPane layeredPane = new FilledLayeredPane();
-		layeredPane.add(previewMap, Integer.valueOf(0));
-		layeredPane.add(mapControlPanel, Integer.valueOf(1));
+		layeredPane.add(previewMap, 0);
+		layeredPane.add(mapControlPanel, 1);
 		add(layeredPane, BorderLayout.CENTER);
 
 		updatePanels();

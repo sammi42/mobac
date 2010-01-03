@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import tac.gui.MapEvaluator;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -38,6 +39,7 @@ public class BeanShellMapSource implements MapSource {
 		try {
 			String url = (String) i
 					.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
+			MapEvaluator.log(String.format("x=%d;y=%d;z=%d -> %s", tilex, tiley, zoom, url));
 			conn = (HttpURLConnection) new URL(url).openConnection();
 		} catch (EvalError e) {
 			log.error(e.getClass() + ": " + e.getMessage(), e);

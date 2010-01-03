@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 
 import tac.StartTAC;
 import tac.gui.components.LineNumberedPaper;
-import tac.gui.mapview.PreviewMap;
+import tac.gui.components.LogPreviewMap;
 import tac.mapsources.BeanShellMapSource;
 import tac.mapsources.impl.Google;
 import tac.mapsources.impl.OsmMapSources;
@@ -39,16 +39,18 @@ import bsh.EvalError;
 
 public class MapEvaluator extends JFrame {
 
+	private static MapEvaluator INSTANCE;
+
 	protected Logger log;
-	private final PreviewMap previewMap;
+	private final LogPreviewMap previewMap;
 	private final LineNumberedPaper mapSourceEditor;
 
 	public MapEvaluator() throws HeadlessException {
-		super("TAC Map Evaluator v0.1 alpha 1");
+		super("TAC Map Evaluator v0.1 alpha 2");
 		log = Logger.getLogger(this.getClass());
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		previewMap = new PreviewMap();
+		previewMap = new LogPreviewMap();
 		mapSourceEditor = new LineNumberedPaper(10, 140);
 		try {
 			String code = Utilities.loadTextResource("bsh/default.bsh");
@@ -66,6 +68,7 @@ public class MapEvaluator extends JFrame {
 		add(bottomPanel, BorderLayout.SOUTH);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setSize(600, 800);
+		INSTANCE = this;
 	}
 
 	private void addButtons(JToolBar toolBar) {
@@ -191,10 +194,14 @@ public class MapEvaluator extends JFrame {
 			}
 			JOptionPane.showMessageDialog(this, "Error in custom code: result is null",
 					"Error in custom code", JOptionPane.ERROR_MESSAGE);
-		} catch (Exception e) {
+		} catch (EvalError e) {
 			log.error("", e);
-			if (e.getCause() instanceof EvalError) {
-				Throwable cause = e.getCause();
+			JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
+					"Error in custom code", JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof EvalError) {
+				log.error("", cause);
 				JOptionPane.showMessageDialog(this,
 						"Error in custom code: \n" + cause.getMessage(), "Error in custom code",
 						JOptionPane.ERROR_MESSAGE);
@@ -202,6 +209,10 @@ public class MapEvaluator extends JFrame {
 				TACExceptionHandler.processException(e);
 			}
 		}
+	}
+
+	public static void log(String msg) {
+		INSTANCE.previewMap.addLog(msg);
 	}
 
 	public static void main(String[] args) {

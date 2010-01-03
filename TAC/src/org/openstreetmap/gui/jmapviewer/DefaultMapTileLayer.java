@@ -17,6 +17,9 @@ public class DefaultMapTileLayer implements MapTileLayer {
 		this.mapSource = mapSource;
 	}
 
+	public void startPainting(MapSource mapSource) {
+	}
+
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
 		Tile tile = getTile(tilex, tiley, zoom);
 		if (tile == null)

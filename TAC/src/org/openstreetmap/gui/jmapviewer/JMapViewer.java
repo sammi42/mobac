@@ -354,6 +354,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 		// paint the tiles in a spiral, starting from center of the map
 		boolean painted = (mapTileLayers.size() > 0);
+		for (MapTileLayer l : mapTileLayers) {
+			l.startPainting(mapSource);
+		}
 		int x = 0;
 		while (painted) {
 			painted = false;
@@ -571,6 +574,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		} else {
 			mapTileLayers.add(new DefaultMapTileLayer(this, mapSource));
 		}
+		if (mapGridLayer!= null)
+			mapTileLayers.add(mapGridLayer);
 		repaint();
 	}
 

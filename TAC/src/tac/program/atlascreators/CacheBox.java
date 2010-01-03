@@ -48,7 +48,7 @@ public class CacheBox extends AtlasCreator {
 		int mapCount = layer.getMapCount();
 		writeInt(mapCount); // int32 number of bounding boxes / maps
 
-		long offset = 32 + 128 + 256 + 8 + 4 + 8; // = 436
+		long offset = 32 + 128 + 256 + 8 + 4; // = 428
 		offset += mapCount * 28;
 		offsetInfos = new MapOffsetInfo[mapCount];
 
@@ -68,12 +68,15 @@ public class CacheBox extends AtlasCreator {
 			writeInt(minY); // int32 minY
 			writeInt(maxY); // int32 maxY
 
-			writeLong(offset); // int64 offsetinfile
+			writeLong(offset); // int64 offset to mapIndexTable
 			offsetInfos[i++] = new MapOffsetInfo(map, offset, tilesInMap);
+			log.trace(String.format("Offset to index table [%d]: 0x%X", i, offset));
 
 			offset += tilesInMap * 8;
 		}
+		log.trace(String.format("End of bounding boxes table: 0x%X", packRaFile.getFilePointer()));
 		packRaFile.seek(offset);
+		log.trace(String.format("Start of tile data: 0x%X", packRaFile.getFilePointer()));
 	}
 
 	@Override
@@ -100,35 +103,37 @@ public class CacheBox extends AtlasCreator {
 
 		ImageIO.setUseCache(false);
 
-		int i = 0;
-		long[] offsets = activeMapOffsetInfo.tileoffsets;
+		int offsetIndex = 0;
+		long[] offsets = new long[activeMapOffsetInfo.tileCount];
 
-		for (int y = yMin; y <= yMax; y++) {
-			for (int x = xMin; x <= xMax; x++) {
-				checkUserAbort();
-				atlasProgress.incMapCreationProgress();
-				try {
+		try {
+			for (int y = yMin; y <= yMax; y++) {
+				for (int x = xMin; x <= xMax; x++) {
+					checkUserAbort();
+					atlasProgress.incMapCreationProgress();
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null) {
-						offsets[i++] = packRaFile.getFilePointer();
+						offsets[offsetIndex++] = packRaFile.getFilePointer();
 						packRaFile.write(sourceTileData);
 					} else {
-						offsets[i++] = 0; // tile does not exist
+						offsets[offsetIndex++] = 0; // tile does not exist
 					}
-				} catch (IOException e) {
-					log.error("", e);
 				}
 			}
+			long pos = packRaFile.getFilePointer();
+			// Write the offsets of all tiles in this map to the correspondent
+			// offset index table
+			packRaFile.seek(activeMapOffsetInfo.indexTableOffset);
+			for (long tileoffset : offsets)
+				writeLong(tileoffset);
+			packRaFile.seek(pos);
+		} catch (IOException e) {
+			throw new MapCreationException(e);
 		}
 	}
 
 	@Override
 	public void finishLayerCreation() throws IOException {
-		for (MapOffsetInfo moi : offsetInfos) {
-			packRaFile.seek(moi.indexOffset);
-			for (long tileoffset : moi.tileoffsets)
-				writeLong(tileoffset);
-		}
 		offsetInfos = null;
 		packFile = null;
 		packRaFile.close();
@@ -184,15 +189,14 @@ public class CacheBox extends AtlasCreator {
 	private class MapOffsetInfo {
 
 		MapInterface map;
-		long indexOffset = 0;
-		long[] tileoffsets;
+		long indexTableOffset = 0;
+		int tileCount;
 
 		public MapOffsetInfo(MapInterface map, long indexOffset, int tileCount) {
 			super();
 			this.map = map;
-			this.indexOffset = indexOffset;
-			this.tileoffsets = new long[tileCount];
+			this.indexTableOffset = indexOffset;
+			this.tileCount = tileCount;
 		}
-
 	}
 }

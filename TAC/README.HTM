@@ -68,7 +68,8 @@ TAC is an open source project hosted on SourceForge.net: <br>
 		BigPlanet / RMaps</a></li>
 		<li><a href="#Ozi">Creating and using atlases with
 		OziExplorer / large PNG image</a></li>
-		<li><a href="#Glopus">Creating and using atlases with Glopus</a></li>
+		<li><a href="#Glopus">Creating atlases for Glopus</a></li>
+		<li><a href="#CacheWolf">Creating atlases for CacheWolf</a></li>
 		<li><a href="#GarminCustom">Creating Garmin Custom maps</a></li>
 		<li><a href="#Magellan">Creating Magellan RMP atlases</a></li>
 	</ul>
@@ -120,7 +121,7 @@ environment. At the first application start all necessary files and
 folders are automatically created by the application.</p>
 
 <hr>
-
+<!-- *************************************************************************** -->
 <h2><a name="AtlasFormats">The different atlas formats</a></h2>
 <h3><a name="TrekBuddy">Creating and using atlases with
 TrekBuddy</a></h3>
@@ -138,7 +139,7 @@ subdirectories containing the different maps of the atlas. For using the
 atlas with TrekBuddy copy the whole directory onto your J2ME device and
 open <tt>cr.tar</tt>/<tt>cr.tba</tt> (in the atlas root directory) in
 TrekBuddy as atlas.</p>
-
+<!-- *************************************************************************** -->
 <h3><a name="MTE">Creating and using atlases with Mobile Trail
 Explorer (MTE)</a></h3>
 <p>For creating atlases compatible with Mobile Trail Explorer you
@@ -153,7 +154,6 @@ Trail Explorer</b> which creates a file structure identical to
 JTileDownloader and then process the maps using <a
 	href="http://code.google.com/p/mobile-trail-explorer/wiki/CacheCreator">MTE
 CacheCreator</a>.<br>
-</br>
 As atlases for Mobile Trail Explorer does not support all features
 provided by TrekBuddy the following settings are ignored when creating
 atlases for Mobile Trail Explorer:</p>
@@ -163,7 +163,7 @@ atlases for Mobile Trail Explorer:</p>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
 <p></p>
-
+<!-- *************************************************************************** -->
 <h3><a name="Maverick">Creating and using atlases with Maverick</a></h3>
 <p>For creating atlases compatible with Maverick you have to select
 <b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
@@ -176,7 +176,7 @@ AndNav:</p>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
-
+<!-- *************************************************************************** -->
 <h3><a name="AndNav">Creating and using atlases with AndNav</a></h3>
 <p>For creating atlases compatible with AndNav you have to select <b>AndNav
 atlas format</b> as format in section <b>Atlas settings</b> on the left side
@@ -188,7 +188,7 @@ the following settings are ignored when creating atlases for AndNav:</p>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
-
+<!-- *************************************************************************** -->
 <h3><a name="OSMTracker">Creating atlases for OSMTracker</a></h3>
 <p>For creating atlases compatible with OSMTracker you have to
 select <b>OSMTracker tile storage</b> as format in section <b>Atlas
@@ -201,7 +201,7 @@ OSMTracker:</p>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
-
+<!-- *************************************************************************** -->
 <h3><a name="BigPlanet">Creating and using atlases with
 BigPlanet / RMaps</a></h3>
 <p>For creating offline atlases compatible with <a
@@ -250,26 +250,28 @@ cd javasqlite-20090430/
 make
 su -c "make install"
 </pre>
-
+<!-- *************************************************************************** -->
 <h3><a name="Ozi">Creating and using atlases with OziExplorer /
 large PNG image export</a></h3>
 <p>For creating atlases compatible with OziExplorer you have to
 select <b>OziExplorer (PNG &amp; MAP)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
-<p>As OziExplorer does only support individual maps some features
-are ignored when creating atlases in this format:</p>
+<h4><a name="OziRestriction">Restrictions</a></h4>
+<p>As OziExplorer does only support tiled maps some features are
+ignored when creating atlases in this format:</p>
 <ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Image output format is fix: 24bit PNG</li>
+	<li>Recreate/adjust map tiles custom tile is ignored</li>
 </ul>
 <p>The output format of an "atlas" for OziExplorer is one
 subdirectory per layer and within this subdirectory one <tt>PNG</tt>
 image and one <tt>MAP</tt> file per defined map. For opening a map in
 OziExplorer select the menu <b>File</b> &rarr; <b>Load from File</b>
-&rarr; <b>Load from MAP file</b> , browse to the layer directory of the
+&rarr; <b>Load from MAP file</b>, browse to the layer directory of the
 created atlas and select the MAP file.</p>
 <p>If you are only interested in the map image you can safely delete
 the created map file.</p>
-<h3>Warning</h3>
+<h4><a name="OziWarning">Warning</a></h4>
 <p>TrekBuddy Atlas Creator uses an highly sophisticated and
 optimized algorithm for creating the PNG files for OziExplorer use. This
 algorithm allows to create very large maps images at low memory usage.
@@ -277,20 +279,30 @@ OziExplorer and most image viewers do not use such sophisticated
 algorithms which can lead to the situation that you can create very
 large map images - but OziExplorer and other image viewers are not able
 to open the image.</p>
-
-<h3><a name="Glopus">Creating and using atlases with Glopus</a></h3>
-<p>For creating atlases compatible with OziExplorer you have to
-select <b>Glopus (PNG &amp; KAL)</b> as format in section <b>Atlas
-settings</b> on the left side of the main window.</p>
-<p>Using this atlas output format the following features are ignored
-when creating atlases:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-</ul>
+<!-- *************************************************************************** -->
+<h3><a name="Glopus">Creating atlases for Glopus</a></h3>
+<p>For creating atlases compatible with Glopus you have to select <b>Glopus
+(PNG &amp; KAL)</b> as format in section <b>Atlas settings</b> on the left
+side of the main window.</p>
+<p>Using this atlas output format the same <a href="#OziRestriction">restrictions</a>
+and the <a href="#OziWarning">warning</a> as for the OziExplorer output
+format apply.</p>
 <p>The output format of an "atlas" for Glopus is one subdirectory
 per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
 file per defined map.</p>
-
+<!-- *************************************************************************** -->
+<h3><a name="CacheWolf">Creating atlases for CacheWolf</a></h3>
+<p>For creating atlases compatible with <a
+	href="http://www.cachewolf.de">CacheWolf</a> you have to select <b>CacheWolf
+WFL</b> as format in section <b>Atlas settings</b> on the left side of the
+main window.</p>
+<p>Using this atlas output format the same <a href="#OziRestriction">restrictions</a>
+and the <a href="#OziWarning">warning</a> as for the OziExplorer output
+format apply.</p>
+<p>The output format of an "atlas" for CacheWolf is one subdirectory
+per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>WFL</tt>
+file per defined map.</p>
+<!-- *************************************************************************** -->
 <h3><a name="GarminCustom">Creating Garmin Custom maps</a></h3>
 <p>For creating atlases of Creating Garmin Custom maps you have to
 select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
@@ -308,11 +320,12 @@ map is larger it will be automatically scaled down to fit into this
 size. For more details about the Garmin Custom Map please visit the <a
 	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
 Forums</a>.</p>
-
+<!-- *************************************************************************** -->
 <h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
 <p>For creating atlases of Creating Garmin Custom Maps you have to
 select <b>Magellan (RMP)</b> as format in section <b>Atlas settings</b>
-on the left side of the main window.</p>
+on the left side of the main window. Additionally you have to set the <b>maximum
+map size to 18000</b> (Settings dialog, tab "map size").</p>
 <p>Using this atlas output format the following features are ignored
 when creating atlases:</p>
 <ul>
@@ -329,7 +342,7 @@ using:</p>
 <p>The output format of an "atlas" for Magellan is one RMP file in
 the atlas directory. You can directly load this file in Magellan
 VantagePoint or transfer it onto your device.</p>
-
+<!-- *************************************************************************** -->
 <hr>
 
 <h2><a name="Enhancement">Enhancement requests</a></h2>

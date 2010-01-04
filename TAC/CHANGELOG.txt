@@ -40,10 +40,10 @@
  ! Fixed #2913874: ArrayIndexOutOfBoundsException in PNG 4-bit writer 
  + New map source: Eniro.com map/aerial/nautical (Sweden, Norway, Finland)
  + Checkbox added in atlas progress dialog for ignoring all download errors  
- + New atlas format: CacheWolf (experimental)
+ + New atlas format: CacheWolf
  + New map source: Mapplus.ch (Switzerland)
- + New atlas format: CacheBox
  + Coordinate format changeable (deg / deg,min / deg,min,sec)
+ + New atlas format: CacheBox (experimental)
  
  
  1.6.1: (2009-10-30)

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives" >
 
+	<property file="src/tac/tac.properties" />
 	<property name="TAC.dir" value="../TAC" />
-	<property name="jar.name" value="TAC Map Evaluator.jar" />
-	<property name="zip.name" value="TAC Map Evaluator.zip" />
+	<property name="jar.name" value="TAC Map Evaluator ${tac.version}.jar" />
+	<property name="zip.name" value="TAC Map Evaluator ${tac.version}.zip" />
 	<property name="main.class" value="tac.gui.MapEvaluator" />
 
 	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />

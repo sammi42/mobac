@@ -31,6 +31,7 @@ import tac.mapsources.impl.Google;
 import tac.mapsources.impl.OsmMapSources;
 import tac.program.DirectoryManager;
 import tac.program.Logging;
+import tac.program.TACInfo;
 import tac.program.model.Settings;
 import tac.program.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
@@ -46,7 +47,7 @@ public class MapEvaluator extends JFrame {
 	private final LineNumberedPaper mapSourceEditor;
 
 	public MapEvaluator() throws HeadlessException {
-		super("TAC Map Evaluator v0.1 alpha 2");
+		super(TACInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -217,6 +218,8 @@ public class MapEvaluator extends JFrame {
 
 	public static void main(String[] args) {
 		StartTAC.setLookAndFeel();
+		TACInfo.PROG_NAME = "TAC Map Evaluator";
+		TACInfo.initialize();
 		Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
 		DirectoryManager.initialize();
 		try {

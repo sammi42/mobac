@@ -9,7 +9,7 @@ import com.sleepycat.persist.model.KeyField;
 import com.sleepycat.persist.model.Persistent;
 import com.sleepycat.persist.model.PrimaryKey;
 
-@Entity(version = 1)
+@Entity(version = 2)
 public class TileDbEntry implements TileStoreEntry {
 
 	@PrimaryKey
@@ -88,7 +88,7 @@ public class TileDbEntry implements TileStoreEntry {
 				tileKey.x, tileKey.y, new Date(timeDownloaded), tlm, txp, eTag);
 	}
 
-	@Persistent(version = 1)
+	@Persistent(version = 2)
 	public static class TileDbKey {
 
 		@KeyField(1)

@@ -31,6 +31,8 @@ import com.sleepycat.je.EnvironmentLockedException;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
+import com.sleepycat.persist.evolve.Mutations;
+import com.sleepycat.persist.evolve.Renamer;
 
 /**
  * The new database based tile store implementation.
@@ -48,6 +50,8 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	private FileLock tileStoreLock = null;
 
+	private Mutations mutations;
+
 	public BerkeleyDbTileStore() throws TileStoreException {
 		super();
 		acquireTileStoreLock();
@@ -60,6 +64,17 @@ public class BerkeleyDbTileStore extends TileStore {
 		envConfig.setAllowCreate(true);
 		envConfig.setSharedCache(true);
 		envConfig.setCachePercent(50);
+
+		mutations = new Mutations();
+
+		// mutations.addRenamer(new Renamer("tac.tilestore.TileDbEntry", 0,
+		// TileDbEntry.class.getName()));
+
+		mutations.addRenamer(new Renamer("tac.tilestore.berkeleydb.TileDbEntry", 1,
+				TileDbEntry.class.getName()));
+		mutations.addRenamer(new Renamer("tac.tilestore.berkeleydb.TileDbEntry$TileDbKey", 1,
+				TileDbKey.class.getName()));
+
 	}
 
 	protected void acquireTileStoreLock() throws TileStoreException {
@@ -373,6 +388,7 @@ public class BerkeleyDbTileStore extends TileStore {
 				StoreConfig storeConfig = new StoreConfig();
 				storeConfig.setAllowCreate(true);
 				storeConfig.setTransactional(false);
+				storeConfig.setMutations(mutations);
 				store = new EntityStore(env, "TilesEntityStore", storeConfig);
 
 				tileIndex = store.getPrimaryIndex(TileDbKey.class, TileDbEntry.class);

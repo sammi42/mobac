@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.tar.TarIndex;
+import tac.utilities.tar.TarIndex;
 
 public class DownloadedTileProvider implements TileProvider {
 

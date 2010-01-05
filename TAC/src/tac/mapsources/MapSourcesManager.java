@@ -258,14 +258,22 @@ public class MapSourcesManager {
 		}
 	}
 
-	public static void regularMapsourcesOnlineUpdate(boolean async) {
+	/**
+	 * This method is automatically called each time TAC starts-up. If the last
+	 * update check is older than three days a new update check is performed.
+	 * 
+	 * @param async
+	 *            <code>true</code>: run the update in a new background.
+	 *            Otherwise wait for the update to finish
+	 */
+	public static void automaticMapsourcesOnlineUpdate(boolean async) {
 		Date lastUpdate = Settings.getInstance().mapSourcesUpdate.lastUpdate;
 		if (lastUpdate == null)
 			lastUpdate = getMapSourcesDate(System.getProperties());
 		Date end = new Date();
 		long diff = end.getTime() - lastUpdate.getTime();
 		diff /= 1000 * 60 * 60 * 24;
-		if (diff < 7) // online update every week
+		if (diff < 4) // check for an update every 4 days
 			return;
 		Runnable r = new Runnable() {
 
@@ -289,6 +297,7 @@ public class MapSourcesManager {
 	}
 
 	/**
+	 * Performs the map source online update check.
 	 * 
 	 * @return <ul>
 	 *         <li>0: mapsources.properties is up-to-date (no update available)</li>

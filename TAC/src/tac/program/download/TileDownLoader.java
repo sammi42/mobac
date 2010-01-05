@@ -14,10 +14,10 @@ import tac.exceptions.DownloadFailedException;
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import tac.program.model.Settings;
-import tac.tar.TarIndexedArchive;
 import tac.tilestore.TileStore;
 import tac.tilestore.TileStoreEntry;
 import tac.utilities.Utilities;
+import tac.utilities.tar.TarIndexedArchive;
 
 public class TileDownLoader {
 

@@ -13,8 +13,8 @@ import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.TileImageFormat;
-import tac.tar.TarIndex;
 import tac.utilities.Utilities;
+import tac.utilities.tar.TarIndex;
 
 /**
  * Creates maps using the Mobile Trail Explorer (MTE) / JTileDownloader atlas

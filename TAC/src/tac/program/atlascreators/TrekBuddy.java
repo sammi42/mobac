@@ -22,10 +22,10 @@ import tac.exceptions.MapCreationException;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarArchive;
-import tac.tar.TarIndex;
-import tac.tar.TarTmiArchive;
 import tac.utilities.Utilities;
+import tac.utilities.tar.TarArchive;
+import tac.utilities.tar.TarIndex;
+import tac.utilities.tar.TarTmiArchive;
 
 public abstract class TrekBuddy extends AtlasCreator {
 

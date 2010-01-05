@@ -4,6 +4,9 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+/**
+ * Utility methods used by several map sources.
+ */
 public class MapSourceTools {
 
 	private static final Logger log = Logger.getLogger(MapSourceTools.class);
@@ -41,11 +44,14 @@ public class MapSourceTools {
 	}
 
 	/**
+	 * Calculates latitude and longitude of the upper left corner of the
+	 * specified tile of <code>mapsource</code> regarding the zoom level
+	 * specified by <code>zoom</code>.
 	 * 
 	 * @param mapSource
 	 * @param zoom
-	 * @param tilex
-	 * @param tiley
+	 * @param tilex horizontal tile number 
+	 * @param tiley vertical tile number
 	 * @return <code>double[] {lon_min , lat_min , lon_max , lat_max}</code>
 	 */
 	public static double[] calculateLatLon(MapSource mapSource, int zoom, int tilex, int tiley) {

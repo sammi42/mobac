@@ -13,8 +13,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import tac.exceptions.MapCreationException;
 import tac.program.TACInfo;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndex;
 import tac.utilities.Utilities;
+import tac.utilities.tar.TarIndex;
 
 public class TTQV extends Ozi {
 

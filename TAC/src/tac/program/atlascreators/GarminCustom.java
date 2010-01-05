@@ -34,9 +34,9 @@ import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
 import tac.program.tiledatawriter.TileImageJpegDataWriter;
-import tac.tar.TarIndex;
 import tac.utilities.Utilities;
 import tac.utilities.stream.ArrayOutputStream;
+import tac.utilities.tar.TarIndex;
 
 public class GarminCustom extends AtlasCreator {
 

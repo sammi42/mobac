@@ -8,7 +8,7 @@ import tac.program.AtlasThread;
 import tac.program.JobDispatcher;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadableElement;
-import tac.tar.TarIndexedArchive;
+import tac.utilities.tar.TarIndexedArchive;
 
 /**
  * Creates the jobs for downloading tiles. If the job queue is full it will

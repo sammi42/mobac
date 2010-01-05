@@ -19,7 +19,7 @@ import tac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.TileImageFormat;
-import tac.tar.TarIndex;
+import tac.utilities.tar.TarIndex;
 
 /**
  * Creates maps using the Mobile Trail Explorer (MTE) cache format.

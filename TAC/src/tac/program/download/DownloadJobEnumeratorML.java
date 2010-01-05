@@ -8,7 +8,7 @@ import tac.mapsources.MultiLayerMapSource;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndexedArchive;
+import tac.utilities.tar.TarIndexedArchive;
 
 /**
  * {@link DownloadJobEnumerator} for {@link MultiLayerMapSource} maps.

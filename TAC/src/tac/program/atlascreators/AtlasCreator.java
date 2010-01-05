@@ -22,8 +22,8 @@ import tac.program.interfaces.MapInterface;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
-import tac.tar.TarIndex;
 import tac.utilities.Utilities;
+import tac.utilities.tar.TarIndex;
 
 /**
  * Abstract base class for all AtlasCreator implementations.

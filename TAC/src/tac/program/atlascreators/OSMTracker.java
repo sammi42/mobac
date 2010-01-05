@@ -1,7 +1,7 @@
 package tac.program.atlascreators;
 
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndex;
+import tac.utilities.tar.TarIndex;
 
 /**
  * Created by didoa [at] users.sourceforge.net

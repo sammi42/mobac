@@ -22,7 +22,7 @@ import tac.program.atlascreators.impl.rmp.rmpfile.Bmp4bit;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndex;
+import tac.utilities.tar.TarIndex;
 
 public class MagellanRmp extends AtlasCreator {
 

@@ -14,9 +14,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndex;
 import tac.utilities.Utilities;
 import tac.utilities.imageio.PngXxlWriter;
+import tac.utilities.tar.TarIndex;
 
 public class Ozi extends TrekBuddy {
 

@@ -13,8 +13,8 @@ import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndex;
 import tac.utilities.Utilities;
+import tac.utilities.tar.TarIndex;
 
 public class CacheBox extends AtlasCreator {
 

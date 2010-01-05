@@ -8,7 +8,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.MapInterface;
-import tac.tar.TarIndexedArchive;
+import tac.utilities.tar.TarIndexedArchive;
 
 public class DownloadJobEnumerator implements Enumeration<Job> {
 

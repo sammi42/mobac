@@ -25,7 +25,7 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
-import tac.tar.TarIndexedArchive;
+import tac.utilities.tar.TarIndexedArchive;
 
 public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode,
 		DownloadableElement {

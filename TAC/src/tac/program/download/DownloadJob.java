@@ -8,7 +8,7 @@ import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.JobDispatcher;
 import tac.program.JobDispatcher.Job;
 import tac.program.interfaces.DownloadJobListener;
-import tac.tar.TarIndexedArchive;
+import tac.utilities.tar.TarIndexedArchive;
 
 public class DownloadJob implements Job {
 

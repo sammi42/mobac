@@ -3,7 +3,7 @@ package tac.program.interfaces;
 import java.util.Enumeration;
 
 import tac.program.JobDispatcher.Job;
-import tac.tar.TarIndexedArchive;
+import tac.utilities.tar.TarIndexedArchive;
 
 /**
  * Classes that implement this interface identify themselves as responsible for

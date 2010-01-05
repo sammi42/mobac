@@ -19,8 +19,8 @@ import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.Settings;
-import tac.tar.TarIndex;
 import tac.utilities.jdbc.SQLiteLoader;
+import tac.utilities.tar.TarIndex;
 
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline

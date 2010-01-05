@@ -23,8 +23,22 @@ public class LogPreviewMap extends PreviewMap {
 		super();
 		setZoomContolsVisible(true);
 		setTileGridVisible(true);
-		mapGridLayer = new MapGridInfoLayer();
+		setTileGridVisible(true);
 		// timer.schedule(new LogRemoverTimerTask(), 0, 500);
+	}
+
+	@Override
+	public void setTileGridVisible(boolean tileGridVisible) {
+		if (isTileGridVisible() == tileGridVisible)
+			return;
+		if (tileGridVisible) {
+			mapGridLayer = new MapGridInfoLayer();
+			addMapTileLayers(mapGridLayer);
+		} else {
+			removeMapTileLayers(mapGridLayer);
+			mapGridLayer = null;
+		}
+		repaint();
 	}
 
 	@Override

@@ -76,6 +76,7 @@ public class MapEvaluator extends JFrame {
 		JButton button = null;
 
 		button = new JButton("Reset", Utilities.loadResourceImageIcon("new-icon.png"));
+		button.setToolTipText("Reset custom code editor to one of several templates");
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -110,6 +111,7 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("Load", Utilities.loadResourceImageIcon("open-icon.png"));
+		button.setToolTipText("Load custom code from file \"mapsource.bsh\"");
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -136,6 +138,7 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("Save", Utilities.loadResourceImageIcon("save-icon.png"));
+		button.setToolTipText("Save custom code to file \"mapsource.bsh\"");
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -156,6 +159,7 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("Execute code", Utilities.loadResourceImageIcon("check-icon.png"));
+		button.setToolTipText("Switch to custom map source (as defined by the custom code)");
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -166,6 +170,7 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("Google Maps", Utilities.loadResourceImageIcon("google-icon.png"));
+		button.setToolTipText("Switch back to predefined Google Maps mapsource");
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -176,11 +181,22 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("OSM", Utilities.loadResourceImageIcon("osm-icon.png"));
+		button.setToolTipText("Switch back to predefined OpenStreetMap mapsource");
 		button.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				previewMap.setMapSource(new OsmMapSources.Mapnik());
+			}
+		});
+		toolBar.add(button);
+		button = new JButton("Tile info", Utilities.loadResourceImageIcon("info-icon.png"));
+		button.setToolTipText("Show/hide tile info");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				previewMap.setTileGridVisible(!previewMap.isTileGridVisible());
 			}
 		});
 		toolBar.add(button);

@@ -8,7 +8,7 @@ import tac.utilities.Utilities;
 
 public class TACInfo {
 
-	public static final String PROG_NAME = "TrekBuddy Atlas Creator";
+	public static String PROG_NAME = "TrekBuddy Atlas Creator";
 	private static String version = null;
 	private static String revision = "";
 

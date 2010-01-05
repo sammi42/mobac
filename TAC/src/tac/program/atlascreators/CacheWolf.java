@@ -35,7 +35,7 @@ public class CacheWolf extends Ozi {
 		}
 	}
 
-	private void writeWflFile() {
+	private void writeWflFile() throws MapCreationException {
 		FileOutputStream fout = null;
 		try {
 			fout = new FileOutputStream(new File(mapDir, mapName + ".wfl"));
@@ -71,7 +71,7 @@ public class CacheWolf extends Ozi {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			log.error("", e);
+			throw new MapCreationException("Error writing wfl file: " + e.getMessage(), e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

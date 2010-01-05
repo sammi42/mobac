@@ -92,7 +92,7 @@ public class AndNav extends AtlasCreator {
 						}
 					}
 				} catch (IOException e) {
-					log.error("", e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
 				}
 			}
 		}

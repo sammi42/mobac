@@ -85,7 +85,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 					if (sourceTileData != null)
 						writeTile(mapName, sourceTileData, x, y, zoom);
 				} catch (IOException e) {
-					log.error("", e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
 				}
 			}
 		}

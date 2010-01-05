@@ -103,7 +103,7 @@ public class TTQV extends Ozi {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException("Error writing cal file: " + e.getMessage(), e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

@@ -141,7 +141,8 @@ public class TrekBuddyCustom extends TrekBuddy {
 						tileImageDataWriter.processImage(tileImage, buf);
 						mapTileWriter.writeTile(tileFileName, buf.toByteArray());
 					} catch (IOException e) {
-						throw new MapCreationException("Error writing tile image: ", e);
+						throw new MapCreationException("Error writing tile image: "
+								+ e.getMessage(), e);
 					}
 
 					xRelPos += realWidth;

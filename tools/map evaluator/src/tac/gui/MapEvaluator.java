@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -18,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -49,6 +50,7 @@ public class MapEvaluator extends JFrame {
 	public MapEvaluator() throws HeadlessException {
 		super(TACInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
+		addWindowListener(new WindowDestroyer());
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		previewMap = new LogPreviewMap();
@@ -232,20 +234,26 @@ public class MapEvaluator extends JFrame {
 		INSTANCE.previewMap.addLog(msg);
 	}
 
+	private class WindowDestroyer extends WindowAdapter {
+		public void windowClosing(WindowEvent event) {
+			TileStore.getInstance().closeAll(true);
+		}
+	}
+
 	public static void main(String[] args) {
 		StartTAC.setLookAndFeel();
 		TACInfo.PROG_NAME = "TAC Map Evaluator";
+		TACExceptionHandler.registerForCurrentThread();
+		TACExceptionHandler.installToolkitEventQueueProxy();
 		TACInfo.initialize();
 		Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
 		DirectoryManager.initialize();
 		try {
 			Settings.load();
-			TileStore.initialize();
-			new MapEvaluator().setVisible(true);
-		} catch (JAXBException e) {
-			JOptionPane.showMessageDialog(null, "Error", e.getLocalizedMessage(),
-					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+		} catch (Exception e) {
+			// Load settings.xml only if it exists
 		}
+		TileStore.initialize();
+		new MapEvaluator().setVisible(true);
 	}
 }

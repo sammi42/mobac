@@ -20,6 +20,7 @@ public class BeanShellMapSource implements MapSource {
 
 	private static int NUM = 0;
 	private String name;
+	private MapSpace mapSpace;
 
 	private Logger log = Logger.getLogger(BeanShellMapSource.class);
 
@@ -30,6 +31,12 @@ public class BeanShellMapSource implements MapSource {
 		i = new Interpreter();
 		i.eval("import java.net.HttpURLConnection;");
 		i.eval(code);
+		Object o = i.get("tileSize");
+		if (o != null) {
+			int tileSize = ((Integer) o).intValue();
+			mapSpace = new MercatorPower2MapSpace(tileSize);
+		} else
+			mapSpace = MercatorPower2MapSpace.INSTANCE_256;
 	}
 
 	@Override
@@ -65,7 +72,7 @@ public class BeanShellMapSource implements MapSource {
 
 	@Override
 	public MapSpace getMapSpace() {
-		return MercatorPower2MapSpace.INSTANCE_256;
+		return mapSpace;
 	}
 
 	@Override

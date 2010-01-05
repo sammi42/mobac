@@ -8,4 +8,7 @@ String getTileUrl( int zoom, int x, int y ) {
 void addHeaders( java.net.HttpURLConnection conn) {
   conn.addRequestProperty("Cookie","test=12345");
   conn.addRequestProperty("Referer","http://www.openstreetmap.org");
-} 
+}
+
+// Default size of each tile is 256x256 pixel
+tileSize = 256;

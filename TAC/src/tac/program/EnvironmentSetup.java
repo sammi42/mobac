@@ -1,6 +1,7 @@
 package tac.program;
 
 import java.io.File;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -20,6 +21,27 @@ import tac.program.model.Settings;
 public class EnvironmentSetup {
 
 	public static Logger log = Logger.getLogger(EnvironmentSetup.class);
+
+	public static void checkMemory() {
+		Runtime r = Runtime.getRuntime();
+		long maxHeap = r.maxMemory();
+		String heapMBFormatted = String.format(Locale.ENGLISH, "%3.2f MiB", maxHeap / 1048576d);
+		log.info("Total avialable memory to TAC: " + heapMBFormatted);
+		if (maxHeap < 100000000) {
+			String msg = "<html><b>WARNING:</b> TrekBuddy Atlas Creator has been started "
+					+ "with a very small amount of memory assigned.<br>"
+					+ "The current maximum usable amount of memory to TrekBuddy Atlas Creator is <b>"
+					+ heapMBFormatted
+					+ "</b>.<br><br>Please make sure to start TrekBuddy Atlas Creator in "
+					+ "the future via the provided start scripts <i>start.cmd</i><br>"
+					+ "on Windows or <i>start.sh</i> on Linux/Unix/OSX or add the "
+					+ "parameter <b>-Xmx 512M</b> to your startup command.<br><br>"
+					+ "Example: <i>java -Xmx512M -jar TrekBuddy_Atlas_Creator.jar</i><br>"
+					+ "<br><center>Press OK to continue and start TrekBuddy Atlas Creator</center></html>";
+			JOptionPane.showMessageDialog(null, msg, "Warning: low memory",
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
 
 	public static void checkFileSetup() {
 

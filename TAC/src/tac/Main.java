@@ -24,6 +24,7 @@ public class Main {
 		try {
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
+			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
 			TileStore.initialize();

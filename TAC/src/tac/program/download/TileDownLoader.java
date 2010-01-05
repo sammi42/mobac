@@ -14,8 +14,8 @@ import tac.exceptions.DownloadFailedException;
 import tac.exceptions.UnrecoverableDownloadException;
 import tac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import tac.program.model.Settings;
-import tac.tilestore.TileStore;
-import tac.tilestore.TileStoreEntry;
+import tac.program.tilestore.TileStore;
+import tac.program.tilestore.TileStoreEntry;
 import tac.utilities.Utilities;
 import tac.utilities.tar.TarIndexedArchive;
 

@@ -1,8 +1,8 @@
-package tac.tilestore.berkeleydb;
+package tac.program.tilestore.berkeleydb;
 
 import java.util.Date;
 
-import tac.tilestore.TileStoreEntry;
+import tac.program.tilestore.TileStoreEntry;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.KeyField;

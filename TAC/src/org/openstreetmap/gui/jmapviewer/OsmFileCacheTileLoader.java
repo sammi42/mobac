@@ -11,8 +11,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 import tac.program.download.TileDownLoader;
-import tac.tilestore.TileStore;
-import tac.tilestore.TileStoreEntry;
+import tac.program.tilestore.TileStore;
+import tac.program.tilestore.TileStoreEntry;
 
 /**
  * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via

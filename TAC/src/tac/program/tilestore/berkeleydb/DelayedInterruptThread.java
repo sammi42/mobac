@@ -1,4 +1,4 @@
-package tac.tilestore.berkeleydb;
+package tac.program.tilestore.berkeleydb;
 
 /**
  * The Berkeley DB has some problems when someone interrupts the thread that is

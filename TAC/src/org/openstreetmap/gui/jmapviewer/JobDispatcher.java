@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import tac.tilestore.berkeleydb.DelayedInterruptThread;
+import tac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
 /**
  * A generic class that processes a list of {@link Runnable} one-by-one using

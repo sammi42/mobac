@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
-import tac.tilestore.berkeleydb.DelayedInterruptThread;
+import tac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
 /**
  * Controls the worker threads that are downloading the map tiles in parallel.

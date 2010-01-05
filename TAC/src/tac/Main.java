@@ -9,7 +9,7 @@ import tac.program.EnvironmentSetup;
 import tac.program.Logging;
 import tac.program.TACInfo;
 import tac.program.model.Settings;
-import tac.tilestore.TileStore;
+import tac.program.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
 
 /**

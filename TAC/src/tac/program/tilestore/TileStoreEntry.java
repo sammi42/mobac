@@ -1,4 +1,4 @@
-package tac.tilestore;
+package tac.program.tilestore;
 
 public interface TileStoreEntry {
 

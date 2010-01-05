@@ -21,7 +21,7 @@ import tac.program.interfaces.DownloadableElement;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.Settings;
-import tac.tilestore.TileStore;
+import tac.program.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.tar.TarIndex;
 import tac.utilities.tar.TarIndexedArchive;

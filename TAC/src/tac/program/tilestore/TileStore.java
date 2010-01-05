@@ -1,4 +1,4 @@
-package tac.tilestore;
+package tac.program.tilestore;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.TileStoreException;
 import tac.program.DirectoryManager;
 import tac.program.model.Settings;
-import tac.tilestore.berkeleydb.BerkeleyDbTileStore;
+import tac.program.tilestore.berkeleydb.BerkeleyDbTileStore;
 
 public abstract class TileStore {
 

@@ -1,4 +1,4 @@
-package tac.tilestore.berkeleydb;
+package tac.program.tilestore.berkeleydb;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +15,10 @@ import java.util.TreeMap;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.TileStoreException;
-import tac.tilestore.TileStore;
-import tac.tilestore.TileStoreEntry;
-import tac.tilestore.TileStoreInfo;
-import tac.tilestore.berkeleydb.TileDbEntry.TileDbKey;
+import tac.program.tilestore.TileStore;
+import tac.program.tilestore.TileStoreEntry;
+import tac.program.tilestore.TileStoreInfo;
+import tac.program.tilestore.berkeleydb.TileDbEntry.TileDbKey;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 import tac.utilities.file.DeleteFileFilter;

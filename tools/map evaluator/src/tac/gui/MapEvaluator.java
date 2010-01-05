@@ -32,7 +32,7 @@ import tac.mapsources.impl.OsmMapSources;
 import tac.program.DirectoryManager;
 import tac.program.Logging;
 import tac.program.model.Settings;
-import tac.tilestore.TileStore;
+import tac.program.tilestore.TileStore;
 import tac.utilities.TACExceptionHandler;
 import tac.utilities.Utilities;
 import bsh.EvalError;

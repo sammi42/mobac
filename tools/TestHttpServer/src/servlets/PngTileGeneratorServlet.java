@@ -46,13 +46,17 @@ public class PngTileGeneratorServlet extends HttpServlet {
 		g2.fillRect(0, 0, 255, 255);
 		g2.setColor(Color.RED);
 		g2.drawRect(0, 0, 255, 255);
+		g2.drawLine(0, 0, 255, 255);
+		g2.drawLine(255, 0, 0, 255);
 		String url = request.getRequestURL().toString();
-		url += "?" + request.getQueryString();
+		String query = request.getQueryString();
+		if (query != null)
+			url += "?" + query;
 		System.out.println(url);
 		String[] strings = url.split("[\\&\\?]");
 		int y = 40;
 		for (String s : strings) {
-			g2.drawString(s, 2, y);
+			g2.drawString(s, 4, y);
 			y += 20;
 		}
 		g2.dispose();

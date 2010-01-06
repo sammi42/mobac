@@ -8,7 +8,7 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 1.7: (2009-??-??)
+ 1.7: (2010-??-??)
  ~ Tiles tore now uses database (BerkelyDB) instead of tile files in file 
     system
  + Old tiles saved in the tile store are checked and updated when used 
@@ -46,7 +46,7 @@
  + New atlas format: CacheBox (experimental)
  + Each map source has now a background color (usually black) that is used 
     in case of missing tiles
- + Content-type check after download (HTTP header and image data header) 
+ + Content-type check after download (HTTP header and image data header)
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

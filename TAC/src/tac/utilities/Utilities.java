@@ -1,6 +1,9 @@
 package tac.utilities;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -26,11 +29,13 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.Main;
 import tac.utilities.file.DirectoryFileFilter;
@@ -61,6 +66,58 @@ public class Utilities {
 			log.error("Error in testJaiColorQuantizerAvailable():", t);
 			return false;
 		}
+		return true;
+	}
+
+	public static BufferedImage createEmptyTileImage(MapSource mapSource) {
+		int tileSize = mapSource.getMapSpace().getTileSize();
+		Color color = mapSource.getBackgroundColor();
+		BufferedImage emptyImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = emptyImage.createGraphics();
+		try {
+			g.setColor(color);
+			g.fillRect(0, 0, tileSize, tileSize);
+		} finally {
+			g.dispose();
+		}
+		return emptyImage;
+	}
+
+	public static byte[] createEmptyTileData(MapSource mapSource) {
+		BufferedImage emptyImage = createEmptyTileImage(mapSource);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
+		try {
+			ImageIO.write(emptyImage, mapSource.getTileType(), buf);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		byte[] emptyTileData = buf.toByteArray();
+		return emptyTileData;
+	}
+
+	private static final byte[] PNG = new byte[] { (byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A,
+			0x0A };
+	private static final byte[] JPG = new byte[] { (byte) 0xFF, (byte) 0xD8, (byte) 0xFF,
+			(byte) 0xE0, (byte) 0x00, 0x10, 'J', 'F', 'I', 'F' };
+	private static final byte[] GIF_1 = "GIF87a".getBytes();
+	private static final byte[] GIF_2 = "GIF89a".getBytes();
+
+	public static String getImageDataFormat(byte[] imageData) {
+		if (startsWith(imageData, PNG))
+			return "png";
+		if (startsWith(imageData, JPG))
+			return "jpg";
+		if (startsWith(imageData, GIF_1) || startsWith(imageData, GIF_2))
+			return "gif";
+		return null;
+	}
+
+	public static boolean startsWith(byte[] data, byte[] startTest) {
+		if (data.length < startTest.length)
+			return false;
+		for (int i = 0; i < startTest.length; i++)
+			if (data[i] != startTest[i])
+				return false;
 		return true;
 	}
 

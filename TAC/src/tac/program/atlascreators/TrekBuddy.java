@@ -1,6 +1,5 @@
 package tac.program.atlascreators;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -100,16 +99,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
 		ImageIO.setUseCache(false);
-		int tileSize = map.getMapSource().getMapSpace().getTileSize();
-		BufferedImage emptyImage = new BufferedImage(tileSize, tileSize,
-				BufferedImage.TYPE_INT_ARGB);
-		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
-		try {
-			ImageIO.write(emptyImage, mapSource.getTileType(), buf);
-		} catch (IOException e1) {
-		}
-		byte[] emptyTileData = buf.toByteArray();
-
+		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
 		for (int x = xMin; x <= xMax; x++) {
 			pixelValueY = 0;
 			for (int y = yMin; y <= yMax; y++) {

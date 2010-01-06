@@ -1,5 +1,7 @@
 package tac.mapsources.impl;
 
+import java.awt.Color;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
@@ -222,9 +224,14 @@ public class OsmMapSources {
 
 		@Override
 		public String toString() {
-			return "Turaterkep (Hungary, experimental)";
+			return "Turaterkep (Hungary)";
 		}
 
+		@Override
+		public Color getBackgroundColor() {
+			return Color.WHITE;
+		}
+		
 	}
 
 }

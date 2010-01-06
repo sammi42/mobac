@@ -1,5 +1,6 @@
 package tac.mapsources;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -110,4 +111,7 @@ public class BeanShellMapSource implements MapSource {
 		return false;
 	}
 
+	public Color getBackgroundColor() {
+		return Color.BLACK;
+	}
 }

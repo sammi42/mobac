@@ -45,4 +45,7 @@ Géoportail
 Asplan Viak Internet AS
 	http://kart.kystverket.no/advanced_default.aspx?lang=eng
 	Reason: Unsupported projection: "Universal Transverse Mercator" (UTM)
-	
+
+Japanese Topo Maps
+	http://watchizu.gsi.go.jp/watchizu.html?meshcode=49324455
+	Reason: Unsupported tile size (300x357)

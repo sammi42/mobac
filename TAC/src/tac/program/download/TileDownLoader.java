@@ -51,8 +51,8 @@ public class TileDownLoader {
 		// IOException("intentionally download error");
 
 		Settings s = Settings.getInstance();
-		String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN,
-				layer, x, y);
+		String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, x,
+				y);
 
 		TileStoreEntry tile = null;
 		if (s.tileStoreEnabled) {
@@ -101,32 +101,39 @@ public class TileDownLoader {
 	 */
 	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, MapSource mapSource)
 			throws UnrecoverableDownloadException, IOException, InterruptedException {
-		HttpURLConnection huc = mapSource.getTileUrlConnection(zoom, x, y);
-		if (huc == null)
+		HttpURLConnection conn = mapSource.getTileUrlConnection(zoom, x, y);
+		if (conn == null)
 			throw new UnrecoverableDownloadException("Tile x=" + x + " y=" + y + " zoom=" + zoom
 					+ " is not a valid tile in map source " + mapSource);
 
-		log.trace("Downloading " + huc.getURL());
+		log.trace("Downloading " + conn.getURL());
 
-		huc.setRequestMethod("GET");
+		conn.setRequestMethod("GET");
 
 		Settings s = Settings.getInstance();
-		huc.setConnectTimeout(1000 * s.connectionTimeout);
-		huc.addRequestProperty("User-agent", s.getUserAgent());
-		huc.setRequestProperty("Accept", ACCEPT);
-		huc.connect();
+		conn.setConnectTimeout(1000 * s.connectionTimeout);
+		conn.addRequestProperty("User-agent", s.getUserAgent());
+		conn.setRequestProperty("Accept", ACCEPT);
+		conn.connect();
 
-		int code = huc.getResponseCode();
+		int code = conn.getResponseCode();
 
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new DownloadFailedException(code);
+		String contentType = conn.getContentType();
+		if (contentType != null && !contentType.startsWith("image/"))
+			throw new UnrecoverableDownloadException(
+					"Content type of the loaded image is unknown: " + contentType);
 
-		String eTag = huc.getHeaderField("ETag");
-		long timeLastModified = huc.getLastModified();
-		long timeExpires = huc.getExpiration();
+		String eTag = conn.getHeaderField("ETag");
+		long timeLastModified = conn.getLastModified();
+		long timeExpires = conn.getExpiration();
 
-		byte[] data = loadTileInBuffer(huc);
+		byte[] data = loadTileInBuffer(conn);
 		Utilities.checkForInterruption();
+		String imageFormat = Utilities.getImageDataFormat(data);
+		if (imageFormat == null)
+			throw new UnrecoverableDownloadException("The returned image is of unknown format");
 		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
 					timeExpires, eTag);
@@ -211,7 +218,11 @@ public class TileDownLoader {
 		}
 
 		if (code != HttpURLConnection.HTTP_OK)
-			throw new IOException("Invaild HTTP response: " + code);
+			throw new DownloadFailedException(code);
+		String contentType = conn.getContentType();
+		if (contentType != null && !contentType.startsWith("image/"))
+			throw new UnrecoverableDownloadException(
+					"Content type of the loaded image is unknown: " + contentType);
 
 		String eTag = conn.getHeaderField("ETag");
 		long timeLastModified = conn.getLastModified();
@@ -219,6 +230,9 @@ public class TileDownLoader {
 
 		byte[] data = loadTileInBuffer(conn);
 		Utilities.checkForInterruption();
+		String imageFormat = Utilities.getImageDataFormat(data);
+		if (imageFormat == null)
+			throw new UnrecoverableDownloadException("The returned image is of unknown format");
 		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
 					timeExpires, eTag);
@@ -275,8 +289,8 @@ public class TileDownLoader {
 					+ "tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
-		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
-				tile.getY());
+		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile
+				.getY());
 		conn.setRequestMethod("HEAD");
 		conn.setRequestProperty("Accept", ACCEPT);
 		long newLastModified = conn.getLastModified();
@@ -293,8 +307,8 @@ public class TileDownLoader {
 					+ "tile in tilestore does not contain ETag attribute");
 			return true;
 		}
-		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(),
-				tile.getY());
+		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile
+				.getY());
 		conn.setRequestMethod("HEAD");
 		conn.setRequestProperty("Accept", ACCEPT);
 		String onlineETag = conn.getHeaderField("ETag");

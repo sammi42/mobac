@@ -1,7 +1,6 @@
 package tac.tools;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -18,6 +17,7 @@ import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.RegionalMapSources;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
+import tac.utilities.Utilities;
 
 public class MapSourceTypeDetector {
 
@@ -97,20 +97,28 @@ public class MapSourceTypeDetector {
 
 			// printHeaders();
 
+			byte[] content = Utilities.getInputBytes(c.getInputStream());
+			String detectedContentType = Utilities.getImageDataFormat(content);
+
 			String contentType = c.getContentType();
-			System.out.print("Image format          : ");
-			if ("image/png".equals(contentType))
-				System.out.println("png");
-			else if ("image/jpeg".equals(contentType))
-				System.out.println("jpg");
+			contentType = contentType.substring(6);
+			if ("png".equals(contentType))
+				contentType = "png";
+			else if ("jpeg".equals(contentType))
+				contentType = "jpg";
 			else
-				System.out.println("unknown");
+				contentType = "unknown: " + c.getContentType();
+			if (contentType.equals(detectedContentType))
+				contentType += " (verified)";
+			else
+				contentType += " (unverified)";
+			System.out.print("Image format          : " + contentType);
 
 			String eTag = c.getHeaderField("ETag");
 			eTagSupported = (eTag != null);
 			if (eTagSupported) {
 				// System.out.println("eTag                  : " + eTag);
-				testIfNoneMatch();
+				testIfNoneMatch(content);
 			}
 			// else System.out.println("eTag                  : -");
 
@@ -147,19 +155,10 @@ public class MapSourceTypeDetector {
 		System.out.println("\n");
 	}
 
-	private void testIfNoneMatch() throws Exception {
+	private void testIfNoneMatch(byte[] content) throws Exception {
 		String eTag = c.getHeaderField("ETag");
-		InputStream in = c.getInputStream();
-		byte[] buffer = new byte[1024];
-		int read = 0;
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		md5.reset();
-		do {
-			read = in.read(buffer);
-			if (read > 0)
-				md5.update(buffer, 0, read);
-		} while (read < 0);
-		byte[] digest = md5.digest();
+		byte[] digest = md5.digest(content);
 		String hexDigest = getHexString(digest);
 		// System.out.println("content MD5           : " + hexDigest);
 		if (hexDigest.equals(eTag))
@@ -177,6 +176,7 @@ public class MapSourceTypeDetector {
 		// System.out.print("If-None-Match response: ");
 		// System.out.println(b2s(supported) + " - " + code + " (" +
 		// c2.getResponseMessage() + ")");
+		c2.disconnect();
 	}
 
 	private void testIfModified() throws IOException {

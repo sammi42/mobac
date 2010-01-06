@@ -1,5 +1,6 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
@@ -121,4 +122,6 @@ public interface MapSource {
 	 *         cache)
 	 */
 	public String getStoreName();
+
+	public Color getBackgroundColor();
 }

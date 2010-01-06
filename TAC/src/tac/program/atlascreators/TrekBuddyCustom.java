@@ -133,6 +133,8 @@ public class TrekBuddyCustom extends TrekBuddy {
 					buf.reset();
 					try {
 						Graphics2D graphics = tileImage.createGraphics();
+						graphics.setColor(mapSource.getBackgroundColor());
+						graphics.fillRect(0, 0, realWidth, realHeight);
 						String tileFileName = "t_" + xRelPos + "_" + yRelPos + "."
 								+ tileImageDataWriter.getFileExt();
 						log.trace("Creating tile " + tileFileName);

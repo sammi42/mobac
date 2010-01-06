@@ -86,6 +86,8 @@ public class Ozi extends TrekBuddy {
 						BufferedImage.TYPE_INT_RGB);
 				Graphics2D graphics = lineImage.createGraphics();
 				try {
+					graphics.setColor(mapSource.getBackgroundColor());
+					graphics.fillRect(0, 0, width, tileLineHeight);
 					int lineX = 0;
 					for (int x = xMin; x <= xMax; x++) {
 						checkUserAbort();

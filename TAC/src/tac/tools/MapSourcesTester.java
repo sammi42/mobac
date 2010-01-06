@@ -41,6 +41,7 @@ import tac.program.Logging;
 import tac.program.download.TileDownLoader;
 import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Settings;
+import tac.utilities.Utilities;
 
 /**
  * Small tool that tests every available map source for operability. The
@@ -167,6 +168,12 @@ public class MapSourcesTester {
 		if (c.getResponseCode() != 200) {
 			throw new MapSourceTestFailed(mapSource, c);
 		}
+		byte[] imageData = Utilities.getInputBytes(c.getInputStream());
+		if (imageData.length == 0)
+			throw new MapSourceTestFailed(mapSource, "Image data empty", c);
+		if (Utilities.getImageDataFormat(imageData) == null) {
+			throw new MapSourceTestFailed(mapSource, "Image data of unknown format", c);
+		}
 	}
 
 	public static class MapSourceTestFailed extends Exception {
@@ -176,11 +183,16 @@ public class MapSourcesTester {
 		final int httpResponseCode;
 		final URL url;
 
-		public MapSourceTestFailed(MapSource mapSource, HttpURLConnection conn) throws IOException {
-			super("MapSource test failed: " + mapSource.getStoreName() + " HTTP "
+		public MapSourceTestFailed(MapSource mapSource, String msg, HttpURLConnection conn)
+				throws IOException {
+			super("MapSource test failed: " + msg + " " + mapSource.getStoreName() + " HTTP "
 					+ conn.getResponseCode());
 			this.url = conn.getURL();
 			this.httpResponseCode = conn.getResponseCode();
+		}
+
+		public MapSourceTestFailed(MapSource mapSource, HttpURLConnection conn) throws IOException {
+			this(mapSource, "", conn);
 		}
 
 		public MapSourceTestFailed(Class<? extends MapSource> mapSourceClass, URL url,

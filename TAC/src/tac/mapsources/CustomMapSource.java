@@ -1,5 +1,6 @@
 package tac.mapsources;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -95,4 +96,8 @@ public class CustomMapSource implements MapSource {
 		return MercatorPower2MapSpace.INSTANCE_256;
 	}
 
+	public Color getBackgroundColor() {
+		return Color.BLACK;
+	}
+	
 }

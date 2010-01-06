@@ -1,5 +1,6 @@
 package tac.mapsources;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -78,6 +79,10 @@ public abstract class AbstractMapSource implements MapSource {
 
 	public MapSpace getMapSpace() {
 		return MercatorPower2MapSpace.INSTANCE_256;
+	}
+
+	public Color getBackgroundColor() {
+		return Color.BLACK;
 	}
 
 	@Override

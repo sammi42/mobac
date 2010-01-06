@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.JOptionPane;
 
@@ -36,6 +39,7 @@ public class TestHttpTileServer extends Serve {
 	 * Error rate in percent
 	 */
 	private static int ERROR_RATE = 0;
+	private static boolean ERROR_ON_URL = false;
 
 	private static TestHttpTileServer server;
 
@@ -43,14 +47,17 @@ public class TestHttpTileServer extends Serve {
 
 	private static final long serialVersionUID = -1L;
 
+	private static MessageDigest MD5;
+
 	public TestHttpTileServer() {
 		// setting aliases, for an optional file servlet
 		PathTreeDictionary aliases = new PathTreeDictionary();
 		setMappingTable(aliases);
 		// setting properties for the server, and exchangable Acceptors
 		Properties properties = new Properties();
+		ERROR_RATE = Integer.getInteger("TestHttpServer.errorRate", 0);
+		ERROR_ON_URL = Boolean.getBoolean("TestHttpServer.errorOnSpecificUrls");
 		int port = Integer.getInteger("TestHttpServer.port", 80);
-
 		try {
 			HttpURLConnection c = (HttpURLConnection) new URL("http://127.0.0.1:" + port
 					+ "/shutdown").openConnection();
@@ -64,6 +71,11 @@ public class TestHttpTileServer extends Serve {
 			// port is unused -> OK
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		try {
+			MD5 = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
 		}
 
 		properties.put("port", port);
@@ -85,16 +97,25 @@ public class TestHttpTileServer extends Serve {
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 	}
 
-	public static boolean errorResponse(HttpServletResponse response) throws IOException {
+	public static boolean errorResponse(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		if (ERROR_RATE == 0)
 			return false;
-		int rnd = RAND.nextInt(100);
-		if (rnd <= ERROR_RATE) {
-			response.sendError(404);
-			System.out.println("Error");
-			return true;
+		if (ERROR_ON_URL) {
+			String url = request.getRequestURL() + request.getQueryString();
+			byte[] digest = MD5.digest(url.getBytes());
+			int hash = Math.abs(digest[4] % 100);
+			System.out.println(url.toString() + " -> " + hash + ">" + ERROR_RATE+"?");
+			if (hash > ERROR_RATE)
+				return false;
+		} else {
+			int rnd = RAND.nextInt(100);
+			if (rnd > ERROR_RATE)
+				return false;
 		}
-		return false;
+		response.sendError(404);
+		System.out.println("Error sent");
+		return true;
 	}
 
 	public static void shutdown() {

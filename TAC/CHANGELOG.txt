@@ -42,9 +42,11 @@
  + Checkbox added in atlas progress dialog for ignoring all download errors  
  + New atlas format: CacheWolf
  + New map source: Mapplus.ch (Switzerland)
- + Coordinate format changeable (deg / deg,min / deg,min,sec)
+ + Coordinate format changeable ("deg" / "deg,min" / "deg,min,sec")
  + New atlas format: CacheBox (experimental)
- 
+ + Each map source has now a background color (usually black) that is used 
+    in case of missing tiles
+ + Content-type check after download (HTTP header and image data header) 
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

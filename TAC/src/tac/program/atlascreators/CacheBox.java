@@ -20,10 +20,10 @@ public class CacheBox extends AtlasCreator {
 
 	private File packFile = null;
 	private RandomAccessFile packRaFile = null;
-	private MapOffsetInfo[] offsetInfos;
+	private MapInfo[] mapInfos;
 
 	private int nextMapOffsetIndex = 0;
-	private MapOffsetInfo activeMapOffsetInfo;
+	private MapInfo activeMapInfo;
 
 	@Override
 	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
@@ -50,7 +50,7 @@ public class CacheBox extends AtlasCreator {
 
 		long offset = 32 + 128 + 256 + 8 + 4; // = 428
 		offset += mapCount * 28;
-		offsetInfos = new MapOffsetInfo[mapCount];
+		mapInfos = new MapInfo[mapCount];
 
 		int i = 0;
 		for (MapInterface map : layer) {
@@ -69,7 +69,7 @@ public class CacheBox extends AtlasCreator {
 			writeInt(maxY); // int32 maxY
 
 			writeLong(offset); // int64 offset to mapIndexTable
-			offsetInfos[i++] = new MapOffsetInfo(map, offset, tilesInMap);
+			mapInfos[i++] = new MapInfo(map, offset, tilesInMap, minX, minY, maxX, maxY);
 			log.trace(String.format("Offset to index table [%d]: 0x%X", i, offset));
 
 			offset += tilesInMap * 8;
@@ -82,9 +82,14 @@ public class CacheBox extends AtlasCreator {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		activeMapOffsetInfo = offsetInfos[nextMapOffsetIndex++];
-		if (!activeMapOffsetInfo.map.equals(map))
+		activeMapInfo = mapInfos[nextMapOffsetIndex++];
+		if (!activeMapInfo.map.equals(map))
 			throw new RuntimeException("Map does not match offset info!");
+		// Just to make sure we use the xy values from mapInfo
+		xMin = activeMapInfo.minX;
+		xMax = activeMapInfo.maxX;
+		yMin = activeMapInfo.minY;
+		yMax = activeMapInfo.maxY;
 	}
 
 	@Override
@@ -104,7 +109,7 @@ public class CacheBox extends AtlasCreator {
 		ImageIO.setUseCache(false);
 
 		int offsetIndex = 0;
-		long[] offsets = new long[activeMapOffsetInfo.tileCount];
+		long[] offsets = new long[activeMapInfo.tileCount];
 
 		try {
 			for (int y = yMin; y <= yMax; y++) {
@@ -112,18 +117,16 @@ public class CacheBox extends AtlasCreator {
 					checkUserAbort();
 					atlasProgress.incMapCreationProgress();
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+					offsets[offsetIndex++] = packRaFile.getFilePointer();
 					if (sourceTileData != null) {
-						offsets[offsetIndex++] = packRaFile.getFilePointer();
 						packRaFile.write(sourceTileData);
-					} else {
-						offsets[offsetIndex++] = 0; // tile does not exist
 					}
 				}
 			}
 			long pos = packRaFile.getFilePointer();
 			// Write the offsets of all tiles in this map to the correspondent
 			// offset index table
-			packRaFile.seek(activeMapOffsetInfo.indexTableOffset);
+			packRaFile.seek(activeMapInfo.indexTableOffset);
 			for (long tileoffset : offsets)
 				writeLong(tileoffset);
 			packRaFile.seek(pos);
@@ -134,7 +137,7 @@ public class CacheBox extends AtlasCreator {
 
 	@Override
 	public void finishLayerCreation() throws IOException {
-		offsetInfos = null;
+		mapInfos = null;
 		packFile = null;
 		packRaFile.close();
 		packRaFile = null;
@@ -142,9 +145,12 @@ public class CacheBox extends AtlasCreator {
 
 	@Override
 	public void abortAtlasCreation() throws IOException {
+		mapInfos = null;
 		Utilities.closeFile(packRaFile);
+		packRaFile = null;
 		if (packFile != null)
 			packFile.delete();
+		packFile = null;
 	}
 
 	@Override
@@ -186,17 +192,27 @@ public class CacheBox extends AtlasCreator {
 		return b1 << 56 | b2 << 48 | b3 << 40 | b4 << 32 | b5 << 24 | b6 << 16 | b7 << 8 | b8 << 0;
 	}
 
-	private class MapOffsetInfo {
+	private class MapInfo {
 
-		MapInterface map;
-		long indexTableOffset = 0;
-		int tileCount;
+		final MapInterface map;
+		final long indexTableOffset;
+		final int tileCount;
 
-		public MapOffsetInfo(MapInterface map, long indexOffset, int tileCount) {
+		final int minX;
+		final int minY;
+		final int maxX;
+		final int maxY;
+
+		public MapInfo(MapInterface map, long indexOffset, int tileCount, int minX, int minY,
+				int maxX, int maxY) {
 			super();
 			this.map = map;
 			this.indexTableOffset = indexOffset;
 			this.tileCount = tileCount;
+			this.minX = minX;
+			this.maxX = maxX;
+			this.minY = minY;
+			this.maxY = maxY;
 		}
 	}
 }

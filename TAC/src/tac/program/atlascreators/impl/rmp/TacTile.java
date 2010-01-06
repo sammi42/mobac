@@ -94,6 +94,9 @@ public class TacTile implements CalibratedImage {
 		/* --- Get Graphics context --- */
 		src_image = getImage();
 
+		if (src_image == null)
+			return;
+
 		/* --- Convert it to RGB color space --- */
 		imageBuffer = new BufferedImage(src_image.getWidth(), src_image.getHeight(),
 				BufferedImage.TYPE_INT_RGB);

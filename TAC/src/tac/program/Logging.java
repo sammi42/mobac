@@ -84,7 +84,7 @@ public class Logging {
 	public static void configureLogfileLogging(Level level) {
 		Logger logger = Logger.getRootLogger();
 		File logFileDir = DirectoryManager.userSettingsDir;
-		String logFilename = new File(logFileDir, "TrekBuffy Atlas Creator.log").getAbsolutePath();
+		String logFilename = new File(logFileDir, "TrekBuddy Atlas Creator.log").getAbsolutePath();
 		Layout layout = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
 		FileAppender consoleAppender;
 		try {

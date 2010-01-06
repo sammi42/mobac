@@ -46,6 +46,7 @@
 			<fileset dir="./">
 				<include name="${jar.name}" />
 				<include name="start.cmd" />
+				<include name="DebugTileServer.properties" />
 			</fileset>
 		</zip>
 	</target>

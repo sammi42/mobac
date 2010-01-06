@@ -117,10 +117,12 @@ public class TestHttpTileServer extends Serve {
 	public static void main(String[] args) {
 		try {
 			Properties prop = new Properties();
-			prop.load(new FileInputStream("server.properties"));
+			FileInputStream fi = new FileInputStream("DebugTileServer.properties");
+			prop.load(fi);
+			fi.close();
 			System.getProperties().putAll(prop);
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Unable to load server.properties: "
+			JOptionPane.showMessageDialog(null, "Unable to load file DebugTileServer.properties: "
 					+ e.getMessage() + "\nUsing default values", "Error loading properties",
 					JOptionPane.ERROR_MESSAGE);
 		}

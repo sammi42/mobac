@@ -19,10 +19,4 @@ public class ShutdownServlet extends HttpServlet {
 		TestHttpTileServer.shutdown();
 	}
 
-	@Override
-	protected void doGet(HttpServletRequest arg0, HttpServletResponse arg1)
-			throws ServletException, IOException {
-		TestHttpTileServer.shutdown();
-	}
-
 }

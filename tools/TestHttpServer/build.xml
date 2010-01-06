@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="all" name="Compile and build java classes plus jar archives">
+
+	<property name="jar.name" value="DebugTileServer.jar" />
+	<property name="zip.name" value="DebugTileServer.zip" />
+	<property name="main.class" value="server.TestHttpTileServer" />
+
+	<target name="all" depends="clean_build,build,create_jar,create_release" />
+
+	<target name="clean_build">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="build" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="build">
+		<mkdir dir="build" />
+		<path id="maincp">
+			<fileset dir="lib" includes="*.jar" />
+		</path>
+		<javac srcdir="src" destdir="build" target="1.6" debug="true">
+			<sourcepath path="src_tac" />
+			<classpath refid="maincp" />
+		</javac>
+		<copy todir="build" overwrite="true">
+			<fileset dir="src">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="create_jar">
+		<delete file="${jar.name}" />
+		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+			<zipfileset src="lib/webserver.jar" excludes="META-INF/**" />
+			<zipfileset src="lib/servlet.jar" excludes="META-INF/**" />
+			<fileset dir="build" />
+		</jar>
+	</target>
+
+	<target name="create_release" description="Packs all necessary files for the binary release into one zip archive">
+		<zip destfile="${zip.name}" update="false">
+			<fileset dir="./">
+				<include name="${jar.name}" />
+				<include name="start.cmd" />
+			</fileset>
+		</zip>
+	</target>
+
+</project>

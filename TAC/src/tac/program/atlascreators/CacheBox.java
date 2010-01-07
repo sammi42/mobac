@@ -68,7 +68,8 @@ public class CacheBox extends AtlasCreator {
 			writeInt(minY); // int32 minY
 			writeInt(maxY); // int32 maxY
 
-			writeLong(offset); // int64 offset to mapIndexTable
+			// Due to a bug in CacheBox we have to add 8 to the offset
+			writeLong(offset + 8); // int64 offset to mapIndexTable
 			mapInfos[i++] = new MapInfo(map, offset, tilesInMap, minX, minY, maxX, maxY);
 			log.trace(String.format("Offset to index table [%d]: 0x%X", i, offset));
 

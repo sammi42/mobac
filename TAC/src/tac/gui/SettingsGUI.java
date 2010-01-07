@@ -301,7 +301,7 @@ public class SettingsGUI extends JDialog {
 		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
 		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
 		tileStoreInfoPanel = new JPanel(new GridBagLayout());
-		//tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
+		// tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
 
 		prepareTileStoreInfoPanel();
 
@@ -309,8 +309,8 @@ public class SettingsGUI extends JDialog {
 		backGround.add(tileStorePanel, BorderLayout.NORTH);
 		JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		tileStoreInfoPanel.setMinimumSize(new Dimension(200,300));
-		//scrollPane.setMinimumSize(new Dimension(100, 100));
+		tileStoreInfoPanel.setMinimumSize(new Dimension(200, 300));
+		// scrollPane.setMinimumSize(new Dimension(100, 100));
 		scrollPane.setPreferredSize(new Dimension(520, 100));
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Information"));
 
@@ -404,7 +404,7 @@ public class SettingsGUI extends JDialog {
 				long size = tsi.getStoreSize();
 				totalTileCount += count;
 				totalTileSize += size;
-				final String mapTileCountText = Integer.toString(count);
+				final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
 				final String mapTileSizeText = Utilities.formatBytes(size);
 
 				SwingUtilities.invokeLater(new Runnable() {

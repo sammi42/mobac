@@ -70,10 +70,13 @@ public class BerkeleyDbTileStore extends TileStore {
 		// mutations.addRenamer(new Renamer("tac.tilestore.TileDbEntry", 0,
 		// TileDbEntry.class.getName()));
 
-		mutations.addRenamer(new Renamer("tac.tilestore.berkeleydb.TileDbEntry", 1,
-				TileDbEntry.class.getName()));
-		mutations.addRenamer(new Renamer("tac.tilestore.berkeleydb.TileDbEntry$TileDbKey", 1,
-				TileDbKey.class.getName()));
+		String oldPackage = "tac.tilestore.berkeleydb";
+		String oldEntry = oldPackage + ".TileDbEntry";
+		String oldKey = oldPackage + ".TileDbEntry$TileDbKey";
+		mutations.addRenamer(new Renamer(oldEntry, 0, TileDbEntry.class.getName()));
+		mutations.addRenamer(new Renamer(oldKey, 0, TileDbKey.class.getName()));
+		mutations.addRenamer(new Renamer(oldEntry, 1, TileDbEntry.class.getName()));
+		mutations.addRenamer(new Renamer(oldKey, 1, TileDbKey.class.getName()));
 
 	}
 

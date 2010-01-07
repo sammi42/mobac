@@ -32,6 +32,7 @@ import static tac.utilities.imageio.PngConstants.IHDR;
 import static tac.utilities.imageio.PngConstants.INTERLACE_NONE;
 import static tac.utilities.imageio.PngConstants.PLTE;
 import static tac.utilities.imageio.PngConstants.SIGNATURE;
+import static tac.utilities.imageio.PngConstants.TEXT;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -95,6 +96,11 @@ public class Png4BitWriter {
 	 */
 	public static void writeImage(OutputStream out, BufferedImage image, int compression)
 			throws IOException {
+		writeImage(out, image, compression, null);
+	}
+
+	public static void writeImage(OutputStream out, BufferedImage image, int compression,
+			String description) throws IOException {
 		DataOutputStream dos = new DataOutputStream(out);
 
 		int width = image.getWidth();
@@ -117,6 +123,14 @@ public class Png4BitWriter {
 		cIHDR.writeByte(FILTER_SET_1);
 		cIHDR.writeByte(INTERLACE_NONE);
 		cIHDR.writeTo(dos);
+
+		if (description != null) {
+			PngChunk cTxT = new PngChunk(TEXT);
+			cTxT.write("Description".getBytes());
+			cTxT.write(0);
+			cTxT.write(description.getBytes());
+			cTxT.writeTo(dos);
+		}
 
 		PngChunk cPLTE = new PngChunk(PLTE);
 		int paletteEntries = palette.getMapSize();

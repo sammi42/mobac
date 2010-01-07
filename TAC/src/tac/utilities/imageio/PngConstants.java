@@ -14,6 +14,7 @@ public class PngConstants {
 	 * Chunk header identifiers
 	 */
 	public static final int IHDR = (int) 0x49484452; // png header
+	public static final int TEXT = (int) 0x74455874; // textual information
 	public static final int PLTE = (int) 0x504C5445; // color palette
 	public static final int IDAT = (int) 0x49444154; // image data
 	public static final int IEND = (int) 0x49454E44; // end of file

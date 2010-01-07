@@ -33,7 +33,8 @@ import Acme.Serve.Serve;
  */
 public class TestHttpTileServer extends Serve {
 
-	private static boolean GENERATE_PNG_FOR_EACH_REQUEST = true;
+	public static boolean GENERATE_PNG_FOR_EACH_REQUEST = true;
+	public static int PNG_COMPRESSION = 1;
 
 	/**
 	 * Error rate in percent
@@ -57,6 +58,7 @@ public class TestHttpTileServer extends Serve {
 		Properties properties = new Properties();
 		ERROR_RATE = Integer.getInteger("TestHttpServer.errorRate", 0);
 		ERROR_ON_URL = Boolean.getBoolean("TestHttpServer.errorOnSpecificUrls");
+		PNG_COMPRESSION = Integer.getInteger("TestHttpServer.generatedPNGcompression", 1);
 		int port = Integer.getInteger("TestHttpServer.port", 80);
 		try {
 			HttpURLConnection c = (HttpURLConnection) new URL("http://127.0.0.1:" + port

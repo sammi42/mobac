@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.Deflater;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -68,7 +67,7 @@ public class PngTileGeneratorServlet extends HttpServlet {
 		g2.dispose();
 		response.setContentType("image/png");
 		OutputStream out = response.getOutputStream();
-		Png4BitWriter.writeImage(out, tile, Deflater.NO_COMPRESSION);
+		Png4BitWriter.writeImage(out, tile, TestHttpTileServer.PNG_COMPRESSION, url);
 		out.close();
 	}
 }

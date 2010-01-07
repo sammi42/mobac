@@ -15,10 +15,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import tac.gui.panels.JProfilesPanel;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.AtlasObject;
 import tac.utilities.Utilities;
 
+/**
+ * A profile is a saved atlas. The available profiles ({@link Profile}
+ * instances) are visible in the <code>profilesCombo</code> in the
+ * {@link JProfilesPanel}.
+ */
 public class Profile implements Comparable<Profile> {
 
 	public static final String PROFILE_NAME_REGEX = "[\\w _-]+";

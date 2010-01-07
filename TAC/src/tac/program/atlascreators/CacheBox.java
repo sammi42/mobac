@@ -48,9 +48,9 @@ public class CacheBox extends AtlasCreator {
 		int mapCount = layer.getMapCount();
 		writeInt(mapCount); // int32 number of bounding boxes / maps
 
-		long offset = 32 + 128 + 256 + 8 + 4; // = 428
+		long offset = 32 + 128 + 256 + 8 + 4 + 8; // = 436
 		offset += mapCount * 28;
-		mapInfos = new MapInfo[mapCount];
+		mapInfos = new MapInfo[mapCount + 1];
 
 		int i = 0;
 		for (MapInterface map : layer) {
@@ -68,13 +68,15 @@ public class CacheBox extends AtlasCreator {
 			writeInt(minY); // int32 minY
 			writeInt(maxY); // int32 maxY
 
-			// Due to a bug in CacheBox we have to add 8 to the offset
-			writeLong(offset + 8); // int64 offset to mapIndexTable
+			writeLong(offset); // int64 offset to mapIndexTable
 			mapInfos[i++] = new MapInfo(map, offset, tilesInMap, minX, minY, maxX, maxY);
 			log.trace(String.format("Offset to index table [%d]: 0x%X", i, offset));
 
 			offset += tilesInMap * 8;
 		}
+		// We need to keep the offset to the last index table
+		// -> required for index table finalization.
+		mapInfos[i] = new MapInfo(null, offset, 0, 0, 0, 0, 0);
 		log.trace(String.format("End of bounding boxes table: 0x%X", packRaFile.getFilePointer()));
 		packRaFile.seek(offset);
 		log.trace(String.format("Start of tile data: 0x%X", packRaFile.getFilePointer()));
@@ -127,7 +129,8 @@ public class CacheBox extends AtlasCreator {
 			long pos = packRaFile.getFilePointer();
 			// Write the offsets of all tiles in this map to the correspondent
 			// offset index table
-			packRaFile.seek(activeMapInfo.indexTableOffset);
+			// Due to a bug in CacheBox we have to subtract 8 from the offset
+			packRaFile.seek(activeMapInfo.indexTableOffset - 8);
 			for (long tileoffset : offsets)
 				writeLong(tileoffset);
 			packRaFile.seek(pos);
@@ -138,6 +141,13 @@ public class CacheBox extends AtlasCreator {
 
 	@Override
 	public void finishLayerCreation() throws IOException {
+		long tableOffset = mapInfos[mapInfos.length - 1].indexTableOffset;
+		long offset = packRaFile.getFilePointer();
+		// Due to a bug in CacheBox we have to subtract 8 from the offset
+		packRaFile.seek(tableOffset - 8);
+		// write the offset to the end of the file (after the last image)
+		// required by CacheBox for length calculation of the last tile
+		packRaFile.writeLong(swapLong(offset));
 		mapInfos = null;
 		packFile = null;
 		packRaFile.close();

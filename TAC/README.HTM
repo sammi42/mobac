@@ -75,6 +75,7 @@ TAC is an open source project hosted on SourceForge.net: <br>
 	</ul>
 	</li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
+	<li><a href="#Bugs">Problems, Bugs &amp; Errors</a></li>
 	<li><a href="#Limitations">Known problems and limitations</a></li>
 	<li><a href="#AdvancedUsers">Details for advanced users</a></li>
 </ul>
@@ -136,9 +137,9 @@ name]_[current date and time]</tt>.</p>
 <p>The atlas itself consists of the atlas startup file <tt>cr.tar</tt>
 (tar format) or <tt>cr.tba</tt> (regular/untared format) and the
 subdirectories containing the different maps of the atlas. For using the
-atlas with TrekBuddy copy the whole directory onto your J2ME device and
-open <tt>cr.tar</tt>/<tt>cr.tba</tt> (in the atlas root directory) in
-TrekBuddy as atlas.</p>
+atlas with TrekBuddy copy the whole directory onto your J2ME device.
+Then use the <b>Load Atlas</b> function of TrekBuddy and open <tt>cr.tar</tt>/<tt>cr.tba</tt>
+(in the atlas root directory).</p>
 <!-- *************************************************************************** -->
 <h3><a name="MTE">Creating and using atlases with Mobile Trail
 Explorer (MTE)</a></h3>
@@ -339,8 +340,8 @@ using:</p>
 	<li>An atlas with more than 5 maps.</li>
 	<li>Maps with a zoom level higher than 15.</li>
 </ul>
-<p>The output format of an "atlas" for Magellan is one RMP file in
-the atlas directory. You can directly load this file in Magellan
+<p>The output format of an "atlas" for Magellan is one <tt>RMP</tt>
+file in the atlas directory. You can directly load this file in Magellan
 VantagePoint or transfer it onto your device.</p>
 <!-- *************************************************************************** -->
 <hr>
@@ -366,15 +367,16 @@ information and a detailed description of your last performed actions.</p>
 
 <h3>The default error log</h3>
 <p>By default TrekBuddy Atlas Creator records all errors of the
-current session into it's error log file <b>TrekBuddy Atlas
-Creator.log</b>. This log file is located on Windows system in the directory
-<b>%APPDATA%\TrekBuddy Atlas Creator\</b> and on Linux/Unix/OSX system
-in the directory <b>~/.tac/</b></p>
+current session into it's error log file <tt>TrekBuddy Atlas
+Creator.log</tt>. This log file is located on Windows system in the directory
+<tt>%APPDATA%\TrekBuddy Atlas Creator\</tt> and on Linux/Unix/OSX system
+in the directory <tt>~/.tac/</tt></p>
 
 <h3>Activate the advanced logging system</h3>
 <p>If the recorded errors in the error log do not indicate a problem
 you can activate the overall message logging mechanism of TrekBuddy
-Atlas Creator:<br />Download the file <a
+Atlas Creator:<br />
+Download the file <a
 	href="http://trekbuddyatlasc.sourceforge.net/log4j.xml">log4j.xml</a>
 and save it in the directory where the jar file of TrekBuddy Atlas
 Creator is installed to.</p>

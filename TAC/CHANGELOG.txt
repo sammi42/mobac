@@ -43,7 +43,7 @@
  + New atlas format: CacheWolf
  + New map source: Mapplus.ch (Switzerland)
  + Coordinate format changeable ("deg" / "deg,min" / "deg,min,sec")
- + New atlas format: CacheBox (experimental)
+ + New atlas format: CacheBox (finally stable)
  + Each map source has now a background color (usually black) that is used 
     in case of missing tiles
  + Content-type check after download (HTTP header and image data header)

@@ -18,7 +18,7 @@ import tac.utilities.GBC;
 import tac.utilities.Utilities;
 
 public class JProfilesPanel extends JCollapsiblePanel {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private JProfilesComboBox profilesCombo;
@@ -133,9 +133,6 @@ public class JProfilesPanel extends JCollapsiblePanel {
 			if (jAtlasTree.save(profile)) {
 				if (!profileInList)
 					profilesCombo.addItem(profile);
-				JOptionPane.showMessageDialog(null, "Profile \"" + profileName
-						+ "\" has been successfully saved", "Profile save",
-						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
 	}

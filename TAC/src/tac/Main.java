@@ -18,10 +18,10 @@ import tac.utilities.TACExceptionHandler;
 public class Main {
 
 	public Main() {
-		Logging.configureLogging();
-		TACInfo.initialize(); // Load revision info
-		TACExceptionHandler.installToolkitEventQueueProxy();
 		try {
+			Logging.configureLogging();
+			TACInfo.initialize(); // Load revision info
+			TACExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
 			EnvironmentSetup.checkMemory();

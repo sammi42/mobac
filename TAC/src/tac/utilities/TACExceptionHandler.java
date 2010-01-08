@@ -12,7 +12,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
@@ -67,9 +66,9 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		processException(Thread.currentThread(), e);
 	}
 
-	public static void processException(Thread t, Throwable e) {
-		log.error("Uncaught exception: ", e);
-		showExceptionDialog(e);
+	public static void processException(Thread thread, Throwable t) {
+		log.error("Uncaught exception: ", t);
+		showExceptionDialog(thread, t, null);
 	}
 
 	public static void processException(Thread t, Throwable e, AWTEvent newEvent) {
@@ -107,12 +106,21 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			return "";
 	}
 
-	public static void showExceptionDialog(Throwable e) {
-		showExceptionDialog(e, null);
+	public static void showExceptionDialog(Throwable t) {
+		showExceptionDialog(t, null);
 	}
 
-	public static void showExceptionDialog(Throwable e, String additionalInfo) {
-		String exceptionName = e.getClass().getSimpleName();
+	public static void showExceptionDialog(Thread thread, Throwable t, String additionalInfo) {
+		String threadInfo = "Thread: " + thread.getName() + "\n";
+		if (additionalInfo != null)
+			additionalInfo = threadInfo + additionalInfo;
+		else
+			additionalInfo = threadInfo;
+		showExceptionDialog(t, additionalInfo);
+	}
+
+	public static void showExceptionDialog(Throwable t, String additionalInfo) {
+		String exceptionName = t.getClass().getSimpleName();
 		try {
 			StringBuilder sb = new StringBuilder(1024);
 			sb.append("Version: " + TACInfo.getCompleteTitle());
@@ -127,7 +135,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version")
 					+ ")");
-			if (e.getClass().equals(java.lang.OutOfMemoryError.class)) {
+			if (t.getClass().equals(java.lang.OutOfMemoryError.class)) {
 				Runtime r = Runtime.getRuntime();
 				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
 			}
@@ -138,14 +146,14 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				sb.append("\n\n" + additionalInfo);
 
 			sb.append("\n\nError hierarchy:");
-			Throwable tmp = e;
+			Throwable tmp = t;
 			while (tmp != null) {
 				sb.append("\n  " + tmp.getClass().getSimpleName() + ": " + tmp.getMessage());
 				tmp = tmp.getCause();
 			}
 
 			StringWriter stack = new StringWriter();
-			e.printStackTrace(new PrintWriter(stack));
+			t.printStackTrace(new PrintWriter(stack));
 			sb.append("\n\n#############################################################\n\n");
 			sb.append(stack.getBuffer().toString());
 			sb.append("\n#############################################################");
@@ -237,13 +245,9 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 	public static void main(String[] args) {
 		for (;;) {
-			ArrayList<byte[]> list = new ArrayList<byte[]>();
 			try {
 				Logging.configureConsoleLogging();
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				for (int i = 0; i < 10000; i++) {
-					list.add(new byte[300000]);
-				}
 				throw new RuntimeException("Test", new Exception("Inner"));
 			} catch (Exception e) {
 				showExceptionDialog(e);
@@ -253,4 +257,5 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			break;
 		}
 	}
+
 }

@@ -64,6 +64,7 @@ import tac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import tac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import tac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import tac.mapsources.impl.WmsSources.TerraserverUSA;
+import tac.program.DirectoryManager;
 import tac.program.model.Settings;
 import tac.utilities.Utilities;
 
@@ -192,7 +193,7 @@ public class MapSourcesManager {
 	public static void loadMapSourceProperties(Properties targetProp) {
 		try {
 			URL mapResUrl = Main.class.getResource("mapsources.properties");
-			File mapFile = new File(Settings.getUserDir(), "mapsources.properties");
+			File mapFile = new File(DirectoryManager.currentDir, "mapsources.properties");
 			Properties resProps = new Properties();
 			Properties fileProps = new Properties();
 			Utilities.loadProperties(resProps, mapResUrl);
@@ -306,7 +307,7 @@ public class MapSourcesManager {
 	public static boolean mapsourcesOnlineUpdate() throws MapSourcesUpdateException {
 		URL url;
 		try {
-			File mapFile = new File(Settings.getUserDir(), "mapsources.properties");
+			File mapFile = new File(DirectoryManager.currentDir, "mapsources.properties");
 			url = new URL(MAPSOURCES_UPDATE_URL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			Settings s = Settings.getInstance();

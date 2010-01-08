@@ -79,11 +79,10 @@
 
 	<target name="shrink" depends="create_jar" description="Removes unused classes from compiled jar">
 		<taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
-		<move file="${jar.name}" tofile="build/temp.jar" overwrite="true" />
 		<proguard>
 			-libraryjars ${java.home}/lib/rt.jar
-			-injars     build/temp.jar
-			-outjars    ${jar.name}
+			-injars     ${jar.name}
+			-outjars    build/temp.jar
 			-keepattributes *Annotation*
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
 			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource$TileUpdate { public *; }
@@ -125,7 +124,7 @@
 			-dontoptimize 
 			-dontobfuscate
 		</proguard>
-		<delete file="build/temp.jar" />
+		<move file="build/temp.jar" tofile="${jar.name}" overwrite="true" />
 	</target>
 
 	<target name="create_svnversion_jar" description="helper function for creating a combined svnversion.jar out of the the different SVNKit jars">

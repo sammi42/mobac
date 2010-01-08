@@ -41,7 +41,7 @@ public class Settings {
 	private static Logger log = Logger.getLogger(Settings.class);
 	private static Settings instance = new Settings();
 
-	public static final File FILE = new File(getUserDir(), "settings.xml");
+	public static final File FILE = new File(DirectoryManager.currentDir, "settings.xml");
 
 	private static long SETTINGS_LAST_MODIFIED = 0;
 
@@ -218,10 +218,6 @@ public class Settings {
 		} finally {
 			Utilities.closeStream(fo);
 		}
-	}
-
-	public static String getUserDir() {
-		return System.getProperty("user.dir");
 	}
 
 	public static void loadOrQuit() {

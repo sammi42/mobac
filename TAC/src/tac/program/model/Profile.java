@@ -16,6 +16,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import tac.gui.panels.JProfilesPanel;
+import tac.program.DirectoryManager;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.AtlasObject;
 import tac.utilities.Utilities;
@@ -37,10 +38,10 @@ public class Profile implements Comparable<Profile> {
 	private static Vector<Profile> profiles = new Vector<Profile>();
 
 	public static void updateProfiles() {
-		File userDir = new File(Settings.getUserDir());
+		File profilesDir = DirectoryManager.currentDir;
 		final Set<Profile> deletedProfiles = new HashSet<Profile>();
 		deletedProfiles.addAll(profiles);
-		userDir.list(new FilenameFilter() {
+		profilesDir.list(new FilenameFilter() {
 
 			public boolean accept(File dir, String fileName) {
 				Matcher m = PROFILE_FILENAME_PATTERN.matcher(fileName);
@@ -64,7 +65,7 @@ public class Profile implements Comparable<Profile> {
 
 	public Profile(String name) {
 		super();
-		this.file = new File(new File(Settings.getUserDir()), "tac-profile-" + name + ".xml");
+		this.file = new File(DirectoryManager.currentDir, "tac-profile-" + name + ".xml");
 		this.name = name;
 	}
 

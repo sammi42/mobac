@@ -72,13 +72,16 @@ public class DirectoryManager {
 	private static File getUserSettingsDir() {
 		if (OSUtilities.detectOs() == OperatingSystem.Windows) {
 			String appData = System.getenv("APPDATA");
-			if (appData != null) {
-				File appDataDir = new File(appData);
-				if (appDataDir.isDirectory()) {
-					File tacDataDir = new File(appData, "TrekBuddy Atlas Creator");
-					if (tacDataDir.isDirectory() || tacDataDir.mkdir())
-						return tacDataDir;
-				}
+			if (appData == null)
+				throw new RuntimeException("User application data to found");
+			File appDataDir = new File(appData);
+			if (appDataDir.isDirectory()) {
+				File tacDataDir = new File(appData, "TrekBuddy Atlas Creator");
+				if (tacDataDir.isDirectory() || tacDataDir.mkdir())
+					return tacDataDir;
+				else
+					throw new RuntimeException("Unable to create directory \""
+							+ tacDataDir.getAbsolutePath() + "\"");
 			}
 		}
 		File userDir = new File(System.getProperty("user.home"));

@@ -1,6 +1,5 @@
 package tac.program;
 
-import java.io.File;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
@@ -13,6 +12,7 @@ import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Layer;
 import tac.program.model.Profile;
 import tac.program.model.Settings;
+import tac.utilities.TACExceptionHandler;
 
 /**
  * Creates the necessary files on first time TrekBuddy Atlas Creator is started
@@ -44,45 +44,36 @@ public class EnvironmentSetup {
 	}
 
 	public static void checkFileSetup() {
+		if (Settings.FILE.exists())
+			return;
 
-		File userDir = new File(System.getProperty("user.dir"));
-
-		File profiles = new File(userDir, "profiles.xml");
-		if (profiles.isFile()) {
-			// delete old settings and profile files
-			profiles.delete();
-			Settings.FILE.delete();
+		try {
+			Settings.save();
+		} catch (Exception e) {
+			log.error("Error while creating settings.xml: " + e.getMessage(), e);
+			String[] options = { "Exit", "Show error report" };
+			int a = JOptionPane.showOptionDialog(null,
+					"Could not create file settings.xml program will exit.", "Error", 0,
+					JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+			if (a == 1)
+				TACExceptionHandler.showExceptionDialog(e);
+			System.exit(1);
 		}
-
-		File atlasFolder = new File(userDir, "atlases");
-		atlasFolder.mkdir();
-
-		if (Settings.FILE.exists() == false) {
-
-			try {
-				Settings.save();
-			} catch (Exception e) {
-				log.error("", e);
-				JOptionPane.showMessageDialog(null,
-						"Could not create file settings.xml program will exit.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				System.exit(0);
-			}
-			Profile p = new Profile("Google Maps New York");
-			Atlas atlas = Atlas.newInstance();
-			try {
-				EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
-				EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
-				Layer layer = new Layer(atlas, "GM New York");
-				layer.addMapsAutocut("GM New York 16", new Google.GoogleMaps(), max, min, 16, null,
-						32000);
-				layer.addMapsAutocut("GM New York 14", new Google.GoogleMaps(), max, min, 14, null,
-						32000);
-				atlas.addLayer(layer);
-				p.save(atlas);
-			} catch (Exception e) {
-				log.error("", e);
-			}
+		Profile p = new Profile("Google Maps New York");
+		Atlas atlas = Atlas.newInstance();
+		try {
+			EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
+			EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
+			Layer layer = new Layer(atlas, "GM New York");
+			layer.addMapsAutocut("GM New York 16", new Google.GoogleMaps(), max, min, 16, null,
+					32000);
+			layer.addMapsAutocut("GM New York 14", new Google.GoogleMaps(), max, min, 14, null,
+					32000);
+			atlas.addLayer(layer);
+			p.save(atlas);
+		} catch (Exception e) {
+			log.error("Creation for example profiles failed", e);
+			TACExceptionHandler.showExceptionDialog(e);
 		}
 	}
 }

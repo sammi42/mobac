@@ -24,7 +24,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.apache.log4j.Logger;
 
-import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MapSourcesUpdater;
 import tac.program.Logging;
 import tac.program.TACInfo;
 
@@ -98,7 +98,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		showExceptionDialog(e);
 	}
 
-	private static String prop(String key) {
+	public static String prop(String key) {
 		String s = System.getProperty(key);
 		if (s != null)
 			return s;
@@ -140,7 +140,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
 			}
 			sb.append("\nMapsources rev: "
-					+ MapSourcesManager.getMapSourcesRev(System.getProperties()));
+					+ MapSourcesUpdater.getMapSourcesRev(System.getProperties()));
 
 			if (additionalInfo != null)
 				sb.append("\n\n" + additionalInfo);

@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
 import tac.mapsources.MapSourceTools;
-import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MapSourcesUpdater;
 import tac.mapsources.impl.Google.GoogleEarth;
 import tac.mapsources.impl.Google.GoogleEarthMapsOverlay;
 import tac.mapsources.impl.Google.GoogleMapMaker;
@@ -63,7 +63,7 @@ public class GoogleUrlUpdater {
 		Logging.disableLogging();
 
 		// just for initializing the MapSourcesManager
-		MapSourcesManager.loadMapSourceProperties(MAPSOURCES_PROPERTIES);
+		MapSourcesUpdater.loadMapSourceProperties(MAPSOURCES_PROPERTIES);
 
 		KEYS.add("mapsources.Date");
 		KEYS.add("mapsources.Rev");

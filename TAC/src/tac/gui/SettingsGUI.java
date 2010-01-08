@@ -61,6 +61,7 @@ import tac.gui.components.JMapSizeCombo;
 import tac.gui.components.JObjectCheckBox;
 import tac.gui.components.JTimeSlider;
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MapSourcesUpdater;
 import tac.program.Logging;
 import tac.program.model.ProxyType;
 import tac.program.model.Settings;
@@ -687,10 +688,10 @@ public class SettingsGUI extends JDialog {
 
 		public void actionPerformed(ActionEvent event) {
 			try {
-				boolean result = MapSourcesManager.mapsourcesOnlineUpdate();
+				boolean result = MapSourcesUpdater.mapsourcesOnlineUpdate();
 				String msg = (result) ? "Online update successfull" : "No new update avilable";
 				DateFormat df = DateFormat.getDateTimeInstance();
-				Date date = MapSourcesManager.getMapSourcesDate(System.getProperties());
+				Date date = MapSourcesUpdater.getMapSourcesDate(System.getProperties());
 				msg += "\nCurrent map source date: " + df.format(date);
 				JOptionPane.showMessageDialog(SettingsGUI.this, msg);
 				if (result)

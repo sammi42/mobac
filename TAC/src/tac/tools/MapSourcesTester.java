@@ -18,6 +18,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MapSourcesUpdater;
 import tac.mapsources.MultiLayerMapSource;
 import tac.mapsources.impl.LocalhostTestSource;
 import tac.mapsources.impl.Google.GoogleMapMaker;
@@ -96,7 +97,7 @@ public class MapSourcesTester {
 			e1.printStackTrace();
 			return;
 		}
-		MapSourcesManager.loadMapSourceProperties();
+		MapSourcesUpdater.loadMapSourceProperties();
 
 		for (MapSource mapSource : MapSourcesManager.getAllMapSources()) {
 			if (mapSource instanceof LocalhostTestSource)

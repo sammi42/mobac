@@ -54,6 +54,7 @@ import tac.gui.panels.JGpxPanel;
 import tac.gui.panels.JProfilesPanel;
 import tac.gui.panels.JTileImageParametersPanel;
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MapSourcesUpdater;
 import tac.program.AtlasThread;
 import tac.program.TACInfo;
 import tac.program.interfaces.AtlasInterface;
@@ -156,7 +157,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomChanged(previewMap.getGridZoom());
 		previewMap.updateMapSelection();
 		previewMap.grabFocus();
-		MapSourcesManager.automaticMapsourcesOnlineUpdate(true);
+		MapSourcesUpdater.automaticMapsourcesOnlineUpdate(true);
 	}
 
 	private void createControls() {

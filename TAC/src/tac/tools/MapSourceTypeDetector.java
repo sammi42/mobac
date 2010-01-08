@@ -14,6 +14,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
+import tac.mapsources.MapSourcesUpdater;
 import tac.mapsources.impl.RegionalMapSources;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
@@ -28,7 +29,7 @@ public class MapSourceTypeDetector {
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
-		MapSourcesManager.loadMapSourceProperties();
+		MapSourcesUpdater.loadMapSourceProperties();
 		testMapSource(RegionalMapSources.MapplusCh.class, Cities.BERN);
 	}
 

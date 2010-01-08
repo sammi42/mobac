@@ -17,6 +17,7 @@ import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import tac.utilities.Juli2Log4jHandler;
+import tac.utilities.TACExceptionHandler;
 
 public class Logging {
 
@@ -111,6 +112,21 @@ public class Logging {
 		logger = java.util.logging.Logger.getLogger("com.sun.xml.internal.bind");
 		logger.setLevel(java.util.logging.Level.ALL);
 		logger.addHandler(h);
+	}
+
+	public static void logSystemInfo() {
+		Logger log = Logger.getLogger("SysInfo");
+		if (!log.isInfoEnabled())
+			return;
+		log.debug("Version: " + TACInfo.getCompleteTitle());
+		log.debug("Platform: " + TACExceptionHandler.prop("os.name") + " ("
+				+ TACExceptionHandler.prop("os.version") + ")");
+		log.debug("Java VM: " + TACExceptionHandler.prop("java.vm.name") + " ("
+				+ TACExceptionHandler.prop("java.runtime.version") + ")");
+		log.debug("Directories:\ncurrentDir: \t" + DirectoryManager.currentDir + "\nprogramDir: \t"
+				+ DirectoryManager.programDir + "\ntempDir:     \t" + DirectoryManager.tempDir
+				+ "\nuserHomeDir: \t" + DirectoryManager.userHomeDir + "\nuserSettingsDir: \t"
+				+ DirectoryManager.userSettingsDir);
 	}
 
 	public static void logSystemProperties() {

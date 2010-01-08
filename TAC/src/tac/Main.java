@@ -21,6 +21,7 @@ public class Main {
 		try {
 			Logging.configureLogging();
 			TACInfo.initialize(); // Load revision info
+			Logging.logSystemInfo();
 			TACExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();

@@ -26,6 +26,7 @@ public class TACInfo {
 			titleHideRevision = Boolean.parseBoolean(props
 					.getProperty("tac.revision.hide", "false"));
 		} catch (Exception e) {
+			Logging.LOG.error("Error reading tac.properties", e);
 		} finally {
 			Utilities.closeStream(propIn);
 		}
@@ -36,6 +37,7 @@ public class TACInfo {
 			String rev = props.getProperty("tac.revision");
 			revision = "(" + rev + ")";
 		} catch (Exception e) {
+			Logging.LOG.error("Error reading tac-rev.properties", e);
 		} finally {
 			Utilities.closeStream(propIn);
 		}

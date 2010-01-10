@@ -14,7 +14,7 @@ public class OsmMapSources {
 	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 	public static final String MAP_HIKING_TRAILS = "http://topo.geofabrik.de/trails/";
-	public static final String MAP_HIKING_RELIEF = "http://topo.geofabrik.de/relief/";
+	public static final String MAP_HIKING_RELIEF = "http://topo.gvf.ve.it/cont/";
 	protected static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
@@ -151,7 +151,7 @@ public class OsmMapSources {
 	public static class OsmHikingRelief extends AbstractMapSource {
 
 		public OsmHikingRelief() {
-			super("OSM Hiking Relief", 4, 15, "png", TileUpdate.LastModified);
+			super("OSM Hiking Relief", 4, 15, "png", TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -231,7 +231,7 @@ public class OsmMapSources {
 		public Color getBackgroundColor() {
 			return Color.WHITE;
 		}
-		
+
 	}
 
 }

@@ -45,13 +45,9 @@ public class BeanShellMapSource implements MapSource {
 			throws IOException {
 		HttpURLConnection conn = null;
 		try {
-			String url = (String) i
-					.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
+			String url = getTileUrl(zoom, tilex, tiley);
 			MapEvaluator.log(String.format("x=%d;y=%d;z=%d -> %s", tilex, tiley, zoom, url));
 			conn = (HttpURLConnection) new URL(url).openConnection();
-		} catch (EvalError e) {
-			log.error(e.getClass() + ": " + e.getMessage(), e);
-			throw new IOException(e);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -69,6 +65,15 @@ public class BeanShellMapSource implements MapSource {
 			}
 		}
 		return conn;
+	}
+
+	public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
+		try {
+			return (String) i.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
+		} catch (EvalError e) {
+			log.error(e.getClass() + ": " + e.getMessage(), e);
+			throw new IOException(e);
+		}
 	}
 
 	@Override

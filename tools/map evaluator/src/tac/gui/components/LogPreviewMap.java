@@ -2,7 +2,9 @@ package tac.gui.components;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.TimerTask;
@@ -10,6 +12,7 @@ import java.util.TimerTask;
 import org.openstreetmap.gui.jmapviewer.MapGridLayer;
 
 import tac.gui.mapview.PreviewMap;
+import tac.mapsources.BeanShellMapSource;
 
 public class LogPreviewMap extends PreviewMap {
 
@@ -104,6 +107,43 @@ public class LogPreviewMap extends PreviewMap {
 			g.drawString("zoom=" + zoom, gx + 4, gy += 14);
 			g.drawString("x=" + tilex, gx + 4, gy += 16);
 			g.drawString("y=" + tiley, gx + 4, gy += 16);
+			if (mapSource instanceof BeanShellMapSource) {
+				try {
+					String tileUrl = ((BeanShellMapSource) mapSource)
+							.getTileUrl(zoom, tilex, tiley);
+					URL url = new URL(tileUrl);
+					String strUrl = url.getHost() + url.getPath();
+					if (url.getQuery() != null && url.getQuery().length() > 0)
+						strUrl += "?" + url.getQuery();
+					drawUrl(g, strUrl, gx + 4, gy += 16, tileSize);
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+
+	private void drawUrl(Graphics g, String s, int x, int y, int width) {
+		FontMetrics fm = g.getFontMetrics();
+		int lineHeight = fm.getHeight();
+
+		int curX = x;
+		int curY = y;
+		width -= 15;
+		
+		int beginIndex = 0;
+		for (int i = 0; i < s.length(); i++) {
+			String sub = s.substring(beginIndex, i);
+			int wordWidth = fm.stringWidth(sub);
+			if (wordWidth >= width) {
+				g.drawString(sub, curX, curY);
+				curY += lineHeight;
+				beginIndex = i;
+				sub = null;
+			}
+		}
+		if (beginIndex != s.length()) {
+			String sub = s.substring(beginIndex, s.length());
+			g.drawString(sub, curX, curY);
 		}
 	}
 }

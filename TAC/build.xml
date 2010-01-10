@@ -80,8 +80,8 @@
 	<target name="shrink" depends="create_jar" description="Removes unused classes from compiled jar">
 		<taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
 		<proguard>
-			-libraryjars ${java.home}/lib/rt.jar
-			-injars     ${jar.name}
+			-libraryjars "${java.home}/lib/rt.jar"
+			-injars     "${jar.name}"
 			-outjars    build/temp.jar
 			-keepattributes *Annotation*
 			-keep class ${main.class} { public static void main(java.lang.String[]); }

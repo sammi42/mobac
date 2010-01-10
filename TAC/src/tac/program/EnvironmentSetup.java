@@ -33,7 +33,7 @@ public class EnvironmentSetup {
 					+ "The current maximum usable amount of memory to TrekBuddy Atlas Creator is <b>"
 					+ heapMBFormatted
 					+ "</b>.<br><br>Please make sure to start TrekBuddy Atlas Creator in "
-					+ "the future via the provided start scripts <i>start.cmd</i><br>"
+					+ "the future via the provided start scripts <i>TrekBuddy Atlas Creator.exe</i><br>"
 					+ "on Windows or <i>start.sh</i> on Linux/Unix/OSX or add the "
 					+ "parameter <b>-Xmx 512M</b> to your startup command.<br><br>"
 					+ "Example: <i>java -Xmx512M -jar TrekBuddy_Atlas_Creator.jar</i><br>"

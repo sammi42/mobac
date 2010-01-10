@@ -183,6 +183,7 @@
 				<include name="README-DEV.HTM" />
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
+				<include name="TrekBuddy Atlas Creator.exe" />
 				<include name="lib/log4j-1.2.15.jar" />
 				<include name="lib/je-*.jar" />
 				<include name="lib/jai_*.jar" />

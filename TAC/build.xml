@@ -165,6 +165,7 @@
 				<include name="README.HTM" />
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
+				<include name="TrekBuddy Atlas Creator.exe" />
 			</fileset>
 		</zip>
 	</target>

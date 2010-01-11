@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import org.openstreetmap.gui.jmapviewer.MapGridLayer;
 
 import tac.gui.mapview.PreviewMap;
+import tac.mapsources.AbstractMapSource;
 import tac.mapsources.BeanShellMapSource;
 
 public class LogPreviewMap extends PreviewMap {
@@ -107,17 +108,20 @@ public class LogPreviewMap extends PreviewMap {
 			g.drawString("zoom=" + zoom, gx + 4, gy += 14);
 			g.drawString("x=" + tilex, gx + 4, gy += 16);
 			g.drawString("y=" + tiley, gx + 4, gy += 16);
-			if (mapSource instanceof BeanShellMapSource) {
-				try {
-					String tileUrl = ((BeanShellMapSource) mapSource)
-							.getTileUrl(zoom, tilex, tiley);
+			String tileUrl = null;
+			try {
+				if (mapSource instanceof BeanShellMapSource)
+					tileUrl = ((BeanShellMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
+				if (mapSource instanceof AbstractMapSource)
+					tileUrl = ((AbstractMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
+				if (tileUrl != null) {
 					URL url = new URL(tileUrl);
 					String strUrl = url.getHost() + url.getPath();
 					if (url.getQuery() != null && url.getQuery().length() > 0)
 						strUrl += "?" + url.getQuery();
 					drawUrl(g, strUrl, gx + 4, gy += 16, tileSize);
-				} catch (Exception e) {
 				}
+			} catch (Exception e) {
 			}
 		}
 	}
@@ -129,7 +133,7 @@ public class LogPreviewMap extends PreviewMap {
 		int curX = x;
 		int curY = y;
 		width -= 15;
-		
+
 		int beginIndex = 0;
 		for (int i = 0; i < s.length(); i++) {
 			String sub = s.substring(beginIndex, i);

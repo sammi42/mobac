@@ -42,7 +42,7 @@ public abstract class AbstractMapSource implements MapSource {
 		return (HttpURLConnection) new URL(url).openConnection();
 	}
 
-	protected abstract String getTileUrl(int zoom, int tilex, int tiley);
+	public abstract String getTileUrl(int zoom, int tilex, int tiley);
 
 	public int getMaxZoom() {
 		return maxZoom;

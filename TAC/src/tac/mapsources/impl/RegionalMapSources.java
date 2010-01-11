@@ -421,7 +421,7 @@ public class RegionalMapSources {
 		}
 
 		@Override
-		protected String getTileUrl(int zoom, int tilex, int tiley) {
+		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=" + service
 					+ "&zoom=" + zoom + "&x=" + tilex + "&y=" + tiley;
 		}
@@ -455,7 +455,7 @@ public class RegionalMapSources {
 		}
 
 		@Override
-		protected String getTileUrl(int zoom, int tilex, int tiley) {
+		public String getTileUrl(int zoom, int tilex, int tiley) {
 			int y = (1 << zoom) - 1 - tiley;
 			return "http://map.eniro.com/geowebcache/service/tms1.0.0/" + mapType + "/" + zoom
 					+ "/" + tilex + "/" + y + ".png";
@@ -515,7 +515,7 @@ public class RegionalMapSources {
 		}
 
 		@Override
-		protected String getTileUrl(int zoom, int tilex, int tiley) {
+		public String getTileUrl(int zoom, int tilex, int tiley) {
 			int z = 17 - zoom;
 			return "http://mp2.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
 					+ "/t" + tiley + "l" + tilex + ".jpg";

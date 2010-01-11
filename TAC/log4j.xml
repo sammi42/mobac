@@ -36,7 +36,11 @@
   <logger name="tac.tar">
   	<level value="DEBUG" />
   </logger>
-    
+  
+  <logger name="SysInfo">
+  	<level value="OFF" />
+  </logger>
+      
   <root>
     <!-- 
     For maximum verboseness please use the following line

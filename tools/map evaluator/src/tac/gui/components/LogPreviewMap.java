@@ -105,9 +105,9 @@ public class LogPreviewMap extends PreviewMap {
 			g.drawRect(gx, gy, tileSize, tileSize);
 			g.setFont(tileInfoFont);
 			g.setColor(Color.BLUE);
-			g.drawString("zoom=" + zoom, gx + 4, gy += 14);
-			g.drawString("x=" + tilex, gx + 4, gy += 16);
-			g.drawString("y=" + tiley, gx + 4, gy += 16);
+			drawStringBG(g, "zoom=" + zoom, gx + 4, gy += 14);
+			drawStringBG(g, "x=" + tilex, gx + 4, gy += 16);
+			drawStringBG(g, "y=" + tiley, gx + 4, gy += 16);
 			String tileUrl = null;
 			try {
 				if (mapSource instanceof BeanShellMapSource)
@@ -129,6 +129,7 @@ public class LogPreviewMap extends PreviewMap {
 	private void drawUrl(Graphics g, String s, int x, int y, int width) {
 		FontMetrics fm = g.getFontMetrics();
 		int lineHeight = fm.getHeight();
+		int ascent = fm.getAscent();
 
 		int curX = x;
 		int curY = y;
@@ -137,8 +138,11 @@ public class LogPreviewMap extends PreviewMap {
 		int beginIndex = 0;
 		for (int i = 0; i < s.length(); i++) {
 			String sub = s.substring(beginIndex, i);
-			int wordWidth = fm.stringWidth(sub);
-			if (wordWidth >= width) {
+			int textWidth = fm.stringWidth(sub);
+			if (textWidth >= width) {
+				g.setColor(Color.WHITE);
+				g.fillRect(curX - 2, curY - ascent, textWidth + 2, lineHeight);
+				g.setColor(Color.BLUE);
 				g.drawString(sub, curX, curY);
 				curY += lineHeight;
 				beginIndex = i;
@@ -147,7 +151,22 @@ public class LogPreviewMap extends PreviewMap {
 		}
 		if (beginIndex != s.length()) {
 			String sub = s.substring(beginIndex, s.length());
+			g.setColor(Color.WHITE);
+			int textWidth = fm.stringWidth(sub);
+			g.fillRect(curX - 2, curY - ascent, textWidth + 2, lineHeight);
+			g.setColor(Color.BLUE);
 			g.drawString(sub, curX, curY);
 		}
+	}
+
+	protected void drawStringBG(Graphics g, String s, int curX, int curY) {
+		FontMetrics fm = g.getFontMetrics();
+		int lineHeight = fm.getHeight();
+		int ascent = fm.getAscent();
+		g.setColor(Color.WHITE);
+		int textWidth = fm.stringWidth(s);
+		g.fillRect(curX - 2, curY - ascent, textWidth + 2, lineHeight);
+		g.setColor(Color.BLUE);
+		g.drawString(s, curX, curY);
 	}
 }

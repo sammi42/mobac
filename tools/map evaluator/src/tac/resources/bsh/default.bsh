@@ -11,4 +11,6 @@ void addHeaders( java.net.HttpURLConnection conn) {
 }
 
 // Default size of each tile is 256x256 pixel
-tileSize = 256;
+tileSize = 256; // optional
+minZoom = 0;    // optional
+maxZoom = 22;   // optional

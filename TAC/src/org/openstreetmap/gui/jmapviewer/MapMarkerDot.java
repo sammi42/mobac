@@ -3,7 +3,7 @@ package org.openstreetmap.gui.jmapviewer;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
@@ -18,9 +18,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
  */
 public class MapMarkerDot implements MapMarker {
 
-	double lat;
-	double lon;
-	Color color;
+	protected double lat;
+	protected double lon;
+	protected Color color;
 
 	public MapMarkerDot(double lat, double lon) {
 		this(Color.YELLOW, lat, lon);
@@ -41,7 +41,7 @@ public class MapMarkerDot implements MapMarker {
 		return lon;
 	}
 
-	public void paint(Graphics g, Point position) {
+	public void paint(Graphics2D g, Point position) {
 		int size_h = 5;
 		int size = size_h * 2;
 		g.setColor(color);

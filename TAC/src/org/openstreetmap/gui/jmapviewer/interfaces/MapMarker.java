@@ -2,7 +2,7 @@ package org.openstreetmap.gui.jmapviewer.interfaces;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -33,5 +33,5 @@ public interface MapMarker {
 	 * @param g
 	 * @param position
 	 */
-	public void paint(Graphics g, Point position);
+	public void paint(Graphics2D g, Point position);
 }

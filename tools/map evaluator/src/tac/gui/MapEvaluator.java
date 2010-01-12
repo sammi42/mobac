@@ -1,6 +1,8 @@
 package tac.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +21,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
 import org.apache.log4j.Level;
@@ -26,7 +30,8 @@ import org.apache.log4j.Logger;
 
 import tac.StartTAC;
 import tac.gui.components.LineNumberedPaper;
-import tac.gui.components.LogPreviewMap;
+import tac.gui.mapview.LogPreviewMap;
+import tac.gui.mapview.ReferenceMapMarker;
 import tac.mapsources.BeanShellMapSource;
 import tac.mapsources.impl.Google;
 import tac.mapsources.impl.OsmMapSources;
@@ -45,32 +50,38 @@ public class MapEvaluator extends JFrame {
 
 	protected Logger log;
 	private final LogPreviewMap previewMap;
+	private JSplitPane splitPane;
 	private final LineNumberedPaper mapSourceEditor;
 
 	public MapEvaluator() throws HeadlessException {
 		super(TACInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
-		addWindowListener(new WindowDestroyer());
+		addWindowListener(new MEWindowAdapter());
+		setMinimumSize(new Dimension(300, 300));
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		previewMap = new LogPreviewMap();
-		mapSourceEditor = new LineNumberedPaper(10, 140);
+		previewMap.setMapMarkerVisible(true);
+		previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
+		mapSourceEditor = new LineNumberedPaper(3, 60);
 		try {
 			String code = Utilities.loadTextResource("bsh/default.bsh");
 			mapSourceEditor.setText(code);
 		} catch (IOException e) {
 			log.error("", e);
 		}
-		add(previewMap, BorderLayout.CENTER);
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 		JToolBar toolBar = new JToolBar("Toolbar");
 		addButtons(toolBar);
+		bottomPanel.setMinimumSize(new Dimension(200, 100));
 
+		JScrollPane editorScrollPane = new JScrollPane(mapSourceEditor);
 		bottomPanel.add(toolBar, BorderLayout.NORTH);
-		bottomPanel.add(mapSourceEditor, BorderLayout.CENTER);
-		add(bottomPanel, BorderLayout.SOUTH);
+		bottomPanel.add(editorScrollPane, BorderLayout.CENTER);
+		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, previewMap, bottomPanel);
+		add(splitPane, BorderLayout.CENTER);
+		setSize(800, 600);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setSize(600, 800);
 		INSTANCE = this;
 	}
 
@@ -166,7 +177,7 @@ public class MapEvaluator extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				exec();
+				executeCode();
 			}
 		});
 		toolBar.add(button);
@@ -204,10 +215,10 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 	}
 
-	private void exec() {
+	private void executeCode() {
 		try {
 			BeanShellMapSource testMapSource = new BeanShellMapSource(mapSourceEditor.getText());
-			if (testMapSource.getTileUrlConnection(0, 0, 0) != null) {
+			if (testMapSource.testCode()) {
 				previewMap.setMapSource(testMapSource);
 				return;
 			}
@@ -234,7 +245,13 @@ public class MapEvaluator extends JFrame {
 		INSTANCE.previewMap.addLog(msg);
 	}
 
-	private class WindowDestroyer extends WindowAdapter {
+	private class MEWindowAdapter extends WindowAdapter {
+
+		@Override
+		public void windowOpened(WindowEvent e) {
+			splitPane.setDividerLocation(0.8);
+		}
+
 		public void windowClosing(WindowEvent event) {
 			TileStore.getInstance().closeAll(true);
 		}

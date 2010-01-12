@@ -80,7 +80,7 @@ public class Tile {
 	 * been loaded.
 	 */
 	public void loadPlaceholderFromCache(TileImageCache cache) {
-		int tileSize = mapSource.getMapSpace().getTileSize(); 
+		int tileSize = mapSource.getMapSpace().getTileSize();
 		BufferedImage tmpImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = (Graphics2D) tmpImage.getGraphics();
 		// g.drawImage(image, 0, 0, null);
@@ -97,8 +97,8 @@ public class Tile {
 				int paintedTileCount = 0;
 				for (int x = 0; x < factor; x++) {
 					for (int y = 0; y < factor; y++) {
-						Tile tile = cache
-								.getTile(mapSource, xtile_high + x, ytile_high + y, zoom_high);
+						Tile tile = cache.getTile(mapSource, xtile_high + x, ytile_high + y,
+								zoom_high);
 						if (tile != null && tile.isLoaded()) {
 							paintedTileCount++;
 							tile.paint(g, x * tileSize, y * tileSize);
@@ -165,6 +165,11 @@ public class Tile {
 		this.image = image;
 	}
 
+	public void setErrorImage() {
+		if (image == null)
+			image = ERROR_IMAGE;
+	}
+
 	public void loadImage(InputStream input) throws IOException {
 		image = ImageIO.read(input);
 	}
@@ -207,13 +212,13 @@ public class Tile {
 			return;
 		g.drawImage(image, x, y, Color.WHITE, null);
 	}
-	
+
 	public void paintTransparent(Graphics g, int x, int y) {
 		if (image == null)
 			return;
 		g.drawImage(image, x, y, null);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Tile " + key;

@@ -2,6 +2,7 @@ package tac.gui.mapview;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -20,6 +21,7 @@ import tac.utilities.MyMath;
 public class ScaleBar {
 
 	private static final Stroke STROKE = new BasicStroke(1);
+	private static final Font FONT = new Font("Sans Serif", Font.PLAIN, 12);
 
 	/**
 	 * Horizontal margin between scale bar and right border of the map
@@ -71,6 +73,7 @@ public class ScaleBar {
 		g.setColor(Color.BLACK);
 		g.drawRect(posX, posY - 10, w2, 20);
 		String value = Integer.toString((int) dist2) + " " + unit;
+		g.setFont(FONT);
 		g.drawString(value, posX + 10, posY + 4);
 	}
 

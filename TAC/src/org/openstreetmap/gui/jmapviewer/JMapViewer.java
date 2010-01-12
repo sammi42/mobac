@@ -302,7 +302,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics graphics) {
+		Graphics2D g = (Graphics2D) graphics;
 		// if (mapIsMoving) {
 		// mapIsMoving = false;
 		// Doesn't look very pretty but is much more faster

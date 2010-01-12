@@ -1,4 +1,4 @@
-package tac.gui.components;
+package tac.gui.mapview;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -101,6 +101,12 @@ public class LogPreviewMap extends PreviewMap {
 	public class MapGridInfoLayer extends MapGridLayer {
 
 		public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
+			if (tilex < 0 || tiley < 0)
+				return;
+			int max = mapSource.getMapSpace().getMaxPixels(zoom);
+			int tileSize = mapSource.getMapSpace().getTileSize();
+			if (tilex * tileSize >= max || tiley * tileSize >= max)
+				return;
 			g.setColor(Color.BLACK);
 			g.drawRect(gx, gy, tileSize, tileSize);
 			g.setFont(tileInfoFont);

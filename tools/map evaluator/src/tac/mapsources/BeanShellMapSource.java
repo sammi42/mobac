@@ -22,6 +22,8 @@ public class BeanShellMapSource implements MapSource {
 	private static int NUM = 0;
 	private String name;
 	private MapSpace mapSpace;
+	private int minZoom = 0;
+	private int maxZoom = 22;
 
 	private Logger log = Logger.getLogger(BeanShellMapSource.class);
 
@@ -38,6 +40,12 @@ public class BeanShellMapSource implements MapSource {
 			mapSpace = new MercatorPower2MapSpace(tileSize);
 		} else
 			mapSpace = MercatorPower2MapSpace.INSTANCE_256;
+		o = i.get("minZoom");
+		if (o != null)
+			minZoom = ((Integer) o).intValue();
+		o = i.get("maxZoom");
+		if (o != null)
+			maxZoom = ((Integer) o).intValue();
 	}
 
 	@Override
@@ -67,6 +75,10 @@ public class BeanShellMapSource implements MapSource {
 		return conn;
 	}
 
+	public boolean testCode() throws IOException {
+		return (getTileUrlConnection(minZoom, 0, 0) != null);
+	}
+
 	public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
 		try {
 			return (String) i.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
@@ -83,12 +95,12 @@ public class BeanShellMapSource implements MapSource {
 
 	@Override
 	public int getMaxZoom() {
-		return 20;
+		return maxZoom;
 	}
 
 	@Override
 	public int getMinZoom() {
-		return 0;
+		return minZoom;
 	}
 
 	@Override

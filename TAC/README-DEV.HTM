@@ -30,6 +30,10 @@ pre {
 	margin-left: 140px;
 }
 
+tt {
+	font-size: 120%;
+}
+
 p,li {
 	font-size: 110%;
 	font-family: Helvetica, Arial, sans-serif;
@@ -39,7 +43,7 @@ p,li {
 </head>
 <body>
 <h1>TrekBuddy Atlas Creator - Readme for Developers</h1>
-<p>Welcome to the develop documentation of TrekBuddy Atlas Creator
+<p>Welcome to the developer documentation of TrekBuddy Atlas Creator
 (TAC). First please read the <a href="README.HTM">standard readme</a>
 for all users.</p>
 <h2>Code access</h2>
@@ -50,11 +54,18 @@ repository at SourceForge:</p>
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/TAC"><tt>https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/TAC</tt></a>
 </p>
 <p>There you will find the latest sources of TAC in form of an
-Eclipse (v3.4) project. All tools, libraries, sources and build files
-are included in this repository. The only exception is <a
+Eclipse (v3.5) project. All tools, libraries, sources and build files
+are included in this repository.</p>
+
+<h2>Using TAC within Eclipse</h2>
+<p>If you want to run TAC from within Eclipse you only need Eclipse
+with Java Development Tools installed (included in all Eclipse Java
+editions). <br />
+The root class for starting TAC in Eclipse <tt>tac.StartTAC</tt></p>
+<p>Compile/building TAC without Eclipse requires <a
 	href="http://ant.apache.org/">Apache Ant</a>) which is used for
 building the jar version of TAC and of course the Java Development Kit
-(JDK).</p>
+(JDK) installed.</p>
 
 <h2>Building TAC</h2>
 <p>For building TAC please run Apache Ant on the provided file <tt><a
@@ -75,7 +86,7 @@ which is included in the final jar of TAC.</p>
 yourself please consider the following guidelines:</p>
 <ol>
 	<li>Chose a version/release name that makes it clear that it is
-	not an official release: Change the version string to refelect that.<br>
+	not an official release: Change the version string to reflect that.<br>
 	Example: <tt>1.6 beta 3 XYZ edition</tt><br>
 	The version string is located in the properties file <tt>src/tac/tac.properties</tt>.
 	Change the entry <b>tac.version</b> to your custom release name.</li>
@@ -88,6 +99,37 @@ yourself please consider the following guidelines:</p>
 	are always welcome. Useful modifications have a great chance to be
 	integrated into the main branch.</li>
 </ol>
+
+<h2>Source code overview - important packages</h2>
+<h3><a href="src/tac/gui">tac.gui</a></h3>
+<p>This package contains the implementation of all dialogs/windows.
+In the sub-packages you can find the related implementations of used
+graphical components - e.g. <tt><a
+	href="src/tac/gui/mapview/PreviewMap.java">tac.gui.mapview.PreviewMap</a></tt> - the
+component that draws the movable map background used by TAC.</p>
+<h3><a href="src/tac/mapsources">tac.mapsources</a></h3>
+<p>Holds the infrastructure and the implementation of all map
+sources available within TAC. For implementing own map sources you
+should derive your map source from the abstract base class <a
+	href="src/tac/mapsources/AbstractMapSource.java"><tt>tac.mapsources.AbstractMapSource</tt></a>.
+The list of available map sources is maintained by <a
+	href="src/tac/mapsources/MapSourcesManager.java"><tt>tac.mapsources.MapSourcesManager</tt></a>.
+By adding an instance of a map sources to the static array field <tt>MAP_SOURCES</tt>
+the map source will be available in the map sources combo-box within
+TAC.</p>
+<h3><a href="src/tac/program/atlascreators">tac.program.atlascreators</a></h3>
+<p>Holds the implementations of all atlas output formats provided by
+TAC. Each class in the package implements exactly one atlas output
+format. The list of available formats is maintained in the enumeration <a
+	href="src/tac/program/model/AtlasOutputFormat.java"><tt>tac.program.model.AtlasOutputFormat</tt></a>.
+</p>
+
+<h3><a href="src/tac/tools">tac.tools</a></h3>
+<p>This package contains additional stand-alone tools that are not
+shipped with the TrekBuddy Atlas Creator binary release. For example the
+<a href="src/tac/tools/MapSourcesTester.java"><tt>tac.tools.MapSourcesTester</tt></a>
+downloads one tile from each map source for verifying that the map
+source is functional.</p>
 
 <h2>Participation</h2>
 <p>If you are familiar with the programming language Java and you

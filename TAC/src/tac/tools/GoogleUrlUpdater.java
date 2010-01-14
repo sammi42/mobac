@@ -61,6 +61,7 @@ public class GoogleUrlUpdater {
 	 */
 	public static void main(String[] args) {
 		Logging.disableLogging();
+		// Logging.configureConsoleLogging(Level.TRACE);
 
 		// just for initializing the MapSourcesManager
 		MapSourcesUpdater.loadMapSourceProperties(MAPSOURCES_PROPERTIES);
@@ -143,9 +144,9 @@ public class GoogleUrlUpdater {
 	public void testMapSource(UpdateableMapSource ums) {
 		String key = ums.key;
 		KEYS.add(key);
-		String oldUrlTemplate = System.getProperty(key);
+		String oldUrlTemplate = MAPSOURCES_PROPERTIES.getProperty(key);
 		if (oldUrlTemplate == null)
-			throw new RuntimeException(ums.mapSourceClass + " " + key);
+			throw new RuntimeException("Url for key not found: " + key);
 		String newUrlTemplate = ums.getUpdatedUrl(this);
 		if (newUrlTemplate == null) {
 			System.out.println(ums.mapSourceClass.getSimpleName());

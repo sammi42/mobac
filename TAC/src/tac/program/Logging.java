@@ -75,6 +75,10 @@ public class Logging {
 		configureConsoleLogging(Level.ERROR, new SimpleLayout());
 	}
 
+	public static void configureConsoleLogging(Level level) {
+		configureConsoleLogging(level, new SimpleLayout());
+	}
+
 	public static void configureConsoleLogging(Level level, Layout layout) {
 		Logger logger = Logger.getRootLogger();
 		ConsoleAppender consoleAppender = new ConsoleAppender(layout);

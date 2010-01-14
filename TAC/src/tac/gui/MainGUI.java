@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -69,6 +71,7 @@ import tac.program.model.TileImageParameters;
 import tac.program.tilestore.TileStore;
 import tac.utilities.GBC;
 import tac.utilities.TACExceptionHandler;
+import tac.utilities.Utilities;
 
 public class MainGUI extends JFrame implements MapEventListener {
 
@@ -122,6 +125,11 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private MainGUI() {
 		super();
+		ArrayList<Image> images = new ArrayList<Image>(3);
+		images.add(Utilities.loadResourceImageIcon("tac48.png").getImage());
+		images.add(Utilities.loadResourceImageIcon("tac32.png").getImage());
+		images.add(Utilities.loadResourceImageIcon("tac16.png").getImage());
+		setIconImages(images);
 		TACExceptionHandler.registerForCurrentThread();
 		setTitle(TACInfo.getCompleteTitle());
 

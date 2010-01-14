@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
@@ -73,6 +75,7 @@ public class MagellanRmp extends AtlasCreator {
 		int count = (xMax - xMin + 1) * (yMax - yMin + 1);
 		atlasProgress.initMapCreation(1000);
 		TacTile[] images = new TacTile[count];
+		ImageIO.setUseCache(false);
 
 		int i = 0;
 		MapSpace mapSpace = map.getMapSource().getMapSpace();
@@ -140,7 +143,7 @@ public class MagellanRmp extends AtlasCreator {
 		int count = 0;
 
 		/* --- Create instance --- */
-		RmpLayer rmpLayer = new RmpLayer(atlasProgress);
+		RmpLayer rmpLayer = new RmpLayer(this);
 
 		/* --- Get the coordinate space of the image --- */
 		BoundingRect rect = si.getBoundingRect();

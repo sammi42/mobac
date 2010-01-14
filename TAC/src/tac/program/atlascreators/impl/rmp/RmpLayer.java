@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import tac.gui.AtlasProgress;
+import tac.program.atlascreators.AtlasCreator;
 import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
 
 /**
@@ -28,14 +29,14 @@ public class RmpLayer {
 	private List<Tiledata> tiles;
 	private TLMEntry tlmFile = null;
 
-	private final AtlasProgress atlasProgress;
+	private final AtlasCreator atlasCreator;
 
 	/**
 	 * Constructor
 	 */
-	public RmpLayer(AtlasProgress atlasProgress) {
+	public RmpLayer(AtlasCreator atlasCreator) {
 		tiles = new LinkedList<Tiledata>();
-		this.atlasProgress = atlasProgress;
+		this.atlasCreator = atlasCreator;
 	}
 
 	/**
@@ -262,13 +263,13 @@ public class RmpLayer {
 			/* --- Number of tiles --- */
 			RmpTools.writeValue(bos, tiles.size(), 4);
 
+			AtlasProgress atlasProgress = atlasCreator.getAtlasProgress();
 			/* --- The tiles --- */
 			int x = 0;
 			int xMax = tiles.size();
 			for (Tiledata tile : tiles) {
 				tile.writeTileData(bos);
-				if (Thread.currentThread().isInterrupted())
-					throw new InterruptedException();
+				atlasCreator.checkUserAbort();
 
 				atlasProgress.setMapCreationProgress((1000 * x++ / xMax));
 			}

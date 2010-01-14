@@ -121,6 +121,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public AtlasProgress(AtlasThread atlasThread) {
 		super("Atlas creation in progress");
 		this.atlasThread = atlasThread;
+		setIconImages(MainGUI.TAC_ICONS);
 		setLayout(new GridBagLayout());
 		updateTask = new UpdateTask();
 		guiUpdater = new GUIUpdater();

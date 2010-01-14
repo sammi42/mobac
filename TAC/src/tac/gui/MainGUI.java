@@ -83,6 +83,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private static Color labelForegroundColor = Color.white;
 
 	private static MainGUI mainGUI = null;
+	public static final ArrayList<Image> TAC_ICONS = new ArrayList<Image>(3);
 
 	protected JAtlasTree jAtlasTree;
 	public PreviewMap previewMap;
@@ -125,11 +126,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private MainGUI() {
 		super();
-		ArrayList<Image> images = new ArrayList<Image>(3);
-		images.add(Utilities.loadResourceImageIcon("tac48.png").getImage());
-		images.add(Utilities.loadResourceImageIcon("tac32.png").getImage());
-		images.add(Utilities.loadResourceImageIcon("tac16.png").getImage());
-		setIconImages(images);
+		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac48.png").getImage());
+		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac32.png").getImage());
+		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac16.png").getImage());
+		setIconImages(TAC_ICONS);
 		TACExceptionHandler.registerForCurrentThread();
 		setTitle(TACInfo.getCompleteTitle());
 

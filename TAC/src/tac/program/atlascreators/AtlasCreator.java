@@ -179,10 +179,14 @@ public abstract class AtlasCreator {
 	 * 
 	 * @throws InterruptedException
 	 */
-	protected void checkUserAbort() throws InterruptedException {
+	public void checkUserAbort() throws InterruptedException {
 		if (Thread.currentThread().isInterrupted())
 			throw new InterruptedException();
 		pauseResumeHandler.pauseWait();
 	}
 
+	public AtlasProgress getAtlasProgress() {
+		return atlasProgress;
+	}
+	
 }

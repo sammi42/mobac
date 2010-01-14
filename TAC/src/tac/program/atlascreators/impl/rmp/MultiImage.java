@@ -102,6 +102,9 @@ public class MultiImage implements CalibratedImage {
 
 				if (hit != HIT_NOHIT) {
 					if (isFirstHit) {
+						// Release the unused images
+						for (int j = firstHit; j<i; j++)
+							images[j] = null;
 						firstHit = i;
 						isFirstHit = false;
 					}

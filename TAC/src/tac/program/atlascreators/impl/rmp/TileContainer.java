@@ -68,8 +68,6 @@ public class TileContainer {
 	 * Write the whole tree into the stream
 	 */
 	public void writeTree(OutputStream os) throws IOException {
-		int i;
-
 		/* --- if this container has subtrees --- */
 		if (previous != null) {
 			/* --- Write previous --- */
@@ -79,8 +77,8 @@ public class TileContainer {
 			writeContainer(os);
 
 			/* --- And all subtrees --- */
-			for (i = 0; i < followUps.size(); i++)
-				followUps.get(i).writeTree(os);
+			for (TileContainer tc : followUps)
+				tc.writeTree(os);
 		} else {
 			/* --- Just write the tile itself, if it does not have subtrees --- */
 			writeContainer(os);

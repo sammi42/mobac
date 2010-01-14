@@ -69,55 +69,43 @@ public class ChecksumOutputStream extends OutputStream {
 	}
 
 	@Override
-	public void write(byte[] arg0, int arg1, int arg2) throws IOException {
+	public void write(byte[] buf, int off, int len) throws IOException {
 		int value;
+		int o = off;
 
-		for (int i = arg1; i < arg2; i++) {
+		for (int i = 0; i < len; i++) {
 			if (evenByte)
-				value = (((int) arg0[i]) & 0xFF) << 8;
+				value = (((int) buf[o++]) & 0xFF) << 8;
 			else
-				value = (((int) arg0[i]) & 0xFF);
+				value = (((int) buf[o++]) & 0xFF);
 
 			checksum ^= value;
 			evenByte = !evenByte;
 		}
 
 		/* --- Send to next stream --- */
-		nextStream.write(arg0, arg1, arg2);
+		nextStream.write(buf, off, len);
 	}
 
 	@Override
-	public void write(byte[] arg0) throws IOException {
-		int value;
-
-		for (int i = 0; i < arg0.length; i++) {
-			if (evenByte)
-				value = (((int) arg0[i]) & 0xFF) << 8;
-			else
-				value = (((int) arg0[i]) & 0xFF);
-
-			checksum ^= value;
-			evenByte = !evenByte;
-		}
-
-		/* --- Send to next stream --- */
-		nextStream.write(arg0);
+	public void write(byte[] buf) throws IOException {
+		write(buf, 0, buf.length);
 	}
 
 	@Override
-	public void write(int arg0) throws IOException {
+	public void write(int val) throws IOException {
 		int value;
 
 		if (evenByte)
-			value = (arg0 & 0xFF) << 8;
+			value = (val & 0xFF) << 8;
 		else
-			value = (arg0 & 0xFF);
+			value = (val & 0xFF);
 
 		checksum ^= value;
 		evenByte = !evenByte;
 
 		/* --- Send to next stream --- */
-		nextStream.write(arg0);
+		nextStream.write(val);
 	}
 
 	@Override

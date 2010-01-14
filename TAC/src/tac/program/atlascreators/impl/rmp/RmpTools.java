@@ -113,7 +113,7 @@ public class RmpTools {
 		if (name.length() > 8)
 			name = name.substring(0, 8);
 
-		return name.toLowerCase();
+		return name.toLowerCase().trim();
 	}
 
 	/**
@@ -132,6 +132,6 @@ public class RmpTools {
 		if (indexstr.length() + basename.length() > 8)
 			basename = basename.substring(0, 8 - indexstr.length());
 
-		return basename + indexstr;
+		return basename.trim() + indexstr;
 	}
 }

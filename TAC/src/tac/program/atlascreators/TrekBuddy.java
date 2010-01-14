@@ -34,7 +34,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 	protected File mapFolder = null;
 	protected MapTileWriter mapTileWriter;
 
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
 		super.startAtlasCreation(atlas);
 	}
 
@@ -56,14 +56,12 @@ public abstract class TrekBuddy extends AtlasCreator {
 		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
 	}
 
-	protected void writeMapFile() {
+	protected void writeMapFile() throws IOException {
 		File mapFile = new File(mapFolder, map.getName() + ".map");
 		FileOutputStream mapFileStream = null;
 		try {
 			mapFileStream = new FileOutputStream(mapFile);
 			writeMapFile(mapFileStream);
-		} catch (IOException e) {
-			log.error("", e);
 		} finally {
 			Utilities.closeStream(mapFileStream);
 		}

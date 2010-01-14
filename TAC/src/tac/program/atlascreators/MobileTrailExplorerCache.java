@@ -39,7 +39,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
 		super.startAtlasCreation(atlas);
 		File cacheFile = new File(atlasDir, "MTEFileCache");
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(cacheFile), 8216);
@@ -47,7 +47,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	}
 
 	@Override
-	public void finishAtlasCreation() throws IOException {
+	public void finishAtlasCreation() throws IOException, InterruptedException {
 		super.finishAtlasCreation();
 		cacheOutStream.close();
 	}

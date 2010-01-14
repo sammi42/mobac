@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 import tac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
 import tac.program.atlascreators.impl.rmp.rmpfile.RmpIni;
 import tac.utilities.Utilities;
+import tac.utilities.stream.CountingOutputStream;
+import tac.utilities.stream.NullOutputStream;
 import tac.utilities.stream.RandomAccessFileOutputStream;
 
 /**
@@ -40,8 +42,10 @@ public class RmpWriter {
 	 *            file
 	 * @param rmpFile
 	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	public RmpWriter(String imageName, int layerCount, File rmpFile) throws IOException {
+	public RmpWriter(String imageName, int layerCount, File rmpFile) throws IOException,
+			InterruptedException {
 		this.rmpFile = rmpFile;
 		// We only use one A00 entry per map/layer - therefore we can
 		// pre-calculate the number of entries:
@@ -64,7 +68,7 @@ public class RmpWriter {
 		writeFileEntry(rmpIni);
 	}
 
-	public void writeFileEntry(RmpFileEntry entry) throws IOException {
+	public void writeFileEntry(RmpFileEntry entry) throws IOException, InterruptedException {
 		EntryInfo info = new EntryInfo();
 		info.name = entry.getFileName();
 		info.extendsion = entry.getFileExtension();
@@ -75,6 +79,44 @@ public class RmpWriter {
 			entryOut.write(0);
 		entries.add(info);
 		log.debug("Written data of entry " + entry + " bytes=" + info.length);
+	}
+
+	public void prepareFileEntry(RmpFileEntry entry) throws IOException, InterruptedException {
+		EntryInfo info = new EntryInfo();
+		info.name = entry.getFileName();
+		info.extendsion = entry.getFileExtension();
+		info.offset = (int) rmpOutputFile.getFilePointer();
+		CountingOutputStream cout = new CountingOutputStream(new NullOutputStream());
+		entry.writeFileContent(cout);
+		info.length = (int) cout.getBytesWritten();
+		long newPos = info.offset + info.length;
+		if ((info.length % 2) != 0)
+			newPos++;
+		rmpOutputFile.seek(newPos);
+		entries.add(info);
+		log.debug("Prepared data of entry " + entry + " bytes=" + info.length);
+	}
+
+	public void writePreparedFileEntry(RmpFileEntry entry) throws IOException, InterruptedException {
+		long pos = rmpOutputFile.getFilePointer();
+		EntryInfo info = new EntryInfo();
+		info.name = entry.getFileName();
+		info.extendsion = entry.getFileExtension();
+		int index = entries.indexOf(info);
+		if (index < 0)
+			throw new RuntimeException("Index for entry not found");
+		info = entries.get(index);
+
+		rmpOutputFile.seek(info.offset);
+		entry.writeFileContent(entryOut);
+		int newLength = ((int) rmpOutputFile.getFilePointer()) - info.offset;
+		if (newLength != info.length)
+			throw new RuntimeException("Length of entry has changed!");
+		if ((newLength % 2) != 0)
+			entryOut.write(0);
+
+		// restore old file position
+		rmpOutputFile.seek(pos);
 	}
 
 	/**
@@ -143,6 +185,37 @@ public class RmpWriter {
 		@Override
 		public String toString() {
 			return "\"" + name + "." + extendsion + "\" offset=" + offset + " length=" + length;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((extendsion == null) ? 0 : extendsion.hashCode());
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			EntryInfo other = (EntryInfo) obj;
+			if (extendsion == null) {
+				if (other.extendsion != null)
+					return false;
+			} else if (!extendsion.equals(other.extendsion))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			return true;
 		}
 
 	}

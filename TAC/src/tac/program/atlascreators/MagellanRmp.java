@@ -1,7 +1,6 @@
 package tac.program.atlascreators;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -16,6 +15,8 @@ import tac.program.atlascreators.impl.rmp.RmpLayer;
 import tac.program.atlascreators.impl.rmp.RmpTools;
 import tac.program.atlascreators.impl.rmp.RmpWriter;
 import tac.program.atlascreators.impl.rmp.TacTile;
+import tac.program.atlascreators.impl.rmp.Tiledata;
+import tac.program.atlascreators.impl.rmp.RmpLayer.TLMEntry;
 import tac.program.atlascreators.impl.rmp.interfaces.CalibratedImage;
 import tac.program.atlascreators.impl.rmp.rmpfile.Bmp2bit;
 import tac.program.atlascreators.impl.rmp.rmpfile.Bmp4bit;
@@ -36,7 +37,7 @@ public class MagellanRmp extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
 		super.startAtlasCreation(atlas);
 		int mapCount = 0;
 		for (LayerInterface layer : atlas) {
@@ -63,13 +64,8 @@ public class MagellanRmp extends AtlasCreator {
 	}
 
 	@Override
-	public void createMap() throws MapCreationException {
-		try {
-			createTiles();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		}
+	public void createMap() throws MapCreationException, InterruptedException {
+		createTiles();
 	}
 
 	@Override
@@ -86,15 +82,17 @@ public class MagellanRmp extends AtlasCreator {
 				images[i++] = new TacTile(mapDlTileProvider, mapSpace, x, y, zoom);
 			}
 		}
-		atlasProgress.setMapCreationProgress(100);
 		// Note: MultiImage relies on the fact, that the image array is sorted
 		// on the left border (west coordinate / x coordinate)
 		MultiImage layerImage = new MultiImage(images, map);
 		try {
 			RmpLayer layer = createLayer(layerImage, layerNum);
 			String layerName = RmpTools.buildTileName(imageName, layerNum);
-			rmpWriter.writeFileEntry(layer.getTLMFile(layerName));
+			TLMEntry tlmEntry = layer.getTLMFile(layerName);
+			rmpWriter.prepareFileEntry(tlmEntry);
 			rmpWriter.writeFileEntry(layer.getA00File(layerName));
+			tlmEntry.updateContent();
+			rmpWriter.writePreparedFileEntry(tlmEntry);
 			atlasProgress.setMapCreationProgress(1000);
 		} catch (IOException e) {
 			throw new MapCreationException(e);
@@ -103,7 +101,7 @@ public class MagellanRmp extends AtlasCreator {
 	}
 
 	@Override
-	public void finishAtlasCreation() throws IOException {
+	public void finishAtlasCreation() throws IOException, InterruptedException {
 		if (rmpWriter == null)
 			return; // Creation already aborted
 		try {
@@ -142,7 +140,7 @@ public class MagellanRmp extends AtlasCreator {
 		int count = 0;
 
 		/* --- Create instance --- */
-		RmpLayer result = new RmpLayer();
+		RmpLayer rmpLayer = new RmpLayer(atlasProgress);
 
 		/* --- Get the coordinate space of the image --- */
 		BoundingRect rect = si.getBoundingRect();
@@ -168,7 +166,6 @@ public class MagellanRmp extends AtlasCreator {
 		double x_end = (rect.getEast() + 180.0) / tile_width;
 		double y_end = (rect.getSouth() + 90.0) / tile_height;
 
-		double x_count = (x_end - x_start) / 800.0;
 		/*
 		 * Create the tiles - process works column wise, starting on the top
 		 * left corner of the destination area.
@@ -176,24 +173,26 @@ public class MagellanRmp extends AtlasCreator {
 		for (int x = x_start; x < x_end; x++) {
 			for (int y = y_start; y < y_end; y++) {
 				count++;
-				checkUserAbort();
 				if (log.isTraceEnabled())
 					log.trace(String.format("Create tile %d layer=%d", count, layer));
 
 				/* --- Create tile --- */
 				BoundingRect subrect = new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
 						- 90, x * tile_width - 180, (x + 1) * tile_width - 180);
-				BufferedImage img = si.getSubImage(subrect, 256, 256);
-				result.addImage((int) x, (int) y, img);
+				Tiledata td = new Tiledata();
+				td.posx = x;
+				td.posy = y;
+				td.rect = subrect;
+				td.si = si;
+				rmpLayer.addPreparedImage(td);
 			}
-			atlasProgress.setMapCreationProgress(100 + (int) ((x - x_start) / x_count));
 		}
 
 		/* --- Build the TLM file --- */
-		result.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect
+		rmpLayer.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect
 				.getNorth(), rect.getSouth());
 
-		return result;
+		return rmpLayer;
 	}
 
 }

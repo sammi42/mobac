@@ -26,7 +26,7 @@ public class CacheBox extends AtlasCreator {
 	private MapInfo activeMapInfo;
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
 		super.startAtlasCreation(atlas);
 	}
 
@@ -96,13 +96,8 @@ public class CacheBox extends AtlasCreator {
 	}
 
 	@Override
-	public void createMap() throws MapCreationException {
-		try {
-			createTiles();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		}
+	public void createMap() throws MapCreationException, InterruptedException {
+		createTiles();
 	}
 
 	@Override

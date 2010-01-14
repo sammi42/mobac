@@ -48,7 +48,7 @@ public class AndNav extends AtlasCreator {
 		}
 	}
 
-	public void createMap() throws MapCreationException {
+	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			Utilities.mkDirs(mapZoomDir);
 		} catch (IOException e) {
@@ -56,12 +56,7 @@ public class AndNav extends AtlasCreator {
 		}
 
 		// This means there should not be any resizing of the tiles.
-		try {
-			createTiles();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		}
+		createTiles();
 	}
 
 	@Override

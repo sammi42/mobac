@@ -35,7 +35,7 @@ public class TrekBuddyCustom extends TrekBuddy {
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
-	public void createMap() throws MapCreationException {
+	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			Utilities.mkDirs(mapFolder);
 
@@ -56,10 +56,9 @@ public class TrekBuddyCustom extends TrekBuddy {
 				super.createTiles();
 
 			mapTileWriter.finalizeMap();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
 		} catch (MapCreationException e) {
+			throw e;
+		} catch (InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(e);

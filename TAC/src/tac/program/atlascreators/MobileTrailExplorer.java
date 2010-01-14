@@ -44,23 +44,17 @@ public class MobileTrailExplorer extends AtlasCreator {
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));
 	}
 
-	public void createMap() throws MapCreationException {
+	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			Utilities.mkDir(mapDir);
 			Utilities.mkDir(mapZoomDir);
 		} catch (IOException e1) {
 			throw new MapCreationException(e1);
 		}
-		try {
-			if (!"png".equalsIgnoreCase(mapSource.getTileType()))
-				// If the tile image format is not png we have to convert it
-				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider,
-						TileImageFormat.PNG);
-			createTiles();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		}
+		if (!"png".equalsIgnoreCase(mapSource.getTileType()))
+			// If the tile image format is not png we have to convert it
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		createTiles();
 	}
 
 	@Override

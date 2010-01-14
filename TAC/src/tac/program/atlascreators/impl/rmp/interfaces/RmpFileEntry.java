@@ -16,8 +16,10 @@ import java.io.OutputStream;
 public interface RmpFileEntry {
 	/**
 	 * Returns the content of the file as byte array
+	 * 
+	 * @throws InterruptedException
 	 */
-	public void writeFileContent(OutputStream os) throws IOException;
+	public void writeFileContent(OutputStream os) throws IOException, InterruptedException;
 
 	/**
 	 * Returns the name of the file without extension
@@ -28,4 +30,5 @@ public interface RmpFileEntry {
 	 * Returns the extension of the file
 	 */
 	public String getFileExtension();
+
 }

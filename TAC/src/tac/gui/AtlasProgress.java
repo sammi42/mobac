@@ -429,9 +429,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			downloadControlListener = null;
 			closeWindow();
 		} else if (abortAtlasDownloadButton.equals(source)) {
+			aborted = true;
 			updateTask.cancel();
 			if (downloadControlListener != null) {
-				aborted = true;
 				downloadControlListener.abortAtlasCreation();
 			} else
 				dispose();

@@ -85,7 +85,7 @@ public class BigPlanetSql extends AtlasCreator {
 	}
 
 	@Override
-	public void createMap() throws MapCreationException {
+	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			SQLiteLoader.loadSQLite();
 		} catch (SQLException e) {
@@ -95,9 +95,6 @@ public class BigPlanetSql extends AtlasCreator {
 			initializeDB();
 			createTiles();
 			conn.close();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
 		} catch (SQLException e) {
 			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\"",
 					e);

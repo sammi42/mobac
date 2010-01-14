@@ -66,7 +66,7 @@ public class GarminCustom extends AtlasCreator {
 	}
 
 	@Override
-	public void createMap() throws MapCreationException {
+	public void createMap() throws MapCreationException, InterruptedException {
 		File kmzFile = null;
 		try {
 			Utilities.mkDir(mapDir);
@@ -78,8 +78,9 @@ public class GarminCustom extends AtlasCreator {
 			kmzOutputStream.close();
 			kmzFile = null;
 		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
+			throw e;
+		} catch (MapCreationException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(e);
 		} finally {

@@ -35,19 +35,14 @@ public class Ozi extends TrekBuddy {
 		mapName = map.getName();
 	}
 
-	public void createMap() throws MapCreationException {
+	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			Utilities.mkDir(mapDir);
-		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+		} catch (IOException e) {
+			throw new MapCreationException(e);
 		}
-		try {
-			createTiles();
-			writeMapFile();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		}
+		createTiles();
+		writeMapFile();
 	}
 
 	@Override

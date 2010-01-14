@@ -86,9 +86,10 @@ public abstract class AtlasCreator {
 	};
 
 	/**
+	 * @throws InterruptedException
 	 * @see AtlasCreator
 	 */
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
 		this.atlas = atlas;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
@@ -107,9 +108,10 @@ public abstract class AtlasCreator {
 	}
 
 	/**
+	 * @throws InterruptedException
 	 * @see AtlasCreator
 	 */
-	public void finishAtlasCreation() throws IOException {
+	public void finishAtlasCreation() throws IOException, InterruptedException {
 	}
 
 	public void abortAtlasCreation() throws IOException {
@@ -158,9 +160,10 @@ public abstract class AtlasCreator {
 	}
 
 	/**
+	 * @throws InterruptedException
 	 * @see AtlasCreator
 	 */
-	public abstract void createMap() throws MapCreationException;
+	public abstract void createMap() throws MapCreationException, InterruptedException;
 
 	/**
 	 * Usually called within {@link #createMap()}.

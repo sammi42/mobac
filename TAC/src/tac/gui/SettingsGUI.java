@@ -318,15 +318,19 @@ public class SettingsGUI extends JDialog {
 		backGround.add(scrollPane, BorderLayout.CENTER);
 	}
 
-	private synchronized void updateTileStoreInfoPanelAsync() {
+	private synchronized void updateTileStoreInfoPanelAsync(final MapSource mapSource) {
 		if (tileStoreAsyncThread != null)
 			return; // An update is currently running
 		tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
 
 			@Override
 			public void run() {
-				log.debug("Updating tilestore information in background");
-				updateTileStoreInfoPanel();
+				if (mapSource == null)
+					log.debug("Updating tilestore information in background");
+				else
+					log.debug("Updating tilestore information for \"" + mapSource
+							+ "\" in background");
+				updateTileStoreInfoPanel(mapSource);
 				log.debug("Updating tilestore information finished");
 				tileStoreAsyncThread = null;
 			}
@@ -363,7 +367,7 @@ public class SettingsGUI extends JDialog {
 			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
 			final JButton deleteButton = new JButton(trash);
 			TileSourceInfoComponents info = new TileSourceInfoComponents();
-			info.tileSource = ts;
+			info.mapSource = ts;
 			info.countLabel = mapTileCountLabel;
 			info.sizeLabel = mapTileSizeLabel;
 			tileStoreInfoList.add(info);
@@ -391,29 +395,37 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
 	}
 
-	private void updateTileStoreInfoPanel() {
+	private void updateTileStoreInfoPanel(MapSource mapSource) {
 		try {
 			TileStore tileStore = TileStore.getInstance();
 
 			long totalTileCount = 0;
 			long totalTileSize = 0;
 			for (final TileSourceInfoComponents info : tileStoreInfoList) {
-				MapSource ts = info.tileSource;
+				MapSource ms = info.mapSource;
 				Utilities.checkForInterruption();
-				TileStoreInfo tsi = tileStore.getStoreInfo(ts);
-				int count = tsi.getTileCount();
-				long size = tsi.getStoreSize();
+				int count;
+				long size;
+				if (mapSource == null || ms.equals(mapSource)) {
+					TileStoreInfo tsi = tileStore.getStoreInfo(ms);
+					count = tsi.getTileCount();
+					size = tsi.getStoreSize();
+					info.count = count;
+					info.size = size;
+					final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
+					final String mapTileSizeText = Utilities.formatBytes(size);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
+							info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
+						}
+					});
+				} else {
+					count = info.count;
+					size = info.size;
+				}
 				totalTileCount += count;
 				totalTileSize += size;
-				final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
-				final String mapTileSizeText = Utilities.formatBytes(size);
-
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
-						info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
-					}
-				});
 			}
 			final String totalTileCountText = "<html><b>" + Long.toString(totalTileCount)
 					+ "</b></html>";
@@ -664,7 +676,7 @@ public class SettingsGUI extends JDialog {
 			// hard disk performance
 			synchronized (this) {
 				if (firstShown)
-					SettingsGUI.this.updateTileStoreInfoPanelAsync();
+					SettingsGUI.this.updateTileStoreInfoPanelAsync(null);
 				firstShown = false;
 			}
 		}
@@ -722,7 +734,7 @@ public class SettingsGUI extends JDialog {
 					try {
 						TileStore ts = TileStore.getInstance();
 						ts.clearStore(source);
-						SettingsGUI.this.updateTileStoreInfoPanelAsync();
+						SettingsGUI.this.updateTileStoreInfoPanelAsync(source);
 						SettingsGUI.this.repaint();
 					} catch (Exception e) {
 						log.error("An error occured while cleaning tile cache: ", e);
@@ -745,7 +757,10 @@ public class SettingsGUI extends JDialog {
 	private static class TileSourceInfoComponents {
 		JLabel sizeLabel;
 		JLabel countLabel;
-		MapSource tileSource;
+		MapSource mapSource;
+
+		int count = -1;
+		long size = 0;
 	}
 
 	public static void main(String[] args) {

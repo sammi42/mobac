@@ -25,7 +25,7 @@
   	<level value="DEBUG" />
   </logger>
   
-  <logger name="tac.tilestore">
+  <logger name="tac.program.tilestore">
   	<level value="DEBUG" />
   </logger>
   
@@ -33,7 +33,7 @@
   	<level value="TRACE" />
   </logger>
   
-  <logger name="tac.tar">
+  <logger name="tac.utilities.tar">
   	<level value="DEBUG" />
   </logger>
   

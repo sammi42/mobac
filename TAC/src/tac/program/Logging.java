@@ -122,15 +122,16 @@ public class Logging {
 		Logger log = Logger.getLogger("SysInfo");
 		if (!log.isInfoEnabled())
 			return;
+		String n = System.getProperty("line.separator");
 		log.debug("Version: " + TACInfo.getCompleteTitle());
 		log.debug("Platform: " + TACExceptionHandler.prop("os.name") + " ("
 				+ TACExceptionHandler.prop("os.version") + ")");
 		log.debug("Java VM: " + TACExceptionHandler.prop("java.vm.name") + " ("
 				+ TACExceptionHandler.prop("java.runtime.version") + ")");
-		log.debug("Directories:\ncurrentDir: \t" + DirectoryManager.currentDir + "\nprogramDir: \t"
-				+ DirectoryManager.programDir + "\ntempDir:     \t" + DirectoryManager.tempDir
-				+ "\nuserHomeDir: \t" + DirectoryManager.userHomeDir + "\nuserSettingsDir: \t"
-				+ DirectoryManager.userSettingsDir);
+		log.debug("Directories:" + n + "currentDir: \t" + DirectoryManager.currentDir + n
+				+ "programDir: \t" + DirectoryManager.programDir + n + "tempDir:     \t"
+				+ DirectoryManager.tempDir + n + "userHomeDir: \t" + DirectoryManager.userHomeDir
+				+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir);
 	}
 
 	public static void logSystemProperties() {

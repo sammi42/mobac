@@ -3,8 +3,6 @@ package tac.program.atlascreators.impl.rmp;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -13,6 +11,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import tac.exceptions.MapCreationException;
 import tac.program.atlascreators.tileprovider.TileProvider;
 import tac.program.interfaces.MapInterface;
+import tac.utilities.collections.SoftHashMap;
 
 /**
  * CalibratedImage that gets its data from a set of other CalibratedImage2
@@ -25,13 +24,13 @@ public class MultiImage {
 	private final MapSource mapSource;
 	private final int zoom;
 	private final TileProvider tileProvider;
-	private HashMap<TileKey, SoftReference<TacTile>> cache;
+	private SoftHashMap<TileKey, TacTile> cache;
 
 	public MultiImage(MapSource mapSource, TileProvider tileProvider, MapInterface map) {
 		this.mapSource = mapSource;
 		this.tileProvider = tileProvider;
 		this.zoom = map.getZoom();
-		cache = new HashMap<TileKey, SoftReference<TacTile>>(400);
+		cache = new SoftHashMap<TileKey, TacTile>(400);
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height)
@@ -47,9 +46,6 @@ public class MultiImage {
 		int yMax = mapSource.getMapSpace().cLatToY(-area.getSouth(), zoom) / tilesize;
 		int yMin = mapSource.getMapSpace().cLatToY(-area.getNorth(), zoom) / tilesize;
 
-		log.trace(String.format("min/max x: %d/%d  min/max y: %d/%d zoom: %d", xMin, xMax, yMin,
-				yMax, zoom));
-
 		BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		Graphics2D graph = result.createGraphics();
@@ -60,21 +56,10 @@ public class MultiImage {
 			for (int x = xMin; x <= xMax; x++) {
 				for (int y = yMin; y <= yMax; y++) {
 					TileKey key = new TileKey(x, y);
-					SoftReference<TacTile> ref = cache.get(key);
-					TacTile image = null;
-					if (ref != null) {
-						image = ref.get();
-						if (image != null)
-							log.trace("Cache hit: " + x + " " + y);
-						else
-							log.trace("Cache soft miss: " + x + " " + y);
-					}
+					TacTile image = cache.get(key);
 					if (image == null) {
-						log.trace("Cache miss: " + x + " " + y);
 						image = new TacTile(tileProvider, mapSpace, x, y, zoom);
-						ref = new SoftReference<TacTile>(image);
-						cache.put(key, ref);
-						log.trace("Added to cache: " + x + " " + y + " elements: " + cache.size());
+						cache.put(key, image);
 					}
 					image.drawSubImage(area, result);
 				}

@@ -9,10 +9,9 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import tac.program.atlascreators.impl.rmp.interfaces.CalibratedImage;
 import tac.program.atlascreators.tileprovider.TileProvider;
 
-public class TacTile implements CalibratedImage {
+public class TacTile {
 	private static final Logger log = Logger.getLogger(TacTile.class);
 
 	private final TileProvider tileProvider;
@@ -87,7 +86,7 @@ public class TacTile implements CalibratedImage {
 		int[] pixel = new int[3];
 
 		/* --- Get the coordination rectangle of the source image --- */
-		src_area = getBoundingRect();
+		src_area = boundingRect;
 
 		/* --- Get Graphics context --- */
 		src_image = getImage();
@@ -151,10 +150,6 @@ public class TacTile implements CalibratedImage {
 		}
 	}
 
-	public BoundingRect getBoundingRect() {
-		return boundingRect;
-	}
-
 	public int getImageHeight() {
 		/* --- A tile is always 256 pixels high --- */
 		return 256;
@@ -166,12 +161,8 @@ public class TacTile implements CalibratedImage {
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height) {
-		BufferedImage result;
-
-		result = createBlack(width, height);
-
+		BufferedImage result = createBlack(width, height);
 		drawSubImage(area, result);
-
 		return result;
 	}
 

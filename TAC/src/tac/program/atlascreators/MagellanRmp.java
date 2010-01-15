@@ -16,10 +16,8 @@ import tac.program.atlascreators.impl.rmp.MultiImage;
 import tac.program.atlascreators.impl.rmp.RmpLayer;
 import tac.program.atlascreators.impl.rmp.RmpTools;
 import tac.program.atlascreators.impl.rmp.RmpWriter;
-import tac.program.atlascreators.impl.rmp.TacTile;
 import tac.program.atlascreators.impl.rmp.Tiledata;
 import tac.program.atlascreators.impl.rmp.RmpLayer.TLMEntry;
-import tac.program.atlascreators.impl.rmp.interfaces.CalibratedImage;
 import tac.program.atlascreators.impl.rmp.rmpfile.Bmp2bit;
 import tac.program.atlascreators.impl.rmp.rmpfile.Bmp4bit;
 import tac.program.interfaces.AtlasInterface;
@@ -72,22 +70,10 @@ public class MagellanRmp extends AtlasCreator {
 
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		int count = (xMax - xMin + 1) * (yMax - yMin + 1);
 		atlasProgress.initMapCreation(1000);
-		TacTile[] images = new TacTile[count];
 		ImageIO.setUseCache(false);
 
-		int i = 0;
-		MapSpace mapSpace = map.getMapSource().getMapSpace();
-		for (int x = xMin; x <= xMax; x++) {
-			for (int y = yMin; y <= yMax; y++) {
-				checkUserAbort();
-				images[i++] = new TacTile(mapDlTileProvider, mapSpace, x, y, zoom);
-			}
-		}
-		// Note: MultiImage relies on the fact, that the image array is sorted
-		// on the left border (west coordinate / x coordinate)
-		MultiImage layerImage = new MultiImage(images, map);
+		MultiImage layerImage = new MultiImage(mapSource, mapDlTileProvider, map);
 		try {
 			RmpLayer layer = createLayer(layerImage, layerNum);
 			String layerName = RmpTools.buildTileName(imageName, layerNum);
@@ -137,7 +123,7 @@ public class MagellanRmp extends AtlasCreator {
 	 * @throws MapCreationException
 	 * @throws IOException
 	 */
-	public RmpLayer createLayer(CalibratedImage si, int layer) throws InterruptedException,
+	public RmpLayer createLayer(MultiImage si, int layer) throws InterruptedException,
 			MapCreationException, IOException {
 
 		int count = 0;
@@ -146,21 +132,24 @@ public class MagellanRmp extends AtlasCreator {
 		RmpLayer rmpLayer = new RmpLayer(this);
 
 		/* --- Get the coordinate space of the image --- */
-		BoundingRect rect = si.getBoundingRect();
+
+		MapSpace mapSpace = mapSource.getMapSpace();
+
+		double north = mapSpace.cYToLat(map.getMinTileCoordinate().y, zoom);
+		double south = mapSpace.cYToLat(map.getMaxTileCoordinate().y, zoom);
+		double west = mapSpace.cXToLon(map.getMinTileCoordinate().x, zoom);
+		double east = mapSpace.cXToLon(map.getMaxTileCoordinate().x, zoom);
+
+		BoundingRect rect = new BoundingRect(-north, -south, west, east);
+
+		Point max = map.getMaxTileCoordinate();
+		Point min = map.getMinTileCoordinate();
+		int imageWidth = max.x - min.x;
+		int imageHeight = max.y - min.y;
 
 		/* --- Calculate tile dimensions --- */
-		double tile_width = (rect.getEast() - rect.getWest()) * 256 / si.getImageWidth();
-		double tile_height = (rect.getSouth() - rect.getNorth()) * 256 / si.getImageHeight();
-
-		/*
-		 * --- Check the theoretical maximum of horizontal and vertical position
-		 * ---
-		 */
-		// double pos_hor = 360 / tile_width;
-		// double pos_ver = 180 / tile_height;
-		// if (pos_hor > 0xFFFF || pos_ver >= 0xFFFF)
-		// throw new MapCreationException(
-		// "Map resolution too high - please select a lower zoom level");
+		double tile_width = (rect.getEast() - rect.getWest()) * 256 / imageWidth;
+		double tile_height = (rect.getSouth() - rect.getNorth()) * 256 / imageHeight;
 
 		/* --- Calculate the positions of the upper left tile --- */
 		int x_start = (int) Math.floor((rect.getWest() + 180) / tile_width);
@@ -176,8 +165,6 @@ public class MagellanRmp extends AtlasCreator {
 		for (int x = x_start; x < x_end; x++) {
 			for (int y = y_start; y < y_end; y++) {
 				count++;
-				if (log.isTraceEnabled())
-					log.trace(String.format("Create tile %d layer=%d", count, layer));
 
 				/* --- Create tile --- */
 				BoundingRect subrect = new BoundingRect(y * tile_height - 90, (y + 1) * tile_height

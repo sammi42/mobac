@@ -175,7 +175,7 @@ public class RmpLayer {
 
 			/* --- Build the tile container --- */
 			TileContainer container = buildTileTree();
-			log.debug("Number of tiles: " + container.getTileCount());
+			log.debug("Number of output tiles: " + container.getTileCount());
 
 			/* --- Create Output file --- */
 			ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);

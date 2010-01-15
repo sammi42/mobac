@@ -18,7 +18,6 @@ public class TacTile implements CalibratedImage {
 	private final TileProvider tileProvider;
 	private final int tilex;
 	private final int tiley;
-	private final int zoom;
 	private BufferedImage image;
 
 	private BoundingRect boundingRect;
@@ -27,7 +26,6 @@ public class TacTile implements CalibratedImage {
 		this.tileProvider = tileProvider;
 		this.tilex = tilex;
 		this.tiley = tiley;
-		this.zoom = zoom;
 		image = null;
 
 		int tileSize = mapSpace.getTileSize();
@@ -179,7 +177,7 @@ public class TacTile implements CalibratedImage {
 
 	@Override
 	public String toString() {
-		return String.format("TacTile x/y/z [%d/%d/%d] = %s", tilex, tiley, zoom, boundingRect);
+		return String.format("TacTile x/y [%d/%d] = %s", tilex, tiley, boundingRect);
 	}
 
 }

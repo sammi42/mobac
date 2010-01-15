@@ -2,67 +2,36 @@ package tac.program.atlascreators.impl.rmp;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.MapCreationException;
-import tac.program.atlascreators.impl.rmp.interfaces.CalibratedImage;
+import tac.program.atlascreators.tileprovider.TileProvider;
 import tac.program.interfaces.MapInterface;
 
 /**
  * CalibratedImage that gets its data from a set of other CalibratedImage2
  * 
  */
-public class MultiImage implements CalibratedImage {
+public class MultiImage {
 
 	private static final Logger log = Logger.getLogger(MultiImage.class);
 
-	private static final int HIT_NOHIT = 0;
-	private static final int HIT_OVERLAP = 1;
-	private static final int HIT_FULLHIT = 2;
+	private final MapSource mapSource;
+	private final int zoom;
+	private final TileProvider tileProvider;
+	private HashMap<TileKey, SoftReference<TacTile>> cache;
 
-	private final TacTile[] images;
-	private final BoundingRect bounds;
-	private final int imageWidth;
-	private final int imageHeight;
-
-	private int firstHit = 0;
-
-	public MultiImage(TacTile[] images, MapInterface map) {
-		this.images = images;
-
-		/* --- Collect the extremes of the coordinates --- */
-		bounds = buildBoundingRect();
-		Point max = map.getMaxTileCoordinate();
-		Point min = map.getMinTileCoordinate();
-		imageWidth = max.x - min.x;
-		imageHeight = max.y - min.y;
-		log.debug("Created with " + images.length + "images; bounds = " + bounds);
-	}
-
-	private BoundingRect buildBoundingRect() {
-		double north = 90.0D;
-		double south = -90.0D;
-		double west = 180.0D;
-		double east = -180.0D;
-
-		for (TacTile tile : images) {
-			BoundingRect part_bounds = tile.getBoundingRect();
-
-			west = Math.min(west, part_bounds.getWest());
-			east = Math.max(east, part_bounds.getEast());
-			north = Math.min(north, part_bounds.getNorth());
-			south = Math.max(south, part_bounds.getSouth());
-		}
-
-		return new BoundingRect(north, south, west, east);
-	}
-
-	public BoundingRect getBoundingRect() {
-		return this.bounds;
+	public MultiImage(MapSource mapSource, TileProvider tileProvider, MapInterface map) {
+		this.mapSource = mapSource;
+		this.tileProvider = tileProvider;
+		this.zoom = map.getZoom();
+		cache = new HashMap<TileKey, SoftReference<TacTile>>(400);
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height)
@@ -70,48 +39,46 @@ public class MultiImage implements CalibratedImage {
 		if (log.isTraceEnabled())
 			log.trace(String.format("getSubImage %d %d %s", width, height, area));
 
-		int hit = 0;
+		MapSpace mapSpace = mapSource.getMapSpace();
+		int tilesize = mapSpace.getTileSize();
 
-		BufferedImage result = new BufferedImage(width, height, 1);
+		int xMax = mapSource.getMapSpace().cLonToX(area.getEast(), zoom) / tilesize;
+		int xMin = mapSource.getMapSpace().cLonToX(area.getWest(), zoom) / tilesize;
+		int yMax = mapSource.getMapSpace().cLatToY(-area.getSouth(), zoom) / tilesize;
+		int yMin = mapSource.getMapSpace().cLatToY(-area.getNorth(), zoom) / tilesize;
+
+		log.trace(String.format("min/max x: %d/%d  min/max y: %d/%d zoom: %d", xMin, xMax, yMin,
+				yMax, zoom));
+
+		BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		Graphics2D graph = result.createGraphics();
 		try {
 			graph.setColor(new Color(255, 255, 255));
 			graph.fillRect(0, 0, width, height);
 
-			/*
-			 * Optimization: We know that the images are sorted and that
-			 * #getSubImage(..) is executed column wise. Therefore we have a
-			 * sliding window in the images array that contains all our relevant
-			 * images (as well as some unneeded).
-			 * 
-			 * Start of the sliding window: image[firstHit]
-			 * 
-			 * End of the sliding window: image[i].getBoundingRect().getWest() >
-			 * area.getEast()
-			 */
-			int i = firstHit;
-			boolean isFirstHit = true;
-			do {
-				TacTile image = images[i];
-				if (image.getBoundingRect().getWest() > area.getEast())
-					break;
-				hit = hitType(image.getBoundingRect(), area);
-
-				// log.trace("HIT: " + hit + " " + this.images[i]);
-
-				if (hit != HIT_NOHIT) {
-					if (isFirstHit) {
-						// Release the unused images
-						for (int j = firstHit; j<i; j++)
-							images[j] = null;
-						firstHit = i;
-						isFirstHit = false;
+			for (int x = xMin; x <= xMax; x++) {
+				for (int y = yMin; y <= yMax; y++) {
+					TileKey key = new TileKey(x, y);
+					SoftReference<TacTile> ref = cache.get(key);
+					TacTile image = null;
+					if (ref != null) {
+						image = ref.get();
+						if (image != null)
+							log.trace("Cache hit: " + x + " " + y);
+						else
+							log.trace("Cache soft miss: " + x + " " + y);
+					}
+					if (image == null) {
+						log.trace("Cache miss: " + x + " " + y);
+						image = new TacTile(tileProvider, mapSpace, x, y, zoom);
+						ref = new SoftReference<TacTile>(image);
+						cache.put(key, ref);
+						log.trace("Added to cache: " + x + " " + y + " elements: " + cache.size());
 					}
 					image.drawSubImage(area, result);
 				}
-				++i;
-			} while (hit != HIT_FULLHIT && i < images.length);
+			}
 		} catch (Throwable t) {
 			throw new MapCreationException(t);
 		} finally {
@@ -120,57 +87,39 @@ public class MultiImage implements CalibratedImage {
 		return result;
 	}
 
-	/**
-	 * Checks if the small rect is part of the big rect
-	 * 
-	 * @return 0=no hit, 1=overlap, 2=full hit
-	 */
-	private int hitType(BoundingRect big, BoundingRect small) {
+	protected static class TileKey {
+		int x;
+		int y;
 
-		// Test up the possibilities where "small" lies totally outside of "big"
-		if (small.getWest() > big.getEast())
-			return HIT_NOHIT; // no intersection possible
-		if (small.getEast() < big.getWest())
-			return HIT_NOHIT; // no intersection possible
-		if (small.getSouth() < big.getNorth())
-			return HIT_NOHIT; // no intersection possible
-		if (small.getNorth() > big.getSouth())
-			return HIT_NOHIT; // no intersection possible
+		public TileKey(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
 
-		int hit = HIT_NOHIT;
-		/* --- Count the number of hits --- */
-		if (small.getWest() >= big.getWest() && small.getNorth() >= big.getNorth())
-			hit++;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + x;
+			result = prime * result + y;
+			return result;
+		}
 
-		if (small.getEast() <= big.getEast() && small.getNorth() >= big.getNorth())
-			hit++;
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			TileKey other = (TileKey) obj;
+			if (x != other.x)
+				return false;
+			if (y != other.y)
+				return false;
+			return true;
+		}
 
-		if (small.getWest() >= big.getWest() && small.getSouth() <= big.getSouth())
-			hit++;
-
-		if (small.getEast() <= big.getEast() && small.getSouth() <= big.getSouth())
-			hit++;
-
-		/* --- Correct the result 0-4 to 0-2 --- */
-		if (hit == 4)
-			return HIT_FULLHIT;
-		if (hit != 0)
-			return HIT_OVERLAP;
-		return HIT_NOHIT;
 	}
-
-	public int getImageHeight() {
-		return imageHeight;
-	}
-
-	public int getImageWidth() {
-		return imageWidth;
-	}
-
-	@Override
-	public String toString() {
-		return "MultiImage [bounds=" + bounds + ", imageHeight=" + imageHeight + ", imageWidth="
-				+ imageWidth + ", images=" + Arrays.toString(images) + "]";
-	}
-
 }

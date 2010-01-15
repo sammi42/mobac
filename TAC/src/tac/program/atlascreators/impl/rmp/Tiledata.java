@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import javax.imageio.ImageIO;
 
 import tac.exceptions.MapCreationException;
-import tac.program.atlascreators.impl.rmp.interfaces.CalibratedImage;
 
 /**
  * Content of a single tile
@@ -25,7 +24,7 @@ public class Tiledata {
 	public int posx;
 	public int posy;
 	public int totalOffset;
-	public CalibratedImage si;
+	public MultiImage si;
 
 	public BoundingRect rect;
 
@@ -42,12 +41,13 @@ public class Tiledata {
 			ImageIO.write(image, "jpg", bout);
 			byte[] data = bout.toByteArray();
 			dataSize = data.length;
+			// Utilities.saveBytes(String.format("D:/jpg/tac-%04d-%04d.jpg",
+			// posx, posy), data);
 			RmpTools.writeValue(out, dataSize, 4);
 			out.write(data);
 		} catch (MapCreationException e) {
 			throw new IOException(e.getCause());
 		}
 	}
-
 
 }

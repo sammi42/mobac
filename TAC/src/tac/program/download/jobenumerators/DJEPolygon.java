@@ -1,37 +1,35 @@
-package tac.program.download;
+package tac.program.download.jobenumerators;
 
 import java.awt.Polygon;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.JobDispatcher.Job;
+import tac.program.download.DownloadJob;
 import tac.program.interfaces.DownloadJobListener;
-import tac.program.interfaces.MapInterface;
+import tac.program.model.MapPolygon;
 import tac.utilities.tar.TarIndexedArchive;
 
-public class DownloadJobEnumeratorPolygon extends DownloadJobEnumerator {
+/**
+ * Enumerates / creates the download jobs for a single layer map with a
+ * polygonal selection.
+ */
+public class DJEPolygon extends DJERectangle {
 
 	protected final int tileSize;
-	protected final int tileSizeHalf;
-	protected Polygon polygon = new Polygon();
+	protected Polygon polygon;
 
-	public DownloadJobEnumeratorPolygon(MapInterface map, MapSource mapSource, int layer,
-			TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		super(map, mapSource, layer, tileArchive, listener);
-		tileSize = mapSource.getMapSpace().getTileSize();
-		tileSizeHalf = tileSize / 2;
+	public DJEPolygon(MapPolygon map, TarIndexedArchive tileArchive, DownloadJobListener listener) {
+		this(map, map.getMapSource(), 0, tileArchive, listener);
 	}
 
-	public DownloadJobEnumeratorPolygon(MapInterface map, TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
-		super(map, tileArchive, listener);
+	protected DJEPolygon(MapPolygon map, MapSource mapSource, int layer,
+			TarIndexedArchive tileArchive, DownloadJobListener listener) {
+		super(map, mapSource, layer, tileArchive, listener);
+		this.polygon = map.getPolygon();
 		tileSize = mapSource.getMapSpace().getTileSize();
-		tileSizeHalf = tileSize / 2;
-		// Example triangle
-		int xMid = (xMax + xMin) / 2;
-		polygon.addPoint(xMin * tileSize, y * tileSize);
-		polygon.addPoint(xMax * tileSize + tileSize - 1, y * tileSize);
-		polygon.addPoint(xMid * tileSize, yMax * tileSize + tileSize - 1);
+		x--;
+		nextElement();
 	}
 
 	public Polygon getPolygon() {

@@ -1,24 +1,22 @@
-package tac.program.download;
-
-import java.util.Enumeration;
+package tac.program.download.jobenumerators;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.mapsources.MultiLayerMapSource;
 import tac.program.JobDispatcher.Job;
+import tac.program.interfaces.DownloadJobEnumerator;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.MapInterface;
 import tac.utilities.tar.TarIndexedArchive;
 
 /**
- * {@link DownloadJobEnumerator} for {@link MultiLayerMapSource} maps.
+ * Enumerates / creates the download jobs for a map that uses a
+ * {@link MultiLayerMapSource}. A maximum of two layers are supported.
  * 
- * <p>
- * Toggles between two internal {@link DownloadJobEnumerator} - one for the base
- * map layer and one for the overlay.
- * </p>
+ * Internally for each layer an own {@link DownloadJobEnumerator} is created and
+ * used alternating.
  */
-public class DownloadJobEnumeratorML implements Enumeration<Job> {
+public class DJEMultiLayer implements DownloadJobEnumerator {
 
 	protected final DownloadJobEnumerator[] layerDJE = new DownloadJobEnumerator[2];
 
@@ -31,12 +29,12 @@ public class DownloadJobEnumeratorML implements Enumeration<Job> {
 	 * @param tileArchive
 	 * @param listener
 	 */
-	public DownloadJobEnumeratorML(MapInterface map, TarIndexedArchive tileArchive,
+	public DJEMultiLayer(MapInterface map, TarIndexedArchive tileArchive,
 			DownloadJobListener listener) {
 		MultiLayerMapSource overlayMapSource = (MultiLayerMapSource) map.getMapSource();
 		MapSource baseMapSource = overlayMapSource.getBackgroundMapSource();
-		layerDJE[0] = new DownloadJobEnumerator(map, baseMapSource, 0, tileArchive, listener);
-		layerDJE[1] = new DownloadJobEnumerator(map, overlayMapSource, 1, tileArchive, listener);
+		layerDJE[0] = DJEFactory.createInstance(map, baseMapSource, 0, tileArchive, listener);
+		layerDJE[1] = DJEFactory.createInstance(map, overlayMapSource, 1, tileArchive, listener);
 	}
 
 	public boolean hasMoreElements() {

@@ -17,8 +17,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import tac.exceptions.InvalidNameException;
 import tac.mapsources.MultiLayerMapSource;
 import tac.program.JobDispatcher.Job;
-import tac.program.download.DownloadJobEnumerator;
-import tac.program.download.DownloadJobEnumeratorML;
+import tac.program.download.jobenumerators.DJEMultiLayer;
+import tac.program.download.jobenumerators.DJERectangle;
 import tac.program.interfaces.CapabilityDeletable;
 import tac.program.interfaces.DownloadJobListener;
 import tac.program.interfaces.DownloadableElement;
@@ -246,8 +246,8 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public MapInterface deepClone(LayerInterface newLayer) {
-		Map map = new Map();
 		try {
+			Map map = this.getClass().newInstance();
 			map.layer = (Layer) newLayer;
 			map.mapSource = mapSource;
 			map.maxTileCoordinate = (Point) maxTileCoordinate.clone();
@@ -259,10 +259,10 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 				map.parameters = null;
 			map.tileDimension = (Dimension) tileDimension.clone();
 			map.zoom = zoom;
-		} catch (CloneNotSupportedException e) {
+			return map;
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return map;
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
@@ -273,9 +273,9 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
 			DownloadJobListener listener) {
 		if (mapSource instanceof MultiLayerMapSource)
-			return new DownloadJobEnumeratorML(this, tileArchive, listener);
+			return new DJEMultiLayer(this, tileArchive, listener);
 		else
-			return new DownloadJobEnumerator(this, tileArchive, listener);
+			return new DJERectangle(this, tileArchive, listener);
 	}
 
 }

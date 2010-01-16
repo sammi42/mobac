@@ -1,16 +1,21 @@
-package tac.program.download;
+package tac.program.download.jobenumerators;
 
 import java.awt.Point;
-import java.util.Enumeration;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.program.JobDispatcher.Job;
+import tac.program.download.DownloadJob;
+import tac.program.interfaces.DownloadJobEnumerator;
 import tac.program.interfaces.DownloadJobListener;
-import tac.program.interfaces.MapInterface;
+import tac.program.model.Map;
 import tac.utilities.tar.TarIndexedArchive;
 
-public class DownloadJobEnumerator implements Enumeration<Job> {
+/**
+ * Enumerates / creates the download jobs for a regular rectangle single layer
+ * map.
+ */
+public class DJERectangle implements DownloadJobEnumerator {
 
 	final protected DownloadJobListener listener;
 	final protected int xMin;
@@ -40,13 +45,12 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	 * @param tileArchive
 	 * @param listener
 	 */
-	public DownloadJobEnumerator(MapInterface map, TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
+	public DJERectangle(Map map, TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		this(map, map.getMapSource(), 0, tileArchive, listener);
 	}
 
-	public DownloadJobEnumerator(MapInterface map, MapSource mapSource, int layer,
-			TarIndexedArchive tileArchive, DownloadJobListener listener) {
+	protected DJERectangle(Map map, MapSource mapSource, int layer, TarIndexedArchive tileArchive,
+			DownloadJobListener listener) {
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
 		Point maxCoord = map.getMaxTileCoordinate();

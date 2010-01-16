@@ -62,6 +62,12 @@ public class GarminCustom extends AtlasCreator {
 		super.initializeMap(map, tarTileIndex);
 		mapDir = new File(atlasDir, map.getLayer().getName());
 		mapName = map.getName();
+		mapName = mapName.replaceAll("[[^\\p{Alnum}-_]]+", "_");
+		mapName = mapName.replaceAll("_{2,}", "_");
+		if (mapName.endsWith("_"))
+			mapName = mapName.substring(0, mapName.length() - 1);
+		if (mapName.startsWith("_"))
+			mapName = mapName.substring(1, mapName.length());
 		imageFileName = "files/" + mapName + ".jpg";
 	}
 

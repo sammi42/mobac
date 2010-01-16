@@ -75,9 +75,9 @@ public class RmpWriter {
 		EntryInfo info = new EntryInfo();
 		info.name = entry.getFileName();
 		info.extendsion = entry.getFileExtension();
-		info.offset = (int) rmpOutputFile.getFilePointer();
+		info.offset = rmpOutputFile.getFilePointer();
 		entry.writeFileContent(entryOut);
-		info.length = ((int) rmpOutputFile.getFilePointer()) - info.offset;
+		info.length = rmpOutputFile.getFilePointer() - info.offset;
 		if ((info.length % 2) != 0)
 			entryOut.write(0);
 		entries.add(info);
@@ -91,10 +91,10 @@ public class RmpWriter {
 		info.name = entry.getFileName();
 		info.extendsion = entry.getFileExtension();
 		long pos = rmpOutputFile.getFilePointer();
-		info.offset = (int) pos;
+		info.offset = pos;
 		CountingOutputStream cout = new CountingOutputStream(new NullOutputStream());
 		entry.writeFileContent(cout);
-		info.length = (int) cout.getBytesWritten();
+		info.length = cout.getBytesWritten();
 		long newPos = pos + info.length;
 		if ((info.length % 2) != 0)
 			newPos++;
@@ -115,29 +115,17 @@ public class RmpWriter {
 			throw new RuntimeException("Index for entry not found");
 		info = entries.get(index);
 
-		seek(info.offset);
+		rmpOutputFile.seek(info.offset);
 		entry.writeFileContent(entryOut);
 		if (rmpOutputFile.getFilePointer() > UINT_MAX)
 			throwRmpTooLarge();
-		int newLength = (int) (rmpOutputFile.getFilePointer() - info.offset);
+		long newLength = rmpOutputFile.getFilePointer() - info.offset;
 		if (newLength != info.length)
 			throw new RuntimeException("Length of entry has changed!");
 		if ((newLength % 2) != 0)
 			entryOut.write(0);
 
 		// restore old file position
-		rmpOutputFile.seek(pos);
-	}
-
-	/**
-	 * Interprets the offset as unsigned number and seeks to it. This allows to
-	 * use the 31th bit of <code>int</code>
-	 * 
-	 * @param offset
-	 * @throws IOException
-	 */
-	private void seek(int offset) throws IOException {
-		long pos = offset & UINT_MAX;
 		rmpOutputFile.seek(pos);
 	}
 
@@ -206,8 +194,8 @@ public class RmpWriter {
 	private static class EntryInfo {
 		String name;
 		String extendsion;
-		int offset;
-		int length;
+		long offset;
+		long length;
 
 		@Override
 		public String toString() {

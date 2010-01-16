@@ -34,6 +34,15 @@ public class RmpTools {
 		}
 	}
 
+	public static void writeValue(OutputStream stream, long value, int length) throws IOException {
+		int i;
+
+		for (i = 0; i < length; i++) {
+			stream.write((int)(value & 0xFF));
+			value >>= 8;
+		}
+	}
+
 	/**
 	 * Writes the given string into the stream. The string is written with a
 	 * fixed length. If the length is longer than the string, then 00 bytes are

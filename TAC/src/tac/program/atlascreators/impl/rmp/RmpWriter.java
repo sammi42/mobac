@@ -26,6 +26,9 @@ import tac.utilities.stream.RandomAccessFileOutputStream;
  * 
  */
 public class RmpWriter {
+
+	public static final long UINT_MAX = 0xffffffffl;
+
 	private static final Logger log = Logger.getLogger(RmpWriter.class);
 
 	private final ArrayList<EntryInfo> entries = new ArrayList<EntryInfo>();
@@ -78,6 +81,8 @@ public class RmpWriter {
 		if ((info.length % 2) != 0)
 			entryOut.write(0);
 		entries.add(info);
+		if (rmpOutputFile.getFilePointer() > UINT_MAX)
+			throwRmpTooLarge();
 		log.debug("Written data of entry " + entry + " bytes=" + info.length);
 	}
 
@@ -85,13 +90,16 @@ public class RmpWriter {
 		EntryInfo info = new EntryInfo();
 		info.name = entry.getFileName();
 		info.extendsion = entry.getFileExtension();
-		info.offset = (int) rmpOutputFile.getFilePointer();
+		long pos = rmpOutputFile.getFilePointer();
+		info.offset = (int) pos;
 		CountingOutputStream cout = new CountingOutputStream(new NullOutputStream());
 		entry.writeFileContent(cout);
 		info.length = (int) cout.getBytesWritten();
-		long newPos = info.offset + info.length;
+		long newPos = pos + info.length;
 		if ((info.length % 2) != 0)
 			newPos++;
+		if (newPos > UINT_MAX)
+			throwRmpTooLarge();
 		rmpOutputFile.seek(newPos);
 		entries.add(info);
 		log.debug("Prepared data of entry " + entry + " bytes=" + info.length);
@@ -107,9 +115,11 @@ public class RmpWriter {
 			throw new RuntimeException("Index for entry not found");
 		info = entries.get(index);
 
-		rmpOutputFile.seek(info.offset);
+		seek(info.offset);
 		entry.writeFileContent(entryOut);
-		int newLength = ((int) rmpOutputFile.getFilePointer()) - info.offset;
+		if (rmpOutputFile.getFilePointer() > UINT_MAX)
+			throwRmpTooLarge();
+		int newLength = (int) (rmpOutputFile.getFilePointer() - info.offset);
 		if (newLength != info.length)
 			throw new RuntimeException("Length of entry has changed!");
 		if ((newLength % 2) != 0)
@@ -117,6 +127,23 @@ public class RmpWriter {
 
 		// restore old file position
 		rmpOutputFile.seek(pos);
+	}
+
+	/**
+	 * Interprets the offset as unsigned number and seeks to it. This allows to
+	 * use the 31th bit of <code>int</code>
+	 * 
+	 * @param offset
+	 * @throws IOException
+	 */
+	private void seek(int offset) throws IOException {
+		long pos = offset & UINT_MAX;
+		rmpOutputFile.seek(pos);
+	}
+
+	private void throwRmpTooLarge() throws IOException {
+		throw new IOException(
+				"RMP file size exeeds 4GiB! The RMP file format does not support that.");
 	}
 
 	/**

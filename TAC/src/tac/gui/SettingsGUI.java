@@ -47,6 +47,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -175,7 +176,7 @@ public class SettingsGUI extends JDialog {
 		tab.setLayout(new GridBagLayout());
 
 		JPanel unitSystemPanel = new JPanel(new GridBagLayout());
-		unitSystemPanel.setBorder(BorderFactory.createTitledBorder("Unit System"));
+		unitSystemPanel.setBorder(createSectionBorder("Unit System"));
 
 		UnitSystem[] us = UnitSystem.values();
 		unitSystem = new JComboBox(us);
@@ -192,14 +193,14 @@ public class SettingsGUI extends JDialog {
 		tab.setLayout(new GridBagLayout());
 
 		JPanel updatePanel = new JPanel(new GridBagLayout());
-		updatePanel.setBorder(BorderFactory.createTitledBorder("Map sources online update"));
+		updatePanel.setBorder(createSectionBorder("Map sources online update"));
 
 		mapSourcesOnlineUpdate = new JButton("Perform online update");
 		mapSourcesOnlineUpdate.addActionListener(new MapSourcesOnlineUpdateAction());
 		updatePanel.add(mapSourcesOnlineUpdate, GBC.std());
 
 		JPanel googlePanel = new JPanel(new GridBagLayout());
-		googlePanel.setBorder(BorderFactory.createTitledBorder("Google Maps"));
+		googlePanel.setBorder(createSectionBorder("Google Maps"));
 
 		String[] languages = new String[] { "en", "de", "ru", "zh-CN" };
 		googleLang = new JComboBox(languages);
@@ -231,7 +232,7 @@ public class SettingsGUI extends JDialog {
 		mapSourcesScrollPane.setMinimumSize(new Dimension(300, 200));
 		JPanel mapSourcesOuterPanel = new JPanel(new BorderLayout());
 		mapSourcesOuterPanel.add(mapSourcesScrollPane, BorderLayout.CENTER);
-		mapSourcesOuterPanel.setBorder(BorderFactory.createTitledBorder("Enabled Map Sources"));
+		mapSourcesOuterPanel.setBorder(createSectionBorder("Enabled Map Sources"));
 		mapSourcesOuterPanel.setPreferredSize(new Dimension(200, 200));
 
 		tab.add(updatePanel, GBC.eol().fill(GBC.HORIZONTAL));
@@ -258,7 +259,7 @@ public class SettingsGUI extends JDialog {
 
 		JPanel defaultExpirationPanel = new JPanel(new GridBagLayout());
 		defaultExpirationPanel.setName("Default expiration time");
-		defaultExpirationPanel.setBorder(BorderFactory.createTitledBorder(""));
+		defaultExpirationPanel.setBorder(createSectionBorder(""));
 		defaultExpirationTime = new JTimeSlider();
 		defaultExpirationTime.addChangeListener(sliderChangeListener);
 		JLabel descr = new JLabel(
@@ -270,14 +271,14 @@ public class SettingsGUI extends JDialog {
 
 		JPanel maxExpirationPanel = new JPanel(new BorderLayout());
 		maxExpirationPanel.setName("Maximum expiration time");
-		maxExpirationPanel.setBorder(BorderFactory.createTitledBorder(""));
+		maxExpirationPanel.setBorder(createSectionBorder(""));
 		maxExpirationTime = new JTimeSlider();
 		maxExpirationTime.addChangeListener(sliderChangeListener);
 		maxExpirationPanel.add(maxExpirationTime, BorderLayout.CENTER);
 
 		JPanel minExpirationPanel = new JPanel(new BorderLayout());
 		minExpirationPanel.setName("Minimum expiration time");
-		minExpirationPanel.setBorder(BorderFactory.createTitledBorder(""));
+		minExpirationPanel.setBorder(createSectionBorder(""));
 		minExpirationTime = new JTimeSlider();
 		minExpirationTime.addChangeListener(sliderChangeListener);
 		minExpirationPanel.add(minExpirationTime, BorderLayout.CENTER);
@@ -300,10 +301,10 @@ public class SettingsGUI extends JDialog {
 		tileStoreEnabled = new JCheckBox("Enable tile store for map preview and atlas download");
 
 		JPanel tileStorePanel = new JPanel(new BorderLayout());
-		tileStorePanel.setBorder(BorderFactory.createTitledBorder("Tile store settings"));
+		tileStorePanel.setBorder(createSectionBorder("Tile store settings"));
 		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
 		tileStoreInfoPanel = new JPanel(new GridBagLayout());
-		// tileStoreInfoPanel.setBorder(BorderFactory.createTitledBorder("Information"));
+		// tileStoreInfoPanel.setBorder(createSectionBorder("Information"));
 
 		prepareTileStoreInfoPanel();
 
@@ -314,7 +315,7 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel.setMinimumSize(new Dimension(200, 300));
 		// scrollPane.setMinimumSize(new Dimension(100, 100));
 		scrollPane.setPreferredSize(new Dimension(520, 100));
-		scrollPane.setBorder(BorderFactory.createTitledBorder("Information"));
+		scrollPane.setBorder(createSectionBorder("Information"));
 
 		backGround.add(scrollPane, BorderLayout.CENTER);
 	}
@@ -459,7 +460,7 @@ public class SettingsGUI extends JDialog {
 				+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
 		JPanel leftPanel = new JPanel(new GridBagLayout());
-		leftPanel.setBorder(BorderFactory.createTitledBorder("Map size settings"));
+		leftPanel.setBorder(createSectionBorder("Map size settings"));
 
 		GBC gbc = GBC.eol().insets(0, 5, 0, 5);
 		leftPanel.add(mapSizeLabel, GBC.std());
@@ -475,7 +476,7 @@ public class SettingsGUI extends JDialog {
 		JPanel backGround = createNewTab("Directories");
 		backGround.setLayout(new GridBagLayout());
 		JPanel atlasOutputDirPanel = new JPanel(new GridBagLayout());
-		atlasOutputDirPanel.setBorder(BorderFactory.createTitledBorder("Atlas output directory"));
+		atlasOutputDirPanel.setBorder(createSectionBorder("Atlas output directory"));
 
 		atlasOutputDirectory = new JTextField();
 		atlasOutputDirectory.setToolTipText("<html>If empty the default directory "
@@ -505,7 +506,7 @@ public class SettingsGUI extends JDialog {
 		backGround.setLayout(new GridBagLayout());
 		GBC gbc_eolh = GBC.eol().fill(GBC.HORIZONTAL);
 		JPanel panel = new JPanel(new GridBagLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Network connections"));
+		panel.setBorder(createSectionBorder("Network connections"));
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
@@ -515,11 +516,11 @@ public class SettingsGUI extends JDialog {
 		backGround.add(panel, gbc_eolh);
 
 		// panel = new JPanel(new GridBagLayout());
-		// panel.setBorder(BorderFactory.createTitledBorder("HTTP User-Agent"));
+		// panel.setBorder(createSectionBorder("HTTP User-Agent"));
 		// backGround.add(panel, gbc_eolh);
 
 		panel = new JPanel(new GridBagLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
+		panel.setBorder(createSectionBorder("HTTP Proxy"));
 		final JLabel proxyTypeLabel = new JLabel("Proxy settings: ");
 		proxyType = new JComboBox(ProxyType.values());
 		proxyType.setSelectedItem(Settings.getInstance().getProxyType());
@@ -546,9 +547,7 @@ public class SettingsGUI extends JDialog {
 		panel.add(proxyHost, gbc_eolh);
 		panel.add(proxyPortLabel, GBC.std());
 		panel.add(proxyPort, gbc_eolh);
-		backGround.add(panel, gbc_eolh);
-
-		backGround.add(panel, gbc_eolh);
+		backGround.add(panel, GBC.eol().fillH());
 
 		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
@@ -665,6 +664,12 @@ public class SettingsGUI extends JDialog {
 		getRootPane().getActionMap().put("ESCAPE", escapeAction);
 	}
 
+	private TitledBorder createSectionBorder(String title) {
+		TitledBorder tb = BorderFactory.createTitledBorder(title);
+		tb.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		return tb;
+	}
+
 	private class WindowShowListener extends ComponentAdapter {
 
 		private boolean firstShown = true;
@@ -765,6 +770,7 @@ public class SettingsGUI extends JDialog {
 	}
 
 	public static void main(String[] args) {
+		TileStore.initialize();
 		StartTAC.setLookAndFeel();
 		Logging.configureConsoleLogging();
 

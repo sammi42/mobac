@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -30,11 +31,13 @@ import tac.gui.mapview.PreviewMap;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.AtlasObject;
 import tac.program.interfaces.CapabilityDeletable;
+import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.ToolTipProvider;
 import tac.program.model.Atlas;
 import tac.program.model.AtlasOutputFormat;
 import tac.program.model.AtlasTreeModel;
+import tac.program.model.EastNorthCoordinate;
 import tac.program.model.MapSelection;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
@@ -240,16 +243,23 @@ public class JAtlasTree extends JTree implements Autoscroll {
 				pm.add(mi);
 			}
 			if (o instanceof AtlasObject) {
-				mi = new JMenuItem("Display map areas");
-				mi.addActionListener(new ActionListener() {
+				final JCheckBoxMenuItem cbmi = new JCheckBoxMenuItem("Display map areas");
+				final MultiMapSelectionLayer msl = new MultiMapSelectionLayer((AtlasObject) o);
+				final boolean mapAreaVisible = mapView.mapLayers.contains(msl); 
+				cbmi.setSelected(mapAreaVisible);
+				cbmi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						mapView.setSelectionByTileCoordinate(null, null, false);
-						mapView.mapLayers.clear();
-						mapView.mapLayers.add(new MultiMapSelectionLayer((AtlasObject) o));
+						if (mapAreaVisible) {
+							mapView.mapLayers.clear();
+						} else {
+							mapView.setSelectionByTileCoordinate(null, null, false);
+							mapView.mapLayers.clear();
+							mapView.mapLayers.add(msl);
+						}
 						mapView.repaint();
 					}
 				});
-				pm.add(mi);
+				pm.add(cbmi);
 			}
 			if (o instanceof MapInterface) {
 				mi = new JMenuItem("Select map area");
@@ -262,15 +272,39 @@ public class JAtlasTree extends JTree implements Autoscroll {
 					}
 				});
 				pm.add(mi);
-				mi = new JMenuItem("Zoom to");
+				mi = new JMenuItem("Select map area and zoom to it");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						MapInterface map = (MapInterface) o;
 						MapSelection ms = new MapSelection(map);
 						mapView.setMapSource(map.getMapSource());
-						mapView.zoomToSelection(ms, true);
+						mapView.setSelectionAndZoomTo(ms, true);
 						mapView.setSelectionByTileCoordinate(map.getZoom(), map
 								.getMinTileCoordinate(), map.getMaxTileCoordinate(), true);
+					}
+				});
+				pm.add(mi);
+			}
+			if (o instanceof LayerInterface) {
+				mi = new JMenuItem("Zoom to");
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						LayerInterface layer = (LayerInterface) o;
+						EastNorthCoordinate max = new EastNorthCoordinate(Double.NEGATIVE_INFINITY,
+								Double.NEGATIVE_INFINITY);
+						EastNorthCoordinate min = new EastNorthCoordinate(Double.POSITIVE_INFINITY,
+								Double.POSITIVE_INFINITY);
+						for (MapInterface map : layer) {
+							MapSelection ms = new MapSelection(map);
+							EastNorthCoordinate mapMax = ms.getMax();
+							EastNorthCoordinate mapMin = ms.getMin();
+							max.lat = Math.max(max.lat, mapMax.lat);
+							max.lon = Math.max(max.lon, mapMax.lon);
+							min.lat = Math.min(min.lat, mapMin.lat);
+							min.lon = Math.min(min.lon, mapMin.lon);
+						}
+						MapSelection ms = new MapSelection(mapView.getMapSource(), max, min);
+						mapView.zoomTo(ms);
 					}
 				});
 				pm.add(mi);

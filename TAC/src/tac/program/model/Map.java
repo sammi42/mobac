@@ -30,25 +30,25 @@ import tac.utilities.tar.TarIndexedArchive;
 public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode,
 		DownloadableElement {
 
-	private String name;
+	protected String name;
 
-	private Layer layer;
+	protected Layer layer;
 
-	private TileImageParameters parameters = null;
-
-	@XmlAttribute
-	private Point maxTileCoordinate = null;
+	protected TileImageParameters parameters = null;
 
 	@XmlAttribute
-	private Point minTileCoordinate = null;
+	protected Point maxTileCoordinate = null;
 
 	@XmlAttribute
-	private MapSource mapSource = null;
-
-	private Dimension tileDimension = null;
+	protected Point minTileCoordinate = null;
 
 	@XmlAttribute
-	private int zoom = -1;
+	protected MapSource mapSource = null;
+
+	protected Dimension tileDimension = null;
+
+	@XmlAttribute
+	protected int zoom;
 
 	private static Logger log = Logger.getLogger(Map.class);
 

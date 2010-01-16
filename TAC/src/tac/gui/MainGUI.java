@@ -725,7 +725,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		if (ms.isAreaSelected()) {
 			mapSelectionMax = ms.getBottomRightPixelCoordinate();
 			mapSelectionMin = ms.getTopLeftPixelCoordinate();
-			previewMap.zoomToSelection(ms, false);
+			previewMap.setSelectionAndZoomTo(ms, false);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}

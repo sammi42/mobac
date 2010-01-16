@@ -246,7 +246,22 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}
 
-	public void zoomToSelection(MapSelection ms, boolean notifyListeners) {
+	public void zoomTo(MapSelection ms) {
+		if (!ms.isAreaSelected())
+			return;
+		log.trace("Setting selection to: " + ms);
+		Point max = ms.getBottomRightPixelCoordinate(MAX_ZOOM);
+		Point min = ms.getTopLeftPixelCoordinate(MAX_ZOOM);
+		setDisplayToFitPixelCoordinates(max.x, max.y, min.x, min.y);
+	}
+
+	/**
+	 * Zooms to the specified {@link MapSelection} and sets the selection to it;
+	 * 
+	 * @param ms
+	 * @param notifyListeners
+	 */
+	public void setSelectionAndZoomTo(MapSelection ms, boolean notifyListeners) {
 		if (!ms.isAreaSelected())
 			return;
 		log.trace("Setting selection to: " + ms);

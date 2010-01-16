@@ -160,6 +160,13 @@ public class MapSelection {
 		return brc;
 	}
 
+	/**
+	 * Returns the bottom right tile x- and y-tile-coordinate (minimum) of the
+	 * selected area regarding the zoom level specified at creation time of this
+	 * {@link MapSelection} instance.
+	 * 
+	 * @return tile coordinate [0..(256 * 2<sup>zoom</sup>)]
+	 */
 	public MercatorPixelCoordinate getBottomRightPixelCoordinate() {
 		return new MercatorPixelCoordinate(mapSpace, maxTileCoordinate_x, maxTileCoordinate_y, zoom);
 	}

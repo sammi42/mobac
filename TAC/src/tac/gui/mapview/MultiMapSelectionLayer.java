@@ -66,4 +66,27 @@ public class MultiMapSelectionLayer implements MapLayer {
 		g.setColor(PreviewMap.GRID_COLOR);
 		g.drawRect(x, y, w, h);
 	}
+
+	@Override
+	public int hashCode() {
+		return object.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MultiMapSelectionLayer other = (MultiMapSelectionLayer) obj;
+		if (object == null) {
+			if (other.object != null)
+				return false;
+		} else if (!object.equals(other.object))
+			return false;
+		return true;
+	}
+
 }

@@ -12,16 +12,16 @@ import tac.utilities.tar.TarIndexedArchive;
 
 public class DownloadJobEnumerator implements Enumeration<Job> {
 
-	final private DownloadJobListener listener;
-	final private int xMin;
-	final private int xMax;
-	final private int yMax;
-	final private int zoom;
-	final private int layer;
-	final private MapSource mapSource;
-	final private TarIndexedArchive tileArchive;
+	final protected DownloadJobListener listener;
+	final protected int xMin;
+	final protected int xMax;
+	final protected int yMax;
+	final protected int zoom;
+	final protected int layer;
+	final protected MapSource mapSource;
+	final protected TarIndexedArchive tileArchive;
 
-	private int x, y;
+	protected int x, y;
 	protected DownloadJob nextJob;
 
 	/**

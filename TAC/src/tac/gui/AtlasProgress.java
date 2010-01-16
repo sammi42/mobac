@@ -105,7 +105,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JCheckBox ignoreDlErrors;
 	private JButton dismissWindowButton;
 	private JButton openProgramFolderButton;
-	private JButton abortAtlasDownloadButton;
+	private JButton abortAtlasCreationButton;
 	private JButton pauseResumeDownloadButton;
 
 	private AtlasCreationController downloadControlListener = null;
@@ -151,9 +151,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		windowTitle = new JLabel("<html><h3>ATLAS CREATION IN PROGRESS...</h3></html>");
 
-		title = new JLabel("Downloading maps of atlas:");
+		title = new JLabel("Processing maps of atlas:");
 
-		mapInfo = new JLabel("Downloading map: ");
+		mapInfo = new JLabel("Processing map: ");
 
 		atlasMapsDone = new JLabel("000 of 000 done");
 		atlasPercent = new JLabel(String.format(TEXT_PERCENT, 100));
@@ -188,13 +188,13 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		totalDownloadTimeValue = new JLabel();
 
 		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically");
-		abortAtlasDownloadButton = new JButton("Abort Download");
-		abortAtlasDownloadButton.setToolTipText("Abort current Atlas download");
+		abortAtlasCreationButton = new JButton("Abort creation");
+		abortAtlasCreationButton.setToolTipText("Abort current Atlas download");
 		dismissWindowButton = new JButton("Close Window");
-		dismissWindowButton.setToolTipText("Download in progress...");
+		dismissWindowButton.setToolTipText("Atlas creation in progress...");
 		dismissWindowButton.setVisible(false);
 		openProgramFolderButton = new JButton("Open Atlas Folder");
-		openProgramFolderButton.setToolTipText("Download in progress...");
+		openProgramFolderButton.setToolTipText("Atlas creation in progress...");
 		openProgramFolderButton.setEnabled(false);
 		pauseResumeDownloadButton = new JButton("Pause/Resume");
 
@@ -246,7 +246,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		GBC gbcRight = GBC.std().anchor(GBC.SOUTHEAST).insets(5, 0, 0, 0);
 		bottomPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-		bottomPanel.add(abortAtlasDownloadButton, gbcRight);
+		bottomPanel.add(abortAtlasCreationButton, gbcRight);
 		bottomPanel.add(dismissWindowButton, gbcRight);
 		bottomPanel.add(pauseResumeDownloadButton, gbcRight);
 		bottomPanel.add(openProgramFolderButton, gbcRight);
@@ -258,7 +258,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		add(borderPanel, GBC.std().fill());
 
-		abortAtlasDownloadButton.addActionListener(this);
+		abortAtlasCreationButton.addActionListener(this);
 		dismissWindowButton.addActionListener(this);
 		openProgramFolderButton.addActionListener(this);
 		pauseResumeDownloadButton.addActionListener(this);
@@ -365,7 +365,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		downloadControlListener = null;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				abortAtlasDownloadButton.setEnabled(false);
+				abortAtlasCreationButton.setEnabled(false);
 
 				if (aborted) {
 					windowTitle.setText("<html><h2>ATLAS CREATION HAS BEEN "
@@ -378,13 +378,13 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				}
 				mapInfo.setText("");
 
-				abortAtlasDownloadButton.setVisible(false);
+				abortAtlasCreationButton.setVisible(false);
 
-				dismissWindowButton.setToolTipText("Close atlas download progress window");
+				dismissWindowButton.setToolTipText("Close atlas creation progress window");
 				dismissWindowButton.setVisible(true);
 
 				if (!aborted) {
-					openProgramFolderButton.setToolTipText("Open folder where Atlas is created");
+					openProgramFolderButton.setToolTipText("Open folder where atlas output folder");
 					openProgramFolderButton.setEnabled(true);
 				}
 			}
@@ -429,7 +429,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		} else if (dismissWindowButton.equals(source)) {
 			downloadControlListener = null;
 			closeWindow();
-		} else if (abortAtlasDownloadButton.equals(source)) {
+		} else if (abortAtlasCreationButton.equals(source)) {
 			aborted = true;
 			updateTask.cancel();
 			if (downloadControlListener != null) {
@@ -468,8 +468,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			}
 
 			if (data.map != null) {
-				String text = "<html>Downloading map \"<b>" + data.map.getName()
-						+ "</b>\" of layer <b>\"" + data.map.getLayer().getName() + "\"</b></html>";
+				String text = "<html>Processing map \"<b>" + data.map.getName()
+						+ "</b>\" of layer <b>\"" + data.map.getLayer().getName()
+						+ "\"</b> map source: " + data.map.getMapSource() + "</html>";
 				mapInfo.setText(text);
 			}
 
@@ -483,7 +484,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				data.totalProgressPercent = newPercent;
 				atlasPercent.setText(String.format(TEXT_PERCENT, data.totalProgressPercent));
 				if (data.atlasInterface != null) {
-					String text = String.format("%d%% - Downloading atlas \"%s\"",
+					String text = String.format("%d%% - Processing atlas \"%s\"",
 							data.totalProgressPercent, data.atlasInterface.getName());
 					if (pauseState)
 						text += " [PAUSED]";

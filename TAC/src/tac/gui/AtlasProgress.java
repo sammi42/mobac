@@ -273,7 +273,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		data.totalNumberOfMaps = mapCount;
 
 		initialTotalTime = System.currentTimeMillis();
-		initialMapDownloadTime = System.currentTimeMillis();
+		initialMapDownloadTime = -1;
 		updateGUI();
 		setVisible(true);
 		TIMER.schedule(updateTask, 0, 500);
@@ -292,7 +292,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public void initMapCreation(int maxTilesToProcess) {
 		data.mapCreationProgress = 0;
 		data.mapCreationMax = maxTilesToProcess;
-		initialMapDownloadTime = System.currentTimeMillis();
+		initialMapDownloadTime = -1;
 		updateGUI();
 	}
 
@@ -513,7 +513,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 					+ data.mapDownloadNumberOfTiles + " tiles done");
 
 			seconds = -1;
-			if (data.mapDownloadProgress != 0)
+			if (data.mapDownloadProgress != 0 && initialMapDownloadTime > 0)
 				seconds = ((System.currentTimeMillis() - initialMapDownloadTime)
 						* (data.mapDownloadNumberOfTiles - data.mapDownloadProgress) / (1000L * data.mapDownloadProgress));
 			mapDownloadTimeLeft.setText(formatRemainingTime(seconds));
@@ -528,7 +528,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			// bytes per second
 			long rate = data.numberOfDownloadedBytes * 1000;
 			long time = System.currentTimeMillis() - initialMapDownloadTime;
-			if (data.mapCreationProgress == 0) {
+			if (data.mapCreationProgress == 0 && initialMapDownloadTime > 0) {
 				if (time == 0) {
 					nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
 				} else {

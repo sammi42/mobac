@@ -27,7 +27,7 @@ import tac.utilities.stream.RandomAccessFileOutputStream;
  */
 public class RmpWriter {
 
-	public static final long UINT_MAX = 0xffffffffl;
+	public static final long MAX_FILE_SIZE = 0x7fffffffl;
 
 	private static final Logger log = Logger.getLogger(RmpWriter.class);
 
@@ -81,7 +81,7 @@ public class RmpWriter {
 		if ((info.length % 2) != 0)
 			entryOut.write(0);
 		entries.add(info);
-		if (rmpOutputFile.getFilePointer() > UINT_MAX)
+		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE)
 			throwRmpTooLarge();
 		log.debug("Written data of entry " + entry + " bytes=" + info.length);
 	}
@@ -98,7 +98,7 @@ public class RmpWriter {
 		long newPos = pos + info.length;
 		if ((info.length % 2) != 0)
 			newPos++;
-		if (newPos > UINT_MAX)
+		if (newPos > MAX_FILE_SIZE)
 			throwRmpTooLarge();
 		rmpOutputFile.seek(newPos);
 		entries.add(info);
@@ -117,7 +117,7 @@ public class RmpWriter {
 
 		rmpOutputFile.seek(info.offset);
 		entry.writeFileContent(entryOut);
-		if (rmpOutputFile.getFilePointer() > UINT_MAX)
+		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE)
 			throwRmpTooLarge();
 		long newLength = rmpOutputFile.getFilePointer() - info.offset;
 		if (newLength != info.length)
@@ -131,7 +131,7 @@ public class RmpWriter {
 
 	private void throwRmpTooLarge() throws IOException {
 		throw new IOException(
-				"RMP file size exeeds 4GiB! The RMP file format does not support that.");
+				"RMP file size exeeds 2GiB! The RMP file format does not support that.");
 	}
 
 	/**

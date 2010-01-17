@@ -5,10 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.zip.CRC32;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -51,6 +53,7 @@ public class GarminCustom extends AtlasCreator {
 	protected String imageFileName;
 
 	protected ZipOutputStream kmzOutputStream = null;
+	private CRC32 crc = new CRC32();
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
@@ -78,7 +81,7 @@ public class GarminCustom extends AtlasCreator {
 			Utilities.mkDir(mapDir);
 			kmzFile = new File(mapDir, mapName + ".kmz");
 			kmzOutputStream = new ZipOutputStream(new FileOutputStream(kmzFile));
-			kmzOutputStream.setLevel(Deflater.NO_COMPRESSION);
+			kmzOutputStream.setMethod(Deflater.NO_COMPRESSION);
 			createTiles();
 			buildKmzFile();
 			kmzOutputStream.close();
@@ -171,12 +174,23 @@ public class GarminCustom extends AtlasCreator {
 			}
 			if (data == null)
 				throw new MapCreationException("Unable to create an image with less than 3 MB!");
-			kmzOutputStream.putNextEntry(new ZipEntry(imageFileName));
-			kmzOutputStream.write(data);
-			kmzOutputStream.closeEntry();
+			writeStoredEntry(imageFileName, data);
 		} catch (IOException e) {
 			throw new MapCreationException(e);
 		}
+	}
+
+	private void writeStoredEntry(String name, byte[] data) throws IOException {
+		ZipEntry ze = new ZipEntry(name);
+		ze.setMethod(ZipEntry.STORED);
+		ze.setCompressedSize(data.length);
+		ze.setSize(data.length);
+		crc.reset();
+		crc.update(data);
+		ze.setCrc(crc.getValue());
+		kmzOutputStream.putNextEntry(ze);
+		kmzOutputStream.write(data);
+		kmzOutputStream.closeEntry();
 	}
 
 	private void buildKmzFile() throws ParserConfigurationException,
@@ -233,9 +247,9 @@ public class GarminCustom extends AtlasCreator {
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-		kmzOutputStream.putNextEntry(new ZipEntry("doc.kml"));
-		serializer.transform(new DOMSource(doc), new StreamResult(kmzOutputStream));
-		kmzOutputStream.closeEntry();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(16000);
+		serializer.transform(new DOMSource(doc), new StreamResult(bos));
+		writeStoredEntry("doc.kml", bos.toByteArray());
 	}
 
 }

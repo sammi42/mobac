@@ -494,11 +494,12 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			data.paused = pauseState;
 
 			long seconds = -1;
-			if (data.totalProgress != 0) {
+			int totalProgress = data.totalProgress;
+			if (totalProgress != 0) {
 				// Avoid for a possible division by zero
-				int totalTilesRemaining = data.totalNumberOfTiles - data.totalProgress;
+				int totalTilesRemaining = data.totalNumberOfTiles - totalProgress;
 				long totalElapsedTime = System.currentTimeMillis() - initialTotalTime;
-				seconds = (totalElapsedTime * totalTilesRemaining / (1000L * data.totalProgress));
+				seconds = (totalElapsedTime * totalTilesRemaining / (1000L * totalProgress));
 			}
 			atlasTimeLeft.setText(formatRemainingTime(seconds));
 
@@ -513,9 +514,10 @@ public class AtlasProgress extends JFrame implements ActionListener {
 					+ data.mapDownloadNumberOfTiles + " tiles done");
 
 			seconds = -1;
-			if (data.mapDownloadProgress != 0 && initialMapDownloadTime > 0)
+			int mapDlProgress = data.mapDownloadProgress;
+			if (mapDlProgress != 0 && initialMapDownloadTime > 0)
 				seconds = ((System.currentTimeMillis() - initialMapDownloadTime)
-						* (data.mapDownloadNumberOfTiles - data.mapDownloadProgress) / (1000L * data.mapDownloadProgress));
+						* (data.mapDownloadNumberOfTiles - mapDlProgress) / (1000L * mapDlProgress));
 			mapDownloadTimeLeft.setText(formatRemainingTime(seconds));
 
 			// map progress

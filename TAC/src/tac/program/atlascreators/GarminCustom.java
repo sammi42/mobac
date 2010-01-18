@@ -212,7 +212,7 @@ public class GarminCustom extends AtlasCreator {
 		Element go = doc.createElement("GroundOverlay");
 		Element ico = doc.createElement("Icon");
 		Element href = doc.createElement("href");
-		Element drawOrder = doc.createElement("DrawOrder");
+		Element drawOrder = doc.createElement("drawOrder");
 		Element latLonBox = doc.createElement("LatLonBox");
 		Element north = doc.createElement("north");
 		Element south = doc.createElement("south");

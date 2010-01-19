@@ -70,6 +70,8 @@ public class JIntField extends JTextField {
 		}
 	}
 
+	
+	
 	protected class InputListener implements DocumentListener {
 
 		private Color defaultColor;

@@ -46,12 +46,15 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
@@ -449,15 +452,23 @@ public class SettingsGUI extends JDialog {
 		JPanel backGround = createNewTab("Map size");
 		backGround.setLayout(new GridBagLayout());
 		mapSize = new JMapSizeCombo();
+		mapSize.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				log.trace("Map size: " + mapSize.getValue());
+			}
+		});
 
 		JLabel mapSizeLabel = new JLabel("Maximum size (width & height) of each map: ");
-		JLabel mapSizeText = new JLabel("<html>If the image of the selected region to download "
-				+ "is larger in height or width than <br>the mapsize it will be splitted into "
-				+ "several maps that are no larger than the "
-				+ "<br>specified maximum map size.<br><br>"
-				+ "<b>Warning</b><br>TrekBuddy versions before v0.9.88 "
-				+ "do not support map sizes larger than 32767.<br>"
-				+ "Newer versions can handle maps up to a size of 1048575.</html>");
+		JLabel mapSizeText = new JLabel(
+				"<html>If the image of the selected region to download "
+						+ "is larger in height or width than <br>the mapsize it will be splitted into "
+						+ "several maps when adding the map selection.<br>"
+						+ "Each map is no larger than the specified maximum map size.<br>"
+						+ "You can see the number of maps and their region in the atlas content tree.<br><br>"
+						+ "<b>Warning</b><br>TrekBuddy versions before v0.9.88 "
+						+ "do not support map sizes larger than 32767.<br>"
+						+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
 		JPanel leftPanel = new JPanel(new GridBagLayout());
 		leftPanel.setBorder(createSectionBorder("Map size settings"));
@@ -617,6 +628,9 @@ public class SettingsGUI extends JDialog {
 		}
 		s.setDisabledMapSources(disabledMaps);
 
+		if (MainGUI.getMainGUI() == null)
+			return;
+		
 		MainGUI.getMainGUI().updateMapSourcesList();
 
 		if (googleLang.getSelectedIndex() < 0) {
@@ -634,8 +648,6 @@ public class SettingsGUI extends JDialog {
 		}
 
 		MainGUI.getMainGUI().previewMap.repaint();
-		// Close the dialog window
-		SettingsGUI.this.dispose();
 	}
 
 	private void addListeners() {
@@ -646,6 +658,8 @@ public class SettingsGUI extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				applySettings();
+				// Close the dialog window
+				SettingsGUI.this.dispose();
 			}
 		});
 		cancelButton.addActionListener(new ActionListener() {
@@ -666,7 +680,9 @@ public class SettingsGUI extends JDialog {
 
 	private TitledBorder createSectionBorder(String title) {
 		TitledBorder tb = BorderFactory.createTitledBorder(title);
-		tb.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+		Border margin = new EmptyBorder(3, 3, 3, 3);
+		tb.setBorder(new CompoundBorder(border, margin));
 		return tb;
 	}
 
@@ -770,9 +786,9 @@ public class SettingsGUI extends JDialog {
 	}
 
 	public static void main(String[] args) {
+		Logging.configureConsoleLogging(Level.TRACE);
 		TileStore.initialize();
 		StartTAC.setLookAndFeel();
-		Logging.configureConsoleLogging();
 
 		new SettingsGUI(null);
 	}

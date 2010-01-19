@@ -21,7 +21,7 @@ public class JIntCombo extends JComboBox {
 	public JIntCombo(Vector<Integer> values, Integer defaultValue) {
 		super(values);
 		this.defaultValue = defaultValue;
-		
+
 		createEditorComponent();
 		setEditable(true);
 		setEditor(new Editor());
@@ -49,7 +49,7 @@ public class JIntCombo extends JComboBox {
 		return editorComponent.isInputValid();
 	}
 
-	public class Editor implements ComboBoxEditor {
+	protected class Editor implements ComboBoxEditor {
 
 		public Editor() {
 			super();
@@ -64,7 +64,11 @@ public class JIntCombo extends JComboBox {
 		}
 
 		public Object getItem() {
-			return editorComponent.getValue();
+			try {
+				return editorComponent.getValue();
+			} catch (NumberFormatException e) {
+				return getValue();
+			}
 		}
 
 		public void removeActionListener(ActionListener l) {

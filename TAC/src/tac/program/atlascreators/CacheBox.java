@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.interfaces.AtlasInterface;
@@ -26,7 +27,8 @@ public class CacheBox extends AtlasCreator {
 	private MapInfo activeMapInfo;
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
+			InterruptedException {
 		super.startAtlasCreation(atlas);
 	}
 

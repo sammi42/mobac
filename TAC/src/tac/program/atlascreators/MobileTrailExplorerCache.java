@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
@@ -39,7 +40,8 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
+			AtlasTestException {
 		super.startAtlasCreation(atlas);
 		File cacheFile = new File(atlasDir, "MTEFileCache");
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(cacheFile), 8216);

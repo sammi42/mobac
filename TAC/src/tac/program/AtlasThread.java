@@ -129,7 +129,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			return;
 		}
 
-		atlasCreator.startAtlasCreation(atlasInterface);
+		try {
+			atlasCreator.startAtlasCreation(atlasInterface);
+		} catch (AtlasTestException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		ap.init(atlasInterface);
 		ap.setVisible(true);

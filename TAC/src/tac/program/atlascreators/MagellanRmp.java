@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.atlascreators.impl.rmp.BoundingRect;
@@ -37,7 +38,8 @@ public class MagellanRmp extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
+			AtlasTestException {
 		super.startAtlasCreation(atlas);
 		int mapCount = 0;
 		for (LayerInterface layer : atlas) {

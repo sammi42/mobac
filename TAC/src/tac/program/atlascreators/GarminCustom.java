@@ -32,9 +32,13 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
+import tac.program.interfaces.AtlasInterface;
+import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
+import tac.program.model.TileImageFormat;
 import tac.program.tiledatawriter.TileImageJpegDataWriter;
 import tac.utilities.Utilities;
 import tac.utilities.stream.ArrayOutputStream;
@@ -58,6 +62,20 @@ public class GarminCustom extends AtlasCreator {
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
+	}
+
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
+			AtlasTestException {
+		super.startAtlasCreation(atlas);
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				TileImageFormat format = map.getParameters().getFormat();
+				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
+					throw new AtlasTestException(
+							"Only JPEG tile format is supported by this atlas format!", map);
+			}
+		}
 	}
 
 	@Override
@@ -154,7 +172,14 @@ public class GarminCustom extends AtlasCreator {
 			graphics.dispose();
 		}
 		try {
-			TileImageJpegDataWriter writer = new TileImageJpegDataWriter(1.0);
+			TileImageJpegDataWriter writer;
+			if (parameters == null) {
+				writer = new TileImageJpegDataWriter(1.0);
+			} else {
+				TileImageFormat format = parameters.getFormat();
+				writer = new TileImageJpegDataWriter((TileImageJpegDataWriter) format
+						.getDataWriter());
+			}
 			writer.initialize();
 			// The maximum file size for the jpg image is 3 MB
 			// This OutputStream will fail if the resulting image is larger than

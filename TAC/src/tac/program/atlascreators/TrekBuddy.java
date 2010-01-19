@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapCreationException;
 import tac.program.atlascreators.impl.MapTileWriter;
 import tac.program.interfaces.AtlasInterface;
@@ -35,7 +36,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 	protected File mapFolder = null;
 	protected MapTileWriter mapTileWriter;
 
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException, AtlasTestException {
 		super.startAtlasCreation(atlas);
 	}
 

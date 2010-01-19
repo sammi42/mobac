@@ -8,6 +8,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+import tac.exceptions.AtlasTestException;
 import tac.exceptions.MapCreationException;
 import tac.gui.AtlasProgress;
 import tac.mapsources.MultiLayerMapSource;
@@ -89,7 +90,8 @@ public abstract class AtlasCreator {
 	 * @throws InterruptedException
 	 * @see AtlasCreator
 	 */
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
+			InterruptedException {
 		this.atlas = atlas;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
@@ -217,5 +219,4 @@ public abstract class AtlasCreator {
 		return mapDlTileProvider;
 	}
 
-	
 }

@@ -16,6 +16,7 @@ import tac.program.atlascreators.tileprovider.TileProvider;
 import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
 import tac.program.model.TileImageParameters;
+import tac.utilities.MyMath;
 
 public class MapTileBuilder {
 
@@ -34,6 +35,14 @@ public class MapTileBuilder {
 
 	private int realWidth;
 	private int realHeight;
+	int mergedWidth;
+	int mergedHeight;
+
+	final int customTileCount;
+	final int xStart;
+	final int yStart;
+	final int xEnd;
+	final int yEnd;
 
 	protected final MapTileWriter mapTileWriter;
 
@@ -49,22 +58,18 @@ public class MapTileBuilder {
 		yMax = atlasCreator.getYMax();
 		yMin = atlasCreator.getYMin();
 		parameters = atlasCreator.getParameters();
-
-	}
-
-	public void createTiles() throws MapCreationException, InterruptedException {
 		// left upper point on the map in pixels
 		// regarding the current zoom level
-		int xStart = xMin * tileSize;
-		int yStart = yMin * tileSize;
+		xStart = xMin * tileSize;
+		yStart = yMin * tileSize;
 
 		// lower right point on the map in pixels
 		// regarding the current zoom level
-		int xEnd = xMax * tileSize + (tileSize - 1);
-		int yEnd = yMax * tileSize + (tileSize - 1);
+		xEnd = xMax * tileSize + (tileSize - 1);
+		yEnd = yMax * tileSize + (tileSize - 1);
 
-		int mergedWidth = xEnd - xStart + 1;
-		int mergedHeight = yEnd - yStart + 1;
+		mergedWidth = xEnd - xStart + 1;
+		mergedHeight = yEnd - yStart + 1;
 
 		// Reduce tile size of overall map height/width is smaller that one tile
 		realWidth = parameters.getWidth();
@@ -73,6 +78,12 @@ public class MapTileBuilder {
 			realWidth = mergedWidth;
 		if (realHeight > mergedHeight)
 			realHeight = mergedHeight;
+
+		customTileCount = MyMath.divCeil(mergedWidth, realWidth)
+				* MyMath.divCeil(mergedHeight, realHeight);
+	}
+
+	public void createTiles() throws MapCreationException, InterruptedException {
 
 		// Absolute positions
 		int xAbsPos = xStart;
@@ -163,6 +174,10 @@ public class MapTileBuilder {
 		// log.trace("cache miss");
 		BufferedImage image = mapDlTileProvider.getTileImage(xTile, yTile);
 		return image;
+	}
+
+	public int getCustomTileCount() {
+		return customTileCount;
 	}
 
 }

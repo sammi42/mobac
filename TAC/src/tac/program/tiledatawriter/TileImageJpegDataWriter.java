@@ -31,8 +31,16 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	 *            maximum quality
 	 */
 	public TileImageJpegDataWriter(double jpegCompressionLevel) {
+		this((float) jpegCompressionLevel);
+	}
+
+	public TileImageJpegDataWriter(float jpegCompressionLevel) {
 		this.jpegCompressionLevel = (float) jpegCompressionLevel;
 		log = Logger.getLogger(this.getClass());
+	}
+
+	public TileImageJpegDataWriter(TileImageJpegDataWriter jpegWriter) {
+		this(jpegWriter.getJpegCompressionLevel());
 	}
 
 	public void initialize() {
@@ -55,6 +63,10 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	public void setJpegCompressionLevel(float jpegCompressionLevel) {
 		this.jpegCompressionLevel = jpegCompressionLevel;
 		iwp.setCompressionQuality(jpegCompressionLevel);
+	}
+
+	public float getJpegCompressionLevel() {
+		return jpegCompressionLevel;
 	}
 
 	public void processImage(RenderedImage image, OutputStream out) throws IOException {

@@ -9,7 +9,7 @@ body {
 	font-family: Helvetica, Arial, sans-serif;
 }
 
-h1,h2,h3 {
+h1,h2,h3,h4 {
 	color: #0000CC;
 	font-style: italic;
 }
@@ -299,12 +299,18 @@ file per defined map.</p>
 	href="http://www.cachewolf.de">CacheWolf</a> you have to select <b>CacheWolf
 WFL</b> as format in section <b>Atlas settings</b> on the left side of the
 main window.</p>
-<p>Using this atlas output format the same <a href="#OziRestriction">restrictions</a>
-and the <a href="#OziWarning">warning</a> as for the OziExplorer output
-format apply.</p>
+<h4>Custom tile processing settings enabled</h4>
+<p>Maps that have custom tile processing options set are saved as
+tiled images with one WFL calibration file for each tile. All processing
+options such as image format and tile size can be used.</p>
+<h4>Custom tile processing settings disabled</h4>
+<p>In this mode automatic tiling is disabled and the same <a
+	href="#OziRestriction">restrictions</a> and the <a href="#OziWarning">warning</a>
+as for the OziExplorer output format apply.</p>
 <p>The output format of an "atlas" for CacheWolf is one subdirectory
 per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>WFL</tt>
 file per defined map.</p>
+
 <!-- *************************************************************************** -->
 <h3><a name="GarminCustom">Creating Garmin Custom maps</a></h3>
 <p>For creating atlases of Creating Garmin Custom maps you have to

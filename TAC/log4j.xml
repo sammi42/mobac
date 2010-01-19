@@ -38,7 +38,7 @@
   </logger>
   
   <logger name="SysInfo">
-  	<level value="OFF" />
+  	<level value="ERROR" />
   </logger>
       
   <root>

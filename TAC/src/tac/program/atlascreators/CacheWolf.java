@@ -44,7 +44,7 @@ public class CacheWolf extends Ozi {
 			mapDir = mapFolder;
 			Utilities.mkDirs(mapDir);
 			mapTileWriter = new CWFileTileWriter();
-			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter);
+			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
 		} catch (IOException e) {

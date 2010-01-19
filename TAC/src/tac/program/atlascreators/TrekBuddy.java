@@ -30,13 +30,16 @@ import tac.utilities.tar.TarTmiArchive;
 
 public abstract class TrekBuddy extends AtlasCreator {
 
+	public static final String FILENAME_PATTERN = "t_%d_%d.%s";
+
 	protected static final int COORD_KIND_LATTITUDE = 1;
 	protected static final int COORD_KIND_LONGITUDE = 2;
 
 	protected File mapFolder = null;
 	protected MapTileWriter mapTileWriter;
 
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException, AtlasTestException {
+	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
+			AtlasTestException {
 		super.startAtlasCreation(atlas);
 	}
 
@@ -128,9 +131,15 @@ public abstract class TrekBuddy extends AtlasCreator {
 	public class TarTileWriter implements MapTileWriter {
 
 		TarArchive ta = null;
+		int tileHeight = 256;
+		int tileWidth = 256;
 
 		public TarTileWriter() {
 			super();
+			if (parameters != null) {
+				tileHeight = parameters.getHeight();
+				tileWidth = parameters.getWidth();
+			}
 			File mapTarFile = new File(mapFolder, map.getName() + ".tar");
 			log.debug("Writing tiles to tared map: " + mapTarFile);
 			try {
@@ -145,8 +154,9 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
 				throws IOException {
-			String tileFileName = "t_" + (tilex * tileSize) + "_" + (tiley * tileSize) + "."
-					+ mapSource.getTileType();
+			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth),
+					(tiley * tileHeight), imageFormat);
+
 			ta.writeFileFromData("set/" + tileFileName, tileData);
 		}
 
@@ -166,12 +176,19 @@ public abstract class TrekBuddy extends AtlasCreator {
 		File setFolder;
 		Writer setFileWriter;
 
+		int tileHeight = 256;
+		int tileWidth = 256;
+
 		public FileTileWriter() throws IOException {
 			super();
 			setFolder = new File(mapFolder, "set");
 			Utilities.mkDir(setFolder);
 			log.debug("Writing tiles to set folder: " + setFolder);
 			File setFile = new File(mapFolder, map.getName() + ".set");
+			if (parameters != null) {
+				tileHeight = parameters.getHeight();
+				tileWidth = parameters.getWidth();
+			}
 			try {
 				setFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
 						setFile), TEXT_FILE_CHARSET));
@@ -182,8 +199,8 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
 				throws IOException {
-			String tileFileName = "t_" + (tilex * tileSize) + "_" + (tiley * tileSize) + "."
-					+ mapSource.getTileType();
+			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth),
+					(tiley * tileHeight), imageFormat);
 
 			File f = new File(setFolder, tileFileName);
 			FileOutputStream out = new FileOutputStream(f);

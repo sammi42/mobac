@@ -33,6 +33,8 @@ public class MapTileBuilder {
 	private final int yMin;
 	private final int yMax;
 
+	private final boolean useRealTileSize;
+
 	private int realWidth;
 	private int realHeight;
 	int mergedWidth;
@@ -46,10 +48,12 @@ public class MapTileBuilder {
 
 	protected final MapTileWriter mapTileWriter;
 
-	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter) {
+	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter,
+			boolean useRealTileSize) {
 		this.atlasCreator = atlasCreator;
 		this.mapTileWriter = mapTileWriter;
 		this.mapDlTileProvider = atlasCreator.getMapDlTileProvider();
+		this.useRealTileSize = useRealTileSize;
 		map = atlasCreator.getMap();
 		mapSource = map.getMapSource();
 		tileSize = mapSource.getMapSpace().getTileSize();
@@ -99,15 +103,19 @@ public class MapTileBuilder {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
 		TileImageDataWriter tileImageDataWriter = parameters.getFormat().getDataWriter();
 		tileImageDataWriter.initialize();
+		int currentTileHeight = realHeight;
+		int currentTileWidth = realWidth;
 		try {
 			String tileType = tileImageDataWriter.getFileExt();
 			int tiley = 0;
 			while (yAbsPos < yEnd) {
 				int tilex = 0;
 				xAbsPos = xStart;
-				int currentTileHeight = Math.min(realHeight, yEnd - yAbsPos + 1);
+				if (useRealTileSize)
+					currentTileHeight = Math.min(realHeight, yEnd - yAbsPos + 1);
 				while (xAbsPos < xEnd) {
-					int currentTileWidth = Math.min(realWidth, xEnd - xAbsPos + 1);
+					if (useRealTileSize)
+						currentTileWidth = Math.min(realWidth, xEnd - xAbsPos + 1);
 					atlasCreator.checkUserAbort();
 					atlasCreator.getAtlasProgress().incMapCreationProgress();
 					BufferedImage tileImage = new BufferedImage(currentTileWidth,
@@ -172,14 +180,46 @@ public class MapTileBuilder {
 		}
 	}
 
-	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		// log.trace("cache miss");
-		BufferedImage image = mapDlTileProvider.getTileImage(xTile, yTile);
-		return image;
-	}
-
 	public int getCustomTileCount() {
 		return customTileCount;
 	}
 
+	/**
+	 * A simple local cache holding the last 10 loaded original tiles. If the
+	 * custom tile size is smaller than 256x256 the efficiency of this cache is
+	 * very high (~ 75% hit rate).
+	 */
+	private CachedTile[] cache = new CachedTile[10];
+	private int cachePos = 0;
+
+	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
+		for (CachedTile ct : cache) {
+			if (ct == null)
+				continue;
+			if (ct.xTile == xTile && ct.yTile == yTile) {
+				// log.trace("cache hit");
+				return ct.image;
+			}
+		}
+		// log.trace("cache miss");
+		BufferedImage image = mapDlTileProvider.getTileImage(xTile, yTile);
+		if (image == null)
+			return null;
+		cache[cachePos] = new CachedTile(image, xTile, yTile);
+		cachePos = (cachePos + 1) % cache.length;
+		return image;
+	}
+
+	private static class CachedTile {
+		BufferedImage image;
+		int xTile;
+		int yTile;
+
+		public CachedTile(BufferedImage image, int tile, int tile2) {
+			super();
+			this.image = image;
+			xTile = tile;
+			yTile = tile2;
+		}
+	}
 }

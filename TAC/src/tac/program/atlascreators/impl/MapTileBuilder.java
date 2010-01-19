@@ -1,4 +1,4 @@
-package tac.program.atlascreators;
+package tac.program.atlascreators.impl;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -7,78 +7,52 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tac.exceptions.MapCreationException;
-import tac.mapsources.mapspace.MercatorPower2MapSpace;
+import tac.program.atlascreators.AtlasCreator;
+import tac.program.atlascreators.tileprovider.TileProvider;
+import tac.program.interfaces.MapInterface;
 import tac.program.interfaces.TileImageDataWriter;
-import tac.program.model.AtlasOutputFormat;
-import tac.utilities.MyMath;
-import tac.utilities.Utilities;
+import tac.program.model.TileImageParameters;
 
-/**
- * Extends the {@link TrekBuddy} so that custom tiles are written. Custom tiles
- * can have a size different of 255x255 pixels), a different color depth and a
- * different image type (jpg/png).
- * 
- * @author r_x
- */
-public class TrekBuddyCustom extends TrekBuddy {
+public class MapTileBuilder {
+
+	private static final Logger log = Logger.getLogger(MapTileBuilder.class);
+
+	private final AtlasCreator atlasCreator;
+	private final TileProvider mapDlTileProvider;
+	private final MapInterface map;
+	private final MapSource mapSource;
+	private final TileImageParameters parameters;
+	private final int tileSize;
+	private final int xMin;
+	private final int xMax;
+	private final int yMin;
+	private final int yMax;
 
 	private int realWidth;
 	private int realHeight;
 
-	@Override
-	public boolean testMapSource(MapSource mapSource) {
-		// if (mapSource instanceof MultiLayerMapSource)
-		// return false;
-		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
+	protected final MapTileWriter mapTileWriter;
+
+	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter) {
+		this.atlasCreator = atlasCreator;
+		this.mapTileWriter = mapTileWriter;
+		this.mapDlTileProvider = atlasCreator.getMapDlTileProvider();
+		map = atlasCreator.getMap();
+		mapSource = map.getMapSource();
+		tileSize = mapSource.getMapSpace().getTileSize();
+		xMax = atlasCreator.getXMax();
+		xMin = atlasCreator.getXMin();
+		yMax = atlasCreator.getYMax();
+		yMin = atlasCreator.getYMin();
+		parameters = atlasCreator.getParameters();
+
 	}
 
-	public void createMap() throws MapCreationException, InterruptedException {
-		try {
-			Utilities.mkDirs(mapFolder);
-
-			// write the .map file containing the calibration points
-			writeMapFile();
-
-			// This means there should not be any resizing of the tiles.
-			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
-				mapTileWriter = new TarTileWriter();
-			else
-				mapTileWriter = new FileTileWriter();
-
-			// Select the tile creator instance based on whether tile image
-			// parameters has been set or not
-			if (parameters != null)
-				createTiles();
-			else
-				super.createTiles();
-
-			mapTileWriter.finalizeMap();
-		} catch (MapCreationException e) {
-			throw e;
-		} catch (InterruptedException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new MapCreationException(e);
-		}
-	}
-
-	/**
-	 * New experimental custom tile size algorithm implementation.
-	 * 
-	 * It creates each custom sized tile separately. Therefore each original
-	 * tile (256x256) will be loaded and painted multiple times. Therefore this
-	 * implementation needs much more CPU power as each original tile is loaded
-	 * at least once and each generated tile has to be saved.
-	 * 
-	 * @throws MapCreationException
-	 */
-	@Override
-	protected void createTiles() throws InterruptedException, MapCreationException {
-		log.debug("Starting map creation using custom parameters: " + parameters);
-
+	public void createTiles() throws MapCreationException, InterruptedException {
 		// left upper point on the map in pixels
 		// regarding the current zoom level
 		int xStart = xMin * tileSize;
@@ -99,10 +73,6 @@ public class TrekBuddyCustom extends TrekBuddy {
 			realWidth = mergedWidth;
 		if (realHeight > mergedHeight)
 			realHeight = mergedHeight;
-
-		int customTileCount = MyMath.divCeil(mergedWidth, realWidth)
-				* MyMath.divCeil(mergedHeight, realHeight);
-		atlasProgress.initMapCreation(customTileCount);
 
 		// Absolute positions
 		int xAbsPos = xStart;
@@ -125,8 +95,8 @@ public class TrekBuddyCustom extends TrekBuddy {
 				int tilex = 0;
 				xAbsPos = xStart;
 				while (xAbsPos < xEnd) {
-					checkUserAbort();
-					atlasProgress.incMapCreationProgress();
+					atlasCreator.checkUserAbort();
+					atlasCreator.getAtlasProgress().incMapCreationProgress();
 					BufferedImage tileImage = new BufferedImage(realWidth, realHeight,
 							BufferedImage.TYPE_3BYTE_BGR);
 					buf.reset();
@@ -142,6 +112,7 @@ public class TrekBuddyCustom extends TrekBuddy {
 						throw new MapCreationException("Error writing tile image: "
 								+ e.getMessage(), e);
 					}
+
 					tilex++;
 					xAbsPos += realWidth;
 				}
@@ -188,42 +159,10 @@ public class TrekBuddyCustom extends TrekBuddy {
 		}
 	}
 
-	/**
-	 * A simple local cache holding the last 10 loaded original tiles. If the
-	 * custom tile size is smaller than 256x256 the efficiency of this cache is
-	 * very high (~ 75% hit rate).
-	 */
-	private CachedTile[] cache = new CachedTile[10];
-	private int cachePos = 0;
-
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
-		for (CachedTile ct : cache) {
-			if (ct == null)
-				continue;
-			if (ct.xTile == xTile && ct.yTile == yTile) {
-				// log.trace("cache hit");
-				return ct.image;
-			}
-		}
 		// log.trace("cache miss");
 		BufferedImage image = mapDlTileProvider.getTileImage(xTile, yTile);
-		if (image == null)
-			return null;
-		cache[cachePos] = new CachedTile(image, xTile, yTile);
-		cachePos = (cachePos + 1) % cache.length;
 		return image;
 	}
 
-	private static class CachedTile {
-		BufferedImage image;
-		int xTile;
-		int yTile;
-
-		public CachedTile(BufferedImage image, int tile, int tile2) {
-			super();
-			this.image = image;
-			xTile = tile;
-			yTile = tile2;
-		}
-	}
 }

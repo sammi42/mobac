@@ -188,5 +188,34 @@ public abstract class AtlasCreator {
 	public AtlasProgress getAtlasProgress() {
 		return atlasProgress;
 	}
+
+	public int getXMin() {
+		return xMin;
+	}
+
+	public int getXMax() {
+		return xMax;
+	}
+
+	public int getYMin() {
+		return yMin;
+	}
+
+	public int getYMax() {
+		return yMax;
+	}
+
+	public MapInterface getMap() {
+		return map;
+	}
+
+	public TileImageParameters getParameters() {
+		return parameters;
+	}
+
+	public TileProvider getMapDlTileProvider() {
+		return mapDlTileProvider;
+	}
+
 	
 }

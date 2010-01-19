@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.exceptions.MapCreationException;
+import tac.program.atlascreators.impl.MapTileWriter;
 import tac.program.interfaces.AtlasInterface;
 import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
@@ -91,44 +92,36 @@ public abstract class TrekBuddy extends AtlasCreator {
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		int pixelValueX = 0;
-		int pixelValueY = 0;
+		int tilex = 0;
+		int tiley = 0;
 
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
 		ImageIO.setUseCache(false);
 		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
+		String tileType = mapSource.getTileType();
 		for (int x = xMin; x <= xMax; x++) {
-			pixelValueY = 0;
+			tiley = 0;
 			for (int y = yMin; y <= yMax; y++) {
 				checkUserAbort();
 				atlasProgress.incMapCreationProgress();
 				try {
-					String tileFileName = "t_" + (pixelValueX * tileSize) + "_"
-							+ (pixelValueY * tileSize) + "." + mapSource.getTileType();
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null) {
-						mapTileWriter.writeTile(tileFileName, sourceTileData);
+						mapTileWriter.writeTile(tilex, tiley, tileType, sourceTileData);
 					} else {
-						log.trace("Tile \"" + tileFileName
-								+ "\" not found in tile archive - creating default");
-						mapTileWriter.writeTile(tileFileName, emptyTileData);
+						log.trace(String.format(
+								"Tile x=%d y=%d not found in tile archive - creating default",
+								tilex, tiley));
+						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
 					}
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
 				}
-				pixelValueY++;
+				tiley++;
 			}
-			pixelValueX++;
+			tilex++;
 		}
-	}
-
-	public interface MapTileWriter {
-
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException;
-
-		public void finalizeMap();
-
 	}
 
 	public class TarTileWriter implements MapTileWriter {
@@ -149,7 +142,10 @@ public abstract class TrekBuddy extends AtlasCreator {
 			}
 		}
 
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
+				throws IOException {
+			String tileFileName = "t_" + (tilex * tileSize) + "_" + (tiley * tileSize) + "."
+					+ mapSource.getTileType();
 			ta.writeFileFromData("set/" + tileFileName, tileData);
 		}
 
@@ -183,7 +179,11 @@ public abstract class TrekBuddy extends AtlasCreator {
 			}
 		}
 
-		public void writeTile(String tileFileName, byte[] tileData) throws IOException {
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
+				throws IOException {
+			String tileFileName = "t_" + (tilex * tileSize) + "_" + (tiley * tileSize) + "."
+					+ mapSource.getTileType();
+
 			File f = new File(setFolder, tileFileName);
 			FileOutputStream out = new FileOutputStream(f);
 			setFileWriter.write(tileFileName + "\r\n");

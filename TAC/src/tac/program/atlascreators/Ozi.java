@@ -63,7 +63,7 @@ public class Ozi extends TrekBuddy {
 	 * width of the map and the height of one tile (256 pixels).
 	 */
 	@Override
-	protected void createTiles() throws InterruptedException {
+	protected void createTiles() throws InterruptedException, MapCreationException {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		ImageIO.setUseCache(false);
 

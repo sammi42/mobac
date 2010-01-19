@@ -115,7 +115,7 @@ public class CacheWolf extends Ozi {
 
 		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
 				throws IOException {
-			String tileFileName = String.format("%d_%d_%s", tilex, tiley, mapName);
+			String tileFileName = String.format("%s_%dx%d", mapName, tilex, tiley);
 			File f = new File(mapDir, tileFileName + '.' + imageFormat);
 			FileOutputStream out = new FileOutputStream(f);
 			try {

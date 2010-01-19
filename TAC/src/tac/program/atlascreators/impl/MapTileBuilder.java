@@ -105,11 +105,13 @@ public class MapTileBuilder {
 			while (yAbsPos < yEnd) {
 				int tilex = 0;
 				xAbsPos = xStart;
+				int currentTileHeight = Math.min(realHeight, yEnd - yAbsPos + 1);
 				while (xAbsPos < xEnd) {
+					int currentTileWidth = Math.min(realWidth, xEnd - xAbsPos + 1);
 					atlasCreator.checkUserAbort();
 					atlasCreator.getAtlasProgress().incMapCreationProgress();
-					BufferedImage tileImage = new BufferedImage(realWidth, realHeight,
-							BufferedImage.TYPE_3BYTE_BGR);
+					BufferedImage tileImage = new BufferedImage(currentTileWidth,
+							currentTileHeight, BufferedImage.TYPE_3BYTE_BGR);
 					buf.reset();
 					try {
 						Graphics2D graphics = tileImage.createGraphics();

@@ -70,6 +70,8 @@ public class GarminCustom extends AtlasCreator {
 		super.startAtlasCreation(atlas);
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
+				if (map.getParameters() == null)
+					continue;
 				TileImageFormat format = map.getParameters().getFormat();
 				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
 					throw new AtlasTestException(
@@ -233,8 +235,22 @@ public class GarminCustom extends AtlasCreator {
 		builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.newDocument();
 
+		boolean folder = true;
 		Element kml = doc.createElementNS("http://www.opengis.net/kml/2.2", "kml");
+		doc.appendChild(kml);
+		Element goRoot = kml;
+		if (folder) {
+			goRoot = doc.createElement("Folder");
+			kml.appendChild(goRoot);
+			Element name = doc.createElement("name");
+			name.setTextContent(map.getLayer().getName());
+			Element open = doc.createElement("open");
+			open.setTextContent("1");
+			goRoot.appendChild(name);
+			goRoot.appendChild(open);
+		}
 		Element go = doc.createElement("GroundOverlay");
+		Element name = doc.createElement("name");
 		Element ico = doc.createElement("Icon");
 		Element href = doc.createElement("href");
 		Element drawOrder = doc.createElement("drawOrder");
@@ -245,6 +261,7 @@ public class GarminCustom extends AtlasCreator {
 		Element west = doc.createElement("west");
 		Element rotation = doc.createElement("rotation");
 
+		name.setTextContent(map.getName());
 		href.setTextContent(imageFileName);
 		drawOrder.setTextContent("0");
 
@@ -254,8 +271,8 @@ public class GarminCustom extends AtlasCreator {
 		east.setTextContent(longitudeMax);
 		rotation.setTextContent("0.0");
 
-		doc.appendChild(kml);
-		kml.appendChild(go);
+		goRoot.appendChild(go);
+		go.appendChild(name);
 		go.appendChild(ico);
 		go.appendChild(latLonBox);
 		ico.appendChild(href);
@@ -276,5 +293,4 @@ public class GarminCustom extends AtlasCreator {
 		serializer.transform(new DOMSource(doc), new StreamResult(bos));
 		writeStoredEntry("doc.kml", bos.toByteArray());
 	}
-
 }

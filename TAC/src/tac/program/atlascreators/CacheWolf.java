@@ -74,8 +74,10 @@ public class CacheWolf extends Ozi {
 			int xStart = xMin * tileSize;
 			int yStart = yMin * tileSize;
 
-			xStart += tilex * parameters.getWidth();
-			yStart += tiley * parameters.getHeight();
+			if (parameters != null) {
+				xStart += tilex * parameters.getWidth();
+				yStart += tiley * parameters.getHeight();
+			}
 
 			double topLeftLon = mapSpace.cXToLon(xStart, zoom);
 			double topLeftLat = mapSpace.cYToLat(yStart, zoom);

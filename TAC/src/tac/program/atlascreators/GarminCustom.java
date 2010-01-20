@@ -59,6 +59,9 @@ public class GarminCustom extends AtlasCreator {
 	protected ZipOutputStream kmzOutputStream = null;
 	private CRC32 crc = new CRC32();
 
+	private Document kmlDoc = null;
+	private Element groundOverlayRoot = null;
+
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
@@ -222,48 +225,62 @@ public class GarminCustom extends AtlasCreator {
 
 	private void buildKmzFile() throws ParserConfigurationException,
 			TransformerFactoryConfigurationError, TransformerException, IOException {
-		MapSpace mapSpace = mapSource.getMapSpace();
+		int startX = xMin * tileSize;
+		int endX = (xMax + 1) * tileSize;
+		int startY = yMin * tileSize;
+		int endY = (yMax + 1) * tileSize;
+		initKmlDoc();
+		addKmlEntry(startX, startY, endX - startX, endY - startY);
+		writeKmlToZip();
+	}
 
-		NumberFormat df = Utilities.FORMAT_6_DEC_ENG;
-
-		String longitudeMin = df.format(mapSpace.cXToLon(xMin * tileSize, zoom));
-		String longitudeMax = df.format(mapSpace.cXToLon((xMax + 1) * tileSize, zoom));
-		String latitudeMin = df.format(mapSpace.cYToLat((yMax + 1) * tileSize, zoom));
-		String latitudeMax = df.format(mapSpace.cYToLat(yMin * tileSize, zoom));
+	private void initKmlDoc() throws ParserConfigurationException {
 
 		DocumentBuilder builder;
 		builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = builder.newDocument();
+		kmlDoc = builder.newDocument();
 
 		boolean folder = true;
-		Element kml = doc.createElementNS("http://www.opengis.net/kml/2.2", "kml");
-		doc.appendChild(kml);
-		Element goRoot = kml;
+		Element kml = kmlDoc.createElementNS("http://www.opengis.net/kml/2.2", "kml");
+		kmlDoc.appendChild(kml);
+		groundOverlayRoot = kml;
 		if (folder) {
-			goRoot = doc.createElement("Folder");
-			kml.appendChild(goRoot);
-			Element name = doc.createElement("name");
+			groundOverlayRoot = kmlDoc.createElement("Folder");
+			kml.appendChild(groundOverlayRoot);
+			Element name = kmlDoc.createElement("name");
 			name.setTextContent(map.getLayer().getName());
-			Element open = doc.createElement("open");
+			Element open = kmlDoc.createElement("open");
 			open.setTextContent("1");
-			goRoot.appendChild(name);
-			goRoot.appendChild(open);
+			groundOverlayRoot.appendChild(name);
+			groundOverlayRoot.appendChild(open);
 		}
-		Element go = doc.createElement("GroundOverlay");
-		Element name = doc.createElement("name");
-		Element ico = doc.createElement("Icon");
-		Element href = doc.createElement("href");
-		Element drawOrder = doc.createElement("drawOrder");
-		Element latLonBox = doc.createElement("LatLonBox");
-		Element north = doc.createElement("north");
-		Element south = doc.createElement("south");
-		Element east = doc.createElement("east");
-		Element west = doc.createElement("west");
-		Element rotation = doc.createElement("rotation");
+
+	}
+
+	private void addKmlEntry(int startX, int startY, int width, int height) {
+		Element go = kmlDoc.createElement("GroundOverlay");
+		Element name = kmlDoc.createElement("name");
+		Element ico = kmlDoc.createElement("Icon");
+		Element href = kmlDoc.createElement("href");
+		Element drawOrder = kmlDoc.createElement("drawOrder");
+		Element latLonBox = kmlDoc.createElement("LatLonBox");
+		Element north = kmlDoc.createElement("north");
+		Element south = kmlDoc.createElement("south");
+		Element east = kmlDoc.createElement("east");
+		Element west = kmlDoc.createElement("west");
+		Element rotation = kmlDoc.createElement("rotation");
 
 		name.setTextContent(map.getName());
 		href.setTextContent(imageFileName);
 		drawOrder.setTextContent("0");
+
+		MapSpace mapSpace = mapSource.getMapSpace();
+		NumberFormat df = Utilities.FORMAT_6_DEC_ENG;
+
+		String longitudeMin = df.format(mapSpace.cXToLon(startX, zoom));
+		String longitudeMax = df.format(mapSpace.cXToLon(startX + width, zoom));
+		String latitudeMin = df.format(mapSpace.cYToLat(startY + height, zoom));
+		String latitudeMax = df.format(mapSpace.cYToLat(startY, zoom));
 
 		north.setTextContent(latitudeMax);
 		south.setTextContent(latitudeMin);
@@ -271,7 +288,7 @@ public class GarminCustom extends AtlasCreator {
 		east.setTextContent(longitudeMax);
 		rotation.setTextContent("0.0");
 
-		goRoot.appendChild(go);
+		groundOverlayRoot.appendChild(go);
 		go.appendChild(name);
 		go.appendChild(ico);
 		go.appendChild(latLonBox);
@@ -283,14 +300,19 @@ public class GarminCustom extends AtlasCreator {
 		latLonBox.appendChild(east);
 		latLonBox.appendChild(west);
 		latLonBox.appendChild(rotation);
+	}
 
+	private void writeKmlToZip() throws TransformerFactoryConfigurationError, TransformerException,
+			IOException {
 		Transformer serializer;
 		serializer = TransformerFactory.newInstance().newTransformer();
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16000);
-		serializer.transform(new DOMSource(doc), new StreamResult(bos));
+		serializer.transform(new DOMSource(kmlDoc), new StreamResult(bos));
 		writeStoredEntry("doc.kml", bos.toByteArray());
+		kmlDoc = null;
+		groundOverlayRoot = null;
 	}
 }

@@ -377,6 +377,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		public TileDatabase(MapSource mapSource) throws IOException, EnvironmentLockedException,
 				DatabaseException {
+			log.debug("Opening tile store db: \"" + mapSource.getStoreName() + "\"");
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			try {
 				t.pauseInterrupt();

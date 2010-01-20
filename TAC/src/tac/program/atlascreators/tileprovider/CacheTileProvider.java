@@ -4,30 +4,56 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Hashtable;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.log4j.Logger;
 
 public class CacheTileProvider extends FilterTileProvider {
 
+	private Logger log = Logger.getLogger(CacheTileProvider.class);
+
 	private Hashtable<CacheKey, SRCachedTile> cache;
+
+	private PreLoadThread preLoader = new PreLoadThread();
 
 	public CacheTileProvider(TileProvider tileProvider) {
 		super(tileProvider);
 		cache = new Hashtable<CacheKey, SRCachedTile>(500);
+		preLoader.start();
 	}
 
 	@Override
 	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
 		SRCachedTile cachedTile = cache.get(new CacheKey(x, y, layer));
+		BufferedImage image = null;
 		if (cachedTile != null) {
 			CachedTile tile = cachedTile.get();
-			if (tile != null)
-				return tile.getImage();
+			if (tile != null) {
+				if (tile.loaded)
+					log.trace(String.format("Cache hit: x=%d y=%d l=%d", x, y, layer));
+				image = tile.getImage();
+				if (!tile.nextLoadJobCreated) {
+					// log.debug(String.format("Preload job added : x=%d y=%d l=%d",
+					// x + 1, y, layer));
+					preloadTile(new CachedTile(new CacheKey(x + 1, y, layer)));
+					tile.nextLoadJobCreated = true;
+				}
+			}
 		}
-		BufferedImage image = super.getTileImage(x, y, layer);
+		if (image == null) {
+			log.trace(String.format("Cache miss: x=%d y=%d l=%d", x, y, layer));
+			// log.debug(String.format("Preload job added : x=%d y=%d l=%d", x +
+			// 1, y, layer));
+			preloadTile(new CachedTile(new CacheKey(x + 1, y, layer)));
+			image = internalGetTileImage(x, y, layer);
+		}
 		return image;
 	}
 
 	protected BufferedImage internalGetTileImage(int x, int y, int layer) throws IOException {
-		return super.getTileImage(x, y, layer);
+		synchronized (tileProvider) {
+			return super.getTileImage(x, y, layer);
+		}
 	}
 
 	public byte[] getTileData(int layer, int x, int y) throws IOException {
@@ -38,10 +64,44 @@ public class CacheTileProvider extends FilterTileProvider {
 		throw new RuntimeException("Not implemented");
 	}
 
+	private void preloadTile(CachedTile tile) {
+		if (cache.get(tile.key) != null)
+			return;
+		preLoader.queue.add(tile);
+		cache.put(tile.key, new SRCachedTile(tile));
+	}
+
 	private static class SRCachedTile extends SoftReference<CachedTile> {
 
 		public SRCachedTile(CachedTile referent) {
 			super(referent);
+		}
+
+	}
+
+	private class PreLoadThread extends Thread {
+
+		private LinkedBlockingQueue<CachedTile> queue = null;
+
+		public PreLoadThread() {
+			super("ImagePreLoadThread");
+			queue = new LinkedBlockingQueue<CachedTile>();
+		}
+
+		@Override
+		public void run() {
+			CachedTile tile;
+			try {
+				while (true) {
+					tile = queue.take();
+					if (tile != null && !tile.loaded) {
+						// log.trace("Loading image async: " + tile);
+						tile.loadImage();
+					}
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -85,34 +145,47 @@ public class CacheTileProvider extends FilterTileProvider {
 				return false;
 			return true;
 		}
-		
+
+		@Override
+		public String toString() {
+			return "CacheKey [x=" + x + ", y=" + y + ", layer=" + layer + "]";
+		}
+
 	}
 
 	private class CachedTile {
-		int x;
-		int y;
-		int layer;
-		private BufferedImage image;
 
-		public CachedTile(int x, int y, int layer) {
+		CacheKey key;
+		private BufferedImage image;
+		boolean loaded = false;
+		boolean nextLoadJobCreated = false;
+
+		public CachedTile(CacheKey key) {
 			super();
-			this.x = x;
-			this.y = y;
-			this.layer = layer;
+			this.key = key;
 			image = null;
 		}
 
 		public synchronized void loadImage() {
 			try {
-				image = internalGetTileImage(x, y, layer);
-			} catch (IOException e) {
-				//
+				image = internalGetTileImage(key.x, key.y, key.layer);
+			} catch (Exception e) {
+				log.error("",e);
 			}
+			loaded = true;
 		}
 
 		public synchronized BufferedImage getImage() {
+			if (!loaded)
+				loadImage();
 			return image;
 		}
-		
+
+		@Override
+		public String toString() {
+			return "CachedTile [key=" + key + ", loaded=" + loaded + ", nextLoadJobCreated="
+					+ nextLoadJobCreated + "]";
+		}
+
 	}
 }

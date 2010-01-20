@@ -5,6 +5,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import tac.exceptions.MapCreationException;
 import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import tac.program.atlascreators.impl.MapTileBuilder;
+import tac.program.atlascreators.tileprovider.CacheTileProvider;
 import tac.program.model.AtlasOutputFormat;
 import tac.utilities.Utilities;
 
@@ -67,6 +68,8 @@ public class TrekBuddyCustom extends TrekBuddy {
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		log.debug("Starting map creation using custom parameters: " + parameters);
+		
+		mapDlTileProvider = new CacheTileProvider(mapDlTileProvider);
 
 		MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 		atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());

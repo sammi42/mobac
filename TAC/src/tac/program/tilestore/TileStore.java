@@ -25,11 +25,11 @@ public abstract class TileStore {
 		try {
 			INSTANCE = new BerkeleyDbTileStore();
 		} catch (TileStoreException e) {
-			String errMsg = "Multiple instances of TrekBuddy Atlas Creator are trying "
+			String errMsg = "Multiple instances of Mobile Atlas Creator are trying "
 					+ "to access the same tile store.\n"
 					+ "The tile store can only be used by used by one instance at a time.\n"
 					+ "Please close the other instance and try again.";
-			JOptionPane.showMessageDialog(null, errMsg, "Multiple instances of TrekBuddy "
+			JOptionPane.showMessageDialog(null, errMsg, "Multiple instances of Mobile "
 					+ "Atlas Creator running", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}

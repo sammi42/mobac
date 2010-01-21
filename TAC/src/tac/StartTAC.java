@@ -4,11 +4,11 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- * Main class for starting TrekBuddy Atlas Creator.
+ * Main class for starting Mobile Atlas Creator.
  * 
  * This class performs the Java Runtime version check and if the correct version
  * is installed it creates a new instance of the class specified by
- * {@link #MAIN_CLASS}. The class to be instanciated is specified by it's name
+ * {@link #MAIN_CLASS}. The class to be instantiated is specified by it's name
  * intentionally as this allows to compile this class without any further class
  * dependencies.
  * 
@@ -58,8 +58,8 @@ public class StartTAC {
 					.showMessageDialog(
 							null,
 							"The used Java Runtime Environment does not meet the minimum requirements.\n"
-									+ "TrekBuddy Atlas Creator requires at least Java 6 (1.6) or higher.\n"
-									+ "Please update your Java Runtime before starting TrekBuddy Atlas Creator.\n\n"
+									+ "Mobile Atlas Creator requires at least Java 6 (1.6) or higher.\n"
+									+ "Please update your Java Runtime before starting Mobile Atlas Creator.\n\n"
 									+ "Detected Java Runtime Version: " + ver,
 							"Java Runtime version problem detected", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);

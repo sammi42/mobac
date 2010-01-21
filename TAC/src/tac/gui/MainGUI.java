@@ -558,7 +558,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 				return;
 			if (jAtlasTree.getAtlas().calculateTilesToDownload() > 3000000) {
 				JOptionPane.showMessageDialog(null,
-						"TrekBuddy Atlas Creator has detected that you are trying to\n"
+						"Mobile Atlas Creator has detected that you are trying to\n"
 								+ "download an extra ordinary large atlas "
 								+ "with a very high number of tiles.\n"
 								+ "Please reduce the selected areas "

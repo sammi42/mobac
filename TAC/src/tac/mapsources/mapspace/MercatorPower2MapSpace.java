@@ -13,7 +13,7 @@ import tac.gui.mapview.PreviewMap;
  * origin (0,0) has latitude ~85 and longitude -180
  * 
  * <p>
- * This is the only implementation that is currently supported by TrekBuddy
+ * This is the only implementation that is currently supported by Mobile
  * Atlas Creator.
  * </p>
  * <p>

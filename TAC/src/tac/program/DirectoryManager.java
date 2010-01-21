@@ -7,7 +7,7 @@ import tac.utilities.Utilities;
 import tac.utilities.OSUtilities.OperatingSystem;
 
 /**
- * Provides the five common directories used within TrekBuddy Atlas Creator:
+ * Provides the five common directories used within Mobile Atlas Creator:
  * <ul>
  * <li>current directory</li>
  * <li>program directory</li>
@@ -54,15 +54,15 @@ public class DirectoryManager {
 	}
 
 	/**
-	 * Returns the directory where TrekBuddy Atlas Creator saves it's
+	 * Returns the directory where Mobile Atlas Creator saves it's
 	 * application settings.
 	 * 
 	 * Examples:
 	 * <ul>
 	 * <li>English Windows XP:<br>
-	 * <tt>C:\Document and Settings\%username%\Application Data\Trekbuddy Atlas Creator</tt>
+	 * <tt>C:\Document and Settings\%username%\Application Data\Mobile Atlas Creator</tt>
 	 * <li>Vista:<br>
-	 * <tt>C:\Users\%username%\Application Data\Trekbuddy Atlas Creator</tt>
+	 * <tt>C:\Users\%username%\Application Data\Mobile Atlas Creator</tt>
 	 * <li>Linux:<br>
 	 * <tt>/home/$username$/.tac</tt></li>
 	 * </ul>
@@ -76,7 +76,7 @@ public class DirectoryManager {
 				throw new RuntimeException("User application data to found");
 			File appDataDir = new File(appData);
 			if (appDataDir.isDirectory()) {
-				File tacDataDir = new File(appData, "TrekBuddy Atlas Creator");
+				File tacDataDir = new File(appData, "Mobile Atlas Creator");
 				if (tacDataDir.isDirectory() || tacDataDir.mkdir())
 					return tacDataDir;
 				else

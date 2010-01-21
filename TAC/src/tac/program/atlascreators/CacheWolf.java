@@ -87,7 +87,7 @@ public class CacheWolf extends Ozi {
 
 			double[] affine = { 0, 0, 0, 0 };
 
-			// TrekBuddy Atlas Creator does only output maps with north at top
+			// Mobile Atlas Creator does only output maps with north at top
 			// (no rotation). Therefore we should be able to simplify the affine
 			// calculation process:
 			affine[1] = (bottomRightLon - topLeftLon) / width;

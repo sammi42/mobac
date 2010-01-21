@@ -23,9 +23,11 @@ public class Logging {
 
 	protected static final String CONFIG_FILENAME = "log4j.xml";
 
+	protected static final String LOG_FILENAME = "Mobile Atlas Creator.log";
+
 	protected static File CONFIG_FILE = null;
 
-	public static final Logger LOG = Logger.getLogger("TAC");
+	public static final Logger LOG = Logger.getLogger("MAC");
 
 	public static final Layout ADVANCED_LAYOUT = new PatternLayout(
 			"%d{ISO8601} %-5p [%t] %c{1}: %m%n");
@@ -89,7 +91,7 @@ public class Logging {
 	public static void configureLogfileLogging(Level level) {
 		Logger logger = Logger.getRootLogger();
 		File logFileDir = DirectoryManager.userSettingsDir;
-		String logFilename = new File(logFileDir, "TrekBuddy Atlas Creator.log").getAbsolutePath();
+		String logFilename = new File(logFileDir, LOG_FILENAME).getAbsolutePath();
 		Layout layout = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
 		FileAppender consoleAppender;
 		try {

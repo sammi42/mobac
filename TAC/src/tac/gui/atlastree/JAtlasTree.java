@@ -50,7 +50,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	private static final int margin = 12;
 
 	private static final String MSG_ATLAS_VERSION_MISMATCH = ""
-			+ "The loaded atlas belongs to an older version TrekBuddy Atlas Creator. "
+			+ "The loaded atlas belongs to an older version Mobile Atlas Creator. "
 			+ "This old version \nused a somehow different atlas profile format "
 			+ "which is incompatible to this version.\n\n"
 			+ "It is recommended to clear the loaded atlas and delete the affected profile.\n"

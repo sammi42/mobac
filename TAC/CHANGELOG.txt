@@ -1,14 +1,14 @@
 *******************************************************************************
-*              T R E K B U D D Y   A T L A S   C R E A T O R                  * 
+*                 M O B I L E   A T L A S   C R E A T O R                     * 
 *******************************************************************************
-*                 V E R S I O N   I N F O R M A T I O N                       *
+*                  V E R S I O N   I N F O R M A T I O N                      *
 *******************************************************************************
  
  + = Additions since previous version
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 1.7: (2010-??-??)
+ 1.7: (2010-01-??)
  ~ Tiles tore now uses database (BerkelyDB) instead of tile files in file 
     system
  + Old tiles saved in the tile store are checked and updated when used 
@@ -32,7 +32,7 @@
  + New map source: Humbermedia Bavaria 
  + New atlas format: Mobile Trail Explorer Cache (writes single MTECache file
     per atlas)
- + New map sources: (Norway) Statkart Topo2 & Toporaster2 (limited to 10.000
+ + New map sources: (Norway) Statkart Topo2, Toporaster2 (limited to 10.000
     tiles per day and IP)
  + Drag & Drop for maps in "Atlas content" tree 
  + New atlas format: Magellan RMP / VantagePoint
@@ -56,16 +56,11 @@
  ! Loading and saving of GPX failed
  
  1.6: (2009-10-27)
- ! Map selections do no longer unwanted enlarge itself in grid mode beyond the 
-    selected grid
  + Loading & saving of GPX 1.1 files (way- track- and routepoints are displayed
     as overlay) 
  + GPX 1.0 files are automatically transformed to GPX 1.1 file on load 
  + Route and tracks are painted as connected line   
  + Add new way points to a GPX file (properties: lat, lon, name)   
- ~ Behavior on adding new maps and layers changed: the number of layers has 
-    been reduced to a minimum making it easier switch between different zoom 
-    levels when using TrekBuddy
  + Map scale bar added (metric/imperial selectable)
  + New atlas format: Mobile Trail Explorer (MTE)
  + New atlas format: RMaps / BigPlanet SQLite (Android applications, requires 
@@ -78,43 +73,54 @@
  + New map sources: Google Maps Korea
  + New map sources: Open Piste Map (openpistemap.org)
  + New atlas format: Maverick (Android application)
- ! Extreme performance break-in in grid-mode fixed
  + New map sources: Emapa.pl (Poland)
- ~ Max zoom level of Google Maps increased from 17 to 19
  + New atlas format: Glopus (PNG & KAL)
  + New map sources: Outdooractive.com Austria and South Tyrol
+
+ ~ Max zoom level of Google Maps increased from 17 to 19
+ ~ Behavior on adding new maps and layers changed: the number of layers has 
+    been reduced to a minimum making it easier switch between different zoom 
+    levels when using TrekBuddy
+
+ ! Extreme performance break-in in grid-mode fixed
+ ! Map selections do no longer unwanted enlarge itself in grid mode beyond the 
+    selected grid
  
  1.5: (2009-08-01)
- ~ Java requirement has changed: Now at least Java 1.6 is required! 
  + Flexible atlases containing different areas of multiple map sources are possible
- ~ Profile saving updated to new atlas structure
- ~ Fullscreen mode is currently unavailable
  + New atlas output format: AndNav - Android Navigation System http://www.andnav.org
- ~ Google Maps, Earth, Mapmaker, Maps China url updated
  + Atlas download can be paused/resumed interactively  
  + Proxy settings rewritten - now system/Java wide or application settings can be  
     used alternatively to the user defined proxy
  + New regional map sources (Poland): ump.waw.pl and docelu.pl
- ~ Settings.xml format has changed
  + Map sources can now be disabled which hides them from the list
- ~ Max zoom for Cycloatlas changed from 14 to 15
  + Merging different layers via drag & drop
  + Custom map sources can be defined via settings.xml (see README.HTM)
- ~ Removed OpenArialMap map source 
  + Map sources manual online update via settings dialog
+ + New atlas format: OziExplorer / large PNG export
+
+ ~ Java requirement has changed: Now at least Java 1.6 is required! 
+ ~ Profile saving updated to new atlas structure
+ ~ Fullscreen mode is currently unavailable
+ ~ Google Maps, Earth, Mapmaker, Maps China url updated
+ ~ Settings.xml format has changed
+ ~ Max zoom for Cycloatlas changed from 14 to 15
+ ~ Removed OpenArialMap map source 
+ ~ Panels on the left can be collapsed to save space
+
  ! Editing the atlas content while map creation in progress resulted in
     unusable/abnormal atlases (see bug #2819613)
- ~ Panels on the left can be collapsed to save space
- + New atlas format: OziExplorer / large PNG export
  
  1.1: (2009-05-13)
+ + New output format: JPEG with different quality levels
+ + added map source Microsoft Maps China (Ditu)
+ 
  ~ Fixed url and name of Cykloatlas (fixes also bug #2755108)
  ~ Updated url of Google Map Maker & Earth
  ~ Fixed tar creation which had problems with default charset on some systems  
- + added map source Microsoft Maps China (Ditu)
  ~ Changed the color depth selector to an output format selector 
- + New output format: JPEG with different quality levels
  ~ OSM Hiking map moved to new server - url adapted
+ 
  ! "Open atlas folder" does now work on Linux (Gnome and may be Kde)
 
  1.0: (2009-04-10)
@@ -126,14 +132,16 @@
  + Experimental: Color reduced (<16) png files are saved using an own implementation
     that writes real 4 bit PNG files (instead to the default Java one that only creates
     8 bit or true color files)    
+ + added map source OSM hiking: http://opentiles.com/nop/    
+ + added map source OpenArialMap    
+
  ~ Maximum map size reduced to 32767 (1 pixel less)
  ~ Atlas output format can now be specified: Tared or untared atlas. The created atlas 
     is always created in the folder "atlases" - the folder "atlasestared" is no longer used.
  ~ "ozi" / "tac_tmp" directory no longer used. Instead one temporary tar file per map 
     layer is created (and later deleted) in the default system temp directory
  ~ fixed GoogleMapMaker map source
- + added map source OSM hiking: http://opentiles.com/nop/    
- + added map source OpenArialMap    
+
  ! Loading tile store information in settings dialog blocked GUI
 
  0.9.7: (2009-03-05)
@@ -141,12 +149,13 @@
  + New map sources (full support): Microsoft Maps, Earth, Hybrid, 
     Cycloatlas (Czech Republic only)
  + New map sources (partial support): Multimap.com
- ~ Google Maps, Earth & MapsChina urls updated
- ~ Custom tile size selection controls combined  
  + Window position, size and state (maximized or not) is saved
  + Preview map allows zoom move/zoom via keyboard controls (patch by Martin Loetzsch)
  + Fullscreen mode hides left panel and places control inside the preview map 
     (patch by Martin Loetzsch)
+
+ ~ Google Maps, Earth & MapsChina urls updated
+ ~ Custom tile size selection controls combined  
  ~ Fixed several Swing thread safety problems (patch by Martin Loetzsch)  
 
  0.9.6: (2009-01-08)
@@ -157,18 +166,18 @@
  + New map source: Yahoo Maps
  + New map source: Google Maps China (Ditu)
  + New map source (Germany only): Outdooractive.com
+ + Selected/entered tile size is now saved/restored in/from settings.xml  
+ + Tooltip of "tiles-to-download-counter-label" (located right to the label 
+    "Zoom levels (..)") now shows the breakdown of the number of tiles
+    to the different zoom levels including the area calculation   
  ~ Exceptions that occur while downloading/creating an atlas are now displayed
     in an dialog showing detailed information about the system and the exception
  ~ Updated Google Maps url & removed "Galileo" appendix
- + Selected/entered tile size is now saved/restored in/from settings.xml  
  ~ New experimental implementation for creating tile of custom size. 
     Disdvantage: Much slower that the algorithm before
     Advantage: Only constant memory needed (approx. less than 10 MB)   
  ~ Using custom tile size now does not concert the tiles to png format. 
     Instead the format used by the maps source is used.
- + Tooltip of "tiles-to-download-counter-label" (located right to the label 
-    "Zoom levels (..)") now shows the breakdown of the number of tiles
-    to the different zoom levels including the area calculation   
 
  0.9.5: (2008-10-27)
 
@@ -206,23 +215,31 @@
  0.8:
  + Added xml based settings file via Java Properties
  + Added possibility to change tile size for the downloaded tiles.
- + Added possibility to set map size in atlas. Giving the possibility to create large atlases 
+ + Added possibility to set map size in atlas. Giving the possibility to create 
+    large atlases 
   
- ! Fixed the non working setting tile store enabled. It was always enabled, despite of what was written in the settings file
- ! Fixed (hopefully) the generation of mixed up atlases at some Linux operating system(s).
- ! Fixed bugs related to defect profiles in profiles.xml file by adding some validation of the xml data at application start.
+ ! Fixed the non working setting tile store enabled. It was always enabled, 
+    despite of what was written in the settings file
+ ! Fixed (hopefully) the generation of mixed up atlases at some Linux operating 
+    system(s).
+ ! Fixed bugs related to defect profiles in profiles.xml file by adding some 
+    validation of the xml data at application start.
   
 0.7:
  + Added possibility to abort an ongoing download of Atlas
- + Added label that shows how many tiles that will be downloaded with current lat, long & zoom settings 
- + Added persistent tile store (cache of tiles in a store which is persistent between program sessions) 
+ + Added label that shows how many tiles that will be downloaded with current 
+    lat, long & zoom settings 
+ + Added persistent tile store (cache of tiles in a store which is persistent 
+    between program sessions) 
 
  ! Fixed wrong download link to ditu.google.com
  
   0.61:
- + Added a possibility to select to download tiles from either ditu.google.com or maps.google.com
+ + Added a possibility to select to download tiles from either ditu.google.com 
+    or maps.google.com
   
- ! Fixed hard coded look and feel, which resulted in an javax.swing.UnsupportedLookAndFeelException at other environments then Windows
+ ! Fixed hard coded look and feel, which resulted in an 
+    javax.swing.UnsupportedLookAndFeelException at other environments then Windows
  
  
      

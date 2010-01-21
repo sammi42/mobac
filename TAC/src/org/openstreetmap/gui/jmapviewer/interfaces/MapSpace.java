@@ -7,7 +7,7 @@ import tac.mapsources.mapspace.MercatorPower2MapSpace;
  * Google/OpenstreetMap.
  * 
  * {@link MercatorPower2MapSpace} is the only implementation that is currently supported
- * by TrekBuddy Atlas Creator.
+ * by Mobile Atlas Creator.
  * <p>
  * DO NOT TRY TO IMPLEMENT YOUR OWN. IT WILL NOT WORK!
  * </p>

@@ -89,7 +89,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(null,
-							"TrekBuddy Atlas Creator has run out of memory.\n"
+							"Mobile Atlas Creator has run out of memory.\n"
 									+ "Please make sure you have started it via the "
 									+ "provided startup scripts 'start.cmd' (Windows) "
 									+ "/ 'start.sh' (Linux).\n"

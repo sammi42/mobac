@@ -15,7 +15,7 @@ import tac.program.model.Settings;
 import tac.utilities.TACExceptionHandler;
 
 /**
- * Creates the necessary files on first time TrekBuddy Atlas Creator is started
+ * Creates the necessary files on first time Mobile Atlas Creator is started
  * or tries to update the environment if the version has changed.
  */
 public class EnvironmentSetup {
@@ -28,16 +28,16 @@ public class EnvironmentSetup {
 		String heapMBFormatted = String.format(Locale.ENGLISH, "%3.2f MiB", maxHeap / 1048576d);
 		log.info("Total avialable memory to TAC: " + heapMBFormatted);
 		if (maxHeap < 100000000) {
-			String msg = "<html><b>WARNING:</b> TrekBuddy Atlas Creator has been started "
+			String msg = "<html><b>WARNING:</b> Mobile Atlas Creator has been started "
 					+ "with a very small amount of memory assigned.<br>"
-					+ "The current maximum usable amount of memory to TrekBuddy Atlas Creator is <b>"
+					+ "The current maximum usable amount of memory to Mobile Atlas Creator is <b>"
 					+ heapMBFormatted
-					+ "</b>.<br><br>Please make sure to start TrekBuddy Atlas Creator in "
-					+ "the future via the provided start scripts <i>TrekBuddy Atlas Creator.exe</i><br>"
+					+ "</b>.<br><br>Please make sure to start Mobile Atlas Creator in "
+					+ "the future via the provided start scripts <i>Mobile Atlas Creator.exe</i><br>"
 					+ "on Windows or <i>start.sh</i> on Linux/Unix/OSX or add the "
 					+ "parameter <b>-Xmx 512M</b> to your startup command.<br><br>"
-					+ "Example: <i>java -Xmx512M -jar TrekBuddy_Atlas_Creator.jar</i><br>"
-					+ "<br><center>Press OK to continue and start TrekBuddy Atlas Creator</center></html>";
+					+ "Example: <i>java -Xmx512M -jar Mobile_Atlas_Creator.jar</i><br>"
+					+ "<br><center>Press OK to continue and start Mobile Atlas Creator</center></html>";
 			JOptionPane.showMessageDialog(null, msg, "Warning: low memory",
 					JOptionPane.WARNING_MESSAGE);
 		}

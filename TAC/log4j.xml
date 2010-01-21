@@ -37,6 +37,10 @@
   	<level value="DEBUG" />
   </logger>
   
+  <logger name="tac.program.atlascreators.impl.rmp.RmpWriter">
+   	<level value="TRACE" /> 
+  </logger>
+  
   <logger name="SysInfo">
   	<level value="ERROR" />
   </logger>
@@ -47,7 +51,7 @@
     <priority value="TRACE" /> 
     -->
     <!-- By default we use log level/priority "DEBUG" -->
-    <priority value="TRACE" />
+    <priority value="DEBUG" />
     <appender-ref ref="console" />
     <appender-ref ref="file" />
   </root>

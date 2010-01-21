@@ -31,7 +31,7 @@ import tac.utilities.tar.TarIndex;
  * </p>
  * <p>
  * Some source parts are taken from the "android-map.blogspot.com Version of
- * TrekBuddy Atlas Creator": http://code.google.com/p/android-map/
+ * Mobile Atlas Creator": http://code.google.com/p/android-map/
  * </p>
  * <p>
  * Additionally the created BigPlanet SQLite database has one additional table

@@ -101,7 +101,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			tileStoreLock = channel.tryLock();
 			if (tileStoreLock == null)
 				throw new TileStoreException("Unable to obtain tile store lock - "
-						+ "another instance of TrekBuddy Atlas Creator is running!");
+						+ "another instance of Mobile Atlas Creator is running!");
 
 			// // Release the lock
 			// lock.release();

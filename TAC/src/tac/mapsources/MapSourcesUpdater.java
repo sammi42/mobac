@@ -173,9 +173,9 @@ public class MapSourcesUpdater {
 			if (conn.getContentLength() == 0)
 				// If there is only an empty file available this indicates that
 				// the mapsources format has changed and requires a new version
-				// of TrekBuddy Atlas Creator
+				// of Mobile Atlas Creator
 				throw new MapSourcesUpdateException(
-						"This version of TrekBuddy Atlas Creator is no longer supported. \n"
+						"This version of Mobile Atlas Creator is no longer supported. \n"
 								+ "Please update to the current version.");
 			byte[] data = new byte[conn.getContentLength()];
 			in.readFully(data);

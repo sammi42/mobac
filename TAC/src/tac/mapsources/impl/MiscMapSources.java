@@ -91,4 +91,24 @@ public class MiscMapSources {
 
 	}
 
+	public static class OviMaps extends AbstractMapSource {
+
+		public OviMaps() {
+			super("Ovi Maps", 1, 18, "png");
+			tileUpdate = TileUpdate.IfModifiedSince;
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
+			return "http://maptile.maps.svc.ovi.com/maptiler/maptile/newest/normal.day/" + zoom
+					+ "/" + x + "/" + y + "/256/png8?token=...&referer=maps.ovi.com";
+		}
+
+		@Override
+		public String toString() {
+			return "Ovi/Nokia Maps";
+		}
+
+		
+	}
+
 }

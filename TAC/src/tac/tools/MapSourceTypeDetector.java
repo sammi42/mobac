@@ -15,7 +15,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.MapSourcesUpdater;
-import tac.mapsources.impl.OsmMapSources;
+import tac.mapsources.impl.MiscMapSources.OviMaps;
 import tac.program.Logging;
 import tac.program.model.EastNorthCoordinate;
 import tac.utilities.Utilities;
@@ -30,7 +30,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(OsmMapSources.OsmHikingRelief.class, Cities.MUNICH);
+		testMapSource(OviMaps.class, Cities.MUNICH);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

@@ -19,6 +19,7 @@ import tac.mapsources.impl.Microsoft.MicrosoftMapsChina;
 import tac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import tac.mapsources.impl.MiscMapSources.MultimapCom;
 import tac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
+import tac.mapsources.impl.MiscMapSources.OviMaps;
 import tac.mapsources.impl.MiscMapSources.YahooMaps;
 import tac.mapsources.impl.OsmMapSources.CycleMap;
 import tac.mapsources.impl.OsmMapSources.Mapnik;
@@ -69,7 +70,7 @@ public class MapSourcesManager {
 				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
 				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(),
 				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
-				new MicrosoftHybrid(), new OutdooractiveGermany(), new OutdooractiveAustria(),
+				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
 				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
 				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),

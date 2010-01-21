@@ -33,7 +33,7 @@ public enum AtlasOutputFormat {
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
-	Ttqv("Touratech TTQV", TTQV.class), //
+	Ttqv("Touratech QV", TTQV.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class);
 

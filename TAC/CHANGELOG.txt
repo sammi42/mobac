@@ -23,7 +23,7 @@
  + New experimental map source: Turaterkep (Hungary hiking)
     Uses tiles of size 512x512 (not supported by all atlas formats)        
  + Multi layer map sources such as Google Hybrid or OSM Hiking with relief 
-    backgroundcan be used with all atlas creators
+    background can be used with all atlas creators
  + New map: NearMap Australia (high-resolution aerial images for Australia)
  ! GPX addWpt: Multiple way points added by one mouse click fixed
  ! Start.sh/Start.cmd Java max heap setting was ignored by Java because of 
@@ -36,7 +36,7 @@
     tiles per day and IP)
  + Drag & Drop for maps in "Atlas content" tree 
  + New atlas format: Magellan RMP / VantagePoint
- + New atlas format: Touratech TTQV
+ + New atlas format: Touratech QV
  ! Fixed #2913874: ArrayIndexOutOfBoundsException in PNG 4-bit writer 
  + New map source: Eniro.com map/aerial/nautical (Sweden, Norway, Finland)
  + Checkbox added in atlas progress dialog for ignoring all download errors  
@@ -45,6 +45,7 @@
  + New map source: Mapplus.ch (Switzerland)
  + Coordinate format changeable ("deg" / "deg,min" / "deg,min,sec")
  + New atlas format: CacheBox
+ + New atlas format: Garmin Custom Map
  + Each map source has now a background color (usually black) that is used 
     in case of missing tiles
  + Content-type check after download (HTTP header and image data header)

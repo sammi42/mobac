@@ -41,10 +41,11 @@ p,ul {
 </style>
 </head>
 <body>
-<h1>Mobile Atlas Creator - Readme</h1>
-<p>This is readme file for the Mobile Atlas Creator
-application. <br>
-Mobile Atlas Creator is an open source project hosted on SourceForge.net: <br>
+<h1>Mobile Atlas Creator - Read-me</h1>
+<p>Welcome to Mobile Atlas Creator read-me file for end users.</p>
+<p>Before January 2010 this project was known as "TrekBuddy Atlas Creator".</p>
+<p>Mobile Atlas Creator is an open source project hosted on
+SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
 </p>
 <h2>Table of contents</h2>
@@ -82,9 +83,8 @@ Mobile Atlas Creator is an open source project hosted on SourceForge.net: <br>
 <hr>
 
 <h2><a name="License">License</a></h2>
-<p>Mobile Atlas Creator is under GNU General Public License
-Version 2 (GPL). For details on the GPL see the license file <a
-	href="gpl.txt">gpl.txt</a></p>
+<p>Mobile Atlas Creator is under GNU General Public License Version
+2 (GPL). For details on the GPL see the license file <a href="gpl.txt">gpl.txt</a></p>
 
 <h2><a name="Description">Description</a></h2>
 <p>This application creates atlases for the J2ME applications <a
@@ -105,10 +105,9 @@ capable image viewer (map image in one large PNG file).</p>
 6 Update 14 (v1.6.0_14) or higher is installed on the computer.</p>
 <p>For reducing the color depth of downloaded tiles the library
 files of the "Java Advanced Imaging" (JAI) have to be present on the
-system respectively in the same directory as
-Mobile_Atlas_Creator.jar. Ready to use binary builds of the Java
-Advanced Imaging library can be obtained at <a
-	href="https://jai.dev.java.net/binary-builds.html">https://jai.dev.java.net/binary-builds.html</a>
+system respectively in the same directory as Mobile_Atlas_Creator.jar.
+Ready to use binary builds of the Java Advanced Imaging library can be
+obtained at <a href="https://jai.dev.java.net/binary-builds.html">https://jai.dev.java.net/binary-builds.html</a>
 </p>
 
 <h2><a name="Installation">Installation</a></h2>
@@ -116,12 +115,11 @@ Advanced Imaging library can be obtained at <a
 to have TAC installed.</p>
 
 <h2><a name="Start">Application start</a></h2>
-<p>The application is started by executing the <tt>Mobile
-Atlas Creator.exe</tt> in a Windows environment or the <tt>start.sh</tt>
-under a Linux / Unix environment (it may be necessary to set the
-executable bit for the script). At the first application start all
-necessary files and folders are automatically created by the
-application.</p>
+<p>The application is started by executing the <tt>Mobile Atlas
+Creator.exe</tt> in a Windows environment or the <tt>start.sh</tt> under a
+Linux / Unix environment (it may be necessary to set the executable bit
+for the script). At the first application start all necessary files and
+folders are automatically created by the application.</p>
 
 <hr>
 <!-- *************************************************************************** -->
@@ -158,8 +156,8 @@ JTileDownloader and then process the maps using <a
 	href="http://code.google.com/p/mobile-trail-explorer/wiki/CacheCreator">MTE
 CacheCreator</a>.<br>
 As atlases for Mobile Trail Explorer does not support all features
-provided by Mobile Atlas Creator the following settings are ignored when creating
-atlases for Mobile Trail Explorer:</p>
+provided by Mobile Atlas Creator the following settings are ignored when
+creating atlases for Mobile Trail Explorer:</p>
 <ul>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
 	<li>Name of all layers and maps</li>
@@ -171,9 +169,9 @@ atlases for Mobile Trail Explorer:</p>
 <p>For creating atlases compatible with Maverick you have to select
 <b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
 on the left side of the main window. <br>
-As atlases for Maverick do not support all features provided by
-Mobile Atlas Creator the following settings are ignored when creating atlases for
-AndNav:</p>
+As atlases for Maverick do not support all features provided by Mobile
+Atlas Creator the following settings are ignored when creating atlases
+for AndNav:</p>
 <ul>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
 	<li>Name of all layers and maps</li>
@@ -184,8 +182,9 @@ AndNav:</p>
 <p>For creating atlases compatible with AndNav you have to select <b>AndNav
 atlas format</b> as format in section <b>Atlas settings</b> on the left side
 of the main window. <br>
-As atlases for AndNav do not support all features provided by Mobile Atlas Creator
-the following settings are ignored when creating atlases for AndNav:</p>
+As atlases for AndNav do not support all features provided by Mobile
+Atlas Creator the following settings are ignored when creating atlases
+for AndNav:</p>
 <ul>
 	<li>Change height or width of the map tiles</li>
 	<li>Name of all layers and maps</li>
@@ -196,9 +195,9 @@ the following settings are ignored when creating atlases for AndNav:</p>
 <p>For creating atlases compatible with OSMTracker you have to
 select <b>OSMTracker tile storage</b> as format in section <b>Atlas
 settings</b> on the left side of the main window. <br>
-As atlases for OSMTracker do not support all features provided by
-Mobile Atlas Creator the following settings are ignored when creating atlases for
-OSMTracker:</p>
+As atlases for OSMTracker do not support all features provided by Mobile
+Atlas Creator the following settings are ignored when creating atlases
+for OSMTracker:</p>
 <ul>
 	<li>Change height or width of the map tiles</li>
 	<li>Name of all layers and maps</li>
@@ -218,8 +217,8 @@ are not shipped with Mobile Atlas Creator. Read section <a
 	href="#SQLite">SQLite library</a> for details what libraries are
 required and how to obtain them.<br>
 The atlas format BigPlanet SQLite does not support all features provided
-by Mobile Atlas Creator the following settings are ignored when creating atlases
-using this output format:</p>
+by Mobile Atlas Creator the following settings are ignored when creating
+atlases using this output format:</p>
 <ul>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
 	<li>Name of all layers and maps</li>
@@ -231,13 +230,13 @@ using this output format:</p>
 <h4><a name="SQLite">SQLite native library</a></h4>
 <p>The BigPlanet atlas format uses a SQLite database for storing the
 tiles. For creating SQLite database an additional native library is
-required. The correspondant Java classes are already part of Mobile 
+required. The correspondant Java classes are already part of Mobile
 Atlas Creator - only the platform dependant native library of <a
 	href="http://www.ch-werner.de/javasqlite">JavaSQLite wrapper by
 Christian Werner</a> is missing. For installing the SQLite wrapper copy the
 file <tt>sqlite_jni.dll</tt> (Windows) respectively <tt>sqlite_jni.so</tt>
-(Linux/Unix) into the program directory of Mobile Atlas Creator
-(where the Mobile_Atlas_Creator.jar is located).</p>
+(Linux/Unix) into the program directory of Mobile Atlas Creator (where
+the Mobile_Atlas_Creator.jar is located).</p>
 <p>For 32 bit Windows systems there are pre-compiled binary
 available: <a
 	href="http://www.ch-werner.de/javasqlite/javasqlite-20090430-win32.zip">
@@ -275,13 +274,12 @@ created atlas and select the MAP file.</p>
 <p>If you are only interested in the map image you can safely delete
 the created map file.</p>
 <h4><a name="OziWarning">Warning</a></h4>
-<p>Mobile Atlas Creator uses an highly sophisticated and
-optimized algorithm for creating the PNG files for OziExplorer use. This
-algorithm allows to create very large maps images at low memory usage.
-OziExplorer and most image viewers do not use such sophisticated
-algorithms which can lead to the situation that you can create very
-large map images - but OziExplorer and other image viewers are not able
-to open the image.</p>
+<p>Mobile Atlas Creator uses an highly sophisticated and optimized
+algorithm for creating the PNG files for OziExplorer use. This algorithm
+allows to create very large maps images at low memory usage. OziExplorer
+and most image viewers do not use such sophisticated algorithms which
+can lead to the situation that you can create very large map images -
+but OziExplorer and other image viewers are not able to open the image.</p>
 <!-- *************************************************************************** -->
 <h3><a name="Glopus">Creating atlases for Glopus</a></h3>
 <p>For creating atlases compatible with Glopus you have to select <b>Glopus
@@ -343,9 +341,8 @@ when creating atlases:</p>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
 </ul>
 <p>Additionally some other limitations may apply, based on which
-device and firmware version you are using. Mobile Atlas Creator does
-not chek those limitations - therefore it may work or not if you are
-using:</p>
+device and firmware version you are using. Mobile Atlas Creator does not
+chek those limitations - therefore it may work or not if you are using:</p>
 <ul>
 	<li>An atlas with more than 5 maps.</li>
 	<li>Maps with a zoom level higher than 15.</li>
@@ -361,51 +358,50 @@ VantagePoint or transfer it onto your device.</p>
 enhancement ideas for Mobile Atlas Creator feel free to open an <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105497">Feature
 Request Ticket</a> at SourceForge.</p>
-<p>If have a new online map which is not available in Mobile
-Atlas Creator there my be change to add it. Before opening a Feature
-Request please take a look into the <a
+<p>If have a new online map which is not available in Mobile Atlas
+Creator there my be change to add it. Before opening a Feature Request
+please take a look into the <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/TAC/misc/Incompatible%20maps.txt">list
 of map sources known to incompatible with Mobile Atlas Creator</a>.</p>
 
 <h2><a name="Bugs">Problems, Bugs &amp; Errors</a></h2>
-<p>In case of unexpected errors while executing Mobile Atlas
-Creator you may get presented a exception dialog containing detailed
-information about the problem. In such a case please create a new <a
+<p>In case of unexpected errors while executing Mobile Atlas Creator
+you may get presented a exception dialog containing detailed information
+about the problem. In such a case please create a new <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">ticket
 in the Bug Tracker</a> at SourceForge. Please add the detailed exception
 information and a detailed description of your last performed actions.</p>
 
 <h3>The default error log</h3>
-<p>By default Mobile Atlas Creator records all errors of the
-current session into it's error log file <tt>Mobile Atlas
-Creator.log</tt>. This log file is located on Windows system in the directory
-<tt>%APPDATA%\Mobile Atlas Creator\</tt> and on Linux/Unix/OSX system
-in the directory <tt>~/.tac/</tt></p>
+<p>By default Mobile Atlas Creator records all errors of the current
+session into it's error log file <tt>Mobile Atlas Creator.log</tt>. This
+log file is located on Windows system in the directory <tt>%APPDATA%\Mobile
+Atlas Creator\</tt> and on Linux/Unix/OSX system in the directory <tt>~/.tac/</tt></p>
 
 <h3>Activate the advanced logging system</h3>
 <p>If the recorded errors in the error log do not indicate a problem
-you can activate the overall message logging mechanism of Mobile
-Atlas Creator:<br />
+you can activate the overall message logging mechanism of Mobile Atlas
+Creator:<br />
 Download the file <a
 	href="http://trekbuddyatlasc.sourceforge.net/log4j.xml">log4j.xml</a>
-and save it in the directory where the jar file of Mobile Atlas
-Creator is installed to.</p>
-<p>The next start Mobile Atlas Creator will create a log file in
-the current directory (on Windows this is usually the directory where
-the JAR file is located on Linux usually the profile directory). Please
-note that the log file is erased on each program start. If you think you
-have found a bug please file it in the <a
+and save it in the directory where the jar file of Mobile Atlas Creator
+is installed to.</p>
+<p>The next start Mobile Atlas Creator will create a log file in the
+current directory (on Windows this is usually the directory where the
+JAR file is located on Linux usually the profile directory). Please note
+that the log file is erased on each program start. If you think you have
+found a bug please file it in the <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">bug
 tracker at SourceForge</a>.</p>
 
 <h2><a name="Limitations">Known problems and limitations</a></h2>
 <h3>New map sources</h3>
-<p>Mobile Atlas Creator is limited to map sources that provide
-their maps if form of map tiles. Each of that map tiles has to be of
-size 256x256 pixels. Additionally the map source has to use the
-spherical Mercator projection and the number of tiles forming the world
-on each zoom level has to be one of the following values: 2<sup>0</sup>,
-2<sup>1</sup>, 2<sup>2</sup> ... 2<sup>21</sup>, 2<sup>22</sup>.<br>
+<p>Mobile Atlas Creator is limited to map sources that provide their
+maps if form of map tiles. Each of that map tiles has to be of size
+256x256 pixels. Additionally the map source has to use the spherical
+Mercator projection and the number of tiles forming the world on each
+zoom level has to be one of the following values: 2<sup>0</sup>, 2<sup>1</sup>,
+2<sup>2</sup> ... 2<sup>21</sup>, 2<sup>22</sup>.<br>
 For more details see OpenStreetMap Wiki: <a
 	href="http://wiki.openstreetmap.org/wiki/Mercator">Mercator</a>, <a
 	href="http://wiki.openstreetmap.org/wiki/Height_and_width_of_a_map">Height

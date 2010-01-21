@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
 
  1.7: (2010-01-??)
+ ~ Project has been renamed to "Mobile Atlas Creator" taking account that
+    besides TrekBuddy a large number of atlas and map formats are supported
+    and for ending the mix-up of "TrekBuddy" and "TrekBuddy Atlas Creator" 
  ~ Tiles tore now uses database (BerkelyDB) instead of tile files in file 
     system
  + Old tiles saved in the tile store are checked and updated when used 

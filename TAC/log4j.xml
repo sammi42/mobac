@@ -10,7 +10,7 @@
   </appender> 
   
   <appender name="file" class="org.apache.log4j.FileAppender">
-    <param name="file" value="TrekBuddy Atlas Creator.log" />
+    <param name="file" value="Mobile Atlas Creator.log" />
     <param name="Append" value="false" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c{1}: %m%n" />

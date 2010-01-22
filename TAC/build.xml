@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
-	<property file="src/tac/mobac.properties" />
+	<property file="src/mobac/mobac.properties" />
 	<property name="jar.name" value="Mobile_Atlas_Creator.jar" />
 	<property name="zip.name" value="Mobile_Atlas_Creator_${mobac.version}.zip" />
 	<property name="zip_src.name" value="Mobile_Atlas_Creator_${mobac.version}_src.zip" />
-	<property name="main.class" value="tac.StartTAC" />
+	<property name="main.class" value="mobac.StartTAC" />
 
 	<property name="je-version" value="3.3.93" />
 
@@ -13,7 +13,6 @@
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete includeemptydirs="true" failonerror="false">
-			<fileset dir="tac_tmp" includes="**/*" />
 			<fileset dir="atlases" includes="**/*" />
 			<fileset dir="build" includes="**/*" />
 			<fileset dir="tilestore" includes="**/*" />
@@ -42,22 +41,22 @@
 		<!-- error if the JRE requirements are not met -->
 		<javac srcdir="src" destdir="build" target="1.4" source="1.4" debug="true">
 			<classpath refid="maincp" />
-			<include name="tac/StartTAC.java" />
+			<include name="mobac/StartTAC.java" />
 		</javac>
 		<!-- Compile the other classes for Java 1.6 -->
 		<javac srcdir="src" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
-			<exclude name="tac/StartTAC.java" />
-			<exclude name="tac/tilestore/berkeleydb/*" />
-			<exclude name="tac/tools/*" />
-			<exclude name="tac/program/mapcreators/MapCreatorBigPlanetSqlJet*" />
+			<exclude name="mobac/StartTAC.java" />
+			<exclude name="mobac/tilestore/berkeleydb/*" />
+			<exclude name="mobac/tools/*" />
+			<exclude name="mobac/program/mapcreators/MapCreatorBigPlanetSqlJet*" />
 			<include name="org/openstreetmap/**" />
-			<include name="tac/**" />
+			<include name="mobac/**" />
 		</javac>
 		<copy todir="build" overwrite="true">
 			<fileset dir="src">
 				<include name="**/*.properties" />
-				<include name="tac/resources/**" />
+				<include name="mobac/resources/**" />
 			</fileset>
 		</copy>
 	</target>
@@ -99,14 +98,14 @@
 			-keep class org.apache.log4j.spi.LocationInfo { public *; }
 			-keep class org.apache.log4j.PatternLayout { public *; }
 			-keep class org.apache.log4j.FileAppender { public *; }
-			-keep class tac.program.model.package-info
-			-keep class tac.program.model.* { public *; }
-			-keep class tac.program.interfaces.* { public *; }
-			-keep class tac.utilities.tar.TarIndex { public *; }
-			-keep class tac.utilities.tar.TarIndexedArchive { public *; }
-			-keep class tac.data.gpx.gpx11.* { public *; }
-			-keep class tac.program.tilestore.berkeleydb.* { *; }
-			-keep class tac.program.tilestore.TileStoreEntry { public *; }
+			-keep class mobac.program.model.package-info
+			-keep class mobac.program.model.* { public *; }
+			-keep class mobac.program.interfaces.* { public *; }
+			-keep class mobac.utilities.tar.TarIndex { public *; }
+			-keep class mobac.utilities.tar.TarIndexedArchive { public *; }
+			-keep class mobac.data.gpx.gpx11.* { public *; }
+			-keep class mobac.program.tilestore.berkeleydb.* { *; }
+			-keep class mobac.program.tilestore.TileStoreEntry { public *; }
 			-keep class SQLite.JDBC2z.* { public *; }
 			-keepclassmembers enum * {
 			    public static **[] values();
@@ -151,10 +150,10 @@
 		</jar>
 	</target>
 
-	<target name="svnversion" description="Updates the revision information in src/tac/mobac.properties">
+	<target name="svnversion" description="Updates the revision information in src/mobac/mobac.properties">
 		<java jar="lib/svnversion.jar" fork="true" outputproperty="mobac.revision.new" />
 		<echo message="TAC revision: ${mobac.revision.new}" />
-		<propertyfile file="src/tac/mobac-rev.properties">
+		<propertyfile file="src/mobac/mobac-rev.properties">
 			<entry key="mobac.revision" value="${mobac.revision.new}" />
 		</propertyfile>
 	</target>
@@ -178,7 +177,7 @@
 				<include name="src/**" />
 				<exclude name="src/_test/**" />
 				<exclude name="src/test/**" />
-				<exclude name="src/tac/tools/**" />
+				<exclude name="src/mobac/tools/**" />
 				<include name="log4j.xml" />
 				<include name="build.xml" />
 				<include name="gpl.txt" />

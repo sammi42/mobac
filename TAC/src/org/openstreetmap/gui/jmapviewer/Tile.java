@@ -13,10 +13,11 @@ import java.net.HttpURLConnection;
 
 import javax.imageio.ImageIO;
 
+import mobac.utilities.Utilities;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 
-import tac.utilities.Utilities;
 
 /**
  * Holds one map tile. Additionally the code for loading the tile image and

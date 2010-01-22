@@ -4,15 +4,16 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.io.ByteArrayInputStream;
 
+import mobac.program.download.TileDownLoader;
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.TileStoreEntry;
+
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
-import tac.program.download.TileDownLoader;
-import tac.program.tilestore.TileStore;
-import tac.program.tilestore.TileStoreEntry;
 
 /**
  * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via

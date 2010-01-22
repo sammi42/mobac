@@ -6,10 +6,11 @@ import java.net.HttpURLConnection;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import mobac.mapsources.MultiLayerMapSource;
+import mobac.program.jaxb.MapSourceAdapter;
+
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
-import tac.mapsources.MultiLayerMapSource;
-import tac.program.jaxb.MapSourceAdapter;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 

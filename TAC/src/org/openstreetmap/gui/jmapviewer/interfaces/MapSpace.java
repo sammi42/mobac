@@ -1,6 +1,6 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
-import tac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 
 /**
  * Preparation for supporting map resolutions other than those uses by

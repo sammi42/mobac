@@ -1,11 +1,8 @@
 package mobac.mapsources.impl;
 
-import java.text.DecimalFormat;
-
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.utilities.Utilities;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;

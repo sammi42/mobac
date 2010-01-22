@@ -5,7 +5,7 @@
 	<property name="jar.name" value="Mobile_Atlas_Creator.jar" />
 	<property name="zip.name" value="Mobile_Atlas_Creator_${mobac.version}.zip" />
 	<property name="zip_src.name" value="Mobile_Atlas_Creator_${mobac.version}_src.zip" />
-	<property name="main.class" value="mobac.StartTAC" />
+	<property name="main.class" value="mobac.StartMOBAC" />
 
 	<property name="je-version" value="3.3.93" />
 
@@ -41,12 +41,12 @@
 		<!-- error if the JRE requirements are not met -->
 		<javac srcdir="src" destdir="build" target="1.4" source="1.4" debug="true">
 			<classpath refid="maincp" />
-			<include name="mobac/StartTAC.java" />
+			<include name="mobac/StartMOBAC.java" />
 		</javac>
 		<!-- Compile the other classes for Java 1.6 -->
 		<javac srcdir="src" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
-			<exclude name="mobac/StartTAC.java" />
+			<exclude name="mobac/StartMOBAC.java" />
 			<exclude name="mobac/tilestore/berkeleydb/*" />
 			<exclude name="mobac/tools/*" />
 			<exclude name="mobac/program/mapcreators/MapCreatorBigPlanetSqlJet*" />
@@ -152,7 +152,7 @@
 
 	<target name="svnversion" description="Updates the revision information in src/mobac/mobac.properties">
 		<java jar="lib/svnversion.jar" fork="true" outputproperty="mobac.revision.new" />
-		<echo message="TAC revision: ${mobac.revision.new}" />
+		<echo message="MOBAC revision: ${mobac.revision.new}" />
 		<propertyfile file="src/mobac/mobac-rev.properties">
 			<entry key="mobac.revision" value="${mobac.revision.new}" />
 		</propertyfile>

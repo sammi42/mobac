@@ -67,13 +67,10 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		mutations = new Mutations();
 
-		// mutations.addRenamer(new Renamer("tac.tilestore.TileDbEntry", 0,
-		// TileDbEntry.class.getName()));
-
 		String oldPackage1 = "tac.tilestore.berkeleydb";
 		String oldPackage2 = "tac.program.tilestore.berkeleydb";
-		String key = ".TileDbEntry";
-		String entry = ".TileDbEntry$TileDbKey";
+		String entry = ".TileDbEntry";
+		String key = ".TileDbEntry$TileDbKey";
 		mutations.addRenamer(new Renamer(oldPackage1 + entry, 0, TileDbEntry.class.getName()));
 		mutations.addRenamer(new Renamer(oldPackage1 + key, 0, TileDbKey.class.getName()));
 		mutations.addRenamer(new Renamer(oldPackage1 + entry, 1, TileDbEntry.class.getName()));
@@ -81,6 +78,8 @@ public class BerkeleyDbTileStore extends TileStore {
 		mutations.addRenamer(new Renamer(oldPackage2 + entry, 2, TileDbEntry.class.getName()));
 		mutations.addRenamer(new Renamer(oldPackage2 + key, 2, TileDbKey.class.getName()));
 
+//		for (Renamer r : mutations.getRenamers())
+//			log.debug(r.toString());
 	}
 
 	protected void acquireTileStoreLock() throws TileStoreException {

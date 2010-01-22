@@ -21,23 +21,23 @@
   	<level value="DEBUG" />
   </logger>
   
-  <logger name="tac.program">
+  <logger name="mobac.program">
   	<level value="DEBUG" />
   </logger>
   
-  <logger name="tac.program.tilestore">
+  <logger name="mobac.program.tilestore">
   	<level value="DEBUG" />
   </logger>
   
-  <logger name="tac.program.atlascreators">
+  <logger name="mobac.program.atlascreators">
   	<level value="TRACE" />
   </logger>
   
-  <logger name="tac.utilities.tar">
+  <logger name="mobac.utilities.tar">
   	<level value="DEBUG" />
   </logger>
   
-  <logger name="tac.program.atlascreators.impl.rmp.RmpWriter">
+  <logger name="mobac.program.atlascreators.impl.rmp.RmpWriter">
    	<level value="TRACE" /> 
   </logger>
   

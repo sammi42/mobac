@@ -24,7 +24,6 @@ import mobac.utilities.file.DirInfoFileFilter;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
@@ -71,16 +70,16 @@ public class BerkeleyDbTileStore extends TileStore {
 		// mutations.addRenamer(new Renamer("tac.tilestore.TileDbEntry", 0,
 		// TileDbEntry.class.getName()));
 
-		String[] oldPackages = new String[] { "tac.tilestore.berkeleydb",
-				"tac.program.tilestore.berkeleydb" };
-		for (String oldPackage : oldPackages) {
-			String oldEntry = oldPackage + ".TileDbEntry";
-			String oldKey = oldPackage + ".TileDbEntry$TileDbKey";
-			mutations.addRenamer(new Renamer(oldEntry, 0, TileDbEntry.class.getName()));
-			mutations.addRenamer(new Renamer(oldKey, 0, TileDbKey.class.getName()));
-			mutations.addRenamer(new Renamer(oldEntry, 1, TileDbEntry.class.getName()));
-			mutations.addRenamer(new Renamer(oldKey, 1, TileDbKey.class.getName()));
-		}
+		String oldPackage1 = "tac.tilestore.berkeleydb";
+		String oldPackage2 = "tac.program.tilestore.berkeleydb";
+		String key = ".TileDbEntry";
+		String entry = ".TileDbEntry$TileDbKey";
+		mutations.addRenamer(new Renamer(oldPackage1 + entry, 0, TileDbEntry.class.getName()));
+		mutations.addRenamer(new Renamer(oldPackage1 + key, 0, TileDbKey.class.getName()));
+		mutations.addRenamer(new Renamer(oldPackage1 + entry, 1, TileDbEntry.class.getName()));
+		mutations.addRenamer(new Renamer(oldPackage1 + key, 1, TileDbKey.class.getName()));
+		mutations.addRenamer(new Renamer(oldPackage2 + entry, 2, TileDbEntry.class.getName()));
+		mutations.addRenamer(new Renamer(oldPackage2 + key, 2, TileDbKey.class.getName()));
 
 	}
 

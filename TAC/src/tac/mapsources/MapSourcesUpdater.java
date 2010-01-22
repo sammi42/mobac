@@ -51,8 +51,6 @@ public class MapSourcesUpdater {
 	 */
 	private static final SimpleDateFormat SVN_DATE_FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss Z");
-	private static final String MAPSOURCES_UPDATE_URL = "http://trekbuddyatlasc.sourceforge.net/"
-			+ "mapsources-update/v1/mapsources.properties";
 
 	/**
 	 * Merges the mapsources property into the system property bundle
@@ -151,17 +149,20 @@ public class MapSourcesUpdater {
 		try {
 			File mapFile = new File(DirectoryManager.currentDir,
 					MapSourcesUpdater.MAPSOURCES_PROPERTIES);
-			url = new URL(MapSourcesUpdater.MAPSOURCES_UPDATE_URL);
+			String mapUpdateUrl = System.getProperty("mobac.updateurl");
+			if (mapUpdateUrl == null)
+				throw new MapSourcesUpdateException("No update url configured!");
+			url = new URL(mapUpdateUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			Settings s = Settings.getInstance();
 			if (mapFile.isFile() && s.mapSourcesUpdate.etag != null
 					&& s.mapSourcesUpdate.etag != "")
 				conn.addRequestProperty("If-None-Match", s.mapSourcesUpdate.etag);
 			int code = conn.getResponseCode();
-			MapSourcesUpdater.log.trace("Mapsources online update: \n\tUpdate url: "
-					+ MapSourcesUpdater.MAPSOURCES_UPDATE_URL + "\n\tResponse  : " + code + " "
-					+ conn.getResponseMessage() + "\n\tSize      : " + conn.getContentLength()
-					+ " bytes \n\tETag      : " + conn.getHeaderField("ETag"));
+			MapSourcesUpdater.log.trace("Mapsources online update: \n\tUpdate url: " + mapUpdateUrl
+					+ "\n\tResponse  : " + code + " " + conn.getResponseMessage()
+					+ "\n\tSize      : " + conn.getContentLength() + " bytes \n\tETag      : "
+					+ conn.getHeaderField("ETag"));
 			if (code == 304)
 				// HTTP 304 = Not Modified => Same as on last update check
 				return false;

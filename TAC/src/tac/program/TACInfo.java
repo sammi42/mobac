@@ -18,26 +18,27 @@ public class TACInfo {
 	private static boolean titleHideRevision = false;
 
 	public static void initialize() {
-		InputStream propIn = Main.class.getResourceAsStream("tac.properties");
+		InputStream propIn = Main.class.getResourceAsStream("mobac.properties");
 		try {
 			Properties props = new Properties();
 			props.load(propIn);
-			version = props.getProperty("tac.version");
+			version = props.getProperty("mobac.version");
 			titleHideRevision = Boolean.parseBoolean(props
-					.getProperty("tac.revision.hide", "false"));
+					.getProperty("mobac.revision.hide", "false"));
+			System.getProperties().putAll(props);
 		} catch (Exception e) {
-			Logging.LOG.error("Error reading tac.properties", e);
+			Logging.LOG.error("Error reading mobac.properties", e);
 		} finally {
 			Utilities.closeStream(propIn);
 		}
-		propIn = Main.class.getResourceAsStream("tac-rev.properties");
+		propIn = Main.class.getResourceAsStream("mobac-rev.properties");
 		try {
 			Properties props = new Properties();
 			props.load(propIn);
-			String rev = props.getProperty("tac.revision");
+			String rev = props.getProperty("mobac.revision");
 			revision = "(" + rev + ")";
 		} catch (Exception e) {
-			Logging.LOG.error("Error reading tac-rev.properties", e);
+			Logging.LOG.error("Error reading mobac-rev.properties", e);
 		} finally {
 			Utilities.closeStream(propIn);
 		}

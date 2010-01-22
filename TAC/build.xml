@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
-	<property file="src/tac/tac.properties" />
+	<property file="src/tac/mobac.properties" />
 	<property name="jar.name" value="Mobile_Atlas_Creator.jar" />
-	<property name="zip.name" value="Mobile_Atlas_Creator_${tac.version}.zip" />
-	<property name="zip_src.name" value="Mobile_Atlas_Creator_${tac.version}_src.zip" />
+	<property name="zip.name" value="Mobile_Atlas_Creator_${mobac.version}.zip" />
+	<property name="zip_src.name" value="Mobile_Atlas_Creator_${mobac.version}_src.zip" />
 	<property name="main.class" value="tac.StartTAC" />
 
 	<property name="je-version" value="3.3.93" />
@@ -151,11 +151,11 @@
 		</jar>
 	</target>
 
-	<target name="svnversion" description="Updates the revision information in src/tac/tac.properties">
-		<java jar="lib/svnversion.jar" fork="true" outputproperty="tac.revision.new" />
-		<echo message="TAC revision: ${tac.revision.new}" />
-		<propertyfile file="src/tac/tac-rev.properties">
-			<entry key="tac.revision" value="${tac.revision.new}" />
+	<target name="svnversion" description="Updates the revision information in src/tac/mobac.properties">
+		<java jar="lib/svnversion.jar" fork="true" outputproperty="mobac.revision.new" />
+		<echo message="TAC revision: ${mobac.revision.new}" />
+		<propertyfile file="src/tac/mobac-rev.properties">
+			<entry key="mobac.revision" value="${mobac.revision.new}" />
 		</propertyfile>
 	</target>
 
@@ -188,7 +188,7 @@
 				<include name="start.*" />
 				<include name="Mobile Atlas Creator.exe" />
 				<include name="misc/launch4j.xml" />
-				<include name="misc/tac.ico" />
+				<include name="misc/mobac.ico" />
 				<include name="lib/log4j-1.2.15.jar" />
 				<include name="lib/je-${je-version}.jar" />
 				<include name="lib/jai_*.jar" />

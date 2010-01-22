@@ -19,7 +19,7 @@ import tac.program.tilestore.TileStore;
 import tac.program.tilestore.TileStoreEntry;
 import tac.program.tilestore.TileStoreInfo;
 import tac.program.tilestore.berkeleydb.TileDbEntry.TileDbKey;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.Utilities;
 import tac.utilities.file.DeleteFileFilter;
 import tac.utilities.file.DirInfoFileFilter;
@@ -60,7 +60,7 @@ public class BerkeleyDbTileStore extends TileStore {
 		envConfig = new EnvironmentConfig();
 		envConfig.setTransactional(false);
 		envConfig.setLocking(true);
-		envConfig.setExceptionListener(TACExceptionHandler.getInstance());
+		envConfig.setExceptionListener(GUIExceptionHandler.getInstance());
 		envConfig.setAllowCreate(true);
 		envConfig.setSharedCache(true);
 		envConfig.setCachePercent(50);

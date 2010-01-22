@@ -22,7 +22,7 @@ import tac.program.interfaces.LayerInterface;
 import tac.program.interfaces.MapInterface;
 import tac.program.model.Settings;
 import tac.program.tilestore.TileStore;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.tar.TarIndex;
 import tac.utilities.tar.TarIndexedArchive;
 
@@ -78,7 +78,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	}
 
 	public void run() {
-		TACExceptionHandler.registerForCurrentThread();
+		GUIExceptionHandler.registerForCurrentThread();
 		log.info("Starting altas creation");
 		ap.setDownloadControlerListener(this);
 		try {
@@ -111,7 +111,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			log.info("Altas creation was interrupted by user");
 		} catch (Exception e) {
 			log.error("Altas creation aborted because of an error: ", e);
-			TACExceptionHandler.showExceptionDialog(e);
+			GUIExceptionHandler.showExceptionDialog(e);
 		}
 		System.gc();
 	}
@@ -162,7 +162,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 								"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 						switch (a) {
 						case 2:
-							TACExceptionHandler.processException(e);
+							GUIExceptionHandler.processException(e);
 						case 1:
 							throw new InterruptedException();
 						}

@@ -31,11 +31,11 @@ import tac.program.TACInfo;
 import com.sleepycat.je.ExceptionEvent;
 import com.sleepycat.je.ExceptionListener;
 
-public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, ExceptionListener {
+public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, ExceptionListener {
 
-	private static final TACExceptionHandler instance = new TACExceptionHandler();
+	private static final GUIExceptionHandler instance = new GUIExceptionHandler();
 
-	private static final Logger log = Logger.getLogger(TACExceptionHandler.class);
+	private static final Logger log = Logger.getLogger(GUIExceptionHandler.class);
 
 	private static final double MB_DIV = 1024d * 1024d;
 
@@ -50,11 +50,11 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		t.setUncaughtExceptionHandler(instance);
 	}
 
-	public static TACExceptionHandler getInstance() {
+	public static GUIExceptionHandler getInstance() {
 		return instance;
 	}
 
-	private TACExceptionHandler() {
+	private GUIExceptionHandler() {
 		super();
 	}
 
@@ -238,7 +238,7 @@ public class TACExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 						}
 					}
 				}
-				TACExceptionHandler.processException(Thread.currentThread(), e);
+				GUIExceptionHandler.processException(Thread.currentThread(), e);
 			}
 		}
 	}

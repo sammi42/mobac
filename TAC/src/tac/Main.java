@@ -10,7 +10,7 @@ import tac.program.Logging;
 import tac.program.TACInfo;
 import tac.program.model.Settings;
 import tac.program.tilestore.TileStore;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 
 /**
  * Java 6 version of the main starter class
@@ -22,20 +22,22 @@ public class Main {
 			Logging.configureLogging();
 			TACInfo.initialize(); // Load revision info
 			Logging.logSystemInfo();
-			TACExceptionHandler.installToolkitEventQueueProxy();
+			GUIExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
 			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
 			TileStore.initialize();
+			EnvironmentSetup.upgrade();
+			Logging.LOG.debug("Starting GUI");
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					MainGUI.createMainGui();
 				}
 			});
 		} catch (Throwable t) {
-			TACExceptionHandler.processException(t);
+			GUIExceptionHandler.processException(t);
 		}
 	}
 
@@ -47,7 +49,7 @@ public class Main {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			new Main();
 		} catch (Throwable t) {
-			TACExceptionHandler.processException(t);
+			GUIExceptionHandler.processException(t);
 		}
 	}
 }

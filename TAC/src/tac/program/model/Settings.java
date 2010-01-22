@@ -31,6 +31,7 @@ import tac.mapsources.CustomMapSource;
 import tac.mapsources.MapSourcesManager;
 import tac.mapsources.impl.Google;
 import tac.program.DirectoryManager;
+import tac.program.TACInfo;
 import tac.program.download.UserAgent;
 import tac.utilities.Utilities;
 
@@ -48,6 +49,9 @@ public class Settings {
 	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
 	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
+	@XmlElement(defaultValue="")
+	private String version;
+	
 	public int maxMapSize = 32767;
 
 	public boolean tileStoreEnabled = true;
@@ -199,6 +203,7 @@ public class Settings {
 	}
 
 	public static void save() throws JAXBException {
+		getInstance().version = TACInfo.getVersion();
 		JAXBContext context = JAXBContext.newInstance(Settings.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -362,6 +367,10 @@ public class Settings {
 		if (atlasOutputDirectory == null)
 			return "";
 		return atlasOutputDirectory;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 
 	/**

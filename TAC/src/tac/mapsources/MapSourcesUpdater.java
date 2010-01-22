@@ -21,7 +21,7 @@ import tac.Main;
 import tac.exceptions.MapSourcesUpdateException;
 import tac.program.DirectoryManager;
 import tac.program.model.Settings;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.Utilities;
 
 public class MapSourcesUpdater {
@@ -246,7 +246,7 @@ public class MapSourcesUpdater {
 			targetProp.putAll(selectedProps);
 		} catch (Exception e) {
 			MapSourcesUpdater.log.error("Error while reading mapsources.properties: ", e);
-			TACExceptionHandler.showExceptionDialog(e);
+			GUIExceptionHandler.showExceptionDialog(e);
 		}
 	}
 

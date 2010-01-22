@@ -74,7 +74,7 @@ import tac.program.tilestore.TileStore;
 import tac.program.tilestore.TileStoreInfo;
 import tac.program.tilestore.berkeleydb.DelayedInterruptThread;
 import tac.utilities.GBC;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.Utilities;
 
 public class SettingsGUI extends JDialog {
@@ -130,7 +130,7 @@ public class SettingsGUI extends JDialog {
 	private SettingsGUI(JFrame owner) {
 		super(owner);
 		setIconImages(MainGUI.TAC_ICONS);
-		TACExceptionHandler.registerForCurrentThread();
+		GUIExceptionHandler.registerForCurrentThread();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setModal(true);
 		setMinimumSize(new Dimension(300, 300));

@@ -30,7 +30,7 @@ public class Profile implements Comparable<Profile> {
 
 	public static final String PROFILE_NAME_REGEX = "[\\w _-]+";
 
-	private static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile("tac-profile-("
+	private static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile("mobac-profile-("
 			+ PROFILE_NAME_REGEX + ").xml");
 
 	private File file;
@@ -65,7 +65,7 @@ public class Profile implements Comparable<Profile> {
 
 	public Profile(String name) {
 		super();
-		this.file = new File(DirectoryManager.currentDir, "tac-profile-" + name + ".xml");
+		this.file = new File(DirectoryManager.currentDir, "mobac-profile-" + name + ".xml");
 		this.name = name;
 	}
 

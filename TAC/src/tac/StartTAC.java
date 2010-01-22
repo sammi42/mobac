@@ -27,8 +27,8 @@ public class StartTAC {
 			Class.forName(MAIN_CLASS).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Unable to start TAC: " + e.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Unable to start Mobile Atlas Creator: "
+					+ e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

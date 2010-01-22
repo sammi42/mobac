@@ -462,6 +462,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	public void setZoom(int zoom) {
 		setZoom(zoom, new Point(getWidth() / 2, getHeight() / 2));
+		repaint();
 	}
 
 	/**

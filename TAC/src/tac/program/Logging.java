@@ -17,7 +17,7 @@ import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import tac.utilities.Juli2Log4jHandler;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 
 public class Logging {
 
@@ -126,10 +126,10 @@ public class Logging {
 			return;
 		String n = System.getProperty("line.separator");
 		log.debug("Version: " + TACInfo.getCompleteTitle());
-		log.debug("Platform: " + TACExceptionHandler.prop("os.name") + " ("
-				+ TACExceptionHandler.prop("os.version") + ")");
-		log.debug("Java VM: " + TACExceptionHandler.prop("java.vm.name") + " ("
-				+ TACExceptionHandler.prop("java.runtime.version") + ")");
+		log.debug("Platform: " + GUIExceptionHandler.prop("os.name") + " ("
+				+ GUIExceptionHandler.prop("os.version") + ")");
+		log.debug("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
+				+ GUIExceptionHandler.prop("java.runtime.version") + ")");
 		log.debug("Directories:" + n + "currentDir: \t" + DirectoryManager.currentDir + n
 				+ "programDir: \t" + DirectoryManager.programDir + n + "tempDir:     \t"
 				+ DirectoryManager.tempDir + n + "userHomeDir: \t" + DirectoryManager.userHomeDir

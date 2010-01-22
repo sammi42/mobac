@@ -54,8 +54,8 @@ public class DirectoryManager {
 	}
 
 	/**
-	 * Returns the directory where Mobile Atlas Creator saves it's
-	 * application settings.
+	 * Returns the directory where Mobile Atlas Creator saves it's application
+	 * settings.
 	 * 
 	 * Examples:
 	 * <ul>
@@ -85,7 +85,7 @@ public class DirectoryManager {
 			}
 		}
 		File userDir = new File(System.getProperty("user.home"));
-		File tacUserDir = new File(userDir, ".tac");
+		File tacUserDir = new File(userDir, ".mobac");
 		if (!tacUserDir.exists() && !tacUserDir.mkdir())
 			throw new RuntimeException("Unable to create directory \""
 					+ tacUserDir.getAbsolutePath() + "\"");

@@ -32,7 +32,7 @@ import tac.program.interfaces.MapInterface;
 import tac.program.model.Settings;
 import tac.utilities.GBC;
 import tac.utilities.OSUtilities;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.Utilities;
 
 /**
@@ -607,7 +607,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public static void main(String[] args) {
 		Logging.configureLogging();
-		TACExceptionHandler.installToolkitEventQueueProxy();
+		GUIExceptionHandler.installToolkitEventQueueProxy();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {

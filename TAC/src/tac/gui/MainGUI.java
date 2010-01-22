@@ -70,7 +70,7 @@ import tac.program.model.Settings;
 import tac.program.model.TileImageParameters;
 import tac.program.tilestore.TileStore;
 import tac.utilities.GBC;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.Utilities;
 
 public class MainGUI extends JFrame implements MapEventListener {
@@ -130,7 +130,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac32.png").getImage());
 		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac16.png").getImage());
 		setIconImages(TAC_ICONS);
-		TACExceptionHandler.registerForCurrentThread();
+		GUIExceptionHandler.registerForCurrentThread();
 		setTitle(TACInfo.getCompleteTitle());
 
 		log.trace("Creating main dialog - " + getTitle());
@@ -443,7 +443,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			}
 			checkAndSaveSettings();
 		} catch (Exception e) {
-			TACExceptionHandler.showExceptionDialog(e);
+			GUIExceptionHandler.showExceptionDialog(e);
 			JOptionPane.showMessageDialog(null,
 					"Error on writing program settings to \"settings.xml\"", "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -579,7 +579,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			} catch (Exception e) {
 				log.error("", e);
-				TACExceptionHandler.processException(e);
+				GUIExceptionHandler.processException(e);
 			}
 		}
 	}

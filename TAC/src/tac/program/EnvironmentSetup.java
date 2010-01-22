@@ -1,5 +1,7 @@
 package tac.program;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
@@ -12,11 +14,12 @@ import tac.program.model.EastNorthCoordinate;
 import tac.program.model.Layer;
 import tac.program.model.Profile;
 import tac.program.model.Settings;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
+import tac.utilities.file.NamePatternFileFilter;
 
 /**
- * Creates the necessary files on first time Mobile Atlas Creator is started
- * or tries to update the environment if the version has changed.
+ * Creates the necessary files on first time Mobile Atlas Creator is started or
+ * tries to update the environment if the version has changed.
  */
 public class EnvironmentSetup {
 
@@ -43,6 +46,16 @@ public class EnvironmentSetup {
 		}
 	}
 
+	public static void upgrade() {
+		FileFilter ff = new NamePatternFileFilter("tac-profile-.*.xml");
+		File profilesDir = DirectoryManager.currentDir;
+		File[] files = profilesDir.listFiles(ff);
+		for (File f : files) {
+			File dest = new File(profilesDir, f.getName().replaceFirst("tac-", "mobac-"));
+			f.renameTo(dest);
+		}
+	}
+
 	public static void checkFileSetup() {
 		if (Settings.FILE.exists())
 			return;
@@ -56,7 +69,7 @@ public class EnvironmentSetup {
 					"Could not create file settings.xml program will exit.", "Error", 0,
 					JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 			if (a == 1)
-				TACExceptionHandler.showExceptionDialog(e);
+				GUIExceptionHandler.showExceptionDialog(e);
 			System.exit(1);
 		}
 		Profile p = new Profile("Google Maps New York");
@@ -73,7 +86,7 @@ public class EnvironmentSetup {
 			p.save(atlas);
 		} catch (Exception e) {
 			log.error("Creation for example profiles failed", e);
-			TACExceptionHandler.showExceptionDialog(e);
+			GUIExceptionHandler.showExceptionDialog(e);
 		}
 	}
 }

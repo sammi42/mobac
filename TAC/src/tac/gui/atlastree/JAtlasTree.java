@@ -41,7 +41,7 @@ import tac.program.model.EastNorthCoordinate;
 import tac.program.model.MapSelection;
 import tac.program.model.Profile;
 import tac.program.model.TileImageParameters;
-import tac.utilities.TACExceptionHandler;
+import tac.utilities.GUIExceptionHandler;
 import tac.utilities.jdbc.SQLiteLoader;
 
 public class JAtlasTree extends JTree implements Autoscroll {
@@ -207,7 +207,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 			}
 			return true;
 		} catch (Exception e) {
-			TACExceptionHandler.processException(e);
+			GUIExceptionHandler.processException(e);
 			return false;
 		}
 	}
@@ -217,7 +217,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 			treeModel.save(profile);
 			return true;
 		} catch (Exception e) {
-			TACExceptionHandler.processException(e);
+			GUIExceptionHandler.processException(e);
 			return false;
 		}
 	}

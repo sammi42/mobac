@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
-public class TacTile {
-	private static final Logger log = Logger.getLogger(TacTile.class);
+public class MobacTile {
+	private static final Logger log = Logger.getLogger(MobacTile.class);
 
 	private final TileProvider tileProvider;
 	private final int tilex;
@@ -22,7 +22,7 @@ public class TacTile {
 
 	private BoundingRect boundingRect;
 
-	public TacTile(TileProvider tileProvider, MapSpace mapSpace, int tilex, int tiley, int zoom) {
+	public MobacTile(TileProvider tileProvider, MapSpace mapSpace, int tilex, int tiley, int zoom) {
 		this.tileProvider = tileProvider;
 		this.tilex = tilex;
 		this.tiley = tiley;
@@ -169,7 +169,7 @@ public class TacTile {
 
 	@Override
 	public String toString() {
-		return String.format("TacTile x/y [%d/%d] = %s", tilex, tiley, boundingRect);
+		return String.format("MobacTile x/y [%d/%d] = %s", tilex, tiley, boundingRect);
 	}
 
 }

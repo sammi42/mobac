@@ -40,7 +40,6 @@ import mobac.utilities.file.DirectoryFileFilter;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 public class Utilities {
 
 	public static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
@@ -135,6 +134,10 @@ public class Utilities {
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
+	}
+
+	public static InputStream loadResourceAsStream(String resourcePath) throws IOException {
+		return Main.class.getResourceAsStream("resources/" + resourcePath);
 	}
 
 	public static String loadTextResource(String resourcePath) throws IOException {

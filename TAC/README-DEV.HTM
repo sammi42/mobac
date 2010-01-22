@@ -53,7 +53,7 @@ at SourceForge:</p>
 <p><a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/TAC"><tt>https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/TAC</tt></a>
 </p>
-<p>There you will find the latest sources of TAC in form of an
+<p>There you will find the latest sources of Mobile Atlas Creator in form of an
 Eclipse (v3.5) project. All tools, libraries, sources and build files
 are included in this repository.</p>
 
@@ -61,14 +61,14 @@ are included in this repository.</p>
 <p>If you want to run MOBAC from within Eclipse you only need Eclipse
 with Java Development Tools installed (included in all Eclipse Java
 editions). <br />
-The root class for starting MOBAC in Eclipse <tt>mobac.StartTAC</tt></p>
-<p>Compile/building TAC without Eclipse requires <a
+The root class for starting MOBAC in Eclipse <tt>mobac.StartMOBAC</tt></p>
+<p>Compile/building Mobile Atlas Creator without Eclipse requires <a
 	href="http://ant.apache.org/">Apache Ant</a>) which is used for
-building the jar version of TAC and of course the Java Development Kit
+building the jar version of Mobile Atlas Creator and of course the Java Development Kit
 (JDK) installed.</p>
 
-<h2>Building TAC</h2>
-<p>For building TAC please run Apache Ant on the provided file <tt><a
+<h2>Building Mobile Atlas Creator</h2>
+<p>For building Mobile Atlas Creator please run Apache Ant on the provided file <tt><a
 	href="build.xml">build.xml</a></tt></p>
 <p>The default build target performs all necessary tasks for
 compiling the sources, packaging the classes to a jar and then
@@ -79,7 +79,7 @@ which is a Java only version of the command <a
 	href="http://svnbook.red-bean.com/en/1.1/re57.html">svnversion</a>
 (bases on <a href="http://svnkit.com">SVNKit</a>). This command updates
 the SVN revision information in file <tt>src/mobac/mobac-rev.properties</tt>
-which is included in the final jar of TAC.</p>
+which is included in the final jar of Mobile Atlas Creator.</p>
 
 <h2>Guidelines for publishing custom builds/releases</h2>
 <p>If you modify Mobile Atlas Creator and you want to publish it
@@ -106,20 +106,20 @@ yourself please consider the following guidelines:</p>
 In the sub-packages you can find the related implementations of used
 graphical components - e.g. <tt><a
 	href="src/mobac/gui/mapview/PreviewMap.java">mobac.gui.mapview.PreviewMap</a></tt>
-- the component that draws the movable map background used by TAC.</p>
+- the component that draws the movable map background used by Mobile Atlas Creator.</p>
 <h3><a href="src/mobac/mapsources">mobac.mapsources</a></h3>
 <p>Holds the infrastructure and the implementation of all map
-sources available within TAC. For implementing own map sources you
+sources available within Mobile Atlas Creator. For implementing own map sources you
 should derive your map source from the abstract base class <a
 	href="src/mobac/mapsources/AbstractMapSource.java"><tt>mobac.mapsources.AbstractMapSource</tt></a>.
 The list of available map sources is maintained by <a
 	href="src/mobac/mapsources/MapSourcesManager.java"><tt>mobac.mapsources.MapSourcesManager</tt></a>.
 By adding an instance of a map sources to the static array field <tt>MAP_SOURCES</tt>
 the map source will be available in the map sources combo-box within
-TAC.</p>
+Mobile Atlas Creator.</p>
 <h3><a href="src/mobac/program/atlascreators">mobac.program.atlascreators</a></h3>
 <p>Holds the implementations of all atlas output formats provided by
-TAC. Each class in the package implements exactly one atlas output
+Mobile Atlas Creator. Each class in the package implements exactly one atlas output
 format. The list of available formats is maintained in the enumeration <a
 	href="src/mobac/program/model/AtlasOutputFormat.java"><tt>mobac.program.model.AtlasOutputFormat</tt></a>.
 </p>
@@ -133,8 +133,8 @@ source is functional.</p>
 
 <h2>Participation</h2>
 <p>If you are familiar with the programming language Java and you
-want to contribute or participate in the development process of TAC feel
-free to contact one of the other developers of TAC <a
+want to contribute or participate in the development process of Mobile Atlas Creator feel
+free to contact one of the other developers of Mobile Atlas Creator <a
 	href="https://sourceforge.net/project/memberlist.php?group_id=238075">listed
 at SourceForge</a>.</p>
 

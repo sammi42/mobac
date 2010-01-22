@@ -35,7 +35,6 @@ import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * A window showing the progress while {@link AtlasThread} downloads and
  * processes the map tiles.
@@ -122,7 +121,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public AtlasProgress(AtlasThread atlasThread) {
 		super("Atlas creation in progress");
 		this.atlasThread = atlasThread;
-		setIconImages(MainGUI.TAC_ICONS);
+		setIconImages(MainGUI.MOBAC_ICONS);
 		setLayout(new GridBagLayout());
 		updateTask = new UpdateTask();
 		guiUpdater = new GUIUpdater();
@@ -179,7 +178,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		downloadErrors = new JLabel("Download errors");
 		downloadErrors
 				.setToolTipText("<html>Download errors for the current layer (retryable/permanent):<br>"
-						+ "TAC tries to retry failed tile downloads up to three times.<br>"
+						+ "Mobile Atlas Creator tries to retry failed tile downloads up to two times.<br>"
 						+ "For each failed try the retryable counter increases by one.<br>"
 						+ "If the tile downloads fails the third time the tile will be counted as "
 						+ "permanent error.</html>");

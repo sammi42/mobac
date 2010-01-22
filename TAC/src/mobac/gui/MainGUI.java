@@ -54,7 +54,7 @@ import mobac.gui.panels.JTileImageParametersPanel;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.AtlasThread;
-import mobac.program.TACInfo;
+import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Layer;
@@ -84,7 +84,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private static Color labelForegroundColor = Color.white;
 
 	private static MainGUI mainGUI = null;
-	public static final ArrayList<Image> TAC_ICONS = new ArrayList<Image>(3);
+	public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<Image>(3);
 
 	protected JAtlasTree jAtlasTree;
 	public PreviewMap previewMap;
@@ -127,12 +127,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private MainGUI() {
 		super();
-		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac48.png").getImage());
-		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac32.png").getImage());
-		TAC_ICONS.add(Utilities.loadResourceImageIcon("tac16.png").getImage());
-		setIconImages(TAC_ICONS);
+		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac48.png").getImage());
+		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac32.png").getImage());
+		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac16.png").getImage());
+		setIconImages(MOBAC_ICONS);
 		GUIExceptionHandler.registerForCurrentThread();
-		setTitle(TACInfo.getCompleteTitle());
+		setTitle(ProgramInfo.getCompleteTitle());
 
 		log.trace("Creating main dialog - " + getTitle());
 		setResizable(true);

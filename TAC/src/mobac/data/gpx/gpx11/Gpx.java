@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import mobac.program.TACInfo;
+import mobac.program.ProgramInfo;
 
 
 /**
@@ -71,7 +71,7 @@ public class Gpx {
 	public static Gpx createGpx() {
 		Gpx gpx = new Gpx();
 		gpx.setVersion("1.1");
-		gpx.setCreator(TACInfo.getVersionTitle());
+		gpx.setCreator(ProgramInfo.getVersionTitle());
 		return gpx;
 	}
 

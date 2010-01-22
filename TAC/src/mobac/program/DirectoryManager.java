@@ -65,7 +65,7 @@ public class DirectoryManager {
 	 * <li>Vista:<br>
 	 * <tt>C:\Users\%username%\Application Data\Mobile Atlas Creator</tt>
 	 * <li>Linux:<br>
-	 * <tt>/home/$username$/.tac</tt></li>
+	 * <tt>/home/$username$/.mobac</tt></li>
 	 * </ul>
 	 * 
 	 * @return
@@ -77,19 +77,19 @@ public class DirectoryManager {
 				throw new RuntimeException("User application data to found");
 			File appDataDir = new File(appData);
 			if (appDataDir.isDirectory()) {
-				File tacDataDir = new File(appData, "Mobile Atlas Creator");
-				if (tacDataDir.isDirectory() || tacDataDir.mkdir())
-					return tacDataDir;
+				File mobacDataDir = new File(appData, "Mobile Atlas Creator");
+				if (mobacDataDir.isDirectory() || mobacDataDir.mkdir())
+					return mobacDataDir;
 				else
 					throw new RuntimeException("Unable to create directory \""
-							+ tacDataDir.getAbsolutePath() + "\"");
+							+ mobacDataDir.getAbsolutePath() + "\"");
 			}
 		}
 		File userDir = new File(System.getProperty("user.home"));
-		File tacUserDir = new File(userDir, ".mobac");
-		if (!tacUserDir.exists() && !tacUserDir.mkdir())
+		File mobacUserDir = new File(userDir, ".mobac");
+		if (!mobacUserDir.exists() && !mobacUserDir.mkdir())
 			throw new RuntimeException("Unable to create directory \""
-					+ tacUserDir.getAbsolutePath() + "\"");
-		return tacUserDir;
+					+ mobacUserDir.getAbsolutePath() + "\"");
+		return mobacUserDir;
 	}
 }

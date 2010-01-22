@@ -2,7 +2,7 @@ package mobac.program;
 
 /**
  * Central instance that allows to pause/resume multiple threads at once. Used
- * in TAC for pausing/resuming map tile download and map creation process.
+ * in MOBAC for pausing/resuming map tile download and map creation process.
  */
 public class PauseResumeHandler {
 

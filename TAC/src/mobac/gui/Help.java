@@ -31,7 +31,7 @@ public class Help extends JFrame implements WindowListener {
 
 	public Help() throws HeadlessException {
 		super("Help");
-		setIconImages(MainGUI.TAC_ICONS);
+		setIconImages(MainGUI.MOBAC_ICONS);
 		setLayout(new GridBagLayout());
 		JLabel text = new JLabel();
 		JButton closeButton = new JButton("Close");

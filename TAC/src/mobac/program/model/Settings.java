@@ -29,7 +29,7 @@ import mobac.mapsources.CustomMapSource;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.impl.Google;
 import mobac.program.DirectoryManager;
-import mobac.program.TACInfo;
+import mobac.program.ProgramInfo;
 import mobac.program.download.UserAgent;
 import mobac.utilities.Utilities;
 
@@ -117,7 +117,7 @@ public class Settings {
 	/**
 	 * Development mode enabled/disabled
 	 * <p>
-	 * In development mode one additional map source is available for using TAC
+	 * In development mode one additional map source is available for using MOBAC
 	 * Debug TileServer
 	 * </p>
 	 */
@@ -204,7 +204,7 @@ public class Settings {
 	}
 
 	public static void save() throws JAXBException {
-		getInstance().version = TACInfo.getVersion();
+		getInstance().version = ProgramInfo.getVersion();
 		JAXBContext context = JAXBContext.newInstance(Settings.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

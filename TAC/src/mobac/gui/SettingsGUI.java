@@ -130,7 +130,7 @@ public class SettingsGUI extends JDialog {
 
 	private SettingsGUI(JFrame owner) {
 		super(owner);
-		setIconImages(MainGUI.TAC_ICONS);
+		setIconImages(MainGUI.MOBAC_ICONS);
 		GUIExceptionHandler.registerForCurrentThread();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setModal(true);

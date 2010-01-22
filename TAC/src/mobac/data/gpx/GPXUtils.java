@@ -26,7 +26,6 @@ import mobac.utilities.Utilities;
 
 import org.w3c.dom.Document;
 
-
 public class GPXUtils {
 
 	public static boolean checkJAXBVersion() {
@@ -60,8 +59,8 @@ public class GPXUtils {
 			}
 			if ("http://www.topografix.com/GPX/1/0".equals(namespace)) {
 				Source xmlSource = new javax.xml.transform.dom.DOMSource(document);
-				Source xsltSource = new StreamSource(GPXUtils.class
-						.getResourceAsStream("/tac/resources/xsl/gpx10to11.xsl"));
+				Source xsltSource = new StreamSource(Utilities
+						.loadResourceAsStream("xsl/gpx10to11.xsl"));
 				JAXBResult result = new JAXBResult(unmarshaller);
 				TransformerFactory transFact = TransformerFactory.newInstance();
 				Transformer trans = transFact.newTransformer(xsltSource);

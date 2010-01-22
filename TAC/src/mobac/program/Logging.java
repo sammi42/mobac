@@ -126,7 +126,7 @@ public class Logging {
 		if (!log.isInfoEnabled())
 			return;
 		String n = System.getProperty("line.separator");
-		log.debug("Version: " + TACInfo.getCompleteTitle());
+		log.debug("Version: " + ProgramInfo.getCompleteTitle());
 		log.debug("Platform: " + GUIExceptionHandler.prop("os.name") + " ("
 				+ GUIExceptionHandler.prop("os.version") + ")");
 		log.debug("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("

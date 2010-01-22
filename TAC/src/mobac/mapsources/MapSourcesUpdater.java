@@ -101,7 +101,7 @@ public class MapSourcesUpdater {
 	}
 
 	/**
-	 * This method is automatically called each time TAC starts-up. If the last
+	 * This method is automatically called each time MOBAC starts-up. If the last
 	 * update check is older than three days a new update check is performed.
 	 * 
 	 * @param async

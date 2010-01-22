@@ -26,7 +26,6 @@ import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
 
-
 public class AtlasThread extends Thread implements DownloadJobListener, AtlasCreationController {
 
 	private static int threadNum = 0;
@@ -94,8 +93,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 									+ "Please make sure you have started it via the "
 									+ "provided startup scripts 'start.cmd' (Windows) "
 									+ "/ 'start.sh' (Linux).\n"
-									+ "Those scripts are increasing the maximum memory "
-									+ "usable by TAC to 512 MB.", "Out of memory",
+									+ "Those scripts are increasing the maximum memory usable "
+									+ "by Mobile Atlas Creator to 512 MB.", "Out of memory",
 							JOptionPane.ERROR_MESSAGE);
 					ap.closeWindow();
 				}
@@ -156,7 +155,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 						// Do nothing and continue with next map
 					} catch (Exception e) {
 						log.error("", e);
-						// TACExceptionHandler.processException(e);
 						String[] options = { "Continue", "Abort", "Show error report" };
 						int a = JOptionPane.showOptionDialog(null, "An error occured: "
 								+ e.getMessage() + "\n[" + e.getClass().getSimpleName() + "]\n\n",
@@ -223,7 +221,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		ap.setZoomLevel(zoom);
 		try {
 			tileArchive = null;
-			String tempSuffix = "TAC_" + atlasInterface.getName() + "_" + zoom + "_";
+			String tempSuffix = "MOBAC_" + atlasInterface.getName() + "_" + zoom + "_";
 			File tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
 			// If something goes wrong the temp file only
 			// persists until the VM exits

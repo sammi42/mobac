@@ -7,7 +7,7 @@ import mobac.gui.MainGUI;
 import mobac.program.DirectoryManager;
 import mobac.program.EnvironmentSetup;
 import mobac.program.Logging;
-import mobac.program.TACInfo;
+import mobac.program.ProgramInfo;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
@@ -21,7 +21,7 @@ public class Main {
 	public Main() {
 		try {
 			Logging.configureLogging();
-			TACInfo.initialize(); // Load revision info
+			ProgramInfo.initialize(); // Load revision info
 			Logging.logSystemInfo();
 			GUIExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
@@ -43,7 +43,7 @@ public class Main {
 	}
 
 	/**
-	 * Start TAC without Java Runtime version check
+	 * Start MOBAC without Java Runtime version check
 	 */
 	public static void main(String[] args) {
 		try {

@@ -42,7 +42,7 @@ public class Tiledata {
 			ImageIO.write(image, "jpg", bout);
 			byte[] data = bout.toByteArray();
 			dataSize = data.length;
-			// Utilities.saveBytes(String.format("D:/jpg/tac-%04d-%04d.jpg",
+			// Utilities.saveBytes(String.format("D:/jpg/mobac-%04d-%04d.jpg",
 			// posx, posy), data);
 			RmpTools.writeValue(out, dataSize, 4);
 			out.write(data);

@@ -25,13 +25,13 @@ public class MultiImage {
 	private final MapSource mapSource;
 	private final int zoom;
 	private final TileProvider tileProvider;
-	private SoftHashMap<TileKey, TacTile> cache;
+	private SoftHashMap<TileKey, MobacTile> cache;
 
 	public MultiImage(MapSource mapSource, TileProvider tileProvider, MapInterface map) {
 		this.mapSource = mapSource;
 		this.tileProvider = tileProvider;
 		this.zoom = map.getZoom();
-		cache = new SoftHashMap<TileKey, TacTile>(400);
+		cache = new SoftHashMap<TileKey, MobacTile>(400);
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height)
@@ -57,9 +57,9 @@ public class MultiImage {
 			for (int x = xMin; x <= xMax; x++) {
 				for (int y = yMin; y <= yMax; y++) {
 					TileKey key = new TileKey(x, y);
-					TacTile image = cache.get(key);
+					MobacTile image = cache.get(key);
 					if (image == null) {
-						image = new TacTile(tileProvider, mapSpace, x, y, zoom);
+						image = new MobacTile(tileProvider, mapSpace, x, y, zoom);
 						cache.put(key, image);
 					}
 					image.drawSubImage(area, result);

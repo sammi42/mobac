@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
+import org.apache.log4j.Logger;
 
 /**
  * A generic class that processes a list of {@link Runnable} one-by-one using
@@ -20,6 +21,7 @@ import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
  */
 public class JobDispatcher {
 
+	private static Logger log = Logger.getLogger(JobDispatcher.class);
 	private static final JobDispatcher INSTANCE = new JobDispatcher();
 
 	/**
@@ -127,7 +129,7 @@ public class JobDispatcher {
 					job.run();
 					job = null;
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error("", e);
 				}
 			}
 		}

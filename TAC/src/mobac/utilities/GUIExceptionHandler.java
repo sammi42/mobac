@@ -24,7 +24,7 @@ import javax.swing.event.HyperlinkListener;
 
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
-import mobac.program.TACInfo;
+import mobac.program.ProgramInfo;
 
 import org.apache.log4j.Logger;
 
@@ -46,7 +46,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 	public static void registerForCurrentThread() {
 		Thread t = Thread.currentThread();
-		log.trace("Registering TAC exception handler for thread \"" + t.getName() + "\" ["
+		log.trace("Registering MOBAC exception handler for thread \"" + t.getName() + "\" ["
 				+ t.getId() + "]");
 		t.setUncaughtExceptionHandler(instance);
 	}
@@ -124,7 +124,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		String exceptionName = t.getClass().getSimpleName();
 		try {
 			StringBuilder sb = new StringBuilder(1024);
-			sb.append("Version: " + TACInfo.getCompleteTitle());
+			sb.append("Version: " + ProgramInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
 			String windowManager = System.getProperty("sun.desktop");
 			if (windowManager != null)

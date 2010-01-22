@@ -7,7 +7,7 @@ import mobac.Main;
 import mobac.utilities.Utilities;
 
 
-public class TACInfo {
+public class ProgramInfo {
 
 	public static String PROG_NAME = "Mobile Atlas Creator";
 	private static String version = null;

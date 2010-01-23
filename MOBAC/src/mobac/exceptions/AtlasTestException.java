@@ -1,11 +1,16 @@
 package mobac.exceptions;
 
+import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 
 public class AtlasTestException extends Exception {
 
 	public AtlasTestException(String message, MapInterface map) {
-		super(message + " (caused by map " + map.getName() + ")");
+		super(message + "\nError caused by map \"" + map.getName() + "\"");
+	}
+
+	public AtlasTestException(String message, LayerInterface layer) {
+		super(message + "\nError caused by layer \"" + layer.getName() + "\"");
 	}
 
 	public AtlasTestException(String message) {

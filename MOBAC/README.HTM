@@ -318,30 +318,20 @@ settings</b> on the left side of the main window. Details about the Garmin
 Custom Map format can be found in the <a
 	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
 Forums</a></p>
-<h4>Custom tile processing settings disbled</h4>
-<p>The output format of an "atlas" for Garmin Custom maps is one
-subdirectory per layer and within this subdirectory each map in form of
-one <tt>KMZ</tt> file containing one <tt>JPG</tt> file. The Garmin
-Custom Map format defines a maximum image size of 1024x1024 pixels. If a
-map is larger it will be automatically scaled down to fit into this
-size. You can prevent scaling when setting the max map size in the
-settings dialog to 1024.
-<h4>Custom tile processing settings enabled</h4>
-<p>You can create multiple tiles in one <tt>KMZ</tt> file by
-specifying a tile size in the custom tile processing settings. Each map
-in the atlas content tree will be exported as one <tt>KMZ</tt> file
-containing up to 100 tiles. If the selected tile size is larger than
-1024x1204 (maximum tile size for Garmin Custom Maps) each tile will be
-resized to this maximum size. For example specifying a tile size of
-2048x2048 scales each tile down by the factor of two. For unscaled
-output the following settings are recommended:
-<pre>
-Custom tile processing width:   1024
-Custom tile processing height:  1024
-Custom tile image format:       JPEG (quality level 100 - 50)
-Map map size (settings dialog): 10 * 1024 = 10240
-</pre>
-</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<p>The output format of an "atlas" for Garmin Custom maps is one <tt>KMZ</tt>
+file per layer containing all maps (max 100) as seperate <tt>JPG</tt>
+image files. The JPEG comression rate can be specified for each
+map/image using image format selector in the custom tile processing
+section. The Garmin Custom Map format defines a maximum image size of
+1024x1024 pixels. If a map is larger it will be automatically scaled
+down to fit into this size. You can prevent scaling when setting the max
+map size in the settings dialog to 1024.</p>
+
 <!-- *************************************************************************** -->
 <h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
 <p>For creating atlases of Creating Garmin Custom Maps you have to

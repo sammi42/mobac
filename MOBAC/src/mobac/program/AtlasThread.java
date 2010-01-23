@@ -132,7 +132,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		try {
 			atlasCreator.startAtlasCreation(atlasInterface);
 		} catch (AtlasTestException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(),
+					"Atlas format restriction violated", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 

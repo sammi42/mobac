@@ -8,9 +8,9 @@
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jai_core.jar"/>
 	<classpathentry kind="lib" path="lib/jai_codec.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/TAC"/>
 	<classpathentry kind="lib" path="lib/gt2-geotiff-2.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/gt-metadata-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/gt2-coverage-2.4.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/MOBAC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

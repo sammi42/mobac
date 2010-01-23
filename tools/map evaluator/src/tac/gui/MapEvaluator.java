@@ -25,23 +25,24 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
+import mobac.StartMOBAC;
+import mobac.mapsources.impl.Google;
+import mobac.mapsources.impl.OsmMapSources;
+import mobac.program.DirectoryManager;
+import mobac.program.Logging;
+import mobac.program.ProgramInfo;
+import mobac.program.model.Settings;
+import mobac.program.tilestore.TileStore;
+import mobac.utilities.GUIExceptionHandler;
+import mobac.utilities.Utilities;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import tac.StartTAC;
 import tac.gui.components.LineNumberedPaper;
 import tac.gui.mapview.LogPreviewMap;
 import tac.gui.mapview.ReferenceMapMarker;
 import tac.mapsources.BeanShellMapSource;
-import tac.mapsources.impl.Google;
-import tac.mapsources.impl.OsmMapSources;
-import tac.program.DirectoryManager;
-import tac.program.Logging;
-import tac.program.TACInfo;
-import tac.program.model.Settings;
-import tac.program.tilestore.TileStore;
-import tac.utilities.TACExceptionHandler;
-import tac.utilities.Utilities;
 import bsh.EvalError;
 
 public class MapEvaluator extends JFrame {
@@ -54,7 +55,7 @@ public class MapEvaluator extends JFrame {
 	private final LineNumberedPaper mapSourceEditor;
 
 	public MapEvaluator() throws HeadlessException {
-		super(TACInfo.getCompleteTitle());
+		super(ProgramInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
 		addWindowListener(new MEWindowAdapter());
 		setMinimumSize(new Dimension(300, 300));
@@ -236,7 +237,7 @@ public class MapEvaluator extends JFrame {
 						"Error in custom code: \n" + cause.getMessage(), "Error in custom code",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				TACExceptionHandler.processException(e);
+				GUIExceptionHandler.processException(e);
 			}
 		}
 	}
@@ -258,11 +259,11 @@ public class MapEvaluator extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		StartTAC.setLookAndFeel();
-		TACInfo.PROG_NAME = "TAC Map Evaluator";
-		TACExceptionHandler.registerForCurrentThread();
-		TACExceptionHandler.installToolkitEventQueueProxy();
-		TACInfo.initialize();
+		StartMOBAC.setLookAndFeel();
+		ProgramInfo.PROG_NAME = "TAC Map Evaluator";
+		GUIExceptionHandler.registerForCurrentThread();
+		GUIExceptionHandler.installToolkitEventQueueProxy();
+		ProgramInfo.initialize();
 		Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
 		DirectoryManager.initialize();
 		try {

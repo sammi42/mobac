@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import tac.gui.MapEvaluator;
-import tac.mapsources.mapspace.MercatorPower2MapSpace;
 import bsh.EvalError;
 import bsh.Interpreter;
 

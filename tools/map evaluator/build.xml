@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives" >
 
-	<property file="src/tac/tac.properties" />
-	<property name="TAC.dir" value="../TAC" />
-	<property name="jar.name" value="TAC Map Evaluator ${tac.version}.jar" />
-	<property name="zip.name" value="TAC Map Evaluator ${tac.version}.zip" />
-	<property name="main.class" value="tac.gui.MapEvaluator" />
+	<property file="src/mobac/mobac.properties" />
+	<property name="MOBAC.dir" value="../MOBAC" />
+	<property name="jar.name" value="MOBAC Map Evaluator ${mobac.version}.jar" />
+	<property name="zip.name" value="MOBAC Map Evaluator ${mobac.version}.zip" />
+	<property name="main.class" value="mobac.gui.MapEvaluator" />
 
 	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />
 
@@ -20,21 +20,21 @@
 		<path id="maincp">
 			<fileset dir="lib" includes="log*.jar" />
 			<fileset dir="lib" includes="bsh*.jar" />
-			<fileset dir="${TAC.dir}/lib" includes="*.jar" />
+			<fileset dir="${MOBAC.dir}/lib" includes="*.jar" />
 		</path>
-		<javac srcdir="src:${TAC.dir}/src" destdir="build" target="1.6" debug="true">
+		<javac srcdir="src:${MOBAC.dir}/src" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
-			<include name="tac/**" />
-			<exclude name="tac/tools/**"/>
+			<include name="mobac/**" />
+			<exclude name="mobac/tools/**"/>
 		</javac>
 		<copy todir="build" overwrite="true">
 			<fileset dir="src">
 				<include name="**/*.properties" />
-				<include name="tac/resources/**" />
+				<include name="mobac/resources/**" />
 			</fileset>
-			<fileset dir="${TAC.dir}/src">
+			<fileset dir="${MOBAC.dir}/src">
 				<include name="**/*.properties" />
-				<include name="tac/resources/**" />
+				<include name="mobac/resources/**" />
 			</fileset>
 		</copy>
 	</target>
@@ -55,10 +55,10 @@
 				<exclude name="org/apache/log4j/or/jms/**"/>
 				<exclude name="org/apache/log4j/jmx/**"/>
 			</zipfileset>
-			<zipfileset src="${TAC.dir}/lib/je-3.3.87.jar" >
+			<zipfileset src="${MOBAC.dir}/lib/je-3.3.87.jar" >
 				<exclude name="com/sleepycat/persist/model/ClassEnhancerTask.*"/>
 			</zipfileset>
-			<zipfileset src="${TAC.dir}/lib/sqlite.jar" />
+			<zipfileset src="${MOBAC.dir}/lib/sqlite.jar" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />
@@ -67,7 +67,7 @@
 	</target>
 
 	<target name="shrink" description="Removes unused classes from compiled jar">
-		<taskdef resource="proguard/ant/task.properties" classpath="${TAC.dir}/lib/proguard.jar" />
+		<taskdef resource="proguard/ant/task.properties" classpath="${MOBAC.dir}/lib/proguard.jar" />
 		<proguard obfuscate="false" optimize="false" ignorewarnings="true">
 			<injar file="${jar.name}"/>
 			<libraryjar file="${java.home}/lib/rt.jar"/>
@@ -111,7 +111,7 @@
 				<include name="src/**" />
 				<exclude name="src/_test/**" />
 				<exclude name="src/test/**" />
-				<exclude name="src/tac/tools/**" />
+				<exclude name="src/mobac/tools/**" />
 				<include name="log4j.xml" />
 				<include name="build.xml" />
 				<include name="gpl.txt" />

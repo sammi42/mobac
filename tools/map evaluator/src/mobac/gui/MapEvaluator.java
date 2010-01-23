@@ -1,7 +1,6 @@
 package mobac.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -28,7 +27,6 @@ import javax.swing.JToolBar;
 import mobac.StartMOBAC;
 import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
-import mobac.gui.mapview.ReferenceMapMarker;
 import mobac.mapsources.BeanShellMapSource;
 import mobac.mapsources.impl.Google;
 import mobac.mapsources.impl.OsmMapSources;
@@ -63,7 +61,9 @@ public class MapEvaluator extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		previewMap = new LogPreviewMap();
 		previewMap.setMapMarkerVisible(true);
-		previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
+
+		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
+
 		mapSourceEditor = new LineNumberedPaper(3, 60);
 		try {
 			String code = Utilities.loadTextResource("bsh/default.bsh");

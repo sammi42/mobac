@@ -1,4 +1,4 @@
-package tac.gui.mapview;
+package mobac.gui.mapview;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

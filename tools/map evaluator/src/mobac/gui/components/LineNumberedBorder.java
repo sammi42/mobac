@@ -1,4 +1,4 @@
-package tac.gui.components;
+package mobac.gui.components;
 
 import java.awt.Component;
 import java.awt.FontMetrics;

@@ -1,17 +1,17 @@
-package tac.mapsources;
+package mobac.mapsources;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import mobac.gui.MapEvaluator;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-import tac.gui.MapEvaluator;
 import bsh.EvalError;
 import bsh.Interpreter;
 

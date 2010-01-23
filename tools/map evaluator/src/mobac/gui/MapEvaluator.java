@@ -1,4 +1,4 @@
-package tac.gui;
+package mobac.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,6 +26,10 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
 import mobac.StartMOBAC;
+import mobac.gui.components.LineNumberedPaper;
+import mobac.gui.mapview.LogPreviewMap;
+import mobac.gui.mapview.ReferenceMapMarker;
+import mobac.mapsources.BeanShellMapSource;
 import mobac.mapsources.impl.Google;
 import mobac.mapsources.impl.OsmMapSources;
 import mobac.program.DirectoryManager;
@@ -39,10 +43,6 @@ import mobac.utilities.Utilities;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import tac.gui.components.LineNumberedPaper;
-import tac.gui.mapview.LogPreviewMap;
-import tac.gui.mapview.ReferenceMapMarker;
-import tac.mapsources.BeanShellMapSource;
 import bsh.EvalError;
 
 public class MapEvaluator extends JFrame {

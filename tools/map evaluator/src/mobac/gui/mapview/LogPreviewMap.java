@@ -1,4 +1,4 @@
-package tac.gui.mapview;
+package mobac.gui.mapview;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -9,12 +9,10 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.TimerTask;
 
-import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.BeanShellMapSource;
 
 import org.openstreetmap.gui.jmapviewer.MapGridLayer;
-
-import tac.mapsources.BeanShellMapSource;
 
 public class LogPreviewMap extends PreviewMap {
 

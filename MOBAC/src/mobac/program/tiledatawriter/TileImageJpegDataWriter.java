@@ -1,6 +1,6 @@
 package mobac.program.tiledatawriter;
 
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -13,7 +13,6 @@ import javax.imageio.ImageWriter;
 import mobac.program.interfaces.TileImageDataWriter;
 
 import org.apache.log4j.Logger;
-
 
 public class TileImageJpegDataWriter implements TileImageDataWriter {
 
@@ -70,7 +69,7 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 		return jpegCompressionLevel;
 	}
 
-	public void processImage(RenderedImage image, OutputStream out) throws IOException {
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
 		jpegImageWriter.setOutput(ImageIO.createImageOutputStream(out));
 		IIOImage ioImage = new IIOImage(image, null, null);
 		jpegImageWriter.write(null, ioImage, iwp);

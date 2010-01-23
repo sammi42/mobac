@@ -51,7 +51,7 @@ public class MultiImage {
 
 		Graphics2D graph = result.createGraphics();
 		try {
-			graph.setColor(new Color(255, 255, 255));
+			graph.setColor(Color.WHITE);
 			graph.fillRect(0, 0, width, height);
 
 			for (int x = xMin; x <= xMax; x++) {

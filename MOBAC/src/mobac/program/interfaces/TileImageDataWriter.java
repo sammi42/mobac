@@ -1,6 +1,6 @@
 package mobac.program.interfaces;
 
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public interface TileImageDataWriter {
 	 *            {@link ByteArrayOutputStream}
 	 * @throws IOException
 	 */
-	public void processImage(RenderedImage image, OutputStream out) throws IOException;
+	public void processImage(BufferedImage image, OutputStream out) throws IOException;
 	
 	public void dispose();
 	

@@ -2,7 +2,6 @@ package mobac.program.atlascreators.tileprovider;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -12,7 +11,6 @@ import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageFormat;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 public class MultiLayerTileProvider extends FilterTileProvider {
 
@@ -37,7 +35,7 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
-		RenderedImage combinedImage = getTileImage(x, y);
+		BufferedImage combinedImage = getTileImage(x, y);
 		if (combinedImage == null)
 			return null;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);

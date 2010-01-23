@@ -18,7 +18,6 @@ import mobac.utilities.MyMath;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 public class MapTileBuilder {
 
 	private static final Logger log = Logger.getLogger(MapTileBuilder.class);
@@ -28,6 +27,7 @@ public class MapTileBuilder {
 	private final MapInterface map;
 	private final MapSource mapSource;
 	private final TileImageParameters parameters;
+	private final TileImageDataWriter tileImageDataWriter;
 	private final int tileSize;
 	private final int xMin;
 	private final int xMax;
@@ -51,7 +51,14 @@ public class MapTileBuilder {
 
 	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter,
 			boolean useRealTileSize) {
+		this(atlasCreator, atlasCreator.getParameters().getFormat().getDataWriter(), mapTileWriter,
+				useRealTileSize);
+	}
+
+	public MapTileBuilder(AtlasCreator atlasCreator, TileImageDataWriter tileImageDataWriter,
+			MapTileWriter mapTileWriter, boolean useRealTileSize) {
 		this.atlasCreator = atlasCreator;
+		this.tileImageDataWriter = tileImageDataWriter;
 		this.mapTileWriter = mapTileWriter;
 		this.mapDlTileProvider = atlasCreator.getMapDlTileProvider();
 		this.useRealTileSize = useRealTileSize;
@@ -102,7 +109,6 @@ public class MapTileBuilder {
 		// cache of ImageIO. This will speed up the creation process a bit
 		ImageIO.setUseCache(false);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(32768);
-		TileImageDataWriter tileImageDataWriter = parameters.getFormat().getDataWriter();
 		tileImageDataWriter.initialize();
 		int currentTileHeight = realHeight;
 		int currentTileWidth = realWidth;

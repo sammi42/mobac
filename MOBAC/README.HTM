@@ -43,7 +43,8 @@ p,ul {
 <body>
 <h1>Mobile Atlas Creator - Read-me</h1>
 <p>Welcome to Mobile Atlas Creator read-me file for end users.</p>
-<p>Before January 2010 this project was known as "TrekBuddy Atlas Creator".</p>
+<p>Before January 2010 this project was known as "TrekBuddy Atlas
+Creator".</p>
 <p>Mobile Atlas Creator is an open source project hosted on
 SourceForge.net: <br>
 <a href="http://trekbuddyatlasc.sourceforge.net">http://trekbuddyatlasc.sourceforge.net</a>
@@ -313,22 +314,34 @@ file per defined map.</p>
 <h3><a name="GarminCustom">Creating Garmin Custom maps</a></h3>
 <p>For creating atlases of Creating Garmin Custom maps you have to
 select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
-settings</b> on the left side of the main window.</p>
-<p>Using this atlas output format the following features are ignored
-when creating atlases:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-</ul>
+settings</b> on the left side of the main window. Details about the Garmin
+Custom Map format can be found in the <a
+	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
+Forums</a></p>
+<h4>Custom tile processing settings disbled</h4>
 <p>The output format of an "atlas" for Garmin Custom maps is one
 subdirectory per layer and within this subdirectory each map in form of
 one <tt>KMZ</tt> file containing one <tt>JPG</tt> file. The Garmin
 Custom Map format defines a maximum image size of 1024x1024 pixels. If a
 map is larger it will be automatically scaled down to fit into this
 size. You can prevent scaling when setting the max map size in the
-settings dialog to 1024. For more details about the Garmin Custom Map
-please visit the <a
-	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
-Forums</a>.</p>
+settings dialog to 1024.
+<h4>Custom tile processing settings enabled</h4>
+<p>You can create multiple tiles in one <tt>KMZ</tt> file by
+specifying a tile size in the custom tile processing settings. Each map
+in the atlas content tree will be exported as one <tt>KMZ</tt> file
+containing up to 100 tiles. If the selected tile size is larger than
+1024x1204 (maximum tile size for Garmin Custom Maps) each tile will be
+resized to this maximum size. For example specifying a tile size of
+2048x2048 scales each tile down by the factor of two. For unscaled
+output the following settings are recommended:
+<pre>
+Custom tile processing width:   1024
+Custom tile processing height:  1024
+Custom tile image format:       JPEG (quality level 100 - 50)
+Map map size (settings dialog): 10 * 1024 = 10240
+</pre>
+</p>
 <!-- *************************************************************************** -->
 <h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
 <p>For creating atlases of Creating Garmin Custom Maps you have to
@@ -407,6 +420,16 @@ For more details see OpenStreetMap Wiki: <a
 	href="http://wiki.openstreetmap.org/wiki/Height_and_width_of_a_map">Height
 and width of a map</a> and <a
 	href="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom levels</a></p>
+<h3>Java Bugs</h3>
+<p>Due to bugs in Java you should not do the following:</p>
+<ul>
+	<li>Install Mobile Atlas Creator into a directory which path
+	contains an "!" (exclamation mark) because of this <a
+		href="http://bugs.sun.com/view_bug.do?bug_id=4523159">Sun Java bug</a>
+	</li>
+	<li>Do not use OpenJDK if you want to work with GPX tracks in
+	Mobile Atlas Creator</li>
+</ul>
 
 <h2><a name="AdvancedUsers">Details for advanced users</a></h2>
 <h3>Custom map sources</h3>

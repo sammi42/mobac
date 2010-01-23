@@ -71,7 +71,6 @@ public class MagellanRmp extends AtlasCreator {
 		createTiles();
 	}
 
-	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		atlasProgress.initMapCreation(1000);
 		ImageIO.setUseCache(false);

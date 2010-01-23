@@ -58,7 +58,6 @@ public class MobileTrailExplorer extends AtlasCreator {
 		createTiles();
 	}
 
-	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		ImageIO.setUseCache(false);

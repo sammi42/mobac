@@ -123,7 +123,6 @@ public class BigPlanetSql extends AtlasCreator {
 		stat.close();
 	}
 
-	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		atlasProgress.initMapCreation(2 * (xMax - xMin + 1) * (yMax - yMin + 1));
 		try {

@@ -2,6 +2,8 @@ package mobac.program.atlascreators;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -9,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.zip.CRC32;
 import java.util.zip.Deflater;
@@ -30,6 +33,9 @@ import javax.xml.transform.stream.StreamResult;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.atlascreators.impl.MapTileBuilder;
+import mobac.program.atlascreators.impl.MapTileWriter;
+import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
@@ -44,7 +50,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 public class GarminCustom extends AtlasCreator {
 
 	/**
@@ -54,8 +59,8 @@ public class GarminCustom extends AtlasCreator {
 	private static final int MAX_FILE_SIZE = 3 * 1024 * 1024;
 
 	protected File mapDir;
-	protected String mapName;
-	protected String imageFileName;
+	// protected String mapName;
+	protected String cleanedMapName;
 
 	protected ZipOutputStream kmzOutputStream = null;
 	private CRC32 crc = new CRC32();
@@ -88,14 +93,13 @@ public class GarminCustom extends AtlasCreator {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		mapDir = new File(atlasDir, map.getLayer().getName());
-		mapName = map.getName();
-		mapName = mapName.replaceAll("[[^\\p{Alnum}-_]]+", "_");
-		mapName = mapName.replaceAll("_{2,}", "_");
-		if (mapName.endsWith("_"))
-			mapName = mapName.substring(0, mapName.length() - 1);
-		if (mapName.startsWith("_"))
-			mapName = mapName.substring(1, mapName.length());
-		imageFileName = "files/" + mapName + ".jpg";
+		cleanedMapName = map.getName();
+		cleanedMapName = cleanedMapName.replaceAll("[[^\\p{Alnum}-_]]+", "_");
+		cleanedMapName = cleanedMapName.replaceAll("_{2,}", "_");
+		if (cleanedMapName.endsWith("_"))
+			cleanedMapName = cleanedMapName.substring(0, cleanedMapName.length() - 1);
+		if (cleanedMapName.startsWith("_"))
+			cleanedMapName = cleanedMapName.substring(1, cleanedMapName.length());
 	}
 
 	@Override
@@ -103,11 +107,18 @@ public class GarminCustom extends AtlasCreator {
 		File kmzFile = null;
 		try {
 			Utilities.mkDir(mapDir);
-			kmzFile = new File(mapDir, mapName + ".kmz");
+			kmzFile = new File(mapDir, cleanedMapName + ".kmz");
 			kmzOutputStream = new ZipOutputStream(new FileOutputStream(kmzFile));
 			kmzOutputStream.setMethod(Deflater.NO_COMPRESSION);
-			createTiles();
-			buildKmzFile();
+			if (parameters == null) {
+				String fileName = "files/" + cleanedMapName + ".jpg";
+				createImage(fileName);
+				buildKmzFile(fileName);
+			} else {
+				initKmlDoc();
+				createTiledImage();
+				writeKmlToZip();
+			}
 			kmzOutputStream.close();
 			kmzFile = null;
 		} catch (InterruptedException e) {
@@ -124,8 +135,22 @@ public class GarminCustom extends AtlasCreator {
 		}
 	}
 
-	@Override
-	protected void createTiles() throws InterruptedException, MapCreationException {
+	protected void createTiledImage() throws InterruptedException, MapCreationException {
+		mapDlTileProvider = new CacheTileProvider(mapDlTileProvider);
+
+		GarminJpegTileImageDataWriter writer = new GarminJpegTileImageDataWriter(
+				(TileImageJpegDataWriter) parameters.getFormat().getDataWriter());
+		MapTileBuilder mapTileBuilder = new MapTileBuilder(this, writer, writer, true);
+		int customTileCount = mapTileBuilder.getCustomTileCount();
+		if (customTileCount > 100)
+			throw new MapCreationException("Too many tiles: " + customTileCount
+					+ "\nMaximum tile count is 100.");
+		atlasProgress.initMapCreation(customTileCount);
+		mapTileBuilder.createTiles();
+	}
+
+	protected void createImage(String imageFileName) throws InterruptedException,
+			MapCreationException {
 
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		ImageIO.setUseCache(false);
@@ -152,8 +177,11 @@ public class GarminCustom extends AtlasCreator {
 				BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics = tileImage.createGraphics();
 		try {
-			if (len > 1024)
+			if (len > 1024) {
 				graphics.setTransform(AffineTransform.getScaleInstance(scaleFactor, scaleFactor));
+				graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			}
 			int lineY = 0;
 			for (int y = yMin; y <= yMax; y++) {
 				int lineX = 0;
@@ -179,13 +207,7 @@ public class GarminCustom extends AtlasCreator {
 		}
 		try {
 			TileImageJpegDataWriter writer;
-			if (parameters == null) {
-				writer = new TileImageJpegDataWriter(1.0);
-			} else {
-				TileImageFormat format = parameters.getFormat();
-				writer = new TileImageJpegDataWriter((TileImageJpegDataWriter) format
-						.getDataWriter());
-			}
+			writer = new TileImageJpegDataWriter(0.9);
 			writer.initialize();
 			// The maximum file size for the jpg image is 3 MB
 			// This OutputStream will fail if the resulting image is larger than
@@ -224,14 +246,14 @@ public class GarminCustom extends AtlasCreator {
 		kmzOutputStream.closeEntry();
 	}
 
-	private void buildKmzFile() throws ParserConfigurationException,
+	private void buildKmzFile(String imageFileName) throws ParserConfigurationException,
 			TransformerFactoryConfigurationError, TransformerException, IOException {
 		int startX = xMin * tileSize;
 		int endX = (xMax + 1) * tileSize;
 		int startY = yMin * tileSize;
 		int endY = (yMax + 1) * tileSize;
 		initKmlDoc();
-		addKmlEntry(startX, startY, endX - startX, endY - startY);
+		addKmlEntry(map.getName(), imageFileName, startX, startY, endX - startX, endY - startY);
 		writeKmlToZip();
 	}
 
@@ -258,7 +280,8 @@ public class GarminCustom extends AtlasCreator {
 
 	}
 
-	private void addKmlEntry(int startX, int startY, int width, int height) {
+	private void addKmlEntry(String imageName, String imageFileName, int startX, int startY,
+			int width, int height) {
 		Element go = kmlDoc.createElement("GroundOverlay");
 		Element name = kmlDoc.createElement("name");
 		Element ico = kmlDoc.createElement("Icon");
@@ -271,7 +294,7 @@ public class GarminCustom extends AtlasCreator {
 		Element west = kmlDoc.createElement("west");
 		Element rotation = kmlDoc.createElement("rotation");
 
-		name.setTextContent(map.getName());
+		name.setTextContent(imageName);
 		href.setTextContent(imageFileName);
 		drawOrder.setTextContent("0");
 
@@ -316,4 +339,52 @@ public class GarminCustom extends AtlasCreator {
 		kmlDoc = null;
 		groundOverlayRoot = null;
 	}
+
+	private class GarminJpegTileImageDataWriter extends TileImageJpegDataWriter implements
+			MapTileWriter {
+
+		int width;
+		int height;
+
+		public GarminJpegTileImageDataWriter(TileImageJpegDataWriter jpegWriter) {
+			super(jpegWriter);
+		}
+
+		@Override
+		public void processImage(BufferedImage image, OutputStream out) throws IOException {
+			width = image.getWidth();
+			height = image.getHeight();
+			int max = Math.max(width, height);
+			if (width > 1024 || height > 1024) {
+				double factor = 1024d / max;
+				int scaledWidth = (int) (factor * width);
+				int scaledHeight = (int) (factor * height);
+				Image scaledImage = image.getScaledInstance(scaledWidth, scaledHeight,
+						BufferedImage.SCALE_SMOOTH);
+				image = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
+				image.getGraphics().drawImage(scaledImage, 0, 0, null);
+			}
+			super.processImage(image, out);
+		}
+
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
+				throws IOException {
+			if (tileData.length > MAX_FILE_SIZE)
+				throw new IOException("Image format exceeds 3 MiB - this is not allowd by "
+						+ "specification please reduce the JPEG quality");
+
+			String filename = String.format("files/tile%dx%d.jpg", tilex, tiley);
+			String name = String.format("%s %dx%d", map.getName(), tilex, tiley);
+			writeStoredEntry(filename, tileData);
+
+			int xStart = (xMin * tileSize) + (tilex * parameters.getWidth());
+			int yStart = (yMin * tileSize) + (tiley * parameters.getHeight());
+
+			addKmlEntry(name, filename, xStart, yStart, width, height);
+		}
+
+		public void finalizeMap() {
+		}
+	}
+
 }

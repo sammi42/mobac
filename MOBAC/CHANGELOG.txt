@@ -21,11 +21,11 @@
  + Atlas output directory can be specified via settings dialog
  + AndNav and OSMTracker: Tile format conversion (JPG <->PNG) implemented
     including color reduction
- ~ Docelu.pl can update it's base url like the Google map sources do
+ ~ Docelu.pl can update it's base URL like the Google map sources do
  ~ Pause/resume button now works while map creation (not only while download)
  + New experimental map source: Turaterkep (Hungary hiking)
     Uses tiles of size 512x512 (not supported by all atlas formats)        
- + Multi layer map sources such as Google Hybrid or OSM Hiking with relief 
+ + Multi-layer map sources such as Google Hybrid or OSM Hiking with relief 
     background can be used with all atlas creators
  + New map: NearMap Australia (high-resolution aerial images for Australia)
  ! GPX addWpt: Multiple way points added by one mouse click fixed
@@ -44,15 +44,16 @@
  + New map source: Eniro.com map/aerial/nautical (Sweden, Norway, Finland)
  + Checkbox added in atlas progress dialog for ignoring all download errors  
  + New atlas format: CacheWolf (as one large 24bit png + WFL or tiled with 
-    multiple WLF files using the cofigured image format and tile size)
+    multiple WLF files using the configured image format and tile size)
  + New map source: Mapplus.ch (Switzerland)
  + Coordinate format changeable ("deg" / "deg,min" / "deg,min,sec")
  + New atlas format: CacheBox
  + New atlas format: Garmin Custom Map
+     Image downscaling uses bilinear filter (improves image quality) 
  + Each map source has now a background color (usually black) that is used 
     in case of missing tiles
  + Content-type check after download (HTTP header and image data header)
- ~ OpenStreetMap Hiking Relief url updated
+ ~ OpenStreetMap Hiking Relief URL updated
  + New map source: Ovi/Nokia Maps
  
  1.6.1: (2009-10-30)

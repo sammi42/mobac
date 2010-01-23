@@ -169,14 +169,6 @@ public abstract class AtlasCreator {
 	public abstract void createMap() throws MapCreationException, InterruptedException;
 
 	/**
-	 * Usually called within {@link #createMap()}.
-	 * 
-	 * @throws InterruptedException
-	 * @throws MapCreationException
-	 */
-	protected abstract void createTiles() throws InterruptedException, MapCreationException;
-
-	/**
 	 * Checks if the user has aborted atlas creation and if <code>true</code> an
 	 * {@link InterruptedException} is thrown.
 	 * 

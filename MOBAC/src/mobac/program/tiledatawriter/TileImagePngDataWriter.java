@@ -1,6 +1,6 @@
 package mobac.program.tiledatawriter;
 
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -12,7 +12,6 @@ import javax.imageio.ImageWriter;
 import mobac.program.interfaces.TileImageDataWriter;
 
 import org.apache.log4j.Logger;
-
 
 public class TileImagePngDataWriter implements TileImageDataWriter {
 
@@ -38,7 +37,7 @@ public class TileImagePngDataWriter implements TileImageDataWriter {
 		log.debug("Used PNG image writer: " + pngImageWriter.getClass().getName());
 	}
 
-	public void processImage(RenderedImage image, OutputStream out) throws IOException {
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
 		pngImageWriter.setOutput(ImageIO.createImageOutputStream(out));
 		IIOImage ioImage = new IIOImage(image, null, null);
 		pngImageWriter.write(ioImage);

@@ -74,7 +74,7 @@ public class MapSourcesManager {
 				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
 				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
-				new OsmWms(), new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
+				/*new OsmWms(),*/ new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
 				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),
 				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
 				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),

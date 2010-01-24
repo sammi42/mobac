@@ -95,7 +95,10 @@ public class GarminCustom extends AtlasCreator {
 		kmzOutputStream = new ZipOutputStream(new FileOutputStream(kmzFile));
 		kmzOutputStream.setMethod(Deflater.NO_COMPRESSION);
 		try {
-			initKmlDoc(layer.getName());
+			if (layer.getMapCount() <= 1)
+				initKmlDoc(null);
+			else
+				initKmlDoc(layer.getName());
 		} catch (ParserConfigurationException e) {
 			throw new IOException(e);
 		}

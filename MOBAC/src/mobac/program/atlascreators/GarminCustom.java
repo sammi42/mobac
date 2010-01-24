@@ -169,9 +169,9 @@ public class GarminCustom extends AtlasCreator {
 		double scaleFactor = 1.0;
 		if (len > 1024) {
 			scaleFactor = 1024d / len;
-			if (imageWidth != imageHeight) {
+			if (mapWidth != mapHeight) {
 				// Map is not rectangle -> adapt height or width
-				if (imageWidth > imageHeight)
+				if (mapWidth > mapHeight)
 					imageHeight = (int) (scaleFactor * mapHeight);
 				else
 					imageWidth = (int) (scaleFactor * mapWidth);
@@ -211,7 +211,12 @@ public class GarminCustom extends AtlasCreator {
 		}
 		try {
 			TileImageJpegDataWriter writer;
-			writer = new TileImageJpegDataWriter(0.9);
+			if (parameters != null) {
+				writer = (TileImageJpegDataWriter) parameters.getFormat().getDataWriter();
+				writer = new TileImageJpegDataWriter(writer);
+			} else
+				writer = new TileImageJpegDataWriter(0.9);
+
 			writer.initialize();
 			// The maximum file size for the jpg image is 3 MB
 			// This OutputStream will fail if the resulting image is larger than

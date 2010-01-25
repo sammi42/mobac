@@ -12,14 +12,13 @@ import java.util.Map;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.MiscMapSources.OviMaps;
+import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.program.Logging;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.utilities.Utilities;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 
 public class MapSourceTypeDetector {
 
@@ -31,7 +30,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(OviMaps.class, Cities.MUNICH);
+		testMapSource(Bergfex.class, Cities.INNSBRUCK);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

@@ -24,6 +24,7 @@ import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
 import mobac.mapsources.impl.RegionalMapSources.AustrianMap;
+import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
@@ -85,6 +86,7 @@ public class MapSourcesTester {
 		testCoordinates.put(StatkartTopo2.class, Cities.OSLO);
 		testCoordinates.put(MapplusCh.class, Cities.BERN);
 		testCoordinates.put(Turaterkep.class, Cities.BUDAPEST);
+		testCoordinates.put(Bergfex.class, Cities.INNSBRUCK);
 	}
 
 	public static void main(String[] args) {

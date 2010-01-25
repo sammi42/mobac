@@ -535,8 +535,10 @@ public class RegionalMapSources {
 
 	public static class Bergfex extends AbstractMapSource {
 
+		int SERVERNUM = 0;
+
 		public Bergfex() {
-			super("Bergfex", 8, 15, "png", TileUpdate.None);
+			super("Bergfex", 8, 15, "png", TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -546,11 +548,12 @@ public class RegionalMapSources {
 
 		@Override
 		public String getTileUrl(int zoom, int x, int y) {
-			String baseurl = "http://static4.bergfex.at/images/amap/";
+			String baseurl = "http://static" + (SERVERNUM + 2) + ".bergfex.at/images/amap/";
+			SERVERNUM = (SERVERNUM + 1) % 3;
 			String xBase = "";
-			if (zoom>13)
-				xBase = Integer.toString(x).substring(0, zoom-12)+"/";
-			return baseurl + zoom + "/" + xBase + "/" + zoom + "_" + x + "_" + y + ".png";
+			if (zoom > 13)
+				xBase = Integer.toString(x).substring(0, zoom - 12) + "/";
+			return baseurl + zoom + "/" + xBase + zoom + "_" + x + "_" + y + ".png";
 		}
 	}
 }

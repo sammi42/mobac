@@ -55,6 +55,7 @@
  + Content-type check after download (HTTP header and image data header)
  ~ OpenStreetMap Hiking Relief URL updated
  + New map source: Ovi/Nokia Maps
+ + New map source: Bergfex (Austria)
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

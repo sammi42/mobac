@@ -28,6 +28,7 @@ import mobac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
 import mobac.mapsources.impl.RegionalMapSources.AustrianMap;
+import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import mobac.mapsources.impl.RegionalMapSources.EmapaPl;
@@ -46,12 +47,10 @@ import mobac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
-import mobac.mapsources.impl.WmsSources.OsmWms;
 import mobac.mapsources.impl.WmsSources.TerraserverUSA;
 import mobac.program.model.Settings;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 public class MapSourcesManager {
 
@@ -72,14 +71,14 @@ public class MapSourcesManager {
 				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
 				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(),
 				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
-				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(),
-				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
-				/*new OsmWms(),*/ new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
-				new EmapaPl(), new AustrianMap(), new FreemapSlovakia(),
-				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
-				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
-				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(),
-				new EniroComNautical(), new MapplusCh() };
+				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(),
+				new OutdooractiveAustria(), new OutdooractiveSouthTyrol(), new MultimapCom(),
+				new MultimapOSUkCom(), new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(),
+				new DoCeluPL(), new EmapaPl(), new AustrianMap(), new Bergfex(),
+				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
+				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
+				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2(),
+				new EniroComMap(), new EniroComAerial(), new EniroComNautical(), new MapplusCh() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

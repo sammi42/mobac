@@ -8,7 +8,6 @@ import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
 
-
 /**
  * Map sources that do not cover the whole world
  */
@@ -532,5 +531,26 @@ public class RegionalMapSources {
 			return conn;
 		}
 
+	}
+
+	public static class Bergfex extends AbstractMapSource {
+
+		public Bergfex() {
+			super("Bergfex", 8, 15, "png", TileUpdate.None);
+		}
+
+		@Override
+		public String toString() {
+			return "Bergfex (Austria)";
+		}
+
+		@Override
+		public String getTileUrl(int zoom, int x, int y) {
+			String baseurl = "http://static4.bergfex.at/images/amap/";
+			String xBase = "";
+			if (zoom>13)
+				xBase = Integer.toString(x).substring(0, zoom-12)+"/";
+			return baseurl + zoom + "/" + xBase + "/" + zoom + "_" + x + "_" + y + ".png";
+		}
 	}
 }

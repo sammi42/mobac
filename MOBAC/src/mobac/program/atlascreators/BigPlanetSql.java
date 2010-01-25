@@ -17,11 +17,11 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.Settings;
+import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
@@ -83,10 +83,16 @@ public class BigPlanetSql extends AtlasCreator {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		databaseFile = new File(atlasDir, DATABASE_FILENAME).getAbsolutePath();
+		log.debug("SQLite Database file: " + databaseFile);
 	}
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
+		try {
+			Utilities.mkDir(atlasDir);
+		} catch (IOException e) {
+			throw new MapCreationException(e);
+		}
 		try {
 			SQLiteLoader.loadSQLite();
 		} catch (SQLException e) {
@@ -97,8 +103,8 @@ public class BigPlanetSql extends AtlasCreator {
 			createTiles();
 			conn.close();
 		} catch (SQLException e) {
-			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\"",
-					e);
+			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\": "
+					+ e.getMessage(), e);
 		}
 	}
 

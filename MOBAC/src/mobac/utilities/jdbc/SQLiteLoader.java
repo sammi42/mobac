@@ -60,7 +60,7 @@ public class SQLiteLoader {
 				File lib = new File(libDir, libName);
 				if (lib.isFile()) {
 					verifiedLibDir = libDir;
-					log.debug("SQLite_jni found: " + lib.getPath());
+					log.debug("sqlite_jni found: " + lib.getPath());
 					System.load(lib.getPath());
 					break;
 				}

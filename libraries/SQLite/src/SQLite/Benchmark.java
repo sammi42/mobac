@@ -138,8 +138,7 @@ public class Benchmark {
 		try {
 			Class.forName(DriverName);
 
-			Benchmark Me = new Benchmark(DBUrl, DBUser, DBPassword,
-					initialize_dataset);
+			new Benchmark(DBUrl, DBUser, DBPassword, initialize_dataset);
 		} catch (java.lang.Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -147,9 +146,9 @@ public class Benchmark {
 	}
 
 	public Benchmark(String url, String user, String password, boolean init) {
-		Vector vClient = new Vector();
-		Thread Client = null;
-		Enumeration en = null;
+		Vector<Thread> vClient = new Vector<Thread>();
+		Thread client = null;
+		Enumeration<Thread> en = null;
 		try {
 			if (init) {
 				System.out.print("Initializing dataset...");
@@ -163,10 +162,10 @@ public class Benchmark {
 			prepared_stmt = false;
 			start_time = System.currentTimeMillis();
 			for (int i = 0; i < n_clients; i++) {
-				Client = new BenchmarkThread(n_txn_per_client, url, user,
+				client = new BenchmarkThread(n_txn_per_client, url, user,
 						password, this);
-				Client.start();
-				vClient.add(Client);
+				client.start();
+				vClient.add(client);
 			}
 
 			/*
@@ -174,8 +173,8 @@ public class Benchmark {
 			 */
 			en = vClient.elements();
 			while (en.hasMoreElements()) {
-				Client = (Thread) en.nextElement();
-				Client.join();
+				client = (Thread) en.nextElement();
+				client.join();
 			}
 			vClient.clear();
 			reportDone();
@@ -184,10 +183,10 @@ public class Benchmark {
 			prepared_stmt = false;
 			start_time = System.currentTimeMillis();
 			for (int i = 0; i < n_clients; i++) {
-				Client = new BenchmarkThread(n_txn_per_client, url, user,
+				client = new BenchmarkThread(n_txn_per_client, url, user,
 						password, this);
-				Client.start();
-				vClient.add(Client);
+				client.start();
+				vClient.add(client);
 			}
 
 			/*
@@ -195,8 +194,8 @@ public class Benchmark {
 			 */
 			en = vClient.elements();
 			while (en.hasMoreElements()) {
-				Client = (Thread) en.nextElement();
-				Client.join();
+				client = (Thread) en.nextElement();
+				client.join();
 			}
 			vClient.clear();
 			reportDone();
@@ -205,10 +204,10 @@ public class Benchmark {
 			prepared_stmt = true;
 			start_time = System.currentTimeMillis();
 			for (int i = 0; i < n_clients; i++) {
-				Client = new BenchmarkThread(n_txn_per_client, url, user,
+				client = new BenchmarkThread(n_txn_per_client, url, user,
 						password, this);
-				Client.start();
-				vClient.add(Client);
+				client.start();
+				vClient.add(client);
 			}
 
 			/*
@@ -217,8 +216,8 @@ public class Benchmark {
 
 			en = vClient.elements();
 			while (en.hasMoreElements()) {
-				Client = (Thread) en.nextElement();
-				Client.join();
+				client = (Thread) en.nextElement();
+				client.join();
 			}
 			vClient.clear();
 			reportDone();
@@ -227,10 +226,10 @@ public class Benchmark {
 			prepared_stmt = true;
 			start_time = System.currentTimeMillis();
 			for (int i = 0; i < n_clients; i++) {
-				Client = new BenchmarkThread(n_txn_per_client, url, user,
+				client = new BenchmarkThread(n_txn_per_client, url, user,
 						password, this);
-				Client.start();
-				vClient.add(Client);
+				client.start();
+				vClient.add(client);
 			}
 
 			/*
@@ -238,8 +237,8 @@ public class Benchmark {
 			 */
 			en = vClient.elements();
 			while (en.hasMoreElements()) {
-				Client = (Thread) en.nextElement();
-				Client.join();
+				client = (Thread) en.nextElement();
+				client.join();
 			}
 			vClient.clear();
 			reportDone();
@@ -725,7 +724,7 @@ class BenchmarkThread extends Thread {
 				Query += " SET Abalance = Abalance + " + delta;
 				Query += " WHERE Aid = " + aid;
 
-				int res = Stmt.executeUpdate(Query);
+				Stmt.executeUpdate(Query);
 				Stmt.clearWarnings();
 
 				Query = "SELECT Abalance";

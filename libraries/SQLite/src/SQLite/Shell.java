@@ -145,8 +145,8 @@ public class Shell implements Callback {
 
 	static boolean is_numeric(String str) {
 		try {
-			Double d = Double.valueOf(str);
-		} catch (java.lang.Exception e) {
+			Double.parseDouble(str);
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
@@ -190,7 +190,7 @@ public class Shell implements Callback {
 			if (count++ == 0) {
 				colwidth = new int[args.length];
 				for (i = 0; i < args.length; i++) {
-					int w, n;
+					int w;
 					w = cols[i].length();
 					if (w < 10) {
 						w = 10;
@@ -319,7 +319,7 @@ public class Shell implements Callback {
 		if (cmd.compareTo(".exit") == 0) {
 			try {
 				db.close();
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 			}
 			System.exit(0);
 		}
@@ -380,7 +380,7 @@ public class Shell implements Callback {
 					t = db.get_table("SELECT name FROM sqlite_master "
 							+ "WHERE type='table' AND " + "name LIKE '%%%q%%' "
 							+ "ORDER BY name", qarg);
-				} catch (Exception e) {
+				} catch (SQLiteException e) {
 					err.println("SQL Error: " + e);
 					err.flush();
 				}
@@ -388,7 +388,7 @@ public class Shell implements Callback {
 				try {
 					t = db.get_table("SELECT name FROM sqlite_master "
 							+ "WHERE type='table' ORDER BY name");
-				} catch (Exception e) {
+				} catch (SQLiteException e) {
 					err.println("SQL Error: " + e);
 					err.flush();
 				}
@@ -412,7 +412,7 @@ public class Shell implements Callback {
 							+ "WHERE type!='meta' AND "
 							+ "name LIKE '%%%q%%' AND " + "sql NOTNULL "
 							+ "ORDER BY type DESC, name", this, qarg);
-				} catch (Exception e) {
+				} catch (SQLiteException e) {
 					err.println("SQL Error: " + e);
 					err.flush();
 				}
@@ -421,7 +421,7 @@ public class Shell implements Callback {
 					db.exec("SELECT sql FROM sqlite_master "
 							+ "WHERE type!='meta' AND " + "sql NOTNULL "
 							+ "ORDER BY tbl_name, type DESC, name", this);
-				} catch (Exception e) {
+				} catch (SQLiteException e) {
 					err.println("SQL Error: " + e);
 					err.flush();
 				}
@@ -431,7 +431,7 @@ public class Shell implements Callback {
 		if (cmd.compareTo(".enc") == 0) {
 			try {
 				db.set_encoding(args.length > 0 ? args[0] : null);
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 				err.println("" + e);
 				err.flush();
 			}
@@ -440,7 +440,7 @@ public class Shell implements Callback {
 		if (cmd.compareTo(".rekey") == 0) {
 			try {
 				db.rekey(args.length > 0 ? args[0] : null);
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 				err.println("" + e);
 				err.flush();
 			}
@@ -481,7 +481,7 @@ public class Shell implements Callback {
 				if (Database.complete(sql)) {
 					try {
 						db.exec(sql, this);
-					} catch (Exception e) {
+					} catch (SQLiteException e) {
 						if (!echo) {
 							err.println(sql);
 						}
@@ -511,7 +511,7 @@ public class Shell implements Callback {
 		} else {
 			try {
 				db.exec(sql, this);
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 				err.println("SQL Error: " + e);
 				err.flush();
 			}
@@ -561,14 +561,14 @@ public class Shell implements Callback {
 		}
 		try {
 			s.db.open(dbname, 0);
-		} catch (Exception e) {
+		} catch (SQLiteException e) {
 			System.err.println("Unable to open database: " + e);
 			System.exit(1);
 		}
 		if (key != null) {
 			try {
 				s.db.key(key);
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 				System.err.println("Unable to set key: " + e);
 				System.exit(1);
 			}
@@ -584,7 +584,7 @@ public class Shell implements Callback {
 		}
 		try {
 			s.db.close();
-		} catch (Exception ee) {
+		} catch (SQLiteException ee) {
 		}
 	}
 }
@@ -606,7 +606,7 @@ class DBDump implements Callback {
 				s.db.exec("SELECT name, type, sql FROM sqlite_master "
 						+ "WHERE type!='meta' AND sql NOT NULL "
 						+ "ORDER BY substr(type,2,1), name", this);
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 				s.err.println("SQL Error: " + e);
 				s.err.flush();
 			}
@@ -619,7 +619,7 @@ class DBDump implements Callback {
 							+ "WHERE tbl_name LIKE '%q' AND type!='meta' "
 							+ " AND sql NOT NULL "
 							+ " ORDER BY substr(type,2,1), name", this, arg);
-				} catch (Exception e) {
+				} catch (SQLiteException e) {
 					s.err.println("SQL Error: " + e);
 					s.err.flush();
 				}
@@ -673,7 +673,7 @@ class DBDump implements Callback {
 				} else {
 					s2.db.exec("SELECT * from '%q'", s2, qargs);
 				}
-			} catch (Exception e) {
+			} catch (SQLiteException e) {
 				s.err.println("SQL Error: " + e);
 				s.err.flush();
 				return true;

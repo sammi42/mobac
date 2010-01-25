@@ -11,6 +11,7 @@ public class FunctionContext {
 	 * Internal handle for the native SQLite API.
 	 */
 
+	@SuppressWarnings("unused")
 	private long handle = 0;
 
 	/**

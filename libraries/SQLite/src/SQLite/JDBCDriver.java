@@ -1,6 +1,5 @@
 package SQLite;
 
-import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
@@ -14,42 +13,32 @@ public class JDBCDriver implements java.sql.Driver {
 
 	public static String vfs = null;
 
-	private static Constructor makeConn = null;
-
 	protected Connection conn;
 
 	static {
 		try {
-			Class connClass = null;
-			Class args[] = new Class[5];
-			args[0] = Class.forName("java.lang.String");
-			args[1] = args[0];
-			args[2] = args[0];
-			args[3] = args[0];
-			args[4] = args[0];
-			String cvers;
-			cvers = "SQLite.JDBC2z.JDBCConnection";
-			connClass = Class.forName(cvers);
-			makeConn = connClass.getConstructor(args);
-			java.sql.DriverManager.registerDriver(new JDBCDriver());
-			try {
-				String shcache = java.lang.System
-						.getProperty("SQLite.sharedcache");
-				if (shcache != null
-						&& (shcache.startsWith("y") || shcache.startsWith("Y"))) {
-					sharedCache = SQLite.Database._enable_shared_cache(true);
-				}
-			} catch (java.lang.Exception e) {
-			}
-			try {
-				String tvfs = java.lang.System.getProperty("SQLite.vfs");
-				if (tvfs != null) {
-					vfs = tvfs;
-				}
-			} catch (java.lang.Exception e) {
+			init();
+		} catch (java.lang.Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void init() throws Exception {
+		java.sql.DriverManager.registerDriver(new JDBCDriver());
+		try {
+			String shcache = System.getProperty("SQLite.sharedcache");
+			if (shcache != null
+					&& (shcache.startsWith("y") || shcache.startsWith("Y"))) {
+				sharedCache = SQLite.Database._enable_shared_cache(true);
 			}
 		} catch (java.lang.Exception e) {
-			System.err.println(e);
+		}
+		try {
+			String tvfs = System.getProperty("SQLite.vfs");
+			if (tvfs != null) {
+				vfs = tvfs;
+			}
+		} catch (java.lang.Exception e) {
 		}
 	}
 
@@ -64,26 +53,25 @@ public class JDBCDriver implements java.sql.Driver {
 		if (!acceptsURL(url)) {
 			return null;
 		}
-		Object args[] = new Object[5];
-		args[0] = url;
-		if (info != null) {
-			args[1] = info.getProperty("encoding");
-			args[2] = info.getProperty("password");
-			args[3] = info.getProperty("daterepr");
-			args[4] = info.getProperty("vfs");
-		}
-		if (args[1] == null) {
-			args[1] = java.lang.System.getProperty("SQLite.encoding");
-		}
-		if (args[4] == null) {
-			args[4] = vfs;
-		}
 		try {
-			conn = (Connection) makeConn.newInstance(args);
-		} catch (java.lang.reflect.InvocationTargetException ie) {
-			throw new SQLException(ie.getTargetException().toString());
-		} catch (java.lang.Exception e) {
-			throw new SQLException(e.toString());
+			String args[] = new String[5];
+			args[0] = url;
+			if (info != null) {
+				args[1] = info.getProperty("encoding");
+				args[2] = info.getProperty("password");
+				args[3] = info.getProperty("daterepr");
+				args[4] = info.getProperty("vfs");
+			}
+			if (args[1] == null) {
+				args[1] = java.lang.System.getProperty("SQLite.encoding");
+			}
+			if (args[4] == null) {
+				args[4] = vfs;
+			}
+			conn = new SQLite.JDBC2z.JDBCConnection(args[0], args[1], args[2],
+					args[3], args[4]);
+		} catch (Exception e) {
+			throw new SQLException(e.toString(), e);
 		}
 		return conn;
 	}

@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.zip.CRC32;
-import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -93,7 +92,7 @@ public class GarminCustom extends AtlasCreator {
 		Utilities.mkDirs(atlasDir);
 		kmzFile = new File(atlasDir, layer.getName() + ".kmz");
 		kmzOutputStream = new ZipOutputStream(new FileOutputStream(kmzFile));
-		kmzOutputStream.setMethod(Deflater.NO_COMPRESSION);
+		kmzOutputStream.setMethod(ZipOutputStream.STORED);
 		try {
 			if (layer.getMapCount() <= 1)
 				initKmlDoc(null);

@@ -695,13 +695,11 @@ public class JDBCPreparedStatement extends JDBCStatement implements
 		throw new SQLException("not supported");
 	}
 
-	public Object getObject(String parameterName, Map<?, ?> map)
-			throws SQLException {
+	public Object getObject(String parameterName, Map map) throws SQLException {
 		throw new SQLException("not supported");
 	}
 
-	public Object getObject(int parameterIndex, Map<?, ?> map)
-			throws SQLException {
+	public Object getObject(int parameterIndex, Map map) throws SQLException {
 		throw new SQLException("not supported");
 	}
 

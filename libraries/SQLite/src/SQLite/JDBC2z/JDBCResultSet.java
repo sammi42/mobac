@@ -859,7 +859,7 @@ public class JDBCResultSet implements java.sql.ResultSet {
 		sb.append(")");
 		try {
 			this.s.conn.db.exec(sb.toString(), null, rowbuf);
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.getMessage());
 		}
 		tr.newrow(rowbuf);
@@ -906,7 +906,7 @@ public class JDBCResultSet implements java.sql.ResultSet {
 		}
 		try {
 			this.s.conn.db.exec(sb.toString(), null, args);
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.getMessage());
 		}
 		System.arraycopy(rowbuf, 0, rd, 0, rowbuf.length);
@@ -937,7 +937,7 @@ public class JDBCResultSet implements java.sql.ResultSet {
 		}
 		try {
 			this.s.conn.db.exec(sb.toString(), null, args);
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.getMessage());
 		}
 		rowbuf = null;
@@ -976,7 +976,7 @@ public class JDBCResultSet implements java.sql.ResultSet {
 		SQLite.TableResult trnew = null;
 		try {
 			trnew = this.s.conn.db.get_table(sb.toString(), args);
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.getMessage());
 		}
 		if (trnew.nrows != 1) {

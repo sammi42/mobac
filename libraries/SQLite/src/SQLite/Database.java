@@ -29,7 +29,7 @@ public class Database {
 	 *            open mode (e.g. SQLITE_OPEN_READONLY)
 	 */
 
-	public void open(String filename, int mode) throws SQLite.SQLiteException {
+	public void open(String filename, int mode) throws SQLite.Exception {
 		if ((mode & 0200) != 0) {
 			mode = SQLite.Constants.SQLITE_OPEN_READWRITE
 					| SQLite.Constants.SQLITE_OPEN_CREATE;
@@ -39,7 +39,7 @@ public class Database {
 		synchronized (this) {
 			try {
 				_open4(filename, mode, null, false);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw se;
 			} catch (java.lang.OutOfMemoryError me) {
 				throw me;
@@ -60,7 +60,7 @@ public class Database {
 	 *            VFS name (for SQLite >= 3.5)
 	 */
 	public void open(String filename, int mode, String vfs)
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		if ((mode & 0200) != 0) {
 			mode = SQLite.Constants.SQLITE_OPEN_READWRITE
 					| SQLite.Constants.SQLITE_OPEN_CREATE;
@@ -70,7 +70,7 @@ public class Database {
 		synchronized (this) {
 			try {
 				_open4(filename, mode, vfs, false);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw se;
 			} catch (java.lang.OutOfMemoryError me) {
 				throw me;
@@ -95,7 +95,7 @@ public class Database {
 	 */
 
 	public void open(String filename, int mode, String vfs, boolean ver2)
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		if ((mode & 0200) != 0) {
 			mode = SQLite.Constants.SQLITE_OPEN_READWRITE
 					| SQLite.Constants.SQLITE_OPEN_CREATE;
@@ -105,7 +105,7 @@ public class Database {
 		synchronized (this) {
 			try {
 				_open4(filename, mode, vfs, ver2);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw se;
 			} catch (java.lang.OutOfMemoryError me) {
 				throw me;
@@ -120,14 +120,14 @@ public class Database {
 	 */
 
 	private native void _open(String filename, int mode)
-			throws SQLite.SQLiteException;
+			throws SQLite.Exception;
 
 	/*
 	 * Newer full interface
 	 */
 
 	private native void _open4(String filename, int mode, String vfs,
-			boolean ver2) throws SQLite.SQLiteException;
+			boolean ver2) throws SQLite.Exception;
 
 	/**
 	 * Open SQLite auxiliary database file for temporary tables.
@@ -136,13 +136,13 @@ public class Database {
 	 *            the name of the auxiliary file or null
 	 */
 
-	public void open_aux_file(String filename) throws SQLite.SQLiteException {
+	public void open_aux_file(String filename) throws SQLite.Exception {
 		synchronized (this) {
 			_open_aux_file(filename);
 		}
 	}
 
-	private native void _open_aux_file(String filename) throws SQLite.SQLiteException;
+	private native void _open_aux_file(String filename) throws SQLite.Exception;
 
 	/**
 	 * Destructor for object.
@@ -160,13 +160,13 @@ public class Database {
 	 * Close the underlying SQLite database file.
 	 */
 
-	public void close() throws SQLite.SQLiteException {
+	public void close() throws SQLite.Exception {
 		synchronized (this) {
 			_close();
 		}
 	}
 
-	private native void _close() throws SQLite.SQLiteException;
+	private native void _close() throws SQLite.Exception;
 
 	/**
 	 * Execute an SQL statement and invoke callback methods for each row of the
@@ -182,14 +182,14 @@ public class Database {
 	 *            the object implementing the callback methods
 	 */
 
-	public void exec(String sql, SQLite.Callback cb) throws SQLite.SQLiteException {
+	public void exec(String sql, SQLite.Callback cb) throws SQLite.Exception {
 		synchronized (this) {
 			_exec(sql, cb);
 		}
 	}
 
 	private native void _exec(String sql, SQLite.Callback cb)
-			throws SQLite.SQLiteException;
+			throws SQLite.Exception;
 
 	/**
 	 * Execute an SQL statement and invoke callback methods for each row of the
@@ -216,14 +216,14 @@ public class Database {
 	 */
 
 	public void exec(String sql, SQLite.Callback cb, String args[])
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		synchronized (this) {
 			_exec(sql, cb, args);
 		}
 	}
 
 	private native void _exec(String sql, SQLite.Callback cb, String args[])
-			throws SQLite.SQLiteException;
+			throws SQLite.Exception;
 
 	/**
 	 * Return the row identifier of the last inserted row.
@@ -303,12 +303,12 @@ public class Database {
 	 */
 
 	public TableResult get_table(String sql, int maxrows)
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		TableResult ret = new TableResult(maxrows);
 		if (!is3()) {
 			try {
 				exec(sql, ret);
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				if (maxrows <= 0 || !ret.atmaxrows) {
 					throw e;
 				}
@@ -341,7 +341,7 @@ public class Database {
 	 * @return result set
 	 */
 
-	public TableResult get_table(String sql) throws SQLite.SQLiteException {
+	public TableResult get_table(String sql) throws SQLite.Exception {
 		return get_table(sql, 0);
 	}
 
@@ -358,12 +358,12 @@ public class Database {
 	 */
 
 	public TableResult get_table(String sql, int maxrows, String args[])
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		TableResult ret = new TableResult(maxrows);
 		if (!is3()) {
 			try {
 				exec(sql, ret, args);
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				if (maxrows <= 0 || !ret.atmaxrows) {
 					throw e;
 				}
@@ -399,7 +399,7 @@ public class Database {
 	 */
 
 	public TableResult get_table(String sql, String args[])
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		return get_table(sql, 0, args);
 	}
 
@@ -416,12 +416,12 @@ public class Database {
 	 */
 
 	public void get_table(String sql, String args[], TableResult tbl)
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		tbl.clear();
 		if (!is3()) {
 			try {
 				exec(sql, tbl, args);
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				if (tbl.maxrows <= 0 || !tbl.atmaxrows) {
 					throw e;
 				}
@@ -584,13 +584,13 @@ public class Database {
 	 *            name of encoding
 	 */
 
-	public void set_encoding(String enc) throws SQLite.SQLiteException {
+	public void set_encoding(String enc) throws SQLite.Exception {
 		synchronized (this) {
 			_set_encoding(enc);
 		}
 	}
 
-	private native void _set_encoding(String enc) throws SQLite.SQLiteException;
+	private native void _set_encoding(String enc) throws SQLite.Exception;
 
 	/**
 	 * Set authorizer function. Only available in SQLite 2.7.6 and above,
@@ -633,7 +633,7 @@ public class Database {
 	 * @return a Vm object
 	 */
 
-	public Vm compile(String sql) throws SQLite.SQLiteException {
+	public Vm compile(String sql) throws SQLite.Exception {
 		synchronized (this) {
 			Vm vm = new Vm();
 			vm_compile(sql, vm);
@@ -652,7 +652,7 @@ public class Database {
 	 * @return a Vm object
 	 */
 
-	public Vm compile(String sql, String args[]) throws SQLite.SQLiteException {
+	public Vm compile(String sql, String args[]) throws SQLite.Exception {
 		synchronized (this) {
 			Vm vm = new Vm();
 			vm_compile_args(sql, vm, args);
@@ -669,7 +669,7 @@ public class Database {
 	 * @return a Stmt object
 	 */
 
-	public Stmt prepare(String sql) throws SQLite.SQLiteException {
+	public Stmt prepare(String sql) throws SQLite.Exception {
 		synchronized (this) {
 			Stmt stmt = new Stmt();
 			stmt_prepare(sql, stmt);
@@ -694,7 +694,7 @@ public class Database {
 	 */
 
 	public Blob open_blob(String db, String table, String column, long row,
-			boolean rw) throws SQLite.SQLiteException {
+			boolean rw) throws SQLite.Exception {
 		synchronized (this) {
 			Blob blob = new Blob();
 			_open_blob(db, table, column, row, rw, blob);
@@ -719,7 +719,7 @@ public class Database {
 	 *            Vm object
 	 */
 
-	private native void vm_compile(String sql, Vm vm) throws SQLite.SQLiteException;
+	private native void vm_compile(String sql, Vm vm) throws SQLite.Exception;
 
 	/**
 	 * Internal compile method, SQLite 3.0 only.
@@ -733,7 +733,7 @@ public class Database {
 	 */
 
 	private native void vm_compile_args(String sql, Vm vm, String args[])
-			throws SQLite.SQLiteException;
+			throws SQLite.Exception;
 
 	/**
 	 * Internal SQLite3 prepare method.
@@ -745,7 +745,7 @@ public class Database {
 	 */
 
 	private native void stmt_prepare(String sql, Stmt stmt)
-			throws SQLite.SQLiteException;
+			throws SQLite.Exception;
 
 	/**
 	 * Internal SQLite open blob method.
@@ -765,7 +765,7 @@ public class Database {
 	 */
 
 	private native void _open_blob(String db, String table, String column,
-			long row, boolean rw, Blob blob) throws SQLite.SQLiteException;
+			long row, boolean rw, Blob blob) throws SQLite.Exception;
 
 	/**
 	 * Establish a progress callback method which gets called after N SQLite VM
@@ -793,7 +793,7 @@ public class Database {
 	 *            the key as byte array
 	 */
 
-	public void key(byte[] ekey) throws SQLite.SQLiteException {
+	public void key(byte[] ekey) throws SQLite.Exception {
 		synchronized (this) {
 			_key(ekey);
 		}
@@ -807,7 +807,7 @@ public class Database {
 	 *            the key as String
 	 */
 
-	public void key(String skey) throws SQLite.SQLiteException {
+	public void key(String skey) throws SQLite.Exception {
 		synchronized (this) {
 			byte ekey[] = null;
 			if (skey != null && skey.length() > 0) {
@@ -831,7 +831,7 @@ public class Database {
 	 *            the key as byte array
 	 */
 
-	public void rekey(byte[] ekey) throws SQLite.SQLiteException {
+	public void rekey(byte[] ekey) throws SQLite.Exception {
 		synchronized (this) {
 			_rekey(ekey);
 		}
@@ -845,7 +845,7 @@ public class Database {
 	 *            the key as String
 	 */
 
-	public void rekey(String skey) throws SQLite.SQLiteException {
+	public void rekey(String skey) throws SQLite.Exception {
 		synchronized (this) {
 			byte ekey[] = null;
 			if (skey != null && skey.length() > 0) {
@@ -899,12 +899,12 @@ public class Database {
 	 * @return long
 	 */
 
-	public static long long_from_julian(String s) throws SQLite.SQLiteException {
+	public static long long_from_julian(String s) throws SQLite.Exception {
 		try {
 			double d = Double.valueOf(s).doubleValue();
 			return long_from_julian(d);
 		} catch (java.lang.Exception ee) {
-			throw new SQLite.SQLiteException("not a julian date");
+			throw new SQLite.Exception("not a julian date");
 		}
 	}
 

@@ -10,7 +10,6 @@ public class Vm {
 	 * Internal handle for the compiled SQLite VM.
 	 */
 
-	@SuppressWarnings("unused")
 	private long handle = 0;
 
 	/**
@@ -47,7 +46,7 @@ public class Vm {
 	 * @return true as long as more row data can be retrieved, false, otherwise.
 	 */
 
-	public native boolean step(Callback cb) throws SQLite.SQLiteException;
+	public native boolean step(Callback cb) throws SQLite.Exception;
 
 	/**
 	 * Compile the next SQL statement for the SQLite VM instance.
@@ -56,13 +55,13 @@ public class Vm {
 	 *         statement sequence.
 	 */
 
-	public native boolean compile() throws SQLite.SQLiteException;
+	public native boolean compile() throws SQLite.Exception;
 
 	/**
 	 * Abort the compiled SQLite VM.
 	 */
 
-	public native void stop() throws SQLite.SQLiteException;
+	public native void stop() throws SQLite.Exception;
 
 	/**
 	 * Destructor for object.

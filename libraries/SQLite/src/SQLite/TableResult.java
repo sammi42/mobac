@@ -57,7 +57,7 @@ public class TableResult implements Callback {
 	 * Rows of the result set. Each row is stored as a String array.
 	 */
 
-	public Vector<String[]> rows;
+	public Vector rows;
 
 	/**
 	 * Maximum number of rows to hold in the table.
@@ -95,7 +95,7 @@ public class TableResult implements Callback {
 	public void clear() {
 		column = new String[0];
 		types = null;
-		rows = new Vector<String[]>();
+		rows = new Vector();
 		ncolumns = nrows = 0;
 		atmaxrows = false;
 	}
@@ -147,7 +147,7 @@ public class TableResult implements Callback {
 		sb.append('\n');
 		for (i = 0; i < nrows; i++) {
 			int k;
-			String row[] = rows.elementAt(i);
+			String row[] = (String[]) rows.elementAt(i);
 			for (k = 0; k < ncolumns; k++) {
 				sb.append(row[k] == null ? "NULL" : row[k]);
 				sb.append('|');

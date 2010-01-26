@@ -586,7 +586,7 @@ public class JDBCDatabaseMetaData implements DatabaseMetaData {
 		try {
 			try {
 				conn.db.exec("SELECT 1 FROM sqlite_master LIMIT 1", null);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw new SQLException("schema reload failed");
 			}
 			rs0 = (JDBCResultSet) (s.executeQuery("PRAGMA table_info("
@@ -703,7 +703,7 @@ public class JDBCDatabaseMetaData implements DatabaseMetaData {
 		try {
 			try {
 				conn.db.exec("SELECT 1 FROM sqlite_master LIMIT 1", null);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw new SQLException("schema reload failed");
 			}
 			rs0 = (JDBCResultSet) (s0.executeQuery("PRAGMA index_list("
@@ -821,7 +821,7 @@ public class JDBCDatabaseMetaData implements DatabaseMetaData {
 		try {
 			try {
 				conn.db.exec("SELECT 1 FROM sqlite_master LIMIT 1", null);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw new SQLException("schema reload failed");
 			}
 			rs0 = (JDBCResultSet) (s0.executeQuery("PRAGMA index_list("
@@ -973,7 +973,7 @@ public class JDBCDatabaseMetaData implements DatabaseMetaData {
 		try {
 			try {
 				conn.db.exec("SELECT 1 FROM sqlite_master LIMIT 1", null);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw new SQLException("schema reload failed");
 			}
 			rs0 = (JDBCResultSet) (s0.executeQuery("PRAGMA foreign_key_list("
@@ -1027,7 +1027,7 @@ public class JDBCDatabaseMetaData implements DatabaseMetaData {
 			try {
 				try {
 					conn.db.exec("SELECT 1 FROM sqlite_master LIMIT 1", null);
-				} catch (SQLite.SQLiteException se) {
+				} catch (SQLite.Exception se) {
 					throw new SQLException("schema reload failed");
 				}
 				rs0 = (JDBCResultSet) (s0
@@ -1135,7 +1135,7 @@ public class JDBCDatabaseMetaData implements DatabaseMetaData {
 		try {
 			try {
 				conn.db.exec("SELECT 1 FROM sqlite_master LIMIT 1", null);
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw new SQLException("schema reload failed");
 			}
 			rs0 = (JDBCResultSet) (s0.executeQuery("PRAGMA index_list("

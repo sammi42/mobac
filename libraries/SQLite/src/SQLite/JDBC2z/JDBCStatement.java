@@ -108,7 +108,7 @@ public class JDBCStatement implements java.sql.Statement {
 					}
 				}
 				updcnt = (int) conn.db.changes();
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				if (conn.db.is3()
 						&& conn.db.last_error() == SQLite.Constants.SQLITE_BUSY
 						&& conn.busy3(conn.db, ++busy)) {
@@ -117,7 +117,7 @@ public class JDBCStatement implements java.sql.Statement {
 							conn.db.exec("ROLLBACK", null);
 							conn.intrans = false;
 						}
-					} catch (SQLite.SQLiteException ee) {
+					} catch (SQLite.Exception ee) {
 					}
 					try {
 						int ms = 20 + busy * 10;

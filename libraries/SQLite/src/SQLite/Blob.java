@@ -268,7 +268,6 @@ public class Blob {
 	 * Internal handle for the SQLite3 blob.
 	 */
 
-	@SuppressWarnings("unused")
 	private long handle = 0;
 
 	/**

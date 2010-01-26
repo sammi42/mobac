@@ -129,7 +129,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 									: (SQLite.Constants.SQLITE_OPEN_READWRITE | SQLite.Constants.SQLITE_OPEN_CREATE),
 							vfs);
 			dbx.set_encoding(enc);
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.toString());
 		}
 		int loop = 0;
@@ -141,12 +141,12 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 				if (SQLite.Database.version().compareTo("2.6.0") >= 0) {
 					dbx.exec("PRAGMA show_datatypes = on;", null);
 				}
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				if (dbx.last_error() != SQLite.Constants.SQLITE_BUSY
 						|| !busy0(dbx, ++loop)) {
 					try {
 						dbx.close();
-					} catch (SQLite.SQLiteException ee) {
+					} catch (SQLite.Exception ee) {
 					}
 					throw new SQLException(e.toString());
 				}
@@ -175,7 +175,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 				if (pwd != null && pwd.length() > 0) {
 					db.key(pwd);
 				}
-			} catch (SQLite.SQLiteException se) {
+			} catch (SQLite.Exception se) {
 				throw new SQLException("error while setting key");
 			}
 			db.busy_handler(this);
@@ -183,7 +183,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 			if (db != null) {
 				try {
 					db.close();
-				} catch (SQLite.SQLiteException ee) {
+				} catch (SQLite.Exception ee) {
 				}
 			}
 			throw e;
@@ -237,7 +237,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 			try {
 				db.close();
 				db = null;
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				throw new SQLException(e.toString());
 			}
 		}
@@ -264,7 +264,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 		try {
 			db.exec("COMMIT", null);
 			intrans = false;
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.toString());
 		}
 	}
@@ -330,7 +330,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 		try {
 			db.exec("ROLLBACK", null);
 			intrans = false;
-		} catch (SQLite.SQLiteException e) {
+		} catch (SQLite.Exception e) {
 			throw new SQLException(e.toString());
 		}
 	}
@@ -339,7 +339,7 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 		if (ac && intrans && db != null) {
 			try {
 				db.exec("ROLLBACK", null);
-			} catch (SQLite.SQLiteException e) {
+			} catch (SQLite.Exception e) {
 				throw new SQLException(e.toString());
 			} finally {
 				intrans = false;
@@ -365,11 +365,11 @@ public class JDBCConnection implements java.sql.Connection, SQLite.BusyHandler {
 				readonly = ro;
 			} catch (SQLException e) {
 				throw e;
-			} catch (SQLite.SQLiteException ee) {
+			} catch (SQLite.Exception ee) {
 				if (dbx != null) {
 					try {
 						dbx.close();
-					} catch (SQLite.SQLiteException eee) {
+					} catch (SQLite.Exception eee) {
 					}
 				}
 				throw new SQLException(ee.toString());
@@ -549,7 +549,7 @@ class DatabaseX extends SQLite.Database {
 		}
 	}
 
-	public void exec(String sql, SQLite.Callback cb) throws SQLite.SQLiteException {
+	public void exec(String sql, SQLite.Callback cb) throws SQLite.Exception {
 		super.exec(sql, cb);
 		synchronized (lock) {
 			lock.notifyAll();
@@ -557,7 +557,7 @@ class DatabaseX extends SQLite.Database {
 	}
 
 	public void exec(String sql, SQLite.Callback cb, String args[])
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		super.exec(sql, cb, args);
 		synchronized (lock) {
 			lock.notifyAll();
@@ -565,7 +565,7 @@ class DatabaseX extends SQLite.Database {
 	}
 
 	public SQLite.TableResult get_table(String sql, String args[])
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		SQLite.TableResult ret = super.get_table(sql, args);
 		synchronized (lock) {
 			lock.notifyAll();
@@ -574,7 +574,7 @@ class DatabaseX extends SQLite.Database {
 	}
 
 	public void get_table(String sql, String args[], SQLite.TableResult tbl)
-			throws SQLite.SQLiteException {
+			throws SQLite.Exception {
 		super.get_table(sql, args, tbl);
 		synchronized (lock) {
 			lock.notifyAll();

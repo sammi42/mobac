@@ -6,12 +6,12 @@ package SQLite;
 
 public interface Trace {
 
-	/**
-	 * Callback to trace (ie log) one SQL statement.
-	 * 
-	 * @param stmt
-	 *            SQL statement string
-	 */
+    /**
+     * Callback to trace (ie log) one SQL statement.
+     *
+     * @param stmt SQL statement string
+     */
 
-	public void trace(String stmt);
+    public void trace(String stmt);
 }
+

@@ -1,10 +1,10 @@
 package SQLite;
 
 /**
- * Callback interface for SQLite's query results. <BR>
- * <BR>
+ * Callback interface for SQLite's query results.
+ * <BR><BR>
  * Example:<BR>
- * 
+ *
  * <PRE>
  *   class TableFmt implements SQLite.Callback {
  *     public void columns(String cols[]) {
@@ -35,37 +35,34 @@ package SQLite;
 
 public interface Callback {
 
-	/**
-	 * Reports column names of the query result. This method is invoked first
-	 * (and once) when the SQLite engine returns the result set.<BR>
-	 * <BR>
-	 * 
-	 * @param coldata
-	 *            string array holding the column names
-	 */
+    /**
+     * Reports column names of the query result.
+     * This method is invoked first (and once) when
+     * the SQLite engine returns the result set.<BR><BR>
+     *
+     * @param coldata string array holding the column names
+     */
 
-	public void columns(String coldata[]);
+    public void columns(String coldata[]);
 
-	/**
-	 * Reports type names of the columns of the query result. This is available
-	 * from SQLite 2.6.0 on and needs the PRAGMA show_datatypes to be turned on.<BR>
-	 * <BR>
-	 * 
-	 * @param types
-	 *            string array holding column types
-	 */
+    /**
+     * Reports type names of the columns of the query result.
+     * This is available from SQLite 2.6.0 on and needs
+     * the PRAGMA show_datatypes to be turned on.<BR><BR>
+     *
+     * @param types string array holding column types
+     */
 
-	public void types(String types[]);
+    public void types(String types[]);
 
-	/**
-	 * Reports row data of the query result. This method is invoked for each row
-	 * of the result set. If true is returned the running SQLite query is
-	 * aborted.<BR>
-	 * <BR>
-	 * 
-	 * @param rowdata
-	 *            string array holding the column values of the row
-	 */
+    /**
+     * Reports row data of the query result.
+     * This method is invoked for each row of the
+     * result set. If true is returned the running
+     * SQLite query is aborted.<BR><BR>
+     *
+     * @param rowdata string array holding the column values of the row
+     */
 
-	public boolean newrow(String rowdata[]);
+    public boolean newrow(String rowdata[]);
 }

@@ -1,6 +1,5 @@
 package SQLite;
 
-import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ public class JDBCDriver implements java.sql.Driver {
 
 	public static String vfs = null;
 
-	private static Constructor makeConn = null;
+	private static java.lang.reflect.Constructor makeConn = null;
 
 	protected Connection conn;
 
@@ -27,8 +26,7 @@ public class JDBCDriver implements java.sql.Driver {
 			args[2] = args[0];
 			args[3] = args[0];
 			args[4] = args[0];
-			String cvers;
-			cvers = "SQLite.JDBC2z.JDBCConnection";
+			String cvers = "SQLite.JDBC2z.JDBCConnection";
 			connClass = Class.forName(cvers);
 			makeConn = connClass.getConstructor(args);
 			java.sql.DriverManager.registerDriver(new JDBCDriver());

@@ -1,12 +1,13 @@
 package SQLite;
 
 /**
- * Callback interface for SQLite's user defined functions. Each callback method
- * receives a <A HREF="FunctionContext.html">FunctionContext</A> object which is
- * used to set the function result or error code. <BR>
- * <BR>
+ * Callback interface for SQLite's user defined functions.
+ * Each callback method receives a
+ * <A HREF="FunctionContext.html">FunctionContext</A> object
+ * which is used to set the function result or error code.
+ * <BR><BR>
  * Example:<BR>
- * 
+ *
  * <PRE>
  *   class SinFunc implements SQLite.Function {
  *     public void function(SQLite.FunctionContext fc, String args[]) {
@@ -29,35 +30,30 @@ package SQLite;
 
 public interface Function {
 
-	/**
-	 * Callback for regular function.
-	 * 
-	 * @param fc
-	 *            function's context for reporting result
-	 * @param args
-	 *            String array of arguments
-	 */
+    /**
+     * Callback for regular function.
+     *
+     * @param fc function's context for reporting result
+     * @param args String array of arguments
+     */
 
-	public void function(FunctionContext fc, String args[]);
+    public void function(FunctionContext fc, String args[]);
 
-	/**
-	 * Callback for one step in aggregate function.
-	 * 
-	 * @param fc
-	 *            function's context for reporting result
-	 * @param args
-	 *            String array of arguments
-	 */
+    /**
+     * Callback for one step in aggregate function.
+     *
+     * @param fc function's context for reporting result
+     * @param args String array of arguments
+     */
 
-	public void step(FunctionContext fc, String args[]);
+    public void step(FunctionContext fc, String args[]);
 
-	/**
-	 * Callback for final step in aggregate function.
-	 * 
-	 * @param fc
-	 *            function's context for reporting result
-	 */
+    /**
+     * Callback for final step in aggregate function.
+     *
+     * @param fc function's context for reporting result
+     */
 
-	public void last_step(FunctionContext fc);
+    public void last_step(FunctionContext fc);
 
 }

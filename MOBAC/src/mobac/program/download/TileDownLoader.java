@@ -19,13 +19,13 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
-
 public class TileDownLoader {
 
 	public static String ACCEPT = "text/html, image/png, image/jpeg, image/gif, */*;q=0.1";
 
 	static {
-		System.setProperty("http.maxConnections", "15");
+		System.setProperty("sun.net.client.defaultReadTimeout", "15");
+		System.setProperty("http.maxConnections", "20");
 	}
 
 	private static Logger log = Logger.getLogger(TileDownLoader.class);
@@ -112,7 +112,8 @@ public class TileDownLoader {
 		conn.setRequestMethod("GET");
 
 		Settings s = Settings.getInstance();
-		conn.setConnectTimeout(1000 * s.connectionTimeout);
+		conn.setConnectTimeout(1000 * s.httpConnectionTimeout);
+		conn.setReadTimeout(1000 * s.httpReadTimeout);
 		conn.addRequestProperty("User-agent", s.getUserAgent());
 		conn.setRequestProperty("Accept", ACCEPT);
 		conn.connect();
@@ -200,7 +201,8 @@ public class TileDownLoader {
 		}
 
 		Settings s = Settings.getInstance();
-		conn.setConnectTimeout(1000 * s.connectionTimeout);
+		conn.setConnectTimeout(1000 * s.httpConnectionTimeout);
+		conn.setReadTimeout(1000 * s.httpReadTimeout);
 		conn.addRequestProperty("User-agent", s.getUserAgent());
 		conn.setRequestProperty("Accept", ACCEPT);
 		conn.connect();

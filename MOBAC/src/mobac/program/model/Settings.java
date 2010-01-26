@@ -88,9 +88,14 @@ public class Settings {
 	public String tileStoreDirectory;
 
 	/**
-	 * Timeout in seconds (default 10 seconds)
+	 * Connection timeout in seconds (default 10 seconds)
 	 */
-	public int connectionTimeout = 10;
+	public int httpConnectionTimeout = 10;
+
+	/**
+	 * Read timeout in seconds (default 10 seconds)
+	 */
+	public int httpReadTimeout = 10;
 
 	/**
 	 * Maximum expiration (in milliseconds) acceptable. If a server sets an

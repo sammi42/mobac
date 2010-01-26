@@ -10,6 +10,7 @@ import mobac.program.DirectoryManager;
 
 import org.apache.log4j.Logger;
 
+import SQLite.Database;
 
 /**
  * Dynamic loading of "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
@@ -40,13 +41,14 @@ public class SQLiteLoader {
 		if (SQLITE_LOADED)
 			return;
 		try {
-			// Load the main class which loads the native library
+			// Load the native library
 			System.loadLibrary("sqlite_jni");
+			log.debug("SQLite library database version: " + Database.version());
 			DriverManager.registerDriver(new SQLite.JDBCDriver());
 			SQLITE_LOADED = true;
 			return;
 		} catch (Throwable t) {
-			// t.printStackTrace();
+			log.error("Loading of sqlite_jni from system library path failed: " + t.getMessage());
 		}
 
 		try {
@@ -60,15 +62,16 @@ public class SQLiteLoader {
 				File lib = new File(libDir, libName);
 				if (lib.isFile()) {
 					verifiedLibDir = libDir;
-					log.debug("sqlite_jni found: " + lib.getPath());
-					System.load(lib.getPath());
+					log.debug("sqlite_jni found: " + lib.getAbsolutePath());
+					System.load(lib.getAbsolutePath());
 					break;
 				}
 			}
 			if (verifiedLibDir == null)
-				throw new SQLException("Native SQLite file not found: " + libName);
+				throw new SQLException("Native SQLite library not found: " + libName);
 
-			// Load the main class which loads the native library
+			log.debug("SQLite library database version: " + Database.version());
+			log.info("Dynamic loading of SQLite library succeeded");
 			DriverManager.registerDriver(new SQLite.JDBCDriver());
 			SQLITE_LOADED = true;
 			return;

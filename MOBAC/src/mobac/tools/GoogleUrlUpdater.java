@@ -66,6 +66,7 @@ public class GoogleUrlUpdater {
 
 		// just for initializing the MapSourcesManager
 		MapSourcesUpdater.loadMapSourceProperties(MAPSOURCES_PROPERTIES);
+		System.getProperties().putAll(MAPSOURCES_PROPERTIES);
 
 		KEYS.add("mapsources.Date");
 		KEYS.add("mapsources.Rev");
@@ -279,6 +280,9 @@ public class GoogleUrlUpdater {
 			Levenshtein similarityAlgo = new Levenshtein();
 			MapSource mapSource = ums.mapSourceClass.newInstance();
 			String currentUrl = MapSourceTools.loadMapUrl(mapSource, "url");
+
+			if (currentUrl == null)
+				throw new RuntimeException("mapsources url not loaded: " + mapSource);
 
 			ArrayList<UrlString> candidateList = new ArrayList<UrlString>(tileUrlCandidates);
 			for (UrlString us : candidateList) {

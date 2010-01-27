@@ -41,6 +41,11 @@ public class PngFileTileServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		try {
+			Thread.sleep(TestHttpTileServer.DELAY);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if (TestHttpTileServer.errorResponse(request, response))
 			return;
 		response.setContentType("image/png");

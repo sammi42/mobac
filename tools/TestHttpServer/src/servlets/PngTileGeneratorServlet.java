@@ -40,6 +40,11 @@ public class PngTileGeneratorServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		try {
+			Thread.sleep(TestHttpTileServer.DELAY);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if (TestHttpTileServer.errorResponse(request, response))
 			return;
 		BufferedImage tile = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_INDEXED,

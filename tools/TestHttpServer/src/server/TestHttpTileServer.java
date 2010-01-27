@@ -36,6 +36,8 @@ public class TestHttpTileServer extends Serve {
 	public static boolean GENERATE_PNG_FOR_EACH_REQUEST = true;
 	public static int PNG_COMPRESSION = 1;
 
+	public static int DELAY = 400;
+
 	/**
 	 * Error rate in percent
 	 */
@@ -59,6 +61,7 @@ public class TestHttpTileServer extends Serve {
 		ERROR_RATE = Integer.getInteger("TestHttpServer.errorRate", 0);
 		ERROR_ON_URL = Boolean.getBoolean("TestHttpServer.errorOnSpecificUrls");
 		PNG_COMPRESSION = Integer.getInteger("TestHttpServer.generatedPNGcompression", 1);
+		DELAY = Integer.getInteger("TestHttpServer.delay", 0);
 		int port = Integer.getInteger("TestHttpServer.port", 80);
 		try {
 			HttpURLConnection c = (HttpURLConnection) new URL("http://127.0.0.1:" + port

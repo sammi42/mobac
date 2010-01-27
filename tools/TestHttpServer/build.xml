@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
+	<!-- Path to MOBAC main application including src and libs -->
+	<property name="MOBAC.dir" value="../MOBAC" />
+
 	<property name="jar.name" value="DebugTileServer.jar" />
 	<property name="zip.name" value="DebugTileServer.zip" />
 	<property name="main.class" value="server.TestHttpTileServer" />
@@ -19,7 +22,7 @@
 			<fileset dir="lib" includes="*.jar" />
 		</path>
 		<javac srcdir="src" destdir="build" target="1.6" debug="true">
-			<sourcepath path="src_tac" />
+			<sourcepath path="${MOBAC.dir}/src" />
 			<classpath refid="maincp" />
 		</javac>
 		<copy todir="build" overwrite="true">

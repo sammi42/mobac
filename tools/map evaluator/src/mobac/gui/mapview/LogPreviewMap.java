@@ -24,6 +24,7 @@ public class LogPreviewMap extends PreviewMap {
 
 	public LogPreviewMap() {
 		super();
+		usePlaceHolderTiles = false;
 		setZoomContolsVisible(true);
 		setTileGridVisible(true);
 		setTileGridVisible(true);

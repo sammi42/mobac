@@ -49,3 +49,9 @@ Asplan Viak Internet AS
 Japanese Topo Maps
 	http://watchizu.gsi.go.jp/watchizu.html?meshcode=49324455
 	Reason: Unsupported tile size (300x357)
+	
+ICC Catalunya
+	http://cygnus.icc.cat/mt10m/
+	http://cygnus.icc.cat/bt5m/
+	Reason: different projection (Plate Carrée projection based on Latitude / Longitude WGS 84)
+	

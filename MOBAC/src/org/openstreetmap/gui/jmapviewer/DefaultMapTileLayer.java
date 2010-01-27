@@ -3,6 +3,7 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.Graphics;
 
 import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
+import org.openstreetmap.gui.jmapviewer.Tile.TileState;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 
@@ -12,12 +13,15 @@ public class DefaultMapTileLayer implements MapTileLayer {
 
 	protected MapSource mapSource;
 
+	protected boolean usePlaceHolders;
+
 	public DefaultMapTileLayer(JMapViewer mapViewer, MapSource mapSource) {
 		this.mapViewer = mapViewer;
 		this.mapSource = mapSource;
 	}
 
 	public void startPainting(MapSource mapSource) {
+		usePlaceHolders = mapViewer.usePlaceHolderTiles;
 	}
 
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
@@ -45,9 +49,10 @@ public class DefaultMapTileLayer implements MapTileLayer {
 		if (tile == null) {
 			tile = new Tile(mapSource, tilex, tiley, zoom);
 			mapViewer.tileCache.addTile(tile);
-			tile.loadPlaceholderFromCache(mapViewer.tileCache);
+			if (usePlaceHolders)
+				tile.loadPlaceholderFromCache(mapViewer.tileCache);
 		}
-		if (!tile.isLoaded()) {
+		if (tile.getTileState() == TileState.TS_NEW) {
 			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(mapSource,
 					tilex, tiley, zoom));
 		}

@@ -3,6 +3,7 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.Graphics;
 
 import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
+import org.openstreetmap.gui.jmapviewer.Tile.TileState;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
@@ -45,7 +46,7 @@ public class OverlayMapTileLayer implements MapTileLayer {
 			tile = new Tile(mapSource, tilex, tiley, zoom);
 			mapViewer.tileCache.addTile(tile);
 		}
-		if (!tile.isLoaded()) {
+		if (tile.getTileState() == TileState.TS_NEW) {
 			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(mapSource,
 					tilex, tiley, zoom));
 		}

@@ -43,15 +43,17 @@ public class Tile {
 		}
 	}
 
+	protected enum TileState {TS_NEW, TS_LOADING, TS_LOADED, TS_ERROR}; 
+
 	protected MapSource mapSource;
 	protected int xtile;
 	protected int ytile;
 	protected int zoom;
 	protected BufferedImage image;
 	protected String key;
-	protected boolean loaded = false;
-	protected boolean loading = false;
+	protected TileState tileState = TileState.TS_NEW;
 
+	
 	/**
 	 * Creates a tile with empty image.
 	 * 
@@ -100,7 +102,7 @@ public class Tile {
 					for (int y = 0; y < factor; y++) {
 						Tile tile = cache.getTile(mapSource, xtile_high + x, ytile_high + y,
 								zoom_high);
-						if (tile != null && tile.isLoaded()) {
+						if (tile != null && tile.tileState == TileState.TS_LOADED) {
 							paintedTileCount++;
 							tile.paint(g, x * tileSize, y * tileSize);
 						}
@@ -124,7 +126,7 @@ public class Tile {
 				at.setTransform(scale, 0, 0, scale, -translate_x, -translate_y);
 				g.setTransform(at);
 				Tile tile = cache.getTile(mapSource, xtile_low, ytile_low, zoom_low);
-				if (tile != null && tile.isLoaded()) {
+				if (tile != null && tile.tileState == TileState.TS_LOADED) {
 					tile.paint(g, 0, 0);
 					image = tmpImage;
 					return;
@@ -167,8 +169,8 @@ public class Tile {
 	}
 
 	public void setErrorImage() {
-		if (image == null)
-			image = ERROR_IMAGE;
+		image = ERROR_IMAGE;
+		tileState = TileState.TS_ERROR;
 	}
 
 	public void loadImage(InputStream input) throws IOException {
@@ -186,12 +188,12 @@ public class Tile {
 		return (ERROR_IMAGE.equals(image));
 	}
 
-	public boolean isLoaded() {
-		return loaded;
+	public TileState getTileState() {
+		return tileState;
 	}
 
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
+	public void setTileState(TileState tileState) {
+		this.tileState = tileState;
 	}
 
 	public HttpURLConnection getUrlConnection() throws IOException {

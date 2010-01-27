@@ -5,6 +5,7 @@ package org.openstreetmap.gui.jmapviewer;
 import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.Tile.TileState;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 
@@ -51,7 +52,7 @@ public class MemoryTileCache implements TileImageCache {
 			return null;
 		// We don't care about placeholder tiles and hourglass image tiles, the
 		// important tiles are the loaded ones
-		if (entry.tile.isLoaded())
+		if (entry.tile.getTileState() == TileState.TS_LOADED)
 			lruTiles.moveElementToFirstPos(entry);
 		return entry.tile;
 	}

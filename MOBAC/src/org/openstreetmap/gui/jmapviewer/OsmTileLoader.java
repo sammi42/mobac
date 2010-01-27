@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.Tile.TileState;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
@@ -39,27 +40,24 @@ public class OsmTileLoader implements TileLoaderJobCreator {
 				Tile tile;
 				synchronized (cache) {
 					tile = cache.getTile(source, tilex, tiley, zoom);
-					if (tile == null || tile.isLoaded() || tile.loading)
+					if (tile == null || tile.tileState == TileState.TS_LOADED
+							|| tile.tileState == TileState.TS_ERROR)
 						return;
-					tile.loading = true;
 				}
 				try {
 					// Thread.sleep(500);
 					input = loadTileFromOsm(tile).getInputStream();
 					tile.loadImage(input);
-					tile.setLoaded(true);
+					tile.setTileState(TileState.TS_LOADED);
 					listener.tileLoadingFinished(tile, true);
 					input.close();
 					input = null;
 				} catch (Exception e) {
-					tile.setImage(Tile.ERROR_IMAGE);
+					tile.setErrorImage();
 					listener.tileLoadingFinished(tile, false);
 					if (input == null)
 						log.error("failed loading " + zoom + "/" + tilex + "/" + tiley + " "
 								+ e.getMessage());
-				} finally {
-					tile.loading = false;
-					tile.setLoaded(true);
 				}
 			}
 

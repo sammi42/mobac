@@ -33,7 +33,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
-
 /**
  * 
  * Provides a simple panel that displays pre-rendered map tiles loaded from the
@@ -58,6 +57,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected TileLoaderJobCreator tileLoader;
 	protected TileImageCache tileCache;
 	protected MapSource mapSource;
+	protected boolean usePlaceHolderTiles = true;
 
 	protected List<MapMarker> mapMarkerList;
 	protected boolean mapMarkersVisible;
@@ -577,7 +577,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		} else {
 			mapTileLayers.add(new DefaultMapTileLayer(this, mapSource));
 		}
-		if (mapGridLayer!= null)
+		if (mapGridLayer != null)
 			mapTileLayers.add(mapGridLayer);
 		repaint();
 	}

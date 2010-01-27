@@ -9,11 +9,11 @@ import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 
 import org.apache.log4j.Logger;
+import org.openstreetmap.gui.jmapviewer.Tile.TileState;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-
 
 /**
  * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via
@@ -59,9 +59,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			TileImageCache cache = listener.getTileImageCache();
 			synchronized (cache) {
 				tile = cache.getTile(mapSource, tilex, tiley, zoom);
-				if (tile == null || tile.isLoaded() || tile.loading)
+				if (tile == null || tile.tileState != TileState.TS_NEW)
 					return;
-				tile.loading = true;
+				tile.setTileState(TileState.TS_LOADING);
 			}
 			if (loadTileFromStore())
 				return;
@@ -91,18 +91,15 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				}
 				if (buffer != null) {
 					tile.loadImage(new ByteArrayInputStream(buffer));
-					tile.setLoaded(true);
+					tile.setTileState(TileState.TS_LOADED);
 					listener.tileLoadingFinished(tile, true);
 				} else {
-					tile.setLoaded(true);
+					tile.setErrorImage();
 				}
 			} catch (Exception e) {
 				log.trace("Downloading of tile " + tile + " failed", e);
 				tile.setErrorImage();
 				listener.tileLoadingFinished(tile, false);
-			} finally {
-				tile.loading = false;
-				tile.setLoaded(true);
 			}
 		}
 

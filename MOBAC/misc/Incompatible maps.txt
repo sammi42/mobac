@@ -55,3 +55,6 @@ ICC Catalunya
 	http://cygnus.icc.cat/bt5m/
 	Reason: different projection (Plate Carrée projection based on Latitude / Longitude WGS 84)
 	
+Zumi Poland
+	http://mapy.zumi.pl/
+	Reson: Tile size 250x250

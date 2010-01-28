@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,6 +61,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private static class Data {
 		AtlasInterface atlasInterface;
 		MapInterface map;
+		MapInfo mapInfo;
 		long numberOfDownloadedBytes = 0;
 		int totalNumberOfTiles = 0;
 		int totalNumberOfMaps = 0;
@@ -82,7 +84,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JLabel windowTitle;
 
 	private JLabel title;
-	private JLabel mapInfo;
+	private JLabel mapInfoLabel;
 	private JLabel mapDownloadTitle;
 	private JLabel atlasPercent;
 	private JLabel mapDownloadPercent;
@@ -114,6 +116,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private GUIUpdater guiUpdater = null;
 
 	private AtlasThread atlasThread;
+
+	private ArrayList<MapInfo> mapInfos = null;
 
 	private static String TEXT_MAP_DOWNLOAD = "Downloading tiles for map number ";
 	private static String TEXT_PERCENT = "Percent done: %d%%";
@@ -153,7 +157,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		title = new JLabel("Processing maps of atlas:");
 
-		mapInfo = new JLabel("Processing map: ");
+		mapInfoLabel = new JLabel("Processing map: ");
 
 		atlasMapsDone = new JLabel("000 of 000 done");
 		atlasPercent = new JLabel(String.format(TEXT_PERCENT, 100));
@@ -206,7 +210,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		// background.add(windowTitle, gbcEolFill);
 		// background.add(Box.createVerticalStrut(10), gbcEol);
 
-		background.add(mapInfo, gbcEolFill);
+		background.add(mapInfoLabel, gbcEolFill);
 		background.add(Box.createVerticalStrut(20), gbcEol);
 
 		background.add(title, gbcRIF);
@@ -266,10 +270,20 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 	public void init(AtlasInterface atlasInterface) {
 		data.atlasInterface = atlasInterface;
-		data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload();
+		data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload() * 2;
 		int mapCount = 0;
-		for (LayerInterface layer : atlasInterface)
+		int tileCount = 0;
+		mapInfos = new ArrayList<MapInfo>(100);
+		for (LayerInterface layer : atlasInterface) {
 			mapCount += layer.getMapCount();
+			for (MapInterface map : layer) {
+				int before = tileCount;
+				int mapTiles = map.calculateTilesToDownload();
+				tileCount += mapTiles + mapTiles;
+				mapInfos.add(new MapInfo(map, before, tileCount));
+			}
+		}
+		mapInfos.trimToSize();
 		data.totalNumberOfMaps = mapCount;
 
 		initialTotalTime = System.currentTimeMillis();
@@ -280,6 +294,9 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	}
 
 	public void initMapDownload(MapInterface map) {
+		int index = mapInfos.indexOf(new MapInfo(map, 0, 0));
+		data.mapInfo = mapInfos.get(index);
+		data.totalProgress = data.mapInfo.tileCountOnStart;
 		data.map = map;
 		data.mapDownloadNumberOfTiles = map.calculateTilesToDownload();
 		initialMapDownloadTime = System.currentTimeMillis();
@@ -305,20 +322,21 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public void incMapDownloadProgress() {
 		data.mapDownloadProgress++;
 		data.totalProgress++;
+		updateGUI();
 	}
 
 	public void incMapCreationProgress() {
-		data.mapCreationProgress++;
-		updateGUI();
+		setMapCreationProgress(data.mapCreationProgress + 1);
 	}
 
 	public void incMapCreationProgress(int stepSize) {
-		data.mapCreationProgress += stepSize;
-		updateGUI();
+		setMapCreationProgress(data.mapCreationProgress + stepSize);
 	}
 
 	public void setMapCreationProgress(int progress) {
 		data.mapCreationProgress = progress;
+		data.totalProgress = data.mapInfo.tileCountOnStart + data.mapInfo.mapTiles
+				+ (data.mapInfo.mapTiles * data.mapCreationProgress / data.mapCreationMax);
 		updateGUI();
 	}
 
@@ -376,7 +394,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 							+ "SUCCESSFULLY</h2></html>");
 					setTitle("Atlas creation finished successfully");
 				}
-				mapInfo.setText("");
+				mapInfoLabel.setText("");
 
 				abortAtlasCreationButton.setVisible(false);
 
@@ -471,7 +489,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				String text = "<html>Processing map \"<b>" + data.map.getName()
 						+ "</b>\" of layer <b>\"" + data.map.getLayer().getName()
 						+ "\"</b> map source: " + data.map.getMapSource() + "</html>";
-				mapInfo.setText(text);
+				mapInfoLabel.setText(text);
 			}
 
 			// atlas progress
@@ -593,6 +611,34 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				listener.abortAtlasCreation();
 		}
 
+	}
+
+	protected static class MapInfo {
+
+		final MapInterface map;
+		final int tileCountOnStart;
+		final int tileCountOnEnd;
+		final int mapTiles;
+
+		public MapInfo(MapInterface map, int tileCountOnStart, int tileCountOnEnd) {
+			super();
+			this.map = map;
+			this.tileCountOnStart = tileCountOnStart;
+			this.tileCountOnEnd = tileCountOnEnd;
+			this.mapTiles = map.calculateTilesToDownload();
+		}
+
+		@Override
+		public int hashCode() {
+			return map.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof MapInfo))
+				return false;
+			return map.equals(((MapInfo) obj).map);
+		}
 	}
 
 	public static interface AtlasCreationController {

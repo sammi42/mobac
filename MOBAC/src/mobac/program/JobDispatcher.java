@@ -7,7 +7,6 @@ import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * Controls the worker threads that are downloading the map tiles in parallel.
  * Additionally the job queue containing the unprocessed tile download jobs can
@@ -124,7 +123,7 @@ public class JobDispatcher {
 		private Logger log = Logger.getLogger(WorkerThread.class);
 
 		public WorkerThread(int threadNum) {
-			super("WorkerThread " + threadNum);
+			super(String.format("WorkerThread %02d", threadNum));
 			setDaemon(true);
 			start();
 		}

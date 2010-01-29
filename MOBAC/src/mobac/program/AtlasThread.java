@@ -277,14 +277,15 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			tileArchive.close();
 			tileIndex = tileArchive.getTarIndex();
 			if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
+				int missing = tileCount - tileIndex.size();
 				log.debug("Expected tile count: " + tileCount + " downloaded tile count: "
-						+ tileIndex.size());
+						+ tileIndex.size() + " missing: " + missing);
 				int answer = JOptionPane.showConfirmDialog(ap,
 						"Something is wrong with download of atlas tiles.\n"
 								+ "The amount of downladed tiles is not as "
 								+ "high as it was calculated.\nTherfore tiles "
-								+ "will be missing in the created atlas.\n\n"
-								+ "Are you sure you want to continue "
+								+ "will be missing in the created atlas.\n" + missing
+								+ " tiles are missing.\n\n" + "Are you sure you want to continue "
 								+ "and create the atlas anyway?",
 						"Error - tiles are missing - do you want to continue anyway?",
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);

@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import mobac.program.AtlasThread;
@@ -125,6 +126,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	public AtlasProgress(AtlasThread atlasThread) {
 		super("Atlas creation in progress");
 		this.atlasThread = atlasThread;
+		ToolTipManager.sharedInstance().setDismissDelay(12000);
 		setIconImages(MainGUI.MOBAC_ICONS);
 		setLayout(new GridBagLayout());
 		updateTask = new UpdateTask();
@@ -181,11 +183,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		activeDownloadsValue = new JLabel();
 		downloadErrors = new JLabel("Download errors");
 		downloadErrors
-				.setToolTipText("<html>Download errors for the current layer (retryable/permanent):<br>"
-						+ "Mobile Atlas Creator tries to retry failed tile downloads up to two times.<br>"
-						+ "For each failed try the retryable counter increases by one.<br>"
-						+ "If the tile downloads fails the third time the tile will be counted as "
-						+ "permanent error.</html>");
+				.setToolTipText("<html><h4>Download errors for the current layer (retryable/permanent)</h4>"
+						+ "<p>Mobile Atlas Creator tries to retry failed tile downloads up to two times.<br>"
+						+ "The first time a tile download fails the <b>retryable</b> counter increases by one.<br>"
+						+ "If the tile downloads fails the second time the tile will be counted as <br>"
+						+ "<b>permanent</b> error and not tried again.<br></p></html>");
 		downloadErrorsValue = new JLabel();
 		downloadErrorsValue.setToolTipText(downloadErrors.getToolTipText());
 		totalDownloadTime = new JLabel("Total creation time");

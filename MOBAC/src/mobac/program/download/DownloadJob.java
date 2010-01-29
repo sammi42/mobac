@@ -1,5 +1,8 @@
 package mobac.program.download;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+
 import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.JobDispatcher;
@@ -51,6 +54,10 @@ public class DownloadJob implements Job {
 					+ "failed with an unrecoverable error: " + e.getCause());
 		} catch (InterruptedException e) {
 			throw e;
+		} catch (SocketTimeoutException e) {
+			processError(dispatcher, e);
+		} catch (ConnectException e) {
+			processError(dispatcher, e);
 		} catch (DownloadFailedException e) {
 			processError(dispatcher, e);
 		} catch (Exception e) {

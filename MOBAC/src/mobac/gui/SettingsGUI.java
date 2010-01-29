@@ -77,7 +77,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
 
@@ -467,7 +466,8 @@ public class SettingsGUI extends JDialog {
 						+ "several maps when adding the map selection.<br>"
 						+ "Each map is no larger than the specified maximum map size.<br>"
 						+ "You can see the number of maps and their region in the atlas content tree.<br><br>"
-						+ "<b>Warning</b><br>TrekBuddy versions before v0.9.88 "
+						+ "<b>Note for TrekBuddy users:</b><br>"
+						+ "TrekBuddy versions before v0.9.88 "
 						+ "do not support map sizes larger than 32767.<br>"
 						+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
@@ -631,7 +631,7 @@ public class SettingsGUI extends JDialog {
 
 		if (MainGUI.getMainGUI() == null)
 			return;
-		
+
 		MainGUI.getMainGUI().updateMapSourcesList();
 
 		if (googleLang.getSelectedIndex() < 0) {

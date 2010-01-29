@@ -9,9 +9,9 @@ public class JMapSizeCombo extends JIntCombo {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int MIN = 1024;
+	public static final int MIN = 10;
 
-	public static final int MAX = 32767;
+	public static final int MAX = Integer.MAX_VALUE;
 
 	static Vector<Integer> MAP_SIZE_VALUES;
 
@@ -29,6 +29,8 @@ public class JMapSizeCombo extends JIntCombo {
 		MAP_SIZE_VALUES.addElement(new Integer(20000));
 		MAP_SIZE_VALUES.addElement(new Integer(15000));
 		MAP_SIZE_VALUES.addElement(new Integer(10000));
+		MAP_SIZE_VALUES.addElement(new Integer(2048));
+		MAP_SIZE_VALUES.addElement(new Integer(1024));
 	}
 
 	public JMapSizeCombo() {
@@ -41,11 +43,7 @@ public class JMapSizeCombo extends JIntCombo {
 
 	@Override
 	protected void createEditorComponent() {
-		editorComponent = new JIntField(MIN, MAX, 4,
-				"<html>Warning: TrekBuddy versions before v0.9.88 "
-						+ "do not support map sizes larger than 32767.<br>"
-						+ "Newer versions have a map size limitation of 1048575.<br>"
-						+ "Please enter a number larger than %d and 32767/1048575</html>");
+		editorComponent = new JIntField(MIN, MAX, 4, "");
 		editorComponent.setErrorColor(Color.ORANGE);
 	}
 

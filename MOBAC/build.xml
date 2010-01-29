@@ -3,8 +3,8 @@
 
 	<property file="src/mobac/mobac.properties" />
 	<property name="jar.name" value="Mobile_Atlas_Creator.jar" />
-	<property name="zip.name" value="Mobile_Atlas_Creator_${mobac.version}.zip" />
-	<property name="zip_src.name" value="Mobile_Atlas_Creator_${mobac.version}_src.zip" />
+	<property name="zip.name" value="Mobile Atlas Creator ${mobac.version}.zip" />
+	<property name="zip_src.name" value="Mobile Atlas Creator ${mobac.version} src.zip" />
 	<property name="main.class" value="mobac.StartMOBAC" />
 
 	<property name="je-version" value="3.3.93" />

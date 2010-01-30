@@ -144,4 +144,13 @@ public class OSUtilities {
 		}
 	}
 
+    /**
+     * Replies true if we are currently running on OSX
+     *
+     * @return true if we are currently running on OSX
+     */
+    public static boolean isPlatformOsx() {
+        String os = System.getProperty("os.name");
+        return os != null && os.toLowerCase().startsWith("mac os x");
+    }
 }

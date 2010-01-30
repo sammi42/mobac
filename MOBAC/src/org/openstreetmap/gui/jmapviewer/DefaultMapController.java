@@ -9,6 +9,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import mobac.utilities.OSUtilities;
+
 /**
  * Default map controller which implements map moving by pressing the right
  * mouse button and zooming by double click or by mouse wheel.
@@ -21,6 +23,9 @@ public class DefaultMapController extends JMapController implements MouseListene
 
 	private static final int MOUSE_BUTTONS_MASK = MouseEvent.BUTTON3_DOWN_MASK
 			| MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
+
+	private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK
+			| MouseEvent.BUTTON1_DOWN_MASK;
 
 	public DefaultMapController(JMapViewer map) {
 		super(map, true);
@@ -59,14 +64,16 @@ public class DefaultMapController extends JMapController implements MouseListene
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (e.getButton() == movementMouseButton) {
+		if (e.getButton() == movementMouseButton || OSUtilities.isPlatformOsx()
+				&& e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
 			lastDragPoint = null;
 			isMoving = true;
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (e.getButton() == movementMouseButton) {
+		if (e.getButton() == movementMouseButton || OSUtilities.isPlatformOsx()
+				&& e.getButton() == MouseEvent.BUTTON1) {
 			lastDragPoint = null;
 			isMoving = false;
 		}
@@ -145,6 +152,22 @@ public class DefaultMapController extends JMapController implements MouseListene
 	}
 
 	public void mouseMoved(MouseEvent e) {
+
+		// Mac OSX simulates with ctrl + mouse 1 the second mouse button hence
+		// no dragging events get fired.
+		if (!OSUtilities.isPlatformOsx() || !movementEnabled || !isMoving)
+			return;
+		// Is only the selected mouse button pressed?
+		if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
+			Point p = e.getPoint();
+			if (lastDragPoint != null) {
+				int diffx = lastDragPoint.x - p.x;
+				int diffy = lastDragPoint.y - p.y;
+				map.moveMap(diffx, diffy);
+			}
+			lastDragPoint = p;
+		}
+
 	}
 
 }

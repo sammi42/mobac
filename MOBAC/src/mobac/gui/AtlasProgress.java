@@ -304,7 +304,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		initialMapDownloadTime = System.currentTimeMillis();
 		data.mapCreationProgress = 0;
 		data.mapDownloadProgress = 0;
-		data.currentMapNumber++;
+		data.currentMapNumber = index + 1;
 		updateGUI();
 	}
 

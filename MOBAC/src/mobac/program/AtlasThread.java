@@ -137,7 +137,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			return;
 		}
 
-		ap.init(atlasInterface);
+		ap.initAtlas(atlasInterface);
 		ap.setVisible(true);
 
 		Settings s = Settings.getInstance();

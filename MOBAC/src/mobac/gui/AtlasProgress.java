@@ -73,8 +73,10 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		int mapDownloadNumberOfTiles = 0;
 		int mapCreationProgress = 0;
 		int mapCreationMax = 0;
-		int retryErrors = 0;
-		int permanentErrors = 0;
+		int mapRetryErrors = 0;
+		int mapPermanentErrors = 0;
+		int prevMapsRetryErrors = 0;
+		int prevMapsPermanentErrors = 0;
 		boolean paused = false;
 	}
 
@@ -179,11 +181,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		nrOfDownloadedBytesPerSecondValue = new JLabel();
 		nrOfDownloadedBytes = new JLabel("Total download size");
 		nrOfDownloadedBytesValue = new JLabel();
-		activeDownloads = new JLabel("Active Downloads");
+		activeDownloads = new JLabel("Active tile fetcher threads");
 		activeDownloadsValue = new JLabel();
 		downloadErrors = new JLabel("Download errors");
 		downloadErrors
-				.setToolTipText("<html><h4>Download errors for the current layer (retryable/permanent)</h4>"
+				.setToolTipText("<html><h4>Download errors for the current map and for the total atlas (retryable/permanent)</h4>"
 						+ "<p>Mobile Atlas Creator tries to retry failed tile downloads up to two times.<br>"
 						+ "The first time a tile download fails the <b>retryable</b> counter increases by one.<br>"
 						+ "If the tile downloads fails the second time the tile will be counted as <br>"
@@ -270,7 +272,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		pauseResumeDownloadButton.addActionListener(this);
 	}
 
-	public void init(AtlasInterface atlasInterface) {
+	public void initAtlas(AtlasInterface atlasInterface) {
 		data.atlasInterface = atlasInterface;
 		data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload() * 2;
 		int mapCount = 0;
@@ -302,6 +304,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		data.map = map;
 		data.mapDownloadNumberOfTiles = map.calculateTilesToDownload();
 		initialMapDownloadTime = System.currentTimeMillis();
+		data.prevMapsPermanentErrors += data.mapPermanentErrors;
+		data.prevMapsRetryErrors += data.mapRetryErrors;
 		data.mapCreationProgress = 0;
 		data.mapDownloadProgress = 0;
 		data.currentMapNumber = index + 1;
@@ -316,8 +320,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	}
 
 	public void setErrorCounter(int retryErrors, int permanentErrors) {
-		data.retryErrors = retryErrors;
-		data.permanentErrors = permanentErrors;
+		data.mapRetryErrors = retryErrors;
+		data.mapPermanentErrors = permanentErrors;
 		updateGUI();
 	}
 
@@ -590,7 +594,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			activeDownloadsValue.setText(": " + activeDownloads);
 			activeDownloadsValue.repaint();
 
-			downloadErrorsValue.setText(": " + data.retryErrors + " / " + data.permanentErrors);
+			int totalPermanentErrors = data.prevMapsPermanentErrors + data.mapPermanentErrors;
+			int totalRetylableErrors = data.prevMapsRetryErrors + data.mapRetryErrors;
+			downloadErrorsValue.setText(": map: " + data.mapRetryErrors + " / "
+					+ data.mapPermanentErrors + " total: " + totalRetylableErrors + " / "
+					+ totalPermanentErrors);
 			downloadErrorsValue.repaint();
 		}
 	}

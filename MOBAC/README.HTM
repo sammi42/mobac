@@ -70,6 +70,8 @@ SourceForge.net: <br>
 		BigPlanet / RMaps</a></li>
 		<li><a href="#Ozi">Creating and using atlases with
 		OziExplorer / large PNG image</a></li>
+		<li><a href="#TTQV">Creating and using atlases with Touratech
+		QV / large PNG image</a></li>
 		<li><a href="#Glopus">Creating atlases for Glopus</a></li>
 		<li><a href="#CacheWolf">Creating atlases for CacheWolf</a></li>
 		<li><a href="#GarminCustom">Creating Garmin Custom maps</a></li>
@@ -260,7 +262,7 @@ large PNG image export</a></h3>
 select <b>OziExplorer (PNG &amp; MAP)</b> as format in section <b>Atlas
 settings</b> on the left side of the main window.</p>
 <h4><a name="OziRestriction">Restrictions</a></h4>
-<p>As OziExplorer does only support tiled maps some features are
+<p>As OziExplorer does not support tiled maps some features are
 ignored when creating atlases in this format:</p>
 <ul>
 	<li>Image output format is fix: 24bit PNG</li>
@@ -275,12 +277,38 @@ created atlas and select the MAP file.</p>
 <p>If you are only interested in the map image you can safely delete
 the created map file.</p>
 <h4><a name="OziWarning">Warning</a></h4>
-<p>Mobile Atlas Creator uses an highly sophisticated and optimized
+<p>Mobile Atlas Creator uses a highly sophisticated and optimized
 algorithm for creating the PNG files for OziExplorer use. This algorithm
 allows to create very large maps images at low memory usage. OziExplorer
 and most image viewers do not use such sophisticated algorithms which
 can lead to the situation that you can create very large map images -
 but OziExplorer and other image viewers are not able to open the image.</p>
+<!-- *************************************************************************** -->
+<h3><a name="TTQV">Creating and using atlases with Touratech QV
+/ large PNG image export</a></h3>
+<p>For creating atlases compatible with Touratech QV you have to
+select <b>Touratech QV</b> as format in section <b>Atlas settings</b> on
+the left side of the main window.</p>
+<h4><a name="TTQVRestriction">Restrictions</a></h4>
+<p>As Touratech QV does not support tiled maps some features are
+ignored when creating atlases in this format:</p>
+<ul>
+	<li>Image output format is fix: 24bit PNG</li>
+	<li>Recreate/adjust map tiles custom tile is ignored</li>
+</ul>
+<p>The output format of an "atlas" for Touratech QV is one
+subdirectory per layer and within this subdirectory one <tt>PNG</tt>
+image and one <tt>CAL</tt> file per defined map.</p>
+<p>If you are only interested in the map image you can safely delete
+the created cal file.</p>
+<h4><a name="TTQVWarning">Warning</a></h4>
+<p>Mobile Atlas Creator uses a highly sophisticated and optimized
+algorithm for creating the PNG files for Touratech QV use. This
+algorithm allows to create very large maps images at low memory usage.
+Touratech QV and most image viewers do not use such sophisticated
+algorithms which can lead to the situation that you can create very
+large map images - but Touratech QV and other image viewers are not able
+to open the image.</p>
 <!-- *************************************************************************** -->
 <h3><a name="Glopus">Creating atlases for Glopus</a></h3>
 <p>For creating atlases compatible with Glopus you have to select <b>Glopus

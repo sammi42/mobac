@@ -223,6 +223,7 @@ public class Settings {
 			m.marshal(getInstance(), bo);
 			fo = new FileOutputStream(FILE);
 			fo.write(bo.toByteArray());
+			fo.close();
 			SETTINGS_LAST_MODIFIED = FILE.lastModified();
 		} catch (IOException e) {
 			throw new JAXBException(e);

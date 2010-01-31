@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -23,7 +22,6 @@ import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 public class MapSourcesUpdater {
 
@@ -101,8 +99,9 @@ public class MapSourcesUpdater {
 	}
 
 	/**
-	 * This method is automatically called each time MOBAC starts-up. If the last
-	 * update check is older than three days a new update check is performed.
+	 * This method is automatically called each time MOBAC starts-up. If the
+	 * last update check is older than three days a new update check is
+	 * performed.
 	 * 
 	 * @param async
 	 *            <code>true</code>: run the update in a new background.
@@ -155,10 +154,10 @@ public class MapSourcesUpdater {
 				throw new MapSourcesUpdateException("No update url configured!");
 			url = new URL(mapUpdateUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			Settings s = Settings.getInstance();
-			if (mapFile.isFile() && s.mapSourcesUpdate.etag != null
-					&& s.mapSourcesUpdate.etag != "")
-				conn.addRequestProperty("If-None-Match", s.mapSourcesUpdate.etag);
+			Settings settings = Settings.getInstance();
+			if (mapFile.isFile() && settings.mapSourcesUpdate.etag != null
+					&& settings.mapSourcesUpdate.etag != "")
+				conn.addRequestProperty("If-None-Match", settings.mapSourcesUpdate.etag);
 			int code = conn.getResponseCode();
 			MapSourcesUpdater.log.trace("Mapsources online update: \n\tUpdate url: " + mapUpdateUrl
 					+ "\n\tResponse  : " + code + " " + conn.getResponseMessage()
@@ -189,8 +188,8 @@ public class MapSourcesUpdater {
 			int onlineRev = getMapSourcesRev(onlineProps);
 			int currentRev = parseMapSourcesRev(System
 					.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY));
-			s.mapSourcesUpdate.lastUpdate = new Date();
-			s.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
+			settings.mapSourcesUpdate.lastUpdate = new Date();
+			settings.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
 			if (onlineRev > currentRev || !mapSourcesExternalFileUsed) {
 				System.getProperties().putAll(onlineProps);
 				FileOutputStream mapFs = null;
@@ -209,7 +208,8 @@ public class MapSourcesUpdater {
 				return true;
 			}
 			return false;
-		} catch (IOException e) {
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 			throw new MapSourcesUpdateException(e);
 		}
 	}

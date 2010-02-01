@@ -164,6 +164,7 @@
 				<include name="${jar.name}" />
 				<include name="gpl.txt" />
 				<include name="README.HTM" />
+				<include name="ReleaseNotes.txt" />
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
 				<include name="Mobile Atlas Creator.exe" />

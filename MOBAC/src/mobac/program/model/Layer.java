@@ -23,11 +23,11 @@ import mobac.program.interfaces.CapabilityDeletable;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.ToolTipProvider;
+import mobac.utilities.MyMath;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 
 /**
  * A layer holding one or multiple maps of the same map source and the same zoom
@@ -100,6 +100,10 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 			maps.add(s);
 			return;
 		}
+		int maxMapCounter = MyMath.divCeil(mapWidth, maxMapDimension.width)
+				* MyMath.divCeil(mapHeight, maxMapDimension.height);
+		int maxMapCountDigits = (int) Math.ceil(Math.log10(maxMapCounter));
+		String mapNameFormat = "%s (%0" + maxMapCountDigits + "d)";
 		int mapCounter = 0;
 		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
 			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {
@@ -107,7 +111,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
 				Point min = new Point(mapX, mapY);
 				Point max = new Point(maxX - 1, maxY - 1);
-				String mapName = String.format("%s (%02d)", new Object[] { mapNameBase,
+				String mapName = String.format(mapNameFormat, new Object[] { mapNameBase,
 						mapCounter++ });
 				Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
 				maps.add(s);

@@ -12,6 +12,8 @@ public class CacheTileProvider extends FilterTileProvider {
 
 	private Logger log = Logger.getLogger(CacheTileProvider.class);
 
+	private static int PRELOADER_THREAD_NUM = 1;
+
 	private Hashtable<CacheKey, SRCachedTile> cache;
 
 	private PreLoadThread preLoader = new PreLoadThread();
@@ -71,6 +73,24 @@ public class CacheTileProvider extends FilterTileProvider {
 		cache.put(tile.key, new SRCachedTile(tile));
 	}
 
+	public void cleanup() {
+		try {
+			cache.clear();
+			if (preLoader != null) {
+				preLoader.interrupt();
+				preLoader = null;
+			}
+		} catch (Throwable t) {
+			log.error("", t);
+		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
+		super.finalize();
+	}
+
 	private static class SRCachedTile extends SoftReference<CachedTile> {
 
 		public SRCachedTile(CachedTile referent) {
@@ -84,7 +104,8 @@ public class CacheTileProvider extends FilterTileProvider {
 		private LinkedBlockingQueue<CachedTile> queue = null;
 
 		public PreLoadThread() {
-			super("ImagePreLoadThread");
+			super("ImagePreLoadThread" + (PRELOADER_THREAD_NUM++));
+			log.debug("Image pre-loader thread started");
 			queue = new LinkedBlockingQueue<CachedTile>();
 		}
 
@@ -100,7 +121,7 @@ public class CacheTileProvider extends FilterTileProvider {
 					}
 				}
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.debug("Image pre-loader thread terminated");
 			}
 		}
 
@@ -170,7 +191,7 @@ public class CacheTileProvider extends FilterTileProvider {
 			try {
 				image = internalGetTileImage(key.x, key.y, key.layer);
 			} catch (Exception e) {
-				log.error("",e);
+				log.error("", e);
 			}
 			loaded = true;
 		}

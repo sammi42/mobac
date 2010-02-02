@@ -8,12 +8,12 @@ import java.io.OutputStreamWriter;
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
+import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 
 public class CacheWolf extends Ozi {
 
@@ -41,7 +41,10 @@ public class CacheWolf extends Ozi {
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		MapTileWriter mapTileWriter;
+
+		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
 		try {
+			mapDlTileProvider = ctp;
 			mapDir = mapFolder;
 			Utilities.mkDirs(mapDir);
 			mapTileWriter = new CWFileTileWriter();
@@ -50,6 +53,8 @@ public class CacheWolf extends Ozi {
 			mapTileBuilder.createTiles();
 		} catch (IOException e) {
 			throw new MapCreationException(e);
+		} finally {
+			ctp.cleanup();
 		}
 	}
 

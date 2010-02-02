@@ -9,7 +9,6 @@ import mobac.utilities.Utilities;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 /**
  * Extends the {@link TrekBuddy} so that custom tiles are written. Custom tiles
  * can have a size different of 255x255 pixels), a different color depth and a
@@ -69,12 +68,17 @@ public class TrekBuddyCustom extends TrekBuddy {
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		log.debug("Starting map creation using custom parameters: " + parameters);
-		
-		mapDlTileProvider = new CacheTileProvider(mapDlTileProvider);
 
-		MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
-		atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
-		mapTileBuilder.createTiles();
+		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+		try {
+			mapDlTileProvider = ctp;
+
+			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
+			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+			mapTileBuilder.createTiles();
+		} finally {
+			ctp.cleanup();
+		}
 	}
 
 }

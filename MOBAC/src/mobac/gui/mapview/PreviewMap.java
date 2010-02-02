@@ -191,8 +191,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 				int posx;
 				int posy;
 				if (gridSize >= mapSource.getMapSpace().getTileSize()) {
-					posx = -tlc.x;
-					posy = -tlc.y;
+					int tilesize = mapSource.getMapSpace().getTileSize();
+					posx = -tlc.x % tilesize;
+					posy = -tlc.y % tilesize;
 					for (int x = posx; x < w; x += gridSize) {
 						g.drawLine(x, posy, x, h);
 					}

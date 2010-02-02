@@ -24,7 +24,6 @@ import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	private static final long serialVersionUID = 1L;
@@ -153,20 +152,22 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		if (gridZoom < 0)
 			return;
 		int zoomToGridZoom = zoom - gridZoom;
+		int tilesize = mapSource.getMapSpace().getTileSize();
 		if (zoomToGridZoom > 0) {
-			gridSize = 256 << zoomToGridZoom;
+			gridSize = tilesize << zoomToGridZoom;
 		} else {
-			gridSize = 256 >> (-zoomToGridZoom);
-			BufferedImage newGridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+			gridSize = tilesize >> (-zoomToGridZoom);
+			BufferedImage newGridTile = new BufferedImage(tilesize, tilesize,
+					BufferedImage.TYPE_INT_ARGB);
 			if (gridSize > 2) {
 				Graphics2D g = newGridTile.createGraphics();
 				int alpha = 5 + (6 + zoomToGridZoom) * 16;
 				alpha = Math.max(0, alpha);
 				alpha = Math.min(130, alpha);
 				g.setColor(new Color(200, 20, 20, alpha));
-				for (int x = 0; x < 256; x += gridSize)
+				for (int x = 0; x < tilesize; x += gridSize)
 					g.drawLine(x, 0, x, 255);
-				for (int y = 0; y < 256; y += gridSize)
+				for (int y = 0; y < tilesize; y += gridSize)
 					g.drawLine(0, y, 255, y);
 			}
 			gridTile = newGridTile;

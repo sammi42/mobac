@@ -56,6 +56,7 @@
  ~ OpenStreetMap Hiking Relief URL updated
  + New map source: Ovi/Nokia Maps
  + New map source: Bergfex (Austria)
+ ! Grid paint juddering on high zoom levels fixed
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

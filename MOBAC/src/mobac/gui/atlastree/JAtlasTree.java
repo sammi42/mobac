@@ -191,6 +191,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	}
 
 	public boolean load(Profile profile) {
+		log.debug("Loading profile "+profile);
 		try {
 			treeModel.load(profile);
 			if (treeModel.getAtlas() instanceof Atlas) {

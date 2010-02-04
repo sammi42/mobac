@@ -17,7 +17,6 @@ import mobac.program.model.Profile;
 import mobac.utilities.GBC;
 import mobac.utilities.Utilities;
 
-
 public class JProfilesPanel extends JCollapsiblePanel {
 
 	private static final long serialVersionUID = 1L;
@@ -25,6 +24,7 @@ public class JProfilesPanel extends JCollapsiblePanel {
 	private JProfilesComboBox profilesCombo;
 	private JButton reloadButton;
 	private JButton deleteButton;
+	private JButton loadButton;
 	private JButton saveAsButton;
 
 	public JProfilesPanel(JAtlasTree atlasTree) {
@@ -37,16 +37,20 @@ public class JProfilesPanel extends JCollapsiblePanel {
 		profilesCombo = new JProfilesComboBox();
 		profilesCombo.setToolTipText("Select an atlas creation profile\n "
 				+ "or enter a name for a new profile");
+		profilesCombo.addActionListener(new ProfileListListener());
 
 		// delete profile button
-		deleteButton = new JButton("Delete profile");
+		deleteButton = new JButton("Delete");
 		deleteButton.addActionListener(new DeleteProfileListener());
 		deleteButton.setToolTipText("Delete atlas profile from list");
 
 		// save as profile button
-		saveAsButton = new JButton("Save as profile");
+		saveAsButton = new JButton("Save");
 		saveAsButton.setToolTipText("Save atlas profile");
 		saveAsButton.addActionListener(new SaveAsProfileListener(atlasTree));
+
+		loadButton = new JButton("Load");
+		loadButton.setToolTipText("Load the selected profile");
 
 		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
 		reloadButton = new JButton(Utilities.loadResourceImageIcon("refresh.png"));
@@ -59,17 +63,20 @@ public class JProfilesPanel extends JCollapsiblePanel {
 		p.add(reloadButton, BorderLayout.EAST);
 
 		contentContainer.add(p, gbc);
-		contentContainer.add(saveAsButton, gbc.toggleEol());
 		contentContainer.add(deleteButton, gbc.toggleEol());
+		contentContainer.add(saveAsButton, gbc);
+		contentContainer.add(loadButton, gbc.toggleEol());
 
 		saveAsButton.setEnabled(false);
 		deleteButton.setEnabled(false);
+		loadButton.setEnabled(false);
 	}
 
 	public void initialize() {
 		// Load all profiles from the profiles file from disk
 		profilesCombo.loadProfilesList();
 		deleteButton.setEnabled(false);
+		loadButton.setEnabled(false);
 	}
 
 	public void reloadProfileList() {
@@ -78,6 +85,10 @@ public class JProfilesPanel extends JCollapsiblePanel {
 
 	public JProfilesComboBox getProfilesCombo() {
 		return profilesCombo;
+	}
+
+	public JButton getLoadButton() {
+		return loadButton;
 	}
 
 	public JButton getDeleteButton() {
@@ -151,4 +162,10 @@ public class JProfilesPanel extends JCollapsiblePanel {
 		}
 	}
 
+	private class ProfileListListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			loadButton.setEnabled(profilesCombo.getSelectedProfile() != null);
+		}
+	}
 }

@@ -8,7 +8,6 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import mobac.program.model.Profile;
 
-
 /**
  * An editable {@link JComboBox} for displaying the saved atlases profiles.
  */

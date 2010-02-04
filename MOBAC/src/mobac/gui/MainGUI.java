@@ -245,7 +245,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		coordinatesPanel = new JCoordinatesPanel();
 		tileImageParametersPanel = new JTileImageParametersPanel();
 		profilesPanel = new JProfilesPanel(jAtlasTree);
-		profilesPanel.getProfilesCombo().addActionListener(new ProfilesComboListener());
+		profilesPanel.getLoadButton().addActionListener(new ProfilesComboListener());
 	}
 
 	private void updateLeftPanel() {
@@ -543,6 +543,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			profilesPanel.getDeleteButton().setEnabled(profile != null);
 			if (profile == null)
 				return;
+			
 			jAtlasTree.load(profile);
 		}
 	}

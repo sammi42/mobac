@@ -118,11 +118,9 @@ public class JProfilesPanel extends JCollapsiblePanel {
 			Object selObject = profilesCombo.getEditor().getItem();
 			String profileName = null;
 			Profile profile = null;
-			boolean profileInList = false;
 			if (selObject instanceof Profile) {
 				profile = (Profile) selObject;
 				profileName = profile.getName();
-				profileInList = true;
 			} else
 				profileName = (String) selObject;
 
@@ -143,8 +141,8 @@ public class JProfilesPanel extends JCollapsiblePanel {
 			}
 
 			if (jAtlasTree.save(profile)) {
-				if (!profileInList)
-					profilesCombo.addItem(profile);
+				reloadProfileList();
+				profilesCombo.setSelectedItem(profile);
 			}
 		}
 	}
@@ -165,7 +163,9 @@ public class JProfilesPanel extends JCollapsiblePanel {
 	private class ProfileListListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			loadButton.setEnabled(profilesCombo.getSelectedProfile() != null);
+			boolean existingProfileSelected = profilesCombo.getSelectedProfile() != null;
+			loadButton.setEnabled(existingProfileSelected);
+			deleteButton.setEnabled(existingProfileSelected);
 		}
 	}
 }

@@ -9,7 +9,6 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 public class OsmMapSources {
 
 	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
@@ -136,7 +135,7 @@ public class OsmMapSources {
 	public static class OsmHikingMap extends AbstractMapSource {
 
 		public OsmHikingMap() {
-			super("OSM Hiking", 4, 18, "png", TileUpdate.LastModified);
+			super("OSM Hiking", 4, 18, "png", TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -153,7 +152,7 @@ public class OsmMapSources {
 	public static class OsmHikingRelief extends AbstractMapSource {
 
 		public OsmHikingRelief() {
-			super("OSM Hiking Relief", 4, 18, "png", TileUpdate.IfNoneMatch);
+			super("OSM Hiking Relief", 4, 15, "png", TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -166,6 +165,7 @@ public class OsmMapSources {
 		}
 
 	}
+
 	public static class OsmHikingBase extends AbstractMapSource {
 
 		public OsmHikingBase() {
@@ -195,6 +195,11 @@ public class OsmMapSources {
 		@Override
 		public String getName() {
 			return "OSM Hiking with Relief";
+		}
+
+		@Override
+		public int getMaxZoom() {
+			return 15;
 		}
 
 		public MapSource getBackgroundMapSource() {

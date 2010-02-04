@@ -12,7 +12,7 @@ import java.util.Map;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.RegionalMapSources.Bergfex;
+import mobac.mapsources.impl.OsmMapSources.OsmHikingRelief;
 import mobac.program.Logging;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.utilities.Utilities;
@@ -30,7 +30,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(Bergfex.class, Cities.INNSBRUCK);
+		testMapSource(OsmHikingRelief.class, Cities.BERLIN);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,

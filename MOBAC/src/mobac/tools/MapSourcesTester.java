@@ -45,7 +45,6 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 /**
  * Small tool that tests every available map source for operability. The
  * operability test consists of the download of one map tile at the highest
@@ -101,49 +100,54 @@ public class MapSourcesTester {
 			return;
 		}
 		MapSourcesUpdater.loadMapSourceProperties();
+		processAllMapSources();
+		// processMapSource(new OsmMapSources.OsmHikingMapWithRelief());
+	}
 
+	public static void processAllMapSources() {
 		for (MapSource mapSource : MapSourcesManager.getAllMapSources()) {
 			if (mapSource instanceof LocalhostTestSource)
 				continue;
-			try {
-				String name = mapSource.getStoreName();
-				StringBuilder sb = new StringBuilder(40);
-				sb.append(name);
-				while (sb.length() < 40)
-					sb.append('.');
-				System.out.print(sb.toString() + ": ");
-				if (testMapSource(mapSource))
-					System.out.println("OK");
-				else
-					System.out.println("Skipped");
-			} catch (MapSourceTestFailed e) {
-				System.out.println("Failed: " + e.httpResponseCode);
-				if (e.httpResponseCode != 404)
-					log.error("Error: ", e);
-			} catch (ConnectException e) {
-				System.out.println(e);
-			} catch (SocketTimeoutException e) {
-				System.out.println(e);
-			} catch (Exception e) {
-				System.out.println(e);
-				log.error("", e);
-			}
+			processMapSource(mapSource);
 		}
+	}
+
+	public static void processMapSource(MapSource mapSource) {
+		try {
+			String name = mapSource.getStoreName();
+			StringBuilder sb = new StringBuilder(40);
+			sb.append(name);
+			while (sb.length() < 40)
+				sb.append('.');
+			if (!testedMapSources.contains(mapSource.getStoreName())) {
+				testedMapSources.add(mapSource.getStoreName());
+				System.out.print(sb.toString() + ": ");
+				testMapSource(mapSource);
+				System.out.println("OK");
+			}
+		} catch (MapSourceTestFailed e) {
+			System.out.println("Failed: " + e.httpResponseCode);
+			if (e.httpResponseCode != 404)
+				log.error("Error: ", e);
+		} catch (ConnectException e) {
+			System.out.println(e);
+		} catch (SocketTimeoutException e) {
+			System.out.println(e);
+		} catch (Exception e) {
+			System.out.println(e);
+			log.error("", e);
+		}
+		if (mapSource instanceof MultiLayerMapSource)
+			processMapSource(((MultiLayerMapSource) mapSource).getBackgroundMapSource());
 	}
 
 	public static boolean testMapSource(Class<? extends MapSource> mapSourceClass) throws Exception {
 		MapSource mapSource = mapSourceClass.newInstance();
-		boolean b = testMapSource(mapSource);
-		if (mapSource instanceof MultiLayerMapSource)
-			b |= testMapSource(((MultiLayerMapSource) mapSource).getBackgroundMapSource());
-		return b;
+		return testMapSource(mapSource);
 	}
 
 	public static boolean testMapSource(MapSource mapSource) throws Exception {
 		Class<? extends MapSource> mc = mapSource.getClass();
-		if (testedMapSources.contains(mapSource.getStoreName()))
-			return false; // map source already tested
-		testedMapSources.add(mapSource.getStoreName());
 		EastNorthCoordinate coordinate = testCoordinates.get(mc);
 		if (coordinate == null)
 			coordinate = C_DEFAULT;

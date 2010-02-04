@@ -53,10 +53,10 @@
  + Each map source has now a background color (usually black) that is used 
     in case of missing tiles
  + Content-type check after download (HTTP header and image data header)
- ~ OpenStreetMap Hiking Relief URL updated
  + New map source: Ovi/Nokia Maps
  + New map source: Bergfex (Austria)
  ! Grid paint juddering on high zoom levels fixed
+ ~ OpenStreetMap Hiking updated
  
  1.6.1: (2009-10-30)
  ! Loading and saving of GPX failed

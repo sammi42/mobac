@@ -14,8 +14,9 @@ public class OsmMapSources {
 
 	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
-	public static final String MAP_HIKING_TRAILS = "http://topo.geofabrik.de/trails/";
-	public static final String MAP_HIKING_RELIEF = "http://topo.gvf.ve.it/cont/";
+	public static final String MAP_HIKING_TRAILS = "http://topo.openstreetmap.de/topo/";
+	public static final String MAP_HIKING_BASE = "http://topo.openstreetmap.de/base/";
+	public static final String MAP_HIKING_RELIEF = "http://topo.geofabrik.de/hills/";
 	protected static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
@@ -135,7 +136,7 @@ public class OsmMapSources {
 	public static class OsmHikingMap extends AbstractMapSource {
 
 		public OsmHikingMap() {
-			super("OSM Hiking", 4, 15, "png", TileUpdate.LastModified);
+			super("OSM Hiking", 4, 18, "png", TileUpdate.LastModified);
 		}
 
 		@Override
@@ -152,7 +153,7 @@ public class OsmMapSources {
 	public static class OsmHikingRelief extends AbstractMapSource {
 
 		public OsmHikingRelief() {
-			super("OSM Hiking Relief", 4, 15, "png", TileUpdate.IfNoneMatch);
+			super("OSM Hiking Relief", 4, 18, "png", TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -162,6 +163,22 @@ public class OsmMapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return MAP_HIKING_RELIEF + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+	public static class OsmHikingBase extends AbstractMapSource {
+
+		public OsmHikingBase() {
+			super("OSM Hiking Base", 4, 18, "png", TileUpdate.IfNoneMatch);
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking Base only (Germany only)";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return MAP_HIKING_BASE + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 	}
@@ -178,6 +195,25 @@ public class OsmMapSources {
 		@Override
 		public String getName() {
 			return "OSM Hiking with Relief";
+		}
+
+		public MapSource getBackgroundMapSource() {
+			return background;
+		}
+	}
+
+	public static class OsmHikingMapWithBase extends OsmHikingMap implements MultiLayerMapSource {
+
+		private MapSource background = new OsmHikingBase();
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking with Base";
+		}
+
+		@Override
+		public String getName() {
+			return "OSM Hiking with Base";
 		}
 
 		public MapSource getBackgroundMapSource() {

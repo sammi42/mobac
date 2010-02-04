@@ -23,6 +23,7 @@ import mobac.mapsources.impl.OsmMapSources.CycleMap;
 import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMap;
+import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithBase;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
 import mobac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
@@ -69,16 +70,17 @@ public class MapSourcesManager {
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
 				new GoogleMapsKorea(), new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(),
 				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
-				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(),
-				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
-				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(),
-				new OutdooractiveAustria(), new OutdooractiveSouthTyrol(), new MultimapCom(),
-				new MultimapOSUkCom(), new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(),
-				new DoCeluPL(), new EmapaPl(), new AustrianMap(), new Bergfex(),
-				new FreemapSlovakia(), new FreemapSlovakiaHiking(),
-				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
-				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2(),
-				new EniroComMap(), new EniroComAerial(), new EniroComNautical(), new MapplusCh() };
+				new OsmHikingMapWithBase(), new OsmHikingMapWithRelief(), new OsmPublicTransport(),
+				new OpenPisteMap(), new MicrosoftMaps(), new MicrosoftMapsChina(),
+				new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OviMaps(),
+				new OutdooractiveGermany(), new OutdooractiveAustria(),
+				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
+				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
+				new EmapaPl(), new AustrianMap(), new Bergfex(), new FreemapSlovakia(),
+				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
+				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
+				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(),
+				new EniroComNautical(), new MapplusCh() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

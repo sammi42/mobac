@@ -24,11 +24,15 @@ public class PngFileTileServlet extends HttpServlet {
 
 	private static byte[] fileContent = null;
 
+	private static final String[] IMAGE_NAMES = { "tile.png", "gradient.png", "cross.png" };
+
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		try {
-			InputStream in = PngTileGeneratorServlet.class.getResourceAsStream("tile.png");
+			int imageNum = Integer.getInteger("TestHttpServer.staticImage", 0);
+			InputStream in = PngTileGeneratorServlet.class
+					.getResourceAsStream(IMAGE_NAMES[imageNum]);
 			fileContent = new byte[in.available()];
 			in.read(fileContent);
 			in.close();

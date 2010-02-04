@@ -2,7 +2,11 @@ package mobac.program.model;
 
 import java.awt.Point;
 import java.awt.Polygon;
+import java.io.StringWriter;
 import java.util.Enumeration;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.JobDispatcher.Job;
@@ -14,10 +18,12 @@ import mobac.program.interfaces.MapInterface;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
+@XmlRootElement
 public class MapPolygon extends Map {
 
+	@XmlElement
 	protected Polygon polygon = new Polygon();
 
 	protected MapPolygon() {
@@ -57,7 +63,32 @@ public class MapPolygon extends Map {
 
 	@Override
 	public String getToolTip() {
-		return super.getToolTip() + "\nMap shape: polygonal";
+		MapSpace mapSpace = mapSource.getMapSpace();
+		EastNorthCoordinate tl = new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate.x,
+				minTileCoordinate.y);
+		EastNorthCoordinate br = new EastNorthCoordinate(mapSpace, zoom, maxTileCoordinate.x,
+				maxTileCoordinate.y);
+
+		StringWriter sw = new StringWriter(1024);
+		sw.write("<html>");
+		sw.write("<b>Polygonal Map</b><br>");
+		sw.write("Map source: " + mapSource.getName() + "<br>");
+		sw.write("Zoom level: " + zoom + "<br>");
+		sw.write("Polygon points: " + polygon.npoints + "<br>");
+		sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y
+				+ ")<br>");
+		sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
+				+ ")<br>");
+		sw.write("Map size: " + (maxTileCoordinate.x - minTileCoordinate.x + 1) + "x"
+				+ (maxTileCoordinate.y - minTileCoordinate.y + 1) + " pixel<br>");
+		if (parameters != null) {
+			sw.write("Tile size: " + parameters.getWidth() + "x" + parameters.getHeight() + "<br>");
+			sw.write("Tile format: " + parameters.getFormat() + "<br>");
+		} else
+			sw.write("Tile size: 256x256 (no processing)<br>");
+		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
+		sw.write("</html>");
+		return sw.toString();
 	}
 
 	@Override

@@ -245,7 +245,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		coordinatesPanel = new JCoordinatesPanel();
 		tileImageParametersPanel = new JTileImageParametersPanel();
 		profilesPanel = new JProfilesPanel(jAtlasTree);
-		profilesPanel.getLoadButton().addActionListener(new ProfilesComboListener());
+		profilesPanel.getLoadButton().addActionListener(new LoadProfileListener());
 	}
 
 	private void updateLeftPanel() {
@@ -282,6 +282,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			public void actionPerformed(ActionEvent e) {
 				jAtlasTree.clearAtlas();
+				previewMap.mapLayers.clear();
+				previewMap.repaint();
 				applyAtlasOutputFormat();
 			}
 		});
@@ -537,7 +539,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private class ProfilesComboListener implements ActionListener {
+	private class LoadProfileListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Profile profile = profilesPanel.getSelectedProfile();
 			profilesPanel.getDeleteButton().setEnabled(profile != null);
@@ -545,6 +547,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 				return;
 			
 			jAtlasTree.load(profile);
+			previewMap.mapLayers.clear();
+			previewMap.repaint();
+			atlasOutputFormatCombo.setSelectedItem(jAtlasTree.getAtlas().getOutputFormat());
 		}
 	}
 

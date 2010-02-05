@@ -1,6 +1,7 @@
 package mobac.gui.mapview;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -34,6 +35,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public static final int MAP_CONTROLLER_RECTANGLE_SELECT = 0;
 	public static final int MAP_CONTROLLER_GPX = 1;
+	
+	protected static final Font LOADING_FONT = new Font("Sans Serif", Font.BOLD, 30);
+
 
 	private static Logger log = Logger.getLogger(PreviewMap.class);
 
@@ -68,6 +72,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public PreviewMap() {
 		super(MapSourcesManager.DEFAULT, new PreviewTileCache(), 5);
+		setEnabled(false);
 		new DefaultMapController(this);
 		mapSource = MapSourcesManager.DEFAULT;
 		// tileLoader = new OsmTileLoader(this);
@@ -176,8 +181,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	@Override
 	protected void paintComponent(Graphics graphics) {
-		if (!isEnabled())
+		if (!isEnabled()) {
+			graphics.setFont(LOADING_FONT);
+			graphics.drawString("Please wait - loading map data", 100, 100);
 			return;
+		}
 		Graphics2D g = (Graphics2D) graphics;
 		super.paintComponent(g);
 		Point tlc = getTopLeftCoordinate();

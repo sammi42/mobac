@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeModelEvent;
@@ -815,6 +816,17 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private class WindowDestroyer extends WindowAdapter {
+		
+		
+		@Override
+		public void windowOpened(WindowEvent e) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					previewMap.setEnabled(true);
+				}
+			});
+		}
+
 		public void windowClosing(WindowEvent event) {
 			saveSettings();
 			TileStore.getInstance().closeAll(true);

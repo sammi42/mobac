@@ -264,7 +264,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 				pm.add(cbmi);
 			}
 			if (o instanceof MapInterface) {
-				mi = new JMenuItem("Select map area");
+				mi = new JMenuItem("Select map bounding box");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						MapInterface map = (MapInterface) o;
@@ -274,7 +274,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 					}
 				});
 				pm.add(mi);
-				mi = new JMenuItem("Select map area and zoom to it");
+				mi = new JMenuItem("Zoom to map bounding box");
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						MapInterface map = (MapInterface) o;

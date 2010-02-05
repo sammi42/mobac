@@ -19,31 +19,43 @@ import mobac.program.model.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 
-public class MapAreaHighlightingLayer implements MapLayer, TreeSelectionListener {
+public class MapAreaHighlightingLayer implements MapLayer {
+
+	private final JAtlasTree tree;
+
+	private TreeSelectionListener treeListener;
 
 	private AtlasObject object;
 
 	public static void removeHighlightingLayers() {
-		Iterator<MapLayer> mapLayers = MainGUI.getMainGUI().previewMap.mapLayers.iterator();
+		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+		Iterator<MapLayer> mapLayers = previewMap.mapLayers.iterator();
+		MapLayer ml;
 		while (mapLayers.hasNext()) {
-			if (mapLayers.next() instanceof MapAreaHighlightingLayer)
+			ml = mapLayers.next();
+			if (ml instanceof MapAreaHighlightingLayer) {
 				mapLayers.remove();
+				((MapAreaHighlightingLayer) ml).unregisterTreeListener();
+			}
 		}
 	}
 
 	public MapAreaHighlightingLayer(JAtlasTree tree) {
-		tree.addTreeSelectionListener(this);
+		this.tree = tree;
 		object = (AtlasObject) tree.getSelectionPath().getLastPathComponent();
 		MainGUI.getMainGUI().previewMap.repaint();
-	}
+		treeListener = new TreeSelectionListener() {
 
-	public void valueChanged(TreeSelectionEvent event) {
-		try {
-			object = (AtlasObject) event.getNewLeadSelectionPath().getLastPathComponent();
-		} catch (Exception e) {
-			object = null;
-		}
-		MainGUI.getMainGUI().previewMap.repaint();
+			public void valueChanged(TreeSelectionEvent event) {
+				try {
+					object = (AtlasObject) event.getNewLeadSelectionPath().getLastPathComponent();
+				} catch (Exception e) {
+					object = null;
+				}
+				MainGUI.getMainGUI().previewMap.repaint();
+			}
+		};
+		tree.addTreeSelectionListener(treeListener);
 	}
 
 	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX,
@@ -111,26 +123,20 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeSelectionListener
 		return (zoomDiff > 0) ? pixelCoord >> zoomDiff : pixelCoord << -zoomDiff;
 	}
 
-	@Override
-	public int hashCode() {
-		return object.hashCode();
+	protected void unregisterTreeListener() {
+		if (treeListener == null)
+			return;
+		try {
+			tree.removeTreeSelectionListener(treeListener);
+			treeListener = null;
+		} catch (Exception e) {
+		}
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MapAreaHighlightingLayer other = (MapAreaHighlightingLayer) obj;
-		if (object == null) {
-			if (other.object != null)
-				return false;
-		} else if (!object.equals(other.object))
-			return false;
-		return true;
+	protected void finalize() throws Throwable {
+		unregisterTreeListener();
+		super.finalize();
 	}
 
 }

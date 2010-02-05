@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -20,7 +21,6 @@ import mobac.program.DirectoryManager;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;
 import mobac.utilities.Utilities;
-
 
 /**
  * A profile is a saved atlas. The available profiles ({@link Profile}
@@ -49,14 +49,15 @@ public class Profile implements Comparable<Profile> {
 				if (m.matches()) {
 					String profileName = m.group(1);
 					Profile profile = new Profile(new File(dir, fileName), profileName);
-					deletedProfiles.remove(profile);
-					profiles.add(profile);
+					if (!deletedProfiles.remove(profile))
+						profiles.add(profile);
 				}
 				return false;
 			}
 		});
 		for (Profile p : deletedProfiles)
 			profiles.remove(p);
+		Collections.sort(profiles);
 	}
 
 	public static Vector<Profile> getProfiles() {

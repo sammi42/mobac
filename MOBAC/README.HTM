@@ -234,16 +234,15 @@ atlases using this output format:</p>
 <p>The BigPlanet atlas format uses a SQLite database for storing the
 tiles. For creating SQLite database an additional native library is
 required. The correspondent Java classes are already part of Mobile
-Atlas Creator - only the platform dependant native library of <a
+Atlas Creator - only the platform dependent native library of <a
 	href="http://www.ch-werner.de/javasqlite">JavaSQLite wrapper by
 Christian Werner</a> is missing. For installing the SQLite wrapper copy the
 file <tt>sqlite_jni.dll</tt> (Windows) respectively <tt>sqlite_jni.so</tt>
 (Linux/Unix) into the program directory of Mobile Atlas Creator (where
 the Mobile_Atlas_Creator.jar is located).</p>
-<p>For 32 bit Windows systems there are pre-compiled binary
-available: <a
-	href="http://www.ch-werner.de/javasqlite/javasqlite-20090430-win32.zip">
-SQLite binaries for Win32</a>. Other operating systems have to compile the
+<p>For Windows and Linux (32bit and 64bit) there are <a
+	href="https://sourceforge.net/projects/trekbuddyatlasc/files/SQLite%20library">pre-compiled
+binaries available</a> Other operating systems systems have to compile the
 wrapper using the <a
 	href="http://www.ch-werner.de/javasqlite/javasqlite-20090430.tar.gz">sources</a>:
 </p>
@@ -253,7 +252,7 @@ tar xzvf javasqlite-20090430.tar.gz
 cd javasqlite-20090430/
 ./configure
 make
-su -c "make install"
+cp .lib/lib* /[MOBAC installation path]
 </pre>
 <!-- *************************************************************************** -->
 <h3><a name="Ozi">Creating and using atlases with OziExplorer /
@@ -451,8 +450,8 @@ and width of a map</a> and <a
 
 <h2><a name="AdvancedUsers">Details for advanced users</a></h2>
 <h3>Moving the tile store path</h3>
-<p>Usually the tile store path where Mobile Atlas Creator saves
-all downloaded images in is automatically determined.<br>
+<p>Usually the tile store path where Mobile Atlas Creator saves all
+downloaded images in is automatically determined.<br>
 In case you want to select a different directory perform the following
 steps:</p>
 <ol>

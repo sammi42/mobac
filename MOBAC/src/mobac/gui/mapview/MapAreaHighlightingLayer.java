@@ -3,7 +3,13 @@ package mobac.gui.mapview;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.Iterator;
 
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+
+import mobac.gui.MainGUI;
+import mobac.gui.atlastree.JAtlasTree;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;
 import mobac.program.interfaces.LayerInterface;
@@ -13,16 +19,37 @@ import mobac.program.model.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 
-public class MultiMapSelectionLayer implements MapLayer {
+public class MapAreaHighlightingLayer implements MapLayer, TreeSelectionListener {
 
 	private AtlasObject object;
 
-	public MultiMapSelectionLayer(AtlasObject object) {
-		this.object = object;
+	public static void removeHighlightingLayers() {
+		Iterator<MapLayer> mapLayers = MainGUI.getMainGUI().previewMap.mapLayers.iterator();
+		while (mapLayers.hasNext()) {
+			if (mapLayers.next() instanceof MapAreaHighlightingLayer)
+				mapLayers.remove();
+		}
+	}
+
+	public MapAreaHighlightingLayer(JAtlasTree tree) {
+		tree.addTreeSelectionListener(this);
+		object = (AtlasObject) tree.getSelectionPath().getLastPathComponent();
+		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	public void valueChanged(TreeSelectionEvent event) {
+		try {
+			object = (AtlasObject) event.getNewLeadSelectionPath().getLastPathComponent();
+		} catch (Exception e) {
+			object = null;
+		}
+		MainGUI.getMainGUI().previewMap.repaint();
 	}
 
 	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX,
 			int maxY) {
+		if (object == null)
+			return;
 		if (object instanceof AtlasInterface) {
 			for (LayerInterface layer : (AtlasInterface) object) {
 				for (MapInterface map : layer) {
@@ -97,7 +124,7 @@ public class MultiMapSelectionLayer implements MapLayer {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MultiMapSelectionLayer other = (MultiMapSelectionLayer) obj;
+		MapAreaHighlightingLayer other = (MapAreaHighlightingLayer) obj;
 		if (object == null) {
 			if (other.object != null)
 				return false;

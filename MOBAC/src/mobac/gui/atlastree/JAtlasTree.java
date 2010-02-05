@@ -24,7 +24,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import mobac.gui.MainGUI;
-import mobac.gui.mapview.MultiMapSelectionLayer;
+import mobac.gui.mapview.MapAreaHighlightingLayer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;
@@ -43,7 +43,6 @@ import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.jdbc.SQLiteLoader;
 
 import org.apache.log4j.Logger;
-
 
 public class JAtlasTree extends JTree implements Autoscroll {
 
@@ -82,6 +81,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	protected KeyStroke deleteNodeKS;
 
 	protected DragDropController ddc;
+
+	protected boolean displaySelectedMapArea = false;
 
 	public JAtlasTree(PreviewMap mapView) {
 		super(new AtlasTreeModel());
@@ -157,7 +158,6 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		Atlas newAtlas = Atlas.newInstance();
 		newAtlas.setName(MainGUI.getMainGUI().getUserText());
 		treeModel.setAtlas(newAtlas);
-		mapView.mapLayers.clear();
 		mapView.repaint();
 	}
 
@@ -191,7 +191,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	}
 
 	public boolean load(Profile profile) {
-		log.debug("Loading profile "+profile);
+		log.debug("Loading profile " + profile);
 		try {
 			treeModel.load(profile);
 			if (treeModel.getAtlas() instanceof Atlas) {
@@ -245,19 +245,19 @@ public class JAtlasTree extends JTree implements Autoscroll {
 				pm.add(mi);
 			}
 			if (o instanceof AtlasObject) {
-				final JCheckBoxMenuItem cbmi = new JCheckBoxMenuItem("Display map areas");
-				final MultiMapSelectionLayer msl = new MultiMapSelectionLayer((AtlasObject) o);
-				final boolean mapAreaVisible = mapView.mapLayers.contains(msl); 
-				cbmi.setSelected(mapAreaVisible);
+				final JCheckBoxMenuItem cbmi = new JCheckBoxMenuItem("Display selected areas");
+				final MapAreaHighlightingLayer msl = new MapAreaHighlightingLayer(this);
+				cbmi.setSelected(displaySelectedMapArea);
 				cbmi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (mapAreaVisible) {
-							mapView.mapLayers.clear();
+						if (displaySelectedMapArea) {
+							MapAreaHighlightingLayer.removeHighlightingLayers();
 						} else {
 							mapView.setSelectionByTileCoordinate(null, null, false);
-							mapView.mapLayers.clear();
+							MapAreaHighlightingLayer.removeHighlightingLayers();
 							mapView.mapLayers.add(msl);
 						}
+						displaySelectedMapArea = !displaySelectedMapArea;
 						mapView.repaint();
 					}
 				});

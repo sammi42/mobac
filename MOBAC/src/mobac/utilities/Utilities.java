@@ -468,11 +468,11 @@ public class Utilities {
 	public static File getClassLocation(Class<?> mainClass) {
 		ProtectionDomain pDomain = mainClass.getProtectionDomain();
 		CodeSource cSource = pDomain.getCodeSource();
-		URL loc = cSource.getLocation(); // file:/c:/almanac14/examples/
 		File f;
 		try {
+			URL loc = cSource.getLocation(); // file:/c:/almanac14/examples/
 			f = new File(loc.toURI());
-		} catch (URISyntaxException e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Unable to determine program directory: ", e);
 		}
 		if (f.isDirectory()) {

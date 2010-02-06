@@ -6,7 +6,6 @@ import mobac.utilities.OSUtilities;
 import mobac.utilities.Utilities;
 import mobac.utilities.OSUtilities.OperatingSystem;
 
-
 /**
  * Provides the five common directories used within Mobile Atlas Creator:
  * <ul>
@@ -46,7 +45,13 @@ public class DirectoryManager {
 	 * @return
 	 */
 	private static File getProgramDir() {
-		File f = Utilities.getClassLocation(DirectoryManager.class);
+		File f =null;
+		try {
+			f = Utilities.getClassLocation(DirectoryManager.class);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return currentDir;
+		}
 		if ("bin".equals(f.getName())) // remove the bin dir -> this usually
 			// happens only in a development environment
 			return f.getParentFile();

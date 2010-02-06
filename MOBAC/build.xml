@@ -100,6 +100,7 @@
 			-keep class org.apache.log4j.FileAppender { public *; }
 			-keep class mobac.program.model.package-info
 			-keep class mobac.program.model.* { public *; }
+			-keep class mobac.program.jaxb.* { public *; }
 			-keep class mobac.program.interfaces.* { public *; }
 			-keep class mobac.utilities.tar.TarIndex { public *; }
 			-keep class mobac.utilities.tar.TarIndexedArchive { public *; }

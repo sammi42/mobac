@@ -29,6 +29,9 @@ import mobac.utilities.tar.TarIndex;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+/**
+ * Decompiled version
+ */
 public class OruxMaps extends AtlasCreator {
 	protected static final Color BG_COLOR = new Color(203, 211, 243);
 	

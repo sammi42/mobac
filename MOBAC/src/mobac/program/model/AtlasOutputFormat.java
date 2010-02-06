@@ -14,11 +14,9 @@ import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
 import mobac.program.atlascreators.MobileTrailExplorerCache;
 import mobac.program.atlascreators.OSMTracker;
-import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.Ozi;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TrekBuddyCustom;
-
 
 @XmlRootElement
 public enum AtlasOutputFormat {
@@ -37,8 +35,10 @@ public enum AtlasOutputFormat {
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
-	CacheBox("CacheBox (PACK)", CacheBox.class),
-	OruxMaps("Android OruxMaps", OruxMaps.class);
+	CacheBox("CacheBox (PACK)", CacheBox.class) //
+	// OruxMaps("Android OruxMaps", OruxMaps.class), //
+	// Imp("CompeGPS IMP", CompeGPSImp.class) //
+	;
 
 	private final String displayName;
 	private Class<? extends AtlasCreator> atlasCreatorClass;

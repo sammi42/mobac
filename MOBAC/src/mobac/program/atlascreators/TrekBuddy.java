@@ -28,7 +28,6 @@ import mobac.utilities.tar.TarTmiArchive;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 public abstract class TrekBuddy extends AtlasCreator {
 
 	public static final String FILENAME_PATTERN = "t_%d_%d.%s";
@@ -275,6 +274,12 @@ public abstract class TrekBuddy extends AtlasCreator {
 		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 2, longitudeMax, latitudeMax));
 		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 3, longitudeMax, latitudeMin));
 		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 4, longitudeMin, latitudeMin));
+
+		sbMap.append("MOP,Map Open Position,0,0\r\n");
+		double mm2b = ((longitudeMax - longitudeMin) * 111319 * Math
+				.cos((latitudeMax - latitudeMin) / 2 + latitudeMin))
+				/ width;
+		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f", mm2b));
 
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");
 

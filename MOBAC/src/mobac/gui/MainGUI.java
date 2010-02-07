@@ -52,6 +52,7 @@ import mobac.gui.panels.JCoordinatesPanel;
 import mobac.gui.panels.JGpxPanel;
 import mobac.gui.panels.JProfilesPanel;
 import mobac.gui.panels.JTileImageParametersPanel;
+import mobac.gui.panels.JTileStoreCoveragePanel;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.AtlasThread;
@@ -106,6 +107,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JCoordinatesPanel coordinatesPanel;
 	private JProfilesPanel profilesPanel;
 	private JTileImageParametersPanel tileImageParametersPanel;
+	private JTileStoreCoveragePanel tileStoreCoveragePanel;
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -247,6 +249,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		tileImageParametersPanel = new JTileImageParametersPanel();
 		profilesPanel = new JProfilesPanel(jAtlasTree);
 		profilesPanel.getLoadButton().addActionListener(new LoadProfileListener());
+		tileStoreCoveragePanel = new JTileStoreCoveragePanel(previewMap);
 	}
 
 	private void updateLeftPanel() {
@@ -318,6 +321,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		leftPanelContent.add(profilesPanel, gbc_eol);
 		leftPanelContent.add(createAtlasButton, gbc_eol);
 		leftPanelContent.add(settingsButton, gbc_eol);
+		leftPanelContent.add(tileStoreCoveragePanel, gbc_eol);
 		leftPanelContent.add(gpxPanel, gbc_eol);
 		leftPanelContent.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 

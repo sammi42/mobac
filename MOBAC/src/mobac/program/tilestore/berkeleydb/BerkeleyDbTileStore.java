@@ -1,5 +1,10 @@
 package mobac.program.tilestore.berkeleydb;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -28,6 +33,7 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.EnvironmentLockedException;
+import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
@@ -78,8 +84,8 @@ public class BerkeleyDbTileStore extends TileStore {
 		mutations.addRenamer(new Renamer(oldPackage2 + entry, 2, TileDbEntry.class.getName()));
 		mutations.addRenamer(new Renamer(oldPackage2 + key, 2, TileDbKey.class.getName()));
 
-//		for (Renamer r : mutations.getRenamers())
-//			log.debug(r.toString());
+		// for (Renamer r : mutations.getRenamers())
+		// log.debug(r.toString());
 	}
 
 	protected void acquireTileStoreLock() throws TileStoreException {
@@ -296,6 +302,18 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
+	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin,
+			Point tileNumMax) {
+		TileDatabase db;
+		try {
+			db = getTileDatabase(mapSource);
+			return db.getCacheCoverage(zoom, tileNumMin, tileNumMax);
+		} catch (DatabaseException e) {
+			log.error("", e);
+			return null;
+		}
+	}
+
 	protected void cleanupDatabases() {
 		if (tileDbMap.size() < MAX_CONCURRENT_ENVIRONMENTS)
 			return;
@@ -432,6 +450,48 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		public TileDbEntry get(TileDbKey key) throws DatabaseException {
 			return tileIndex.get(key);
+		}
+
+		public BufferedImage getCacheCoverage(int zoom, Point tileNumMin, Point tileNumMax)
+				throws DatabaseException {
+			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
+			int width = tileNumMax.x - tileNumMin.x + 1;
+			int height = tileNumMax.y - tileNumMin.y + 1;
+			byte ff = (byte) 0xFF;
+			byte[] colors = new byte[] { 120, 120, 120, 120, // alpha-gray
+					10, ff, 0, 120 // alpha-green
+			};
+			IndexColorModel colorModel = new IndexColorModel(2, 2, colors, 0, true);
+			BufferedImage image = null;
+			try {
+				image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED,
+						colorModel);
+			} catch (Throwable e) {
+				log.error("Failed to create coverage image: " + e.toString());
+				image = null;
+				System.gc();
+				return null;
+			}
+			WritableRaster raster = image.getRaster();
+
+			TileDbKey fromKey = new TileDbKey(tileNumMin.x, tileNumMin.y, zoom);
+			TileDbKey toKey = new TileDbKey(tileNumMax.x, tileNumMax.y, zoom);
+			EntityCursor<TileDbKey> cursor = tileIndex.keys(fromKey, true, toKey, true);
+			try {
+				Rectangle r = new Rectangle(tileNumMin.x, tileNumMin.y, width, height);
+				TileDbKey key = cursor.next();
+				while (key != null) {
+					if (r.contains(key.x, key.y)) {
+						raster.setSample(key.x - tileNumMin.x, key.y - tileNumMin.y, 0, 1);
+					}
+					key = cursor.next();
+					if (t.interruptedWhilePaused())
+						return null;
+				}
+			} finally {
+				cursor.close();
+			}
+			return image;
 		}
 
 		protected void purge() {

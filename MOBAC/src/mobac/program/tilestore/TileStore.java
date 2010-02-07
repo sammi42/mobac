@@ -1,5 +1,7 @@
 package mobac.program.tilestore;
 
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,7 +14,6 @@ import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 public abstract class TileStore {
 
@@ -88,6 +89,9 @@ public abstract class TileStore {
 	 * @throws InterruptedException
 	 */
 	public abstract TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException;
+
+	public abstract BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin,
+			Point tileNumMax);
 
 	/**
 	 * 

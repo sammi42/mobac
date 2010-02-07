@@ -111,6 +111,11 @@ public class TileDbEntry implements TileStoreEntry {
 			this.zoom = zoom;
 		}
 
+		@Override
+		public String toString() {
+			return "TileDbKey [x=" + x + ", y=" + y + ", zoom=" + zoom + "]";
+		}
+		
 	}
 
 }

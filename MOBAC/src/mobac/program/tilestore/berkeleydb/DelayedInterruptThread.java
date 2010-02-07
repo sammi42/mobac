@@ -17,6 +17,10 @@ public class DelayedInterruptThread extends Thread {
 		super(name);
 	}
 
+	public DelayedInterruptThread(Runnable target) {
+		super(target);
+	}
+
 	@Override
 	public void interrupt() {
 		if (interruptPaused)

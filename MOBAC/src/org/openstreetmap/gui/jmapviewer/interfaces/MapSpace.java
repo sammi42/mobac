@@ -1,13 +1,15 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
+import java.awt.Point;
+
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 
 /**
  * Preparation for supporting map resolutions other than those uses by
  * Google/OpenstreetMap.
  * 
- * {@link MercatorPower2MapSpace} is the only implementation that is currently supported
- * by Mobile Atlas Creator.
+ * {@link MercatorPower2MapSpace} is the only implementation that is currently
+ * supported by Mobile Atlas Creator.
  * <p>
  * DO NOT TRY TO IMPLEMENT YOUR OWN. IT WILL NOT WORK!
  * </p>
@@ -15,7 +17,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 public interface MapSpace {
 
 	public int getMaxPixels(int zoom);
-	
+
 	/**
 	 * @return size (height and width) of each tile in pixel
 	 */
@@ -88,5 +90,11 @@ public interface MapSpace {
 	 *         6367.5km or 3956.6miles)
 	 */
 	public double horizontalDistance(int zoom, int y, int xDist);
+
+	public Point changeZoom(Point pixelCoordinate, int oldZoom, int newZoom);
+
+	public int xChangeZoom(int x, int oldZoom, int newZoom);
+
+	public int yChangeZoom(int y, int oldZoom, int newZoom);
 
 }

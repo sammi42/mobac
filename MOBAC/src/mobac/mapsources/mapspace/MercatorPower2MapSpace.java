@@ -1,9 +1,10 @@
 package mobac.mapsources.mapspace;
 
+import java.awt.Point;
+
 import mobac.gui.mapview.PreviewMap;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 
 /**
  * Mercator projection with a world width and height of 256 * 2<sup>zoom</sup>
@@ -14,8 +15,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
  * origin (0,0) has latitude ~85 and longitude -180
  * 
  * <p>
- * This is the only implementation that is currently supported by Mobile
- * Atlas Creator.
+ * This is the only implementation that is currently supported by Mobile Atlas
+ * Creator.
  * </p>
  * <p>
  * DO NOT TRY TO IMPLEMENT YOUR OWN. IT WILL NOT WORK!
@@ -163,6 +164,22 @@ public class MercatorPower2MapSpace implements MapSpace {
 
 		double a = cos_lat * cos_lat * sin_dLon_2 * sin_dLon_2;
 		return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	}
+
+	public int xChangeZoom(int x, int oldZoom, int newZoom) {
+		int zoomDiff = oldZoom - newZoom;
+		return (zoomDiff > 0) ? x >> zoomDiff : x << -zoomDiff;
+	}
+
+	public int yChangeZoom(int y, int oldZoom, int newZoom) {
+		int zoomDiff = oldZoom - newZoom;
+		return (zoomDiff > 0) ? y >> zoomDiff : y << -zoomDiff;
+	}
+
+	public Point changeZoom(Point pixelCoordinate, int oldZoom, int newZoom) {
+		int x = xChangeZoom(pixelCoordinate.x, oldZoom, newZoom);
+		int y = yChangeZoom(pixelCoordinate.y, oldZoom, newZoom);
+		return new Point(x, y);
 	}
 
 }

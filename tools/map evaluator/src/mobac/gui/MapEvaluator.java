@@ -251,6 +251,7 @@ public class MapEvaluator extends JFrame {
 		@Override
 		public void windowOpened(WindowEvent e) {
 			splitPane.setDividerLocation(0.8);
+			previewMap.setEnabled(true);
 		}
 
 		public void windowClosing(WindowEvent event) {

@@ -130,6 +130,9 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
 		TileDatabase db;
+		if (tileDbMap == null)
+			// Tile store has been losed already
+			return null;
 		synchronized (tileDbMap) {
 			db = tileDbMap.get(mapSource.getStoreName());
 		}
@@ -177,7 +180,8 @@ public class BerkeleyDbTileStore extends TileStore {
 			if (log.isTraceEnabled())
 				log.trace("Saved " + mapSource.getStoreName() + " " + tile);
 			db = getTileDatabase(mapSource);
-			db.put(tile);
+			if (db != null)
+				db.put(tile);
 		} catch (Exception e) {
 			if (db != null)
 				db.close();

@@ -1,2 +1,5 @@
 Toolbar Icons by Ruby Software
 http://www.iconarchive.com/category/application/toolbar-icons-by-ruby-software.html
+
+help-icon:
+http://commons.wikimedia.org/wiki/File:Torchlight_help_icon.svg

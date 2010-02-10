@@ -34,6 +34,7 @@ public class BeanShellMapSource implements MapSource {
 		name = "TestMapSource" + NUM++;
 		i = new Interpreter();
 		i.eval("import java.net.HttpURLConnection;");
+		i.eval("import mobac.program.beanshell.*;");
 		i.eval(code);
 		Object o = i.get("tileSize");
 		if (o != null) {

@@ -7,7 +7,7 @@
 	<property file="src/mobac/mobac.properties" />
 	<property name="jar.name" value="Map Evaluator ${mobac.version}.jar" />
 	<property name="zip.name" value="Map Evaluator ${mobac.version}.zip" />
-	<property name="main.class" value="mobac.gui.MapEvaluator" />
+	<property name="main.class" value="mobac.StartMapEvaluator" />
 
 	<target name="all" depends="clean_build,build,create_jar,shrink,create_release" />
 
@@ -27,6 +27,7 @@
 		<path id="maincp">
 			<fileset dir="lib" includes="log*.jar" />
 			<fileset dir="lib" includes="bsh*.jar" />
+			<fileset dir="lib" includes="commons-codec*.jar" />
 			<fileset dir="${MOBAC.dir}/lib" includes="*.jar" />
 		</path>
 		<javac srcdir="src:${MOBAC.dir}/src" destdir="build" target="1.6" debug="true">
@@ -62,6 +63,7 @@
 				<exclude name="org/apache/log4j/or/jms/**" />
 				<exclude name="org/apache/log4j/jmx/**" />
 			</zipfileset>
+			<zipfileset src="lib/commons-codec-1.4.jar" />
 			<zipfileset src="${MOBAC.dir}/lib/je-3.3.93.jar">
 				<exclude name="com/sleepycat/persist/model/ClassEnhancerTask.*" />
 			</zipfileset>
@@ -80,6 +82,7 @@
 			<libraryjar file="${java.home}/lib/rt.jar" />
 			<outjar file="build/${jar.name}" />
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
+			-keep class mobac.program.beanshell.* { public *; }
 			-keepclassmembers enum * {
 			    public static **[] values();
 			    public static ** valueOf(java.lang.String);

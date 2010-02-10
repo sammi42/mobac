@@ -24,21 +24,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
-import mobac.StartMOBAC;
+import mobac.gui.actions.HelpAction;
 import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
 import mobac.mapsources.BeanShellMapSource;
 import mobac.mapsources.impl.Google;
 import mobac.mapsources.impl.OsmMapSources;
-import mobac.program.DirectoryManager;
-import mobac.program.Logging;
 import mobac.program.ProgramInfo;
-import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import bsh.EvalError;
@@ -214,6 +210,10 @@ public class MapEvaluator extends JFrame {
 			}
 		});
 		toolBar.add(button);
+		button = new JButton("Help", Utilities.loadResourceImageIcon("help-icon.png"));
+		button.setToolTipText("Show help dialog");
+		button.addActionListener(new HelpAction());
+		toolBar.add(button);
 	}
 
 	private void executeCode() {
@@ -259,20 +259,4 @@ public class MapEvaluator extends JFrame {
 		}
 	}
 
-	public static void main(String[] args) {
-		StartMOBAC.setLookAndFeel();
-		ProgramInfo.PROG_NAME = "TAC Map Evaluator";
-		GUIExceptionHandler.registerForCurrentThread();
-		GUIExceptionHandler.installToolkitEventQueueProxy();
-		ProgramInfo.initialize();
-		Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
-		DirectoryManager.initialize();
-		try {
-			Settings.load();
-		} catch (Exception e) {
-			// Load settings.xml only if it exists
-		}
-		TileStore.initialize();
-		new MapEvaluator().setVisible(true);
-	}
 }

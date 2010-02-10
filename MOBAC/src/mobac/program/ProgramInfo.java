@@ -6,7 +6,6 @@ import java.util.Properties;
 import mobac.Main;
 import mobac.utilities.Utilities;
 
-
 public class ProgramInfo {
 
 	public static String PROG_NAME = "Mobile Atlas Creator";
@@ -24,8 +23,8 @@ public class ProgramInfo {
 			Properties props = new Properties();
 			props.load(propIn);
 			version = props.getProperty("mobac.version");
-			titleHideRevision = Boolean.parseBoolean(props
-					.getProperty("mobac.revision.hide", "false"));
+			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide",
+					"false"));
 			System.getProperties().putAll(props);
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac.properties", e);
@@ -37,7 +36,13 @@ public class ProgramInfo {
 			Properties props = new Properties();
 			props.load(propIn);
 			String rev = props.getProperty("mobac.revision");
-			revision = "(" + rev + ")";
+			revision = rev;
+			if (revision.endsWith("M"))
+				revision = revision.substring(0, revision.length() - 1);
+			int index = revision.indexOf(':');
+			if (index > 0)
+				revision = revision.substring(index + 1, revision.length());
+			revision = "(" + revision + ")";
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac-rev.properties", e);
 		} finally {

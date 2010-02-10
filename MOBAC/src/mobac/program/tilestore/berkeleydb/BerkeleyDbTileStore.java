@@ -131,7 +131,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
 		TileDatabase db;
 		if (tileDbMap == null)
-			// Tile store has been losed already
+			// Tile store has been closed already
 			return null;
 		synchronized (tileDbMap) {
 			db = tileDbMap.get(mapSource.getStoreName());

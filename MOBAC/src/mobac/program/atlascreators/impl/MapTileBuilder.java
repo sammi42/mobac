@@ -130,8 +130,7 @@ public class MapTileBuilder {
 					buf.reset();
 					try {
 						Graphics2D graphics = tileImage.createGraphics();
-						graphics.setColor(mapSource.getBackgroundColor());
-						graphics.fillRect(0, 0, realWidth, realHeight);
+						prepareTile(graphics);
 						paintCustomTile(graphics, xAbsPos, yAbsPos);
 						graphics.dispose();
 						tileImageDataWriter.processImage(tileImage, buf);
@@ -150,6 +149,11 @@ public class MapTileBuilder {
 		} finally {
 			tileImageDataWriter.dispose();
 		}
+	}
+
+	protected void prepareTile(Graphics2D graphics) {
+		graphics.setColor(mapSource.getBackgroundColor());
+		graphics.fillRect(0, 0, realWidth, realHeight);
 	}
 
 	/**

@@ -49,12 +49,34 @@ public class MapTileBuilder {
 
 	protected final MapTileWriter mapTileWriter;
 
+	/**
+	 * @param atlasCreator
+	 * @param mapTileWriter
+	 * @param useRealTileSize
+	 *            affects the tile size at the left and bottom border of the
+	 *            map. If <code>true</code> those tile will have the size of the
+	 *            remaining image data available size (they can be smaller than
+	 *            the size specified). If <code>false</code> the tile size will
+	 *            be as specified by the map's {@link TileImageParameters}.
+	 */
 	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter,
 			boolean useRealTileSize) {
 		this(atlasCreator, atlasCreator.getParameters().getFormat().getDataWriter(), mapTileWriter,
 				useRealTileSize);
 	}
 
+	/**
+	 * 
+	 * @param atlasCreator
+	 * @param tileImageDataWriter
+	 * @param mapTileWriter
+	 * @param useRealTileSize
+	 *            affects the tile size at the left and bottom border of the
+	 *            map. If <code>true</code> those tile will have the size of the
+	 *            remaining image data available size (they can be smaller than
+	 *            the size specified). If <code>false</code> the tile size will
+	 *            be as specified by the map's {@link TileImageParameters}.
+	 */
 	public MapTileBuilder(AtlasCreator atlasCreator, TileImageDataWriter tileImageDataWriter,
 			MapTileWriter mapTileWriter, boolean useRealTileSize) {
 		this.atlasCreator = atlasCreator;
@@ -83,14 +105,16 @@ public class MapTileBuilder {
 		mergedWidth = xEnd - xStart + 1;
 		mergedHeight = yEnd - yStart + 1;
 
-		// Reduce tile size of overall map height/width is smaller that one tile
 		realWidth = parameters.getWidth();
 		realHeight = parameters.getHeight();
-		if (realWidth > mergedWidth)
-			realWidth = mergedWidth;
-		if (realHeight > mergedHeight)
-			realHeight = mergedHeight;
-
+		if (useRealTileSize) {
+			// Reduce tile size of overall map height/width
+			// if it is smaller than one tile
+			if (realWidth > mergedWidth)
+				realWidth = mergedWidth;
+			if (realHeight > mergedHeight)
+				realHeight = mergedHeight;
+		}
 		customTileCount = MyMath.divCeil(mergedWidth, realWidth)
 				* MyMath.divCeil(mergedHeight, realHeight);
 	}

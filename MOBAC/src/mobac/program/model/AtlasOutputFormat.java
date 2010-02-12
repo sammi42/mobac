@@ -37,7 +37,7 @@ public enum AtlasOutputFormat {
 	Ttqv("Touratech QV", TTQV.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
-	OruxMaps("Android OruxMaps", OruxMaps.class) //
+	OruxMaps("OruxMaps", OruxMaps.class) //
 	// Imp("CompeGPS IMP", CompeGPSImp.class) //
 	;
 

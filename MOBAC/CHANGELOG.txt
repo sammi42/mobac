@@ -9,7 +9,8 @@
  ~ = Changes   since previous version
 
  1.8: (2010-03-??)
- ! Fixed PNG 256 color output  
+ ! Fixed PNG 256 color output
+ + New atlas format: OruxMaps (Android)  
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

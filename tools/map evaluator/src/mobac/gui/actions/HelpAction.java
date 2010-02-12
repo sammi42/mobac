@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 
 import javax.swing.JOptionPane;
 
+import org.apache.axis2.description.java2wsdl.bytecode.ParamNameExtractor;
+
 import mobac.program.beanshell.Tools;
 
 public class HelpAction implements ActionListener {
@@ -16,27 +18,28 @@ public class HelpAction implements ActionListener {
 		StringWriter sw = new StringWriter();
 		sw.append("<html>");
 		sw.append("<h2>Available tools function:</h2>");
-		sw.append("<ul>");
 
 		Method[] methods = Tools.class.getMethods();
 
 		for (Method m : methods) {
 			if (!Tools.class.equals(m.getDeclaringClass()))
 				continue;
-			sw.append("<li>");
-
+			sw.append("<pre>");
 			sw.append(getClassName(m.getReturnType()) + " Tools." + m.getName() + "(");
 			Class<?>[] params = m.getParameterTypes();
+			String[] names = ParamNameExtractor.getParameterNamesFromDebugInfo(m);
 			int last = params.length - 1;
 			for (int i = 0; i < params.length; i++) {
 				sw.append(getClassName(params[i]));
+				if (names != null)
+					sw.append(" " + names[i]);
 				if (i != last)
 					sw.append(", ");
 			}
-			sw.append(")</li>");
+			sw.append(")</pre>");
 		}
 
-		sw.append("</ul></html>");
+		sw.append("</html>");
 		JOptionPane.showMessageDialog(null, sw.toString(), "Help", JOptionPane.PLAIN_MESSAGE);
 	}
 

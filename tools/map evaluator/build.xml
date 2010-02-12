@@ -82,7 +82,7 @@
 			<libraryjar file="${java.home}/lib/rt.jar" />
 			<outjar file="build/${jar.name}" />
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
-			-keep class mobac.program.beanshell.* { public *; }
+			-keep class mobac.program.beanshell.* { *; }
 			-keepclassmembers enum * {
 			    public static **[] values();
 			    public static ** valueOf(java.lang.String);
@@ -97,8 +97,6 @@
 			-keepclassmembers class * implements com.sleepycat.persist.evolve.Conversion {
 				boolean equals(java.lang.Object);
 			}
-			
-			
 		</proguard>
 		<move file="build/${jar.name}" tofile="${jar.name}" overwrite="true" />
 	</target>

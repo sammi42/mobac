@@ -23,7 +23,7 @@ public class Tools {
 	}
 
 	public static String encodeBase64(byte[] binaryData) {
-		return Base64.encodeBase64String(binaryData);
+		return new String(Base64.encodeBase64(binaryData));
 	}
 
 	public static byte[] decodeBase64(String base64String) {

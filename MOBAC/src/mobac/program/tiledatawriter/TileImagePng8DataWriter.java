@@ -14,7 +14,6 @@ public class TileImagePng8DataWriter extends TileImagePngDataWriter {
 	@Override
 	public void processImage(BufferedImage image, OutputStream out) throws IOException {
 		BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 256);
-		System.out.println(image2.getColorModel());
 		super.processImage(image2, out);
 	}
 

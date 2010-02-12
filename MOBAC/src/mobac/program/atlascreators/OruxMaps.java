@@ -16,6 +16,8 @@ import mobac.exceptions.MapCreationException;
 import mobac.gui.AtlasProgress;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.AtlasThread;
+import mobac.program.atlascreators.impl.MapTileBuilder;
+import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.TileImageDataWriter;
@@ -140,6 +142,9 @@ public class OruxMaps extends AtlasCreator {
 	 */
 
 	protected void createTiles() throws InterruptedException {
+
+		// OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this,...);
+
 		// log.debug("Starting map creation using custom parameters: " + param);
 		Thread t = Thread.currentThread();
 
@@ -360,6 +365,39 @@ public class OruxMaps extends AtlasCreator {
 		sbMap.append("</MapCalibration>\n");
 		sbMap.append("</OruxTracker>\n");
 		return sbMap.toString();
+
+	}
+
+	private class OruxMapTileBuilder extends MapTileBuilder {
+
+		public OruxMapTileBuilder(AtlasCreator atlasCreator, TileImageDataWriter tileImageDataWriter) {
+			super(atlasCreator, tileImageDataWriter, new OruxMapTileWriter(), false);
+		}
+
+		@Override
+		protected void prepareTile(Graphics2D graphics) {
+			graphics.setColor(BG_COLOR);
+			graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+		}
+
+	}
+
+	private class OruxMapTileWriter implements MapTileWriter {
+
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
+				throws IOException {
+			String tileFileName = String.format("%s_%d_%d.omc2", map.getName(), tilex, tiley);
+			FileOutputStream out = new FileOutputStream(new File(setFolder, tileFileName));
+			try {
+				out.write(tileData);
+			} finally {
+				Utilities.closeStream(out);
+			}
+		}
+
+		public void finalizeMap() {
+			// Nothing to do
+		}
 
 	}
 }

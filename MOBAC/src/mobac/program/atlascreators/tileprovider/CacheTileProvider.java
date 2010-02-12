@@ -8,6 +8,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
+/**
+ * A tile cache with speculative loading on a separate thread. Usually this
+ * decreases map generation time on multi-core systems. 
+ */
 public class CacheTileProvider extends FilterTileProvider {
 
 	private Logger log = Logger.getLogger(CacheTileProvider.class);

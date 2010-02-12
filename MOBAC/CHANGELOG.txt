@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 1.8: (2010-03-??)
+ ! Fixed PNG 256 color output  
+
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that
     besides TrekBuddy a large number of atlas and map formats are supported

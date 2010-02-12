@@ -279,7 +279,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 		double mm2b = ((longitudeMax - longitudeMin) * 111319 * Math
 				.cos((latitudeMax - latitudeMin) / 2 + latitudeMin))
 				/ width;
-		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f", mm2b));
+		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f\r\n", mm2b));
 
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");
 

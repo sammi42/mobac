@@ -24,12 +24,14 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
- * Creates maps using the OruxMaps (Android) atlas format. Most of the code is
- * taken from TrekBuddy.java and TrekBuddyCustom.java
+ * Creates maps using the OruxMaps (Android) atlas format.
  * 
  * @author orux
  */
 public class OruxMaps extends AtlasCreator {
+
+	// Calibration file extension
+	protected static final String ORUXMAPS_EXT = ".otrk2.xml";
 
 	// OruxMaps tile size
 	protected static final int TILE_SIZE = 512;
@@ -37,31 +39,48 @@ public class OruxMaps extends AtlasCreator {
 	// OruxMaps background color
 	protected static final Color BG_COLOR = new Color(0xcb, 0xd3, 0xf3);
 
-	protected File layerFolder;
-	protected File mapFolder;
-	protected File setFolder;
+	// Each layer is a Main map for OruxMaps
+	protected File oruxMapsMainDir;
+
+	// Each map is a Layer map for OruxMaps
+	protected File oruxMapsLayerDir;
+
+	// Images directory for each map
+	protected File oruxMapsImagesDir;
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
+
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
 
+	/*
+	 * @see
+	 * mobac.program.atlascreators.AtlasCreator#initLayerCreation(mobac.program
+	 * .interfaces.LayerInterface)
+	 */
 	@Override
 	public void initLayerCreation(LayerInterface layer) throws IOException {
+
 		super.initLayerCreation(layer);
-		// look for main otrk2 calibration file; write if not exists
-		layerFolder = new File(atlasDir, layer.getName());
-		Utilities.mkDirs(layerFolder);
-		String otrk2FileName = layer.getName() + ".otrk2.xml";
-		File otrk2 = new File(layerFolder, otrk2FileName);
-		writeMainOtrk2File(otrk2, layer.getName());
+		oruxMapsMainDir = new File(atlasDir, layer.getName());
+		Utilities.mkDir(oruxMapsMainDir);
+		writeMainOtrk2File(layer.getName());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * mobac.program.atlascreators.AtlasCreator#initializeMap(mobac.program.
+	 * interfaces.MapInterface, mobac.utilities.tar.TarIndex)
+	 */
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+
 		super.initializeMap(map, tarTileIndex);
-		mapFolder = new File(layerFolder, map.getName());
-		setFolder = new File(mapFolder, "set");
+		oruxMapsLayerDir = new File(oruxMapsMainDir, map.getName());
+		oruxMapsImagesDir = new File(oruxMapsLayerDir, "set");
 		// OruxMaps default image format, jpeg90; always TILE_SIZE=512;
 		if (parameters == null)
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);
@@ -69,10 +88,12 @@ public class OruxMaps extends AtlasCreator {
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, parameters.getFormat());
 	}
 
-	public void createMap() throws MapCreationException {
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
 
 		try {
-			Utilities.mkDirs(setFolder);
+			Utilities.mkDir(oruxMapsLayerDir);
+			Utilities.mkDir(oruxMapsImagesDir);
 			writeOtrk2File();
 			createTiles();
 		} catch (InterruptedException e) {
@@ -100,12 +121,13 @@ public class OruxMaps extends AtlasCreator {
 	/**
 	 * Main calibration file
 	 * 
-	 * @param otrk2
+	 * @param name
 	 */
-	private void writeMainOtrk2File(File otrk2, String name) {
-		log.trace("Writing main otrk2 file");
+	private void writeMainOtrk2File(String name) {
+
 		OutputStreamWriter writer;
 		FileOutputStream otrk2FileStream = null;
+		File otrk2 = new File(oruxMapsMainDir, name + ORUXMAPS_EXT);
 		try {
 			writer = new OutputStreamWriter(new FileOutputStream(otrk2), "UTF8");
 			writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -124,12 +146,18 @@ public class OruxMaps extends AtlasCreator {
 		}
 	}
 
+	/**
+	 * Main calibration file per layer
+	 * 
+	 */
 	protected void writeOtrk2File() {
-		File otrk2File = new File(mapFolder, map.getName() + ".otrk2.xml");
+
 		FileOutputStream stream = null;
+		OutputStreamWriter mapWriter;
+		File otrk2File = new File(oruxMapsLayerDir, map.getName() + ORUXMAPS_EXT);
 		try {
 			stream = new FileOutputStream(otrk2File);
-			OutputStreamWriter mapWriter = new OutputStreamWriter(stream, "UTF8");
+			mapWriter = new OutputStreamWriter(stream, "UTF8");
 			MapSpace mapSpace = mapSource.getMapSpace();
 			double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
 			double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
@@ -172,7 +200,6 @@ public class OruxMaps extends AtlasCreator {
 			mapWriter.append("</CalibrationPoints>\n");
 			mapWriter.append("</MapCalibration>\n");
 			mapWriter.append("</OruxTracker>\n");
-
 			mapWriter.flush();
 		} catch (IOException e) {
 			log.error("", e);
@@ -192,7 +219,7 @@ public class OruxMaps extends AtlasCreator {
 			graphics.setColor(BG_COLOR);
 			graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
 		}
-
+		
 	}
 
 	private class OruxMapTileWriter implements MapTileWriter {
@@ -200,7 +227,7 @@ public class OruxMaps extends AtlasCreator {
 		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
 				throws IOException {
 			String tileFileName = String.format("%s_%d_%d.omc2", map.getName(), tilex, tiley);
-			FileOutputStream out = new FileOutputStream(new File(setFolder, tileFileName));
+			FileOutputStream out = new FileOutputStream(new File(oruxMapsImagesDir, tileFileName));
 			try {
 				out.write(tileData);
 			} finally {

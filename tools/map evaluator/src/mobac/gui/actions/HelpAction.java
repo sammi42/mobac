@@ -2,14 +2,15 @@ package mobac.gui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 
 import javax.swing.JOptionPane;
 
-import org.apache.axis2.description.java2wsdl.bytecode.ParamNameExtractor;
-
 import mobac.program.beanshell.Tools;
+
+import org.apache.axis2.description.java2wsdl.bytecode.ParamReader;
 
 public class HelpAction implements ActionListener {
 
@@ -21,13 +22,19 @@ public class HelpAction implements ActionListener {
 
 		Method[] methods = Tools.class.getMethods();
 
+		ParamReader pr =null;
+		try {
+			pr = new ParamReader(Tools.class);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		for (Method m : methods) {
 			if (!Tools.class.equals(m.getDeclaringClass()))
 				continue;
 			sw.append("<pre>");
 			sw.append(getClassName(m.getReturnType()) + " Tools." + m.getName() + "(");
 			Class<?>[] params = m.getParameterTypes();
-			String[] names = ParamNameExtractor.getParameterNamesFromDebugInfo(m);
+			String[] names = pr.getParameterNames(m);
 			int last = params.length - 1;
 			for (int i = 0; i < params.length; i++) {
 				sw.append(getClassName(params[i]));

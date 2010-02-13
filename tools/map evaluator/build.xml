@@ -5,7 +5,7 @@
 	<property name="MOBAC.dir" value="../MOBAC" />
 
 	<property file="src/mobac/mobac.properties" />
-	<property name="jar.name" value="Map Evaluator ${mobac.version}.jar" />
+	<property name="jar.name" value="Map Evaluator.jar" />
 	<property name="zip.name" value="Map Evaluator ${mobac.version}.zip" />
 	<property name="main.class" value="mobac.StartMapEvaluator" />
 
@@ -83,6 +83,7 @@
 			<outjar file="build/${jar.name}" />
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
 			-keep class mobac.program.beanshell.* { *; }
+			-keep class org.apache.axis2.description.java2wsdl.bytecode.ParamReader { public read*; }
 			-keepclassmembers enum * {
 			    public static **[] values();
 			    public static ** valueOf(java.lang.String);

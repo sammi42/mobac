@@ -35,6 +35,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 	protected static final int COORD_KIND_LATTITUDE = 1;
 	protected static final int COORD_KIND_LONGITUDE = 2;
 
+	protected File layerFolder = null;
 	protected File mapFolder = null;
 	protected MapTileWriter mapTileWriter;
 
@@ -58,7 +59,8 @@ public abstract class TrekBuddy extends AtlasCreator {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		LayerInterface layer = map.getLayer();
-		mapFolder = new File(new File(atlasDir, layer.getName()), map.getName());
+		layerFolder = new File(atlasDir, layer.getName());
+		mapFolder = new File(layerFolder, map.getName());
 	}
 
 	protected void writeMapFile() throws IOException {
@@ -276,10 +278,10 @@ public abstract class TrekBuddy extends AtlasCreator {
 		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 4, longitudeMin, latitudeMin));
 
 		sbMap.append("MOP,Map Open Position,0,0\r\n");
-		double mm2b = ((longitudeMax - longitudeMin) * 111319 * Math
+		double mm1b = ((longitudeMax - longitudeMin) * 111319 * Math
 				.cos((latitudeMax - latitudeMin) / 2 + latitudeMin))
 				/ width;
-		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f\r\n", mm2b));
+		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f\r\n", mm1b));
 
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");
 

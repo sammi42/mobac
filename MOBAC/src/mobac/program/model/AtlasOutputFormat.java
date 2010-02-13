@@ -9,6 +9,7 @@ import mobac.program.atlascreators.CacheBox;
 import mobac.program.atlascreators.CacheWolf;
 import mobac.program.atlascreators.GarminCustom;
 import mobac.program.atlascreators.Glopus;
+import mobac.program.atlascreators.GlopusMapFile;
 import mobac.program.atlascreators.MagellanRmp;
 import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
@@ -32,6 +33,7 @@ public enum AtlasOutputFormat {
 	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
+	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Ttqv("Touratech QV", TTQV.class), //

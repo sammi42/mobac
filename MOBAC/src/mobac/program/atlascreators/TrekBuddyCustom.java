@@ -41,9 +41,9 @@ public class TrekBuddyCustom extends TrekBuddy {
 			// Select the tile creator instance based on whether tile image
 			// parameters has been set or not
 			if (parameters != null)
-				createTiles();
+				createCustomTiles();
 			else
-				super.createTiles();
+				createTiles();
 
 			mapTileWriter.finalizeMap();
 		} catch (MapCreationException e) {
@@ -65,8 +65,7 @@ public class TrekBuddyCustom extends TrekBuddy {
 	 * 
 	 * @throws MapCreationException
 	 */
-	@Override
-	protected void createTiles() throws InterruptedException, MapCreationException {
+	protected void createCustomTiles() throws InterruptedException, MapCreationException {
 		log.debug("Starting map creation using custom parameters: " + parameters);
 
 		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);

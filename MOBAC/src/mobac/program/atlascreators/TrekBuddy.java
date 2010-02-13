@@ -278,9 +278,11 @@ public abstract class TrekBuddy extends AtlasCreator {
 		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 4, longitudeMin, latitudeMin));
 
 		sbMap.append("MOP,Map Open Position,0,0\r\n");
-		double mm1b = ((longitudeMax - longitudeMin) * 111319 * Math
-				.cos((latitudeMax - latitudeMin) / 2 + latitudeMin))
-				/ width;
+
+		// The simple variant for calculating mm1b
+		// http://www.trekbuddy.net/forum/viewtopic.php?t=3755&postdays=0&postorder=asc&start=286
+		double mm1b = (longitudeMax - longitudeMin) * 111319
+				* Math.cos((latitudeMax + latitudeMin) / 2) / width;
 		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f\r\n", mm1b));
 
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");

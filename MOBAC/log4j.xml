@@ -30,7 +30,7 @@
   </logger>
   
   <logger name="mobac.program.atlascreators">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
   
   <logger name="mobac.utilities.tar">

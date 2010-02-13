@@ -1,7 +1,5 @@
 package mobac.utilities.stream;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,33 +10,57 @@ public class LittleEndianOutputStream extends FilterOutputStream {
 		super(out);
 	}
 
-	public void writeInt(int value) throws IOException {
-		for (int i = 0; i < 4; i++) {
-			out.write(value & 0xFF);
-			value >>= 8;
-		}
+	/**
+	 * Write an int, 32-bits. Like DataOutputStream.writeInt.
+	 * 
+	 * @param v
+	 *            the int to write
+	 * 
+	 * @throws IOException
+	 *             if write fails.
+	 */
+	public final void writeInt(int v) throws IOException {
+		byte[] work = new byte[4];
+		work[0] = (byte) (v & 0xFF);
+		work[1] = (byte) ((v >> 8) & 0xFF);
+		work[2] = (byte) ((v >> 16) & 0xFF);
+		work[3] = (byte) ((v >> 24) & 0xFF);
+		out.write(work, 0, 4);
 	}
-	
-	public void writeDouble(double value) throws IOException {
-		
 
-		/* --- Convert the value into a byte array --- */
-		ByteArrayOutputStream bo = new ByteArrayOutputStream(8);
-		DataOutputStream dos = new DataOutputStream(bo);
-
-		/* --- Convert the value into a 8 byte double --- */
-		dos.writeDouble(value);
-		dos.close();
-		byte[] b = bo.toByteArray();
-
-		/* --- Change byte order --- */
-		for (int i = 0; i < 4; i++) {
-			byte help = b[i];
-			b[i] = b[7 - i];
-			b[7 - i] = help;
-		}
-
-		/* --- Write result into output stream --- */
-		out.write(b);
+	/**
+	 * Write a double.
+	 * 
+	 * @param v
+	 *            the double to write. Like DataOutputStream.writeDouble.
+	 * 
+	 * @throws IOException
+	 *             if write fails.
+	 */
+	public final void writeDouble(double v) throws IOException {
+		writeLong(Double.doubleToLongBits(v));
 	}
+
+	/**
+	 * Write a long, 64-bits. like DataOutputStream.writeLong.
+	 * 
+	 * @param v
+	 *            the long to write
+	 * 
+	 * @throws IOException
+	 *             if write fails.
+	 */
+	public final void writeLong(long v) throws IOException {
+		byte[] work = new byte[8];
+		work[0] = (byte) v;
+		work[1] = (byte) (v >> 8);
+		work[2] = (byte) (v >> 16);
+		work[3] = (byte) (v >> 24);
+		work[4] = (byte) (v >> 32);
+		work[5] = (byte) (v >> 40);
+		work[6] = (byte) (v >> 48);
+		work[7] = (byte) (v >> 56);
+		out.write(work);
+	}
+
 }

@@ -1,9 +1,10 @@
 package mobac.program.atlascreators;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 
 import mobac.exceptions.MapCreationException;
@@ -73,17 +74,23 @@ public class GlopusMapFile extends TrekBuddyCustom {
 		public void finalizeMap() {
 
 			File gmfFile = new File(layerFolder, map.getName() + ".gmf");
-			LittleEndianOutputStream out = null;
+			FileOutputStream fout = null;
 			try {
 				Utilities.mkDirs(layerFolder);
 				int count = tiles.size();
-				int offset = 8 + count * 68;
-				out = new LittleEndianOutputStream(new FileOutputStream(gmfFile));
+				int offset = 8 + count * (68 + 12);
+				fout = new FileOutputStream(gmfFile);
+				LittleEndianOutputStream out = new LittleEndianOutputStream(
+						new BufferedOutputStream(fout, 16384));
 				out.writeInt((int) 0xff000002);
 				out.writeInt(count);
+				int mapNumber = 0;
+				Charset charset = Charset.forName("UTF-16LE");
 				for (GlopusTile gt : tiles) {
-					out.writeInt(0);// Name length
-					// out.writeWCHAR(mapName)
+					String mapName = String.format("%06d", mapNumber);
+					byte[] nameBytes = mapName.getBytes(charset);
+					out.writeInt(mapName.length());// Name length
+					out.write(nameBytes);
 					out.writeInt(offset);
 					out.writeInt(tileWidth);
 					out.writeInt(tileHeight);
@@ -96,15 +103,19 @@ public class GlopusMapFile extends TrekBuddyCustom {
 					out.writeInt(tileWidth - 1);
 					out.writeDouble(gt.calBRLon);
 					out.writeDouble(gt.calBRLat);
+					//log.trace(String.format("Offset \"%s\": 0x%x", mapName, offset));
 					offset += gt.data.length;
 				}
+				out.flush();
+				out = null;
 				for (GlopusTile gt : tiles) {
-					out.write(gt.data);
+					fout.write(gt.data);
 				}
+				fout.flush();
 			} catch (IOException e) {
 				GUIExceptionHandler.showExceptionDialog(e);
 			} finally {
-				Utilities.closeStream(out);
+				Utilities.closeStream(fout);
 			}
 		}
 	}

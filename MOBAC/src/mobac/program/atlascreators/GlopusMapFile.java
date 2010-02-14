@@ -36,7 +36,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
  *     double dLat  // latitude of calibration point
  * END OF FILE HEADER
  * Afterwards the tile image data follows as specified by each filepos 
- * offset. 
+ * offset.
  * </pre>
  * 
  */
@@ -94,11 +94,11 @@ public class GlopusMapFile extends TrekBuddyCustom {
 			int xCooord = xCoordStart + tilex * tileWidth;
 			int yCooord = yCoordStart + tiley * tileHeight;
 
-			double calTLLon = mapSpace.cXToLon(xCooord, zoom);
-			double calTLLat = mapSpace.cYToLat(yCooord, zoom);
-			double calBRLon = mapSpace.cXToLon(xCooord + tileWidth, zoom);
-			double calBRLat = mapSpace.cYToLat(yCooord + tileHeight, zoom);
-			GlopusTile gt = new GlopusTile(tileData, calTLLat, calTLLon, calBRLat, calBRLon);
+			double calWLon = mapSpace.cXToLon(xCooord, zoom);
+			double calNLat = mapSpace.cYToLat(yCooord, zoom);
+			double calELon = mapSpace.cXToLon(xCooord + tileWidth, zoom);
+			double calSLat = mapSpace.cYToLat(yCooord + tileHeight, zoom);
+			GlopusTile gt = new GlopusTile(tileData, calNLat, calWLon, calSLat, calELon);
 			tiles.add(gt);
 		}
 
@@ -109,7 +109,12 @@ public class GlopusMapFile extends TrekBuddyCustom {
 			try {
 				Utilities.mkDirs(layerFolder);
 				int count = tiles.size();
-				int offset = 8 + count * (68 + 20);
+				int offset = 8 + count * ( //
+						20 // nameLength, offset and calibration point count,
+							// tile height & width
+						+ (12 * 2) // name bytes
+						+ (4 * 24) // four calibration points
+						);
 				fout = new FileOutputStream(gmfFile);
 				LittleEndianOutputStream out = new LittleEndianOutputStream(
 						new BufferedOutputStream(fout, 16384));
@@ -118,25 +123,33 @@ public class GlopusMapFile extends TrekBuddyCustom {
 				int mapNumber = 0;
 				Charset charset = Charset.forName("UTF-16LE");
 				for (GlopusTile gt : tiles) {
-					String mapName = String.format("%06d.%s", mapNumber++, tileType);
+					String mapName = String.format("%08d.%s", mapNumber++, tileType);
 					byte[] nameBytes = mapName.getBytes(charset);
 					out.writeInt(mapName.length());// Name length
 					out.write(nameBytes);
 					out.writeInt(offset);
 					out.writeInt(tileWidth);
 					out.writeInt(tileHeight);
-					out.writeInt(2); // number of calibration points
+					out.writeInt(4); // number of calibration points
 					out.writeInt(0);
 					out.writeInt(0);
-					out.writeDouble(gt.calTLLon);
-					out.writeDouble(gt.calTLLat);
+					out.writeDouble(gt.calWLon);
+					out.writeDouble(gt.calNLat);
 					out.writeInt(tileHeight);
 					out.writeInt(tileWidth);
-					out.writeDouble(gt.calBRLon);
-					out.writeDouble(gt.calBRLat);
+					out.writeDouble(gt.calELon);
+					out.writeDouble(gt.calSLat);
+					out.writeInt(tileHeight);
+					out.writeInt(0);
+					out.writeDouble(gt.calELon);
+					out.writeDouble(gt.calNLat);
+					out.writeInt(0);
+					out.writeInt(tileWidth);
+					out.writeDouble(gt.calWLon);
+					out.writeDouble(gt.calSLat);
 					if (log.isTraceEnabled())
-						log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calTLLon,
-								gt.calTLLat, gt.calBRLon, gt.calBRLon, mapName, offset));
+						log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calWLon,
+								gt.calNLat, gt.calELon, gt.calELon, mapName, offset));
 					offset += gt.data.length;
 				}
 				out.flush();
@@ -156,19 +169,19 @@ public class GlopusMapFile extends TrekBuddyCustom {
 
 	private static class GlopusTile {
 		byte[] data;
-		double calTLLat;
-		double calTLLon;
-		double calBRLat;
-		double calBRLon;
+		double calNLat;
+		double calWLon;
+		double calSLat;
+		double calELon;
 
-		public GlopusTile(byte[] data, double calTLLat, double calTLLon, double calBRLat,
-				double calBRLon) {
+		public GlopusTile(byte[] data, double calNLat, double calWLon, double calSLat,
+				double calELon) {
 			super();
 			this.data = data;
-			this.calTLLat = calTLLat;
-			this.calTLLon = calTLLon;
-			this.calBRLat = calBRLat;
-			this.calBRLon = calBRLon;
+			this.calNLat = calNLat;
+			this.calWLon = calWLon;
+			this.calSLat = calSLat;
+			this.calELon = calELon;
 		}
 
 	}

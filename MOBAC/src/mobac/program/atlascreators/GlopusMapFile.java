@@ -15,6 +15,31 @@ import mobac.utilities.stream.LittleEndianOutputStream;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+/**
+ * General structure of an GMF file (Little Endian)
+ * 
+ * <pre>
+ * DWORD Version // 0xff000002
+ * DWORD cnt // Number of tiles in the file
+ * 
+ * for each tile: 
+ *   DWORD len;         // number of characters in tile name
+ *   wchar_t name[len]  // map/tile name in UTF_16LE
+ *   DWORD filepos      // offset where image data starts in this file
+ *   DWORD width        // tile width in pixel
+ *   DWORD height       // tile height in pixel
+ *   DWORD cntCalPoints // calibration point count (usually 2 or 4)
+ *   for each tile calibration point
+ *     DWORD x      // calibration point x position in tile
+ *     DWORD y      // calibration point y position in tile
+ *     double dLong // longitude of calibration point
+ *     double dLat  // latitude of calibration point
+ * END OF FILE HEADER
+ * Afterwards the tile image data follows as specified by each filepos 
+ * offset. 
+ * </pre>
+ * 
+ */
 public class GlopusMapFile extends TrekBuddyCustom {
 
 	@Override
@@ -42,10 +67,13 @@ public class GlopusMapFile extends TrekBuddyCustom {
 	private class GlopusTileWriter implements MapTileWriter {
 
 		LinkedList<GlopusTile> tiles;
+		int xCoordStart;
+		int yCoordStart;
 		int tileHeight = 256;
 		int tileWidth = 256;
 		int zoom;
 		MapSpace mapSpace;
+		String tileType;
 
 		public GlopusTileWriter() {
 			super();
@@ -56,17 +84,20 @@ public class GlopusMapFile extends TrekBuddyCustom {
 			}
 			zoom = map.getZoom();
 			mapSpace = mapSource.getMapSpace();
+			xCoordStart = GlopusMapFile.this.xMin * mapSpace.getTileSize();
+			yCoordStart = GlopusMapFile.this.yMin * mapSpace.getTileSize();
 		}
 
 		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
 				throws IOException {
-			int xCooord = xMin + tilex * tileWidth;
-			int yCooord = yMin + tiley * tileHeight;
+			this.tileType = tileType;
+			int xCooord = xCoordStart + tilex * tileWidth;
+			int yCooord = yCoordStart + tiley * tileHeight;
 
 			double calTLLon = mapSpace.cXToLon(xCooord, zoom);
 			double calTLLat = mapSpace.cYToLat(yCooord, zoom);
-			double calBRLon = mapSpace.cXToLon(xCooord + tileWidth - 1, zoom);
-			double calBRLat = mapSpace.cYToLat(yCooord + tileHeight - 1, zoom);
+			double calBRLon = mapSpace.cXToLon(xCooord + tileWidth, zoom);
+			double calBRLat = mapSpace.cYToLat(yCooord + tileHeight, zoom);
 			GlopusTile gt = new GlopusTile(tileData, calTLLat, calTLLon, calBRLat, calBRLon);
 			tiles.add(gt);
 		}
@@ -78,7 +109,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 			try {
 				Utilities.mkDirs(layerFolder);
 				int count = tiles.size();
-				int offset = 8 + count * (68 + 12);
+				int offset = 8 + count * (68 + 20);
 				fout = new FileOutputStream(gmfFile);
 				LittleEndianOutputStream out = new LittleEndianOutputStream(
 						new BufferedOutputStream(fout, 16384));
@@ -87,7 +118,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 				int mapNumber = 0;
 				Charset charset = Charset.forName("UTF-16LE");
 				for (GlopusTile gt : tiles) {
-					String mapName = String.format("%06d", mapNumber);
+					String mapName = String.format("%06d.%s", mapNumber++, tileType);
 					byte[] nameBytes = mapName.getBytes(charset);
 					out.writeInt(mapName.length());// Name length
 					out.write(nameBytes);
@@ -99,11 +130,13 @@ public class GlopusMapFile extends TrekBuddyCustom {
 					out.writeInt(0);
 					out.writeDouble(gt.calTLLon);
 					out.writeDouble(gt.calTLLat);
-					out.writeInt(tileHeight - 1);
-					out.writeInt(tileWidth - 1);
+					out.writeInt(tileHeight);
+					out.writeInt(tileWidth);
 					out.writeDouble(gt.calBRLon);
 					out.writeDouble(gt.calBRLat);
-					//log.trace(String.format("Offset \"%s\": 0x%x", mapName, offset));
+					if (log.isTraceEnabled())
+						log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calTLLon,
+								gt.calTLLat, gt.calBRLon, gt.calBRLon, mapName, offset));
 					offset += gt.data.length;
 				}
 				out.flush();
@@ -118,6 +151,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 				Utilities.closeStream(fout);
 			}
 		}
+
 	}
 
 	private static class GlopusTile {

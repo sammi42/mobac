@@ -76,6 +76,7 @@ SourceForge.net: <br>
 		<li><a href="#CacheWolf">Creating atlases for CacheWolf</a></li>
 		<li><a href="#GarminCustom">Creating Garmin Custom maps</a></li>
 		<li><a href="#Magellan">Creating Magellan RMP atlases</a></li>
+		<li><a href="#OruxMaps">Creating OruxMaps custom maps</a></li>
 	</ul>
 	</li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
@@ -380,6 +381,22 @@ chek those limitations - therefore it may work or not if you are using:</p>
 <p>The output format of an "atlas" for Magellan is one <tt>RMP</tt>
 file in the atlas directory. You can directly load this file in Magellan
 VantagePoint or transfer it onto your device.</p>
+
+<!-- *************************************************************************** -->
+<h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
+<p>For creating atlases compatible with 
+<a	href="http://oruxmaps.x10hosting.com">OruxMaps</a> as format you have to
+select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left side of the main window.</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Layer settings, custom tile size. OruxMaps always uses 512x512 tile size. 
+	You can select the tile format (PNG or JPEG). If you do not select any, 
+	default value is JPEG - quality 90.</li>
+</ul>
+<p>The output format of an "atlas" for OruxMaps is one or more map directories
+ in the atlas directory. You have to copy those maps onto your device 
+ (default directory: /oruxmaps/mapfiles/).</p>
 <!-- *************************************************************************** -->
 <hr>
 

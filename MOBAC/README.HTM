@@ -73,6 +73,7 @@ SourceForge.net: <br>
 		<li><a href="#TTQV">Creating and using atlases with Touratech
 		QV / large PNG image</a></li>
 		<li><a href="#Glopus">Creating atlases for Glopus</a></li>
+		<li><a href="#AFTrack">Creating atlases for AFTrack</a></li>
 		<li><a href="#CacheWolf">Creating atlases for CacheWolf</a></li>
 		<li><a href="#GarminCustom">Creating Garmin Custom maps</a></li>
 		<li><a href="#Magellan">Creating Magellan RMP atlases</a></li>
@@ -312,14 +313,38 @@ to open the image.</p>
 <!-- *************************************************************************** -->
 <h3><a name="Glopus">Creating atlases for Glopus</a></h3>
 <p>For creating atlases compatible with Glopus you have to select <b>Glopus
-(PNG &amp; KAL)</b> as format in section <b>Atlas settings</b> on the left
-side of the main window.</p>
+(PNG &amp; KAL)</b> or <b> Glopus Map File (GMF)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window.</p>
+<h4>Glopus (PNG &amp; KAL)</h4>
 <p>Using this atlas output format the same <a href="#OziRestriction">restrictions</a>
 and the <a href="#OziWarning">warning</a> as for the OziExplorer output
 format apply.</p>
 <p>The output format of an "atlas" for Glopus is one subdirectory
 per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
 file per defined map.</p>
+<h4>Glopus Map File (GMF)</h4>
+<p>Within this file a (large) number of tiles with its calibrated
+coordinates are stored. Glopus works best if each tile has a resolution
+of 1024x1024 pixels. So check <b>Recreate/adjust map tiles (CPU
+intensive)</b>. Width and height should be set to <b>1024</b>.</p>
+<p>The output format is one file for each layer in the corresponding
+folder.</p>
+<!-- *************************************************************************** -->
+<h3><a name="AFTrack">Creating atlases for AFTrack (Symbian
+S60)</a></h3>
+<p>For creating atlases compatible with AFTrack you have to select <b>Glopus
+Map File (GMF)</b> as format in section <b>Atlas settings</b> on the left
+side of the main window.</p>
+
+<p>Within this file a (large) number of tiles with its calibrated
+coordinates are stored. AFTrack works best if each tile has got a
+resolution of 256x256 Pixels. So uncheck <b>Recreate/adjust map
+tiles (CPU intensive)</b>.</p>
+<p>The output format is one file for each layer in the corresponding
+folder.</p>
+<h4><a name="AFTrackRestriction">Restrictions</a></h4>
+<p>AFTrack can handle a maximum of 4096 tiles - so be sure not to
+select more.</p>
 <!-- *************************************************************************** -->
 <h3><a name="CacheWolf">Creating atlases for CacheWolf</a></h3>
 <p>For creating atlases compatible with <a
@@ -384,19 +409,20 @@ VantagePoint or transfer it onto your device.</p>
 
 <!-- *************************************************************************** -->
 <h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
-<p>For creating atlases compatible with 
-<a	href="http://oruxmaps.x10hosting.com">OruxMaps</a> as format you have to
-select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left side of the main window.</p>
+<p>For creating atlases compatible with <a
+	href="http://oruxmaps.x10hosting.com">OruxMaps</a> as format you have
+to select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left
+side of the main window.</p>
 <p>Using this atlas output format the following features are ignored
 when creating atlases:</p>
 <ul>
-	<li>Layer settings, custom tile size. OruxMaps always uses 512x512 tile size. 
-	You can select the tile format (PNG or JPEG). If you do not select any, 
-	default value is JPEG - quality 90.</li>
+	<li>Layer settings, custom tile size. OruxMaps always uses 512x512
+	tile size. You can select the tile format (PNG or JPEG). If you do not
+	select any, default value is JPEG - quality 90.</li>
 </ul>
-<p>The output format of an "atlas" for OruxMaps is one or more map directories
- in the atlas directory. You have to copy those maps onto your device 
- (default directory: /oruxmaps/mapfiles/).</p>
+<p>The output format of an "atlas" for OruxMaps is one or more map
+directories in the atlas directory. You have to copy those maps onto
+your device (default directory: /oruxmaps/mapfiles/).</p>
 <!-- *************************************************************************** -->
 <hr>
 

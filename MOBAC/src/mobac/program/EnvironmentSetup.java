@@ -31,7 +31,7 @@ public class EnvironmentSetup {
 		long maxHeap = r.maxMemory();
 		String heapMBFormatted = String.format(Locale.ENGLISH, "%3.2f MiB", maxHeap / 1048576d);
 		log.info("Total avialable memory to MOBAC: " + heapMBFormatted);
-		if (maxHeap < 100000000) {
+		if (maxHeap < 200000000) {
 			String msg = "<html><b>WARNING:</b> Mobile Atlas Creator has been started "
 					+ "with a very small amount of memory assigned.<br>"
 					+ "The current maximum usable amount of memory to Mobile Atlas Creator is <b>"

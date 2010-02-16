@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.impl.MapTileWriter;
+import mobac.program.interfaces.LayerInterface;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.LittleEndianOutputStream;
@@ -43,18 +44,27 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 public class GlopusMapFile extends TrekBuddyCustom {
 
 	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
+		mapTileWriter = new GlopusTileWriter(layer);
+	}
+
+	@Override
+	public void finishLayerCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		super.finishLayerCreation();
+	}
+
+	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
-			mapTileWriter = new GlopusTileWriter();
-
+			((GlopusTileWriter) mapTileWriter).initMap();
 			// Select the tile creator instance based on whether tile image
 			// parameters has been set or not
 			if (parameters != null)
 				createCustomTiles();
 			else
 				createTiles();
-
-			mapTileWriter.finalizeMap();
 		} catch (MapCreationException e) {
 			throw e;
 		} catch (InterruptedException e) {
@@ -64,8 +74,15 @@ public class GlopusMapFile extends TrekBuddyCustom {
 		}
 	}
 
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		mapTileWriter = null;
+		super.abortAtlasCreation();
+	}
+
 	private class GlopusTileWriter implements MapTileWriter {
 
+		final LayerInterface layer;
 		LinkedList<GlopusTile> tiles;
 		int xCoordStart;
 		int yCoordStart;
@@ -75,9 +92,13 @@ public class GlopusMapFile extends TrekBuddyCustom {
 		MapSpace mapSpace;
 		String tileType;
 
-		public GlopusTileWriter() {
+		public GlopusTileWriter(LayerInterface layer) {
 			super();
+			this.layer = layer;
 			tiles = new LinkedList<GlopusTile>();
+		}
+
+		public void initMap() {
 			if (parameters != null) {
 				tileHeight = parameters.getHeight();
 				tileWidth = parameters.getWidth();
@@ -104,14 +125,13 @@ public class GlopusMapFile extends TrekBuddyCustom {
 
 		public void finalizeMap() {
 
-			File gmfFile = new File(layerFolder, map.getName() + ".gmf");
+			File gmfFile = new File(atlasDir, layer.getName() + ".gmf");
 			FileOutputStream fout = null;
 			try {
-				Utilities.mkDirs(layerFolder);
 				int count = tiles.size();
 				int offset = 8 + count * ( //
 						20 // nameLength, offset and calibration point count,
-							// tile height & width
+						// tile height & width
 						+ (12 * 2) // name bytes
 						+ (4 * 24) // four calibration points
 						);

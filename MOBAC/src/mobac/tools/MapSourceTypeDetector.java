@@ -12,7 +12,7 @@ import java.util.Map;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.OsmMapSources.OsmHikingRelief;
+import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.program.Logging;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.utilities.Utilities;
@@ -30,7 +30,7 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(OsmHikingRelief.class, Cities.BERLIN);
+		testMapSource(GoogleTerrain.class, Cities.BERLIN);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,
@@ -208,12 +208,13 @@ public class MapSourceTypeDetector {
 	@Override
 	public String toString() {
 		StringWriter sw = new StringWriter();
-		sw.append("Mapsource........: " + mapSource.getName() + "\n");
-		sw.append("If-None-Match....: " + b2s(ifNoneMatchSupported) + "\n");
-		sw.append("eTag.............: " + b2s(eTagSupported) + "\n");
-		sw.append("If-Modified-Since: " + b2s(ifModifiedSinceSupported) + "\n");
-		sw.append("LastModified.....: " + b2s(lastModifiedTimePresent) + "\n");
-		sw.append("Expires..........: " + b2s(expirationTimePresent) + "\n");
+		sw.append("Mapsource.........: " + mapSource.getName() + "\n");
+		sw.append("Current TileUpdate: " + mapSource.getTileUpdate() + "\n");
+		sw.append("If-None-Match.....: " + b2s(ifNoneMatchSupported) + "\n");
+		sw.append("eTag..............: " + b2s(eTagSupported) + "\n");
+		sw.append("If-Modified-Since.: " + b2s(ifModifiedSinceSupported) + "\n");
+		sw.append("LastModified......: " + b2s(lastModifiedTimePresent) + "\n");
+		sw.append("Expires...........: " + b2s(expirationTimePresent) + "\n");
 
 		return sw.toString();
 	}

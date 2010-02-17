@@ -7,7 +7,6 @@ import mobac.mapsources.UpdatableMapSource;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 public class Google {
 
 	public static String LANG = "en";
@@ -69,7 +68,7 @@ public class Google {
 	public static class GoogleTerrain extends GoogleSource {
 
 		public GoogleTerrain() {
-			super("Google Terrain", 0, 15, "jpg", TileUpdate.IfModifiedSince);
+			super("Google Terrain", 0, 15, "jpg", TileUpdate.None);
 		}
 
 	}
@@ -80,7 +79,7 @@ public class Google {
 	public static class GoogleMapsChina extends GoogleSource {
 
 		public GoogleMapsChina() {
-			super("Google Maps China", 0, 19, "png", TileUpdate.IfModifiedSince);
+			super("Google Maps China", 0, 19, "png", TileUpdate.None);
 		}
 
 		@Override
@@ -111,7 +110,7 @@ public class Google {
 	public static class GoogleEarth extends GoogleSource {
 
 		public GoogleEarth() {
-			super("Google Earth", 0, 20, "jpg", TileUpdate.IfModifiedSince);
+			super("Google Earth", 0, 20, "jpg", TileUpdate.None);
 		}
 
 	}
@@ -119,7 +118,7 @@ public class Google {
 	public static class GoogleEarthMapsOverlay extends GoogleSource {
 
 		public GoogleEarthMapsOverlay() {
-			super("Google Earth Maps Overlay", 0, 20, "png", TileUpdate.IfModifiedSince);
+			super("Google Earth Maps Overlay", 0, 20, "png", TileUpdate.None);
 		}
 
 	}

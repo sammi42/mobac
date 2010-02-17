@@ -23,23 +23,23 @@ import mobac.program.atlascreators.TrekBuddyCustom;
 @XmlRootElement
 public enum AtlasOutputFormat {
 
-	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
-	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
-	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
-	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
-	Maverick("Maverick atlas format", Maverick.class), //
-	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
-	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
+	CacheBox("CacheBox (PACK)", CacheBox.class), //
+	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
+	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
-	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
+	Maverick("Maverick atlas format", Maverick.class), //
+	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
+	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
+	OruxMaps("OruxMaps", OruxMaps.class), //
+	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
+	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	Ttqv("Touratech QV", TTQV.class), //
-	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
-	CacheBox("CacheBox (PACK)", CacheBox.class), //
-	OruxMaps("OruxMaps", OruxMaps.class) //
+	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
+	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class) //
 	// Imp("CompeGPS IMP", CompeGPSImp.class) //
 	;
 

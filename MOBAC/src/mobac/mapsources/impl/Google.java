@@ -49,7 +49,7 @@ public class Google {
 	public static class GoogleMaps extends GoogleSource {
 
 		public GoogleMaps() {
-			super("Google Maps", 0, 19, "png", TileUpdate.IfModifiedSince);
+			super("Google Maps", 0, 19, "png", TileUpdate.None);
 		}
 
 	}
@@ -60,7 +60,7 @@ public class Google {
 	public static class GoogleMapMaker extends GoogleSource {
 
 		public GoogleMapMaker() {
-			super("Google Map Maker", 1, 17, "png", TileUpdate.IfModifiedSince);
+			super("Google Map Maker", 1, 17, "png", TileUpdate.None);
 		}
 
 	}

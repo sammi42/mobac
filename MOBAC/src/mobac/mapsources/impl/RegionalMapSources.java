@@ -223,7 +223,7 @@ public class RegionalMapSources {
 	public static class FreemapSlovakia extends AbstractMapSource {
 
 		public FreemapSlovakia() {
-			super("FreemapSlovakia", 5, 16, "png", TileUpdate.ETag);
+			super("FreemapSlovakia", 5, 16, "png", TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -244,7 +244,7 @@ public class RegionalMapSources {
 	public static class FreemapSlovakiaHikingHillShade extends AbstractMapSource {
 
 		public FreemapSlovakiaHikingHillShade() {
-			super("FreemapSlovakiaHikingHillShade", 6, 16, "png", TileUpdate.ETag);
+			super("FreemapSlovakiaHikingHillShade", 6, 16, "png", TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -264,7 +264,7 @@ public class RegionalMapSources {
 	public static class FreemapSlovakiaHiking extends AbstractMapSource {
 
 		public FreemapSlovakiaHiking() {
-			super("FreemapSlovakiaHiking", 6, 16, "png", TileUpdate.ETag);
+			super("FreemapSlovakiaHiking", 6, 16, "png", TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -303,7 +303,7 @@ public class RegionalMapSources {
 
 	public static class NearMap extends AbstractMapSource {
 		public NearMap() {
-			super("NearMap Australia", 0, 21, "jpg", TileUpdate.IfNoneMatch);
+			super("NearMap Australia", 0, 21, "jpg", TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

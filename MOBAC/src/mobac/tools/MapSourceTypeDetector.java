@@ -1,5 +1,7 @@
 package mobac.tools;
 
+import static mobac.tools.Cities.BERLIN;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -12,9 +14,11 @@ import java.util.Map;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.Google.GoogleTerrain;
+import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import mobac.program.Logging;
+import mobac.program.download.TileDownLoader;
 import mobac.program.model.EastNorthCoordinate;
+import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -24,22 +28,31 @@ public class MapSourceTypeDetector {
 
 	public static final SecureRandom RND = new SecureRandom();
 
+	public static final EastNorthCoordinate C_DEFAULT = BERLIN;
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
+		MapSourcesManager.getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(GoogleTerrain.class, Cities.BERLIN);
+		testMapSource(MicrosoftVirtualEarth.class);
+	}
+
+	public static void testMapSource(Class<? extends MapSource> mapSourceClass) {
+		testMapSource(mapSourceClass, Cities.getTestCoordinate(mapSourceClass, C_DEFAULT));
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass,
 			EastNorthCoordinate coordinate) {
+		if (coordinate == null)
+			throw new NullPointerException("Coordinate not set for "
+					+ mapSourceClass.getSimpleName());
 		MapSourceTypeDetector mstd;
 		try {
 			mstd = new MapSourceTypeDetector(mapSourceClass);
 			mstd.testMapSource(coordinate);
-			System.out.println(mstd);
 		} catch (Exception e) {
 			System.err.println("Error while testing map source: " + e.getMessage());
 		}
@@ -78,10 +91,19 @@ public class MapSourceTypeDetector {
 	}
 
 	public void testMapSource(EastNorthCoordinate coordinate) {
+		int zoomMed = mapSource.getMinZoom()
+				+ ((mapSource.getMaxZoom() - mapSource.getMinZoom()) / 2);
+		testMapSource(coordinate, zoomMed);
+		System.out.println(this);
+		testMapSource(coordinate, mapSource.getMinZoom());
+		System.out.println(this);
+		testMapSource(coordinate, mapSource.getMaxZoom());
+		System.out.println(this);
+	}
+
+	public void testMapSource(EastNorthCoordinate coordinate, int zoom) {
 		try {
 			System.out.println("Testing " + mapSource.toString());
-			int zoom = mapSource.getMinZoom()
-					+ ((mapSource.getMaxZoom() - mapSource.getMinZoom()) / 2);
 
 			MapSpace mapSpace = mapSource.getMapSpace();
 			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
@@ -91,6 +113,9 @@ public class MapSourceTypeDetector {
 			url = c.getURL();
 			System.out.println("Sample url: " + c.getURL());
 			System.out.println("Connecting...");
+			c.setReadTimeout(10000);
+			c.addRequestProperty("User-agent", Settings.getInstance().getUserAgent());
+			c.setRequestProperty("Accept", TileDownLoader.ACCEPT);
 			c.connect();
 			System.out.println("Connection established - response HTTP " + c.getResponseCode());
 			if (c.getResponseCode() != 200)
@@ -211,7 +236,7 @@ public class MapSourceTypeDetector {
 		sw.append("Mapsource.........: " + mapSource.getName() + "\n");
 		sw.append("Current TileUpdate: " + mapSource.getTileUpdate() + "\n");
 		sw.append("If-None-Match.....: " + b2s(ifNoneMatchSupported) + "\n");
-		sw.append("eTag..............: " + b2s(eTagSupported) + "\n");
+		sw.append("ETag..............: " + b2s(eTagSupported) + "\n");
 		sw.append("If-Modified-Since.: " + b2s(ifModifiedSinceSupported) + "\n");
 		sw.append("LastModified......: " + b2s(lastModifiedTimePresent) + "\n");
 		sw.append("Expires...........: " + b2s(expirationTimePresent) + "\n");

@@ -46,6 +46,12 @@ import org.w3c.tidy.Tidy;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
+/**
+ * Stand alone tool for updating several Google map sources. 
+ * Google changes the tile url of each map source very often - 
+ * sometimes daily. This tool checks the map html pages and 
+ * extracts the relevant URLs.  
+ */
 public class GoogleUrlUpdater {
 
 	static Properties MAPSOURCES_PROPERTIES = new Properties();

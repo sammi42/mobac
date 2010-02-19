@@ -3,12 +3,14 @@ package mobac.tools;
 import static mobac.tools.Cities.BERLIN;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -16,24 +18,6 @@ import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.MultiLayerMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
-import mobac.mapsources.impl.Google.GoogleMapMaker;
-import mobac.mapsources.impl.Google.GoogleMapsChina;
-import mobac.mapsources.impl.Google.GoogleMapsKorea;
-import mobac.mapsources.impl.MiscMapSources.MultimapCom;
-import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
-import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
-import mobac.mapsources.impl.OsmMapSources.Turaterkep;
-import mobac.mapsources.impl.RegionalMapSources.AustrianMap;
-import mobac.mapsources.impl.RegionalMapSources.Bergfex;
-import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
-import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
-import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
-import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
-import mobac.mapsources.impl.RegionalMapSources.NearMap;
-import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
 import mobac.program.model.EastNorthCoordinate;
@@ -61,32 +45,7 @@ public class MapSourcesTester {
 
 	public static final EastNorthCoordinate C_DEFAULT = BERLIN;
 
-	private static HashMap<Class<? extends MapSource>, EastNorthCoordinate> testCoordinates;
-
-	private static HashSet<String> testedMapSources;
-
-	static {
-		testCoordinates = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
-		testedMapSources = new HashSet<String>();
-		testCoordinates.put(GoogleMapMaker.class, Cities.BANGALORE);
-		testCoordinates.put(Cykloatlas.class, Cities.PRAHA);
-		testCoordinates.put(GoogleMapsChina.class, Cities.SHANGHAI);
-		testCoordinates.put(GoogleMapsKorea.class, Cities.SEOUL);
-		testCoordinates.put(MultimapCom.class, Cities.LONDON);
-		testCoordinates.put(MultimapOSUkCom.class, Cities.LONDON);
-		testCoordinates.put(DoCeluPL.class, Cities.WARSZAWA);
-		testCoordinates.put(AustrianMap.class, Cities.VIENNA);
-		testCoordinates.put(FreemapSlovakia.class, Cities.BRATISLAVA);
-		testCoordinates.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
-		testCoordinates.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);
-		testCoordinates.put(NearMap.class, Cities.SYDNEY);
-		testCoordinates.put(HubermediaBavaria.class, Cities.MUNICH);
-		testCoordinates.put(OpenPisteMap.class, Cities.MUNICH);
-		testCoordinates.put(StatkartTopo2.class, Cities.OSLO);
-		testCoordinates.put(MapplusCh.class, Cities.BERN);
-		testCoordinates.put(Turaterkep.class, Cities.BUDAPEST);
-		testCoordinates.put(Bergfex.class, Cities.INNSBRUCK);
-	}
+	private static HashSet<String> testedMapSources = new HashSet<String>();
 
 	public static void main(String[] args) {
 		HttpURLConnection.setFollowRedirects(false);
@@ -147,10 +106,7 @@ public class MapSourcesTester {
 	}
 
 	public static boolean testMapSource(MapSource mapSource) throws Exception {
-		Class<? extends MapSource> mc = mapSource.getClass();
-		EastNorthCoordinate coordinate = testCoordinates.get(mc);
-		if (coordinate == null)
-			coordinate = C_DEFAULT;
+		EastNorthCoordinate coordinate = Cities.getTestCoordinate(mapSource, C_DEFAULT);
 		testMapSource(mapSource, coordinate);
 		return true;
 	}
@@ -169,18 +125,37 @@ public class MapSourcesTester {
 		c.setRequestProperty("Accept", TileDownLoader.ACCEPT);
 
 		c.connect();
-		c.disconnect();
-		if (c.getResponseCode() == 302) {
-			log.debug(c.getResponseMessage());
-		}
-		if (c.getResponseCode() != 200) {
-			throw new MapSourceTestFailed(mapSource, c);
-		}
-		byte[] imageData = Utilities.getInputBytes(c.getInputStream());
-		if (imageData.length == 0)
-			throw new MapSourceTestFailed(mapSource, "Image data empty", c);
-		if (Utilities.getImageDataFormat(imageData) == null) {
-			throw new MapSourceTestFailed(mapSource, "Image data of unknown format", c);
+		try {
+			if (c.getResponseCode() == 302) {
+				log.debug(c.getResponseMessage());
+			}
+			if (c.getResponseCode() != 200) {
+				throw new MapSourceTestFailed(mapSource, c);
+			}
+			byte[] imageData = Utilities.getInputBytes(c.getInputStream());
+			if (imageData.length == 0)
+				throw new MapSourceTestFailed(mapSource, "Image data empty", c);
+			if (Utilities.getImageDataFormat(imageData) == null) {
+				throw new MapSourceTestFailed(mapSource, "Image data of unknown format", c);
+			}
+			switch (mapSource.getTileUpdate()) {
+			case ETag:
+			case IfNoneMatch:
+				if (c.getHeaderField("ETag") == null) {
+					throw new MapSourceTestFailed(mapSource,
+							"No ETag present but map sources uses " + mapSource.getTileUpdate()
+									+ "\n", c);
+				}
+				break;
+			case LastModified:
+				if (c.getHeaderField("Last-Modified") == null)
+					throw new MapSourceTestFailed(mapSource,
+							"No Last-Modified entry present but map sources uses "
+									+ mapSource.getTileUpdate() + "\n", c);
+				break;
+			}
+		} finally {
+			c.disconnect();
 		}
 	}
 
@@ -189,12 +164,15 @@ public class MapSourcesTester {
 		private static final long serialVersionUID = 1L;
 
 		final int httpResponseCode;
+		final HttpURLConnection conn;
 		final URL url;
+		final Class<? extends MapSource> mapSourceClass;
 
 		public MapSourceTestFailed(MapSource mapSource, String msg, HttpURLConnection conn)
 				throws IOException {
-			super("MapSource test failed: " + msg + " " + mapSource.getStoreName() + " HTTP "
-					+ conn.getResponseCode());
+			super(msg);
+			this.mapSourceClass = mapSource.getClass();
+			this.conn = conn;
 			this.url = conn.getURL();
 			this.httpResponseCode = conn.getResponseCode();
 		}
@@ -205,9 +183,10 @@ public class MapSourcesTester {
 
 		public MapSourceTestFailed(Class<? extends MapSource> mapSourceClass, URL url,
 				int httpResponseCode) {
-			super("MapSource test failed: " + mapSourceClass.toString() + " HTTP "
-					+ httpResponseCode);
+			super();
+			this.mapSourceClass = mapSourceClass;
 			this.url = url;
+			this.conn = null;
 			this.httpResponseCode = httpResponseCode;
 		}
 
@@ -215,5 +194,29 @@ public class MapSourcesTester {
 			return httpResponseCode;
 		}
 
+		@Override
+		public String getMessage() {
+			String msg = super.getMessage();
+			msg = "MapSource test failed: " + msg + " " + mapSourceClass.getSimpleName() + " HTTP "
+					+ httpResponseCode + "\n" + conn.getURL();
+			if (conn != null)
+				msg += "\n" + printHeaders(conn);
+			return msg;
+		}
+
+		protected static String printHeaders(HttpURLConnection conn) {
+			StringWriter sw = new StringWriter();
+			sw.append("Headers:\n");
+			for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
+				String key = entry.getKey();
+				for (String elem : entry.getValue()) {
+					if (key != null)
+						sw.append(key + " = ");
+					sw.append(elem);
+					sw.append("\n");
+				}
+			}
+			return sw.toString();
+		}
 	}
 }

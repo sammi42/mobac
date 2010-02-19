@@ -60,7 +60,7 @@ public class Google {
 	public static class GoogleMapMaker extends GoogleSource {
 
 		public GoogleMapMaker() {
-			super("Google Map Maker", 1, 17, "png", TileUpdate.None);
+			super("Google Map Maker", 1, 17, "png", TileUpdate.LastModified);
 		}
 
 	}

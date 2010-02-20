@@ -533,7 +533,17 @@ public class RegionalMapSources {
 
 	}
 
+	/**
+	 * 
+	 * 
+	 *
+	 */
 	public static class Bergfex extends AbstractMapSource {
+
+		/**
+		 * 2009-02-20: server 4 causes some problems - commented out
+		 */
+		static final byte[] SERVER_IDS = { 2, 3 /* , 4 */};
 
 		int SERVERNUM = 0;
 
@@ -548,8 +558,8 @@ public class RegionalMapSources {
 
 		@Override
 		public String getTileUrl(int zoom, int x, int y) {
-			String baseurl = "http://static" + (SERVERNUM + 2) + ".bergfex.at/images/amap/";
-			SERVERNUM = (SERVERNUM + 1) % 3;
+			String baseurl = "http://static" + SERVER_IDS[SERVERNUM] + ".bergfex.at/images/amap/";
+			SERVERNUM = (SERVERNUM + 1) % SERVER_IDS.length;
 			String xBase = "";
 			if (zoom > 13)
 				xBase = Integer.toString(x).substring(0, zoom - 12) + "/";

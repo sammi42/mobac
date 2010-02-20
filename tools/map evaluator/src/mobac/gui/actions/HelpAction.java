@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
 
 import mobac.program.beanshell.Tools;
+import mobac.program.beanshell.Tools.MethodDescription;
 
 import org.apache.axis2.description.java2wsdl.bytecode.ParamReader;
 
@@ -22,7 +23,7 @@ public class HelpAction implements ActionListener {
 
 		Method[] methods = Tools.class.getMethods();
 
-		ParamReader pr =null;
+		ParamReader pr = null;
 		try {
 			pr = new ParamReader(Tools.class);
 		} catch (IOException e1) {
@@ -31,6 +32,8 @@ public class HelpAction implements ActionListener {
 		for (Method m : methods) {
 			if (!Tools.class.equals(m.getDeclaringClass()))
 				continue;
+			// sw.append("<h4>" + m.getName() + "</h4>");
+			sw.append("<hr>");
 			sw.append("<pre>");
 			sw.append(getClassName(m.getReturnType()) + " Tools." + m.getName() + "(");
 			Class<?>[] params = m.getParameterTypes();
@@ -44,8 +47,12 @@ public class HelpAction implements ActionListener {
 					sw.append(", ");
 			}
 			sw.append(")</pre>");
+			MethodDescription md = m.getAnnotation(Tools.MethodDescription.class);
+			if (md != null)
+				sw.append(md.value() + "<br>");
 		}
 
+		sw.append("<hr>");
 		sw.append("</html>");
 		JOptionPane.showMessageDialog(null, sw.toString(), "Help", JOptionPane.PLAIN_MESSAGE);
 	}

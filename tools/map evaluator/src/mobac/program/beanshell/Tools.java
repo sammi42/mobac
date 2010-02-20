@@ -26,20 +26,20 @@ public class Tools {
 	public static final MapSpace OSM_MERCATOR = MercatorPower2MapSpace.INSTANCE_256;
 
 	@MethodDescription("Converts an horizontal tile number on a certain zoom level "
-			+ "into the correspndant longitude.")
+			+ "into the corespondent longitude")
 	public static double xTileToLon(int x, int zoom) {
 		return OSM_MERCATOR.cXToLon(x, zoom);
 	}
 
 	@MethodDescription("Converts an vertical tile number on a certain zoom level "
-			+ "into the correspndant latitude.")
+			+ "into the corespondent latitude")
 	public static double yTileToLat(int y, int zoom) {
 		return OSM_MERCATOR.cYToLat(y, zoom);
 	}
 
 	@MethodDescription("Returns a random value. Range [0..<b>max</b>]")
 	public int getRandomInt(int max) {
-		return RND.nextInt(max);
+		return RND.nextInt(max + 1);
 	}
 
 	@MethodDescription("Converts a tile numer on a certain zoom level into a quad tree coordinate")
@@ -54,8 +54,8 @@ public class Tools {
 		return buf;
 	}
 
-	@MethodDescription("Encodes the <b>binaryData</b> byte array to a " +
-			"base64 String without line breaks")
+	@MethodDescription("Encodes the <b>binaryData</b> byte array to a "
+			+ "base64 String without line breaks")
 	public static String encodeBase64(byte[] binaryData) {
 		return new String(Base64.encodeBase64(binaryData));
 	}
@@ -71,8 +71,8 @@ public class Tools {
 		return Hex.encodeHexString(binaryData);
 	}
 
-	@MethodDescription("Decodes an hexadecimal encoded String to a byte array. The string have to " +
-			"contain only the hexadecimal encoded nibbles.")
+	@MethodDescription("Decodes an hexadecimal encoded String to a byte array. The string have to "
+			+ "contain only the hexadecimal encoded nibbles.")
 	public static byte[] decodeHex(String hexString) throws DecoderException {
 		return Hex.decodeHex(hexString.toCharArray());
 	}

@@ -83,7 +83,7 @@
 			<outjar file="build/${jar.name}" />
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
 			-keep class mobac.program.beanshell.* { *; }
-			-keep class org.apache.axis2.description.java2wsdl.bytecode.ParamReader { public read*; }
+			-keep class org.apache.axis2.description.java2wsdl.bytecode.ParamReader { public * ; }
 			-keepclassmembers enum * {
 			    public static **[] values();
 			    public static ** valueOf(java.lang.String);

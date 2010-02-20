@@ -114,26 +114,4 @@
 		</zip>
 	</target>
 
-	<target name="create_release_src" description="Packs all necessary files for the source code release into one zip archive">
-		<zip destfile="${zip_src.name}" update="false">
-			<fileset dir="./">
-				<include name="src/**" />
-				<exclude name="src/_test/**" />
-				<exclude name="src/test/**" />
-				<exclude name="src/mobac/tools/**" />
-				<include name="log4j.xml" />
-				<include name="build.xml" />
-				<include name="gpl.txt" />
-				<include name="README.HTM" />
-				<include name="README-DEV.HTM" />
-				<include name="CHANGELOG.txt" />
-				<include name="start.*" />
-				<include name="lib/log4j-1.2.15.jar" />
-				<include name="lib/je-*.jar" />
-				<include name="lib/jai_*.jar" />
-				<include name="lib/sqlite.jar" />
-				<include name="lib/proguard.jar" />
-			</fileset>
-		</zip>
-	</target>
 </project>

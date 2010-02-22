@@ -21,28 +21,21 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
+import mobac.mapsources.MapSourcesManager;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-import tac.mapsources.MapSourcesManager;
 
 public class JAutoFilterCombo extends JComboBox {
 
 	private static final Logger log = Logger.getLogger(JAutoFilterCombo.class);
 
-	private final JTextComponent textComponent;
-
-	private FilterComboBoxRenderer renderer;
-
 	public JAutoFilterCombo(Vector<?> items) {
 		super(items);
-		textComponent = (JTextComponent) getEditor().getEditorComponent();
-		textComponent.setDocument(new AutoCompleteDocument());
 		setEditable(true);
-		renderer = new FilterComboBoxRenderer();
-		setRenderer(renderer);
 	}
 
 	protected class AutoCompleteDocument extends PlainDocument {
@@ -104,40 +97,6 @@ public class JAutoFilterCombo extends JComboBox {
 			}
 
 			// clearSelection();
-		}
-
-	}
-
-	private class FilterComboBoxRenderer extends BasicComboBoxRenderer {
-
-		private Component dummy;
-
-		private String filter = "";
-
-		public FilterComboBoxRenderer() {
-			super();
-		}
-
-		public void setFilter(String text) {
-			this.filter = text;
-		}
-
-		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index,
-				boolean isSelected, boolean cellHasFocus) {
-			String valueText = value.toString();
-			if (filter == null || filter.length() == 0 || valueText.contains(filter))
-				return super.getListCellRendererComponent(list, value, index, isSelected,
-						cellHasFocus);
-			else {
-				Dimension d = new Dimension();
-				return new Box.Filler(d, d, d);
-			}
-		}
-
-		@Override
-		public Dimension getPreferredSize() {
-			return super.getPreferredSize();
 		}
 
 	}

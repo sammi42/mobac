@@ -3,13 +3,14 @@ package tiledb.berkeley;
 import java.io.File;
 import java.io.IOException;
 
+import mobac.program.DirectoryManager;
+import mobac.program.model.Settings;
+import mobac.utilities.Utilities;
+import mobac.utilities.file.DeleteFileFilter;
+
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import tac.program.DirectoryManager;
-import tac.program.model.Settings;
-import tac.utilities.Utilities;
-import tac.utilities.file.DeleteFileFilter;
 import tiledb.berkeley.TileDbEntry.TileDbKey;
 
 import com.sleepycat.je.CursorConfig;
@@ -33,6 +34,9 @@ public class TileStore {
 
 	private EnvironmentConfig envConfig;
 
+	private TileDatabase currentDb;
+	private MapSource currentMapSource;
+
 	private TileStore() {
 		log = Logger.getLogger(this.getClass());
 
@@ -45,6 +49,8 @@ public class TileStore {
 			tileStoreDir = new File(tileStorePath);
 		else
 			tileStoreDir = new File(DirectoryManager.userHomeDir, "tilestore");
+		currentDb = null;
+		currentMapSource = null;
 	}
 
 	public static TileStore getInstance() {
@@ -57,8 +63,23 @@ public class TileStore {
 		}
 	}
 
-	private TileDatabase getTileDatabase(MapSource mapSource) {
-		return null; // TODO: implement
+	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
+		if (mapSource.equals(currentMapSource))
+			return currentDb;
+		synchronized (INSTANCE) {
+			if (currentDb != null)
+				currentDb.close();
+			try {
+				currentDb = new TileDatabase(mapSource);
+				currentMapSource = mapSource;
+				return currentDb;
+			} catch (Exception e) {
+				log.error("", e);
+				currentDb = null;
+				currentMapSource = null;
+				throw new DatabaseException(e);
+			}
+		}
 	}
 
 	public TileDbEntry getTile(int x, int y, int zoom, MapSource mapSource) {
@@ -83,12 +104,21 @@ public class TileStore {
 	public void prepareTileStore(MapSource mapSource) {
 		if (!mapSource.allowFileStore())
 			return;
-		getTileDatabase(mapSource);
+		try {
+			getTileDatabase(mapSource);
+		} catch (DatabaseException e) {
+		}
 	}
 
 	public void clearStore(MapSource tileSource) {
 		File tileStore = new File(tileStoreDir, tileSource.getName());
-		// TODO: Close opened tile database if open
+		if (tileSource.equals(currentMapSource)) {
+			synchronized (INSTANCE) {
+				currentDb.close();
+				currentDb = null;
+				currentMapSource = null;
+			}
+		}
 		if (tileStore.exists()) {
 			DeleteFileFilter dff = new DeleteFileFilter();
 			tileStore.listFiles(dff);
@@ -158,7 +188,7 @@ public class TileStore {
 		final Environment env;
 		final EntityStore store;
 		final PrimaryIndex<TileDbKey, TileDbEntry> tileIndex;
-		boolean dbOpen;
+		boolean dbClosed = false;
 
 		public TileDatabase(MapSource mapSource) throws IOException, EnvironmentLockedException, DatabaseException {
 			this.mapSource = mapSource;
@@ -227,14 +257,20 @@ public class TileStore {
 		}
 
 		public synchronized void close() {
+			if (dbClosed)
+				return;
 			try {
 				if (store != null)
 					store.close();
-			} catch (DatabaseException e) {
+			} catch (Exception e) {
+				log.error("", e);
 			}
 			try {
 				env.close();
-			} catch (DatabaseException e) {
+			} catch (Exception e) {
+				log.error("", e);
+			} finally {
+				dbClosed = true;
 			}
 		}
 

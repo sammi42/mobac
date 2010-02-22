@@ -19,18 +19,18 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.Timer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
+
+import mobac.mapsources.MapSourcesManager;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-import tac.mapsources.MapSourcesManager;
 
 /**
  * Autocomplete combobox with filtering and text inserting of new text
@@ -43,38 +43,24 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 
 	private static final Logger log = Logger.getLogger(JAutoCompleteCombo.class);
 	private ComboBoxFilteredModel comboBoxFilteredModel;
-	private final JTextComponent textComponent = (JTextComponent) getEditor().getEditorComponent();
 	private boolean modelFilling = false;
+	private final JTextComponent textComponent;
 
-	private boolean updatePopup;
 	private String previousPattern = null;
-	private boolean initialized = false;
 
 	public JAutoCompleteCombo(Vector<?> items) {
 		super();
+		textComponent = (JTextComponent) getEditor().getEditorComponent();
 		setEditable(true);
 		comboBoxFilteredModel = new ComboBoxFilteredModel(items);
 
 		log.trace("setPattern() called from constructor");
 		setPattern(null);
-		updatePopup = false;
 
 		textComponent.setDocument(new AutoCompleteDocument());
 		setModel(comboBoxFilteredModel);
-		setSelectedItem(null);
+		setSelectedIndex(0);
 
-		new Timer(20, new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				if (updatePopup && isDisplayable()) {
-					setPopupVisible(false);
-					if (comboBoxFilteredModel.getSize() > 0) {
-						setPopupVisible(true);
-					}
-					updatePopup = false;
-				}
-			}
-		}).start();
 		getEditor().getEditorComponent().addFocusListener(this);
 		getEditor().getEditorComponent().addMouseListener(new MouseAdapter() {
 
@@ -96,8 +82,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		if (pattern != null && pattern.trim().isEmpty())
 			pattern = null;
 
-		if (previousPattern == null && pattern == null || pattern != null
-				&& pattern.equals(previousPattern)) {
+		if (previousPattern == null && pattern == null || pattern != null && pattern.equals(previousPattern)) {
 			log.trace("[setPatter] pattern is the same as previous: " + previousPattern);
 			return;
 		}
@@ -111,11 +96,9 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		// if (log.isTraceEnabled()) {
 		// StringBuilder b = new StringBuilder(100);
 		// b.append("pattern filter '").append(pattern == null ? "null" :
-		// pattern).append(
-		// "' set:\n");
+		// pattern).append("' set:\n");
 		// for (int i = 0; i < comboBoxFilteredModel.getSize(); i++) {
-		// b.append(", ").append('[').append(comboBoxFilteredModel.getElementAt(i))
-		// .append(']');
+		// b.append(", ").append('[').append(comboBoxFilteredModel.getElementAt(i)).append(']');
 		// }
 		// int ind = b.indexOf(", ");
 		// if (ind != -1) {
@@ -125,8 +108,6 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		// log.trace(b);
 		// }
 		modelFilling = false;
-		if (pattern != null)
-			updatePopup = true;
 	}
 
 	private void clearSelection() {
@@ -140,7 +121,11 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 	}
 
 	public void focusLost(FocusEvent e) {
-		setSelectedItem(getSelectedItem());
+		Object selItem = getSelectedItem();
+		if (selItem == null)
+			return;
+		previousPattern = selItem.toString();
+		textComponent.setText(previousPattern);
 	}
 
 	protected class AutoCompleteDocument extends PlainDocument {
@@ -153,7 +138,9 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					int key = e.getKeyCode();
-					if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
+					if (key == KeyEvent.VK_ESCAPE) {
+						
+					} else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
 						arrowKeyPressed = true;
 						log.trace("arrow key pressed");
 					}
@@ -245,7 +232,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 
 			if (pattern == null || pattern.isEmpty()) {
 				filtered = list;
-				JAutoCompleteCombo.this.setSelectedItem(comboBoxFilteredModel.getElementAt(0));
+				JAutoCompleteCombo.this.setSelectedIndex(0);
 				log.trace(String.format("[setPattern] combo.setSelectedItem(null)"));
 			} else {
 				filtered = new ArrayList<Object>(list.size());
@@ -256,7 +243,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 						filtered.add(list.get(i));
 					}
 				}
-				//JAutoCompleteCombo.this.setSelectedItem(pattern);
+				JAutoCompleteCombo.this.setPopupVisible(true);
 				log.trace(String.format("[setPattern] combo.setSelectedItem(%s)", pattern));
 			}
 			log.trace(String.format("pattern:'%s', filtered: %s", pattern, filtered));
@@ -280,10 +267,8 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 			log.trace("Model.setSelectedItem(" + anObject + ")");
 			if (anObject instanceof String)
 				return;
-			if ((selectedItem != null && !selectedItem.equals(anObject)) || selectedItem == null
-					&& anObject != null) {
-				log.debug("new selectedItem: " + anObject + " "
-						+ anObject.getClass().getSimpleName());
+			if ((selectedItem != null && !selectedItem.equals(anObject)) || selectedItem == null && anObject != null) {
+				log.debug("new selectedItem: " + anObject + " " + anObject.getClass().getSimpleName());
 				selectedItem = anObject;
 				fireContentsChanged(this, -1, -1);
 			}
@@ -305,7 +290,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		// root.addAppender(new ConsoleAppender(new
 		// PatternLayout("%d{ISO8601} [%5p] %m at %l%n")));
 		Logger root = Logger.getRootLogger();
-		root.setLevel(Level.TRACE);
+		root.setLevel(Level.DEBUG);
 		root.addAppender(new ConsoleAppender(new PatternLayout("%d{ISO8601} %m at %L%n")));
 
 		// BasicConfigurator.configure();
@@ -315,8 +300,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		frame.setLayout(new GridLayout(3, 1));
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
-		final JAutoCompleteCombo combo = new JAutoCompleteCombo(MapSourcesManager
-				.getEnabledMapSources());
+		final JAutoCompleteCombo combo = new JAutoCompleteCombo(MapSourcesManager.getEnabledMapSources());
 		combo.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

@@ -59,9 +59,9 @@ public class BigPlanetSql extends AtlasCreator {
 	private String databaseFile;
 
 	/**
-	 * Accumulate tiles in batch process until 5MB of heap are remaining
+	 * Accumulate tiles in batch process until 10MB of heap are remaining
 	 */
-	private static final long HEAP_MIN = 5 * 1024 * 1024;
+	private static final long HEAP_MIN = 10 * 1024 * 1024;
 
 	private Connection conn = null;
 	private PreparedStatement prepStmt;

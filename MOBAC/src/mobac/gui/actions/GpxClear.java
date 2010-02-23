@@ -30,7 +30,7 @@ public class GpxClear implements ActionListener {
 			if (mapLayers.next() instanceof GpxLayer)
 				mapLayers.remove();
 		}
-		panel.getListModel().clear();
+		panel.resetModel();
 		MainGUI.getMainGUI().previewMap.repaint();
 	}
 

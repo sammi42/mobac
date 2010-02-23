@@ -1,15 +1,16 @@
 package mobac.gui.actions;
 
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent; 
 import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
+import mobac.gui.components.GpxEntry;
 import mobac.gui.mapview.GpxMapController;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.panels.JGpxPanel;
-import mobac.gui.panels.JGpxPanel.ListModelEntry;
+
 
 
 public class GpxAddPoint implements ActionListener {
@@ -24,7 +25,7 @@ public class GpxAddPoint implements ActionListener {
 	}
 
 	public synchronized void actionPerformed(ActionEvent event) {
-		ListModelEntry entry = panel.getSelectedEntry();
+		GpxEntry entry = panel.getSelectedEntry();
 		if (entry == null) {
 			int answer = JOptionPane.showConfirmDialog(null, "No GPX file selected.\n"
 					+ "Do you want to create a new GPX file?", "Add point to new GPX file?",

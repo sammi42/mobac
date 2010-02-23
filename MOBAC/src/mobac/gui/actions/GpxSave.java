@@ -1,6 +1,6 @@
 package mobac.gui.actions;
 
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent; 
 import java.awt.event.ActionListener;
 import java.io.File;
 
@@ -11,8 +11,8 @@ import javax.xml.bind.JAXBException;
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.gui.MainGUI;
+import mobac.gui.components.GpxEntry;
 import mobac.gui.panels.JGpxPanel;
-import mobac.gui.panels.JGpxPanel.ListModelEntry;
 import mobac.program.model.Settings;
 import mobac.utilities.file.GpxFileFilter;
 
@@ -41,7 +41,7 @@ public class GpxSave implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 
-		ListModelEntry entry = panel.getSelectedEntry();
+		GpxEntry entry = panel.getSelectedEntry();
 		if (entry == null) {
 			JOptionPane.showMessageDialog(null, "No Gpx file selected", "Error saving Gpx file",
 					JOptionPane.ERROR_MESSAGE);
@@ -53,7 +53,7 @@ public class GpxSave implements ActionListener {
 		Gpx gpx = entry.getLayer().getGpx();
 
 		try {
-			File f = entry.getGpxFile();
+			File f = entry.getFile();
 			if (saveAs || f == null)
 				f = selectFile(f);
 			if (f == null)

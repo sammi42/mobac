@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 
 import mobac.data.gpx.gpx11.Gpx;
-import mobac.gui.panels.JGpxPanel.ListModelEntry;
+import mobac.gui.components.GpxEntry;
 
 import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -17,13 +17,13 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class GpxMapController extends JMapController implements MouseListener {
 
-	private ListModelEntry entry;
+	private GpxEntry entry;
 
-	public GpxMapController(JMapViewer map, ListModelEntry entry, boolean enabled) {
+	public GpxMapController(JMapViewer map, GpxEntry entry, boolean enabled) {
 		super(map, enabled);
 		this.entry = entry;
 	}
-
+	
 	public void mouseClicked(MouseEvent e) {
 		// Add new GPX point to currently selected GPX file
 		disable();
@@ -49,6 +49,7 @@ public class GpxMapController extends JMapController implements MouseListener {
 			wpt.setLat(new BigDecimal(lat));
 			wpt.setLon(new BigDecimal(lon));
 			gpx11.getWpt().add(wpt);
+			// TODO update tree
 		}
 		map.repaint();
 	}

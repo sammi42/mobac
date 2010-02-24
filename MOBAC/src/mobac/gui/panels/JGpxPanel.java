@@ -1,6 +1,6 @@
 package mobac.gui.panels;
 
-import java.awt.Dimension;  
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.List;
@@ -25,13 +25,12 @@ import mobac.gui.actions.GpxSave;
 import mobac.gui.components.GpxEntry;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.components.RteEntry;
+import mobac.gui.components.TrkEntry;
 import mobac.gui.components.TrksegEntry;
 import mobac.gui.components.WptEntry;
-import mobac.gui.components.TrkEntry;
 import mobac.gui.mapview.GpxLayer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.utilities.GBC;
-
 
 public class JGpxPanel extends JCollapsiblePanel {
 
@@ -40,7 +39,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 	private JTree tree;
 	private DefaultMutableTreeNode rootNode;
 	private DefaultTreeModel model;
-	
+
 	private PreviewMap previewMap;
 
 	public JGpxPanel(PreviewMap previewMap) {
@@ -64,12 +63,13 @@ public class JGpxPanel extends JCollapsiblePanel {
 		addPointGpx.addActionListener(new GpxAddPoint(this));
 
 		rootNode = new DefaultMutableTreeNode("loaded gpx files...");
-		tree = new JTree(rootNode);			
+		tree = new JTree(rootNode);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setRootVisible(false);
+		tree.setShowsRootHandles(true);
 		JScrollPane treeView = new JScrollPane(tree);
 		treeView.setPreferredSize(new Dimension(100, 100));
-		model = (DefaultTreeModel)tree.getModel(); 
+		model = (DefaultTreeModel) tree.getModel();
 
 		GBC eol = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC std = GBC.std().fill(GBC.HORIZONTAL);
@@ -82,21 +82,22 @@ public class JGpxPanel extends JCollapsiblePanel {
 	}
 
 	/**
-	 * 	adds a layer for a new gpx file on the map and adds its structure to the treeview 
+	 * adds a layer for a new gpx file on the map and adds its structure to the
+	 * treeview
 	 * 
 	 */
-	public GpxEntry addGpxLayer(File f, GpxLayer layer) {	
+	public GpxEntry addGpxLayer(File f, GpxLayer layer) {
 		GpxEntry gpxEntry = new GpxEntry(f, layer);
-		DefaultMutableTreeNode gpxNode = new DefaultMutableTreeNode(gpxEntry);		
-		model.insertNodeInto(gpxNode, rootNode, rootNode.getChildCount());	
-		TreePath path = new TreePath(gpxNode.getPath());		
+		DefaultMutableTreeNode gpxNode = new DefaultMutableTreeNode(gpxEntry);
+		model.insertNodeInto(gpxNode, rootNode, rootNode.getChildCount());
+		TreePath path = new TreePath(gpxNode.getPath());
 		tree.scrollPathToVisible(new TreePath(path));
 		tree.setSelectionPath(path);
 
-		addRtes(layer, gpxNode);			
+		addRtes(layer, gpxNode);
 		addTrks(layer, gpxNode);
 		addWpts(layer, gpxNode);
-		
+
 		previewMap.mapLayers.add(layer);
 		return gpxEntry;
 	}
@@ -136,7 +137,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 				DefaultMutableTreeNode trksegNode = new DefaultMutableTreeNode(trksegEntry);
 				model.insertNodeInto(trksegNode, trkNode, trkNode.getChildCount());
 				counter++;
-				
+
 				// add trkpts
 				List<WptType> trkpts = trkseg.getTrkpt();
 				for (WptType trkpt : trkpts) {
@@ -144,7 +145,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 					DefaultMutableTreeNode trkptNode = new DefaultMutableTreeNode(trkptEntry);
 					model.insertNodeInto(trkptNode, trksegNode, trksegNode.getChildCount());
 				}
-			} 		
+			}
 		}
 	}
 
@@ -172,7 +173,8 @@ public class JGpxPanel extends JCollapsiblePanel {
 
 	public GpxEntry getSelectedEntry() {
 		TreePath selection = tree.getSelectionPath();
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection.getLastPathComponent();
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection
+				.getLastPathComponent();
 		if (selectedNode.getParent().getParent() == null) {
 			GpxEntry gpxEntry = (GpxEntry) selectedNode.getUserObject();
 			return gpxEntry;
@@ -180,10 +182,9 @@ public class JGpxPanel extends JCollapsiblePanel {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Resets the tree view. 
-	 * Used by GpxClear.
+	 * Resets the tree view. Used by GpxClear.
 	 * 
 	 */
 	public void resetModel() {

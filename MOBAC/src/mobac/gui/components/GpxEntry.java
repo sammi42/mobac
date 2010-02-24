@@ -1,43 +1,14 @@
 package mobac.gui.components;
 
-import java.io.File;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import mobac.gui.mapview.GpxLayer;
 
 public class GpxEntry {
+	private DefaultMutableTreeNode node;
 	private GpxLayer layer;
-	private File file;
-	
-	public GpxEntry(File f, GpxLayer layer) {
-		this.file = f;
-		this.setLayer(layer);
-	}
-	
-	public String toString() {
-		String name = "";
-		try {
-			name = getLayer().getGpx().getMetadata().getName();
-		} catch (NullPointerException e) {
-			// no name set
-		}
-		if (name != null && !name.equals("")) {
-			return name;
-		} else {
-			if (file == null) {
-				return "unnamed (new gpx)";
-			} else {
-				return "unnamed (file " + file.getName() + ")";
-			}
-		}
-	}
-	
-	public File getFile() {
-		return file;
-	}
-	
-	public void setFile(File f) {
-		file = f;
-	}
+	/** determines whether an entry can be a parent for waypoints */
+	private boolean isWaypointParent = false;
 	
 	public void setLayer(GpxLayer layer) {
 		this.layer = layer;
@@ -46,6 +17,25 @@ public class GpxEntry {
 	public GpxLayer getLayer() {
 		return layer;
 	}
+	
+	/**
+	 * Remembers the associated tree node.
+	 * 
+	 * @param node
+	 */
+	public void setNode(DefaultMutableTreeNode node) {
+		this.node = node;
+	}
+
+	public DefaultMutableTreeNode getNode() {
+		return node;
+	}
+
+	public void setWaypointParent(boolean isWaypointParent) {
+		this.isWaypointParent = isWaypointParent;
+	}
+
+	public boolean isWaypointParent() {
+		return isWaypointParent;
+	}
 }
-
-

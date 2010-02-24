@@ -1,28 +1,31 @@
 package mobac.gui.components;
 
-import mobac.data.gpx.gpx11.TrkType;
 import mobac.gui.mapview.GpxLayer;
 
-public class TrkEntry extends GpxEntry {
-	private TrkType trk;
+public class GpxRootEntry extends GpxEntry {
 	
-	public TrkEntry(TrkType trk, GpxLayer layer) {
-		this.trk = trk;
+	public GpxRootEntry(GpxLayer layer) {
 		this.setLayer(layer);
 		this.setWaypointParent(true);
-	}	
+	}
 	
 	public String toString() {
 		String name = "";
 		try {
-			name = trk.getName();
+			name = getLayer().getGpx().getMetadata().getName();
 		} catch (NullPointerException e) {
 			// no name set
 		}
 		if (name != null && !name.equals("")) {
 			return name;
 		} else {
-			return "unnamed track";
+			if (getLayer().getFile() == null) {
+				return "unnamed (new gpx)";
+			} else {
+				return "unnamed (file " + getLayer().getFile().getName() + ")";
+			}
 		}
-	}		
+	}
 }
+
+

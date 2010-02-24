@@ -1,6 +1,6 @@
 package mobac.gui.mapview;
 
-import java.awt.Point;
+import java.awt.Point; 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.math.BigDecimal;
@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.gui.components.GpxEntry;
+import mobac.gui.panels.JGpxPanel;
 
 import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -17,17 +18,19 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class GpxMapController extends JMapController implements MouseListener {
 
+	private JGpxPanel panel;
 	private GpxEntry entry;
 
-	public GpxMapController(JMapViewer map, GpxEntry entry, boolean enabled) {
+	public GpxMapController(JMapViewer map, JGpxPanel panel, boolean enabled) {
 		super(map, enabled);
-		this.entry = entry;
+		this.panel = panel;
 	}
 	
 	public void mouseClicked(MouseEvent e) {
 		// Add new GPX point to currently selected GPX file
 		disable();
 		if (e.getButton() == MouseEvent.BUTTON1) {
+			entry = panel.getSelectedEntry();
 			Gpx gpx = entry.getLayer().getGpx();
 			Point p = e.getPoint();
 			Point tl = ((PreviewMap) map).getTopLeftCoordinate();
@@ -48,8 +51,8 @@ public class GpxMapController extends JMapController implements MouseListener {
 			wpt.setName(name);
 			wpt.setLat(new BigDecimal(lat));
 			wpt.setLon(new BigDecimal(lon));
-			gpx11.getWpt().add(wpt);
-			// TODO update tree
+			gpx11.getWpt().add(wpt);		// TODO add to correct parent instead of root
+			panel.addWpt(wpt, entry);			
 		}
 		map.repaint();
 	}
@@ -75,5 +78,4 @@ public class GpxMapController extends JMapController implements MouseListener {
 		super.disable();
 		((PreviewMap) map).getMapSelectionController().enable();
 	}
-
 }

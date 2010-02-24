@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.gui.MainGUI;
-import mobac.gui.components.GpxEntry;
+import mobac.gui.components.GpxRootEntry;
 import mobac.gui.mapview.GpxLayer;
 import mobac.gui.panels.JGpxPanel;
 //import mobac.gui.panels.JGpxPanel.ListModelEntry;
@@ -28,9 +28,9 @@ public class GpxNew implements ActionListener {
 		MainGUI.getMainGUI().previewMap.repaint();
 	}
 
-	public GpxEntry newGpx() {
+	public GpxRootEntry newGpx() {
 		Gpx gpx = Gpx.createGpx();
 		GpxLayer gpxLayer = new GpxLayer(gpx);
-		return panel.addGpxLayer(null, gpxLayer);
+		return panel.addGpxLayer(gpxLayer);
 	}
 }

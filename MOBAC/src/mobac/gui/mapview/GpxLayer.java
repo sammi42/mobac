@@ -4,12 +4,14 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.io.File;
 
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.data.gpx.gpx11.RteType;
 import mobac.data.gpx.gpx11.TrkType;
 import mobac.data.gpx.gpx11.TrksegType;
 import mobac.data.gpx.gpx11.WptType;
+import mobac.gui.panels.JGpxPanel;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
@@ -35,7 +37,12 @@ public class GpxLayer implements MapLayer {
 
 	// private Logger log = Logger.getLogger(GpxLayer.class);
 
+	/** the associated gpx file handle */
+	private File file;
+	/** the associated gpx object */
 	private Gpx gpx;
+	/** the associated panel that displays the nodes of the gpx file */
+	private JGpxPanel panel;
 
 	private boolean showWaypoints = true;
 	private boolean showWaypointName = true;
@@ -122,6 +129,22 @@ public class GpxLayer implements MapLayer {
 
 	public Gpx getGpx() {
 		return gpx;
+	}
+
+	public void setPanel(JGpxPanel panel) {
+		this.panel = panel;
+	}
+
+	public JGpxPanel getPanel() {
+		return panel;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public File getFile() {
+		return file;
 	}
 
 }

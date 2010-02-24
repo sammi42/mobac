@@ -2,7 +2,6 @@ package mobac.gui.panels;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -23,6 +22,7 @@ import mobac.gui.actions.GpxLoad;
 import mobac.gui.actions.GpxNew;
 import mobac.gui.actions.GpxSave;
 import mobac.gui.components.GpxEntry;
+import mobac.gui.components.GpxRootEntry;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.components.RteEntry;
 import mobac.gui.components.TrkEntry;
@@ -35,7 +35,7 @@ import mobac.utilities.GBC;
 public class JGpxPanel extends JCollapsiblePanel {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private JTree tree;
 	private DefaultMutableTreeNode rootNode;
 	private DefaultTreeModel model;
@@ -44,7 +44,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 
 	public JGpxPanel(PreviewMap previewMap) {
 		super("Gpx", new GridBagLayout());
-
+		
 		this.previewMap = previewMap;
 
 		JButton newGpx = new JButton("New Gpx");
@@ -86,8 +86,9 @@ public class JGpxPanel extends JCollapsiblePanel {
 	 * treeview
 	 * 
 	 */
-	public GpxEntry addGpxLayer(File f, GpxLayer layer) {
-		GpxEntry gpxEntry = new GpxEntry(f, layer);
+	public GpxRootEntry addGpxLayer(GpxLayer layer) {	
+		layer.setPanel(this);		
+		GpxRootEntry gpxEntry = new GpxRootEntry(layer);
 		DefaultMutableTreeNode gpxNode = new DefaultMutableTreeNode(gpxEntry);
 		model.insertNodeInto(gpxNode, rootNode, rootNode.getChildCount());
 		TreePath path = new TreePath(gpxNode.getPath());
@@ -108,10 +109,9 @@ public class JGpxPanel extends JCollapsiblePanel {
 	 * @param model
 	 */
 	private void addWpts(GpxLayer layer, DefaultMutableTreeNode gpxNode) {
-		// waypoints
 		List<WptType> wpts = layer.getGpx().getWpt();
 		for (WptType wpt : wpts) {
-			WptEntry wptEntry = new WptEntry(wpt);
+			WptEntry wptEntry = new WptEntry(wpt, layer);
 			DefaultMutableTreeNode wptNode = new DefaultMutableTreeNode(wptEntry);
 			model.insertNodeInto(wptNode, gpxNode, gpxNode.getChildCount());
 		}
@@ -126,14 +126,14 @@ public class JGpxPanel extends JCollapsiblePanel {
 		// tracks
 		List<TrkType> trks = layer.getGpx().getTrk();
 		for (TrkType trk : trks) {
-			TrkEntry trkEntry = new TrkEntry(trk);
+			TrkEntry trkEntry = new TrkEntry(trk, layer);
 			DefaultMutableTreeNode trkNode = new DefaultMutableTreeNode(trkEntry);
 			model.insertNodeInto(trkNode, gpxNode, gpxNode.getChildCount());
 			// trkseg
 			List<TrksegType> trksegs = trk.getTrkseg();
 			int counter = 1;
 			for (TrksegType trkseg : trksegs) {
-				TrksegEntry trksegEntry = new TrksegEntry(trkseg, counter);
+				TrksegEntry trksegEntry = new TrksegEntry(trkseg, counter, layer);
 				DefaultMutableTreeNode trksegNode = new DefaultMutableTreeNode(trksegEntry);
 				model.insertNodeInto(trksegNode, trkNode, trkNode.getChildCount());
 				counter++;
@@ -141,7 +141,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 				// add trkpts
 				List<WptType> trkpts = trkseg.getTrkpt();
 				for (WptType trkpt : trkpts) {
-					WptEntry trkptEntry = new WptEntry(trkpt);
+					WptEntry trkptEntry = new WptEntry(trkpt, layer);
 					DefaultMutableTreeNode trkptNode = new DefaultMutableTreeNode(trkptEntry);
 					model.insertNodeInto(trkptNode, trksegNode, trksegNode.getChildCount());
 				}
@@ -158,29 +158,46 @@ public class JGpxPanel extends JCollapsiblePanel {
 	private void addRtes(GpxLayer layer, DefaultMutableTreeNode gpxNode) {
 		List<RteType> rtes = layer.getGpx().getRte();
 		for (RteType rte : rtes) {
-			RteEntry rteEntry = new RteEntry(rte);
+			RteEntry rteEntry = new RteEntry(rte, layer);
 			DefaultMutableTreeNode rteNode = new DefaultMutableTreeNode(rteEntry);
 			model.insertNodeInto(rteNode, gpxNode, gpxNode.getChildCount());
 			// add rtepts
 			List<WptType> rtepts = rte.getRtept();
 			for (WptType rtept : rtepts) {
-				WptEntry rteptEntry = new WptEntry(rtept);
+				WptEntry rteptEntry = new WptEntry(rtept, layer);
 				DefaultMutableTreeNode rteptNode = new DefaultMutableTreeNode(rteptEntry);
 				model.insertNodeInto(rteptNode, rteNode, rteNode.getChildCount());
 			}
 		}
 	}
-
+	
+	/**
+	 * Updates the tree view to show the newly added waypoint.
+	 * 
+	 * @param wpt		- new waypoint
+	 * @param gpxEntry	- parent entry in the tree
+	 */
+	public void addWpt(WptType wpt, GpxEntry gpxEntry) {
+		WptEntry wptEntry = new WptEntry(wpt, gpxEntry.getLayer());
+		DefaultMutableTreeNode wptNode = new DefaultMutableTreeNode(wptEntry);
+		model.insertNodeInto(wptNode, gpxEntry.getNode(), gpxEntry.getNode().getChildCount());
+	}
+	
 	public GpxEntry getSelectedEntry() {
-		TreePath selection = tree.getSelectionPath();
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection
-				.getLastPathComponent();
-		if (selectedNode.getParent().getParent() == null) {
-			GpxEntry gpxEntry = (GpxEntry) selectedNode.getUserObject();
-			return gpxEntry;
-		} else {
+		TreePath selection = tree.getSelectionPath();	
+		if (selection == null) {
 			return null;
 		}
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection.getLastPathComponent();
+
+		GpxEntry gpxEntry = null;
+		try {
+			gpxEntry = (GpxEntry) selectedNode.getUserObject();
+			gpxEntry.setNode(selectedNode);
+		} catch (ClassCastException e) {
+			// TODO add debug log msgs
+		}
+		return gpxEntry;
 	}
 
 	/**

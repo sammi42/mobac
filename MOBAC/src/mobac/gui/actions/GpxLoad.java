@@ -26,6 +26,7 @@ public class GpxLoad implements ActionListener {
 		this.panel = panel;
 	}
 
+	// TODO check if file already in tree
 	public void actionPerformed(ActionEvent event) {
 		if (!GPXUtils.checkJAXBVersion())
 			return;
@@ -45,7 +46,8 @@ public class GpxLoad implements ActionListener {
 		try {
 			Gpx gpx = GPXUtils.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
-			panel.addGpxLayer(f, gpxLayer);
+			gpxLayer.setFile(f);
+			panel.addGpxLayer(gpxLayer);	
 		} catch (JAXBException e) {
 			JOptionPane
 					.showMessageDialog(

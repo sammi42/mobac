@@ -1,6 +1,6 @@
 package mobac.gui.actions;
 
-import java.awt.event.ActionEvent; 
+import java.awt.event.ActionEvent;  
 import java.awt.event.ActionListener;
 import java.io.File;
 
@@ -53,14 +53,14 @@ public class GpxSave implements ActionListener {
 		Gpx gpx = entry.getLayer().getGpx();
 
 		try {
-			File f = entry.getFile();
+			File f = entry.getLayer().getFile();
 			if (saveAs || f == null)
 				f = selectFile(f);
 			if (f == null)
 				return;
 			if (!f.getName().toLowerCase().endsWith(".gpx"))
 				f = new File(f.getAbsolutePath() + ".gpx");
-			entry.setFile(f);
+			entry.getLayer().setFile(f);
 			GPXUtils.saveGpxFile(gpx, f);
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);

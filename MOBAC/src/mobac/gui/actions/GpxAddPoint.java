@@ -1,6 +1,6 @@
 package mobac.gui.actions;
 
-import java.awt.event.ActionEvent; 
+import java.awt.event.ActionEvent;  
 import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
@@ -17,7 +17,7 @@ public class GpxAddPoint implements ActionListener {
 
 	JGpxPanel panel;
 	
-	static GpxMapController mapController = null;
+	private GpxMapController mapController = null;
 
 	public GpxAddPoint(JGpxPanel panel) {
 		super();
@@ -34,10 +34,17 @@ public class GpxAddPoint implements ActionListener {
 				return;
 			entry = new GpxNew(panel).newGpx();
 		}
+		
+		if (!entry.isWaypointParent()) {
+			JOptionPane.showMessageDialog(null, "Way points can only be added to the gpx " +
+										"file, routes, tracks or track segments.", "Error", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
 		PreviewMap map = MainGUI.getMainGUI().previewMap;
 		map.getMapSelectionController().disable();
 		if (mapController == null)
-			mapController = new GpxMapController(map, entry, false);
+			mapController = new GpxMapController(map, panel, false);
 		mapController.enable();
 	}
 }

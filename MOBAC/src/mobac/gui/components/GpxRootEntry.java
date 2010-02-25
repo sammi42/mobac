@@ -13,8 +13,7 @@ public class GpxRootEntry extends GpxEntry {
 		String name = "";
 		try {
 			name = getLayer().getGpx().getMetadata().getName();
-		} catch (NullPointerException e) {
-			// no name set
+		} catch (NullPointerException e){
 		}
 		if (name != null && !name.equals("")) {
 			return name;

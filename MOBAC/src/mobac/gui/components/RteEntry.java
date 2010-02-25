@@ -7,7 +7,7 @@ public class RteEntry extends GpxEntry {
 	private RteType rte;
 	
 	public RteEntry(RteType rte, GpxLayer layer) {
-		this.rte = rte;
+		this.setRte(rte);
 		this.setLayer(layer);
 		this.setWaypointParent(true);
 	}	
@@ -15,7 +15,7 @@ public class RteEntry extends GpxEntry {
 	public String toString() {
 		String name = "";
 		try {
-			name = rte.getName();
+			name = getRte().getName();
 		} catch (NullPointerException e) {
 			// no name set
 		}
@@ -24,5 +24,13 @@ public class RteEntry extends GpxEntry {
 		} else {
 			return "unnamed route";
 		}
+	}
+
+	private void setRte(RteType rte) {
+		this.rte = rte;
+	}
+
+	public RteType getRte() {
+		return rte;
 	}		
 }

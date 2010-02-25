@@ -17,4 +17,8 @@ public class TrksegEntry extends GpxEntry {
 	public String toString() {
 		return name;
 	}		
+	
+	public TrksegType getTrkSeg() {
+		return trkseg;
+	}
 }

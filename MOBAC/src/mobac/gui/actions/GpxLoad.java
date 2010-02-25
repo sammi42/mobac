@@ -16,7 +16,6 @@ import mobac.gui.panels.JGpxPanel;
 import mobac.program.model.Settings;
 import mobac.utilities.file.GpxFileFilter;
 
-
 public class GpxLoad implements ActionListener {
 
 	JGpxPanel panel;
@@ -26,7 +25,6 @@ public class GpxLoad implements ActionListener {
 		this.panel = panel;
 	}
 
-	// TODO check if file already in tree
 	public void actionPerformed(ActionEvent event) {
 		if (!GPXUtils.checkJAXBVersion())
 			return;
@@ -43,11 +41,26 @@ public class GpxLoad implements ActionListener {
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
 		File f = fc.getSelectedFile();
+		if (panel.isFileOpen(f.getAbsolutePath())) {
+			int answer = JOptionPane.showConfirmDialog(null, "The file was already opened.\n"
+					+ "Do you want to open a new instance of this file?", "Warning",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+
+		}
+		doLoad(f);
+	}
+
+	/**
+	 * @param f
+	 */
+	private void doLoad(File f) {
 		try {
 			Gpx gpx = GPXUtils.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
 			gpxLayer.setFile(f);
-			panel.addGpxLayer(gpxLayer);	
+			panel.addGpxLayer(gpxLayer);
 		} catch (JAXBException e) {
 			JOptionPane
 					.showMessageDialog(

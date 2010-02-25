@@ -2,6 +2,7 @@ package mobac.gui.panels;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -35,16 +36,17 @@ import mobac.utilities.GBC;
 public class JGpxPanel extends JCollapsiblePanel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private JTree tree;
 	private DefaultMutableTreeNode rootNode;
 	private DefaultTreeModel model;
+	private ArrayList<String> openedFiles;
 
 	private PreviewMap previewMap;
 
 	public JGpxPanel(PreviewMap previewMap) {
 		super("Gpx", new GridBagLayout());
-		
+
 		this.previewMap = previewMap;
 
 		JButton newGpx = new JButton("New Gpx");
@@ -71,6 +73,8 @@ public class JGpxPanel extends JCollapsiblePanel {
 		treeView.setPreferredSize(new Dimension(100, 100));
 		model = (DefaultTreeModel) tree.getModel();
 
+		openedFiles = new ArrayList<String>();
+		
 		GBC eol = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC std = GBC.std().fill(GBC.HORIZONTAL);
 		addContent(treeView, eol);
@@ -86,8 +90,8 @@ public class JGpxPanel extends JCollapsiblePanel {
 	 * treeview
 	 * 
 	 */
-	public GpxRootEntry addGpxLayer(GpxLayer layer) {	
-		layer.setPanel(this);		
+	public GpxRootEntry addGpxLayer(GpxLayer layer) {
+		layer.setPanel(this);
 		GpxRootEntry gpxEntry = new GpxRootEntry(layer);
 		DefaultMutableTreeNode gpxNode = new DefaultMutableTreeNode(gpxEntry);
 		model.insertNodeInto(gpxNode, rootNode, rootNode.getChildCount());
@@ -99,6 +103,8 @@ public class JGpxPanel extends JCollapsiblePanel {
 		addTrks(layer, gpxNode);
 		addWpts(layer, gpxNode);
 
+		openedFiles.add(layer.getFile().getAbsolutePath());
+		
 		previewMap.mapLayers.add(layer);
 		return gpxEntry;
 	}
@@ -170,36 +176,42 @@ public class JGpxPanel extends JCollapsiblePanel {
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates the tree view to show the newly added waypoint.
 	 * 
-	 * @param wpt		- new waypoint
-	 * @param gpxEntry	- parent entry in the tree
+	 * @param wpt
+	 *            - new waypoint
+	 * @param gpxEntry
+	 *            - parent entry in the tree
 	 */
 	public void addWpt(WptType wpt, GpxEntry gpxEntry) {
 		WptEntry wptEntry = new WptEntry(wpt, gpxEntry.getLayer());
 		DefaultMutableTreeNode wptNode = new DefaultMutableTreeNode(wptEntry);
 		model.insertNodeInto(wptNode, gpxEntry.getNode(), gpxEntry.getNode().getChildCount());
 	}
-	
+
 	public GpxEntry getSelectedEntry() {
-		TreePath selection = tree.getSelectionPath();	
+		TreePath selection = tree.getSelectionPath();
 		if (selection == null) {
 			return null;
 		}
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection.getLastPathComponent();
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection
+				.getLastPathComponent();
 
 		GpxEntry gpxEntry = null;
 		try {
 			gpxEntry = (GpxEntry) selectedNode.getUserObject();
 			gpxEntry.setNode(selectedNode);
 		} catch (ClassCastException e) {
-			// TODO add debug log msgs
 		}
 		return gpxEntry;
 	}
 
+	public boolean isFileOpen(String path) {
+		return openedFiles.contains(path);
+	}
+	
 	/**
 	 * Resets the tree view. Used by GpxClear.
 	 * 
@@ -207,5 +219,6 @@ public class JGpxPanel extends JCollapsiblePanel {
 	public void resetModel() {
 		rootNode = new DefaultMutableTreeNode("loaded gpx files...");
 		model.setRoot(rootNode);
+		openedFiles = new ArrayList<String>();
 	}
 }

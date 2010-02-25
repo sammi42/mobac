@@ -37,7 +37,7 @@ public class GpxAddPoint implements ActionListener {
 		
 		if (!entry.isWaypointParent()) {
 			JOptionPane.showMessageDialog(null, "Way points can only be added to the gpx " +
-										"file, routes, tracks or track segments.", "Error", JOptionPane.INFORMATION_MESSAGE);
+										"file, routes or track segments.", "Error", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		

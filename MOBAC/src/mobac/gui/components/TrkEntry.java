@@ -9,7 +9,7 @@ public class TrkEntry extends GpxEntry {
 	public TrkEntry(TrkType trk, GpxLayer layer) {
 		this.trk = trk;
 		this.setLayer(layer);
-		this.setWaypointParent(true);
+		this.setWaypointParent(false);
 	}	
 	
 	public String toString() {
@@ -24,5 +24,9 @@ public class TrkEntry extends GpxEntry {
 		} else {
 			return "unnamed track";
 		}
+	}
+
+	public TrkType getTrk() {
+		return trk;
 	}		
 }

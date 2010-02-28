@@ -23,5 +23,9 @@ public class WptEntry extends GpxEntry {
 		} else {
 			return "unnamed waypoint";
 		}
+	}
+
+	public WptType getWpt() {
+		return wpt;
 	}		
 }

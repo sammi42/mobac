@@ -1,22 +1,18 @@
 package mobac.gui.mapview;
 
-import java.awt.Point;
+import java.awt.Point; 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import mobac.data.gpx.gpx11.Gpx;
-import mobac.data.gpx.gpx11.RteType;
-import mobac.data.gpx.gpx11.TrksegType;
 import mobac.data.gpx.gpx11.WptType;
+import mobac.gui.actions.GpxEditor;
 import mobac.gui.components.GpxEntry;
 import mobac.gui.components.GpxRootEntry;
 import mobac.gui.components.RteEntry;
-import mobac.gui.components.TrkEntry;
 import mobac.gui.components.TrksegEntry;
 import mobac.gui.panels.JGpxPanel;
 
@@ -59,54 +55,17 @@ public class GpxMapController extends JMapController implements MouseListener {
 			wpt.setName(name);
 			wpt.setLat(new BigDecimal(lat));
 			wpt.setLon(new BigDecimal(lon));
+			GpxEditor editor = GpxEditor.getInstance();
 			if (entry.getClass() == GpxRootEntry.class) {
 				gpx11.getWpt().add(wpt);
 			} else if (entry.getClass() == RteEntry.class) {
-				findRteAndAdd(entry, wpt);
+				editor.findRteAndAdd(entry, wpt);
 			} else if (entry.getClass() == TrksegEntry.class) {
-				findTrksegAndAdd(entry, wpt);
+				editor.findTrksegAndAdd(entry, wpt);
 			}
 			panel.addWpt(wpt, entry);
 		}
 		map.repaint();
-	}
-
-	/**
-	 * Adds a wpt to the selected route.
-	 * 
-	 * @param entry
-	 * @param wpt
-	 */
-	private void findRteAndAdd(GpxEntry entry, WptType wpt) {
-		List<RteType> rtes = entry.getLayer().getGpx().getRte();
-		RteType rteParent = ((RteEntry) entry).getRte();
-		for (RteType rte : rtes) {
-			if (rte.equals(rteParent)) {
-				rte.getRtept().add(wpt);
-			}
-		}
-	}
-
-	/**
-	 * Adds a wpt to the selected track segment.
-	 * 
-	 * @param entry
-	 * @param wpt
-	 */
-	private void findTrksegAndAdd(GpxEntry entry, WptType wpt) {
-		// get the track the selected track segment belongs to
-		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) entry.getNode().getParent();
-		TrkEntry trkParent = (TrkEntry) parentNode.getUserObject();
-
-		// get the selected track segment
-		TrksegType trksegParent = ((TrksegEntry) entry).getTrkSeg();
-		List<TrksegType> trksegs = trkParent.getTrk().getTrkseg();
-
-		for (TrksegType trkseg : trksegs) {
-			if (trkseg.equals(trksegParent)) {
-				trkseg.getTrkpt().add(wpt);
-			}
-		}
 	}
 
 	public void mouseEntered(MouseEvent e) {

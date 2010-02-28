@@ -22,6 +22,7 @@ import mobac.gui.actions.GpxClear;
 import mobac.gui.actions.GpxLoad;
 import mobac.gui.actions.GpxNew;
 import mobac.gui.actions.GpxSave;
+import mobac.gui.actions.GpxTreeListener;
 import mobac.gui.components.GpxEntry;
 import mobac.gui.components.GpxRootEntry;
 import mobac.gui.components.JCollapsiblePanel;
@@ -33,6 +34,11 @@ import mobac.gui.mapview.GpxLayer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.utilities.GBC;
 
+/**
+ * Allows to load, display, edit and save gpx files using a tree view. TODO warn
+ * unsaved changes on exit
+ * 
+ */
 public class JGpxPanel extends JCollapsiblePanel {
 
 	private static final long serialVersionUID = 1L;
@@ -73,8 +79,10 @@ public class JGpxPanel extends JCollapsiblePanel {
 		treeView.setPreferredSize(new Dimension(100, 100));
 		model = (DefaultTreeModel) tree.getModel();
 
+		tree.addMouseListener(new GpxTreeListener());
+
 		openedFiles = new ArrayList<String>();
-		
+
 		GBC eol = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC std = GBC.std().fill(GBC.HORIZONTAL);
 		addContent(treeView, eol);
@@ -104,7 +112,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 		addWpts(layer, gpxNode);
 
 		openedFiles.add(layer.getFile().getAbsolutePath());
-		
+
 		previewMap.mapLayers.add(layer);
 		return gpxEntry;
 	}
@@ -211,7 +219,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 	public boolean isFileOpen(String path) {
 		return openedFiles.contains(path);
 	}
-	
+
 	/**
 	 * Resets the tree view. Used by GpxClear.
 	 * 

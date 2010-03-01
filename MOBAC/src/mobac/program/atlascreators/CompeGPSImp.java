@@ -12,6 +12,12 @@ import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
+/**
+ * Correspondent feature tracker entry: <a href="https://sourceforge.net/tracker/?func=detail&aid=2931899&group_id=238075&atid=1105497"
+ * >IMP calibration files</a>
+ * 
+ * State: Waiting for further information.
+ */
 public class CompeGPSImp extends Ozi {
 
 	@Override

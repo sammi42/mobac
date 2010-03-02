@@ -393,13 +393,16 @@ public class RegionalMapSources {
 	 * <td>17</td>
 	 * </tr>
 	 * <tr>
-	 * <td>Europe</td>
+	 * <td>europa</td>
 	 * <td>Europe Map WMS</td>
 	 * <td>all</td>
 	 * <td>17</td>
 	 * </tr>
-	 * </table> {@link http
-	 * ://www.statkart.no/?module=Articles;action=Article.publicShow;ID=14165}
+	 * </table>
+	 * 
+	 * <pre>
+	 * http://www.statkart.no/?module=Articles;action=Article.publicShow;ID=14165
+	 * </pre>
 	 */
 	public static class StatkartTopo2 extends AbstractMapSource {
 

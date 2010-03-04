@@ -30,7 +30,7 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 		ImageIO.setUseCache(false);
 	}
 
-	public byte[] getTileData(int layer, int x, int y) throws IOException {
+	public byte[] getTileData(int x, int y, int layer) throws IOException {
 		return getTileData(x, y);
 	}
 

@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import mobac.data.gpx.gpx11.Gpx;
 import mobac.data.gpx.gpx11.RteType;
+import mobac.data.gpx.gpx11.TrkType;
 import mobac.data.gpx.gpx11.TrksegType;
 import mobac.data.gpx.gpx11.WptType;
 import mobac.gui.components.GpxEntry;
@@ -64,5 +66,50 @@ public class GpxEditor {
 				trkseg.getTrkpt().add(wpt);
 			}
 		}
+	}
+
+	/**
+	 * Removes a waypoint from the Gpx assigned to the layer.
+	 * 
+	 * @param wpt
+	 *            - the node to be removed
+	 * @return - true if wpt found and deleted, false otherwise
+	 */
+	public boolean findWptAndDelete(WptType wpt, GpxEntry gpxEntry) {
+		Gpx gpx = gpxEntry.getLayer().getGpx();
+		// wpts
+		List<WptType> wpts = gpx.getWpt();
+		for (WptType currentWpt : wpts) {
+			if (currentWpt.equals(wpt)) {
+				wpts.remove(currentWpt);
+				return true;
+			}
+		}
+		// trks
+		List<TrkType> trks = gpx.getTrk();
+		for (TrkType currentTrk : trks) {
+			List<TrksegType> trksegs = currentTrk.getTrkseg();
+			for (TrksegType currentTrkseg : trksegs) {
+				wpts = currentTrkseg.getTrkpt();
+				for (WptType currentWpt : wpts) {
+					if (currentWpt.equals(wpt)) {
+						wpts.remove(currentWpt);
+						return true;
+					}
+				}
+			}
+		}
+		// rtes
+		List<RteType> rtes = gpx.getRte();
+		for (RteType currentRte : rtes) {
+			wpts = currentRte.getRtept();
+			for (WptType currentWpt : wpts) {
+				if (currentWpt.equals(wpt)) {
+					wpts.remove(currentWpt);
+					return true;
+				}
+			}
+		}
+		return false; // if the node wasn't found
 	}
 }

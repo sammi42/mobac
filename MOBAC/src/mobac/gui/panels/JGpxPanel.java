@@ -199,6 +199,22 @@ public class JGpxPanel extends JCollapsiblePanel {
 		model.insertNodeInto(wptNode, gpxEntry.getNode(), gpxEntry.getNode().getChildCount());
 	}
 
+	/**
+	 * Updates the tree view after removing a waypoint.
+	 * 
+	 * @param wpt
+	 *            - deleted waypoint
+	 * @param gpxEntry
+	 *            - parent entry of the deleted element in the tree
+	 */
+	public void removeWpt(WptEntry wptEntry) {
+		DefaultMutableTreeNode wptNode = wptEntry.getNode();
+		model.removeNodeFromParent(wptNode);
+
+		// update layer (is changing the gpx enough? prolly not
+		// did remove it already...check wheter its enough
+	}
+
 	public GpxEntry getSelectedEntry() {
 		TreePath selection = tree.getSelectionPath();
 		if (selection == null) {

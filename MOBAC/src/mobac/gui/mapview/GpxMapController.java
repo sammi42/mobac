@@ -1,6 +1,6 @@
 package mobac.gui.mapview;
 
-import java.awt.Point; 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.math.BigDecimal;
@@ -65,6 +65,10 @@ public class GpxMapController extends JMapController implements MouseListener {
 			}
 			panel.addWpt(wpt, entry);
 		}
+		map.repaint();
+	}
+
+	public void repaint() {
 		map.repaint();
 	}
 

@@ -6,12 +6,16 @@ import java.awt.event.MouseListener;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import mobac.data.gpx.gpx11.WptType;
+import mobac.gui.MainGUI;
 import mobac.gui.components.GpxEntry;
 import mobac.gui.components.GpxRootEntry;
 import mobac.gui.components.RteEntry;
 import mobac.gui.components.TrkEntry;
 import mobac.gui.components.TrksegEntry;
 import mobac.gui.components.WptEntry;
+import mobac.gui.mapview.GpxMapController;
+import mobac.gui.mapview.PreviewMap;
 
 /**
  * Listener for the gpx editor tree elements.
@@ -22,6 +26,8 @@ import mobac.gui.components.WptEntry;
 public class GpxElementListener implements MouseListener {
 	private JMenuItem item;
 	private GpxEntry gpxEntry;
+	private GpxMapController mapController = null;
+	private GpxEditor editor = GpxEditor.getInstance();
 
 	public GpxElementListener(GpxEntry gpxEntry) {
 		this.gpxEntry = gpxEntry;
@@ -53,11 +59,42 @@ public class GpxElementListener implements MouseListener {
 		}
 	}
 
+	/**
+	 * Removes an entry (wpt, trk, trkseg, rte) from a gpx file (and the
+	 * displayed layer) Currently only works for waypoints.
+	 * 
+	 */
 	private void removeEntry() {
-		// TODO show warning and delete
+		int answer = JOptionPane.showConfirmDialog(null, "Do you really want to delete this node?",
+				"Delete node", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (answer == JOptionPane.YES_OPTION) {
+			PreviewMap map = MainGUI.getMainGUI().previewMap;
+			map.getMapSelectionController().disable();
+			if (mapController == null)
+				mapController = new GpxMapController(map, gpxEntry.getLayer().getPanel(), false);
+			mapController.enable();
+
+			if (gpxEntry.getClass().equals(RteEntry.class)) {
+				// RteEntry rte = (RteEntry) gpxEntry;
+
+			} else if (gpxEntry.getClass().equals(TrkEntry.class)) {
+				// TrkEntry trk = (TrkEntry) gpxEntry;
+
+			} else if (gpxEntry.getClass().equals(WptEntry.class)) {
+				WptEntry wptEntry = (WptEntry) gpxEntry;
+				WptType wpt = wptEntry.getWpt();
+				editor.findWptAndDelete(wpt, gpxEntry);
+				wptEntry.getLayer().getPanel().removeWpt(wptEntry);
+				mapController.repaint();
+			} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
+				// GpxRootEntry root = (GpxRootEntry) gpxEntry;
+
+			}
+		} else {
+			return;
+		}
 	}
 
-	// TODO move edit to GpxEditor
 	/**
 	 * Renames (if possible) the entry according to user input.
 	 * 

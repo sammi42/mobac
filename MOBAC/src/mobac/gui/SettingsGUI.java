@@ -462,10 +462,11 @@ public class SettingsGUI extends JDialog {
 		JLabel mapSizeLabel = new JLabel("Maximum size (width & height) of each map: ");
 		JLabel mapSizeText = new JLabel(
 				"<html>If the image of the selected region to download "
-						+ "is larger in height or width than <br>the mapsize it will be splitted into "
-						+ "several maps when adding the map selection.<br>"
+						+ "is larger in height or width than <br>the map size it will be splitted into "
+						+ "several maps <b>when adding the map selection</b>.<br>"
 						+ "Each map is no larger than the specified maximum map size.<br>"
-						+ "You can see the number of maps and their region in the atlas content tree.<br><br>"
+						+ "You can see the number of maps and their region in the atlas content tree.<br>"
+						+ "Changing the maximum map size after an area has been added the atlas has no effect on the atlas.<br><br>"
 						+ "<b>Note for TrekBuddy users:</b><br>"
 						+ "TrekBuddy versions before v0.9.88 "
 						+ "do not support map sizes larger than 32767.<br>"

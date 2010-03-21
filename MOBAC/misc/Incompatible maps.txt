@@ -58,3 +58,8 @@ ICC Catalunya
 Zumi Poland
 	http://mapy.zumi.pl/
 	Reson: Tile size 250x250
+	
+Hungarian Turistautak.hu
+	http://www.turistautak.hu/maps.php?id=magyarorszag&image=raster
+	Reson: Tile size 410x300
+	

@@ -119,9 +119,10 @@ public class TileDownLoader {
 		conn.connect();
 
 		int code = conn.getResponseCode();
+		byte[] data = loadBodyDataInBuffer(conn);
 
 		if (code != HttpURLConnection.HTTP_OK)
-			throw new DownloadFailedException(code);
+			throw new DownloadFailedException(conn, code);
 		String contentType = conn.getContentType();
 		if (contentType != null && !contentType.startsWith("image/"))
 			throw new UnrecoverableDownloadException(
@@ -131,7 +132,6 @@ public class TileDownLoader {
 		long timeLastModified = conn.getLastModified();
 		long timeExpires = conn.getExpiration();
 
-		byte[] data = loadTileInBuffer(conn);
 		Utilities.checkForInterruption();
 		String imageFormat = Utilities.getImageDataFormat(data);
 		if (imageFormat == null)
@@ -219,9 +219,10 @@ public class TileDownLoader {
 				log.trace("Data unchanged on server: " + mapSource + " " + tile);
 			return null;
 		}
+		byte[] data = loadBodyDataInBuffer(conn);
 
 		if (code != HttpURLConnection.HTTP_OK)
-			throw new DownloadFailedException(code);
+			throw new DownloadFailedException(conn, code);
 		String contentType = conn.getContentType();
 		if (contentType != null && !contentType.startsWith("image/"))
 			throw new UnrecoverableDownloadException(
@@ -231,7 +232,6 @@ public class TileDownLoader {
 		long timeLastModified = conn.getLastModified();
 		long timeExpires = conn.getExpiration();
 
-		byte[] data = loadTileInBuffer(conn);
 		Utilities.checkForInterruption();
 		String imageFormat = Utilities.getImageDataFormat(data);
 		if (imageFormat == null)
@@ -262,7 +262,16 @@ public class TileDownLoader {
 		return (expiredTime < System.currentTimeMillis());
 	}
 
-	protected static byte[] loadTileInBuffer(HttpURLConnection conn) throws IOException {
+	/**
+	 * Reads all available data from the input stream of <code>conn</code> and
+	 * returns it as byte array. If no input data is available the method
+	 * returns <code>null</code>.
+	 * 
+	 * @param conn
+	 * @return
+	 * @throws IOException
+	 */
+	protected static byte[] loadBodyDataInBuffer(HttpURLConnection conn) throws IOException {
 		InputStream input = conn.getInputStream();
 		int bufSize = Math.max(input.available(), 32768);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream(bufSize);
@@ -275,6 +284,7 @@ public class TileDownLoader {
 			else
 				finished = true;
 		} while (!finished);
+		log.trace("Retrieved " + bout.size() + " bytes for a HTTP " + conn.getResponseCode());
 		if (bout.size() == 0)
 			return null;
 		return bout.toByteArray();

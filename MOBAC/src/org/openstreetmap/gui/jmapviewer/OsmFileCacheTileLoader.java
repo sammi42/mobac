@@ -4,6 +4,7 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.io.ByteArrayInputStream;
 
+import mobac.exceptions.DownloadFailedException;
 import mobac.program.download.TileDownLoader;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
@@ -96,6 +97,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				} else {
 					tile.setErrorImage();
 				}
+			} catch (DownloadFailedException e) {
+				log.debug("Downloading of tile " + tile + " failed " + e.getMessage());
+				tile.setErrorImage();
+				listener.tileLoadingFinished(tile, false);
 			} catch (Exception e) {
 				log.trace("Downloading of tile " + tile + " failed", e);
 				tile.setErrorImage();

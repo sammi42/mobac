@@ -87,6 +87,7 @@ public class Logging {
 		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 		consoleAppender.setThreshold(level);
 		logger.addAppender(consoleAppender);
+		logger.setLevel(level);
 	}
 
 	public static void configureLogfileLogging(Level level) {

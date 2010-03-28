@@ -12,7 +12,6 @@ import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
 
-
 /**
  * Java 6 version of the main starter class
  */
@@ -21,6 +20,7 @@ public class Main {
 	public Main() {
 		try {
 			Logging.configureLogging();
+			// MySocketImplFactory.install();
 			ProgramInfo.initialize(); // Load revision info
 			Logging.logSystemInfo();
 			GUIExceptionHandler.installToolkitEventQueueProxy();

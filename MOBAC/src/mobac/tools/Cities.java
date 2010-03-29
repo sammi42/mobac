@@ -11,7 +11,6 @@ import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
-import mobac.mapsources.impl.RegionalMapSources.AustrianMap;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -59,7 +58,7 @@ public class Cities {
 		TEST_COORDINATES.put(MultimapCom.class, Cities.LONDON);
 		TEST_COORDINATES.put(MultimapOSUkCom.class, Cities.LONDON);
 		TEST_COORDINATES.put(DoCeluPL.class, Cities.WARSZAWA);
-		TEST_COORDINATES.put(AustrianMap.class, Cities.VIENNA);
+		//TEST_COORDINATES.put(AustrianMap.class, Cities.VIENNA);
 		TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);

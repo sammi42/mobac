@@ -192,32 +192,6 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * AustrianMap
-	 * <p>
-	 * <a href="http://www.austrianmap.at">www.austrianmap.at</a>
-	 * </p>
-	 */
-	public static class AustrianMap extends AbstractMapSource {
-
-		public AustrianMap() {
-			super("AustrianMap", 14, 15, "png");
-			tileUpdate = TileUpdate.ETag;
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			int tileX100 = tilex / 100;
-			return "http://www.bergfex.at/images/amap/" + zoom + "/" + tileX100 + "/" + zoom + "_"
-					+ tilex + "_" + tiley + ".png";
-		}
-
-		@Override
-		public String toString() {
-			return getName() + " (Austria only)";
-		}
-
-	}
-
-	/**
 	 * @author SourceForge.net user didoa.
 	 */
 	public static class FreemapSlovakia extends AbstractMapSource {

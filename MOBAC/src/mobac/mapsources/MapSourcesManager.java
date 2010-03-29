@@ -28,7 +28,6 @@ import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
 import mobac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
-import mobac.mapsources.impl.RegionalMapSources.AustrianMap;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -76,7 +75,7 @@ public class MapSourcesManager {
 				new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
 				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
-				new EmapaPl(), new AustrianMap(), new Bergfex(), new FreemapSlovakia(),
+				new EmapaPl(), /*new AustrianMap(),*/ new Bergfex(), new FreemapSlovakia(),
 				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
 				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
 				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(),

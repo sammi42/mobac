@@ -6,8 +6,33 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 public class NotWorking {
+
+	/**
+	 * AustrianMap
+	 * <p>
+	 * <a href="http://www.austrianmap.at">www.austrianmap.at</a>
+	 * </p>
+	 */
+	public static class AustrianMap extends AbstractMapSource {
+
+		public AustrianMap() {
+			super("AustrianMap", 14, 15, "png");
+			tileUpdate = TileUpdate.ETag;
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			int tileX100 = tilex / 100;
+			return "http://www.bergfex.at/images/amap/" + zoom + "/" + tileX100 + "/" + zoom + "_"
+					+ tilex + "_" + tiley + ".png";
+		}
+
+		@Override
+		public String toString() {
+			return getName() + " (Austria only)";
+		}
+
+	}
 
 	/**
 	 * Yandex uses an unknown projection and and different ellipsoid. See
@@ -27,7 +52,7 @@ public class NotWorking {
 
 		@Override
 		public MapSpace getMapSpace() {
-			return null; //unknown what to return
+			return null; // unknown what to return
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -75,7 +100,7 @@ public class NotWorking {
 
 		@Override
 		public MapSpace getMapSpace() {
-			return null; //unknown what to return
+			return null; // unknown what to return
 		}
 
 		@Override

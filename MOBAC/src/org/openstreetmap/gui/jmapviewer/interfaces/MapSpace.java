@@ -16,6 +16,12 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
  */
 public interface MapSpace {
 
+	public enum ProjectionCategory {
+		SPHERE, ELLIPSOID, GEOID
+	};
+
+	public ProjectionCategory getProjectionCategory();
+
 	public int getMaxPixels(int zoom);
 
 	/**

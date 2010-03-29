@@ -26,8 +26,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
  */
 public class MercatorPower2MapSpace implements MapSpace {
 
-	public static final MapSpace INSTANCE_256 = new MercatorPower2MapSpace(256);
-
 	protected static final double MAX_LAT = 85.05112877980659;
 	protected static final double MIN_LAT = -85.05112877980659;
 
@@ -38,8 +36,9 @@ public class MercatorPower2MapSpace implements MapSpace {
 	 * different zoom levels.
 	 */
 	protected final int[] worldSize;
+	public static final MapSpace INSTANCE_256 = new MercatorPower2MapSpace(256);
 
-	public MercatorPower2MapSpace(int tileSize) {
+	protected MercatorPower2MapSpace(int tileSize) {
 		this.tileSize = tileSize;
 		worldSize = new int[PreviewMap.MAX_ZOOM + 1];
 		for (int zoom = 0; zoom < worldSize.length; zoom++)
@@ -48,6 +47,10 @@ public class MercatorPower2MapSpace implements MapSpace {
 
 	protected double radius(int zoom) {
 		return getMaxPixels(zoom) / (2.0 * Math.PI);
+	}
+
+	public ProjectionCategory getProjectionCategory() {
+		return ProjectionCategory.SPHERE;
 	}
 
 	/**

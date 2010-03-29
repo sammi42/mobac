@@ -723,6 +723,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	public void mapSourceChanged(MapSource newMapSource) {
+		// TODO update selected area if new map source has different projectionCategory
 		calculateNrOfTilesToDownload();
 		if (newMapSource.equals(mapSourceCombo.getSelectedItem()))
 			return;

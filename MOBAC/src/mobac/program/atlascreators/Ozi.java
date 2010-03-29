@@ -17,6 +17,8 @@ import mobac.utilities.imageio.PngXxlWriter;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 
 
 public class Ozi extends TrekBuddy {
@@ -26,7 +28,10 @@ public class Ozi extends TrekBuddy {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
+		MapSpace mapSpace = mapSource.getMapSpace();
+		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE
+				.equals(mapSpace.getProjectionCategory()));
+		// TODO supports Mercator ellipsoid?
 	}
 
 	@Override

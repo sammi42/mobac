@@ -15,6 +15,7 @@ import java.util.Map;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
+import mobac.mapsources.impl.MiscMapSources.YandexMap;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
 import mobac.program.model.EastNorthCoordinate;
@@ -37,7 +38,7 @@ public class MapSourceTypeDetector {
 		Logging.configureLogging();
 		MapSourcesManager.getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(MicrosoftVirtualEarth.class);
+		testMapSource(YandexMap.class);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass) {

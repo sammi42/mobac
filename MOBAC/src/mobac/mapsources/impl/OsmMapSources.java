@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MultiLayerMapSource;
-import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.mapsources.mapspace.MapSpaceFactory;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
@@ -248,7 +248,7 @@ public class OsmMapSources {
 	 */
 	public static class Turaterkep extends AbstractMapSource {
 
-		private MapSpace space = new MercatorPower2MapSpace(512);
+		private static MapSpace space = MapSpaceFactory.getInstance(512, false);
 
 		public Turaterkep() {
 			super("Turaterkep", 7, 16, "png", TileUpdate.IfNoneMatch);

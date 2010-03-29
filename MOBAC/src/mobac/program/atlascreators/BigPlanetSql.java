@@ -12,7 +12,6 @@ import java.sql.Statement;
 import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
@@ -68,8 +67,6 @@ public class BigPlanetSql extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return false;
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 

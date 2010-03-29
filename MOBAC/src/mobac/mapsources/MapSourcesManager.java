@@ -19,6 +19,8 @@ import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.OviMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMaps;
+import mobac.mapsources.impl.MiscMapSources.YandexSat;
+import mobac.mapsources.impl.MiscMapSources.YandexMap;
 import mobac.mapsources.impl.OsmMapSources.CycleMap;
 import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
@@ -75,11 +77,11 @@ public class MapSourcesManager {
 				new OutdooractiveGermany(), new OutdooractiveAustria(),
 				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
 				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
-				new EmapaPl(), /*new AustrianMap(),*/ new Bergfex(), new FreemapSlovakia(),
-				new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
-				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
-				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(),
-				new EniroComNautical(), new MapplusCh() };
+				new EmapaPl(), new Bergfex(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
+				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
+				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2(),
+				new EniroComMap(), new EniroComAerial(), new EniroComNautical(), new MapplusCh(),
+				new YandexMap(), new YandexSat() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

@@ -1,7 +1,10 @@
 package mobac.mapsources.impl;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
+import mobac.mapsources.mapspace.MercatorPower2MapSpaceEllipsoidal;
 
 public class MiscMapSources {
 
@@ -108,7 +111,79 @@ public class MiscMapSources {
 			return "Ovi/Nokia Maps";
 		}
 
-		
+	}
+
+	/**
+	 * Yandex Maps
+	 */
+	public static class YandexMap extends AbstractMapSource {
+		// YandexMap.url=http://vec0{$servernum}.maps.yandex.ru/tiles?l=map&v=2.10.2&x={$x}&y={$y}&z={$z}
+
+		int SERVER_NUM = 1;
+
+		String urlPattern;
+
+		public YandexMap() {
+			super("YandexMap", 1, 17, "png", TileUpdate.IfModifiedSince);
+			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+		}
+
+		@Override
+		public MapSpace getMapSpace() {
+			return MercatorPower2MapSpaceEllipsoidal.INSTANCE_256;
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			SERVER_NUM = (SERVER_NUM % 3) + 3;
+			String tmp = urlPattern;
+			tmp = tmp.replace("{$servernum}", Integer.toString(SERVER_NUM));
+			tmp = tmp.replace("{$x}", Integer.toString(tilex));
+			tmp = tmp.replace("{$y}", Integer.toString(tiley));
+			tmp = tmp.replace("{$z}", Integer.toString(zoom));
+			return tmp;
+		}
+
+		@Override
+		public String toString() {
+			return "Yandex Map (Russia)";
+		}
+
+	}
+
+	/**
+	 * Yandex Sat
+	 */
+	public static class YandexSat extends AbstractMapSource {
+
+		private static int SERVER_NUM = 1;
+
+		private String urlPattern;
+
+		public YandexSat() {
+			super("YandexSat", 1, 18, "jpg", TileUpdate.IfModifiedSince);
+			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			SERVER_NUM = (SERVER_NUM % 3) + 3;
+			String tmp = urlPattern;
+			tmp = tmp.replace("{$servernum}", Integer.toString(SERVER_NUM));
+			tmp = tmp.replace("{$x}", Integer.toString(tilex));
+			tmp = tmp.replace("{$y}", Integer.toString(tiley));
+			tmp = tmp.replace("{$z}", Integer.toString(zoom));
+			return tmp;
+		}
+
+		@Override
+		public MapSpace getMapSpace() {
+			return MercatorPower2MapSpaceEllipsoidal.INSTANCE_256;
+		}
+
+		@Override
+		public String toString() {
+			return "Yandex Sat (Russia)";
+		}
+
 	}
 
 }

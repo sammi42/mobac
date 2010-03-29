@@ -41,6 +41,7 @@ import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -64,7 +65,10 @@ public class GarminCustom extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
+		MapSpace mapSpace = mapSource.getMapSpace();
+		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE
+				.equals(mapSpace.getProjectionCategory()));
+		// TODO supports Mercator ellipsoid?
 	}
 
 	@Override

@@ -253,25 +253,34 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * Mapa Polski i Europy Emapa.pl (added by "Velociraptor")
+	 * Emapi - mapa internetowa firmy Emapa
 	 * <p>
-	 * <a href="mapa.emapa.pl">mapa.emapa.pl</a>
+	 * <a href="http://emapi.pl/">emapi.pl</a>
 	 * </p>
 	 */
-	public static class EmapaPl extends AbstractMapSource {
+	public static class EmapiPl extends AbstractMapSource {
 
-		public EmapaPl() {
-			super("EmapaPl", 0, 19, "png", TileUpdate.None);
+		public EmapiPl() {
+			super("EmapiPl", 0, 19, "png", TileUpdate.None);
 		}
 
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://mapa.emapa.pl/mapsrc/img.aspx?&x=" + tilex + "&y=" + tiley + "&zoom="
-					+ zoom;
+		public String getTileUrl(int zoom, int x, int y) {
+			return "http://emapi.pl/Default.aspx?tileX=" + x + "&tileY=" + y + "&zoom=" + zoom
+					+ "&layer=std&fun=GetMap&userID=pasat";
+		}
+
+		@Override
+		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
+				throws IOException {
+			HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
+			conn.addRequestProperty("Cookie", "currentView=");
+			conn.addRequestProperty("Referer", "http://emapi.pl/?referer=");
+			return conn;
 		}
 
 		@Override
 		public String toString() {
-			return "Emapa.pl (Poland only)";
+			return "Emapi.pl (Poland only)";
 		}
 	}
 

@@ -78,6 +78,7 @@ SourceForge.net: <br>
 		<li><a href="#GarminCustom">Creating Garmin Custom maps</a></li>
 		<li><a href="#Magellan">Creating Magellan RMP atlases</a></li>
 		<li><a href="#OruxMaps">Creating OruxMaps custom maps</a></li>
+		<li><a href="#PathAway">Creating atlases for PathAway</a></li>
 	</ul>
 	</li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
@@ -424,6 +425,23 @@ when creating atlases:</p>
 directories in the atlas directory. You have to copy those maps onto
 your device (default directory: /oruxmaps/mapfiles/).</p>
 <!-- *************************************************************************** -->
+<h3><a name="PathAway">Creating atlases for PathAway</a></h3>
+<p>For creating atlases compatible with PathAway you have to select
+<b>PathAway tile cache</b> as format in section <b>Atlas settings</b> on
+the left side of the main window. <br>
+As atlases for PathAway do not support all features provided by Mobile
+Atlas Creator the following restrictions apply when creating atlases for
+PathAway:</p>
+<ul>
+	<li>The maximum zoom level is 16 - higher zoom levels are not
+	possible with this atlas format</li>
+	<li>Tile width and width can not be changed (settings will be
+	ignored)</li>
+	<li>Name of all layers and maps is ignored</li>
+	<li>Structure of the atlas is ignored (which maps belongs to which
+	layer)</li>
+</ul>
+<!-- *************************************************************************** -->
 <hr>
 
 <h2><a name="Enhancement">Enhancement requests</a></h2>
@@ -455,8 +473,7 @@ Atlas Creator\</tt> and on Linux/Unix/OSX system in the directory <tt>~/.mobac/<
 <p>If the recorded errors in the error log do not indicate a problem
 you can activate the overall message logging mechanism of Mobile Atlas
 Creator:<br>
-Download the file <a
-	href="http://mobac.dnsalias.org/log4j.xml">log4j.xml</a>
+Download the file <a href="http://mobac.dnsalias.org/log4j.xml">log4j.xml</a>
 and save it in the directory where the jar file of Mobile Atlas Creator
 is installed to.</p>
 <p>The next start Mobile Atlas Creator will create a log file in the

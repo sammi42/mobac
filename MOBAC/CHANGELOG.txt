@@ -19,7 +19,8 @@
  ~ Austrian Map removed (does not work anymore - unable to fix)
  + Yandex Map & Sat added (works only with selected atlas creators because of a 
     different projection category - Yandex uses an ellipsoid)
- ~ Map source change: Emapi.pl replaces Emapa.pl       
+ ~ Map source change: Emapi.pl replaces Emapa.pl
+ + New atlas format: PathAway       
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

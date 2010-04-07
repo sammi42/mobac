@@ -17,6 +17,7 @@ import mobac.program.atlascreators.MobileTrailExplorerCache;
 import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.Ozi;
+import mobac.program.atlascreators.PathAway;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TrekBuddyCustom;
 
@@ -39,8 +40,8 @@ public enum AtlasOutputFormat {
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
-	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class) //
-	// Imp("CompeGPS IMP", CompeGPSImp.class) //
+	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
+	PathAway("PathAway tile cache", PathAway.class) //
 	;
 
 	private final String displayName;

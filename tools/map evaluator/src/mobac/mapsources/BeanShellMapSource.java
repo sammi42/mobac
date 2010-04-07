@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import mobac.gui.MapEvaluator;
+import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 
 import org.apache.log4j.Logger;
@@ -39,7 +40,7 @@ public class BeanShellMapSource implements MapSource {
 		Object o = i.get("tileSize");
 		if (o != null) {
 			int tileSize = ((Integer) o).intValue();
-			mapSpace = new MercatorPower2MapSpace(tileSize);
+			mapSpace = MapSpaceFactory.getInstance(tileSize, true);
 		} else
 			mapSpace = MercatorPower2MapSpace.INSTANCE_256;
 		o = i.get("minZoom");

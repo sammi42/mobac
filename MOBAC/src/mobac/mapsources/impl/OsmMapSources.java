@@ -248,7 +248,7 @@ public class OsmMapSources {
 	 */
 	public static class Turaterkep extends AbstractMapSource {
 
-		private static MapSpace space = MapSpaceFactory.getInstance(512, false);
+		private static MapSpace space = MapSpaceFactory.getInstance(512, true);
 
 		public Turaterkep() {
 			super("Turaterkep", 7, 16, "png", TileUpdate.IfNoneMatch);

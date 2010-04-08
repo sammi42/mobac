@@ -17,7 +17,7 @@ public class PathAway extends OSMTracker {
 
 	public PathAway() {
 		super();
-		tileFileNamePattern = "%02d/%04x/%04x.%s";
+		tileFileNamePattern = "%02X/%04X/%04X.%s";
 	}
 
 	@Override

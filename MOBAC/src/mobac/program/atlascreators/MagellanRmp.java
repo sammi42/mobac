@@ -47,16 +47,16 @@ public class MagellanRmp extends AtlasCreator {
 			for (MapInterface map : layer) {
 				mapCount++;
 				// if (map.getZoom() > 15)
-				// throw new IOException("resolution too high - "
+				// throw new AtlasTestException("resolution too high - "
 				// + "highest possible zoom level is 15");
 				Point max = map.getMaxTileCoordinate();
 				Point min = map.getMinTileCoordinate();
 				if (max.x - min.x > 18000 || max.y - min.y > 18000)
-					throw new IOException("Map too large. Max size 18000x18000");
+					throw new AtlasTestException("Map too large. Max size 18000x18000");
 			}
 		}
 		// if (mapCount > 5)
-		// throw new IOException("Too many maps in atlas. Max map count = 5");
+		// throw new AtlasTestException("Too many maps in atlas. Max map count = 5");
 		imageName = RmpTools.buildImageName(atlas.getName());
 		rmpWriter = new RmpWriter(imageName, mapCount, new File(atlasDir, imageName + ".rmp"));
 	}

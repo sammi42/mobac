@@ -1,8 +1,7 @@
-package mobac.tools;
+package mobac.tools.urlupdater;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -12,11 +11,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +24,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.impl.Google.GoogleEarth;
 import mobac.mapsources.impl.Google.GoogleEarthMapsOverlay;
 import mobac.mapsources.impl.Google.GoogleMapMaker;
@@ -36,6 +32,7 @@ import mobac.mapsources.impl.Google.GoogleMapsChina;
 import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.program.Logging;
+import mobac.tools.MapSourcesTester;
 import mobac.tools.MapSourcesTester.MapSourceTestFailed;
 import mobac.utilities.Utilities;
 
@@ -47,16 +44,13 @@ import org.w3c.tidy.Tidy;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 /**
- * Stand alone tool for updating several Google map sources. 
- * Google changes the tile url of each map source very often - 
- * sometimes daily. This tool checks the map html pages and 
- * extracts the relevant URLs.  
+ * Stand alone tool for updating several Google map sources. Google changes the
+ * tile url of each map source very often - sometimes daily. This tool checks
+ * the map html pages and extracts the relevant URLs.
  */
 public class GoogleUrlUpdater {
 
-	static Properties MAPSOURCES_PROPERTIES = new Properties();
-
-	static List<String> KEYS = new ArrayList<String>();
+	static UrlUpdater URL_UPDATER;
 
 	/**
 	 * <p>
@@ -71,11 +65,7 @@ public class GoogleUrlUpdater {
 		// Logging.configureConsoleLogging(Level.TRACE);
 
 		// just for initializing the MapSourcesManager
-		MapSourcesUpdater.loadMapSourceProperties(MAPSOURCES_PROPERTIES);
-		System.getProperties().putAll(MAPSOURCES_PROPERTIES);
-
-		KEYS.add("mapsources.Date");
-		KEYS.add("mapsources.Rev");
+		URL_UPDATER = UrlUpdater.getInstance();
 
 		GoogleUrlUpdater g = new GoogleUrlUpdater();
 
@@ -119,59 +109,39 @@ public class GoogleUrlUpdater {
 			}
 
 		});
-		System.out.println("Updated map sources: " + g.updatedMapSources);
-		if (g.updatedMapSources > 0) {
-			ByteArrayOutputStream bo = new ByteArrayOutputStream(4096);
-			PrintWriter pw = new PrintWriter(bo, true);
-			for (String key : KEYS) {
-				pw.println(key + "=" + MAPSOURCES_PROPERTIES.getProperty(key));
-				MAPSOURCES_PROPERTIES.remove(key);
-			}
-			// Non updateable mapsources
-			Enumeration<?> enu = MAPSOURCES_PROPERTIES.keys();
-			while (enu.hasMoreElements()) {
-				String key = (String) enu.nextElement();
-				pw.println(key + "=" + MAPSOURCES_PROPERTIES.getProperty(key));
-			}
-			pw.flush();
-			FileOutputStream fo = null;
-			try {
-				fo = new FileOutputStream("src/mobac/mapsources.properties");
-				fo.write(bo.toByteArray());
-				System.out.println("mapsources.properties has been updated");
-			} catch (IOException e) {
-
-			} finally {
-				Utilities.closeStream(fo);
-			}
-		}
+		
+		URL_UPDATER.writeUpdatedMapsourcesPropertiesFile();
+		
+		System.out.println("Updated map sources: " + URL_UPDATER.getUpdatedUrlsCount());
 	}
 
-	protected int updatedMapSources = 0;
-
 	public void testMapSource(UpdateableMapSource ums) {
-		String key = ums.key;
-		KEYS.add(key);
-		String oldUrlTemplate = MAPSOURCES_PROPERTIES.getProperty(key);
-		if (oldUrlTemplate == null)
-			throw new RuntimeException("Url for key not found: " + key);
-		String newUrlTemplate = ums.getUpdatedUrl(this);
-		if (newUrlTemplate == null) {
-			System.out.println(ums.mapSourceClass.getSimpleName());
-			System.out.println(" failed to extract url");
-		} else if (!oldUrlTemplate.equals(newUrlTemplate)) {
-			try {
-				System.setProperty(key, newUrlTemplate);
-				MapSourcesTester.testMapSource(ums.mapSourceClass);
+		try {
+			String key = ums.key;
+			// KEYS.add(key);
+			String oldUrlTemplate = URL_UPDATER.getMapSourceUrl(key);
+			if (oldUrlTemplate == null)
+				throw new RuntimeException("Url for key not found: " + key);
+			String newUrlTemplate = ums.getUpdatedUrl(this);
+			if (newUrlTemplate == null) {
 				System.out.println(ums.mapSourceClass.getSimpleName());
-				MAPSOURCES_PROPERTIES.setProperty(key, newUrlTemplate);
-				updatedMapSources++;
-			} catch (MapSourceTestFailed e) {
-				System.err.print("Test of new url failed: ");
-				System.err.println(key + "=" + newUrlTemplate);
-			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(" failed to extract url");
+			} else if (!oldUrlTemplate.equals(newUrlTemplate)) {
+				try {
+					System.setProperty(key, newUrlTemplate);
+					MapSourcesTester.testMapSource(ums.mapSourceClass);
+					System.out.println(ums.mapSourceClass.getSimpleName());
+					UrlUpdater.getInstance().updateMapSopurceUrl(key, newUrlTemplate);
+				} catch (MapSourceTestFailed e) {
+					System.err.print("Test of new url failed: ");
+					System.err.println(key + "=" + newUrlTemplate);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
+		} catch (Exception e) {
+			System.err.println("Failed to update " + ums);
+			e.printStackTrace();
 		}
 	}
 

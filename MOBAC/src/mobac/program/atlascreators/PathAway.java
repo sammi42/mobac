@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
+import mobac.mapsources.impl.OsmMapSources;
 import mobac.mapsources.impl.Google.GoogleEarth;
 import mobac.mapsources.impl.Google.GoogleMaps;
 import mobac.mapsources.impl.Google.GoogleTerrain;
@@ -38,6 +39,10 @@ public class PathAway extends OSMTracker {
 			shortMapDir = "G2";
 		else if (mapSource.getClass().equals(GoogleTerrain.class))
 			shortMapDir = "G3";
+		else if (mapSource.getClass().equals(OsmMapSources.Mapnik.class))
+			shortMapDir = "OSM1";
+		else if (mapSource.getClass().equals(OsmMapSources.CycleMap.class))
+			shortMapDir = "OCM1";
 		if (shortMapDir != null)
 			mapDir = new File(atlasDir, shortMapDir);
 	}

@@ -48,9 +48,7 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
  * tile url of each map source very often - sometimes daily. This tool checks
  * the map html pages and extracts the relevant URLs.
  */
-public class GoogleUrlUpdater {
-
-	static UrlUpdater URL_UPDATER;
+public class GoogleUrlUpdater implements Runnable {
 
 	/**
 	 * <p>
@@ -65,21 +63,29 @@ public class GoogleUrlUpdater {
 		// Logging.configureConsoleLogging(Level.TRACE);
 
 		// just for initializing the MapSourcesManager
-		URL_UPDATER = UrlUpdater.getInstance();
+		UrlUpdater.getInstance();
 
 		GoogleUrlUpdater g = new GoogleUrlUpdater();
+		g.run();
 
-		g.testMapSource(new UpdateableMapSource(
-				"http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2", GoogleMaps.class));
-		g.testMapSource(new UpdateableMapSource(
+		UrlUpdater.getInstance().writeUpdatedMapsourcesPropertiesFile();
+
+		System.out
+				.println("Updated map sources: " + UrlUpdater.getInstance().getUpdatedUrlsCount());
+	}
+
+	public void run() {
+		testMapSource(new UpdateableMapSource("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2",
+				GoogleMaps.class));
+		testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2", GoogleEarth.class));
-		g.testMapSource(new UpdateableMapSource(
+		testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2", GoogleTerrain.class));
-		g.testMapSource(new UpdateableMapSource(
+		testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&t=h&z=4",
 				GoogleEarthMapsOverlay.class));
 
-		g.testMapSource(new UpdateableMapSource(
+		testMapSource(new UpdateableMapSource(
 				"http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8",
 				GoogleMapsKorea.class, false) {
 
@@ -93,7 +99,7 @@ public class GoogleUrlUpdater {
 
 		});
 
-		g.testMapSource(new UpdateableMapSource("", GoogleMapMaker.class) {
+		testMapSource(new UpdateableMapSource("", GoogleMapMaker.class) {
 
 			@Override
 			public String getUpdatedUrl(GoogleUrlUpdater g) {
@@ -101,7 +107,7 @@ public class GoogleUrlUpdater {
 			}
 
 		});
-		g.testMapSource(new UpdateableMapSource("", GoogleMapsChina.class) {
+		testMapSource(new UpdateableMapSource("", GoogleMapsChina.class) {
 
 			@Override
 			public String getUpdatedUrl(GoogleUrlUpdater g) {
@@ -109,17 +115,13 @@ public class GoogleUrlUpdater {
 			}
 
 		});
-		
-		URL_UPDATER.writeUpdatedMapsourcesPropertiesFile();
-		
-		System.out.println("Updated map sources: " + URL_UPDATER.getUpdatedUrlsCount());
 	}
 
 	public void testMapSource(UpdateableMapSource ums) {
 		try {
 			String key = ums.key;
 			// KEYS.add(key);
-			String oldUrlTemplate = URL_UPDATER.getMapSourceUrl(key);
+			String oldUrlTemplate = UrlUpdater.getInstance().getMapSourceUrl(key);
 			if (oldUrlTemplate == null)
 				throw new RuntimeException("Url for key not found: " + key);
 			String newUrlTemplate = ums.getUpdatedUrl(this);

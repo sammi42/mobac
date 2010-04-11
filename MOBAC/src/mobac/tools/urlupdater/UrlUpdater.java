@@ -92,7 +92,10 @@ public class UrlUpdater {
 	 */
 	public static void main(String[] args) {
 		Logging.disableLogging();
-
+		getInstance();
+		new GoogleUrlUpdater().run();
+		new YandexUrlUpdater().run();
+		getInstance().writeUpdatedMapsourcesPropertiesFile();
 	}
 
 }

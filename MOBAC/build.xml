@@ -48,7 +48,7 @@
 			<classpath refid="maincp" />
 			<exclude name="mobac/StartMOBAC.java" />
 			<exclude name="mobac/tilestore/berkeleydb/*" />
-			<exclude name="mobac/tools/*" />
+			<exclude name="mobac/tools/**" />
 			<exclude name="mobac/program/mapcreators/MapCreatorBigPlanetSqlJet*" />
 			<include name="org/openstreetmap/**" />
 			<include name="mobac/**" />

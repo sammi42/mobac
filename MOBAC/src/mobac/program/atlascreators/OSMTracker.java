@@ -6,10 +6,15 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
@@ -24,15 +29,32 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  */
 public class OSMTracker extends AtlasCreator {
 
-	protected File mapDir = null;
-
 	protected String tileFileNamePattern = "%d/%d/%d.%s";
 
+	protected File mapDir = null;
+
 	protected String tileType = null;
+
+	protected MapTileWriter mapTileWriter = null;
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
+
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
+			InterruptedException {
+		super.startAtlasCreation(atlas);
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				TileImageParameters param = map.getParameters();
+				if (param == null)
+					continue;
+				if (param.getHeight() != 256 || param.getWidth() != 256)
+					throw new AtlasTestException("Custom tile size is not supported by this atlas");
+			}
+		}
 	}
 
 	@Override
@@ -49,6 +71,8 @@ public class OSMTracker extends AtlasCreator {
 
 	public void createMap() throws MapCreationException, InterruptedException {
 		// This means there should not be any resizing of the tiles.
+		if (mapTileWriter == null)
+			mapTileWriter = new OSMTileWriter();
 		createTiles();
 	}
 
@@ -62,16 +86,8 @@ public class OSMTracker extends AtlasCreator {
 				atlasProgress.incMapCreationProgress();
 				try {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null) {
-						File f = getTileFile(x, y, zoom);
-						Utilities.mkDirs(f.getParentFile());
-						FileOutputStream out = new FileOutputStream(f);
-						try {
-							out.write(sourceTileData);
-						} finally {
-							Utilities.closeStream(out);
-						}
-					}
+					if (sourceTileData != null)
+						mapTileWriter.writeTile(x, y, tileType, sourceTileData);
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
 				}
@@ -79,8 +95,28 @@ public class OSMTracker extends AtlasCreator {
 		}
 	}
 
-	protected File getTileFile(int x, int y, int zoom) {
-		return new File(mapDir, String.format(tileFileNamePattern, zoom, x, y, tileType));
-	}
+	protected class OSMTileWriter implements MapTileWriter {
 
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
+				throws IOException {
+			File file = new File(mapDir, String.format(tileFileNamePattern, zoom, tilex, tiley,
+					tileType));
+			writeTile(file, tileData);
+		}
+
+		protected void writeTile(File file, byte[] tileData) throws IOException {
+			Utilities.mkDirs(file.getParentFile());
+			FileOutputStream out = new FileOutputStream(file);
+			try {
+				out.write(tileData);
+			} finally {
+				Utilities.closeStream(out);
+			}
+		}
+
+		public void finalizeMap() throws IOException {
+			// Nothing to do
+		}
+
+	}
 }

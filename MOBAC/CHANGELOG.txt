@@ -22,6 +22,7 @@
  ~ Map source change: Emapi.pl replaces Emapa.pl
  + New atlas format: PathAway
  ! Alpha transparency problem with multi-layer maps        
+ + New atlas format: AFTrack (OSZ)
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

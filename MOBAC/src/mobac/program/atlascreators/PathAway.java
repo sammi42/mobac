@@ -62,9 +62,15 @@ public class PathAway extends OSMTracker {
 		}
 	}
 
-	@Override
-	protected File getTileFile(int x, int y, int zoom) {
-		return new File(mapDir, String.format(tileFileNamePattern, 17 - zoom, x, y, tileType));
-	}
+	protected class PathAwayTileWriter extends OSMTileWriter {
 
+		@Override
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
+				throws IOException {
+			File file = new File(mapDir, String.format(tileFileNamePattern, 17 - zoom, tilex,
+					tiley, tileType));
+			writeTile(file, tileData);
+		}
+
+	}
 }

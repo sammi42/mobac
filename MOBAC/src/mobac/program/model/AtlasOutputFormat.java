@@ -2,6 +2,7 @@ package mobac.program.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobac.program.atlascreators.AFTrack;
 import mobac.program.atlascreators.AndNav;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.atlascreators.BigPlanetSql;
@@ -24,6 +25,7 @@ import mobac.program.atlascreators.TrekBuddyCustom;
 @XmlRootElement
 public enum AtlasOutputFormat {
 
+	AFTrack("AFTrack (OSZ)", AFTrack.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
 	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
@@ -31,17 +33,17 @@ public enum AtlasOutputFormat {
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
-	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
 	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
 	OruxMaps("OruxMaps", OruxMaps.class), //
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
+	PathAway("PathAway tile cache", PathAway.class), //
+	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
 	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
-	PathAway("PathAway tile cache", PathAway.class) //
 	;
 
 	private final String displayName;

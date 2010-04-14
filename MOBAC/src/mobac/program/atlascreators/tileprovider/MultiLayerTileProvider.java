@@ -47,7 +47,7 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		BufferedImage combinedImage = new BufferedImage(tileSize, tileSize,
-				BufferedImage.TYPE_4BYTE_ABGR);
+				BufferedImage.TYPE_3BYTE_BGR);
 		Graphics g = combinedImage.getGraphics();
 		g.setColor(mapSource.getBackgroundColor());
 		g.fillRect(0, 0, tileSize, tileSize);

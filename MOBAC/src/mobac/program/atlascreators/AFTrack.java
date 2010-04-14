@@ -1,6 +1,7 @@
 package mobac.program.atlascreators;
 
 import java.awt.Point;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -59,6 +61,8 @@ public class AFTrack extends OSMTracker {
 		ZipOutputStream zipStream;
 		FileOutputStream out;
 
+		private CRC32 crc = new CRC32();
+
 		public OszTileWriter(File oszFile) throws FileNotFoundException {
 			super();
 			out = new FileOutputStream(oszFile);
@@ -68,28 +72,36 @@ public class AFTrack extends OSMTracker {
 		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
 				throws IOException {
 			String entryName = String.format(tileFileNamePattern, zoom, tilex, tiley, tileType);
+			writeZipEntry(entryName, tileData);
+		}
+
+		private void writeZipEntry(String entryName, byte[] data) throws IOException {
 			ZipEntry entry = new ZipEntry(entryName);
+
+			entry.setMethod(ZipEntry.STORED);
+			entry.setCompressedSize(data.length);
+			entry.setSize(data.length);
+			crc.reset();
+			crc.update(data);
+			entry.setCrc(crc.getValue());
 			zipStream.putNextEntry(entry);
-			zipStream.write(tileData);
+			zipStream.write(data);
 			zipStream.closeEntry();
 		}
 
 		public void finalizeMap() throws IOException {
-			ZipEntry entry = new ZipEntry("Manifest.txt");
-			zipStream.putNextEntry(entry);
-			OutputStreamWriter writer = new OutputStreamWriter(zipStream);
+			ByteArrayOutputStream bout = new ByteArrayOutputStream(100);
+			OutputStreamWriter writer = new OutputStreamWriter(bout);
 
 			Collections.sort(zoomLevel);
-			for (Integer zoom : zoomLevel) {
-				writer.append(String.format("zoom=%d\r\n",zoom.intValue()));
-			}
-			writer.append(String.format("minx=%d\r\n",min.x));
-			writer.append(String.format("maxx=%d\r\n",max.x));
-			writer.append(String.format("miny=%d\r\n",min.y));
-			writer.append(String.format("maxy=%d\r\n",max.y));
-			writer.flush();
-			writer = null;
-			zipStream.closeEntry();
+			for (Integer zoom : zoomLevel)
+				writer.append(String.format("zoom=%d\r\n", zoom.intValue()));
+			writer.append(String.format("minx=%d\r\n", min.x));
+			writer.append(String.format("maxx=%d\r\n", max.x));
+			writer.append(String.format("miny=%d\r\n", min.y));
+			writer.append(String.format("maxy=%d\r\n", max.y));
+			writer.close();
+			writeZipEntry("Manifest.txt", bout.toByteArray());
 			Utilities.closeStream(zipStream);
 		}
 

@@ -205,6 +205,12 @@ public class OsmMapSources {
 		public MapSource getBackgroundMapSource() {
 			return background;
 		}
+
+		@Override
+		public Color getBackgroundColor() {
+			return Color.WHITE;
+		}
+		
 	}
 
 	public static class OsmHikingMapWithBase extends OsmHikingMap implements MultiLayerMapSource {

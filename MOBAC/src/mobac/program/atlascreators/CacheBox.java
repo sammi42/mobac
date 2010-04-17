@@ -12,11 +12,11 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 public class CacheBox extends AtlasCreator {
 
@@ -31,6 +31,19 @@ public class CacheBox extends AtlasCreator {
 	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
 			InterruptedException {
 		super.startAtlasCreation(atlas);
+		for (LayerInterface layer : atlas) {
+			if (layer.getMapCount() == 0)
+				throw new AtlasTestException("Empty layers are not allowed", layer);
+			Class<? extends MapSource> mapSourceClass = layer.getMap(0).getMapSource().getClass();
+			for (MapInterface map : layer) {
+				if (!mapSourceClass.equals(map.getMapSource().getClass()))
+					throw new AtlasTestException(
+							"Different map sources are not allowed within one layer", map);
+				TileImageParameters param = map.getParameters();
+				if (param != null)
+					throw new AtlasTestException("Custom tile size or format not supported", map);
+			}
+		}
 	}
 
 	@Override
@@ -44,7 +57,11 @@ public class CacheBox extends AtlasCreator {
 		if (packFile.exists())
 			Utilities.deleteFile(packFile);
 		packRaFile = new RandomAccessFile(packFile, "rw");
-		writeString(layer.getName(), 32); // layer name
+		/*
+		 * We use the mapsource name as layer name. See feature request #2987674
+		 * for details.
+		 */
+		writeString(layer.getMap(0).getMapSource().getName(), 32); // layer name
 		writeString(layer.getName(), 128); // layer friendly name
 		writeString("", 256); // layer url - unused
 		writeLong(0); // int64 ticks

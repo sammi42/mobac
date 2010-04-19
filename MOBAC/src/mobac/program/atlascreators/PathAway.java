@@ -8,7 +8,6 @@ import mobac.mapsources.impl.OsmMapSources;
 import mobac.mapsources.impl.Google.GoogleEarth;
 import mobac.mapsources.impl.Google.GoogleMaps;
 import mobac.mapsources.impl.Google.GoogleTerrain;
-import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.utilities.tar.TarIndex;
@@ -48,13 +47,9 @@ public class PathAway extends OSMTracker {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
-			AtlasTestException {
-		super.startAtlasCreation(atlas);
-		int mapCount = 0;
+	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
-				mapCount++;
 				if (map.getZoom() > 17)
 					throw new AtlasTestException("resolution too high - "
 							+ "highest possible zoom level is 17");

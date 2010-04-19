@@ -9,9 +9,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.model.TileImageFormat;
 import mobac.utilities.Utilities;
 import mobac.utilities.imageio.PngXxlWriter;
 import mobac.utilities.tar.TarIndex;
@@ -19,7 +21,6 @@ import mobac.utilities.tar.TarIndex;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
-
 
 public class Ozi extends TrekBuddy {
 
@@ -32,6 +33,11 @@ public class Ozi extends TrekBuddy {
 		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE
 				.equals(mapSpace.getProjectionCategory()));
 		// TODO supports Mercator ellipsoid?
+	}
+
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		testAtlasTileFormat(TileImageFormat.PNG);
 	}
 
 	@Override

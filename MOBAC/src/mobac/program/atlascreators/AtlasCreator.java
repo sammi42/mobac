@@ -19,13 +19,13 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
+import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 /**
  * Abstract base class for all AtlasCreator implementations.
@@ -94,12 +94,16 @@ public abstract class AtlasCreator {
 	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
 			InterruptedException {
 		this.atlas = atlas;
+		testAtlas();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
 		File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
 
 		atlasDir = new File(atlasOutputDir, atlasDirName);
 		Utilities.mkDirs(atlasDir);
+	}
+
+	protected void testAtlas() throws AtlasTestException {
 	}
 
 	public void initLayerCreation(LayerInterface layer) throws IOException {
@@ -210,6 +214,28 @@ public abstract class AtlasCreator {
 
 	public TileProvider getMapDlTileProvider() {
 		return mapDlTileProvider;
+	}
+
+	/**
+	 * Tests all maps of the currently active atlas if a custom tile image
+	 * format has been specified and if the specified format is equal to the
+	 * <code>allowedFormat</code>.
+	 * 
+	 * @param allowedFormat
+	 * @throws AtlasTestException
+	 */
+	protected void testAtlasTileFormat(TileImageFormat allowedFormat) throws AtlasTestException {
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				TileImageParameters parameters = map.getParameters();
+				if (parameters == null)
+					continue;
+				if (!parameters.getFormat().equals(allowedFormat))
+					throw new AtlasTestException(
+							"Selected custom tile format not supported - only format \""
+									+ allowedFormat + "\" is supported", map);
+			}
+		}
 	}
 
 }

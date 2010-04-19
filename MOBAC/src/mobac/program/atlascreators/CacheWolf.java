@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
@@ -16,6 +17,10 @@ import mobac.utilities.tar.TarIndex;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class CacheWolf extends Ozi {
+
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+	}
 
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {

@@ -30,7 +30,6 @@ import javax.xml.transform.stream.StreamResult;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageFormat;
@@ -72,9 +71,7 @@ public class GarminCustom extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
-			AtlasTestException {
-		super.startAtlasCreation(atlas);
+	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			if (layer.getMapCount() > 100)
 				throw new AtlasTestException("Layer exceeeds the maximum map count of 100", layer);

@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageParameters;
@@ -28,9 +27,7 @@ public class CacheBox extends AtlasCreator {
 	private MapInfo activeMapInfo;
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
-			InterruptedException {
-		super.startAtlasCreation(atlas);
+	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			if (layer.getMapCount() == 0)
 				throw new AtlasTestException("Empty layers are not allowed", layer);
@@ -61,7 +58,8 @@ public class CacheBox extends AtlasCreator {
 		 * We use the mapsource name as layer name. See feature request #2987674
 		 * for details.
 		 */
-		writeString(layer.getMap(0).getMapSource().getStoreName(), 32); // layer name
+		writeString(layer.getMap(0).getMapSource().getStoreName(), 32); // layer
+																		// name
 		writeString(layer.getName(), 128); // layer friendly name
 		writeString("", 256); // layer url - unused
 		writeLong(0); // int64 ticks

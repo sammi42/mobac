@@ -11,7 +11,6 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
-import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageParameters;
@@ -43,9 +42,7 @@ public class OSMTracker extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
-			InterruptedException {
-		super.startAtlasCreation(atlas);
+	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				TileImageParameters param = map.getParameters();

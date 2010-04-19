@@ -26,7 +26,6 @@ import mobac.utilities.tar.TarIndex;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 public class MagellanRmp extends AtlasCreator {
 
 	RmpWriter rmpWriter = null;
@@ -43,22 +42,22 @@ public class MagellanRmp extends AtlasCreator {
 			AtlasTestException {
 		super.startAtlasCreation(atlas);
 		int mapCount = 0;
+		for (LayerInterface layer : atlas)
+			mapCount += layer.getMapCount();
+		imageName = RmpTools.buildImageName(atlas.getName());
+		rmpWriter = new RmpWriter(imageName, mapCount, new File(atlasDir, imageName + ".rmp"));
+	}
+
+	@Override
+	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
-				mapCount++;
-				// if (map.getZoom() > 15)
-				// throw new AtlasTestException("resolution too high - "
-				// + "highest possible zoom level is 15");
 				Point max = map.getMaxTileCoordinate();
 				Point min = map.getMinTileCoordinate();
 				if (max.x - min.x > 18000 || max.y - min.y > 18000)
 					throw new AtlasTestException("Map too large. Max size 18000x18000");
 			}
 		}
-		// if (mapCount > 5)
-		// throw new AtlasTestException("Too many maps in atlas. Max map count = 5");
-		imageName = RmpTools.buildImageName(atlas.getName());
-		rmpWriter = new RmpWriter(imageName, mapCount, new File(atlasDir, imageName + ".rmp"));
 	}
 
 	@Override

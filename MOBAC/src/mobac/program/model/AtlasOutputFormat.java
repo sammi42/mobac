@@ -3,6 +3,7 @@ package mobac.program.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobac.program.atlascreators.AFTrack;
+import mobac.program.atlascreators.AlpineQuestMap;
 import mobac.program.atlascreators.AndNav;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.atlascreators.BigPlanetSql;
@@ -26,6 +27,7 @@ import mobac.program.atlascreators.TrekBuddyCustom;
 public enum AtlasOutputFormat {
 
 	AFTrack("AFTrack (OSZ)", AFTrack.class), //
+	AlpineQuestMap("AlpineQuestMap (AQM)", AlpineQuestMap.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
 	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //

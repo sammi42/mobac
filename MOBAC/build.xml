@@ -36,6 +36,7 @@
 			<fileset dir="lib" includes="jai*.jar" />
 			<fileset dir="lib" includes="je-${je-version}.jar" />
 			<fileset dir="lib" includes="sqlite.jar" />
+			<fileset dir="lib" includes="flatpack.jar" />
 		</path>
 		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
@@ -71,6 +72,7 @@
 			<zipfileset src="lib/log4j-1.2.15.jar" />
 			<zipfileset src="lib/je-${je-version}.jar" />
 			<zipfileset src="lib/sqlite.jar" />
+			<zipfileset src="lib/flatpack.jar" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />

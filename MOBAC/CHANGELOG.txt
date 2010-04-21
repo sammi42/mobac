@@ -24,6 +24,7 @@
  ! Alpha transparency problem with multi-layer maps        
  + New atlas format: AFTrack (OSZ)
  ~ CacheBox layer name uses now the map source name
+ + New atlas format: AlpineQuestMap (AQM)
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

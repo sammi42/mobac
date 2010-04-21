@@ -22,6 +22,7 @@ import mobac.program.atlascreators.Ozi;
 import mobac.program.atlascreators.PathAway;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TrekBuddyCustom;
+import mobac.program.atlascreators.Ublox;
 
 @XmlRootElement
 public enum AtlasOutputFormat {
@@ -44,6 +45,7 @@ public enum AtlasOutputFormat {
 	PathAway("PathAway tile cache", PathAway.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Ttqv("Touratech QV", TTQV.class), //
+	Ublox("Ublox", Ublox.class), // 
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
 	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
 	;

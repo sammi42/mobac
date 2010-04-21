@@ -33,6 +33,11 @@
   	<level value="DEBUG" />
   </logger>
   
+  <logger name="mobac.program.atlascreators.tileprovider.CacheTileProvider">
+  	<level value="TRACE" />
+  </logger>
+    
+  
   <logger name="mobac.utilities.tar">
   	<level value="DEBUG" />
   </logger>

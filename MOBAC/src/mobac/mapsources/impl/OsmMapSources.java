@@ -15,7 +15,7 @@ public class OsmMapSources {
 	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 	public static final String MAP_HIKING_TRAILS = "http://topo.openstreetmap.de/topo/";
 	public static final String MAP_HIKING_BASE = "http://topo.openstreetmap.de/base/";
-	public static final String MAP_HIKING_RELIEF = "http://topo.geofabrik.de/hills/";
+	public static final String MAP_HIKING_RELIEF = "http://hills-nc.openstreetmap.de/";
 	protected static final String MAP_PISTE = "http://openpistemap.org/tiles/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {

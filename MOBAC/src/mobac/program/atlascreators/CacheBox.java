@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageParameters;
@@ -36,9 +37,6 @@ public class CacheBox extends AtlasCreator {
 				if (!mapSourceClass.equals(map.getMapSource().getClass()))
 					throw new AtlasTestException(
 							"Different map sources are not allowed within one layer", map);
-				TileImageParameters param = map.getParameters();
-				if (param != null)
-					throw new AtlasTestException("Custom tile size or format not supported", map);
 			}
 		}
 	}
@@ -59,7 +57,7 @@ public class CacheBox extends AtlasCreator {
 		 * for details.
 		 */
 		writeString(layer.getMap(0).getMapSource().getStoreName(), 32); // layer
-																		// name
+		// name
 		writeString(layer.getName(), 128); // layer friendly name
 		writeString("", 256); // layer url - unused
 		writeLong(0); // int64 ticks
@@ -103,6 +101,9 @@ public class CacheBox extends AtlasCreator {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
+		TileImageParameters param = map.getParameters();
+		if (param != null)
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());
 		activeMapInfo = mapInfos[nextMapOffsetIndex++];
 		if (!activeMapInfo.map.equals(map))
 			throw new RuntimeException("Map does not match offset info!");

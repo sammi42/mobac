@@ -31,7 +31,7 @@ public class ConvertedRawTileProvider extends FilterTileProvider {
 	}
 
 	public byte[] getTileData(int x, int y, int layer) throws IOException {
-		BufferedImage image = getTileImage(x, y, layer);
+		BufferedImage image = tileProvider.getTileImage(x, y, layer);
 		if (image == null)
 			return null;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);

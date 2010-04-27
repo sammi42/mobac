@@ -7,9 +7,9 @@ import java.net.URL;
 
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 
 /**
  * Abstract base class for map sources.
@@ -30,7 +30,7 @@ public abstract class AbstractMapSource implements MapSource {
 			TileUpdate tileUpdate) {
 		this.name = name;
 		this.minZoom = minZoom;
-		this.maxZoom = maxZoom;
+		this.maxZoom = Math.min(maxZoom, JMapViewer.MAX_ZOOM);
 		this.tileType = tileType;
 		this.tileUpdate = tileUpdate;
 	}

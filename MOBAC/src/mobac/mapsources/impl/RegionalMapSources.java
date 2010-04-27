@@ -284,9 +284,10 @@ public class RegionalMapSources {
 		}
 	}
 
+
 	public static class NearMap extends AbstractMapSource {
 		public NearMap() {
-			super("NearMap Australia", 0, 21, "jpg", TileUpdate.IfModifiedSince);
+			super("NearMap Australia", 0, 24, "jpg", TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

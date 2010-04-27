@@ -25,6 +25,7 @@ public class AFTrack extends OSMTracker {
 
 	private ArrayList<Integer> zoomLevel = new ArrayList<Integer>();
 
+	private int maxZoom;
 	private Point min;
 	private Point max;
 
@@ -34,8 +35,9 @@ public class AFTrack extends OSMTracker {
 		File oszFile = new File(atlasDir, layer.getName() + ".osz");
 		mapTileWriter = new OszTileWriter(oszFile);
 		zoomLevel.clear();
-		min = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		max = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+		min = new Point();
+		max = new Point();
+		maxZoom = -1;
 	}
 
 	@Override
@@ -50,10 +52,13 @@ public class AFTrack extends OSMTracker {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		zoomLevel.add(new Integer(map.getZoom()));
-		min.x = Math.min(min.x, map.getMinTileCoordinate().x / 256);
-		min.y = Math.min(min.y, map.getMinTileCoordinate().y / 256);
-		max.x = Math.max(max.x, map.getMaxTileCoordinate().x / 256);
-		max.y = Math.max(max.y, map.getMaxTileCoordinate().y / 256);
+		if (map.getZoom() > maxZoom) {
+			maxZoom = map.getZoom();
+			min.x = map.getMinTileCoordinate().x / 256;
+			min.y = map.getMinTileCoordinate().y / 256;
+			max.x = map.getMaxTileCoordinate().x / 256;
+			max.y = map.getMaxTileCoordinate().y / 256;
+		}
 	}
 
 	private class OszTileWriter extends OSMTileWriter {

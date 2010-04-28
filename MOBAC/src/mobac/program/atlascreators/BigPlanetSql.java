@@ -15,11 +15,9 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.AtlasInterface;
-import mobac.program.interfaces.MapInterface;
 import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
-import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
@@ -63,7 +61,7 @@ public class BigPlanetSql extends AtlasCreator {
 	 */
 	private static final long HEAP_MIN = 10 * 1024 * 1024;
 
-	private Connection conn = null;
+	protected Connection conn = null;
 	private PreparedStatement prepStmt;
 
 	@Override
@@ -80,12 +78,7 @@ public class BigPlanetSql extends AtlasCreator {
 	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
 		this.atlas = atlas;
 		atlasDir = Settings.getInstance().getAtlasOutputDirectory();
-	}
-
-	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
-		databaseFile = new File(atlasDir, DATABASE_FILENAME).getAbsolutePath();
+		databaseFile = new File(atlasDir, getDatabaseFileName()).getAbsolutePath();
 		log.debug("SQLite Database file: " + databaseFile);
 	}
 
@@ -102,23 +95,45 @@ public class BigPlanetSql extends AtlasCreator {
 			throw new MapCreationException(SQLiteLoader.MSG_SQLITE_MISSING, e);
 		}
 		try {
+			openConnection();
 			initializeDB();
 			createTiles();
-			conn.close();
 		} catch (SQLException e) {
 			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\": "
 					+ e.getMessage(), e);
 		}
 	}
 
-	private Connection getConnection() throws SQLException {
-		String url = "jdbc:sqlite:/" + this.databaseFile;
-		Connection conn = DriverManager.getConnection(url);
-		return conn;
+	private void openConnection() throws SQLException {
+		if (conn == null || conn.isClosed()) {
+			String url = "jdbc:sqlite:/" + this.databaseFile;
+			conn = DriverManager.getConnection(url);
+		}
+	}
+
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+		}
+		conn = null;
+		super.abortAtlasCreation();
+	}
+
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+		}
+		conn = null;
+		super.finishAtlasCreation();
 	}
 
 	protected void initializeDB() throws SQLException {
-		conn = getConnection();
 		Statement stat = conn.createStatement();
 		stat.executeUpdate(TABLE_DDL);
 		stat.executeUpdate(INDEX_DDL);
@@ -139,7 +154,7 @@ public class BigPlanetSql extends AtlasCreator {
 			int batchTileCount = 0;
 			Runtime r = Runtime.getRuntime();
 			long heapMaxSize = r.maxMemory();
-			prepStmt = conn.prepareStatement(INSERT_SQL);
+			prepStmt = conn.prepareStatement(getTileInsertSQL());
 			for (int x = xMin; x <= xMax; x++) {
 				for (int y = yMin; y <= yMax; y++) {
 					checkUserAbort();
@@ -178,7 +193,7 @@ public class BigPlanetSql extends AtlasCreator {
 			stat.close();
 			conn.commit();
 		} catch (SQLException e) {
-			log.error("", e);
+			throw new MapCreationException(e);
 		}
 	}
 
@@ -192,6 +207,14 @@ public class BigPlanetSql extends AtlasCreator {
 		prepStmt.setBinaryStream(5, is, is.available());
 		prepStmt.addBatch();
 		is.close();
+	}
+
+	protected String getDatabaseFileName() {
+		return DATABASE_FILENAME;
+	}
+
+	protected String getTileInsertSQL() {
+		return INSERT_SQL;
 	}
 
 }

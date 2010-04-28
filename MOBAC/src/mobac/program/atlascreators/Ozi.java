@@ -37,7 +37,7 @@ public class Ozi extends TrekBuddy {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		testAtlasTileFormat(TileImageFormat.PNG);
+		performTest_AtlasTileFormat(TileImageFormat.PNG);
 	}
 
 	@Override

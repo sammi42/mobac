@@ -224,7 +224,8 @@ public abstract class AtlasCreator {
 	 * @param allowedFormat
 	 * @throws AtlasTestException
 	 */
-	protected void testAtlasTileFormat(TileImageFormat allowedFormat) throws AtlasTestException {
+	protected void performTest_AtlasTileFormat(TileImageFormat allowedFormat)
+			throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				TileImageParameters parameters = map.getParameters();
@@ -234,6 +235,16 @@ public abstract class AtlasCreator {
 					throw new AtlasTestException(
 							"Selected custom tile format not supported - only format \""
 									+ allowedFormat + "\" is supported", map);
+			}
+		}
+	}
+
+	protected void performTest_MaxMapZoom(int maxZoom) throws AtlasTestException {
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				if (map.getZoom() > maxZoom)
+					throw new AtlasTestException("Maximum zoom is " + maxZoom
+							+ " for this atlas format", map);
 			}
 		}
 	}

@@ -40,6 +40,7 @@ public class Cities {
 	public static final EastNorthCoordinate BRATISLAVA = new EastNorthCoordinate(48.154, 17.14);
 	public static final EastNorthCoordinate SEOUL = new EastNorthCoordinate(37.55, 126.98);
 	public static final EastNorthCoordinate SYDNEY = new EastNorthCoordinate(-33.8, 151.3);
+	public static final EastNorthCoordinate PERTH = new EastNorthCoordinate(-31.9, 115.8);
 	public static final EastNorthCoordinate BUDAPEST = new EastNorthCoordinate(47.47, 19.05);
 	public static final EastNorthCoordinate MUNICH = new EastNorthCoordinate(48.13, 11.58);
 	public static final EastNorthCoordinate OSLO = new EastNorthCoordinate(59.91, 10.75);
@@ -62,7 +63,7 @@ public class Cities {
 		TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);
-		TEST_COORDINATES.put(NearMap.class, Cities.SYDNEY);
+		TEST_COORDINATES.put(NearMap.class, Cities.PERTH);
 		TEST_COORDINATES.put(HubermediaBavaria.class, Cities.MUNICH);
 		TEST_COORDINATES.put(OpenPisteMap.class, Cities.MUNICH);
 		TEST_COORDINATES.put(StatkartTopo2.class, Cities.OSLO);

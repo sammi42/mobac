@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.AtlasInterface;
@@ -71,6 +72,11 @@ public class BigPlanetSql extends AtlasCreator {
 	}
 
 	@Override
+	protected void testAtlas() throws AtlasTestException {
+		performTest_MaxMapZoom(17);
+	}
+
+	@Override
 	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
 		this.atlas = atlas;
 		atlasDir = Settings.getInstance().getAtlasOutputDirectory();
@@ -111,7 +117,7 @@ public class BigPlanetSql extends AtlasCreator {
 		return conn;
 	}
 
-	private void initializeDB() throws SQLException {
+	protected void initializeDB() throws SQLException {
 		conn = getConnection();
 		Statement stat = conn.createStatement();
 		stat.executeUpdate(TABLE_DDL);
@@ -176,7 +182,7 @@ public class BigPlanetSql extends AtlasCreator {
 		}
 	}
 
-	private void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
+	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
 		InputStream is = new ByteArrayInputStream(tileData);
 		int s = 0;
 		prepStmt.setInt(1, x);

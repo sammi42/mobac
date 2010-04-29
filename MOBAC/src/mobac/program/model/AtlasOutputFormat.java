@@ -30,7 +30,7 @@ public enum AtlasOutputFormat {
 	AFTrack("AFTrack (OSZ)", AFTrack.class), //
 	AlpineQuestMap("AlpineQuestMap (AQM)", AlpineQuestMap.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
-	BigPlanet("BigPlanet SQLite", BigPlanetSql.class), //
+	BigPlanet("BigPlanet / RMaps SQLite", BigPlanetSql.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //

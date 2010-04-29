@@ -47,7 +47,8 @@ public enum AtlasOutputFormat {
 	Ttqv("Touratech QV", TTQV.class), //
 	Ublox("Ublox", Ublox.class), // 
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
-	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
+	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), // 
+	// XGPS("xGPS", SQLitexGPS.class), //
 	;
 
 	private final String displayName;

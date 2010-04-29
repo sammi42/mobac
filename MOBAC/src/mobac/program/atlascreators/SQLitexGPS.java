@@ -3,7 +3,7 @@ package mobac.program.atlascreators;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class xGPS extends BigPlanetSql {
+public class SQLitexGPS extends BigPlanetSql {
 
 	private static final String TABLE_TILES = "CREATE TABLE tiles "
 			+ "(x INTEGER, y INTEGER,zoom INTEGER,type INTEGER, img BLOB, PRIMARY KEY(x,y,zoom,type))";

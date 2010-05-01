@@ -100,13 +100,9 @@ public class Ozi extends TrekBuddy {
 					for (int x = xMin; x <= xMax; x++) {
 						checkUserAbort();
 						atlasProgress.incMapCreationProgress();
-						try {
-							BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
-							if (tile != null)
-								graphics.drawImage(tile, lineX, 0, backgroundColor, null);
-						} catch (IOException e) {
-							log.error("", e);
-						}
+						BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
+						if (tile != null)
+							graphics.drawImage(tile, lineX, 0, backgroundColor, null);
 						lineX += tileSize;
 					}
 				} finally {
@@ -116,7 +112,7 @@ public class Ozi extends TrekBuddy {
 			}
 			pngWriter.finish();
 		} catch (IOException e) {
-			log.error("", e);
+			throw new MapCreationException(e);
 		} finally {
 			Utilities.closeStream(fileOs);
 		}

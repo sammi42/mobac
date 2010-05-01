@@ -66,17 +66,11 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 		super.initializeMap(map, tarTileIndex);
 	}
 
-	public void createMap() throws MapCreationException {
-		try {
-			if (!"png".equalsIgnoreCase(mapSource.getTileType()))
-				// If the tile image format is not png we have to convert it
-				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider,
-						TileImageFormat.PNG);
-			createTiles();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		}
+	public void createMap() throws MapCreationException, InterruptedException {
+		if (!"png".equalsIgnoreCase(mapSource.getTileType()))
+			// If the tile image format is not png we have to convert it
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		createTiles();
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {

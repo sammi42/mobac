@@ -84,6 +84,7 @@ public class Ozi extends TrekBuddy {
 		int tileLineHeight = tileSize;
 
 		FileOutputStream fileOs = null;
+		Color backgroundColor = mapSource.getBackgroundColor();
 		try {
 			fileOs = new FileOutputStream(new File(mapDir, mapName + ".png"));
 			PngXxlWriter pngWriter = new PngXxlWriter(width, height, fileOs);
@@ -93,7 +94,7 @@ public class Ozi extends TrekBuddy {
 						BufferedImage.TYPE_INT_RGB);
 				Graphics2D graphics = lineImage.createGraphics();
 				try {
-					graphics.setColor(mapSource.getBackgroundColor());
+					graphics.setColor(backgroundColor);
 					graphics.fillRect(0, 0, width, tileLineHeight);
 					int lineX = 0;
 					for (int x = xMin; x <= xMax; x++) {
@@ -102,7 +103,7 @@ public class Ozi extends TrekBuddy {
 						try {
 							BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
 							if (tile != null)
-								graphics.drawImage(tile, lineX, 0, Color.WHITE, null);
+								graphics.drawImage(tile, lineX, 0, backgroundColor, null);
 						} catch (IOException e) {
 							log.error("", e);
 						}

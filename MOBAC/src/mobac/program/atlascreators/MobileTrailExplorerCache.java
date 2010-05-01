@@ -18,10 +18,10 @@ import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageFormat;
+import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 
 /**
  * Creates maps using the Mobile Trail Explorer (MTE) cache format.
@@ -47,6 +47,12 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 		File cacheFile = new File(atlasDir, "MTEFileCache");
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(cacheFile), 8216);
 		cacheOutStream = new DataOutputStream(out);
+	}
+
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		Utilities.closeStream(cacheOutStream);
+		super.abortAtlasCreation();
 	}
 
 	@Override

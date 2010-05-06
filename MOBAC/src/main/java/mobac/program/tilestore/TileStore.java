@@ -23,7 +23,9 @@ public abstract class TileStore {
 
 	protected File tileStoreDir;
 
-	public static void initialize() {
+	public static synchronized void initialize() {
+		if (INSTANCE != null)
+			return;
 		try {
 			INSTANCE = new BerkeleyDbTileStore();
 		} catch (TileStoreException e) {

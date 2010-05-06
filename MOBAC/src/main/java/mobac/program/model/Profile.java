@@ -31,8 +31,10 @@ public class Profile implements Comparable<Profile> {
 
 	public static final String PROFILE_NAME_REGEX = "[\\w _-]+";
 
-	private static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile("mobac-profile-("
-			+ PROFILE_NAME_REGEX + ").xml");
+	public static final String PROFILE_FILENAME_PREFIX = "mobac-profile-";
+
+	public static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile(PROFILE_FILENAME_PREFIX
+			+ "(" + PROFILE_NAME_REGEX + ").xml");
 
 	private File file;
 	private String name;
@@ -67,7 +69,7 @@ public class Profile implements Comparable<Profile> {
 
 	public Profile(String name) {
 		super();
-		this.file = new File(DirectoryManager.currentDir, "mobac-profile-" + name + ".xml");
+		this.file = new File(DirectoryManager.currentDir, getProfileFileName(name));
 		this.name = name;
 	}
 
@@ -141,6 +143,10 @@ public class Profile implements Comparable<Profile> {
 
 	public static boolean checkAtlas(AtlasInterface atlasInterface) {
 		return checkAtlasObject(atlasInterface);
+	}
+
+	public static String getProfileFileName(String profileName) {
+		return PROFILE_FILENAME_PREFIX + profileName + ".xml";
 	}
 
 	private static boolean checkAtlasObject(Object o) {

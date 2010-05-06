@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
-	<property file="src/mobac/mobac.properties" />
+	<property file="src/main/resources/mobac/mobac.properties" />
+	
+	<property name="rev.prop.file" value="src/main/resources/mobac/mobac-rev.properties" />
 	<property name="jar.name" value="Mobile_Atlas_Creator.jar" />
 	<property name="zip.name" value="Mobile Atlas Creator ${mobac.version}.zip" />
 	<property name="zip_src.name" value="Mobile Atlas Creator ${mobac.version} src.zip" />
@@ -40,12 +42,12 @@
 		</path>
 		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
-		<javac srcdir="src" destdir="build" target="1.4" source="1.4" debug="true">
+		<javac srcdir="src/main/java" destdir="build" target="1.4" source="1.4" debug="true">
 			<classpath refid="maincp" />
 			<include name="mobac/StartMOBAC.java" />
 		</javac>
 		<!-- Compile the other classes for Java 1.6 -->
-		<javac srcdir="src" destdir="build" target="1.6" debug="true">
+		<javac srcdir="src/main/java" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<exclude name="mobac/StartMOBAC.java" />
 			<exclude name="mobac/tilestore/berkeleydb/*" />
@@ -55,10 +57,7 @@
 			<include name="mobac/**" />
 		</javac>
 		<copy todir="build" overwrite="true">
-			<fileset dir="src">
-				<include name="**/*.properties" />
-				<include name="mobac/resources/**" />
-			</fileset>
+			<fileset dir="src/main/resources" />
 		</copy>
 	</target>
 
@@ -156,7 +155,7 @@
 	<target name="svnversion" description="Updates the revision information in src/mobac/mobac.properties">
 		<java jar="lib/svnversion.jar" fork="true" outputproperty="mobac.revision.new" />
 		<echo message="MOBAC revision: ${mobac.revision.new}" />
-		<propertyfile file="src/mobac/mobac-rev.properties">
+		<propertyfile file="${rev.prop.file}">
 			<entry key="mobac.revision" value="${mobac.revision.new}" />
 		</propertyfile>
 	</target>

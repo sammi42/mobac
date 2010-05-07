@@ -31,11 +31,13 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private static int threadNum = 0;
 	private static Logger log = Logger.getLogger(AtlasThread.class);
 
+	private File customAtlasDir = null;
+
 	private DownloadJobProducerThread djp = null;
 	private JobDispatcher downloadJobDispatcher;
 	private AtlasProgress ap; // The GUI showing the progress
 
-	private AtlasInterface atlasInterface;
+	private AtlasInterface atlas;
 	private AtlasCreator atlasCreator = null;
 	private PauseResumeHandler pauseResumeHandler;
 
@@ -44,11 +46,16 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
 
-	public AtlasThread(AtlasInterface atlasInterface) throws AtlasTestException {
+	public AtlasThread(AtlasInterface atlas) throws AtlasTestException {
+		this(atlas, atlas.getOutputFormat().createAtlasCreatorInstance());
+	}
+
+	public AtlasThread(AtlasInterface atlas, AtlasCreator atlasCreator)
+			throws AtlasTestException {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
-		this.atlasInterface = atlasInterface;
-		atlasCreator = atlasInterface.getOutputFormat().createAtlasCreatorInstance();
+		this.atlas = atlas;
+		this.atlasCreator = atlasCreator;
 		testAtlas();
 		TileStore.getInstance().closeAll(false);
 		pauseResumeHandler = new PauseResumeHandler();
@@ -56,11 +63,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	private void testAtlas() throws AtlasTestException {
 		try {
-			for (LayerInterface layer : atlasInterface) {
+			for (LayerInterface layer : atlas) {
 				for (MapInterface map : layer) {
 					if (!atlasCreator.testMapSource(map.getMapSource()))
 						throw new AtlasTestException("The selected atlas output format \""
-								+ atlasInterface.getOutputFormat()
+								+ atlas.getOutputFormat()
 								+ "\" does not support the map source \"" + map.getMapSource()
 								+ "\"");
 				}
@@ -121,7 +128,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		/***
 		 * In this section of code below, atlas is created.
 		 **/
-		long totalNrOfTiles = atlasInterface.calculateTilesToDownload();
+		long totalNrOfTiles = atlas.calculateTilesToDownload();
 
 		if (totalNrOfTiles > Integer.MAX_VALUE) {
 			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!",
@@ -130,21 +137,21 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		}
 
 		try {
-			atlasCreator.startAtlasCreation(atlasInterface);
+			atlasCreator.startAtlasCreation(atlas, customAtlasDir);
 		} catch (AtlasTestException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(),
 					"Atlas format restriction violated", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
-		ap.initAtlas(atlasInterface);
+		ap.initAtlas(atlas);
 		ap.setVisible(true);
 
 		Settings s = Settings.getInstance();
 
 		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler);
 		try {
-			for (LayerInterface layer : atlasInterface) {
+			for (LayerInterface layer : atlas) {
 				atlasCreator.initLayerCreation(layer);
 				for (MapInterface map : layer) {
 					try {
@@ -222,7 +229,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		ap.setZoomLevel(zoom);
 		try {
 			tileArchive = null;
-			String tempSuffix = "MOBAC_" + atlasInterface.getName() + "_" + zoom + "_";
+			String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
 			File tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
 			// If something goes wrong the temp file only
 			// persists until the VM exits
@@ -380,6 +387,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	public AtlasProgress getAtlasProgress() {
 		return ap;
+	}
+
+	public File getCustomAtlasDir() {
+		return customAtlasDir;
+	}
+
+	public void setCustomAtlasDir(File customAtlasDir) {
+		this.customAtlasDir = customAtlasDir;
 	}
 
 }

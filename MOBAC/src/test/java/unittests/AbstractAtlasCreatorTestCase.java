@@ -1,6 +1,11 @@
 package unittests;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,24 +31,28 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 
-	protected Logger log;
+	protected final Logger log;
+	protected File testAtlasDir;
+	protected final SecureRandom rnd;
 
 	public AbstractAtlasCreatorTestCase() {
 		super();
 		Logging.configureConsoleLogging(Level.INFO);
 		log = Logger.getLogger(this.getClass());
 		TileStore.initialize();
+		testAtlasDir = new File("target/test-atlases");
+		rnd = new SecureRandom();
 	}
 
 	protected void createAtlas(String profileName, Class<? extends AtlasCreator> atlasCreatorClass)
 			throws InstantiationException, IllegalAccessException, JAXBException,
-			AtlasTestException, InterruptedException {
+			AtlasTestException, InterruptedException, IOException {
 		AtlasCreator atlasCreator = atlasCreatorClass.newInstance();
 		createAtlas(profileName, atlasCreator);
 	}
 
 	protected void createAtlas(String profileName, AtlasCreator atlasCreator) throws JAXBException,
-			AtlasTestException, InterruptedException {
+			AtlasTestException, InterruptedException, IOException {
 		String profileFile = "profiles/" + Profile.getProfileFileName(profileName);
 		InputStream in = ClassLoader.getSystemResourceAsStream(profileFile);
 		assertNotNull(in);
@@ -58,9 +67,12 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 	}
 
 	protected void createAtlas(AtlasInterface atlas, AtlasCreator atlasCreator)
-			throws AtlasTestException, InterruptedException {
-		AtlasThread atlasThread = new AtlasThread(atlas);
-		// Settings.getInstance().setAtlasOutputDirectory("atlases/")
+			throws AtlasTestException, InterruptedException, IOException {
+		AtlasThread atlasThread = new AtlasThread(atlas, atlasCreator);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss_SSSS");
+		File customAtlasDir = new File(testAtlasDir, atlasCreator.getClass().getSimpleName() + "_"
+				+ atlas.getName() + "_" + sdf.format(new Date()));
+		atlasThread.setCustomAtlasDir(customAtlasDir);
 		atlasThread.start();
 		atlasThread.join();
 	}

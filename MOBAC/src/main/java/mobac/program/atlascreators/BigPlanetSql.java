@@ -75,9 +75,11 @@ public class BigPlanetSql extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException {
-		this.atlas = atlas;
-		atlasDir = Settings.getInstance().getAtlasOutputDirectory();
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException,
+			AtlasTestException, InterruptedException {
+		if (customAtlasDir == null)
+			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
+		super.startAtlasCreation(atlas, customAtlasDir);
 		databaseFile = new File(atlasDir, getDatabaseFileName()).getAbsolutePath();
 		log.debug("SQLite Database file: " + databaseFile);
 	}

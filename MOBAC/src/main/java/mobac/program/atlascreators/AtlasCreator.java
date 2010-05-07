@@ -35,7 +35,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  * <li>AtlasCreator instantiation via
  * {@link AtlasOutputFormat#createAtlasCreatorInstance()}</li>
  * <li>AtlasCreator atlas initialization via
- * {@link #startAtlasCreation(AtlasInterface)}</li>
+ * {@link #startAtlasCreation(AtlasInterface, File)}</li>
  * <li>1 to n times {@link #initializeMap(MapInterface, TarIndex)} followed by
  * {@link #createMap()}</li>
  * <li>AtlasCreator atlas finalization via {@link #finishAtlasCreation()}</li>
@@ -88,18 +88,24 @@ public abstract class AtlasCreator {
 	};
 
 	/**
+	 * @param customAtlasDir
+	 *            if not <code>null</code> the customAtlasDir is used instead of
+	 *            the generated atlas directory name
 	 * @throws InterruptedException
 	 * @see AtlasCreator
 	 */
-	public void startAtlasCreation(AtlasInterface atlas) throws AtlasTestException, IOException,
-			InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
+			throws AtlasTestException, IOException, InterruptedException {
 		this.atlas = atlas;
 		testAtlas();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
-		File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
 
-		atlasDir = new File(atlasOutputDir, atlasDirName);
+		if (customAtlasDir == null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+			String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
+			File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
+			atlasDir = new File(atlasOutputDir, atlasDirName);
+		} else
+			atlasDir = customAtlasDir;
 		Utilities.mkDirs(atlasDir);
 	}
 

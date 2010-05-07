@@ -39,9 +39,9 @@ public abstract class TrekBuddy extends AtlasCreator {
 	protected File mapFolder = null;
 	protected MapTileWriter mapTileWriter;
 
-	public void startAtlasCreation(AtlasInterface atlas) throws IOException, InterruptedException,
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException, InterruptedException,
 			AtlasTestException {
-		super.startAtlasCreation(atlas);
+		super.startAtlasCreation(atlas, customAtlasDir);
 	}
 
 	public void finishAtlasCreation() {

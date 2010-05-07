@@ -5,14 +5,14 @@ import java.sql.Statement;
 
 public class SQLitexGPS extends BigPlanetSql {
 
-	private static final String TABLE_MAPS = "CREATE TABLE maps "
+	private static final String TABLE_MAPS = "CREATE TABLE IF NOT EXISTS maps "
 			+ "(id INTEGER, name TEXT, zoom TEXT, type INTEGER, PRIMARY KEY(id));";
-	private static final String TABLE_MAPREGIONS = "CREATE TABLE map_regions "
+	private static final String TABLE_MAPREGIONS = "CREATE TABLE IF NOT EXISTS map_regions "
 			+ "(regionsid INTEGER, mapid INTEGER, PRIMARY KEY(regionsid))";
-	private static final String TABLE_REGIONS_POINTS = "CREATE TABLE regions_points "
+	private static final String TABLE_REGIONS_POINTS = "CREATE TABLE IF NOT EXISTS regions_points "
 			+ "(regionsid INTEGER, lat REAL,lon REAL, pos INTEGER, PRIMARY KEY(regionsid,lat,lon))";
-	private static final String TABLE_TILES = "CREATE TABLE tiles "
-			+ "(x INTEGER, y INTEGER,zoom INTEGER,type INTEGER, img BLOB, PRIMARY KEY(x,y,zoom,type))";
+	private static final String TABLE_TILES = "CREATE TABLE IF NOT EXISTS tiles "
+			+ "(x INTEGER, y INTEGER, zoom INTEGER, type INTEGER, img BLOB, PRIMARY KEY(x,y,zoom,type))";
 
 	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles "
 			+ "(x,y,zoom,type,img) VALUES (?,?,?,?,?)";

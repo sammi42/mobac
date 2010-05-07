@@ -18,6 +18,5 @@ public class SQLiteTestCase extends AbstractAtlasCreatorTestCase {
 		log.info("Starting test testRMaps");
 		createAtlas("HamburgPark", BigPlanetSql.class);
 	}
-
 	
 }

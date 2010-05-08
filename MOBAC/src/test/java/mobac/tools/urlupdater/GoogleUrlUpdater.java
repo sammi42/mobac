@@ -23,6 +23,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import mapsources.MapSourceTestCase;
+import mapsources.MapSourceTestFailedException;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.impl.Google.GoogleEarth;
 import mobac.mapsources.impl.Google.GoogleEarthMapsOverlay;
@@ -32,8 +34,6 @@ import mobac.mapsources.impl.Google.GoogleMapsChina;
 import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.program.Logging;
-import mobac.tools.MapSourcesTester;
-import mobac.tools.MapSourcesTester.MapSourceTestFailed;
 import mobac.utilities.Utilities;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -131,10 +131,11 @@ public class GoogleUrlUpdater implements Runnable {
 			} else if (!oldUrlTemplate.equals(newUrlTemplate)) {
 				try {
 					System.setProperty(key, newUrlTemplate);
-					MapSourcesTester.testMapSource(ums.mapSourceClass);
+					MapSourceTestCase testCase = new MapSourceTestCase(ums.mapSourceClass);
 					System.out.println(ums.mapSourceClass.getSimpleName());
 					UrlUpdater.getInstance().updateMapSopurceUrl(key, newUrlTemplate);
-				} catch (MapSourceTestFailed e) {
+					testCase.runMapSourceTest();
+				} catch (MapSourceTestFailedException e) {
 					System.err.print("Test of new url failed: ");
 					System.err.println(key + "=" + newUrlTemplate);
 				} catch (Exception e) {

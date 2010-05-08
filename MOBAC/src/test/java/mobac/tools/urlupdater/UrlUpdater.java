@@ -73,7 +73,7 @@ public class UrlUpdater {
 		pw.flush();
 		FileOutputStream fo = null;
 		try {
-			fo = new FileOutputStream("src/mobac/mapsources.properties");
+			fo = new FileOutputStream("src/main/resources/mobac/mapsources.properties");
 			fo.write(bo.toByteArray());
 			System.out.println("mapsources.properties has been updated");
 		} catch (IOException e) {

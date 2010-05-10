@@ -45,7 +45,7 @@ public class DirectoryManager {
 	 * @return
 	 */
 	private static File getProgramDir() {
-		File f =null;
+		File f = null;
 		try {
 			f = Utilities.getClassLocation(DirectoryManager.class);
 		} catch (Exception e) {
@@ -79,7 +79,8 @@ public class DirectoryManager {
 		if (OSUtilities.detectOs() == OperatingSystem.Windows) {
 			String appData = System.getenv("APPDATA");
 			if (appData == null)
-				throw new RuntimeException("User application data to found");
+				throw new RuntimeException("Unable to retrieve user application data directory - "
+						+ "environment variable %APPDATA% does not exist!");
 			File appDataDir = new File(appData);
 			if (appDataDir.isDirectory()) {
 				File mobacDataDir = new File(appData, "Mobile Atlas Creator");

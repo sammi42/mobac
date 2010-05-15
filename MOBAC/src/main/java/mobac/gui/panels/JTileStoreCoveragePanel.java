@@ -35,6 +35,9 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		zoomCombo = new JComboBox();
 		zoomCombo.setToolTipText("Select the zoom level you wish "
 				+ "to display tile store coverage");
+		titlePanel.setToolTipText("<html>Displays the regions for the curently "
+				+ "selected map source that has been <br> downloaded and "
+				+ "which are therefore offline available in the tile store (tile cache)</html>");
 
 		contentContainer.add(new JLabel("zoom level"), GBC.std());
 		contentContainer.add(zoomCombo, GBC.std());
@@ -58,7 +61,8 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 	public void mapSourceChanged(MapSource newMapSource) {
 		TileStoreCoverageLayer.removeCacheCoverageLayers();
 		Integer selZoom = (Integer) zoomCombo.getSelectedItem();
-		if (selZoom==null) selZoom = new Integer(8);
+		if (selZoom == null)
+			selZoom = new Integer(8);
 		Integer[] items = new Integer[newMapSource.getMaxZoom() - newMapSource.getMinZoom()];
 		int zoom = newMapSource.getMinZoom();
 		for (int i = 0; i < items.length; i++) {

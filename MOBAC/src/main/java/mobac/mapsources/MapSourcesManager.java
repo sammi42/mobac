@@ -19,8 +19,8 @@ import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.OviMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMaps;
-import mobac.mapsources.impl.MiscMapSources.YandexSat;
 import mobac.mapsources.impl.MiscMapSources.YandexMap;
+import mobac.mapsources.impl.MiscMapSources.YandexSat;
 import mobac.mapsources.impl.OsmMapSources.CycleMap;
 import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
@@ -32,6 +32,7 @@ import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
+import mobac.mapsources.impl.RegionalMapSources.CykloatlasWithRelief;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import mobac.mapsources.impl.RegionalMapSources.EmapiPl;
 import mobac.mapsources.impl.RegionalMapSources.EniroComAerial;
@@ -59,29 +60,25 @@ public class MapSourcesManager {
 	public static final MapSource DEFAULT = new Mapnik();
 	private static MapSource[] MAP_SOURCES;
 
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource(
-			"Localhost (stored)", true);
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource(
-			"Localhost (unstored)", false);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource("Localhost (stored)", true);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource("Localhost (unstored)", false);
 
 	static {
 		MapSourcesUpdater.loadMapSourceProperties();
 		MAP_SOURCES = new MapSource[] { //
 				//
-				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(),
-				new GoogleMapsKorea(), new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(),
-				new YahooMaps(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
-				new OsmHikingMapWithBase(), new OsmHikingMapWithRelief(), new OsmPublicTransport(),
-				new OpenPisteMap(), new MicrosoftMaps(), new MicrosoftMapsChina(),
-				new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OviMaps(),
-				new OutdooractiveGermany(), new OutdooractiveAustria(),
-				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
-				new Cykloatlas(), new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(),
-				new EmapiPl(), new Bergfex(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
-				new FreemapSlovakiaHikingHillShade(), new Turaterkep(), new NearMap(),
-				new HubermediaBavaria(), new StatkartTopo2(), new StatkartToporaster2(),
-				new EniroComMap(), new EniroComAerial(), new EniroComNautical(), new MapplusCh(),
-				new YandexMap(), new YandexSat() };
+				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleMapsKorea(),
+				new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(), new YahooMaps(), DEFAULT,
+				new TilesAtHome(), new CycleMap(), new OsmHikingMap(), new OsmHikingMapWithBase(),
+				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
+				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OviMaps(),
+				new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),
+				new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(), new CykloatlasWithRelief(),
+				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new EmapiPl(), new Bergfex(),
+				new FreemapSlovakia(), new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
+				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
+				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(), new EniroComNautical(),
+				new MapplusCh(), new YandexMap(), new YandexSat() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {
@@ -103,8 +100,7 @@ public class MapSourcesManager {
 			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_OFF);
 			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_ON);
 		}
-		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance()
-				.getDisabledMapSources());
+		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance().getDisabledMapSources());
 		for (MapSource ms : MAP_SOURCES) {
 			if (!disabledMapSources.contains(ms.getName()))
 				mapSources.add(ms);

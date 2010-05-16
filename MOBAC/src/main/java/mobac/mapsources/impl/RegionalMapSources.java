@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Random;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
+import mobac.mapsources.MultiLayerMapSource;
 import mobac.mapsources.UpdatableMapSource;
 
 /**
@@ -39,9 +42,8 @@ public class RegionalMapSources {
 			char[] cy = sy.toCharArray();
 			String szoom = Integer.toHexString(zoom);
 
-			String s = baseUrl + szoom + "/" + cx[4] + cy[4] + "/" + cx[3] + cy[3] + "/" + cx[2]
-					+ cy[2] + "/" + cx[1] + cy[1] + "/" + cx[0] + cy[0] + "/z" + szoom + "x" + sx
-					+ "y" + sy + ".png";
+			String s = baseUrl + szoom + "/" + cx[4] + cy[4] + "/" + cx[3] + cy[3] + "/" + cx[2] + cy[2] + "/" + cx[1]
+					+ cy[1] + "/" + cx[0] + cy[0] + "/z" + szoom + "x" + sx + "y" + sy + ".png";
 			return s;
 		}
 
@@ -68,8 +70,8 @@ public class RegionalMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String s = "http://" + SERVER_NUM + ".tiles.ump.waw.pl/ump_tiles/" + zoom + "/" + tilex
-					+ "/" + tiley + ".png";
+			String s = "http://" + SERVER_NUM + ".tiles.ump.waw.pl/ump_tiles/" + zoom + "/" + tilex + "/" + tiley
+					+ ".png";
 			SERVER_NUM = (SERVER_NUM + 1) % MAX_SERVER_NUM;
 			return s;
 		}
@@ -94,8 +96,8 @@ public class RegionalMapSources {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			if (zoom < 8)
 				throw new RuntimeException("Zoom level not suported");
-			String s = "http://t" + SERVER_NUM + ".outdooractive.com/" + mapName + "/map/" + zoom
-					+ "/" + tilex + "/" + tiley + ".png";
+			String s = "http://t" + SERVER_NUM + ".outdooractive.com/" + mapName + "/map/" + zoom + "/" + tilex + "/"
+					+ tiley + ".png";
 			SERVER_NUM = (SERVER_NUM + 1) % 4;
 			return s;
 		}
@@ -152,8 +154,7 @@ public class RegionalMapSources {
 			String z = Integer.toString(zoom);
 			if (zoom >= 13)
 				z += "c";
-			return "http://services.tmapserver.cz/tiles/gm/shc/" + z + "/" + tilex + "/" + tiley
-					+ ".png";
+			return "http://services.tmapserver.cz/tiles/gm/shc/" + z + "/" + tilex + "/" + tiley + ".png";
 		}
 
 		@Override
@@ -164,9 +165,38 @@ public class RegionalMapSources {
 	}
 
 	/**
+	 * Unused
+	 */
+	public static class CykloatlasRelief extends AbstractMapSource {
+
+		public CykloatlasRelief() {
+			super("Cykloatlasrelief", 7, 15, "png", TileUpdate.LastModified);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://services.tmapserver.cz/tiles/gm/sum/" + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
+	public static class CykloatlasWithRelief extends CykloatlasRelief implements MultiLayerMapSource {
+		
+		private MapSource background = new Cykloatlas();
+		
+		public MapSource getBackgroundMapSource() {
+			return background;
+		}
+
+		@Override
+		public String toString() {
+			return "Cykloatlas with relief (CZ, SK)";
+		}
+	}
+	
+	
+	/**
 	 * 
-	 * Requires known user agent, and something else otherwise we get only a
-	 * HTTP 403
+	 * Requires known user agent, and something else otherwise we get only a HTTP 403
 	 * <p>
 	 * map provider does not work --> currently unused
 	 * </p>
@@ -183,8 +213,7 @@ public class RegionalMapSources {
 			sx = sx.substring(0, 3) + "/" + sx.substring(3, 6) + "/" + sx.substring(6, 9);
 			sy = sy.substring(0, 3) + "/" + sy.substring(3, 6) + "/" + sy.substring(6, 9);
 
-			String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy
-					+ ".png";
+			String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy + ".png";
 			System.out.println(s);
 			return s;
 		}
@@ -201,8 +230,7 @@ public class RegionalMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.freemap.sk/layers/allinone/?/BNp/" + zoom + "/" + tilex + "/"
-					+ tiley;
+			return "http://www.freemap.sk/layers/allinone/?/BNp/" + zoom + "/" + tilex + "/" + tiley;
 		}
 
 		@Override
@@ -222,8 +250,7 @@ public class RegionalMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.freemap.sk/layers/allinone/?/BVRNTp/" + zoom + "/" + tilex + "/"
-					+ tiley;
+			return "http://www.freemap.sk/layers/allinone/?/BVRNTp/" + zoom + "/" + tilex + "/" + tiley;
 		}
 
 		@Override
@@ -242,8 +269,7 @@ public class RegionalMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.freemap.sk/layers/allinone/?/BNTNp/" + zoom + "/" + tilex + "/"
-					+ tiley;
+			return "http://www.freemap.sk/layers/allinone/?/BNTNp/" + zoom + "/" + tilex + "/" + tiley;
 		}
 
 		@Override
@@ -270,8 +296,7 @@ public class RegionalMapSources {
 		}
 
 		@Override
-		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
-				throws IOException {
+		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
 			HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
 			conn.addRequestProperty("Cookie", "currentView=");
 			conn.addRequestProperty("Referer", "http://emapi.pl/?referer=");
@@ -284,15 +309,13 @@ public class RegionalMapSources {
 		}
 	}
 
-
 	public static class NearMap extends AbstractMapSource {
 		public NearMap() {
 			super("NearMap Australia", 0, 24, "jpg", TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.nearmap.com/maps/hl=en&nml=Vert&z=" + zoom + "&x=" + tilex + "&y="
-					+ tiley;
+			return "http://www.nearmap.com/maps/hl=en&nml=Vert&z=" + zoom + "&x=" + tilex + "&y=" + tiley;
 		}
 
 	}
@@ -335,9 +358,8 @@ public class RegionalMapSources {
 	 * http://www.statkart.no/
 	 * 
 	 * <p>
-	 * There is a limit of 10 000 cache-tiler per end user (unique IP address)
-	 * per day. This restriction is therefore not associated with the individual
-	 * application.
+	 * There is a limit of 10 000 cache-tiler per end user (unique IP address) per day. This restriction is therefore
+	 * not associated with the individual application.
 	 * </p>
 	 * 
 	 * <table border="1">
@@ -396,8 +418,8 @@ public class RegionalMapSources {
 			this("topo2", "Statkart Topo 2", 0, 17, "png", TileUpdate.None);
 		}
 
-		public StatkartTopo2(String service, String name, int minZoom, int maxZoom,
-				String tileType, TileUpdate tileUpdate) {
+		public StatkartTopo2(String service, String name, int minZoom, int maxZoom, String tileType,
+				TileUpdate tileUpdate) {
 			super(name, minZoom, maxZoom, tileType, tileUpdate);
 			this.service = service;
 		}
@@ -409,8 +431,8 @@ public class RegionalMapSources {
 
 		@Override
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=" + service
-					+ "&zoom=" + zoom + "&x=" + tilex + "&y=" + tiley;
+			return "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=" + service + "&zoom=" + zoom
+					+ "&x=" + tilex + "&y=" + tiley;
 		}
 
 	}
@@ -444,8 +466,8 @@ public class RegionalMapSources {
 		@Override
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			int y = (1 << zoom) - 1 - tiley;
-			return "http://map.eniro.com/geowebcache/service/tms1.0.0/" + mapType + "/" + zoom
-					+ "/" + tilex + "/" + y + ".png";
+			return "http://map.eniro.com/geowebcache/service/tms1.0.0/" + mapType + "/" + zoom + "/" + tilex + "/" + y
+					+ ".png";
 		}
 	}
 
@@ -482,8 +504,8 @@ public class RegionalMapSources {
 
 		String referer;
 
-		private static final char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
-				'b', 'c', 'd', 'e', 'f' };
+		private static final char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
+				'f' };
 
 		public MapplusCh() {
 			super("MapplusCh", 7, 16, "jpg", TileUpdate.ETag);
@@ -492,8 +514,7 @@ public class RegionalMapSources {
 			for (int i = 0; i < sessID.length; i++)
 				sessID[i] = hex[rnd.nextInt(hex.length)];
 			// example sessID = "12ea56827487e927d4b202ad48248109";
-			referer = "http://www.mapplus.ch/NeapoljsMapPage.php?uid=public&group=public&sessID="
-					+ new String(sessID);
+			referer = "http://www.mapplus.ch/NeapoljsMapPage.php?uid=public&group=public&sessID=" + new String(sessID);
 		}
 
 		@Override
@@ -504,13 +525,12 @@ public class RegionalMapSources {
 		@Override
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			int z = 17 - zoom;
-			return "http://mp2.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex
-					+ "/t" + tiley + "l" + tilex + ".jpg";
+			return "http://mp2.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex + "/t" + tiley + "l"
+					+ tilex + ".jpg";
 		}
 
 		@Override
-		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
-				throws IOException {
+		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
 			HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
 			// http request property "Referer" is required -
 			// otherwise we only get "tranparentpixel.gif"

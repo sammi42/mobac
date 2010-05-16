@@ -79,7 +79,13 @@ SourceForge.net: <br>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
 	<li><a href="#Bugs">Problems, Bugs &amp; Errors</a></li>
 	<li><a href="#Limitations">Known problems and limitations</a></li>
-	<li><a href="#AdvancedUsers">Details for advanced users</a></li>
+	<li><a href="#AdvancedUsers">Details for advanced users</a>
+	<ul style="margin-left: 10px;">
+		<li><a href="#CustomMapSource">Custom map sources</a></li>
+		<li><a href="#CustomMultiLayerMapSource">Custom multi-layer
+		map sources</a></li>
+	</ul>
+	</li>
 </ul>
 <hr>
 
@@ -210,9 +216,9 @@ BigPlanet / RMaps</a></h3>
 <p>For creating offline atlases compatible with <a
 	href="http://code.google.com/p/bigplanet/">BigPlanet-Maps</a> and <a
 	href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>
-(both Android applications) you have to select <b>BigPlanet / RMaps SQLite</b>
-as format in section <b>Atlas settings</b> on the left side of the main
-window. <br>
+(both Android applications) you have to select <b>BigPlanet / RMaps
+SQLite</b> as format in section <b>Atlas settings</b> on the left side of
+the main window. <br>
 Please not that this atlas format requires additional libraries which
 are not shipped with Mobile Atlas Creator. Read section <a
 	href="#SQLite">SQLite library</a> for details what libraries are
@@ -532,7 +538,7 @@ tile store directory. The previously used tile store will not be used
 anymore.<br>
 Deleting the <tt>&lt;tileStoreDirectory&gt;</tt> tag restores the old
 behavior (automatically tile store directory selection).</p>
-<h3>Custom map sources</h3>
+<h3><a name="CustomMapSource">Custom map sources</a></h3>
 <p>Custom map sources which uses a similar URL scheme as
 Google/OpenStreetMap can be added by editing the file <tt>settings.xml</tt>
 with an text editor.</p>
@@ -568,8 +574,12 @@ curly brace:</p>
 	<li><b>{$y}</b> for the y tile coordinate - number range: [0..2<sup><i>zoom
 	level</i></sup>]</li>
 </ul>
-<h3>Custom multi-layer map sources</h3>
-<p>The same way map sources which consist of two layers can be added as well:</p>
+<h3><a name="CustomMultiLayerMapSource">Custom multi-layer map
+sources</a></h3>
+<p>The same way map sources which consists of two layers can be
+added as well. Note that the foreground map source images must have
+transparent parts - otherwise the background map source will not be
+visible.</p>
 <pre>
 &lt;settings&gt;
     &lt;customMapSources&gt;

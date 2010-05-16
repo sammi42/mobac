@@ -568,5 +568,30 @@ curly brace:</p>
 	<li><b>{$y}</b> for the y tile coordinate - number range: [0..2<sup><i>zoom
 	level</i></sup>]</li>
 </ul>
+<h3>Custom multi-layer map sources</h3>
+<p>The same way map sources which consist of two layers can be added as well:</p>
+<pre>
+&lt;settings&gt;
+    &lt;customMapSources&gt;
+        &lt;customMultiLayerMapSource&gt;
+            &lt;name&gt;Custom OSM Mapnik&lt;/name&gt;
+            &lt;minZoom&gt;0&lt;/minZoom&gt;
+            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+            &lt;tileType&gt;png&lt;/tileType&gt;
+            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
+            &lt;url&gt;http://topo.openstreetmap.de/topo/{$z}/{$x}/{$y}.png&lt;/url&gt;
+            &lt;backgroundMapSource&gt;
+	            &lt;name&gt;Custom background unique name&lt;/name&gt;
+	            &lt;minZoom&gt;0&lt;/minZoom&gt;
+	            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+	            &lt;tileType&gt;png&lt;/tileType&gt;
+	            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
+	            &lt;url&gt;http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png&lt;/url&gt;
+            &lt;/backgroundMapSource&gt;
+        &lt;/customMultiLayerMapSource&gt;
+    &lt;/customMapSources&gt;
+    ...
+&lt;/settings&gt;</pre>
+
 </body>
 </html>

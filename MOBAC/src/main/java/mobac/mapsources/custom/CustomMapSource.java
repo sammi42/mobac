@@ -1,4 +1,4 @@
-package mobac.mapsources;
+package mobac.mapsources.custom;
 
 import java.awt.Color;
 import java.io.IOException;

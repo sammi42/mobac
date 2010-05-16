@@ -20,13 +20,15 @@ import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobac.gui.actions.GpxLoad;
 import mobac.gui.mapview.ScaleBar;
 import mobac.gui.panels.JCoordinatesPanel;
-import mobac.mapsources.CustomMapSource;
 import mobac.mapsources.MapSourcesManager;
+import mobac.mapsources.custom.CustomMapSource;
+import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.mapsources.impl.Google;
 import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
@@ -34,7 +36,6 @@ import mobac.program.download.UserAgent;
 import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
-
 
 @XmlRootElement
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
@@ -50,9 +51,9 @@ public class Settings {
 	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
 	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
-	@XmlElement(defaultValue="")
+	@XmlElement(defaultValue = "")
 	private String version;
-	
+
 	public int maxMapSize = 32767;
 
 	public boolean tileStoreEnabled = true;
@@ -98,22 +99,19 @@ public class Settings {
 	public int httpReadTimeout = 10;
 
 	/**
-	 * Maximum expiration (in milliseconds) acceptable. If a server sets an
-	 * expiration time larger than this value it is truncated to this value on
-	 * next download.
+	 * Maximum expiration (in milliseconds) acceptable. If a server sets an expiration time larger than this value it is
+	 * truncated to this value on next download.
 	 */
 	public long tileMaxExpirationTime = TimeUnit.DAYS.toMillis(365);
 
 	/**
-	 * Minimum expiration (in milliseconds) acceptable. If a server sets an
-	 * expiration time smaller than this value it is truncated to this value on
-	 * next download.
+	 * Minimum expiration (in milliseconds) acceptable. If a server sets an expiration time smaller than this value it
+	 * is truncated to this value on next download.
 	 */
 	public long tileMinExpirationTime = TimeUnit.DAYS.toMillis(1);
 
 	/**
-	 * Expiration time (in milliseconds) of a tile if the server does not
-	 * provide an expiration time
+	 * Expiration time (in milliseconds) of a tile if the server does not provide an expiration time
 	 */
 	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(7);
 
@@ -122,16 +120,14 @@ public class Settings {
 	/**
 	 * Development mode enabled/disabled
 	 * <p>
-	 * In development mode one additional map source is available for using MOBAC
-	 * Debug TileServer
+	 * In development mode one additional map source is available for using MOBAC Debug TileServer
 	 * </p>
 	 */
 	@XmlElement
 	private boolean devMode = false;
 
 	/**
-	 * Saves the last used directory of the GPX file chooser dialog. Used in
-	 * {@link GpxLoad}.
+	 * Saves the last used directory of the GPX file chooser dialog. Used in {@link GpxLoad}.
 	 */
 	public String gpxFileChooserDir = "";
 
@@ -157,7 +153,8 @@ public class Settings {
 	private Vector<String> disabledMapSources = new Vector<String>();
 
 	@XmlElementWrapper(name = "customMapSources")
-	@XmlElement(name = "customMapSource")
+	@XmlElements( { @XmlElement(name = "customMapSource", type = CustomMapSource.class),
+			@XmlElement(name = "customMultiLayerMapSource", type = CustomMultiLayerMapSource.class) })
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
 	@XmlElement(name = "MapSourcesUpdate")
@@ -237,8 +234,7 @@ public class Settings {
 			load();
 		} catch (JAXBException e) {
 			log.error(e);
-			JOptionPane.showMessageDialog(null,
-					"Could not read file settings.xml program will exit.", "Error",
+			JOptionPane.showMessageDialog(null, "Could not read file settings.xml program will exit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
@@ -383,8 +379,8 @@ public class Settings {
 	/**
 	 * 
 	 * @param dir
-	 *            <code>null</code> or empty string resets to default directory
-	 *            otherwise set the new atlas output directory.
+	 *            <code>null</code> or empty string resets to default directory otherwise set the new atlas output
+	 *            directory.
 	 */
 	public void setAtlasOutputDirectory(String dir) {
 		if (dir != null && dir.trim().length() == 0)

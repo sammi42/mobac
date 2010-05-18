@@ -105,6 +105,7 @@
 			-keep class mobac.data.gpx.gpx11.* { public *; }
 			-keep class mobac.program.tilestore.berkeleydb.* { *; }
 			-keep class mobac.program.tilestore.TileStoreEntry { public *; }
+			-keep class mobac.mapsources.custom.* { *; }
 			-keep class SQLite.JDBC2z.* { public *; }
 			-keepclassmembers enum * {
 			    public static **[] values();

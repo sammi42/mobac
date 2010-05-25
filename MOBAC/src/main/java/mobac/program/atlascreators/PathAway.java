@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
+import mobac.exceptions.MapCreationException;
 import mobac.mapsources.impl.OsmMapSources;
 import mobac.mapsources.impl.Google.GoogleEarth;
 import mobac.mapsources.impl.Google.GoogleMaps;
@@ -15,9 +16,8 @@ import mobac.utilities.tar.TarIndex;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
- * Creates a tile cache structure as used by <a
- * href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile, Symbian,
- * Palm)
+ * Creates a tile cache structure as used by <a href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile,
+ * Symbian, Palm)
  */
 public class PathAway extends OSMTracker {
 
@@ -46,13 +46,19 @@ public class PathAway extends OSMTracker {
 			mapDir = new File(atlasDir, shortMapDir);
 	}
 
+	public void createMap() throws MapCreationException, InterruptedException {
+		// This means there should not be any resizing of the tiles.
+		if (mapTileWriter == null)
+			mapTileWriter = new PathAwayTileWriter();
+		createTiles();
+	}
+
 	@Override
 	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				if (map.getZoom() > 17)
-					throw new AtlasTestException("resolution too high - "
-							+ "highest possible zoom level is 17");
+					throw new AtlasTestException("resolution too high - " + "highest possible zoom level is 17");
 			}
 		}
 	}
@@ -60,10 +66,8 @@ public class PathAway extends OSMTracker {
 	protected class PathAwayTileWriter extends OSMTileWriter {
 
 		@Override
-		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
-				throws IOException {
-			File file = new File(mapDir, String.format(tileFileNamePattern, 17 - zoom, tilex,
-					tiley, tileType));
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			File file = new File(mapDir, String.format(tileFileNamePattern, 17 - zoom, tilex, tiley, tileType));
 			writeTile(file, tileData);
 		}
 

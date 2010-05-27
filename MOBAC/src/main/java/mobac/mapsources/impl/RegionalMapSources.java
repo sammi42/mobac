@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Random;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.MultiLayerMapSource;
 import mobac.mapsources.UpdatableMapSource;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Map sources that do not cover the whole world
@@ -180,9 +180,9 @@ public class RegionalMapSources {
 	}
 
 	public static class CykloatlasWithRelief extends CykloatlasRelief implements MultiLayerMapSource {
-		
+
 		private MapSource background = new Cykloatlas();
-		
+
 		public MapSource getBackgroundMapSource() {
 			return background;
 		}
@@ -192,8 +192,7 @@ public class RegionalMapSources {
 			return "Cykloatlas with relief (CZ, SK)";
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 * Requires known user agent, and something else otherwise we get only a HTTP 403
@@ -441,6 +440,14 @@ public class RegionalMapSources {
 
 		public StatkartToporaster2() {
 			super("toporaster2", "Statkart Toporaster 2", 0, 17, "png", TileUpdate.None);
+		}
+
+	}
+
+	public static class StatkartSjoHovedkart2 extends StatkartTopo2 {
+
+		public StatkartSjoHovedkart2() {
+			super("sjo_hovedkart2", "Statkart sea/nautical", 0, 17, "png", TileUpdate.None);
 		}
 
 	}

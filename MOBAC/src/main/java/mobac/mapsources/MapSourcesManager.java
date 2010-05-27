@@ -47,6 +47,7 @@ import mobac.mapsources.impl.RegionalMapSources.NearMap;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
+import mobac.mapsources.impl.RegionalMapSources.StatkartSjoHovedkart2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
@@ -77,8 +78,8 @@ public class MapSourcesManager {
 				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new EmapiPl(), new Bergfex(),
 				new FreemapSlovakia(), new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
 				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
-				new StatkartToporaster2(), new EniroComMap(), new EniroComAerial(), new EniroComNautical(),
-				new MapplusCh(), new YandexMap(), new YandexSat() };
+				new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(), new EniroComAerial(),
+				new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat() };
 	}
 
 	public static Vector<MapSource> getAllMapSources() {

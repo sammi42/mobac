@@ -177,25 +177,29 @@ public class MapSourcesUpdater {
 				// near future
 				Properties onlineProps = new Properties();
 				onlineProps.load(new ByteArrayInputStream(data));
-				// int onlineRev = getMapSourcesRev(onlineProps);
-				// int currentRev = parseMapSourcesRev(System.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY));
+				int onlineRev = getMapSourcesRev(onlineProps);
+				int currentRev = parseMapSourcesRev(System.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY));
 				settings.mapSourcesUpdate.lastUpdate = new Date();
 				settings.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
-				System.getProperties().putAll(onlineProps);
-				FileOutputStream mapFs = null;
-				try {
-					mapFs = new FileOutputStream(mapFile);
-					mapFs.write(data);
-				} finally {
-					Utilities.closeStream(mapFs);
-				}
-				for (MapSource ms : MapSourcesManager.getAllMapSources()) {
-					if (ms instanceof UpdatableMapSource) {
-						((UpdatableMapSource) ms).update();
+				// Check if local file is newer that the remote file
+				if (onlineRev > currentRev || !mapSourcesExternalFileUsed) {
+					System.getProperties().putAll(onlineProps);
+					FileOutputStream mapFs = null;
+					try {
+						mapFs = new FileOutputStream(mapFile);
+						mapFs.write(data);
+					} finally {
+						Utilities.closeStream(mapFs);
 					}
+					for (MapSource ms : MapSourcesManager.getAllMapSources()) {
+						if (ms instanceof UpdatableMapSource) {
+							((UpdatableMapSource) ms).update();
+						}
+					}
+					mapSourcesExternalFileUsed = true;
+					return true;
 				}
-				mapSourcesExternalFileUsed = true;
-				return true;
+				return false;
 			} catch (java.net.UnknownHostException e) {
 				// TODO catch host unreachable:
 				// 19:14:20,021 ERROR [MapSourcesUpdate] MapSourcesUpdater: mobac.dnsalias.org

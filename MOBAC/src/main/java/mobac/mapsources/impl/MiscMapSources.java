@@ -1,16 +1,16 @@
 package mobac.mapsources.impl;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
+import mobac.mapsources.UpdatableMapSource;
 import mobac.mapsources.mapspace.MercatorPower2MapSpaceEllipsoidal;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class MiscMapSources {
 
 	/**
-	 * Map from Multimap.com - incomplete for high zoom levels Uses Quad-Tree
-	 * coordinate notation
+	 * Map from Multimap.com - incomplete for high zoom levels Uses Quad-Tree coordinate notation
 	 */
 	public static class MultimapCom extends AbstractMapSource {
 
@@ -26,8 +26,7 @@ public class MiscMapSources {
 
 			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 			if (tileNum.length() > 12)
-				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/"
-						+ tileNum.substring(12);
+				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/" + tileNum.substring(12);
 			else if (tileNum.length() > 6)
 				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6);
 
@@ -38,8 +37,7 @@ public class MiscMapSources {
 				base = "http://mc2.tiles-cdn.multimap.com/ptiles/map/mi917/";
 			else
 				base = "http://mc3.tiles-cdn.multimap.com/ptiles/map/mi931/";
-			tileNum = base + (zoom + 1) + "/" + tileNum
-					+ ".png?client=public_api&service_seq=14458";
+			tileNum = base + (zoom + 1) + "/" + tileNum + ".png?client=public_api&service_seq=14458";
 			return tileNum;
 		}
 	}
@@ -57,8 +55,7 @@ public class MiscMapSources {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 			if (tileNum.length() > 12)
-				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/"
-						+ tileNum.substring(12);
+				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6, 12) + "/" + tileNum.substring(12);
 			else if (tileNum.length() > 6)
 				tileNum = tileNum.substring(0, 6) + "/" + tileNum.substring(6);
 
@@ -72,8 +69,7 @@ public class MiscMapSources {
 			else
 				base = "http://mc0.tiles-cdn.multimap.com/ptiles/map/mi932/";
 
-			tileNum = base + (zoom + 1) + "/" + tileNum
-					+ ".png?client=public_api&service_seq=14458";
+			tileNum = base + (zoom + 1) + "/" + tileNum + ".png?client=public_api&service_seq=14458";
 			return tileNum;
 		}
 	}
@@ -88,8 +84,8 @@ public class MiscMapSources {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			int yahooTileY = (((1 << zoom) - 2) / 2) - tiley;
 			int yahooZoom = getMaxZoom() - zoom + 2;
-			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex
-					+ "&y=" + yahooTileY + "+6163&z=" + yahooZoom;
+			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex + "&y=" + yahooTileY
+					+ "+6163&z=" + yahooZoom;
 		}
 
 	}
@@ -102,8 +98,8 @@ public class MiscMapSources {
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return "http://maptile.maps.svc.ovi.com/maptiler/maptile/newest/normal.day/" + zoom
-					+ "/" + x + "/" + y + "/256/png8?token=...&referer=maps.ovi.com";
+			return "http://maptile.maps.svc.ovi.com/maptiler/maptile/newest/normal.day/" + zoom + "/" + x + "/" + y
+					+ "/256/png8?token=...&referer=maps.ovi.com";
 		}
 
 		@Override
@@ -116,7 +112,7 @@ public class MiscMapSources {
 	/**
 	 * Yandex Maps
 	 */
-	public static class YandexMap extends AbstractMapSource {
+	public static class YandexMap extends AbstractMapSource implements UpdatableMapSource {
 		// YandexMap.url=http://vec0{$servernum}.maps.yandex.ru/tiles?l=map&v=2.10.2&x={$x}&y={$y}&z={$z}
 
 		int SERVER_NUM = 1;
@@ -125,7 +121,7 @@ public class MiscMapSources {
 
 		public YandexMap() {
 			super("YandexMap", 1, 17, "png", TileUpdate.IfModifiedSince);
-			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+			update();
 		}
 
 		@Override
@@ -148,12 +144,16 @@ public class MiscMapSources {
 			return "Yandex Map (Russia)";
 		}
 
+		public void update() {
+			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+		}
+
 	}
 
 	/**
 	 * Yandex Sat
 	 */
-	public static class YandexSat extends AbstractMapSource {
+	public static class YandexSat extends AbstractMapSource implements UpdatableMapSource {
 
 		private static int SERVER_NUM = 1;
 
@@ -161,7 +161,7 @@ public class MiscMapSources {
 
 		public YandexSat() {
 			super("YandexSat", 1, 18, "jpg", TileUpdate.IfModifiedSince);
-			urlPattern = MapSourceTools.loadMapUrl(this, "url");
+			update();
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -182,6 +182,10 @@ public class MiscMapSources {
 		@Override
 		public String toString() {
 			return "Yandex Sat (Russia)";
+		}
+
+		public void update() {
+			urlPattern = MapSourceTools.loadMapUrl(this, "url");
 		}
 
 	}

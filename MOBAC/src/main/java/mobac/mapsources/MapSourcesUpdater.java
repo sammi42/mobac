@@ -33,23 +33,19 @@ public class MapSourcesUpdater {
 	private static final String MAPSOURCES_PROPERTIES = "mapsources.properties";
 
 	/**
-	 * Extracts the revision number from the Subversion keyword entry
-	 * rev/revision
+	 * Extracts the revision number from the Subversion keyword entry rev/revision
 	 */
 	private static final Pattern SVN_REV = Pattern.compile("\\$Rev\\:\\s*(\\d*)\\s*\\$");
 
 	/**
-	 * Extracts the important part of the Subversion keyword entry
-	 * Date/LastChangedDate so that it can be parsed by
+	 * Extracts the important part of the Subversion keyword entry Date/LastChangedDate so that it can be parsed by
 	 * {@link MapSourcesUpdater#SVN_DATE_FORMAT}
 	 */
-	private static final Pattern SVN_DATE = Pattern
-			.compile("\\$Date\\:\\s*([\\d\\s:\\-\\+]*) \\(.*\\)\\s*\\$");
+	private static final Pattern SVN_DATE = Pattern.compile("\\$Date\\:\\s*([\\d\\s:\\-\\+]*) \\(.*\\)\\s*\\$");
 	/**
 	 * Date format for parsing the Subversion date keyword content
 	 */
-	private static final SimpleDateFormat SVN_DATE_FORMAT = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss Z");
+	private static final SimpleDateFormat SVN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
 	/**
 	 * Merges the mapsources property into the system property bundle
@@ -99,13 +95,11 @@ public class MapSourcesUpdater {
 	}
 
 	/**
-	 * This method is automatically called each time MOBAC starts-up. If the
-	 * last update check is older than three days a new update check is
-	 * performed.
+	 * This method is automatically called each time MOBAC starts-up. If the last update check is older than three days
+	 * a new update check is performed.
 	 * 
 	 * @param async
-	 *            <code>true</code>: run the update in a new background.
-	 *            Otherwise wait for the update to finish
+	 *            <code>true</code>: run the update in a new background. Otherwise wait for the update to finish
 	 */
 	public static void automaticMapsourcesOnlineUpdate(boolean async) {
 		Date lastUpdate = Settings.getInstance().mapSourcesUpdate.lastUpdate;
@@ -147,23 +141,20 @@ public class MapSourcesUpdater {
 	public static boolean mapsourcesOnlineUpdate() throws MapSourcesUpdateException {
 		URL url;
 		try {
-			File mapFile = new File(DirectoryManager.currentDir,
-					MapSourcesUpdater.MAPSOURCES_PROPERTIES);
+			File mapFile = new File(DirectoryManager.currentDir, MapSourcesUpdater.MAPSOURCES_PROPERTIES);
 			String mapUpdateUrl = System.getProperty("mobac.updateurl");
 			if (mapUpdateUrl == null)
 				throw new MapSourcesUpdateException("No update url configured!");
 			url = new URL(mapUpdateUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			Settings settings = Settings.getInstance();
-			if (mapFile.isFile() && settings.mapSourcesUpdate.etag != null
-					&& settings.mapSourcesUpdate.etag != "")
+			if (mapFile.isFile() && settings.mapSourcesUpdate.etag != null && settings.mapSourcesUpdate.etag != "")
 				conn.addRequestProperty("If-None-Match", settings.mapSourcesUpdate.etag);
-			try {	// TODO temporarily introduced try/catch due to uncaught exception
+			try { // TODO temporarily introduced try/catch due to uncaught exception
 				int code = conn.getResponseCode();
 				MapSourcesUpdater.log.trace("Mapsources online update: \n\tUpdate url: " + mapUpdateUrl
-						+ "\n\tResponse  : " + code + " " + conn.getResponseMessage()
-						+ "\n\tSize      : " + conn.getContentLength() + " bytes \n\tETag      : "
-						+ conn.getHeaderField("ETag"));
+						+ "\n\tResponse  : " + code + " " + conn.getResponseMessage() + "\n\tSize      : "
+						+ conn.getContentLength() + " bytes \n\tETag      : " + conn.getHeaderField("ETag"));
 				if (code == 304)
 					// HTTP 304 = Not Modified => Same as on last update check
 					return false;
@@ -171,7 +162,7 @@ public class MapSourcesUpdater {
 					throw new MapSourcesUpdateException("Invalid HTTP server response: " + code + " "
 							+ conn.getResponseMessage());
 				DataInputStream in = new DataInputStream(conn.getInputStream());
-	
+
 				if (conn.getContentLength() == 0)
 					// If there is only an empty file available this indicates that
 					// the mapsources format has changed and requires a new version
@@ -186,36 +177,32 @@ public class MapSourcesUpdater {
 				// near future
 				Properties onlineProps = new Properties();
 				onlineProps.load(new ByteArrayInputStream(data));
-				int onlineRev = getMapSourcesRev(onlineProps);
-				int currentRev = parseMapSourcesRev(System
-						.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY));
+				// int onlineRev = getMapSourcesRev(onlineProps);
+				// int currentRev = parseMapSourcesRev(System.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY));
 				settings.mapSourcesUpdate.lastUpdate = new Date();
 				settings.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
-				if (onlineRev > currentRev || !mapSourcesExternalFileUsed) {
-					System.getProperties().putAll(onlineProps);
-					FileOutputStream mapFs = null;
-					try {
-						mapFs = new FileOutputStream(mapFile);
-						mapFs.write(data);
-					} finally {
-						Utilities.closeStream(mapFs);
-					}
-					for (MapSource ms : MapSourcesManager.getAllMapSources()) {
-						if (ms instanceof UpdatableMapSource) {
-							((UpdatableMapSource) ms).update();
-						}
-					}
-					mapSourcesExternalFileUsed = true;
-					return true;
+				System.getProperties().putAll(onlineProps);
+				FileOutputStream mapFs = null;
+				try {
+					mapFs = new FileOutputStream(mapFile);
+					mapFs.write(data);
+				} finally {
+					Utilities.closeStream(mapFs);
 				}
-				return false;
+				for (MapSource ms : MapSourcesManager.getAllMapSources()) {
+					if (ms instanceof UpdatableMapSource) {
+						((UpdatableMapSource) ms).update();
+					}
+				}
+				mapSourcesExternalFileUsed = true;
+				return true;
 			} catch (java.net.UnknownHostException e) {
-// 				TODO catch host unreachable:
-//				19:14:20,021 ERROR [MapSourcesUpdate] MapSourcesUpdater: mobac.dnsalias.org
-//				java.net.UnknownHostException: mobac.dnsalias.org
-//					at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:177)
-//					at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:366)
-//					at java.net.Socket.connect(Socket.java:525)
+				// TODO catch host unreachable:
+				// 19:14:20,021 ERROR [MapSourcesUpdate] MapSourcesUpdater: mobac.dnsalias.org
+				// java.net.UnknownHostException: mobac.dnsalias.org
+				// at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:177)
+				// at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:366)
+				// at java.net.Socket.connect(Socket.java:525)
 				return false;
 			}
 		} catch (Exception e) {
@@ -225,16 +212,14 @@ public class MapSourcesUpdater {
 	}
 
 	/**
-	 * Merges the mapsources property into the Properties
-	 * <code>targetprop</code>
+	 * Merges the mapsources property into the Properties <code>targetprop</code>
 	 * 
 	 * @param targetProp
 	 */
 	public static void loadMapSourceProperties(Properties targetProp) {
 		try {
 			URL mapResUrl = Main.class.getResource(MapSourcesUpdater.MAPSOURCES_PROPERTIES);
-			File mapFile = new File(DirectoryManager.currentDir,
-					MapSourcesUpdater.MAPSOURCES_PROPERTIES);
+			File mapFile = new File(DirectoryManager.currentDir, MapSourcesUpdater.MAPSOURCES_PROPERTIES);
 			Properties resProps = new Properties();
 			Properties fileProps = new Properties();
 			Utilities.loadProperties(resProps, mapResUrl);
@@ -243,8 +228,8 @@ public class MapSourcesUpdater {
 				Utilities.loadProperties(fileProps, mapFile);
 				int fileRev = getMapSourcesRev(fileProps);
 				int resRev = getMapSourcesRev(resProps);
-				MapSourcesUpdater.log.trace("mapsources.properties revisons (resource/file): "
-						+ resRev + " / " + fileRev);
+				MapSourcesUpdater.log.trace("mapsources.properties revisons (resource/file): " + resRev + " / "
+						+ fileRev);
 				selectedProps = (fileRev < resRev) ? resProps : fileProps;
 			} else {
 				selectedProps = resProps;

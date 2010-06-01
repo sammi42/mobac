@@ -67,7 +67,7 @@ public class TTQV extends Ozi {
 			NumberFormat nf = new DecimalFormat("0.000000E000", Utilities.DFS_ENG);
 			mapWriter.write("scale_area = 6 =  " + nf.format(scale).toLowerCase() + "\r\n");
 			mapWriter.write("proj_mode = 10 = proj\r\n");
-			mapWriter.write("projparams = 10 = proj=merc lon_0=-\r\n");
+			mapWriter.write("projparams = 10 = proj=merc\r\n");
 			mapWriter.write("datum1 = 10 = WGS 84# 6378137# 298.257223563# 0# 0# 0#\r\n");
 			mapWriter.write("c1_x = 7 =  0\r\n");
 			mapWriter.write("c1_y = 7 =  0\r\n");

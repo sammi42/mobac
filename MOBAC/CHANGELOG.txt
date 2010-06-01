@@ -29,7 +29,8 @@
  ! Fixed OSM Hiking relief
  + New map source: Cykloatlas with relief
  + Custom Map Sources extended to multi-layer map source (2 layers)
- + New map source: Statkart sea/nautical (AKA "sjo_hovedkart2") 
+ + New map source: Statkart sea/nautical (AKA "sjo_hovedkart2")
+ ~ TouretechQV: Corrected "projparams" (removed unset UTM zone) - see #2970353 
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

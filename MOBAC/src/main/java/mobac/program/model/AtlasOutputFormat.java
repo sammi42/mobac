@@ -12,6 +12,7 @@ import mobac.program.atlascreators.CacheWolf;
 import mobac.program.atlascreators.GarminCustom;
 import mobac.program.atlascreators.Glopus;
 import mobac.program.atlascreators.GlopusMapFile;
+import mobac.program.atlascreators.GoogleEarthOverlay;
 import mobac.program.atlascreators.MagellanRmp;
 import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
@@ -34,7 +35,8 @@ public enum AtlasOutputFormat {
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
-	Glopus("Glopus (PNG & KAL)", Glopus.class), // 
+	Glopus("Glopus (PNG & KAL)", Glopus.class), //
+	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //

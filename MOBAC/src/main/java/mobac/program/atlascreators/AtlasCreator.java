@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.EnumSet;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
@@ -32,12 +33,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  * 
  * The general call schema is as follows:
  * <ol>
- * <li>AtlasCreator instantiation via
- * {@link AtlasOutputFormat#createAtlasCreatorInstance()}</li>
- * <li>AtlasCreator atlas initialization via
- * {@link #startAtlasCreation(AtlasInterface, File)}</li>
- * <li>1 to n times {@link #initializeMap(MapInterface, TarIndex)} followed by
- * {@link #createMap()}</li>
+ * <li>AtlasCreator instantiation via {@link AtlasOutputFormat#createAtlasCreatorInstance()}</li>
+ * <li>AtlasCreator atlas initialization via {@link #startAtlasCreation(AtlasInterface, File)}</li>
+ * <li>1 to n times {@link #initializeMap(MapInterface, TarIndex)} followed by {@link #createMap()}</li>
  * <li>AtlasCreator atlas finalization via {@link #finishAtlasCreation()}</li>
  * </ol>
  */
@@ -89,13 +87,12 @@ public abstract class AtlasCreator {
 
 	/**
 	 * @param customAtlasDir
-	 *            if not <code>null</code> the customAtlasDir is used instead of
-	 *            the generated atlas directory name
+	 *            if not <code>null</code> the customAtlasDir is used instead of the generated atlas directory name
 	 * @throws InterruptedException
 	 * @see AtlasCreator
 	 */
-	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
-			throws AtlasTestException, IOException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws AtlasTestException, IOException,
+			InterruptedException {
 		this.atlas = atlas;
 		testAtlas();
 
@@ -136,8 +133,7 @@ public abstract class AtlasCreator {
 	}
 
 	/**
-	 * Test if the {@link AtlasCreator} instance supports the selected
-	 * {@link MapSource}
+	 * Test if the {@link AtlasCreator} instance supports the selected {@link MapSource}
 	 * 
 	 * @param mapSource
 	 * @return <code>true</code> if supported otherwise <code>false</code>
@@ -179,8 +175,7 @@ public abstract class AtlasCreator {
 	public abstract void createMap() throws MapCreationException, InterruptedException;
 
 	/**
-	 * Checks if the user has aborted atlas creation and if <code>true</code> an
-	 * {@link InterruptedException} is thrown.
+	 * Checks if the user has aborted atlas creation and if <code>true</code> an {@link InterruptedException} is thrown.
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -223,24 +218,22 @@ public abstract class AtlasCreator {
 	}
 
 	/**
-	 * Tests all maps of the currently active atlas if a custom tile image
-	 * format has been specified and if the specified format is equal to the
-	 * <code>allowedFormat</code>.
+	 * Tests all maps of the currently active atlas if a custom tile image format has been specified and if the
+	 * specified format is equal to the <code>allowedFormat</code>.
 	 * 
 	 * @param allowedFormat
 	 * @throws AtlasTestException
 	 */
-	protected void performTest_AtlasTileFormat(TileImageFormat allowedFormat)
-			throws AtlasTestException {
+	protected void performTest_AtlasTileFormat(EnumSet<TileImageFormat> allowedFormats) throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				TileImageParameters parameters = map.getParameters();
 				if (parameters == null)
 					continue;
-				if (!parameters.getFormat().equals(allowedFormat))
+				if (!allowedFormats.contains(parameters.getFormat()))
 					throw new AtlasTestException(
-							"Selected custom tile format not supported - only format \""
-									+ allowedFormat + "\" is supported", map);
+							"Selected custom tile format not supported - only the following format(s) are supported: "
+									+ allowedFormats, map);
 			}
 		}
 	}
@@ -249,8 +242,7 @@ public abstract class AtlasCreator {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				if (map.getZoom() > maxZoom)
-					throw new AtlasTestException("Maximum zoom is " + maxZoom
-							+ " for this atlas format", map);
+					throw new AtlasTestException("Maximum zoom is " + maxZoom + " for this atlas format", map);
 			}
 		}
 	}

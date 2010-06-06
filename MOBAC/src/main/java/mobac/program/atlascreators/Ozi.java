@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.EnumSet;
 
 import javax.imageio.ImageIO;
 
@@ -30,14 +31,14 @@ public class Ozi extends TrekBuddy {
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		MapSpace mapSpace = mapSource.getMapSpace();
-		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE
-				.equals(mapSpace.getProjectionCategory()));
+		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
+				.getProjectionCategory()));
 		// TODO supports Mercator ellipsoid?
 	}
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		performTest_AtlasTileFormat(TileImageFormat.PNG);
+		performTest_AtlasTileFormat(EnumSet.of(TileImageFormat.PNG));
 	}
 
 	@Override
@@ -71,8 +72,8 @@ public class Ozi extends TrekBuddy {
 	}
 
 	/**
-	 * Writes the large picture (tile) line by line. Each line has the full
-	 * width of the map and the height of one tile (256 pixels).
+	 * Writes the large picture (tile) line by line. Each line has the full width of the map and the height of one tile
+	 * (256 pixels).
 	 */
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
@@ -90,8 +91,7 @@ public class Ozi extends TrekBuddy {
 			PngXxlWriter pngWriter = new PngXxlWriter(width, height, fileOs);
 
 			for (int y = yMin; y <= yMax; y++) {
-				BufferedImage lineImage = new BufferedImage(width, tileLineHeight,
-						BufferedImage.TYPE_INT_RGB);
+				BufferedImage lineImage = new BufferedImage(width, tileLineHeight, BufferedImage.TYPE_INT_RGB);
 				Graphics2D graphics = lineImage.createGraphics();
 				try {
 					graphics.setColor(backgroundColor);

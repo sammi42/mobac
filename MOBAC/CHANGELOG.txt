@@ -32,6 +32,7 @@
  + New map source: Statkart sea/nautical (AKA "sjo_hovedkart2")
  ~ TouretechQV: Corrected "projparams" (removed unset UTM zone) - see #2970353
  + New atlas format: Google Earth Overlay (unrestricted Google Custom Map) 
+ ! Fixed: #3008934 (MM1B calculation problem in .map file)
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

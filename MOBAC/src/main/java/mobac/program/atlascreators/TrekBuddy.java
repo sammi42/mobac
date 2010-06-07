@@ -92,8 +92,8 @@ public abstract class TrekBuddy extends AtlasCreator {
 		int width = (xMax - xMin + 1) * tileSize;
 		int height = (yMax - yMin + 1) * tileSize;
 
-		mapWriter.write(prepareMapString(imageFileName, longitudeMin, longitudeMax, latitudeMin,
-				latitudeMax, width, height));
+		mapWriter.write(prepareMapString(imageFileName, longitudeMin, longitudeMax, latitudeMin, latitudeMax, width,
+				height));
 		mapWriter.flush();
 	}
 
@@ -116,9 +116,8 @@ public abstract class TrekBuddy extends AtlasCreator {
 					if (sourceTileData != null) {
 						mapTileWriter.writeTile(tilex, tiley, tileType, sourceTileData);
 					} else {
-						log.trace(String.format(
-								"Tile x=%d y=%d not found in tile archive - creating default",
-								tilex, tiley));
+						log.trace(String.format("Tile x=%d y=%d not found in tile archive - creating default", tilex,
+								tiley));
 						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
 					}
 				} catch (IOException e) {
@@ -154,10 +153,9 @@ public abstract class TrekBuddy extends AtlasCreator {
 			}
 		}
 
-		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
-				throws IOException {
-			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth),
-					(tiley * tileHeight), imageFormat);
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
+			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth), (tiley * tileHeight),
+					imageFormat);
 
 			ta.writeFileFromData("set/" + tileFileName, tileData);
 		}
@@ -192,17 +190,16 @@ public abstract class TrekBuddy extends AtlasCreator {
 				tileWidth = parameters.getWidth();
 			}
 			try {
-				setFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-						setFile), TEXT_FILE_CHARSET));
+				setFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(setFile),
+						TEXT_FILE_CHARSET));
 			} catch (IOException e) {
 				log.error("", e);
 			}
 		}
 
-		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
-				throws IOException {
-			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth),
-					(tiley * tileHeight), imageFormat);
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
+			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth), (tiley * tileHeight),
+					imageFormat);
 
 			File f = new File(setFolder, tileFileName);
 			FileOutputStream out = new FileOutputStream(f);
@@ -224,8 +221,8 @@ public abstract class TrekBuddy extends AtlasCreator {
 		}
 	}
 
-	protected String prepareMapString(String fileName, double longitudeMin, double longitudeMax,
-			double latitudeMin, double latitudeMax, int width, int height) {
+	protected String prepareMapString(String fileName, double longitudeMin, double longitudeMax, double latitudeMin,
+			double latitudeMax, int width, int height) {
 
 		StringBuffer sbMap = new StringBuffer();
 
@@ -281,8 +278,9 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 		// The simple variant for calculating mm1b
 		// http://www.trekbuddy.net/forum/viewtopic.php?t=3755&postdays=0&postorder=asc&start=286
-		double mm1b = (longitudeMax - longitudeMin) * 111319
-				* Math.cos((latitudeMax + latitudeMin) / 2) / width;
+		double mm1b = (longitudeMax - longitudeMin) * 111319;
+		mm1b *= Math.cos(Math.toRadians((latitudeMax + latitudeMin) / 2.0)) / width;
+
 		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f\r\n", mm1b));
 
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");

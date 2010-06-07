@@ -312,7 +312,8 @@ public class GoogleUrlUpdater implements Runnable {
 			String html = new String(Utilities.getInputBytes(in));
 			in.close();
 			c.disconnect();
-			Pattern p = Pattern.compile("\\\"(http://mt\\d.google.cn/vt/v[^\\\"]*)\\\"");
+			
+			Pattern p = Pattern.compile("\\\"(http://mt\\d.google.cn/vt/lyrs=[^\\\"]*)\\\"");
 			Matcher m = p.matcher(html);
 			if (!m.find())
 				throw new RuntimeException("pattern not found");

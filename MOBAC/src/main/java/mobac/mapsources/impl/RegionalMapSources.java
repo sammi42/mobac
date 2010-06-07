@@ -165,12 +165,12 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * Unused
+	 * Relief only
 	 */
 	public static class CykloatlasRelief extends AbstractMapSource {
 
 		public CykloatlasRelief() {
-			super("Cykloatlasrelief", 7, 15, "png", TileUpdate.LastModified);
+			super("CykloatlasRelief", 7, 15, "png", TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

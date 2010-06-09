@@ -1,6 +1,6 @@
 package unittests;
 
-import mobac.program.atlascreators.BigPlanetSql;
+import mobac.program.atlascreators.RMapsSQLite;
 import mobac.program.atlascreators.SQLitexGPS;
 
 public class SQLiteTestCase extends AbstractAtlasCreatorTestCase {
@@ -16,7 +16,7 @@ public class SQLiteTestCase extends AbstractAtlasCreatorTestCase {
 
 	public void testRMaps() throws Exception {
 		log.info("Starting test testRMaps");
-		createAtlas("HamburgPark", BigPlanetSql.class);
+		createAtlas("HamburgPark", RMapsSQLite.class);
 	}
 	
 }

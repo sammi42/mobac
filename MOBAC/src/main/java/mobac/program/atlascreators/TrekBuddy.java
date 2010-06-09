@@ -32,9 +32,6 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 	public static final String FILENAME_PATTERN = "t_%d_%d.%s";
 
-	protected static final int COORD_KIND_LATTITUDE = 1;
-	protected static final int COORD_KIND_LONGITUDE = 2;
-
 	protected File layerFolder = null;
 	protected File mapFolder = null;
 	protected MapTileWriter mapTileWriter;
@@ -236,10 +233,10 @@ public abstract class TrekBuddy extends AtlasCreator {
 		sbMap.append("Magnetic Variation,,,E\r\n");
 		sbMap.append("Map Projection,Mercator,PolyCal,No," + "AutoCalOnly,No,BSBUseWPX,No\r\n");
 
-		String latMax = getDegMinFormat(latitudeMax, COORD_KIND_LATTITUDE);
-		String latMin = getDegMinFormat(latitudeMin, COORD_KIND_LATTITUDE);
-		String lonMax = getDegMinFormat(longitudeMax, COORD_KIND_LONGITUDE);
-		String lonMin = getDegMinFormat(longitudeMin, COORD_KIND_LONGITUDE);
+		String latMax = getDegMinFormat(latitudeMax, true);
+		String latMin = getDegMinFormat(latitudeMin, true);
+		String lonMax = getDegMinFormat(longitudeMax, false);
+		String lonMin = getDegMinFormat(longitudeMin, false);
 
 		String pointLine = "Point%02d,xy, %4s, %4s,in, deg, %1s, %1s, grid," + " , , ,N\r\n";
 
@@ -336,17 +333,17 @@ public abstract class TrekBuddy extends AtlasCreator {
 		}
 	}
 
-	private static String getDegMinFormat(double coord, int COORD_KIND) {
+	private static String getDegMinFormat(double coord, boolean isLatitude) {
 
 		boolean neg = (coord < 0.0);
 		coord = Math.abs(coord);
 		int deg = (int) coord;
-		double min = (coord - deg) * 60;
+		double min = (coord - deg) * 60.0;
 
 		String degMinFormat = "%d, %3.6f, %c";
 
 		char dirC;
-		if (COORD_KIND == COORD_KIND_LATTITUDE)
+		if (isLatitude)
 			dirC = (neg ? 'S' : 'N');
 		else
 			dirC = (neg ? 'W' : 'E');

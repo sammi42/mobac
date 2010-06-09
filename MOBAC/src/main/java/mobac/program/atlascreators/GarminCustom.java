@@ -47,7 +47,8 @@ public class GarminCustom extends GoogleEarthOverlay {
 		}
 	}
 
-	protected void writeTileImage(String imageFileName, BufferedImage tileImage) throws MapCreationException {
+	@Override
+	protected void writeTileImage(BufferedImage tileImage) throws MapCreationException {
 		try {
 			TileImageJpegDataWriter writer;
 			if (parameters != null) {
@@ -75,6 +76,7 @@ public class GarminCustom extends GoogleEarthOverlay {
 			}
 			if (data == null)
 				throw new MapCreationException("Unable to create an image with less than 3 MB!");
+			String imageFileName = "files/" + cleanedMapName + "." + writer.getFileExt();
 			writeStoredEntry(imageFileName, data);
 		} catch (IOException e) {
 			throw new MapCreationException(e);

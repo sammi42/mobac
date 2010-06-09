@@ -27,12 +27,11 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
-import mobac.program.model.TileImageFormat;
+import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
@@ -61,19 +60,6 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
 				.getProjectionCategory()));
 		// TODO supports Mercator ellipsoid?
-	}
-
-	@Override
-	protected void testAtlas() throws AtlasTestException {
-		for (LayerInterface layer : atlas) {
-			for (MapInterface map : layer) {
-				if (map.getParameters() == null)
-					continue;
-				TileImageFormat format = map.getParameters().getFormat();
-				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
-					throw new AtlasTestException("Only JPEG tile format is supported by this atlas format!", map);
-			}
-		}
 	}
 
 	@Override
@@ -130,9 +116,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
-			String fileName = "files/" + cleanedMapName + ".jpg";
-			createImage(fileName);
-			addMapToKmz(fileName);
+			createImage();
 		} catch (InterruptedException e) {
 			throw e;
 		} catch (MapCreationException e) {
@@ -142,7 +126,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		}
 	}
 
-	protected void createImage(String imageFileName) throws InterruptedException, MapCreationException {
+	protected void createImage() throws InterruptedException, MapCreationException {
 
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		ImageIO.setUseCache(false);
@@ -197,25 +181,24 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		} finally {
 			graphics.dispose();
 		}
-		TileImageJpegDataWriter writer;
-		if (parameters != null) {
-			writer = (TileImageJpegDataWriter) parameters.getFormat().getDataWriter();
-			writer = new TileImageJpegDataWriter(writer);
-		} else
-			writer = new TileImageJpegDataWriter(0.9);
-
-		writer.initialize();
-		writeTileImage(imageFileName, tileImage, writer);
+		writeTileImage(tileImage);
 	}
 
-	protected void writeTileImage(String imageFileName, BufferedImage tileImage, TileImageJpegDataWriter writer)
-			throws MapCreationException {
+	protected void writeTileImage(BufferedImage tileImage) throws MapCreationException {
+		TileImageDataWriter writer;
+		if (parameters != null) {
+			writer = parameters.getFormat().getDataWriter();
+		} else
+			writer = new TileImageJpegDataWriter(0.9);
+		writer.initialize();
 		try {
 			int initialBufferSize = tileImage.getWidth() * tileImage.getHeight() / 4;
 			ByteArrayOutputStream buf = new ByteArrayOutputStream(initialBufferSize);
 			writer.processImage(tileImage, buf);
+			String imageFileName = "files/" + cleanedMapName + "." + writer.getFileExt();
 			writeStoredEntry(imageFileName, buf.toByteArray());
-		} catch (IOException e) {
+			addMapToKmz(imageFileName);
+		} catch (Exception e) {
 			throw new MapCreationException(e);
 		}
 	}

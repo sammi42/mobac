@@ -43,7 +43,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  * RMaps.
  * <p>
  */
-public class BigPlanetSql extends AtlasCreator {
+public class RMapsSQLite extends AtlasCreator {
 
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";

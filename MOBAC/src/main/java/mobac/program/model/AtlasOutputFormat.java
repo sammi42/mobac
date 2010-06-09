@@ -6,7 +6,7 @@ import mobac.program.atlascreators.AFTrack;
 import mobac.program.atlascreators.AlpineQuestMap;
 import mobac.program.atlascreators.AndNav;
 import mobac.program.atlascreators.AtlasCreator;
-import mobac.program.atlascreators.BigPlanetSql;
+import mobac.program.atlascreators.RMapsSQLite;
 import mobac.program.atlascreators.CacheBox;
 import mobac.program.atlascreators.CacheWolf;
 import mobac.program.atlascreators.GarminCustom;
@@ -31,13 +31,13 @@ public enum AtlasOutputFormat {
 	AFTrack("AFTrack (OSZ)", AFTrack.class), //
 	AlpineQuestMap("AlpineQuestMap (AQM)", AlpineQuestMap.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
-	BigPlanet("BigPlanet / RMaps SQLite", BigPlanetSql.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
 	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
+	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
 	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
@@ -45,7 +45,7 @@ public enum AtlasOutputFormat {
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	PathAway("PathAway tile cache", PathAway.class), //
-	Rmp("Magellan (RMP)", MagellanRmp.class), //
+	BigPlanet("RMaps SQLite", RMapsSQLite.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	Ublox("Ublox", Ublox.class), // 
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 

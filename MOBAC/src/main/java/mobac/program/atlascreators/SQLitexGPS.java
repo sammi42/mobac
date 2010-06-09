@@ -3,7 +3,7 @@ package mobac.program.atlascreators;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SQLitexGPS extends BigPlanetSql {
+public class SQLitexGPS extends RMapsSQLite {
 
 	private static final String TABLE_MAPS = "CREATE TABLE IF NOT EXISTS maps "
 			+ "(id INTEGER, name TEXT, zoom TEXT, type INTEGER, PRIMARY KEY(id));";

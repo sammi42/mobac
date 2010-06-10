@@ -45,7 +45,7 @@ public class MapSourcesTestSuite extends TestSuite {
 		testedMapSources = new HashSet<String>();
 		MapSourcesUpdater.loadMapSourceProperties();
 		Settings.load();
-		for (MapSource mapSource : MapSourcesManager.getAllMapSources())
+		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources())
 			addMapSourcesTestCase(mapSource);
 	}
 

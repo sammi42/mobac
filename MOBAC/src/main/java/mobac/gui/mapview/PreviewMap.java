@@ -35,30 +35,26 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public static final int MAP_CONTROLLER_RECTANGLE_SELECT = 0;
 	public static final int MAP_CONTROLLER_GPX = 1;
-	
-	protected static final Font LOADING_FONT = new Font("Sans Serif", Font.BOLD, 30);
 
+	protected static final Font LOADING_FONT = new Font("Sans Serif", Font.BOLD, 30);
 
 	private static Logger log = Logger.getLogger(PreviewMap.class);
 
 	/**
-	 * Interactive map selection max/min pixel coordinates regarding zoom level
-	 * <code>MAX_ZOOM</code>
+	 * Interactive map selection max/min pixel coordinates regarding zoom level <code>MAX_ZOOM</code>
 	 */
 	private Point iSelectionMin;
 	private Point iSelectionMax;
 
 	/**
-	 * Map selection max/min pixel coordinates regarding zoom level
-	 * <code>MAX_ZOOM</code> with respect to the grid zoom.
+	 * Map selection max/min pixel coordinates regarding zoom level <code>MAX_ZOOM</code> with respect to the grid zoom.
 	 */
 	private Point gridSelectionStart;
 	private Point gridSelectionEnd;
 
 	/**
-	 * Pre-painted tile with grid lines on it. This makes painting the grid a
-	 * lot faster in difference to painting each line or rectangle if the grid
-	 * zoom is much higher that the current zoom level.
+	 * Pre-painted tile with grid lines on it. This makes painting the grid a lot faster in difference to painting each
+	 * line or rectangle if the grid zoom is much higher that the current zoom level.
 	 */
 	private BufferedImage gridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 
@@ -71,10 +67,9 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	protected JMapController mapSelectionController;
 
 	public PreviewMap() {
-		super(MapSourcesManager.DEFAULT, new PreviewTileCache(), 5);
+		super(MapSourcesManager.getInstance().getDefaultMapSource(), new PreviewTileCache(), 5);
 		setEnabled(false);
 		new DefaultMapController(this);
-		mapSource = MapSourcesManager.DEFAULT;
 		// tileLoader = new OsmTileLoader(this);
 		OsmFileCacheTileLoader cacheTileLoader = new OsmFileCacheTileLoader(this);
 		setTileLoader(cacheTileLoader);
@@ -109,14 +104,13 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	 */
 	public void settingsLoad() {
 		Settings settings = Settings.getInstance();
-		MapSource mapSource = MapSourcesManager.getSourceByName(settings.mapviewMapSource);
+		MapSource mapSource = MapSourcesManager.getInstance().getSourceByName(settings.mapviewMapSource);
 		if (mapSource != null)
 			setMapSource(mapSource);
 		EastNorthCoordinate c = settings.mapviewCenterCoordinate;
 		gridZoom = settings.mapviewGridZoom;
 		setDisplayPositionByLatLon(c, settings.mapviewZoom);
-		setSelectionByTileCoordinate(MAX_ZOOM, settings.mapviewSelectionMin,
-				settings.mapviewSelectionMax, true);
+		setSelectionByTileCoordinate(MAX_ZOOM, settings.mapviewSelectionMin, settings.mapviewSelectionMax, true);
 	}
 
 	@Override
@@ -162,8 +156,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			gridSize = tilesize << zoomToGridZoom;
 		} else {
 			gridSize = tilesize >> (-zoomToGridZoom);
-			BufferedImage newGridTile = new BufferedImage(tilesize, tilesize,
-					BufferedImage.TYPE_INT_ARGB);
+			BufferedImage newGridTile = new BufferedImage(tilesize, tilesize, BufferedImage.TYPE_INT_ARGB);
 			if (gridSize > 2) {
 				Graphics2D g = newGridTile.createGraphics();
 				int alpha = 5 + (6 + zoomToGridZoom) * 16;
@@ -300,19 +293,16 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	/**
 	 * 
 	 * @param pStart
-	 *            x/y tile coordinate of the top left tile regarding the current
-	 *            zoom level
+	 *            x/y tile coordinate of the top left tile regarding the current zoom level
 	 * @param pEnd
-	 *            x/y tile coordinate of the bottom right tile regarding the
-	 *            current zoom level
+	 *            x/y tile coordinate of the bottom right tile regarding the current zoom level
 	 * @param notifyListeners
 	 */
 	public void setSelectionByTileCoordinate(Point pStart, Point pEnd, boolean notifyListeners) {
 		setSelectionByTileCoordinate(zoom, pStart, pEnd, notifyListeners);
 	}
 
-	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd,
-			boolean notifyListeners) {
+	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd, boolean notifyListeners) {
 		if (pStart == null || pEnd == null) {
 			iSelectionMin = null;
 			iSelectionMax = null;
@@ -394,10 +384,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			x_max = iSelectionMax.x;
 			y_max = iSelectionMax.y;
 		}
-		MercatorPixelCoordinate min = new MercatorPixelCoordinate(mapSource.getMapSpace(), x_min,
-				y_min, MAX_ZOOM);
-		MercatorPixelCoordinate max = new MercatorPixelCoordinate(mapSource.getMapSpace(), x_max,
-				y_max, MAX_ZOOM);
+		MercatorPixelCoordinate min = new MercatorPixelCoordinate(mapSource.getMapSpace(), x_min, y_min, MAX_ZOOM);
+		MercatorPixelCoordinate max = new MercatorPixelCoordinate(mapSource.getMapSpace(), x_max, y_max, MAX_ZOOM);
 		// log.debug("sel min: [" + min + "]");
 		// log.debug("sel max: [" + max + "]");
 		for (MapEventListener listener : mapEventListeners)
@@ -435,9 +423,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	/**
-	 * Clears the in-memory tile cache and performs a repaint which causes a
-	 * reload of all displayed tiles (from disk or if not present from the map
-	 * source via network).
+	 * Clears the in-memory tile cache and performs a repaint which causes a reload of all displayed tiles (from disk or
+	 * if not present from the map source via network).
 	 */
 	public void refreshMap() {
 		((MemoryTileCache) tileCache).clear();

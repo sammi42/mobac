@@ -69,7 +69,7 @@ public class Settings {
 	public Point mapviewSelectionMin = null;
 
 	@XmlElement(nillable = false)
-	public String mapviewMapSource = MapSourcesManager.DEFAULT.getName();
+	public String mapviewMapSource = MapSourcesManager.getInstance().getDefaultMapSource().getName();
 
 	public String elementName = "Layer name";
 

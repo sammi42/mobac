@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import mobac.gui.MainGUI;
+import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.program.DirectoryManager;
 import mobac.program.EnvironmentSetup;
 import mobac.program.Logging;
@@ -26,6 +27,7 @@ public class Main {
 			GUIExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
+			DefaultMapSourcesManager.initialize();
 			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();

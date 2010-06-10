@@ -191,7 +191,7 @@ public class MapSourcesUpdater {
 					} finally {
 						Utilities.closeStream(mapFs);
 					}
-					for (MapSource ms : MapSourcesManager.getAllMapSources()) {
+					for (MapSource ms : MapSourcesManager.getInstance().getAllMapSources()) {
 						if (ms instanceof UpdatableMapSource) {
 							((UpdatableMapSource) ms).update();
 						}

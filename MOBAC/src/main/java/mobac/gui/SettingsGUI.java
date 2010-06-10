@@ -217,11 +217,10 @@ public class SettingsGUI extends JDialog {
 		Color c = UIManager.getColor("List.background");
 		mapSourcesInnerPanel.setBackground(c);
 
-		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance()
-				.getDisabledMapSources());
+		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance().getDisabledMapSources());
 
 		mapSourceCbList.clear();
-		for (MapSource ms : MapSourcesManager.getAllMapSources()) {
+		for (MapSource ms : MapSourcesManager.getInstance().getAllMapSources()) {
 			JMapSourceCB checkBox = new JMapSourceCB(ms.toString());
 			checkBox.setObject(ms);
 			checkBox.setSelected(!disabledMapSources.contains(ms.getName()));
@@ -265,9 +264,8 @@ public class SettingsGUI extends JDialog {
 		defaultExpirationPanel.setBorder(createSectionBorder(""));
 		defaultExpirationTime = new JTimeSlider();
 		defaultExpirationTime.addChangeListener(sliderChangeListener);
-		JLabel descr = new JLabel(
-				"<html>The default exipration time is used for map sources that do not <br>"
-						+ "provide an expiration time for each map tile.</html>", JLabel.CENTER);
+		JLabel descr = new JLabel("<html>The default exipration time is used for map sources that do not <br>"
+				+ "provide an expiration time for each map tile.</html>", JLabel.CENTER);
 
 		defaultExpirationPanel.add(descr, gbc_ef);
 		defaultExpirationPanel.add(defaultExpirationTime, gbc_ef);
@@ -313,8 +311,8 @@ public class SettingsGUI extends JDialog {
 
 		backGround.setLayout(new BorderLayout());
 		backGround.add(tileStorePanel, BorderLayout.NORTH);
-		JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		tileStoreInfoPanel.setMinimumSize(new Dimension(200, 300));
 		// scrollPane.setMinimumSize(new Dimension(100, 100));
 		scrollPane.setPreferredSize(new Dimension(520, 100));
@@ -333,8 +331,7 @@ public class SettingsGUI extends JDialog {
 				if (mapSource == null)
 					log.debug("Updating tilestore information in background");
 				else
-					log.debug("Updating tilestore information for \"" + mapSource
-							+ "\" in background");
+					log.debug("Updating tilestore information for \"" + mapSource + "\" in background");
 				updateTileStoreInfoPanel(mapSource);
 				log.debug("Updating tilestore information finished");
 				tileStoreAsyncThread = null;
@@ -362,7 +359,7 @@ public class SettingsGUI extends JDialog {
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-		for (MapSource ts : MapSourcesManager.getAllMapSources()) {
+		for (MapSource ts : MapSourcesManager.getInstance().getAllMapSources()) {
 			if (!tileStore.storeExists(ts))
 				continue;
 			String mapTileCountText = "  ?  ";
@@ -432,10 +429,8 @@ public class SettingsGUI extends JDialog {
 				totalTileCount += count;
 				totalTileSize += size;
 			}
-			final String totalTileCountText = "<html><b>" + Long.toString(totalTileCount)
-					+ "</b></html>";
-			final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize)
-					+ "</b></html>";
+			final String totalTileCountText = "<html><b>" + Long.toString(totalTileCount) + "</b></html>";
+			final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>";
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					totalTileCountLabel.setText(totalTileCountText);
@@ -467,8 +462,7 @@ public class SettingsGUI extends JDialog {
 						+ "Each map is no larger than the specified maximum map size.<br>"
 						+ "You can see the number of maps and their region in the atlas content tree.<br>"
 						+ "Changing the maximum map size after an area has been added the atlas has no effect on the atlas.<br><br>"
-						+ "<b>Note for TrekBuddy users:</b><br>"
-						+ "TrekBuddy versions before v0.9.88 "
+						+ "<b>Note for TrekBuddy users:</b><br>" + "TrekBuddy versions before v0.9.88 "
 						+ "do not support map sizes larger than 32767.<br>"
 						+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
@@ -492,9 +486,8 @@ public class SettingsGUI extends JDialog {
 		atlasOutputDirPanel.setBorder(createSectionBorder("Atlas output directory"));
 
 		atlasOutputDirectory = new JTextField();
-		atlasOutputDirectory.setToolTipText("<html>If empty the default directory "
-				+ "is used: <br><tt>" + Settings.getInstance().getAtlasOutputDirectory()
-				+ "</tt></html>");
+		atlasOutputDirectory.setToolTipText("<html>If empty the default directory " + "is used: <br><tt>"
+				+ Settings.getInstance().getAtlasOutputDirectory() + "</tt></html>");
 		JButton selectAtlasOutputDirectory = new JButton("Select");
 		selectAtlasOutputDirectory.addActionListener(new ActionListener() {
 
@@ -523,8 +516,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC
-				.std().fill(GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.std().fill(
+				GBC.HORIZONTAL));
 
 		backGround.add(panel, gbc_eolh);
 
@@ -601,8 +594,8 @@ public class SettingsGUI extends JDialog {
 	}
 
 	/**
-	 * Reads the user defined settings from the gui and updates the
-	 * {@link Settings} values according to the read gui settings.
+	 * Reads the user defined settings from the gui and updates the {@link Settings} values according to the read gui
+	 * settings.
 	 */
 	private void applySettings() {
 		Settings s = Settings.getInstance();
@@ -644,9 +637,8 @@ public class SettingsGUI extends JDialog {
 			MainGUI.getMainGUI().checkAndSaveSettings();
 		} catch (Exception e) {
 			log.error("Error saving settings to file", e);
-			JOptionPane.showMessageDialog(null, "Error saving settings to file:\n" + e.toString()
-					+ " (" + e.getClass().getSimpleName() + ")", "Error saving settings to file",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Error saving settings to file:\n" + e.toString() + " ("
+					+ e.getClass().getSimpleName() + ")", "Error saving settings to file", JOptionPane.ERROR_MESSAGE);
 		}
 
 		MainGUI.getMainGUI().previewMap.repaint();
@@ -733,8 +725,8 @@ public class SettingsGUI extends JDialog {
 				if (result)
 					MainGUI.getMainGUI().refreshPreviewMap();
 			} catch (MapSourcesUpdateException e) {
-				JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(),
-						"Mapsources online update failed", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(), "Mapsources online update failed",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

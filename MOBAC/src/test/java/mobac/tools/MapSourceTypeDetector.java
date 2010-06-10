@@ -35,7 +35,7 @@ public class MapSourceTypeDetector {
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
-		MapSourcesManager.getAllMapSources();
+		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 		testMapSource(YandexMap.class);
 	}
@@ -44,11 +44,9 @@ public class MapSourceTypeDetector {
 		testMapSource(mapSourceClass, Cities.getTestCoordinate(mapSourceClass, C_DEFAULT));
 	}
 
-	public static void testMapSource(Class<? extends MapSource> mapSourceClass,
-			EastNorthCoordinate coordinate) {
+	public static void testMapSource(Class<? extends MapSource> mapSourceClass, EastNorthCoordinate coordinate) {
 		if (coordinate == null)
-			throw new NullPointerException("Coordinate not set for "
-					+ mapSourceClass.getSimpleName());
+			throw new NullPointerException("Coordinate not set for " + mapSourceClass.getSimpleName());
 		MapSourceTypeDetector mstd;
 		try {
 			mstd = new MapSourceTypeDetector(mapSourceClass);
@@ -75,13 +73,13 @@ public class MapSourceTypeDetector {
 	private boolean ifModifiedSinceSupported = false;
 	private boolean ifNoneMatchSupported = false;
 
-	public MapSourceTypeDetector(Class<? extends MapSource> mapSourceClass)
-			throws InstantiationException, IllegalAccessException {
+	public MapSourceTypeDetector(Class<? extends MapSource> mapSourceClass) throws InstantiationException,
+			IllegalAccessException {
 		this(mapSourceClass.newInstance());
 	}
 
 	public MapSourceTypeDetector(String mapSourceName) {
-		this(MapSourcesManager.getSourceByName(mapSourceName));
+		this(MapSourcesManager.getInstance().getSourceByName(mapSourceName));
 	}
 
 	public MapSourceTypeDetector(MapSource mapSource) {
@@ -91,8 +89,7 @@ public class MapSourceTypeDetector {
 	}
 
 	public void testMapSource(EastNorthCoordinate coordinate) {
-		int zoomMed = mapSource.getMinZoom()
-				+ ((mapSource.getMaxZoom() - mapSource.getMinZoom()) / 2);
+		int zoomMed = mapSource.getMinZoom() + ((mapSource.getMaxZoom() - mapSource.getMinZoom()) / 2);
 		testMapSource(coordinate, zoomMed);
 		System.out.println(this);
 		testMapSource(coordinate, mapSource.getMinZoom());
@@ -165,8 +162,7 @@ public class MapSourceTypeDetector {
 				// + Utilities.formatDurationSeconds(diff));
 			}
 			long modified = c.getLastModified();
-			lastModifiedTimePresent = (c.getHeaderField("last-modified") != null)
-					&& (modified != 0);
+			lastModifiedTimePresent = (c.getHeaderField("last-modified") != null) && (modified != 0);
 			// if (modified == 0)
 			// System.out.println("Last modified time    : not set");
 			// else
@@ -251,9 +247,9 @@ public class MapSourceTypeDetector {
 			return "-";
 	}
 
-	static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3',
-			(byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a',
-			(byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
+	static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5',
+			(byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
+			(byte) 'f' };
 
 	public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
 		byte[] hex = new byte[2 * raw.length];

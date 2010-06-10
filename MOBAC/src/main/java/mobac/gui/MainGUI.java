@@ -75,7 +75,6 @@ import org.apache.log4j.Logger;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 public class MainGUI extends JFrame implements MapEventListener {
 
 	private static final long serialVersionUID = 1L;
@@ -196,7 +195,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setToolTipText("Projects a grid of the specified zoom level over the map");
 
 		// map source combo
-		mapSourceCombo = new JComboBox(MapSourcesManager.getEnabledMapSources());
+		mapSourceCombo = new JComboBox(MapSourcesManager.getInstance().getEnabledMapSources());
 		mapSourceCombo.setMaximumRowCount(20);
 		mapSourceCombo.addActionListener(new MapSourceComboListener());
 		mapSourceCombo.setToolTipText("Select map source");
@@ -260,19 +259,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JCollapsiblePanel mapSourcePanel = new JCollapsiblePanel("Map source", new GridBagLayout());
 		mapSourcePanel.addContent(mapSourceCombo, GBC.std().insets(2, 2, 2, 2).fill());
 
-		JCollapsiblePanel zoomLevelsPanel = new JCollapsiblePanel("Zoom Levels",
-				new GridBagLayout());
+		JCollapsiblePanel zoomLevelsPanel = new JCollapsiblePanel("Zoom Levels", new GridBagLayout());
 		zoomLevelsPanel.addContent(zoomLevelPanel, GBC.eol().insets(2, 4, 2, 0));
-		zoomLevelsPanel.addContent(amountOfTilesLabel, GBC.std().anchor(GBC.WEST)
-				.insets(0, 5, 0, 2));
+		zoomLevelsPanel.addContent(amountOfTilesLabel, GBC.std().anchor(GBC.WEST).insets(0, 5, 0, 2));
 
 		GBC gbc_std = GBC.std().insets(5, 2, 5, 3);
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 3);
 
-		JCollapsiblePanel atlasContentPanel = new JCollapsiblePanel("Atlas Content",
-				new GridBagLayout());
-		JScrollPane treeScrollPane = new JScrollPane(jAtlasTree,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JCollapsiblePanel atlasContentPanel = new JCollapsiblePanel("Atlas Content", new GridBagLayout());
+		JScrollPane treeScrollPane = new JScrollPane(jAtlasTree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jAtlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
 
@@ -301,8 +296,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		atlasContentPanel.addContent(new JLabel("Name: "), gbc_std);
 		atlasContentPanel.addContent(atlasNameTextField, gbc_eol.fill(GBC.HORIZONTAL));
 
-		JCollapsiblePanel atlasNamePanel = new JCollapsiblePanel("Atlas settings",
-				new GridBagLayout());
+		JCollapsiblePanel atlasNamePanel = new JCollapsiblePanel("Atlas settings", new GridBagLayout());
 		atlasNamePanel.addContent(new JLabel("Format: "), gbc_std);
 		atlasNamePanel.addContent(atlasOutputFormatCombo, gbc_eol);
 
@@ -380,7 +374,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	public void updateMapSourcesList() {
 		MapSource ms = (MapSource) mapSourceCombo.getSelectedItem();
-		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSourcesManager.getEnabledMapSources()));
+		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSourcesManager.getInstance().getEnabledMapSources()));
 		mapSourceCombo.setSelectedItem(ms);
 		MapSource ms2 = (MapSource) mapSourceCombo.getSelectedItem();
 		if (!ms.equals(ms2))
@@ -451,8 +445,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			checkAndSaveSettings();
 		} catch (Exception e) {
 			GUIExceptionHandler.showExceptionDialog(e);
-			JOptionPane.showMessageDialog(null,
-					"Error on writing program settings to \"settings.xml\"", "Error",
+			JOptionPane.showMessageDialog(null, "Error on writing program settings to \"settings.xml\"", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -462,8 +455,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 			int x = JOptionPane.showConfirmDialog(this,
 					"The settings.xml files has been changed by another application.\n"
 							+ "Do you want to overwrite these changes?\n"
-							+ "All changes made by the other application will be lost!",
-					"Overwrite changes?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+							+ "All changes made by the other application will be lost!", "Overwrite changes?",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (x != JOptionPane.YES_OPTION)
 				return;
 		}
@@ -549,7 +542,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			profilesPanel.getDeleteButton().setEnabled(profile != null);
 			if (profile == null)
 				return;
-			
+
 			jAtlasTree.load(profile);
 			previewMap.repaint();
 			atlasOutputFormatCombo.setSelectedItem(jAtlasTree.getAtlas().getOutputFormat());
@@ -567,12 +560,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 			if (!jAtlasTree.testAtlasContentValid())
 				return;
 			if (jAtlasTree.getAtlas().calculateTilesToDownload() > 3000000) {
-				JOptionPane.showMessageDialog(null,
-						"Mobile Atlas Creator has detected that you are trying to\n"
-								+ "download an extra ordinary large atlas "
-								+ "with a very high number of tiles.\n"
-								+ "Please reduce the selected areas "
-								+ "on high zoom levels and try again.",
+				JOptionPane.showMessageDialog(null, "Mobile Atlas Creator has detected that you are trying to\n"
+						+ "download an extra ordinary large atlas " + "with a very high number of tiles.\n"
+						+ "Please reduce the selected areas " + "on high zoom levels and try again.",
 						"Atlas download prohibited", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -648,8 +638,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	public void applyAtlasOutputFormat() {
-		AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo
-				.getSelectedItem();
+		AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem();
 		jAtlasTree.getAtlas().setOutputFormat(atlasOutputFormat);
 	}
 
@@ -674,8 +663,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
 		String name = atlasNameTextField.getText();
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
-		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(),
-				cbZoom);
+		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(), cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		if (ms == null) {
 			JOptionPane.showMessageDialog(this, "Please select an area");
@@ -712,8 +700,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			TileImageParameters customTileParameters = getSelectedTileImageParameters();
 			try {
 				String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
-				layer.addMapsAutocut(mapName, tileSource, tl, br, zoom, customTileParameters,
-						settings.maxMapSize);
+				layer.addMapsAutocut(mapName, tileSource, tl, br, zoom, customTileParameters, settings.maxMapSize);
 			} catch (InvalidNameException e) {
 				log.error("", e);
 			}
@@ -769,8 +756,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			amountOfTilesLabel.setToolTipText("");
 		} else {
 			try {
-				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource()
-						.getMinZoom(), cbZoom);
+				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(), cbZoom);
 
 				int[] zoomLevels = sZL.getZoomLevels();
 
@@ -782,8 +768,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 					int zoom = zoomLevels[i];
 					long[] info = ms.calculateNrOfTilesEx(zoom);
 					totalNrOfTiles += info[0];
-					hint.append("<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1]
-							+ "*" + info[2] + ")");
+					hint.append("<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] + "*" + info[2] + ")");
 				}
 				String hintText = "<html>" + hint.toString() + "</html>";
 				amountOfTilesLabel.setText(String.format(baseText, Long.toString(totalNrOfTiles)));
@@ -819,8 +804,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private class WindowDestroyer extends WindowAdapter {
-		
-		
+
 		@Override
 		public void windowOpened(WindowEvent e) {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -837,11 +821,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	/**
-	 * Saves the window position and size when window is moved or resized. This
-	 * is necessary because of the maximized state. If a window is maximized it
-	 * is impossible to retrieve the window size & position of the non-maximized
-	 * window - therefore we have to collect the information every time they
-	 * change.
+	 * Saves the window position and size when window is moved or resized. This is necessary because of the maximized
+	 * state. If a window is maximized it is impossible to retrieve the window size & position of the non-maximized
+	 * window - therefore we have to collect the information every time they change.
 	 */
 	private class MainWindowListener extends ComponentAdapter {
 		public void componentResized(ComponentEvent event) {

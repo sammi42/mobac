@@ -6,7 +6,6 @@ import mobac.mapsources.MapSourcesManager;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 
 	@Override
@@ -16,7 +15,7 @@ public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 
 	@Override
 	public MapSource unmarshal(String name) throws Exception {
-		return MapSourcesManager.getSourceByName(name);
+		return MapSourcesManager.getInstance().getSourceByName(name);
 	}
 
 }

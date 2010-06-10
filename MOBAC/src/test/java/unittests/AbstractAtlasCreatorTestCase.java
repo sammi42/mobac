@@ -39,15 +39,16 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 	protected final File testAtlasDir;
 	protected final SecureRandom rnd;
 
-	protected static TestTileServer TEST_TILE_SERVER;
-	
+	protected static final TestTileServer TEST_TILE_SERVER;
+	protected static final TestMapSourcesManager TEST_TILE_SERVER_MANAGER;
+
 	static {
 		Logging.configureConsoleLogging(Level.DEBUG);
 		Logger.getLogger("mobac").setLevel(Level.INFO);
 		TEST_TILE_SERVER = new TestTileServer(18888);
 		TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));
 		TEST_TILE_SERVER.start();
-		new TestMapSourcesManager(TEST_TILE_SERVER.getPort());
+		TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort());
 	}
 
 	public AbstractAtlasCreatorTestCase() {

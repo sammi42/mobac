@@ -216,7 +216,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		kmzOutputStream.closeEntry();
 	}
 
-	private void addMapToKmz(String imageFileName) throws ParserConfigurationException,
+	protected void addMapToKmz(String imageFileName) throws ParserConfigurationException,
 			TransformerFactoryConfigurationError, TransformerException, IOException {
 		int startX = xMin * tileSize;
 		int endX = (xMax + 1) * tileSize;

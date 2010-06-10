@@ -9,24 +9,34 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class TestMapSourcesManager extends MapSourcesManager {
 
-	private final MapSource localhostMapSource;
+	private final MapSource theMapSource;
 
 	public TestMapSourcesManager(int port) {
 		super();
-		localhostMapSource = new LocalhostTestSource("Localhost test", port, false);
+		theMapSource = new LocalhostTestSource("Localhost test", port, false);
+		install();
+	}
+
+	public TestMapSourcesManager(MapSource mapSource) {
+		super();
+		theMapSource = mapSource;
+		install();
+	}
+
+	public void install() {
 		INSTANCE = this;
 	}
 
 	@Override
 	public Vector<MapSource> getAllMapSources() {
 		Vector<MapSource> v = new Vector<MapSource>(1);
-		v.add(localhostMapSource);
+		v.add(theMapSource);
 		return v;
 	}
 
 	@Override
 	public MapSource getDefaultMapSource() {
-		return localhostMapSource;
+		return theMapSource;
 	}
 
 	@Override
@@ -36,7 +46,7 @@ public class TestMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public MapSource getSourceByName(String name) {
-		return localhostMapSource;
+		return theMapSource;
 	}
 
 }

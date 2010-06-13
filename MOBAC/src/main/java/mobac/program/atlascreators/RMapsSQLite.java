@@ -22,25 +22,20 @@ import mobac.utilities.jdbc.SQLiteLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
- * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
- * SQLite maps) http://code.google.com/p/bigplanet/
+ * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline SQLite maps)
+ * http://code.google.com/p/bigplanet/
  * <p>
- * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license)
- * http://www.ch-werner.de/javasqlite/
+ * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license) http://www.ch-werner.de/javasqlite/
  * </p>
  * <p>
- * Some source parts are taken from the "android-map.blogspot.com Version of
- * Mobile Atlas Creator": http://code.google.com/p/android-map/
+ * Some source parts are taken from the "android-map.blogspot.com Version of Mobile Atlas Creator":
+ * http://code.google.com/p/android-map/
  * </p>
  * <p>
- * Additionally the created BigPlanet SQLite database has one additional table
- * containing special info needed by the Android application <a
- * href="http://robertdeveloper.blogspot.com/search/label/rmaps.release"
- * >RMaps</a>.<br>
- * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and
- * {@link #RMAPS_UPDATE_INFO_SQL} ).<br>
- * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of
- * RMaps.
+ * Additionally the created BigPlanet SQLite database has one additional table containing special info needed by the
+ * Android application <a href="http://robertdeveloper.blogspot.com/search/label/rmaps.release" >RMaps</a>.<br>
+ * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and {@link #RMAPS_UPDATE_INFO_SQL} ).<br>
+ * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
  * <p>
  */
 public class RMapsSQLite extends AtlasCreator {
@@ -51,8 +46,6 @@ public class RMapsSQLite extends AtlasCreator {
 	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 As minzoom, 0 As maxzoom";
 	private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info";
 	private static final String RMAPS_UPDATE_INFO_SQL = "INSERT INTO info SELECT MIN(z) as minzoom, MAX(z) as maxzoom FROM tiles";
-
-	private static final String DATABASE_FILENAME = "BigPlanet_maps.sqlitedb";
 
 	private String databaseFile;
 
@@ -75,8 +68,8 @@ public class RMapsSQLite extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException,
-			AtlasTestException, InterruptedException {
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException, AtlasTestException,
+			InterruptedException {
 		if (customAtlasDir == null)
 			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
 		super.startAtlasCreation(atlas, customAtlasDir);
@@ -101,8 +94,7 @@ public class RMapsSQLite extends AtlasCreator {
 			initializeDB();
 			createTiles();
 		} catch (SQLException e) {
-			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\": "
-					+ e.getMessage(), e);
+			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage(), e);
 		}
 	}
 
@@ -212,7 +204,7 @@ public class RMapsSQLite extends AtlasCreator {
 	}
 
 	protected String getDatabaseFileName() {
-		return DATABASE_FILENAME;
+		return "Custom " + atlas.getName() + ".sqlitedb";
 	}
 
 	protected String getTileInsertSQL() {

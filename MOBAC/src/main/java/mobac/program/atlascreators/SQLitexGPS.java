@@ -21,12 +21,18 @@ public class SQLitexGPS extends RMapsSQLite {
 	@Override
 	protected void initializeDB() throws SQLException {
 		Statement stat = conn.createStatement();
-		stat.executeUpdate(TABLE_MAPS);
-		stat.executeUpdate(TABLE_TILES);
-		stat.executeUpdate(TABLE_MAPREGIONS);
-		stat.executeUpdate(TABLE_REGIONS_POINTS);
+		stat.execute(TABLE_MAPS);
+		stat.execute(TABLE_TILES);
+		stat.execute(TABLE_MAPREGIONS);
+		stat.execute(TABLE_REGIONS_POINTS);
 		stat.close();
 	}
+
+	
+	@Override
+	protected void updateTileMetaInfo() throws SQLException {
+	}
+
 
 	@Override
 	protected String getDatabaseFileName() {

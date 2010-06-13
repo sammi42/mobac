@@ -43,9 +43,9 @@ public class RMapsSQLite extends AtlasCreator {
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
 	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,s,image) VALUES (?,?,?,?,?)";
-	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 As minzoom, 0 As maxzoom";
-	private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info";
-	private static final String RMAPS_UPDATE_INFO_SQL = "INSERT INTO info SELECT MIN(z) as minzoom, MAX(z) as maxzoom FROM tiles";
+	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 AS minzoom, 0 AS maxzoom";
+	private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info;";
+	private static final String RMAPS_UPDATE_INFO_SQL = "INSERT INTO info SELECT MIN(z) as minzoom, MAX(z) as maxzoom FROM tiles;";
 
 	private String databaseFile;
 
@@ -179,16 +179,19 @@ public class RMapsSQLite extends AtlasCreator {
 			conn.commit();
 			prepStmt.clearBatch();
 			atlasProgress.incMapCreationProgress(batchTileCount);
-
-			Statement stat = conn.createStatement();
-			stat.addBatch(RMAPS_CLEAR_INFO_SQL);
-			stat.addBatch(RMAPS_UPDATE_INFO_SQL);
-			stat.executeBatch();
-			stat.close();
+			updateTileMetaInfo();
 			conn.commit();
 		} catch (SQLException e) {
 			throw new MapCreationException(e);
 		}
+	}
+
+	protected void updateTileMetaInfo() throws SQLException {
+		Statement stat = conn.createStatement();
+		stat.addBatch(RMAPS_CLEAR_INFO_SQL);
+		stat.addBatch(RMAPS_UPDATE_INFO_SQL);
+		stat.executeBatch();
+		stat.close();
 	}
 
 	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {

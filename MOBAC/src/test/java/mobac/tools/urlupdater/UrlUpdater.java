@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
 import mobac.utilities.Utilities;
@@ -92,6 +93,7 @@ public class UrlUpdater {
 	 */
 	public static void main(String[] args) {
 		Logging.disableLogging();
+		DefaultMapSourcesManager.initialize();
 		getInstance();
 		new GoogleUrlUpdater().run();
 		new YandexUrlUpdater().run();

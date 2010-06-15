@@ -12,9 +12,10 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
+import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.MiscMapSources.YandexMap;
+import mobac.mapsources.impl.RegionalMapSources.MyTopo;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
 import mobac.program.model.EastNorthCoordinate;
@@ -35,9 +36,10 @@ public class MapSourceTypeDetector {
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
+		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(YandexMap.class);
+		testMapSource(MyTopo.class);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass) {

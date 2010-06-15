@@ -580,4 +580,30 @@ public class RegionalMapSources {
 			return baseurl + zoom + "/" + xBase + zoom + "_" + x + "_" + y + ".png";
 		}
 	}
+
+	/**
+	 * 
+	 * http://www.mytopo.com/maps/
+	 * 
+	 * Funny: The URL indicates PNG images but the server provides JPEG files...
+	 * 
+	 */
+	public static class MyTopo extends AbstractMapSource {
+
+		public MyTopo() {
+			super("MyTopo", 6, 16, "jpg", TileUpdate.None);
+		}
+
+		@Override
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://maps.mytopo.com/mytopo/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/" + tiley
+					+ ".png";
+		}
+
+		@Override
+		public String toString() {
+			return "MyTopo (USA only)";
+		}
+
+	}
 }

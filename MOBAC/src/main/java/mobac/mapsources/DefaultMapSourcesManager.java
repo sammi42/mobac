@@ -43,6 +43,7 @@ import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
+import mobac.mapsources.impl.RegionalMapSources.MyTopo;
 import mobac.mapsources.impl.RegionalMapSources.NearMap;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
@@ -78,7 +79,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OviMaps(),
 				new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),
 				new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(), new CykloatlasWithRelief(),
-				new TerraserverUSA(), new UmpWawPl(), new DoCeluPL(), new EmapiPl(), new Bergfex(),
+				new TerraserverUSA(), new MyTopo(), new UmpWawPl(), new DoCeluPL(), new EmapiPl(), new Bergfex(),
 				new FreemapSlovakia(), new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
 				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
 				new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(), new EniroComAerial(),

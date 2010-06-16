@@ -30,10 +30,12 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 		ImageIO.setUseCache(false);
 	}
 
+	@Override
 	public byte[] getTileData(int x, int y, int layer) throws IOException {
 		return getTileData(x, y);
 	}
 
+	@Override
 	public byte[] getTileData(int x, int y) throws IOException {
 		BufferedImage combinedImage = getTileImage(x, y);
 		if (combinedImage == null)
@@ -45,9 +47,9 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 
 	@Override
 	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
+		log.trace("Creting multi-layer tile x=" + x + " y=" + y + " layer=" + layer);
 		int tileSize = mapSource.getMapSpace().getTileSize();
-		BufferedImage combinedImage = new BufferedImage(tileSize, tileSize,
-				BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage combinedImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics g = combinedImage.getGraphics();
 		g.setColor(mapSource.getBackgroundColor());
 		g.fillRect(0, 0, tileSize, tileSize);

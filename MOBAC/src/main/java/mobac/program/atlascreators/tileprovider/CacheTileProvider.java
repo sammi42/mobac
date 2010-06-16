@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  * A tile cache with speculative loading on a separate thread. Usually this decreases map generation time on multi-core
  * systems.
  */
-public class CacheTileProvider extends FilterTileProvider {
+public class CacheTileProvider implements TileProvider {
 
 	private Logger log = Logger.getLogger(CacheTileProvider.class);
 
@@ -25,13 +25,18 @@ public class CacheTileProvider extends FilterTileProvider {
 
 	private PreLoadThread preLoader = new PreLoadThread();
 
+	protected final TileProvider tileProvider;
+
 	public CacheTileProvider(TileProvider tileProvider) {
-		super(tileProvider);
+		this.tileProvider = tileProvider;
 		cache = new Hashtable<CacheKey, SRCachedTile>(500);
 		preLoader.start();
 	}
 
-	@Override
+	public BufferedImage getTileImage(int x, int y) throws IOException {
+		return getTileImage(x, y, 0);
+	}
+
 	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
 		SRCachedTile cachedTile = cache.get(new CacheKey(x, y, layer));
 		BufferedImage image = null;
@@ -61,7 +66,7 @@ public class CacheTileProvider extends FilterTileProvider {
 
 	protected BufferedImage internalGetTileImage(int x, int y, int layer) throws IOException {
 		synchronized (tileProvider) {
-			return super.getTileImage(x, y, layer);
+			return tileProvider.getTileImage(x, y, layer);
 		}
 	}
 
@@ -123,7 +128,7 @@ public class CacheTileProvider extends FilterTileProvider {
 		public PreLoadThread() {
 			super("ImagePreLoadThread" + (PRELOADER_THREAD_NUM++));
 			log.debug("Image pre-loader thread started");
-			//pre-loading more than 20 tiles doesn't make much sense
+			// pre-loading more than 20 tiles doesn't make much sense
 			queue = new LinkedBlockingQueue<CachedTile>(20);
 		}
 

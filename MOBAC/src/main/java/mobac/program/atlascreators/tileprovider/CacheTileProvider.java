@@ -9,13 +9,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.log4j.Logger;
 
 /**
- * A tile cache with speculative loading on a separate thread. Usually this
- * decreases map generation time on multi-core systems. 
+ * A tile cache with speculative loading on a separate thread. Usually this decreases map generation time on multi-core
+ * systems.
  */
 public class CacheTileProvider extends FilterTileProvider {
 
 	private Logger log = Logger.getLogger(CacheTileProvider.class);
 
+	/**
+	 * Counter for identifying the different threads
+	 */
 	private static int PRELOADER_THREAD_NUM = 1;
 
 	private Hashtable<CacheKey, SRCachedTile> cache;
@@ -71,10 +74,20 @@ public class CacheTileProvider extends FilterTileProvider {
 	}
 
 	private void preloadTile(CachedTile tile) {
+		if (preLoader.queue.remainingCapacity() < 1) {
+			// Preloader thread is too slow
+			log.trace("Preloading rejected: " + tile.key);
+			return;
+		}
 		if (cache.get(tile.key) != null)
 			return;
-		preLoader.queue.add(tile);
-		cache.put(tile.key, new SRCachedTile(tile));
+		try {
+			preLoader.queue.add(tile);
+			cache.put(tile.key, new SRCachedTile(tile));
+		} catch (IllegalStateException e) {
+			// Queue is "full"
+			log.trace("Preloading rejected: " + tile.key);
+		}
 	}
 
 	public void cleanup() {
@@ -110,7 +123,8 @@ public class CacheTileProvider extends FilterTileProvider {
 		public PreLoadThread() {
 			super("ImagePreLoadThread" + (PRELOADER_THREAD_NUM++));
 			log.debug("Image pre-loader thread started");
-			queue = new LinkedBlockingQueue<CachedTile>();
+			//pre-loading more than 20 tiles doesn't make much sense
+			queue = new LinkedBlockingQueue<CachedTile>(20);
 		}
 
 		@Override
@@ -182,6 +196,7 @@ public class CacheTileProvider extends FilterTileProvider {
 
 		CacheKey key;
 		private BufferedImage image;
+		private IOException loadException = null;
 		boolean loaded = false;
 		boolean nextLoadJobCreated = false;
 
@@ -194,22 +209,25 @@ public class CacheTileProvider extends FilterTileProvider {
 		public synchronized void loadImage() {
 			try {
 				image = internalGetTileImage(key.x, key.y, key.layer);
+			} catch (IOException e) {
+				loadException = e;
 			} catch (Exception e) {
-				log.error("", e);
+				loadException = new IOException(e);
 			}
 			loaded = true;
 		}
 
-		public synchronized BufferedImage getImage() {
+		public synchronized BufferedImage getImage() throws IOException {
 			if (!loaded)
 				loadImage();
+			if (loadException != null)
+				throw loadException;
 			return image;
 		}
 
 		@Override
 		public String toString() {
-			return "CachedTile [key=" + key + ", loaded=" + loaded + ", nextLoadJobCreated="
-					+ nextLoadJobCreated + "]";
+			return "CachedTile [key=" + key + ", loaded=" + loaded + ", nextLoadJobCreated=" + nextLoadJobCreated + "]";
 		}
 
 	}

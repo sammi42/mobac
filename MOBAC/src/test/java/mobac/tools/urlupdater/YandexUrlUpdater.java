@@ -57,7 +57,7 @@ public class YandexUrlUpdater implements Runnable {
 				String url = urlUpdater.getMapSourceUrl(key);
 				String newUrl = url.replaceFirst("&v=[^&]+&", "&v=" + version + "&");
 				if (!newUrl.equals(url)) {
-					System.out.println("Updated " + key);
+					System.out.println(key);
 					urlUpdater.updateMapSopurceUrl(key, newUrl);
 				}
 			}

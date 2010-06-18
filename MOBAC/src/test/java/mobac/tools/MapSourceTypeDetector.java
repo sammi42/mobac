@@ -15,7 +15,7 @@ import java.util.Map;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.RegionalMapSources.MyTopo;
+import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
 import mobac.program.model.EastNorthCoordinate;
@@ -39,7 +39,7 @@ public class MapSourceTypeDetector {
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
-		testMapSource(MyTopo.class);
+		testMapSource(YahooMapsJapan.class);
 	}
 
 	public static void testMapSource(Class<? extends MapSource> mapSourceClass) {

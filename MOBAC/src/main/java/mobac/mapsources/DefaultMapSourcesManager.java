@@ -19,6 +19,7 @@ import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.OviMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMaps;
+import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.mapsources.impl.MiscMapSources.YandexMap;
 import mobac.mapsources.impl.MiscMapSources.YandexSat;
 import mobac.mapsources.impl.OsmMapSources.CycleMap;
@@ -73,8 +74,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		MAP_SOURCES = new MapSource[] { //
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleMapsKorea(),
-				new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(), new YahooMaps(), DEFAULT,
-				new TilesAtHome(), new CycleMap(), new OsmHikingMap(), new OsmHikingMapWithBase(),
+				new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(), new YahooMaps(), new YahooMapsJapan(),
+				DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(), new OsmHikingMapWithBase(),
 				new OsmHikingMapWithRelief(), new OsmPublicTransport(), new OpenPisteMap(), new MicrosoftMaps(),
 				new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OviMaps(),
 				new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),

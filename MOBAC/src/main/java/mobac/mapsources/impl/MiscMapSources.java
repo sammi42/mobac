@@ -77,8 +77,7 @@ public class MiscMapSources {
 	public static class YahooMaps extends AbstractMapSource {
 
 		public YahooMaps() {
-			super("Yahoo Maps", 1, 16, "jpg");
-			tileUpdate = TileUpdate.IfModifiedSince;
+			super("Yahoo Maps", 1, 16, "jpg", TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -86,6 +85,20 @@ public class MiscMapSources {
 			int yahooZoom = getMaxZoom() - zoom + 2;
 			return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + tilex + "&y=" + yahooTileY
 					+ "+6163&z=" + yahooZoom;
+		}
+
+	}
+
+	public static class YahooMapsJapan extends AbstractMapSource {
+
+		public YahooMapsJapan() {
+			super("Yahoo Maps Japan", 1, 19, "png", TileUpdate.IfModifiedSince);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			int yahooY = (((1 << zoom) - 2) / 2) - tiley;
+			int yahooZoom = zoom + 1;
+			return "http://ta.map.yahoo.co.jp/yta/map?v=4.3&r=1&x=" + tilex + "&y=" + yahooY + "&z=" + yahooZoom;
 		}
 
 	}

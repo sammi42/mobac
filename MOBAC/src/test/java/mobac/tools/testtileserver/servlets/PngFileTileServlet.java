@@ -47,9 +47,11 @@ public class PngFileTileServlet extends AbstractTileServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("image/png");
+		response.setContentLength(fileContent.length);
 		OutputStream out = response.getOutputStream();
 		out.write(fileContent);
 		out.close();
+		response.flushBuffer();
 	}
 
 }

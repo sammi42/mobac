@@ -7,10 +7,12 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Properties;
 
+import javax.servlet.Servlet;
 import javax.swing.JOptionPane;
 
 import mobac.program.Logging;
 import mobac.tools.testtileserver.servlets.AbstractTileServlet;
+import mobac.tools.testtileserver.servlets.JpgTileGeneratorServlet;
 import mobac.tools.testtileserver.servlets.PngFileTileServlet;
 import mobac.tools.testtileserver.servlets.PngTileGeneratorServlet;
 import mobac.tools.testtileserver.servlets.ShutdownServlet;
@@ -44,7 +46,7 @@ public class TestTileServer extends Serve {
 
 		properties.put("port", port);
 		properties.put("z", "20"); // max number of created threads in a thread
-		properties.put("keep-alive", "true");
+		properties.put("keep-alive", Boolean.TRUE);
 		properties.put("bind-address", "127.0.0.1");
 		// pool
 		properties.setProperty(Acme.Serve.Serve.ARG_NOHUP, "nohup");
@@ -90,7 +92,9 @@ public class TestTileServer extends Serve {
 	}
 
 	public void setTileServlet(AbstractTileServlet tileServlet) {
-		unloadServlet("/");
+		Servlet oldServlet = getServlet("/");
+		if (oldServlet != null)
+			unloadServlet(oldServlet);
 		addServlet("/", tileServlet);
 	}
 
@@ -154,7 +158,9 @@ public class TestTileServer extends Serve {
 		tileServlet.setErrorRate(errorRate);
 		tileServlet.setErrorOnUrl(errorOnUrl);
 		tileServlet.setDelay(delay);
-		server.setTileServlet(tileServlet);
+		// server.setTileServlet(tileServlet);
+
+		server.addServlet("/", new JpgTileGeneratorServlet(90));
 
 		stopOtherTileServer(port);
 		server.serve();

@@ -11,9 +11,9 @@ public class TestMapSourcesManager extends MapSourcesManager {
 
 	private final MapSource theMapSource;
 
-	public TestMapSourcesManager(int port) {
+	public TestMapSourcesManager(int port, String tileType) {
 		super();
-		theMapSource = new LocalhostTestSource("Localhost test", port, false);
+		theMapSource = new LocalhostTestSource("Localhost test", port, tileType, false);
 		install();
 	}
 

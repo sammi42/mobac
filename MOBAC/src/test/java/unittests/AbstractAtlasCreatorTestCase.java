@@ -23,7 +23,7 @@ import mobac.program.model.Atlas;
 import mobac.program.model.Profile;
 import mobac.program.tilestore.TileStore;
 import mobac.tools.testtileserver.TestTileServer;
-import mobac.tools.testtileserver.servlets.PngFileTileServlet;
+import mobac.tools.testtileserver.servlets.JpgTileGeneratorServlet;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -43,12 +43,13 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 	protected static final TestMapSourcesManager TEST_TILE_SERVER_MANAGER;
 
 	static {
-		Logging.configureConsoleLogging(Level.DEBUG);
-		Logger.getLogger("mobac").setLevel(Level.INFO);
+		Logging.configureConsoleLogging(Level.TRACE,Logging.ADVANCED_LAYOUT);
+		//Logger.getLogger("mobac").setLevel(Level.INFO);
 		TEST_TILE_SERVER = new TestTileServer(18888);
-		TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));
+		// TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));
+		TEST_TILE_SERVER.setTileServlet(new JpgTileGeneratorServlet(90));
 		TEST_TILE_SERVER.start();
-		TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort());
+		TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort(), "jpg");
 	}
 
 	public AbstractAtlasCreatorTestCase() {

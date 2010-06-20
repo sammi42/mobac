@@ -71,7 +71,7 @@ public class Logging {
 
 	public static void configureDefaultErrorLogging() {
 		configureConsoleLogging(Level.INFO, new SimpleLayout());
-		configureLogfileLogging(Level.WARN);
+		configureLogFileLogging(Level.WARN);
 	}
 
 	public static void configureConsoleLogging() {
@@ -90,7 +90,7 @@ public class Logging {
 		logger.setLevel(level);
 	}
 
-	public static void configureLogfileLogging(Level level) {
+	public static void configureLogFileLogging(Level level) {
 		Logger logger = Logger.getRootLogger();
 		File logFileDir = DirectoryManager.userSettingsDir;
 		String logFilename = new File(logFileDir, LOG_FILENAME).getAbsolutePath();

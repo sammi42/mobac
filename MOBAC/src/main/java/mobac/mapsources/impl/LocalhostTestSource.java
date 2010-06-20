@@ -8,15 +8,14 @@ public class LocalhostTestSource extends AbstractMapSource {
 
 	private String baseUrl;
 
-	public LocalhostTestSource(String name, boolean allowStore) {
-		super(name, 0, 22, "png");
-		this.allowStore = allowStore;
-		baseUrl = "http://127.0.0.1/tile?";
+	public LocalhostTestSource(String name, String tileType, boolean allowStore) {
+		this(name, 80, tileType, allowStore);
 	}
 
-	public LocalhostTestSource(String name, int port, boolean allowStore) {
-		this(name, allowStore);
-		baseUrl = "http://127.0.0.1:" + port + "/tile?";
+	public LocalhostTestSource(String name, int port, String tileType, boolean allowStore) {
+		super(name, 0, 22, tileType);
+		this.allowStore = allowStore;
+		baseUrl = "http://127.0.0.1:" + port + "/tile." + tileType + "?";
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {

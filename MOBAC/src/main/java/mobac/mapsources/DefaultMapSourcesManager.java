@@ -63,8 +63,10 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	public static final MapSource DEFAULT = new Mapnik();
 	private MapSource[] MAP_SOURCES;
 
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource("Localhost (stored)", true);
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource("Localhost (unstored)", false);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource("Localhost (stored)", "png",
+			true);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource("Localhost (unstored)",
+			"png", false);
 
 	static {
 		MapSourcesUpdater.loadMapSourceProperties();

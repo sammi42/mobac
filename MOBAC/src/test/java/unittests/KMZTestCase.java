@@ -18,10 +18,10 @@ public class KMZTestCase extends AbstractAtlasCreatorTestCase {
 		assertNotNull(dir);
 	}
 
-	public void testGarminCustom() throws Exception {
-		AtlasInterface atlas = loadAtlas("HamburgPark");
-		File dir = createAtlas(atlas, new GarminCustom());
-		assertNotNull(dir);
-	}
+//	public void testGarminCustom() throws Exception {
+//		AtlasInterface atlas = loadAtlas("HamburgPark");
+//		File dir = createAtlas(atlas, new GarminCustom());
+//		assertNotNull(dir);
+//	}
 
 }

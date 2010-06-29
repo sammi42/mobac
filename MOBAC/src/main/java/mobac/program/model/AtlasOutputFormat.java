@@ -12,6 +12,7 @@ import mobac.program.atlascreators.GarminCustom;
 import mobac.program.atlascreators.Glopus;
 import mobac.program.atlascreators.GlopusMapFile;
 import mobac.program.atlascreators.GoogleEarthOverlay;
+import mobac.program.atlascreators.GpsSportsTracker;
 import mobac.program.atlascreators.MagellanRmp;
 import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
@@ -38,6 +39,7 @@ public enum AtlasOutputFormat {
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
 	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
+	GpsSportsTracker("GPS Sports Tracker", GpsSportsTracker.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //

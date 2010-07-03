@@ -6,6 +6,7 @@ import java.util.HashSet;
 import javax.xml.bind.JAXBException;
 
 import junit.framework.TestSuite;
+import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.MultiLayerMapSource;
@@ -44,6 +45,7 @@ public class MapSourcesTestSuite extends TestSuite {
 		log = Logger.getLogger(MapSourcesTestSuite.class);
 		testedMapSources = new HashSet<String>();
 		MapSourcesUpdater.loadMapSourceProperties();
+		DefaultMapSourcesManager.initialize();
 		Settings.load();
 		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources())
 			addMapSourcesTestCase(mapSource);

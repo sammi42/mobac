@@ -62,4 +62,8 @@ Zumi Poland
 Hungarian Turistautak.hu
 	http://www.turistautak.hu/maps.php?id=magyarorszag&image=raster
 	Reson: Tile size 410x300
+
+Mapa Polski Targeo	
+	http://mapa.targeo.pl/
+	Reson: Tile size 200x200
 	

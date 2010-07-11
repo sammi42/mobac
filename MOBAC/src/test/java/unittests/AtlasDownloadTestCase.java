@@ -2,7 +2,9 @@ package unittests;
 
 import java.io.File;
 
-import mobac.program.atlascreators.AndNav;
+import mobac.mapsources.DefaultMapSourcesManager;
+import mobac.program.atlascreators.Maplorer;
+import mobac.program.atlascreators.NokiaSportsTracker;
 import mobac.program.interfaces.AtlasInterface;
 
 public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
@@ -12,8 +14,12 @@ public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
 	}
 
 	public void testGoogleEarchOverlay() throws Exception {
-		AtlasInterface atlas = loadAtlas("Germany10-12");
-		File dir = createAtlas(atlas, new AndNav());
+		AtlasInterface atlas;
+		//atlas = loadAtlas("Germany10-12");
+		//atlas = loadAtlas("HamburgPark");
+		DefaultMapSourcesManager.initialize();
+		atlas = loadAtlas("Munich6-16");
+		File dir = createAtlas(atlas, new NokiaSportsTracker());
 		assertNotNull(dir);
 	}
 

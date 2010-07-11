@@ -43,9 +43,14 @@ public class NokiaSportsTracker extends AtlasCreator {
 	}
 
 	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
+		mapDir = new File(atlasDir, layer.getName());
+	}
+
+	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		mapDir = new File(atlasDir, map.getName());
 		if (!"png".equalsIgnoreCase(mapSource.getTileType()))
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
@@ -76,8 +81,17 @@ public class NokiaSportsTracker extends AtlasCreator {
 	}
 
 	public void writeTile(int tilex, int tiley, byte[] tileData) throws IOException {
-		String fileName = getTileName(zoom, tilex, tiley) + ".jpg";
-		File file = new File(mapDir, fileName);
+		String tileName = getTileName(zoom, tilex, tiley);
+		int count = tileName.length();
+		int dirCount = count / 3;
+		File tileDir = mapDir;
+		for (int i = 0; i < dirCount; i++) {
+			int start = i * 3;
+			String dirName = tileName.substring(start, start + 3);
+			tileDir = new File(tileDir, dirName);
+		}
+		String fileName = tileName + ".jpg";
+		File file = new File(tileDir, fileName);
 		writeTile(file, tileData);
 	}
 

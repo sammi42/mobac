@@ -45,7 +45,7 @@ public enum AtlasOutputFormat {
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
 	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
-	NST("Nokia Sports Tracker", NokiaSportsTracker.class), //
+	NST("Nokia Sport Tracker", NokiaSportsTracker.class), //
 	OruxMaps("OruxMaps", OruxMaps.class), //
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //

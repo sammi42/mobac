@@ -17,6 +17,7 @@ import mobac.program.atlascreators.MagellanRmp;
 import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
 import mobac.program.atlascreators.MobileTrailExplorerCache;
+import mobac.program.atlascreators.NokiaSportsTracker;
 import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.Ozi;
@@ -44,6 +45,7 @@ public enum AtlasOutputFormat {
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
 	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
+	NST("Nokia Sports Tracker", NokiaSportsTracker.class), //
 	OruxMaps("OruxMaps", OruxMaps.class), //
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //

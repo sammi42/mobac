@@ -233,6 +233,8 @@ public class GoogleUrlUpdater implements Runnable {
 					path = path.replaceFirst("y=\\d+", "y={\\$y}");
 					path = path.replaceFirst("z=\\d+", "z={\\$z}");
 
+					path = path.replaceFirst("cookie=[^&]+&", "");
+
 					if (path.equalsIgnoreCase(tileUrl.getPath()))
 						continue; // Nothing was replaced
 

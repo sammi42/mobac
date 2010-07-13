@@ -84,6 +84,8 @@ public class NokiaSportsTracker extends AtlasCreator {
 		String tileName = getTileName(zoom, tilex, tiley);
 		int count = tileName.length();
 		int dirCount = count / 3;
+		if ((count % 3 == 0) & (dirCount > 0))
+			dirCount--;
 		File tileDir = mapDir;
 		for (int i = 0; i < dirCount; i++) {
 			int start = i * 3;

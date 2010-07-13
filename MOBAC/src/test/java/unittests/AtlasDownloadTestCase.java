@@ -3,7 +3,6 @@ package unittests;
 import java.io.File;
 
 import mobac.mapsources.DefaultMapSourcesManager;
-import mobac.program.atlascreators.Maplorer;
 import mobac.program.atlascreators.NokiaSportsTracker;
 import mobac.program.interfaces.AtlasInterface;
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageFormat;
 
@@ -20,7 +21,7 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 
 	private int layerCount;
 
-	public MultiLayerTileProvider(MapSource mapSource, TileProvider tileProvider, int layerCount) {
+	public MultiLayerTileProvider(MultiLayerMapSource mapSource, TileProvider tileProvider, int layerCount) {
 		super(tileProvider);
 		this.mapSource = mapSource;
 		this.layerCount = layerCount;

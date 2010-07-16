@@ -158,8 +158,8 @@ public abstract class AtlasCreator {
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
 		mapDlTileProvider = new DownloadedTileProvider(tarTileIndex, mapSource);
-		if (map.getMapSource() instanceof MultiLayerMapSource)
-			mapDlTileProvider = new MultiLayerTileProvider(map.getMapSource(), mapDlTileProvider, 2);
+		if (mapSource instanceof MultiLayerMapSource)
+			mapDlTileProvider = new MultiLayerTileProvider((MultiLayerMapSource) mapSource, mapDlTileProvider, 2);
 		Thread t = Thread.currentThread();
 		if (!(t instanceof AtlasThread))
 			throw new RuntimeException("Calling thread must be AtlasThread!");

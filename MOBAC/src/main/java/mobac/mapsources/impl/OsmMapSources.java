@@ -75,8 +75,7 @@ public class OsmMapSources {
 
 		@Override
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String url = String.format(PATTERN, new Object[] { SERVER[SERVER_NUM], zoom, tilex,
-					tiley });
+			String url = String.format(PATTERN, new Object[] { SERVER[SERVER_NUM], zoom, tilex, tiley });
 			SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
 			return url;
 		}
@@ -210,7 +209,7 @@ public class OsmMapSources {
 		public Color getBackgroundColor() {
 			return Color.WHITE;
 		}
-		
+
 	}
 
 	public static class OsmHikingMapWithBase extends OsmHikingMap implements MultiLayerMapSource {
@@ -250,6 +249,58 @@ public class OsmMapSources {
 	}
 
 	/**
+	 * http://hikebikemap.de/
+	 */
+	public static class HikebikemapBase extends AbstractMapSource {
+
+		public HikebikemapBase() {
+			super("HikebikemapTiles", 0, 18, "png", TileUpdate.None);
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hikebikemap Map";
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://toolserver.org/tiles/hikebike/" + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
+	/**
+	 * Hill shades / relief
+	 * 
+	 * http://hikebikemap.de/
+	 */
+	public static class HikebikemapRelief extends AbstractMapSource {
+
+		public HikebikemapRelief() {
+			super("HikebikemapRelief", 0, 17, "png", TileUpdate.None);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://toolserver.org/~cmarqu/hill/" + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
+	public static class Hikebikemap extends HikebikemapRelief implements MultiLayerMapSource {
+
+		private final MapSource BASE = new HikebikemapBase();
+
+		public MapSource getBackgroundMapSource() {
+			return BASE;
+		}
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hikebikemap.de";
+		}
+
+	}
+
+	/**
 	 * Uses 512x512 tiles - not fully supported at the moment!
 	 */
 	public static class Turaterkep extends AbstractMapSource {
@@ -261,8 +312,7 @@ public class OsmMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://turaterkep.hostcity.hu/tiles/" + zoom + "/" + tilex + "/" + tiley
-					+ ".png";
+			return "http://turaterkep.hostcity.hu/tiles/" + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 		@Override

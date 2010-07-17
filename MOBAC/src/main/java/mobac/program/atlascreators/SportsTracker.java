@@ -20,7 +20,7 @@ import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-public class NokiaSportsTracker extends AtlasCreator {
+public class SportsTracker extends AtlasCreator {
 
 	protected File mapDir = null;
 

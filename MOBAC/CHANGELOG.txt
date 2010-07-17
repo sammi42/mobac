@@ -36,7 +36,7 @@
  + New map source: MyTopo.com (USA only)
  + New map source: Yahoo Maps Japan
  + New atlas format: GPS Sports Tracker
- + New atlas format: Nokia Sports Tracker
+ + New atlas format: Sports Tracker
  + New map source: OSM Hikebikemap.de
  + Background color for custom maps added
 

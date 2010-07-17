@@ -7,12 +7,13 @@ import java.net.URL;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.jaxb.ColorAdapter;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-
 
 /**
  * Custom tile store provider, configurable via settings.xml.
@@ -37,6 +38,10 @@ public class CustomMapSource implements MapSource {
 
 	@XmlElement(required = true, nillable = false)
 	private String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
+
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	private Color backgroundColor = Color.BLACK;
 
 	/**
 	 * Constructor without parameters - required by JAXB
@@ -68,8 +73,7 @@ public class CustomMapSource implements MapSource {
 		return tileType;
 	}
 
-	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
-			throws IOException {
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
 		String url = getTileUrl(zoom, tilex, tiley);
 		if (url == null)
 			return null;
@@ -98,7 +102,7 @@ public class CustomMapSource implements MapSource {
 	}
 
 	public Color getBackgroundColor() {
-		return Color.BLACK;
+		return backgroundColor;
 	}
-	
+
 }

@@ -38,6 +38,7 @@
  + New atlas format: GPS Sports Tracker
  + New atlas format: Nokia Sports Tracker
  + New map source: OSM Hikebikemap.de
+ + Background color for custom maps added
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

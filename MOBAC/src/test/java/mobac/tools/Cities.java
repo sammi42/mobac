@@ -16,8 +16,8 @@ import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
+import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaCycling;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
 import mobac.mapsources.impl.RegionalMapSources.NearMap;
@@ -65,7 +65,7 @@ public class Cities {
 		// TEST_COORDINATES.put(AustrianMap.class, Cities.VIENNA);
 		TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
-		TEST_COORDINATES.put(FreemapSlovakiaHikingHillShade.class, Cities.BRATISLAVA);
+		TEST_COORDINATES.put(FreemapSlovakiaCycling.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(NearMap.class, Cities.PERTH);
 		TEST_COORDINATES.put(HubermediaBavaria.class, Cities.MUNICH);
 		TEST_COORDINATES.put(OpenPisteMap.class, Cities.MUNICH);

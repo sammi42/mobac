@@ -41,8 +41,8 @@ import mobac.mapsources.impl.RegionalMapSources.EniroComAerial;
 import mobac.mapsources.impl.RegionalMapSources.EniroComMap;
 import mobac.mapsources.impl.RegionalMapSources.EniroComNautical;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
+import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaCycling;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHikingHillShade;
 import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
 import mobac.mapsources.impl.RegionalMapSources.MyTopo;
@@ -84,7 +84,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),
 				new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(), new CykloatlasWithRelief(),
 				new TerraserverUSA(), new MyTopo(), new UmpWawPl(), new DoCeluPL(), new EmapiPl(), new Bergfex(),
-				new FreemapSlovakia(), new FreemapSlovakiaHiking(), new FreemapSlovakiaHikingHillShade(),
+				new FreemapSlovakia(), new FreemapSlovakiaHiking(), new FreemapSlovakiaCycling(),
 				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
 				new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(), new EniroComAerial(),
 				new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat() };

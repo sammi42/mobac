@@ -220,7 +220,9 @@ public class RegionalMapSources {
 	}
 
 	/**
-	 * @author SourceForge.net user didoa.
+	 * http://www.freemap.sk
+	 * 
+	 * @author SourceForge.net user didoa, nickn17
 	 */
 	public static class FreemapSlovakia extends AbstractMapSource {
 
@@ -229,37 +231,20 @@ public class RegionalMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.freemap.sk/layers/allinone/?/BNp/" + zoom + "/" + tilex + "/" + tiley;
+			return "http://tiles.freemap.sk/A/" + zoom + "/" + tilex + "/" + tiley;
 		}
 
 		@Override
 		public String toString() {
-			return "Freemap Slovakia (Atlas)";
+			return "Freemap Slovakia Atlas";
 		}
 
 	}
 
 	/**
-	 * @author SourceForge.net user didoa.
-	 */
-	public static class FreemapSlovakiaHikingHillShade extends AbstractMapSource {
-
-		public FreemapSlovakiaHikingHillShade() {
-			super("FreemapSlovakiaHikingHillShade", 6, 16, "png", TileUpdate.None);
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.freemap.sk/layers/allinone/?/BVRNTp/" + zoom + "/" + tilex + "/" + tiley;
-		}
-
-		@Override
-		public String toString() {
-			return "Freemap Slovakia Hiking (with HillShade)";
-		}
-	}
-
-	/**
-	 * @author SourceForge.net user didoa.
+	 * http://www.freemap.sk
+	 * 
+	 * @author SourceForge.net user didoa, nickn17
 	 */
 	public static class FreemapSlovakiaHiking extends AbstractMapSource {
 
@@ -268,12 +253,31 @@ public class RegionalMapSources {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://www.freemap.sk/layers/allinone/?/BNTNp/" + zoom + "/" + tilex + "/" + tiley;
+			return "http://tiles.freemap.sk/T/" + zoom + "/" + tilex + "/" + tiley;
 		}
 
 		@Override
 		public String toString() {
 			return "Freemap Slovakia Hiking";
+		}
+	}
+
+	/**
+	 * http://www.freemap.sk
+	 */
+	public static class FreemapSlovakiaCycling extends AbstractMapSource {
+
+		public FreemapSlovakiaCycling() {
+			super("FreemapSlovakiaCyclo", 6, 16, "png", TileUpdate.None);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return "http://tiles.freemap.sk/C/" + zoom + "/" + tilex + "/" + tiley;
+		}
+
+		@Override
+		public String toString() {
+			return "Freemap Slovakia Cycling";
 		}
 	}
 

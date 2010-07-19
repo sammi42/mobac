@@ -3,7 +3,7 @@ package unittests;
 import java.io.File;
 
 import mobac.mapsources.DefaultMapSourcesManager;
-import mobac.program.atlascreators.SportsTracker;
+import mobac.program.atlascreators.Maplorer;
 import mobac.program.interfaces.AtlasInterface;
 
 public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
@@ -18,7 +18,7 @@ public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
 		//atlas = loadAtlas("HamburgPark");
 		DefaultMapSourcesManager.initialize();
 		atlas = loadAtlas("Munich6-16");
-		File dir = createAtlas(atlas, new SportsTracker());
+		File dir = createAtlas(atlas, new Maplorer());
 		assertNotNull(dir);
 	}
 

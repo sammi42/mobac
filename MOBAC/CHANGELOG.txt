@@ -40,6 +40,7 @@
  + New map source: OSM Hikebikemap.de
  + Background color for custom maps added
  ~ Freemap.sk maps updated and changed
+ + New atlas format: Maplorer
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

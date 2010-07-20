@@ -10,6 +10,7 @@ import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
+import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
@@ -49,6 +50,7 @@ public class Cities {
 	public static final EastNorthCoordinate LONDON = new EastNorthCoordinate(51.51, -0.11);
 	public static final EastNorthCoordinate INNSBRUCK = new EastNorthCoordinate(47.26, 11.39);
 	public static final EastNorthCoordinate TOKYO = new EastNorthCoordinate(35.683889, 139.774444);
+	public static final EastNorthCoordinate TAIPEI = new EastNorthCoordinate(25.033333, 121.633333);
 
 	static {
 		TEST_COORDINATES = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
@@ -62,6 +64,7 @@ public class Cities {
 		TEST_COORDINATES.put(MultimapOSUkCom.class, Cities.LONDON);
 		TEST_COORDINATES.put(DoCeluPL.class, Cities.WARSZAWA);
 		TEST_COORDINATES.put(YahooMapsJapan.class, TOKYO);
+		TEST_COORDINATES.put(YahooMapsTaiwan.class, TAIPEI);
 		// TEST_COORDINATES.put(AustrianMap.class, Cities.VIENNA);
 		TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
 		TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);

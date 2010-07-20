@@ -103,6 +103,19 @@ public class MiscMapSources {
 
 	}
 
+	public static class YahooMapsTaiwan extends AbstractMapSource {
+
+		public YahooMapsTaiwan() {
+			super("Yahoo Maps Taiwan", 1, 18, "png", TileUpdate.None);
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
+			int yahooY = (((1 << zoom) - 2) / 2) - y;
+			int yahooZoom = 16 - zoom + 2;
+			return "http://l.yimg.com/kp/tl?x=" + x + "&y=" + yahooY + "&z=" + yahooZoom;
+		}
+	}
+
 	public static class OviMaps extends AbstractMapSource {
 
 		public OviMaps() {

@@ -20,6 +20,7 @@ import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.OviMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
+import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
 import mobac.mapsources.impl.MiscMapSources.YandexMap;
 import mobac.mapsources.impl.MiscMapSources.YandexSat;
 import mobac.mapsources.impl.OsmMapSources.CycleMap;
@@ -78,16 +79,16 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				//
 				new GoogleMaps(), new GoogleMapMaker(), new GoogleMapsChina(), new GoogleMapsKorea(),
 				new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(), new YahooMaps(), new YahooMapsJapan(),
-				DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(), new OsmHikingMapWithBase(),
-				new OsmHikingMapWithRelief(), new Hikebikemap(), new OsmPublicTransport(), new OpenPisteMap(),
-				new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(), new MicrosoftHybrid(),
-				new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(), new OutdooractiveSouthTyrol(),
-				new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(), new CykloatlasWithRelief(),
-				new TerraserverUSA(), new MyTopo(), new UmpWawPl(), new DoCeluPL(), new EmapiPl(), new Bergfex(),
-				new FreemapSlovakia(), new FreemapSlovakiaHiking(), new FreemapSlovakiaCycling(),
-				new Turaterkep(), new NearMap(), new HubermediaBavaria(), new StatkartTopo2(),
-				new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(), new EniroComAerial(),
-				new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat() };
+				new YahooMapsTaiwan(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
+				new OsmHikingMapWithBase(), new OsmHikingMapWithRelief(), new Hikebikemap(), new OsmPublicTransport(),
+				new OpenPisteMap(), new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
+				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(),
+				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
+				new CykloatlasWithRelief(), new TerraserverUSA(), new MyTopo(), new UmpWawPl(), new DoCeluPL(),
+				new EmapiPl(), new Bergfex(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
+				new FreemapSlovakiaCycling(), new Turaterkep(), new NearMap(), new HubermediaBavaria(),
+				new StatkartTopo2(), new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(),
+				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat() };
 	}
 
 	public static void initialize() {

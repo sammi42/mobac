@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.impl.MapTileBuilder;
@@ -16,6 +17,8 @@ import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.model.TileImageFormat;
+import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
@@ -43,6 +46,19 @@ public class Maplorer extends AtlasCreator {
 		MapSpace mapSpace = mapSource.getMapSpace();
 		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
 				.getProjectionCategory()));
+	}
+
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				if (map.getParameters() == null)
+					continue;
+				TileImageFormat format = map.getParameters().getFormat();
+				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
+					throw new AtlasTestException("Only JPG tile format is supported by MAPLORER!", map);
+			}
+		}
 	}
 
 	protected void createCustomTiles() throws InterruptedException, MapCreationException {
@@ -156,7 +172,9 @@ public class Maplorer extends AtlasCreator {
 			tileYmax = tiley;
 		}
 
-		private String IntToLetter(int i) {
+		private String IntToLetter(int i) throws IOException {
+			if (i > 26)
+				throw new IOException("Maximum tile column overflow - map too wide!");
 			char c = (char) (i + 64);
 			return Character.toString(c);
 		}

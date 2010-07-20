@@ -74,6 +74,7 @@ SourceForge.net: <br>
 		<li><a href="#Magellan">Magellan RMP</a></li>
 		<li><a href="#OruxMaps">OruxMaps</a></li>
 		<li><a href="#PathAway">PathAway</a></li>
+		<li><a href="#MAPLORER">MAPLORER</a></li>
 	</ul>
 	</li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
@@ -444,6 +445,28 @@ PathAway:</p>
 	<li>Structure of the atlas is ignored (which maps belongs to which
 	layer)</li>
 </ul>
+<!-- *************************************************************************** -->
+<h3><a name="MAPLORER">Creating atlases for MAPLORER</a></h3>
+<p>For creating atlases compatible with <a href="http://maplorer.com">MAPLORER</a> you have to select 
+the <b>Maplorer</b> format in the <b>Atlas settings</b> section on the left side of the main window. 
+You have to choose <b>JPG image format</b> under <b>Layer settings/tile format</b> (PNG is not supported by Maplorer). </p>
+
+<p>There are no specific limits on tile sizes and/or numbers; good results for hiking/biking can be 
+obtained using zoom level 15, custom tile size of 1024x1024 (check <b>Recreate/adjust map tiles (CPU intensive)</b> 
+under <b>Layer settings</b>. For good performance, avoid using too big or too many tiles (the maximum number of 
+columns in Maplorer is currently 26 ('A' to 'Z'), but it is preferable to use less). </p>
+
+<p>After defining the maps and layers (select region and click <b>Add selection</b> under <b>Atlas Content)</b> 
+for the atlas, click the button Create Atlas. Once atlas download and creation has completed, all 
+necessary files belonging to the atlas can be found in the directory 
+<tt>atlases\[atlas name]_[current date and time]</tt>.</p>
+
+<p>To install the atlas on your device, simply connect it to your PC and copy the content of the 
+respective atlas subdirectory (i.e. all .jpg and .pos files generated) to the Maplorer directory 
+(the one which contains maplorer.exe) on your device. Starting Maplorer on the device will 
+automatically read all tiles and create the index map. Detailed instructions on making maps for 
+Maplorer can be found at <a href="http://maplorer.com">http://maplorer.com</a> </p>
+
 <!-- *************************************************************************** -->
 <hr>
 

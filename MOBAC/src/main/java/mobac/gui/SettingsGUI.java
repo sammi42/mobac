@@ -205,7 +205,7 @@ public class SettingsGUI extends JDialog {
 		JPanel googlePanel = new JPanel(new GridBagLayout());
 		googlePanel.setBorder(createSectionBorder("Google Maps"));
 
-		String[] languages = new String[] { "en", "de", "ru", "zh-CN" };
+		String[] languages = new String[] { "en", "de", "ru", "uk", "zh-CN" };
 		googleLang = new JComboBox(languages);
 		googleLang.setEditable(true);
 

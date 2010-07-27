@@ -35,6 +35,8 @@ public class OruxMaps extends AtlasCreator {
 
 	// OruxMaps tile size
 	protected static final int TILE_SIZE = 512;
+	
+	protected String calVersionCode;
 
 	// OruxMaps background color
 	protected static final Color BG_COLOR = new Color(0xcb, 0xd3, 0xf3);
@@ -46,7 +48,14 @@ public class OruxMaps extends AtlasCreator {
 	protected File oruxMapsLayerDir;
 
 	// Images directory for each map
-	protected File oruxMapsImagesDir;
+	protected File oruxMapsImagesDir;	
+	
+	protected LayerInterface currentLayer;
+	
+	public OruxMaps(){
+		super();
+		calVersionCode = "2.1";
+	}
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
@@ -63,9 +72,18 @@ public class OruxMaps extends AtlasCreator {
 	public void initLayerCreation(LayerInterface layer) throws IOException {
 
 		super.initLayerCreation(layer);
+		currentLayer = layer;
 		oruxMapsMainDir = new File(atlasDir, layer.getName());
 		Utilities.mkDir(oruxMapsMainDir);
-		writeMainOtrk2File(layer.getName());
+		
+	}
+	
+
+	@Override
+	public void finishLayerCreation() throws IOException {
+
+		super.finishLayerCreation();
+		writeMainOtrk2File(currentLayer.getName());
 	}
 
 	/*
@@ -79,8 +97,6 @@ public class OruxMaps extends AtlasCreator {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 
 		super.initializeMap(map, tarTileIndex);
-		oruxMapsLayerDir = new File(oruxMapsMainDir, map.getName());
-		oruxMapsImagesDir = new File(oruxMapsLayerDir, "set");
 		// OruxMaps default image format, jpeg90; always TILE_SIZE=512;
 		if (parameters == null)
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);
@@ -91,6 +107,8 @@ public class OruxMaps extends AtlasCreator {
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 
+		oruxMapsLayerDir = new File(oruxMapsMainDir, map.getName());
+		oruxMapsImagesDir = new File(oruxMapsLayerDir, "set");
 		try {
 			Utilities.mkDir(oruxMapsLayerDir);
 			Utilities.mkDir(oruxMapsImagesDir);
@@ -110,7 +128,7 @@ public class OruxMaps extends AtlasCreator {
 		try {
 			mapDlTileProvider = ctp;
 
-			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this);
+			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, new OruxMapTileWriter());
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
 		} finally {
@@ -132,10 +150,13 @@ public class OruxMaps extends AtlasCreator {
 			writer = new OutputStreamWriter(new FileOutputStream(otrk2), "UTF8");
 			writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			writer.append("<OruxTracker "
-					+ "xmlns:orux=\"http://oruxtracker.com/app/res/calibration\"\n"
-					+ " versionCode=\"2.1\">\n");
-			writer.append("<MapCalibration layers=\"true\" layerLevel=\"0\">\n");
+					+ "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n"
+					+ " versionCode=\"" + calVersionCode + "\">\n");
+			writer.append("<MapCalibration layers=\"true\" layerLevel=\"0\">\n");			
 			writer.append("<MapName><![CDATA[" + name + "]]></MapName>\n");
+			
+			writer.append(appendMapContent());
+			
 			writer.append("</MapCalibration>\n");
 			writer.append("</OruxTracker>\n");
 			writer.flush();
@@ -144,6 +165,10 @@ public class OruxMaps extends AtlasCreator {
 		} finally {
 			Utilities.closeStream(otrk2FileStream);
 		}
+	}
+	
+	protected String appendMapContent(){
+		return "";
 	}
 
 	/**
@@ -157,15 +182,30 @@ public class OruxMaps extends AtlasCreator {
 		File otrk2File = new File(oruxMapsLayerDir, map.getName() + ORUXMAPS_EXT);
 		try {
 			stream = new FileOutputStream(otrk2File);
-			mapWriter = new OutputStreamWriter(stream, "UTF8");
+			mapWriter = new OutputStreamWriter(stream, "UTF8");			
+			mapWriter.append(prepareOtrk2File());
+			mapWriter.flush();
+		} catch (IOException e) {
+			log.error("", e);
+		} finally {
+			Utilities.closeStream(stream);
+		}
+	}
+	
+	/**
+	 * Main calibration file per layer
+	 * 
+	 */
+	protected String prepareOtrk2File() {
+
+		StringBuilder mapWriter = new StringBuilder();
 			MapSpace mapSpace = mapSource.getMapSpace();
 			double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
 			double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
 			double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
 			double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
-			mapWriter.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			mapWriter.append("<OruxTracker "
-					+ "xmlns:orux=\"http://oruxtracker.com/app/res/calibration\"\n"
+					+ "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n"
 					+ " versionCode=\"2.1\">\n");
 			mapWriter.append("<MapCalibration layers=\"false\" layerLevel=\"" + map.getZoom()
 					+ "\">\n");
@@ -200,18 +240,13 @@ public class OruxMaps extends AtlasCreator {
 			mapWriter.append("</CalibrationPoints>\n");
 			mapWriter.append("</MapCalibration>\n");
 			mapWriter.append("</OruxTracker>\n");
-			mapWriter.flush();
-		} catch (IOException e) {
-			log.error("", e);
-		} finally {
-			Utilities.closeStream(stream);
-		}
+			return mapWriter.toString();
 	}
 
-	private class OruxMapTileBuilder extends MapTileBuilder {
+	protected class OruxMapTileBuilder extends MapTileBuilder {
 
-		public OruxMapTileBuilder(AtlasCreator atlasCreator) {
-			super(atlasCreator, new OruxMapTileWriter(), false);
+		public OruxMapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter) {
+			super(atlasCreator, mapTileWriter, false);
 		}
 
 		@Override

@@ -58,23 +58,23 @@ SourceForge.net: <br>
 	<li><a href="#Start">Application start</a></li>
 	<li><a href="#AtlasFormats">The different atlas formats</a>
 	<ul style="margin-left: 10px;">
-		<li><a href="#TrekBuddy">TrekBuddy</a></li>
-		<li><a href="#MTE">Mobile Trail Explorer (MTE)</a></li>
-		<li><a href="#Maverick">Maverick</a></li>
+		<li><a href="#AFTrackOSZ">AFTrack (OSZ)</a></li>
 		<li><a href="#AndNav">AndNav</a></li>
+		<li><a href="#CacheWolf">CacheWolf</a></li>
+		<li><a href="#GarminCustom">Garmin Custom maps</a></li>
+		<li><a href="#Glopus">Glopus</a></li>
+		<li><a href="#GMF">Glopus Map File / AFTrack (GMF)</a></li>
+		<li><a href="#Magellan">Magellan RMP</a></li>
+		<li><a href="#MAPLORER">MAPLORER</a></li>
+		<li><a href="#Maverick">Maverick</a></li>
+		<li><a href="#MTE">Mobile Trail Explorer (MTE)</a></li>
 		<li><a href="#OSMTracker">OSMTracker</a></li>
 		<li><a href="#BigPlanet">RMaps / BigPlanet Tracks</a></li>
 		<li><a href="#Ozi">OziExplorer / large PNG image</a></li>
-		<li><a href="#TTQV">Touratech QV</a></li>
-		<li><a href="#Glopus">Glopus</a></li>
-		<li><a href="#GMF">Glopus Map File / AFTrack (GMF)</a></li>
-		<li><a href="#AFTrackOSZ">AFTrack (OSZ)</a></li>
-		<li><a href="#CacheWolf">CacheWolf</a></li>
-		<li><a href="#GarminCustom">Garmin Custom maps</a></li>
-		<li><a href="#Magellan">Magellan RMP</a></li>
 		<li><a href="#OruxMaps">OruxMaps</a></li>
 		<li><a href="#PathAway">PathAway</a></li>
-		<li><a href="#MAPLORER">MAPLORER</a></li>
+		<li><a href="#TrekBuddy">TrekBuddy</a></li>
+		<li><a href="#TTQV">Touratech QV</a></li>
 	</ul>
 	</li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
@@ -103,6 +103,7 @@ Explorer (MTE)</a>, the Android applications <a
 	href="http://www.codesector.com/maverick.php">Maverick</a>, <a
 	href="http://code.google.com/p/big-planet-tracks/">Big Planet Tracks</a>, <a
 	href="http://robertdeveloper.blogspot.com/search/label/rmaps.release">RMaps</a>,
+	href="http://www.oruxmaps.com/">OruxMaps</a>,
 the Pocket PC application <a href="http://www.glopus.de/">Glopus</a> and
 the commercial Windows application <a href="http://www.oziexplorer.com/">OziExplorer</a>.
 The map image created for OziExplorer can also be used with any PNG
@@ -132,22 +133,149 @@ folders are automatically created by the application.</p>
 <hr>
 <!-- *************************************************************************** -->
 <h2><a name="AtlasFormats">The different atlas formats</a></h2>
-<h3><a name="TrekBuddy">Creating and using atlases with
-TrekBuddy</a></h3>
-<p>For creating atlases compatible with TrekBuddy you have to select
-<b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
-in section <b>Atlas settings</b> on the left side of the main window.</p>
-<p>After defining the maps and layers for the atlas to be created
-start atlas download and creation via the button <b>Create Atlas</b>.
-Once atlas download and creation has completed all necessary files
-belonging to the atlas can be found in the directory <tt>atlases\[atlas
-name]_[current date and time]</tt>.</p>
-<p>The atlas itself consists of the atlas startup file <tt>cr.tar</tt>
-(tar format) or <tt>cr.tba</tt> (regular/untared format) and the
-subdirectories containing the different maps of the atlas. For using the
-atlas with TrekBuddy copy the whole directory onto your J2ME device.
-Then use the <b>Load Atlas</b> function of TrekBuddy and open <tt>cr.tar</tt>/<tt>cr.tba</tt>
-(in the atlas root directory).</p>
+<!-- *************************************************************************** -->
+<h3><a name="AFTrackOSZ">AFTrack OSZ</a></h3>
+<p>TODO</p>
+<!-- *************************************************************************** -->
+<h3><a name="AndNav">Creating and using atlases with AndNav</a></h3>
+<p>For creating atlases compatible with AndNav you have to select <b>AndNav
+atlas format</b> as format in section <b>Atlas settings</b> on the left side
+of the main window. <br>
+As atlases for AndNav do not support all features provided by Mobile
+Atlas Creator the following settings are ignored when creating atlases
+for AndNav:</p>
+<ul>
+	<li>Change height or width of the map tiles</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+</ul>
+<!-- *************************************************************************** -->
+<h3><a name="CacheWolf">Creating atlases for CacheWolf</a></h3>
+<p>For creating atlases compatible with <a
+	href="http://www.cachewolf.de">CacheWolf</a> you have to select <b>CacheWolf
+WFL</b> as format in section <b>Atlas settings</b> on the left side of the
+main window.</p>
+<h4>Custom tile processing settings enabled</h4>
+<p>Maps that have custom tile processing options set are saved as
+tiled images with one WFL calibration file for each tile. All processing
+options such as image format and tile size can be used.</p>
+<h4>Custom tile processing settings disabled</h4>
+<p>In this mode automatic tiling is disabled and the same <a
+	href="#OziRestriction">restrictions</a> and the <a href="#OziWarning">warning</a>
+as for the OziExplorer output format apply.</p>
+<p>The output format of an "atlas" for CacheWolf is one subdirectory
+per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>WFL</tt>
+file per defined map.</p>
+<!-- *************************************************************************** -->
+<h3><a name="GarminCustom">Creating Garmin Custom maps</a></h3>
+<p>For creating atlases of Creating Garmin Custom maps you have to
+select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window. Details about the Garmin
+Custom Map format can be found in the <a
+	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
+Forums</a></p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<p>The output format of an "atlas" for Garmin Custom maps is one <tt>KMZ</tt>
+file per layer containing all maps (max 100) as seperate <tt>JPG</tt>
+image files. The JPEG compression rate can be specified for each
+map/image using image format selector in the custom tile processing
+section. The Garmin Custom Map format defines a maximum image size of
+1024x1024 pixels. If a map is larger it will be automatically scaled
+down to fit into this size. You can prevent scaling when setting the max
+map size in the settings dialog to 1024.</p>
+<!-- *************************************************************************** -->
+<h3><a name="Glopus">Creating atlases for Glopus</a></h3>
+<p>For creating atlases compatible with Glopus you have to select <b>Glopus
+(PNG &amp; KAL)</b> or <b> Glopus Map File (GMF)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window.</p>
+<h4>Glopus (PNG &amp; KAL)</h4>
+<p>Using this atlas output format the same <a href="#OziRestriction">restrictions</a>
+and the <a href="#OziWarning">warning</a> as for the OziExplorer output
+format apply.</p>
+<p>The output format of an "atlas" for Glopus is one subdirectory
+per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
+file per defined map.</p>
+<h4>Glopus Map File (GMF)</h4>
+<p>Within this file a (large) number of tiles with its calibrated
+coordinates are stored. Glopus works best if each tile has a resolution
+of 1024x1024 pixels. So check <b>Recreate/adjust map tiles (CPU
+intensive)</b>. Width and height should be set to <b>1024</b>.</p>
+<p>The output format is one file for each layer in the corresponding
+folder.</p>
+<!-- *************************************************************************** -->
+<h3><a name="GMF">Glopus Map File (GMF) / AFTrack</a></h3>
+<p>For creating atlases compatible with AFTrack (Symbian S60) you
+have to select <b>Glopus Map File (GMF)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window.</p>
+
+<p>Within this file a (large) number of tiles with its calibrated
+coordinates are stored. AFTrack works best if each tile has got a
+resolution of 256x256 Pixels. So uncheck <b>Recreate/adjust map
+tiles (CPU intensive)</b>.</p>
+<p>The output format is one file for each layer in the corresponding
+folder.</p>
+<h4><a name="AFTrackRestriction">Restrictions</a></h4>
+<p>AFTrack can handle a maximum of 4096 tiles - so be sure not to
+select more.</p>
+<!-- *************************************************************************** -->
+<h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
+<p>For creating atlases of Creating Garmin Custom Maps you have to
+select <b>Magellan (RMP)</b> as format in section <b>Atlas settings</b>
+on the left side of the main window. Additionally you have to set the <b>maximum
+map size to 18000</b> (Settings dialog, tab "map size").</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<p>Additionally some other limitations may apply, based on which
+device and firmware version you are using. Mobile Atlas Creator does not
+chek those limitations - therefore it may work or not if you are using:</p>
+<ul>
+	<li>An atlas with more than 5 maps.</li>
+	<li>Maps with a zoom level higher than 15.</li>
+</ul>
+<p>The output format of an "atlas" for Magellan is one <tt>RMP</tt>
+file in the atlas directory. You can directly load this file in Magellan
+VantagePoint or transfer it onto your device.</p>
+<!-- *************************************************************************** -->
+<h3><a name="MAPLORER">Creating atlases for MAPLORER</a></h3>
+<p>For creating atlases compatible with <a href="http://maplorer.com">MAPLORER</a> you have to select 
+the <b>Maplorer</b> format in the <b>Atlas settings</b> section on the left side of the main window. 
+You have to choose <b>JPG image format</b> under <b>Layer settings/tile format</b> (PNG is not supported by Maplorer). </p>
+
+<p>There are no specific limits on tile sizes and/or numbers; good results for hiking/biking can be 
+obtained using zoom level 15, custom tile size of 1024x1024 (check <b>Recreate/adjust map tiles (CPU intensive)</b> 
+under <b>Layer settings</b>. For good performance, avoid using too big or too many tiles (the maximum number of 
+columns in Maplorer is currently 26 ('A' to 'Z'), but it is preferable to use less). </p>
+
+<p>After defining the maps and layers (select region and click <b>Add selection</b> under <b>Atlas Content)</b> 
+for the atlas, click the button Create Atlas. Once atlas download and creation has completed, all 
+necessary files belonging to the atlas can be found in the directory 
+<tt>atlases\[atlas name]_[current date and time]</tt>.</p>
+
+<p>To install the atlas on your device, simply connect it to your PC and copy the content of the 
+respective atlas subdirectory (i.e. all .jpg and .pos files generated) to the Maplorer directory 
+(the one which contains maplorer.exe) on your device. Starting Maplorer on the device will 
+automatically read all tiles and create the index map. Detailed instructions on making maps for 
+Maplorer can be found at <a href="http://maplorer.com">http://maplorer.com</a> </p>
+<!-- *************************************************************************** -->
+<h3><a name="Maverick">Creating and using atlases with Maverick</a></h3>
+<p>For creating atlases compatible with Maverick you have to select
+<b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
+on the left side of the main window. <br>
+As atlases for Maverick do not support all features provided by Mobile
+Atlas Creator the following settings are ignored when creating atlases
+for AndNav:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+</ul>
 <!-- *************************************************************************** -->
 <h3><a name="MTE">Creating and using atlases with Mobile Trail
 Explorer (MTE)</a></h3>
@@ -168,33 +296,6 @@ provided by Mobile Atlas Creator the following settings are ignored when
 creating atlases for Mobile Trail Explorer:</p>
 <ul>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-	<li>Name of all layers and maps</li>
-	<li>Structure of the atlas (which maps belongs to which layer)</li>
-</ul>
-<p></p>
-<!-- *************************************************************************** -->
-<h3><a name="Maverick">Creating and using atlases with Maverick</a></h3>
-<p>For creating atlases compatible with Maverick you have to select
-<b>Maverick atlas format</b> as format in section <b>Atlas settings</b>
-on the left side of the main window. <br>
-As atlases for Maverick do not support all features provided by Mobile
-Atlas Creator the following settings are ignored when creating atlases
-for AndNav:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-	<li>Name of all layers and maps</li>
-	<li>Structure of the atlas (which maps belongs to which layer)</li>
-</ul>
-<!-- *************************************************************************** -->
-<h3><a name="AndNav">Creating and using atlases with AndNav</a></h3>
-<p>For creating atlases compatible with AndNav you have to select <b>AndNav
-atlas format</b> as format in section <b>Atlas settings</b> on the left side
-of the main window. <br>
-As atlases for AndNav do not support all features provided by Mobile
-Atlas Creator the following settings are ignored when creating atlases
-for AndNav:</p>
-<ul>
-	<li>Change height or width of the map tiles</li>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 </ul>
@@ -288,6 +389,57 @@ and most image viewers do not use such sophisticated algorithms which
 can lead to the situation that you can create very large map images -
 but OziExplorer and other image viewers are not able to open the image.</p>
 <!-- *************************************************************************** -->
+<h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
+<p>For creating atlases compatible with <a
+	href="http://www.oruxmaps.com">OruxMaps</a> as format you have
+to select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left
+side of the main window.</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Layer settings, custom tile size. OruxMaps always uses 512x512
+	tile size. You can select the tile format (PNG or JPEG). If you do not
+	select any, default value is JPEG - quality 90.</li>
+</ul>
+<p>The output format of an "atlas" for OruxMaps is one or more map
+directories in the atlas directory. You have to copy those maps onto
+your device (default directory: /oruxmaps/mapfiles/).</p>
+<p>If you select OruxMaps Sqlite format, then you need Sqlite native libraries; see <a href="#BigPlanet">RMaps / BigPlanet Tracks</a></p>
+<!-- *************************************************************************** -->
+<h3><a name="PathAway">Creating atlases for PathAway</a></h3>
+<p>For creating atlases compatible with PathAway you have to select
+<b>PathAway tile cache</b> as format in section <b>Atlas settings</b> on
+the left side of the main window. <br>
+As atlases for PathAway do not support all features provided by Mobile
+Atlas Creator the following restrictions apply when creating atlases for
+PathAway:</p>
+<ul>
+	<li>The maximum zoom level is 16 - higher zoom levels are not
+	possible with this atlas format</li>
+	<li>Tile width and width can not be changed (settings will be
+	ignored)</li>
+	<li>Name of all layers and maps is ignored</li>
+	<li>Structure of the atlas is ignored (which maps belongs to which
+	layer)</li>
+</ul>
+<!-- *************************************************************************** -->
+<h3><a name="TrekBuddy">Creating and using atlases with
+TrekBuddy</a></h3>
+<p>For creating atlases compatible with TrekBuddy you have to select
+<b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
+in section <b>Atlas settings</b> on the left side of the main window.</p>
+<p>After defining the maps and layers for the atlas to be created
+start atlas download and creation via the button <b>Create Atlas</b>.
+Once atlas download and creation has completed all necessary files
+belonging to the atlas can be found in the directory <tt>atlases\[atlas
+name]_[current date and time]</tt>.</p>
+<p>The atlas itself consists of the atlas startup file <tt>cr.tar</tt>
+(tar format) or <tt>cr.tba</tt> (regular/untared format) and the
+subdirectories containing the different maps of the atlas. For using the
+atlas with TrekBuddy copy the whole directory onto your J2ME device.
+Then use the <b>Load Atlas</b> function of TrekBuddy and open <tt>cr.tar</tt>/<tt>cr.tba</tt>
+(in the atlas root directory).</p>
+<!-- *************************************************************************** -->
 <h3><a name="TTQV">Creating and using atlases with Touratech QV
 / large PNG image export</a></h3>
 <p>For creating atlases compatible with Touratech QV you have to
@@ -314,160 +466,7 @@ algorithms which can lead to the situation that you can create very
 large map images - but Touratech QV and other image viewers are not able
 to open the image.</p>
 <!-- *************************************************************************** -->
-<h3><a name="Glopus">Creating atlases for Glopus</a></h3>
-<p>For creating atlases compatible with Glopus you have to select <b>Glopus
-(PNG &amp; KAL)</b> or <b> Glopus Map File (GMF)</b> as format in section <b>Atlas
-settings</b> on the left side of the main window.</p>
-<h4>Glopus (PNG &amp; KAL)</h4>
-<p>Using this atlas output format the same <a href="#OziRestriction">restrictions</a>
-and the <a href="#OziWarning">warning</a> as for the OziExplorer output
-format apply.</p>
-<p>The output format of an "atlas" for Glopus is one subdirectory
-per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>KAL</tt>
-file per defined map.</p>
-<h4>Glopus Map File (GMF)</h4>
-<p>Within this file a (large) number of tiles with its calibrated
-coordinates are stored. Glopus works best if each tile has a resolution
-of 1024x1024 pixels. So check <b>Recreate/adjust map tiles (CPU
-intensive)</b>. Width and height should be set to <b>1024</b>.</p>
-<p>The output format is one file for each layer in the corresponding
-folder.</p>
-<!-- *************************************************************************** -->
-<h3><a name="GMF">Glopus Map File (GMF) / AFTrack</a></h3>
-<p>For creating atlases compatible with AFTrack (Symbian S60) you
-have to select <b>Glopus Map File (GMF)</b> as format in section <b>Atlas
-settings</b> on the left side of the main window.</p>
 
-<p>Within this file a (large) number of tiles with its calibrated
-coordinates are stored. AFTrack works best if each tile has got a
-resolution of 256x256 Pixels. So uncheck <b>Recreate/adjust map
-tiles (CPU intensive)</b>.</p>
-<p>The output format is one file for each layer in the corresponding
-folder.</p>
-<h4><a name="AFTrackRestriction">Restrictions</a></h4>
-<p>AFTrack can handle a maximum of 4096 tiles - so be sure not to
-select more.</p>
-<!-- *************************************************************************** -->
-<h3><a name="AFTrackOSZ">AFTrack OSZ</a></h3>
-<p>TODO</p>
-<!-- *************************************************************************** -->
-<h3><a name="CacheWolf">Creating atlases for CacheWolf</a></h3>
-<p>For creating atlases compatible with <a
-	href="http://www.cachewolf.de">CacheWolf</a> you have to select <b>CacheWolf
-WFL</b> as format in section <b>Atlas settings</b> on the left side of the
-main window.</p>
-<h4>Custom tile processing settings enabled</h4>
-<p>Maps that have custom tile processing options set are saved as
-tiled images with one WFL calibration file for each tile. All processing
-options such as image format and tile size can be used.</p>
-<h4>Custom tile processing settings disabled</h4>
-<p>In this mode automatic tiling is disabled and the same <a
-	href="#OziRestriction">restrictions</a> and the <a href="#OziWarning">warning</a>
-as for the OziExplorer output format apply.</p>
-<p>The output format of an "atlas" for CacheWolf is one subdirectory
-per layer and within this subdirectory one <tt>PNG</tt> image and one <tt>WFL</tt>
-file per defined map.</p>
-
-<!-- *************************************************************************** -->
-<h3><a name="GarminCustom">Creating Garmin Custom maps</a></h3>
-<p>For creating atlases of Creating Garmin Custom maps you have to
-select <b>Garmin Custom Map (KMZ)</b> as format in section <b>Atlas
-settings</b> on the left side of the main window. Details about the Garmin
-Custom Map format can be found in the <a
-	href="https://forums.garmin.com/forumdisplay.php?f=205">Garmin
-Forums</a></p>
-<p>Using this atlas output format the following features are ignored
-when creating atlases:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-</ul>
-<p>The output format of an "atlas" for Garmin Custom maps is one <tt>KMZ</tt>
-file per layer containing all maps (max 100) as seperate <tt>JPG</tt>
-image files. The JPEG compression rate can be specified for each
-map/image using image format selector in the custom tile processing
-section. The Garmin Custom Map format defines a maximum image size of
-1024x1024 pixels. If a map is larger it will be automatically scaled
-down to fit into this size. You can prevent scaling when setting the max
-map size in the settings dialog to 1024.</p>
-
-<!-- *************************************************************************** -->
-<h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
-<p>For creating atlases of Creating Garmin Custom Maps you have to
-select <b>Magellan (RMP)</b> as format in section <b>Atlas settings</b>
-on the left side of the main window. Additionally you have to set the <b>maximum
-map size to 18000</b> (Settings dialog, tab "map size").</p>
-<p>Using this atlas output format the following features are ignored
-when creating atlases:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-</ul>
-<p>Additionally some other limitations may apply, based on which
-device and firmware version you are using. Mobile Atlas Creator does not
-chek those limitations - therefore it may work or not if you are using:</p>
-<ul>
-	<li>An atlas with more than 5 maps.</li>
-	<li>Maps with a zoom level higher than 15.</li>
-</ul>
-<p>The output format of an "atlas" for Magellan is one <tt>RMP</tt>
-file in the atlas directory. You can directly load this file in Magellan
-VantagePoint or transfer it onto your device.</p>
-
-<!-- *************************************************************************** -->
-<h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
-<p>For creating atlases compatible with <a
-	href="http://oruxmaps.x10hosting.com">OruxMaps</a> as format you have
-to select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left
-side of the main window.</p>
-<p>Using this atlas output format the following features are ignored
-when creating atlases:</p>
-<ul>
-	<li>Layer settings, custom tile size. OruxMaps always uses 512x512
-	tile size. You can select the tile format (PNG or JPEG). If you do not
-	select any, default value is JPEG - quality 90.</li>
-</ul>
-<p>The output format of an "atlas" for OruxMaps is one or more map
-directories in the atlas directory. You have to copy those maps onto
-your device (default directory: /oruxmaps/mapfiles/).</p>
-<!-- *************************************************************************** -->
-<h3><a name="PathAway">Creating atlases for PathAway</a></h3>
-<p>For creating atlases compatible with PathAway you have to select
-<b>PathAway tile cache</b> as format in section <b>Atlas settings</b> on
-the left side of the main window. <br>
-As atlases for PathAway do not support all features provided by Mobile
-Atlas Creator the following restrictions apply when creating atlases for
-PathAway:</p>
-<ul>
-	<li>The maximum zoom level is 16 - higher zoom levels are not
-	possible with this atlas format</li>
-	<li>Tile width and width can not be changed (settings will be
-	ignored)</li>
-	<li>Name of all layers and maps is ignored</li>
-	<li>Structure of the atlas is ignored (which maps belongs to which
-	layer)</li>
-</ul>
-<!-- *************************************************************************** -->
-<h3><a name="MAPLORER">Creating atlases for MAPLORER</a></h3>
-<p>For creating atlases compatible with <a href="http://maplorer.com">MAPLORER</a> you have to select 
-the <b>Maplorer</b> format in the <b>Atlas settings</b> section on the left side of the main window. 
-You have to choose <b>JPG image format</b> under <b>Layer settings/tile format</b> (PNG is not supported by Maplorer). </p>
-
-<p>There are no specific limits on tile sizes and/or numbers; good results for hiking/biking can be 
-obtained using zoom level 15, custom tile size of 1024x1024 (check <b>Recreate/adjust map tiles (CPU intensive)</b> 
-under <b>Layer settings</b>. For good performance, avoid using too big or too many tiles (the maximum number of 
-columns in Maplorer is currently 26 ('A' to 'Z'), but it is preferable to use less). </p>
-
-<p>After defining the maps and layers (select region and click <b>Add selection</b> under <b>Atlas Content)</b> 
-for the atlas, click the button Create Atlas. Once atlas download and creation has completed, all 
-necessary files belonging to the atlas can be found in the directory 
-<tt>atlases\[atlas name]_[current date and time]</tt>.</p>
-
-<p>To install the atlas on your device, simply connect it to your PC and copy the content of the 
-respective atlas subdirectory (i.e. all .jpg and .pos files generated) to the Maplorer directory 
-(the one which contains maplorer.exe) on your device. Starting Maplorer on the device will 
-automatically read all tiles and create the index map. Detailed instructions on making maps for 
-Maplorer can be found at <a href="http://maplorer.com">http://maplorer.com</a> </p>
-
-<!-- *************************************************************************** -->
 <hr>
 
 <h2><a name="Enhancement">Enhancement requests</a></h2>

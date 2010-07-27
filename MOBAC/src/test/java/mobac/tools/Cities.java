@@ -13,6 +13,9 @@ import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
@@ -76,6 +79,9 @@ public class Cities {
 		TEST_COORDINATES.put(MapplusCh.class, Cities.BERN);
 		TEST_COORDINATES.put(Turaterkep.class, Cities.BUDAPEST);
 		TEST_COORDINATES.put(Bergfex.class, Cities.INNSBRUCK);
+		TEST_COORDINATES.put(AeroChartsIFR.class, Cities.NEY_YORK);
+		TEST_COORDINATES.put(AeroChartsIFRH.class, Cities.NEY_YORK);
+		TEST_COORDINATES.put(AeroChartsVFR.class, Cities.NEY_YORK);
 	}
 
 	public static EastNorthCoordinate getTestCoordinate(MapSource mapSource, EastNorthCoordinate defaultCoordinate) {

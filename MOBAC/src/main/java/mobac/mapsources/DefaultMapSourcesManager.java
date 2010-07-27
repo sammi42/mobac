@@ -55,6 +55,9 @@ import mobac.mapsources.impl.RegionalMapSources.StatkartSjoHovedkart2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
 import mobac.mapsources.impl.WmsSources.TerraserverUSA;
 import mobac.program.model.Settings;
 
@@ -88,7 +91,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new EmapiPl(), new Bergfex(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaCycling(), new Turaterkep(), new NearMap(), new HubermediaBavaria(),
 				new StatkartTopo2(), new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(),
-				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat() };
+				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat(),
+				new AeroChartsVFR(), new AeroChartsIFR(), new AeroChartsIFRH() };
 	}
 
 	public static void initialize() {

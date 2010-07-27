@@ -42,6 +42,7 @@
  ~ Freemap.sk maps updated and changed
  + New atlas format: Maplorer
  + New map source: Yahoo Taiwan
+ + New map sources: Aero Charts VFR/IFR/IFR-H (USA only from runwayfinder.com) 
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

@@ -610,4 +610,52 @@ public class RegionalMapSources {
 		}
 
 	}
+
+	/**
+	 * Aero charts from USA http://www.runwayfinder.com
+	 * 
+	 */
+	public abstract static class AeroCharts extends AbstractMapSource {
+
+		private String baseUrl = "http://www.runwayfinder.com/media/";
+		protected String service;
+
+		public AeroCharts(String name, String service, int minZoom, int maxZoom) {
+			super(name, minZoom, maxZoom, "jpg", TileUpdate.LastModified);
+			this.service = service;
+		}
+
+		@Override
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return baseUrl + service + "x=" + tilex + "&y=" + tiley + "&z=" + (17 - zoom);
+		}
+
+		@Override
+		public String toString() {
+			return getName() + " (USA only)";
+		}
+
+	}
+
+	public static class AeroChartsVFR extends AeroCharts {
+
+		public AeroChartsVFR() {
+			super("Aero VFR Charts", "charts/?", 4, 11);
+		}
+	}
+
+	public static class AeroChartsIFR extends AeroCharts {
+
+		public AeroChartsIFR() {
+			super("Aero IFR Charts", "ifrcharts/?", 4, 11);
+		}
+	}
+
+	public static class AeroChartsIFRH extends AeroCharts {
+
+		public AeroChartsIFRH() {
+			super("Aero IFR-H Charts", "ifrhicharts/?", 4, 9);
+		}
+	}
+
 }

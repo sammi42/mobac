@@ -14,6 +14,7 @@ import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.mapsources.impl.Microsoft.MicrosoftHybrid;
 import mobac.mapsources.impl.Microsoft.MicrosoftMaps;
 import mobac.mapsources.impl.Microsoft.MicrosoftMapsChina;
+import mobac.mapsources.impl.Microsoft.MicrosoftOrdnanceSurveyExplorer;
 import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
@@ -33,6 +34,9 @@ import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
 import mobac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
 import mobac.mapsources.impl.RegionalMapSources.CykloatlasWithRelief;
@@ -55,9 +59,6 @@ import mobac.mapsources.impl.RegionalMapSources.StatkartSjoHovedkart2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
-import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
-import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
-import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
 import mobac.mapsources.impl.WmsSources.TerraserverUSA;
 import mobac.program.model.Settings;
 
@@ -92,7 +93,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new FreemapSlovakiaCycling(), new Turaterkep(), new NearMap(), new HubermediaBavaria(),
 				new StatkartTopo2(), new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(),
 				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat(),
-				new AeroChartsVFR(), new AeroChartsIFR(), new AeroChartsIFRH() };
+				new MicrosoftOrdnanceSurveyExplorer(), new AeroChartsVFR(), new AeroChartsIFR(), new AeroChartsIFRH() };
 	}
 
 	public static void initialize() {

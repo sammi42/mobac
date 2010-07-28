@@ -6,6 +6,7 @@ import mobac.mapsources.impl.Google.GoogleMapMaker;
 import mobac.mapsources.impl.Google.GoogleMapsChina;
 import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Microsoft.MicrosoftMapsChina;
+import mobac.mapsources.impl.Microsoft.MicrosoftOrdnanceSurveyExplorer;
 import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
@@ -82,6 +83,7 @@ public class Cities {
 		TEST_COORDINATES.put(AeroChartsIFR.class, Cities.NEY_YORK);
 		TEST_COORDINATES.put(AeroChartsIFRH.class, Cities.NEY_YORK);
 		TEST_COORDINATES.put(AeroChartsVFR.class, Cities.NEY_YORK);
+		TEST_COORDINATES.put(MicrosoftOrdnanceSurveyExplorer.class, Cities.LONDON);
 	}
 
 	public static EastNorthCoordinate getTestCoordinate(MapSource mapSource, EastNorthCoordinate defaultCoordinate) {

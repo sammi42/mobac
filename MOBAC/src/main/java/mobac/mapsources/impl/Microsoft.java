@@ -7,8 +7,7 @@ public class Microsoft {
 
 	/**
 	 * Uses QuadTree coordinate system for addressing a tile. See <a
-	 * href="http://msdn.microsoft.com/en-us/library/bb259689.aspx">Virtual
-	 * Earth Tile System</a> for details.
+	 * href="http://msdn.microsoft.com/en-us/library/bb259689.aspx">Virtual Earth Tile System</a> for details.
 	 */
 	public static abstract class AbstractMicrosoft extends AbstractMapSource {
 
@@ -18,8 +17,7 @@ public class Microsoft {
 		protected int serverNumMax = 4;
 		protected char mapTypeChar;
 
-		public AbstractMicrosoft(String name, String tileType, char mapTypeChar,
-				TileUpdate tileUpdate) {
+		public AbstractMicrosoft(String name, String tileType, char mapTypeChar, TileUpdate tileUpdate) {
 			super(name, 1, 19, tileType, tileUpdate);
 			this.mapTypeChar = mapTypeChar;
 		}
@@ -27,8 +25,7 @@ public class Microsoft {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 			serverNum = (serverNum + 1) % serverNumMax;
-			return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar + tileNum + "."
-					+ tileType + urlAppend;
+			return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar + tileNum + "." + tileType + urlAppend;
 		}
 
 		@Override
@@ -76,4 +73,21 @@ public class Microsoft {
 		}
 
 	}
+
+	public static class MicrosoftOrdnanceSurveyExplorer extends AbstractMapSource {
+
+		public MicrosoftOrdnanceSurveyExplorer() {
+			super("Ordnance Survey Explorer Maps (UK)", 12, 16, "png", TileUpdate.IfNoneMatch);
+		}
+
+		@Override
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
+			String urlAppend = "?g=41&productSet=mmOS";
+			return "http://ecn.t2.tiles.virtualearth.net/tiles/r" + tileNum + "." + tileType + urlAppend;
+		}
+		
+		
+	}
+	
 }

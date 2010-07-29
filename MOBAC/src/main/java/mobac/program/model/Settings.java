@@ -166,25 +166,7 @@ public class Settings {
 	 */
 	private ProxyType proxyType = ProxyType.SYSTEM;
 	private String customProxyHost = "";
-
-	public String getCustomProxyUserName() {
-		return customProxyUserName;
-	}
-
-	public void setCustomProxyUserName(String customProxyUserName) {
-		this.customProxyUserName = customProxyUserName;
-	}
-
-	public String getCustomProxyPassword() {
-		return customProxyPassword;
-	}
-
-	public void setCustomProxyPassword(String customProxyPassword) {
-		this.customProxyPassword = customProxyPassword;
-	}
-
 	private String customProxyPort = "";
-
 	private String customProxyUserName = "";
 	private String customProxyPassword = "";
 
@@ -353,6 +335,22 @@ public class Settings {
 
 	public void setCustomProxyPort(String proxyPort) {
 		this.customProxyPort = proxyPort;
+	}
+
+	public String getCustomProxyUserName() {
+		return customProxyUserName;
+	}
+
+	public void setCustomProxyUserName(String customProxyUserName) {
+		this.customProxyUserName = customProxyUserName;
+	}
+
+	public String getCustomProxyPassword() {
+		return customProxyPassword;
+	}
+
+	public void setCustomProxyPassword(String customProxyPassword) {
+		this.customProxyPassword = customProxyPassword;
 	}
 
 	public Vector<String> getDisabledMapSources() {

@@ -45,6 +45,7 @@
  + New map sources: Aero Charts VFR/IFR/IFR-H (USA only from runwayfinder.com) 
  + New atlas format: OruxMaps Sqlite
  + New map source: Ordnance Survey Explorer Maps (UK)
+ + Proxy authentication by user name/password added in GUI  
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

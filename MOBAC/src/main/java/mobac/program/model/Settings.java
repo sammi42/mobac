@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.Date;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -164,7 +166,27 @@ public class Settings {
 	 */
 	private ProxyType proxyType = ProxyType.SYSTEM;
 	private String customProxyHost = "";
+
+	public String getCustomProxyUserName() {
+		return customProxyUserName;
+	}
+
+	public void setCustomProxyUserName(String customProxyUserName) {
+		this.customProxyUserName = customProxyUserName;
+	}
+
+	public String getCustomProxyPassword() {
+		return customProxyPassword;
+	}
+
+	public void setCustomProxyPassword(String customProxyPassword) {
+		this.customProxyPassword = customProxyPassword;
+	}
+
 	private String customProxyPort = "";
+
+	private String customProxyUserName = "";
+	private String customProxyPassword = "";
 
 	private Vector<String> disabledMapSources = new Vector<String>();
 
@@ -344,25 +366,41 @@ public class Settings {
 	}
 
 	public void applyProxySettings() {
+		boolean useSystemProxies = false;
 		String newProxyHost = null;
 		String newProxyPort = null;
+		Authenticator newAuthenticator = null;
 		switch (proxyType) {
 		case SYSTEM:
-			System.setProperty("java.net.useSystemProxies", "true");
-			log.info("Proxy configuration applied: system settings");
-			return;
+			log.info("Applying proxy configuration: system settings");
+			useSystemProxies = true;
+			break;
 		case APP_SETTINGS:
 			newProxyHost = SYSTEM_PROXY_HOST;
 			newProxyPort = SYSTEM_PROXY_PORT;
+			log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort);
 			break;
 		case CUSTOM:
 			newProxyHost = customProxyHost;
 			newProxyPort = customProxyPort;
+			log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort);
+			break;
+		case CUSTOM_W_AUTH:
+			newProxyHost = customProxyHost;
+			newProxyPort = customProxyPort;
+			newAuthenticator = new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(customProxyUserName, customProxyPassword.toCharArray());
+				}
+			};
+			log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort + " user="
+					+ customProxyUserName);
+			break;
 		}
 		Utilities.setHttpProxyHost(newProxyHost);
 		Utilities.setHttpProxyPort(newProxyPort);
-		System.setProperty("java.net.useSystemProxies", "false");
-		log.info("Proxy configuration applied: host=" + newProxyHost + " port=" + newProxyPort);
+		Authenticator.setDefault(newAuthenticator);
+		System.setProperty("java.net.useSystemProxies", Boolean.toString(useSystemProxies));
 	}
 
 	@XmlElement

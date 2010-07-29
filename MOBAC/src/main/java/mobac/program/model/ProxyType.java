@@ -17,8 +17,10 @@
 package mobac.program.model;
 
 public enum ProxyType {
-	SYSTEM("Use standard Java proxy settings"), APP_SETTINGS("Use application properties"), CUSTOM(
-			"Use custom proxy (user defined)");
+	SYSTEM("Use standard Java proxy settings"), // 
+	APP_SETTINGS("Use application properties"), //
+	CUSTOM("Use custom proxy (user defined)"), //
+	CUSTOM_W_AUTH("Use custom proxy with Authentication");
 
 	private String text;
 

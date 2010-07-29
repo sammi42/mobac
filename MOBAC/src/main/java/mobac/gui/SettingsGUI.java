@@ -125,6 +125,9 @@ public class SettingsGUI extends JDialog {
 	private JTextField proxyHost;
 	private JTextField proxyPort;
 
+	private JTextField proxyUserName;
+	private JTextField proxyPassword;
+	
 	private JButton okButton;
 	private JButton cancelButton;
 
@@ -546,18 +549,32 @@ public class SettingsGUI extends JDialog {
 		final JLabel proxyTypeLabel = new JLabel("Proxy settings: ");
 		proxyType = new JComboBox(ProxyType.values());
 		proxyType.setSelectedItem(Settings.getInstance().getProxyType());
+		
 		final JLabel proxyHostLabel = new JLabel("Proxy host name: ");
 		proxyHost = new JTextField(Settings.getInstance().getCustomProxyHost());
+		
 		final JLabel proxyPortLabel = new JLabel("Proxy port: ");
 		proxyPort = new JTextField(Settings.getInstance().getCustomProxyPort());
+		
+		final JLabel proxyUserNameLabel = new JLabel("Proxy user: ");
+		proxyUserName = new JTextField(Settings.getInstance().getCustomProxyUserName());
+		
+		final JLabel proxyPasswordLabel = new JLabel("Proxy password: ");
+		proxyPassword = new JTextField(Settings.getInstance().getCustomProxyPassword());
+		
 		ActionListener al = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				boolean b = ProxyType.CUSTOM.equals(proxyType.getSelectedItem());
-				proxyHost.setEnabled(b);
-				proxyPort.setEnabled(b);
-				proxyHostLabel.setEnabled(b);
-				proxyPortLabel.setEnabled(b);
+				boolean c = ProxyType.CUSTOM_W_AUTH.equals(proxyType.getSelectedItem());
+				proxyHost.setEnabled(b || c);
+				proxyPort.setEnabled(b || c);
+				proxyHostLabel.setEnabled(b || c);
+				proxyPortLabel.setEnabled(b || c);
+				proxyUserName.setEnabled(c);
+				proxyPassword.setEnabled(c);
+				proxyUserNameLabel.setEnabled(c);
+				proxyPasswordLabel.setEnabled(c);
 			}
 		};
 		al.actionPerformed(null);
@@ -565,10 +582,19 @@ public class SettingsGUI extends JDialog {
 
 		panel.add(proxyTypeLabel, GBC.std());
 		panel.add(proxyType, gbc_eolh.insets(5, 2, 5, 2));
+		
 		panel.add(proxyHostLabel, GBC.std());
 		panel.add(proxyHost, gbc_eolh);
+		
 		panel.add(proxyPortLabel, GBC.std());
 		panel.add(proxyPort, gbc_eolh);
+		
+		panel.add(proxyUserNameLabel, GBC.std());
+		panel.add(proxyUserName, gbc_eolh);
+		
+		panel.add(proxyPasswordLabel, GBC.std());
+		panel.add(proxyPassword, gbc_eolh);
+		
 		backGround.add(panel, GBC.eol().fillH());
 
 		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
@@ -630,6 +656,9 @@ public class SettingsGUI extends JDialog {
 		s.setProxyType((ProxyType) proxyType.getSelectedItem());
 		s.setCustomProxyHost(proxyHost.getText());
 		s.setCustomProxyPort(proxyPort.getText());
+		s.setCustomProxyUserName(proxyUserName.getText());
+		s.setCustomProxyPassword(proxyPassword.getText());
+		
 		s.applyProxySettings();
 
 		Vector<String> disabledMaps = new Vector<String>();

@@ -47,8 +47,7 @@ p,ul,ol {
 Creator".</p>
 <p>Mobile Atlas Creator is an open source project hosted on
 SourceForge.net: <br>
-<a href="http://mobac.dnsalias.org">http://mobac.dnsalias.org</a>
-</p>
+<a href="http://mobac.dnsalias.org">http://mobac.dnsalias.org</a></p>
 <h2>Table of contents</h2>
 <ul style="margin-left: 50px;">
 	<li><a href="#License">License</a></li>
@@ -101,13 +100,14 @@ SourceForge.net: <br>
 Explorer (MTE)</a>, the Android applications <a
 	href="http://www.andnav.org/">AndNav</a>, <a
 	href="http://www.codesector.com/maverick.php">Maverick</a>, <a
-	href="http://code.google.com/p/big-planet-tracks/">Big Planet Tracks</a>, <a
+	href="http://code.google.com/p/big-planet-tracks/">Big Planet
+Tracks</a>, <a
 	href="http://robertdeveloper.blogspot.com/search/label/rmaps.release">RMaps</a>,
-	href="http://www.oruxmaps.com/">OruxMaps</a>,
-the Pocket PC application <a href="http://www.glopus.de/">Glopus</a> and
-the commercial Windows application <a href="http://www.oziexplorer.com/">OziExplorer</a>.
-The map image created for OziExplorer can also be used with any PNG
-capable image viewer (map image in one large PNG file).</p>
+href="http://www.oruxmaps.com/">OruxMaps</a>, the Pocket PC application <a
+	href="http://www.glopus.de/">Glopus</a> and the commercial Windows
+application <a href="http://www.oziexplorer.com/">OziExplorer</a>. The
+map image created for OziExplorer can also be used with any PNG capable
+image viewer (map image in one large PNG file).</p>
 
 <h2><a name="Requirements">Requirements</a></h2>
 <p>This application requires that a Java Runtime Environment Version
@@ -121,7 +121,9 @@ obtained at <a href="https://jai.dev.java.net/binary-builds.html">https://jai.de
 
 <h2><a name="Installation">Installation</a></h2>
 <p>Copy or move the unzipped files to a folder where you would like
-to have Mobile Atlas Creator installed.</p>
+to have Mobile Atlas Creator installed. On computers running Windows
+please make sure <b>not to install MOBAC into Program Files
+sub-directory!</b></p>
 
 <h2><a name="Start">Application start</a></h2>
 <p>The application is started by executing the <tt>Mobile Atlas
@@ -244,25 +246,33 @@ file in the atlas directory. You can directly load this file in Magellan
 VantagePoint or transfer it onto your device.</p>
 <!-- *************************************************************************** -->
 <h3><a name="MAPLORER">Creating atlases for MAPLORER</a></h3>
-<p>For creating atlases compatible with <a href="http://maplorer.com">MAPLORER</a> you have to select 
-the <b>Maplorer</b> format in the <b>Atlas settings</b> section on the left side of the main window. 
-You have to choose <b>JPG image format</b> under <b>Layer settings/tile format</b> (PNG is not supported by Maplorer). </p>
+<p>For creating atlases compatible with <a
+	href="http://maplorer.com">MAPLORER</a> you have to select the <b>Maplorer</b>
+format in the <b>Atlas settings</b> section on the left side of the main
+window. You have to choose <b>JPG image format</b> under <b>Layer
+settings/tile format</b> (PNG is not supported by Maplorer).</p>
 
-<p>There are no specific limits on tile sizes and/or numbers; good results for hiking/biking can be 
-obtained using zoom level 15, custom tile size of 1024x1024 (check <b>Recreate/adjust map tiles (CPU intensive)</b> 
-under <b>Layer settings</b>. For good performance, avoid using too big or too many tiles (the maximum number of 
-columns in Maplorer is currently 26 ('A' to 'Z'), but it is preferable to use less). </p>
+<p>There are no specific limits on tile sizes and/or numbers; good
+results for hiking/biking can be obtained using zoom level 15, custom
+tile size of 1024x1024 (check <b>Recreate/adjust map tiles (CPU
+intensive)</b> under <b>Layer settings</b>. For good performance, avoid
+using too big or too many tiles (the maximum number of columns in
+Maplorer is currently 26 ('A' to 'Z'), but it is preferable to use
+less).</p>
 
-<p>After defining the maps and layers (select region and click <b>Add selection</b> under <b>Atlas Content)</b> 
-for the atlas, click the button Create Atlas. Once atlas download and creation has completed, all 
-necessary files belonging to the atlas can be found in the directory 
-<tt>atlases\[atlas name]_[current date and time]</tt>.</p>
+<p>After defining the maps and layers (select region and click <b>Add
+selection</b> under <b>Atlas Content)</b> for the atlas, click the button
+Create Atlas. Once atlas download and creation has completed, all
+necessary files belonging to the atlas can be found in the directory <tt>atlases\[atlas
+name]_[current date and time]</tt>.</p>
 
-<p>To install the atlas on your device, simply connect it to your PC and copy the content of the 
-respective atlas subdirectory (i.e. all .jpg and .pos files generated) to the Maplorer directory 
-(the one which contains maplorer.exe) on your device. Starting Maplorer on the device will 
-automatically read all tiles and create the index map. Detailed instructions on making maps for 
-Maplorer can be found at <a href="http://maplorer.com">http://maplorer.com</a> </p>
+<p>To install the atlas on your device, simply connect it to your PC
+and copy the content of the respective atlas subdirectory (i.e. all .jpg
+and .pos files generated) to the Maplorer directory (the one which
+contains maplorer.exe) on your device. Starting Maplorer on the device
+will automatically read all tiles and create the index map. Detailed
+instructions on making maps for Maplorer can be found at <a
+	href="http://maplorer.com">http://maplorer.com</a></p>
 <!-- *************************************************************************** -->
 <h3><a name="Maverick">Creating and using atlases with Maverick</a></h3>
 <p>For creating atlases compatible with Maverick you have to select
@@ -391,9 +401,9 @@ but OziExplorer and other image viewers are not able to open the image.</p>
 <!-- *************************************************************************** -->
 <h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
 <p>For creating atlases compatible with <a
-	href="http://www.oruxmaps.com">OruxMaps</a> as format you have
-to select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left
-side of the main window.</p>
+	href="http://www.oruxmaps.com">OruxMaps</a> as format you have to
+select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left side
+of the main window.</p>
 <p>Using this atlas output format the following features are ignored
 when creating atlases:</p>
 <ul>
@@ -404,7 +414,8 @@ when creating atlases:</p>
 <p>The output format of an "atlas" for OruxMaps is one or more map
 directories in the atlas directory. You have to copy those maps onto
 your device (default directory: /oruxmaps/mapfiles/).</p>
-<p>If you select OruxMaps Sqlite format, then you need Sqlite native libraries; see <a href="#BigPlanet">RMaps / BigPlanet Tracks</a></p>
+<p>If you select OruxMaps Sqlite format, then you need Sqlite native
+libraries; see <a href="#BigPlanet">RMaps / BigPlanet Tracks</a></p>
 <!-- *************************************************************************** -->
 <h3><a name="PathAway">Creating atlases for PathAway</a></h3>
 <p>For creating atlases compatible with PathAway you have to select

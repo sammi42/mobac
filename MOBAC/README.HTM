@@ -137,7 +137,18 @@ folders are automatically created by the application.</p>
 <h2><a name="AtlasFormats">The different atlas formats</a></h2>
 <!-- *************************************************************************** -->
 <h3><a name="AFTrackOSZ">AFTrack OSZ</a></h3>
-<p>TODO</p>
+<p>For creating atlases compatible with AFTrack (Symbian S60) you
+have to select <b>AFTrack (OSZ)</b> as format in section <b>Atlas
+settings</b> on the left side of the main window.</p>
+<p>OSZ is a ZIP-archive. Within this zip archive a (large) number of
+tiles with the calibrated folder structure (coordinates) are stored. OSZ
+only works if each tile has got a resolution of 256x256 Pixels. So be
+sure to uncheck <b>Recreate/adjust map tiles (CPU intensive)</b>.</p>
+<p>The output format is one file for each layer in the corresponding
+folder.</p>
+<h4><a name="AFTrackOSZRestriction">Restrictions</a></h4>
+<p>Depending on the device free memory the file maybe not work. So
+more then 80000 tiles should not be used.</p>
 <!-- *************************************************************************** -->
 <h3><a name="AndNav">Creating and using atlases with AndNav</a></h3>
 <p>For creating atlases compatible with AndNav you have to select <b>AndNav

@@ -101,10 +101,8 @@ public enum AtlasOutputFormat {
 			return null;
 		try {
 			return atlasCreatorClass.newInstance();
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
 		}
 	}
 }

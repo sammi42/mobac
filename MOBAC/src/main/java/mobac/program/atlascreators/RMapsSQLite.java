@@ -16,10 +16,8 @@
  ******************************************************************************/
 package mobac.program.atlascreators;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -54,7 +52,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
  * <p>
  */
-public class RMapsSQLite extends AtlasCreator {
+public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
@@ -72,6 +70,11 @@ public class RMapsSQLite extends AtlasCreator {
 
 	protected Connection conn = null;
 	private PreparedStatement prepStmt;
+
+	public RMapsSQLite() {
+		super();
+		SQLiteLoader.loadSQLiteOrShowError();
+	}
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
@@ -150,7 +153,7 @@ public class RMapsSQLite extends AtlasCreator {
 		stat.executeUpdate(RMAPS_TABLE_INFO_DDL);
 
 		stat.executeUpdate("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)");
-		if (!(stat.executeQuery("SELECT * FROM android_metadata").first())) {
+		if (!(stat.executeQuery("SELECT * FROM android_metadata").next())) {
 			String locale = Locale.getDefault().toString();
 			stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + locale + "')");
 		}
@@ -211,15 +214,13 @@ public class RMapsSQLite extends AtlasCreator {
 	}
 
 	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
-		InputStream is = new ByteArrayInputStream(tileData);
 		int s = 0;
 		prepStmt.setInt(1, x);
 		prepStmt.setInt(2, y);
 		prepStmt.setInt(3, 17 - z);
 		prepStmt.setInt(4, s);
-		prepStmt.setBinaryStream(5, is, is.available());
+		prepStmt.setBytes(5, tileData);
 		prepStmt.addBatch();
-		is.close();
 	}
 
 	protected String getDatabaseFileName() {

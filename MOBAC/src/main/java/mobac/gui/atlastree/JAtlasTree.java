@@ -42,6 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
 import mobac.gui.MainGUI;
 import mobac.gui.mapview.MapAreaHighlightingLayer;
 import mobac.gui.mapview.PreviewMap;
+import mobac.program.atlascreators.RequiresSQLite;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;
 import mobac.program.interfaces.CapabilityDeletable;
@@ -49,7 +50,6 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.program.model.Atlas;
-import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.AtlasTreeModel;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
@@ -74,9 +74,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
 
 	private static final String MSG_ATLAS_DATA_CHECK_FAILED = ""
 			+ "At least one problem was detected while loading the saved atlas profile.\n"
-			+ "Usually this indicates that the profile file is inconsistent "
-			+ "or the file format \n" + "has changed.\n\n"
-			+ "It is recommended to clear the loaded atlas and delete the affected profile.\n"
+			+ "Usually this indicates that the profile file is inconsistent " + "or the file format \n"
+			+ "has changed.\n\n" + "It is recommended to clear the loaded atlas and delete the affected profile.\n"
 			+ "Otherwise various exceptions may be thrown while working with this atlas.";
 
 	private static final String MSG_ATLAS_EMPTY = "Atlas is empty - "
@@ -122,8 +121,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		ActionMap actionMap = getActionMap();
 
 		// map moving
-		inputMap.put(deleteNodeKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
-				ACTION_DELETE_NODE);
+		inputMap.put(deleteNodeKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), ACTION_DELETE_NODE);
 		actionMap.put(ACTION_DELETE_NODE, new AbstractAction("Delete") {
 
 			public void actionPerformed(ActionEvent e) {
@@ -137,13 +135,13 @@ public class JAtlasTree extends JTree implements Autoscroll {
 
 	public boolean testAtlasContentValid() {
 		AtlasInterface atlas = getAtlas();
-		if (AtlasOutputFormat.BigPlanet.equals(atlas.getOutputFormat())) {
+		if (RequiresSQLite.class.isAssignableFrom(atlas.getOutputFormat().getMapCreatorClass())) {
 			if (!SQLiteLoader.loadSQLiteOrShowError())
 				return false;
 		}
 		if (atlas.calculateTilesToDownload() == 0) {
-			JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>",
-					"Error - atlas has no content", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>", "Error - atlas has no content",
+					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		return true;
@@ -213,15 +211,15 @@ public class JAtlasTree extends JTree implements Autoscroll {
 			if (treeModel.getAtlas() instanceof Atlas) {
 				Atlas atlas = (Atlas) treeModel.getAtlas();
 				if (atlas.getVersion() < Atlas.CURRENT_ATLAS_VERSION) {
-					JOptionPane.showMessageDialog(null, MSG_ATLAS_VERSION_MISMATCH,
-							"Outdated atlas version", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, MSG_ATLAS_VERSION_MISMATCH, "Outdated atlas version",
+							JOptionPane.WARNING_MESSAGE);
 					return true;
 				}
 			}
 			boolean problemsDetected = Profile.checkAtlas(treeModel.getAtlas());
 			if (problemsDetected) {
-				JOptionPane.showMessageDialog(null, MSG_ATLAS_DATA_CHECK_FAILED,
-						"Atlas loading problem", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, MSG_ATLAS_DATA_CHECK_FAILED, "Atlas loading problem",
+						JOptionPane.WARNING_MESSAGE);
 			}
 			return true;
 		} catch (Exception e) {
@@ -285,8 +283,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
 					public void actionPerformed(ActionEvent e) {
 						MapInterface map = (MapInterface) o;
 						mapView.setMapSource(map.getMapSource());
-						mapView.setSelectionByTileCoordinate(map.getZoom(), map
-								.getMinTileCoordinate(), map.getMaxTileCoordinate(), true);
+						mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
+								.getMaxTileCoordinate(), true);
 					}
 				});
 				pm.add(mi);
@@ -297,8 +295,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
 						MapSelection ms = new MapSelection(map);
 						mapView.setMapSource(map.getMapSource());
 						mapView.setSelectionAndZoomTo(ms, true);
-						mapView.setSelectionByTileCoordinate(map.getZoom(), map
-								.getMinTileCoordinate(), map.getMaxTileCoordinate(), true);
+						mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
+								.getMaxTileCoordinate(), true);
 					}
 				});
 				pm.add(mi);
@@ -339,8 +337,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 				mi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						AtlasObject atlasObject = (AtlasObject) o;
-						TileImageParameters p = MainGUI.getMainGUI()
-								.getSelectedTileImageParameters();
+						TileImageParameters p = MainGUI.getMainGUI().getSelectedTileImageParameters();
 						applyTileImageParameters(atlasObject, p);
 					}
 				});
@@ -381,8 +378,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		if (o instanceof MapInterface) {
 			MapInterface map = (MapInterface) o;
 			mapView.setMapSource(map.getMapSource());
-			mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
-					.getMaxTileCoordinate(), true);
+			mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map.getMaxTileCoordinate(),
+					true);
 		}
 	}
 
@@ -397,9 +394,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	public Insets getAutoscrollInsets() {
 		Rectangle outer = getBounds();
 		Rectangle inner = getParent().getBounds();
-		return new Insets(inner.y - outer.y + margin, inner.x - outer.x + margin, outer.height
-				- inner.height - inner.y + outer.y + margin, outer.width - inner.width - inner.x
-				+ outer.x + margin);
+		return new Insets(inner.y - outer.y + margin, inner.x - outer.x + margin, outer.height - inner.height - inner.y
+				+ outer.y + margin, outer.width - inner.width - inner.x + outer.x + margin);
 	}
 
 }

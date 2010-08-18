@@ -47,7 +47,9 @@
  + New map source: Ordnance Survey Explorer Maps (UK)
  + Proxy authentication by user name/password added in GUI  
  + New atlas format: OSMAND
- ~ SQLite backend replaced - Zentus SqliteJDBC is now used
+ ~ SQLite back-end replaced - Zentus SqliteJDBC is now used 
+    (see README.HTM for details)
+ ! OpenPisteMap tile url updated
 
  1.7: (2010-02-05)
  ~ Project has been renamed to "Mobile Atlas Creator" taking account that

@@ -34,6 +34,7 @@ import mobac.program.atlascreators.Maplorer;
 import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
 import mobac.program.atlascreators.MobileTrailExplorerCache;
+import mobac.program.atlascreators.NaviComputer;
 import mobac.program.atlascreators.OSMAND;
 import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
@@ -65,6 +66,7 @@ public enum AtlasOutputFormat {
 	Maverick("Maverick atlas format", Maverick.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
 	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
+	NaviComputer("NaviComputer (NMAP)", NaviComputer.class), //
 	OruxMaps("OruxMaps", OruxMaps.class), //
 	OruxMapsSqlite("OruxMaps Sqlite", OruxMapsSqlite.class), //
 	OSMAND("OSMAND tile storage", OSMAND.class), //

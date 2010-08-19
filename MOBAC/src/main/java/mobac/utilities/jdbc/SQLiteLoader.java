@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.utilities.jdbc;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
@@ -58,6 +59,16 @@ public class SQLiteLoader {
 			SQLException e = new SQLException("Loading of SQLite library failed: " + t.getMessage(), t);
 			log.error(e.getMessage());
 			throw e;
+		}
+	}
+
+	public static void closeConnection(Connection conn) {
+		if (conn == null)
+			return;
+		try {
+			conn.close();
+		} catch (Exception e) {
+			log.error("Failed to close SQL connection: " + e.getMessage());
 		}
 	}
 

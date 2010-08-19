@@ -203,9 +203,8 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 		prepTilesData.execute();
 	}
 
-	protected String getDatabaseFileName() throws IOException {
+	protected String getDatabaseFileName() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss_");
-		Utilities.mkDirs(atlasDir);
 		databaseFile = new File(atlasDir, sdf.format(new Date()) + atlas.getName() + ".nmap").getAbsolutePath();
 		return databaseFile;
 	}

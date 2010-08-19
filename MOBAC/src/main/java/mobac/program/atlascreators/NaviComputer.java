@@ -23,28 +23,28 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
-	private static final String NAVI_TABLES = "CREATE TABLE  MapInfo (MapType TEXT, Zoom INTEGER NOT NULL, MinX INTEGER, MaxX INTEGER, MinY INTEGER, MaxY INTEGER);"
-			+ "CREATE TABLE  Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Zoom INTEGER NOT NULL);"
-			+ "CREATE TABLE  TilesData (id INTEGER NOT NULL PRIMARY KEY CONSTRAINT fk_Tiles_id REFERENCES Tiles(id) ON DELETE CASCADE, Tile BLOB NULL);"
+	private static final String NAVI_TABLES = "CREATE TABLE  MapInfo (MapType TEXT, Zoom INTEGER NOT NULL, MinX INTEGER, MaxX INTEGER, MinY INTEGER, MaxY INTEGER);\n"
+			+ "CREATE TABLE  Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Zoom INTEGER NOT NULL);\n"
+			+ "CREATE TABLE  TilesData (id INTEGER NOT NULL PRIMARY KEY CONSTRAINT fk_Tiles_id REFERENCES Tiles(id) ON DELETE CASCADE, Tile BLOB NULL);\n"
 
 			+ "CREATE TRIGGER fkdc_TilesData_id_Tiles_id "
 			+ "BEFORE DELETE ON Tiles "
 			+ "FOR EACH ROW BEGIN "
 			+ "DELETE FROM TilesData WHERE TilesData.id = OLD.id; "
-			+ "END; "
+			+ "END;\n"
 			+ "CREATE TRIGGER fki_TilesData_id_Tiles_id "
 			+ "BEFORE INSERT ON [TilesData] "
 			+ "FOR EACH ROW BEGIN "
 			+ "SELECT RAISE(ROLLBACK, 'insert on table TilesData violates foreign key constraint fki_TilesData_id_Tiles_id') "
 			+ "WHERE (SELECT id FROM Tiles WHERE id = NEW.id) IS NULL; "
-			+ "END; "
+			+ "END;\n"
 			+ "CREATE TRIGGER fku_TilesData_id_Tiles_id "
 			+ "BEFORE UPDATE ON [TilesData] "
 			+ "FOR EACH ROW BEGIN "
 			+ "SELECT RAISE(ROLLBACK, 'update on table TilesData violates foreign key constraint fku_TilesData_id_Tiles_id') "
 			+ "WHERE (SELECT id FROM Tiles WHERE id = NEW.id) IS NULL; "
-			+ "END; "
-			+ "CREATE INDEX IndexOfTiles ON Tiles (X, Y, Zoom); ";
+			+ "END;\n"
+			+ "CREATE INDEX IndexOfTiles ON Tiles (X, Y, Zoom);";
 
 	private static final String INSERT_TILES = "INSERT INTO Tiles (id,X,Y,Zoom) VALUES (?,?,?,?)";
 	private static final String INSERT_TILES_DATA = "INSERT  INTO TilesData (id,Tile) VALUES (?,?)";
@@ -149,8 +149,12 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
 	protected void initializeDB() throws SQLException {
 		Statement stat = conn.createStatement();
-		stat.executeUpdate(NAVI_TABLES);
+		String[] sqlList = NAVI_TABLES.split("\\n");
+		for (String sql : sqlList)
+			stat.addBatch(sql);
+		stat.executeBatch();
 		stat.close();
+		log.debug("Database initialization complete: tables, trigges and index created");
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
@@ -199,11 +203,9 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 		prepTilesData.execute();
 	}
 
-	protected String getDatabaseFileName() {
+	protected String getDatabaseFileName() throws IOException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss_");
-		String atlasDirName = atlas.getName();
-		File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
-		atlasDir = new File(atlasOutputDir, atlasDirName);
+		Utilities.mkDirs(atlasDir);
 		databaseFile = new File(atlasDir, sdf.format(new Date()) + atlas.getName() + ".nmap").getAbsolutePath();
 		return databaseFile;
 	}

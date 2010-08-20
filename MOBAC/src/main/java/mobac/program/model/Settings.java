@@ -164,7 +164,7 @@ public class Settings {
 	/**
 	 * Network settings
 	 */
-	private ProxyType proxyType = ProxyType.SYSTEM;
+	private ProxyType proxyType = ProxyType.CUSTOM;
 	private String customProxyHost = "";
 	private String customProxyPort = "";
 	private String customProxyUserName = "";

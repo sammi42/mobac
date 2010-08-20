@@ -59,11 +59,10 @@ public class GpxLoad implements ActionListener {
 		File f = fc.getSelectedFile();
 		if (panel.isFileOpen(f.getAbsolutePath())) {
 			int answer = JOptionPane.showConfirmDialog(null, "The file was already opened.\n"
-					+ "Do you want to open a new instance of this file?", "Warning",
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					+ "Do you want to open a new instance of this file?", "Warning", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
 			if (answer != JOptionPane.YES_OPTION)
 				return;
-
 		}
 		doLoad(f);
 	}
@@ -78,14 +77,11 @@ public class GpxLoad implements ActionListener {
 			gpxLayer.setFile(f);
 			panel.addGpxLayer(gpxLayer);
 		} catch (JAXBException e) {
-			JOptionPane
-					.showMessageDialog(
-							MainGUI.getMainGUI(),
-							"<html>Unable to load the GPX file <br><i>"
-									+ f.getAbsolutePath()
-									+ "</i><br><br><b>Please make sure the file is a valid GPX v1.1 file.</b><br>"
-									+ "<br>Internal error message:<br>" + e.getMessage()
-									+ "</html>", "GPX loading failed", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(MainGUI.getMainGUI(), "<html>Unable to load the GPX file <br><i>"
+					+ f.getAbsolutePath()
+					+ "</i><br><br><b>Please make sure the file is a valid GPX v1.1 file.</b><br>"
+					+ "<br>Internal error message:<br>" + e.getMessage() + "</html>", "GPX loading failed",
+					JOptionPane.ERROR_MESSAGE);
 
 		}
 		MainGUI.getMainGUI().previewMap.repaint();

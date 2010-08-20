@@ -51,8 +51,7 @@ import mobac.gui.mapview.PreviewMap;
 import mobac.utilities.GBC;
 
 /**
- * Allows to load, display, edit and save gpx files using a tree view. TODO warn
- * unsaved changes on exit
+ * Allows to load, display, edit and save gpx files using a tree view. TODO warn unsaved changes on exit
  * 
  */
 public class JGpxPanel extends JCollapsiblePanel {
@@ -110,8 +109,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 	}
 
 	/**
-	 * adds a layer for a new gpx file on the map and adds its structure to the
-	 * treeview
+	 * adds a layer for a new gpx file on the map and adds its structure to the treeview
 	 * 
 	 */
 	public GpxRootEntry addGpxLayer(GpxLayer layer) {
@@ -127,7 +125,8 @@ public class JGpxPanel extends JCollapsiblePanel {
 		addTrks(layer, gpxNode);
 		addWpts(layer, gpxNode);
 
-		openedFiles.add(layer.getFile().getAbsolutePath());
+		if (layer.getFile() != null)
+			openedFiles.add(layer.getFile().getAbsolutePath());
 
 		previewMap.mapLayers.add(layer);
 		return gpxEntry;
@@ -236,8 +235,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 		if (selection == null) {
 			return null;
 		}
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection
-				.getLastPathComponent();
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection.getLastPathComponent();
 
 		GpxEntry gpxEntry = null;
 		try {

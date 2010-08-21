@@ -76,9 +76,9 @@ public enum AtlasOutputFormat {
 	RMaps("RMaps SQLite", RMapsSQLite.class), //
 	NST("Sports Tracker", SportsTracker.class), //
 	Ttqv("Touratech QV", TTQV.class), //
-	Ublox("Ublox", Ublox.class), // 
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 
 	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), // 
+	Ublox("Ublox", Ublox.class), // 
 	// XGPS("xGPS", SQLitexGPS.class), //
 	;
 

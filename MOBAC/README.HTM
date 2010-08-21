@@ -52,32 +52,43 @@ SourceForge.net: <br>
 <ul style="margin-left: 50px;">
 	<li><a href="#License">License</a></li>
 	<li><a href="#Description">Description</a></li>
-	<li><a href="#Requirements">Requirements</a></li>
+	<li><a href="#Requirements">Requirements</a>
+	<ul style="margin-left: 10px;">
+		<li><a href="#SQLite">SQLite atlas formats</a></li>
+		<li><a href="#JAI">Java Advanced Imaging" (JAI)</a></li>
+	</ul>
+	</li>
 	<li><a href="#Installation">Installation</a></li>
 	<li><a href="#Start">Application start</a></li>
 	<li><a href="#AtlasFormats">The different atlas formats</a>
 	<ul style="margin-left: 10px;">
 		<li><a href="#AFTrackOSZ">AFTrack (OSZ)</a></li>
 		<li><a href="#AndNav">AndNav</a></li>
+		<li><a href="#BigPlanet">Big Planet Tracks</a></li>
+		<!-- CacheBox  -->
 		<li><a href="#CacheWolf">CacheWolf</a></li>
 		<li><a href="#GarminCustom">Garmin Custom maps</a></li>
 		<li><a href="#Glopus">Glopus</a></li>
 		<li><a href="#GMF">Glopus Map File / AFTrack (GMF)</a></li>
+		<!-- Google Earth Overlay (KMZ) -->
+		<!-- GPS Sports Tracker -->
 		<li><a href="#Magellan">Magellan RMP</a></li>
 		<li><a href="#MAPLORER">MAPLORER</a></li>
 		<li><a href="#Maverick">Maverick</a></li>
 		<li><a href="#MTE">Mobile Trail Explorer (MTE)</a></li>
 		<li><a href="#NaviComputer">NaviComputer</a></li>
-		<li><a href="#OSMTracker">OSMTracker</a></li>
-		<li><a href="#BigPlanet">RMaps / BigPlanet Tracks</a></li>
-		<li><a href="#Ozi">OziExplorer / large PNG image</a></li>
 		<li><a href="#OruxMaps">OruxMaps</a></li>
+		<!-- OSMAND -->
+		<li><a href="#OSMTracker">OSMTracker</a></li>
+		<li><a href="#Ozi">OziExplorer / large PNG image</a></li>
 		<li><a href="#PathAway">PathAway</a></li>
-		<li><a href="#TrekBuddy">TrekBuddy</a></li>
+		<li><a href="#RMaps">RMaps</a></li>
+		<!-- Sports Tracker -->
 		<li><a href="#TTQV">Touratech QV</a></li>
+		<li><a href="#TrekBuddy">TrekBuddy</a></li>
+		<!-- UBlox -->
 	</ul>
 	</li>
-	<li><a href="#SQLite">SQLite atlas formats</a></li>
 	<li><a href="#Enhancement">Enhancement requests</a></li>
 	<li><a href="#Bugs">Problems, Bugs &amp; Errors</a></li>
 	<li><a href="#Limitations">Known problems and limitations</a></li>
@@ -93,7 +104,12 @@ SourceForge.net: <br>
 
 <h2><a name="License">License</a></h2>
 <p>Mobile Atlas Creator is under GNU General Public License Version
-2 (GPL). For details on the GPL see the license file <a href="gpl.txt">gpl.txt</a></p>
+2 (GPL). For details on the GPL see the license file <a href="gpl.txt">gpl.txt</a>.<br />
+The source code is available on the <a
+	href="https://sourceforge.net/projects/trekbuddyatlasc/files/">SourceForge.net</a>
+for download and in the <a
+	href="http://sourceforge.net/scm/?type=svn&group_id=238075">project's
+source code Subversion repository</a>.</p>
 
 <h2><a name="Description">Description</a></h2>
 <p>This application creates atlases for the J2ME applications <a
@@ -114,6 +130,22 @@ capable image viewer (map image in one large PNG file).</p>
 <h2><a name="Requirements">Requirements</a></h2>
 <p>This application requires that a Java Runtime Environment Version
 6 Update 14 (v1.6.0_14) or higher is installed on the computer.</p>
+<p>If you have the choice between different Java Runtimes you should
+prefer the Java Runtime provided by Sun/Oracle. Especially the OpenJDK
+has some bugs regarding MOBAC and tends to crash on certain situations.</p>
+<h3><a name="SQLite">SQLite (optional)</a></h3>
+<p>Some atlas formats uses a SQLite database for storing the tiles.
+For creating SQLite database the additional Java library <a
+	href="http://www.zentus.com/sqlitejdbc/">SQLiteJDBC</a> is required.
+MOBAC has been tested with <a
+	href="http://files.zentus.com/sqlitejdbc/sqlitejdbc-v056.jar">sqlitejdbc-v056.jar</a>
+- newer versions should also work.</p>
+<p>Installation of the additional SQLite libraries is pretty simple:
+Just jownload the JAR file and place it in the same directory where <tt>Mobile_Atlas_Creator.jar</tt>
+is located. Alternatively you can place it in any path covered by the
+JAVA search path. The next time MOBAC is started the SQLite library is
+loaded and can be used.</p>
+<h3><a name="JAI">Java Advanced Imaging (optional)</a></h3>
 <p>For reducing the color depth of downloaded tiles the library
 files of the "Java Advanced Imaging" (JAI) have to be present on the
 system respectively in the same directory as Mobile_Atlas_Creator.jar.
@@ -128,12 +160,18 @@ please make sure <b>not to install MOBAC into Program Files
 sub-directory!</b></p>
 
 <h2><a name="Start">Application start</a></h2>
+<h3>Windows</h3>
 <p>The application is started by executing the <tt>Mobile Atlas
-Creator.exe</tt> in a Windows environment or the <tt>start.sh</tt> under a
-Linux / Unix environment (it may be necessary to set the executable bit
-for the script). At the first application start all necessary files and
+Creator.exe</tt>. During the first application start all necessary files and
 folders are automatically created by the application.</p>
-
+<h3>Linux and OSX</h3>
+<p>You can start MOBAC by executing the start-up script <tt>start.sh</tt>.
+Before starting MOBAC the first time it may be necessary to set the
+executable bit for <tt>start.sh</tt> e.g. by executing the following
+command:</p>
+<pre>chmod u+x start.sh</pre>
+<p>During the first application start all necessary files and
+folders are automatically created by the application.</p>
 <hr>
 <!-- *************************************************************************** -->
 <h2><a name="AtlasFormats">The different atlas formats</a></h2>
@@ -163,6 +201,29 @@ for AndNav:</p>
 	<li>Change height or width of the map tiles</li>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
+</ul>
+<!-- *************************************************************************** -->
+<h3><a name="BigPlanet">Creating and using atlases with Big
+Planet Tracks</a></h3>
+<p>For creating offline atlases compatible with <a
+	href="http://code.google.com/p/big-planet-tracks/">Big Planet
+Tracks</a> (Android application) you have to select <b>Big Planet Tracks
+SQLite</b> as format in section <b>Atlas settings</b> on the left side of
+the main window. <br>
+Please not that this atlas format requires additional libraries which
+are not shipped with Mobile Atlas Creator. Read section <a
+	href="#SQLite">SQLite library</a> for details what libraries are
+required and how to obtain them.<br>
+The atlas format BigPlanet SQLite does not support all features provided
+by Mobile Atlas Creator the following settings are ignored when creating
+atlases using this output format:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+	<li>Atlases created after another are merged into one Database
+	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
+	output directory.</li>
 </ul>
 <!-- *************************************************************************** -->
 <h3><a name="CacheWolf">Creating atlases for CacheWolf</a></h3>
@@ -337,6 +398,24 @@ download and creation has completed, the generated file with the
 extension nmap can be found in the MOBAC output directory. This
 *.nmap-file is the required input file for NaviComputer.</p>
 <!-- *************************************************************************** -->
+<h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
+<p>For creating atlases compatible with <a
+	href="http://www.oruxmaps.com">OruxMaps</a> as format you have to
+select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left side
+of the main window.</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Layer settings, custom tile size. OruxMaps always uses 512x512
+	tile size. You can select the tile format (PNG or JPEG). If you do not
+	select any, default value is JPEG - quality 90.</li>
+</ul>
+<p>The output format of an "atlas" for OruxMaps is one or more map
+directories in the atlas directory. You have to copy those maps onto
+your device (default directory: /oruxmaps/mapfiles/).</p>
+<p>If you select OruxMaps Sqlite format, then you need SQLite native
+libraries; see <a href="#SQLite">SQLite atlas formats</a></p>
+<!-- *************************************************************************** -->
 <h3><a name="OSMTracker">Creating atlases for OSMTracker</a></h3>
 <p>For creating atlases compatible with OSMTracker you have to
 select <b>OSMTracker tile storage</b> as format in section <b>Atlas
@@ -348,30 +427,6 @@ for OSMTracker:</p>
 	<li>Change height or width of the map tiles</li>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
-</ul>
-<!-- *************************************************************************** -->
-<h3><a name="BigPlanet">Creating and using atlases with
-BigPlanet / RMaps</a></h3>
-<p>For creating offline atlases compatible with <a
-	href="http://code.google.com/p/bigplanet/">BigPlanet-Maps</a> and <a
-	href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>
-(both Android applications) you have to select <b>BigPlanet / RMaps
-SQLite</b> as format in section <b>Atlas settings</b> on the left side of
-the main window. <br>
-Please not that this atlas format requires additional libraries which
-are not shipped with Mobile Atlas Creator. Read section <a
-	href="#SQLite">SQLite library</a> for details what libraries are
-required and how to obtain them.<br>
-The atlas format BigPlanet SQLite does not support all features provided
-by Mobile Atlas Creator the following settings are ignored when creating
-atlases using this output format:</p>
-<ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
-	<li>Name of all layers and maps</li>
-	<li>Structure of the atlas (which maps belongs to which layer)</li>
-	<li>Atlases created after another are merged into one Database
-	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
-	output directory.</li>
 </ul>
 <!-- *************************************************************************** -->
 <h3><a name="Ozi">Creating and using atlases with OziExplorer /
@@ -402,24 +457,6 @@ and most image viewers do not use such sophisticated algorithms which
 can lead to the situation that you can create very large map images -
 but OziExplorer and other image viewers are not able to open the image.</p>
 <!-- *************************************************************************** -->
-<h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
-<p>For creating atlases compatible with <a
-	href="http://www.oruxmaps.com">OruxMaps</a> as format you have to
-select <b>OruxMaps</b> in section <b>Atlas settings</b> on the left side
-of the main window.</p>
-<p>Using this atlas output format the following features are ignored
-when creating atlases:</p>
-<ul>
-	<li>Layer settings, custom tile size. OruxMaps always uses 512x512
-	tile size. You can select the tile format (PNG or JPEG). If you do not
-	select any, default value is JPEG - quality 90.</li>
-</ul>
-<p>The output format of an "atlas" for OruxMaps is one or more map
-directories in the atlas directory. You have to copy those maps onto
-your device (default directory: /oruxmaps/mapfiles/).</p>
-<p>If you select OruxMaps Sqlite format, then you need Sqlite native
-libraries; see <a href="#SQLite">RMaps / BigPlanet Tracks</a></p>
-<!-- *************************************************************************** -->
 <h3><a name="PathAway">Creating atlases for PathAway</a></h3>
 <p>For creating atlases compatible with PathAway you have to select
 <b>PathAway tile cache</b> as format in section <b>Atlas settings</b> on
@@ -437,22 +474,26 @@ PathAway:</p>
 	layer)</li>
 </ul>
 <!-- *************************************************************************** -->
-<h3><a name="TrekBuddy">Creating and using atlases with
-TrekBuddy</a></h3>
-<p>For creating atlases compatible with TrekBuddy you have to select
-<b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
-in section <b>Atlas settings</b> on the left side of the main window.</p>
-<p>After defining the maps and layers for the atlas to be created
-start atlas download and creation via the button <b>Create Atlas</b>.
-Once atlas download and creation has completed all necessary files
-belonging to the atlas can be found in the directory <tt>atlases\[atlas
-name]_[current date and time]</tt>.</p>
-<p>The atlas itself consists of the atlas startup file <tt>cr.tar</tt>
-(tar format) or <tt>cr.tba</tt> (regular/untared format) and the
-subdirectories containing the different maps of the atlas. For using the
-atlas with TrekBuddy copy the whole directory onto your J2ME device.
-Then use the <b>Load Atlas</b> function of TrekBuddy and open <tt>cr.tar</tt>/<tt>cr.tba</tt>
-(in the atlas root directory).</p>
+<h3><a name="RMaps">Creating and using atlases with RMaps</a></h3>
+<p>For creating offline atlases compatible with <a
+	href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>
+(Android application) you have to select <b>RMaps SQLite</b> as format
+in section <b>Atlas settings</b> on the left side of the main window. <br>
+Please not that this atlas format requires additional libraries which
+are not shipped with Mobile Atlas Creator. Read section <a
+	href="#SQLite">SQLite library</a> for details what libraries are
+required and how to obtain them.<br>
+The atlas format BigPlanet SQLite does not support all features provided
+by Mobile Atlas Creator the following settings are ignored when creating
+atlases using this output format:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Name of all layers and maps</li>
+	<li>Structure of the atlas (which maps belongs to which layer)</li>
+	<li>Atlases created after another are merged into one Database
+	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
+	output directory.</li>
+</ul>
 <!-- *************************************************************************** -->
 <h3><a name="TTQV">Creating and using atlases with Touratech QV
 / large PNG image export</a></h3>
@@ -480,21 +521,22 @@ algorithms which can lead to the situation that you can create very
 large map images - but Touratech QV and other image viewers are not able
 to open the image.</p>
 <!-- *************************************************************************** -->
-
-<h2><a name="SQLite">SQLite atlas formats</a></h2>
-<p>Some atlas formats uses a SQLite database for storing the tiles.
-For creating SQLite database the additional Java library <a
-	href="http://www.zentus.com/sqlitejdbc/">SQLiteJDBC</a> is required.
-MOBAC has been tested with <a
-	href="http://files.zentus.com/sqlitejdbc/sqlitejdbc-v056.jar">sqlitejdbc-v056.jar</a>
-- newer versions should also work.</p>
-<h3>Installation</h3>
-<p>Installation of the additional SQLite libraries is pretty simple:
-Just jownload the JAR file and place it in the same directory where <tt>Mobile_Atlas_Creator.jar</tt>
-is located. Alternatively you can place it in any path covered by the
-JAVA search path. The next time MOBAC is started the SQLite library is
-loaded and can be used.</p>
-<hr>
+<h3><a name="TrekBuddy">Creating and using atlases with
+TrekBuddy</a></h3>
+<p>For creating atlases compatible with TrekBuddy you have to select
+<b>TrekBuddy tared atlas</b> or <b>TrekBuddy untared atlas</b> as format
+in section <b>Atlas settings</b> on the left side of the main window.</p>
+<p>After defining the maps and layers for the atlas to be created
+start atlas download and creation via the button <b>Create Atlas</b>.
+Once atlas download and creation has completed all necessary files
+belonging to the atlas can be found in the directory <tt>atlases\[atlas
+name]_[current date and time]</tt>.</p>
+<p>The atlas itself consists of the atlas startup file <tt>cr.tar</tt>
+(tar format) or <tt>cr.tba</tt> (regular/untared format) and the
+subdirectories containing the different maps of the atlas. For using the
+atlas with TrekBuddy copy the whole directory onto your J2ME device.
+Then use the <b>Load Atlas</b> function of TrekBuddy and open <tt>cr.tar</tt>/<tt>cr.tba</tt>
+(in the atlas root directory).</p>
 <!-- *************************************************************************** -->
 <h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other

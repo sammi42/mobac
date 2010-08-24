@@ -184,11 +184,7 @@
 				<include name="Mobile Atlas Creator.exe" />
 				<include name="misc/launch4j.xml" />
 				<include name="misc/mobac.ico" />
-				<include name="lib/log4j-1.2.15.jar" />
-				<include name="lib/je-${je-version}.jar" />
-				<include name="lib/jai_*.jar" />
-				<include name="lib/sqlitejdbc*.jar" />
-				<include name="lib/proguard.jar" />
+				<include name="lib/*.jar" />
 			</fileset>
 		</zip>
 	</target>

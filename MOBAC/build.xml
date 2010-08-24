@@ -173,8 +173,6 @@
 		<zip destfile="${zip_src.name}" update="false">
 			<fileset dir="./">
 				<include name="src/**" />
-				<exclude name="src/_test/**" />
-				<exclude name="src/test/**" />
 				<exclude name="src/mobac/tools/**" />
 				<include name="log4j.xml" />
 				<include name="build.xml" />

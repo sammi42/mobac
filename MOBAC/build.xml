@@ -37,7 +37,6 @@
 			<fileset dir="lib" includes="log*.jar" />
 			<fileset dir="lib" includes="jai*.jar" />
 			<fileset dir="lib" includes="je-${je-version}.jar" />
-			<fileset dir="lib" includes="flatpack-1.0.jar" />
 		</path>
 		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
@@ -66,7 +65,6 @@
 			</manifest>
 			<zipfileset src="lib/log4j-1.2.15.jar" />
 			<zipfileset src="lib/je-${je-version}.jar" />
-			<zipfileset src="lib/flatpack-1.0.jar" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />

@@ -17,9 +17,16 @@
 package mobac.program.atlascreators;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,22 +35,31 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.ProgramInfo;
+import mobac.program.atlascreators.impl.aqm.FlatPackCreator;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.TileImageDataWriter;
+import mobac.utilities.stream.ArrayOutputStream;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-import psyberia.api.packer.PsyFlatPackCreator;
-
 /**
- * Creates maps using the AlpineQuestMap atlas format.
+ * Creates maps using the AlpineQuestMap atlas format (AQM v2 complient).
  * 
- * AQM format pack tiles in a unique file using the FlatPack format.
+ * AQM format pack tiles in a unique file using the FlatPack format. Supports multi-layers, tile resizing.
  * 
  * @author Camille
  */
 public class AlpineQuestMap extends AtlasCreator {
+
+	public static final String AQM_VERSION = "2";
+
+	public static final String AQM_HEADER = "V" + AQM_VERSION + "HEADER";
+	public static final String AQM_LEVEL = "V" + AQM_VERSION + "LEVEL";
+	public static final String AQM_LEVEL_DELIMITER = "@LEVEL";
+	public static final String AQM_END_DELIMITER = "#END";
 
 	private static final String[] SCALES = new String[] { "1:512 000 000", // 00
 			"1:256 000 000", // 01
@@ -76,98 +92,74 @@ public class AlpineQuestMap extends AtlasCreator {
 			"1:1" // 28
 	};
 
-	private File strMapFileName = null;
-	private File strInfFileName = null;
+	private FlatPackCreator packCreator = null;
+	private File filePack = null;
 
-	private PsyFlatPackCreator packCreator = null;
+	private double xResizeRatio = 1.0;
+	private double yResizeRatio = 1.0;
 
-	private long nbTiles = 0;
-	private String strFormat = null;
-	private Dimension tileSize = null;
-
-	@Override
-	public boolean testMapSource(MapSource mapSource) {
-		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-	}
+	private int lastZoomLevel = 0;
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initLayerCreation(final LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
 
-		// resize images
-		if (parameters != null) {
-			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters
-					.getFormat());
-			strFormat = parameters.getFormat().getDataWriter().getFileExt();
-			// tileSize = parameters.getDimension();
-		} else {
-			strFormat = mapSource.getTileType();
-			// tileSize = map.getTileSize();
-		}
+		if (layer.getMapCount() > 0) {
+			// create the file
+			this.filePack = new File(atlasDir + "/" + layer.getName() + ".AQM");
+			this.packCreator = new FlatPackCreator(filePack);
+			this.lastZoomLevel = -1;
 
-		// no tile resizing
-		tileSize = map.getTileSize();
+			// add map header
+			this.addMapHeader(layer.getMap(0).getMapSource().toString(), layer.getName());
 
-		if (strFormat != null)
-			strFormat = strFormat.toUpperCase();
+			// add level headers
+			for (int i = 0; i < layer.getMapCount(); i++) {
+				// needed to merge splitted maps due to map size (map split not needed by AQM format)
+				Insets bounds = new Insets(layer.getMap(i).getMinTileCoordinate().y, layer.getMap(i)
+						.getMinTileCoordinate().x, layer.getMap(i).getMaxTileCoordinate().y, layer.getMap(i)
+						.getMaxTileCoordinate().x);
 
-		// number of tiles for all world
-		nbTiles = Math.round(Math.pow(2, zoom));
-
-		// used files
-		strMapFileName = new File(atlasDir, mapSource.getName() + "_" + zoom + "_"
-				+ map.getLayer().getName() + ".AQM");
-		strInfFileName = new File(atlasDir, mapSource.getName() + "_" + zoom + "_"
-				+ map.getLayer().getName() + ".INF");
-	}
-
-	public void createMap() throws MapCreationException, InterruptedException {
-		try {
-			packCreator = new PsyFlatPackCreator(strMapFileName.getAbsolutePath());
-
-			// metadata information at the beginning
-			addInfFile(packCreator);
-
-			// add tiles
-			addTiles();
-
-			packCreator.close();
-		} catch (Exception e) {
-			throw new MapCreationException(e);
-		}
-	}
-
-	private final void addTiles() throws InterruptedException, MapCreationException {
-		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-		ImageIO.setUseCache(false);
-
-		for (int x = xMin; x <= xMax; x++) {
-			for (int y = yMin; y <= yMax; y++) {
-				checkUserAbort();
-				atlasProgress.incMapCreationProgress();
-
-				try {
-					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null) {
-						/* y tiles count starts bottom in AQM */
-						packCreator.add(sourceTileData, "" + x + "_" + (nbTiles - y));
-					}
-				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+				// loops over all maps with the same level and add the bounds
+				while (((i + 1) < layer.getMapCount()) && (layer.getMap(i).getZoom() == layer.getMap(i + 1).getZoom())) {
+					i++;
+					bounds.top = Math.min(bounds.top, layer.getMap(i).getMinTileCoordinate().y);
+					bounds.left = Math.min(bounds.left, layer.getMap(i).getMinTileCoordinate().x);
+					bounds.bottom = Math.max(bounds.bottom, layer.getMap(i).getMaxTileCoordinate().y);
+					bounds.right = Math.max(bounds.right, layer.getMap(i).getMaxTileCoordinate().x);
 				}
+
+				this.addLevelHeader(layer.getMap(i), bounds);
 			}
 		}
 	}
 
-	private final void addInfFile(final PsyFlatPackCreator pack) throws IOException {
+	@Override
+	public void finishLayerCreation() throws IOException {
+		// add end of file delimiter
+		packCreator.add(new byte[0], AQM_END_DELIMITER);
+		packCreator.close();
+		packCreator = null;
+
+		super.finishLayerCreation();
+	}
+
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		if (packCreator != null)
+			packCreator.close();
+		packCreator = null;
+
+		if (filePack != null)
+			filePack.delete();
+		filePack = null;
+
+		super.abortAtlasCreation();
+	}
+
+	private final void addMapHeader(final String strID, final String strName) throws IOException {
 		// version of the AQM format (internal use)
-		String strVersion = "1";
-
-		// projection of tiles (internal use)
-		String strProjection = "mercator";
-
-		// unique identifier for a data source / zoom (internal use)
-		String strID = mapSource.getName() + "_" + zoom;
+		String strVersion = AQM_VERSION;
 
 		// software used to create the map (displayed to user)
 		String strSoftware = ProgramInfo.getCompleteTitle();
@@ -175,14 +167,34 @@ public class AlpineQuestMap extends AtlasCreator {
 		// date of creation (displayed to user)
 		String strDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
 
-		// source of the map data (displayed to user)
-		String strDataSource = mapSource.toString();
-
 		// name of the person that created the map (displayed to user)
-		String strCreator = "MobileAtlasCreator";
+		String strCreator = "";
 
-		// copyright of map data (displayed to user)
-		String strCopyright = mapSource.toString();
+		StringWriter w = new StringWriter();
+		w.write("[map]        " + "\n");
+		w.write("id         = " + strID + "\n");
+		w.write("name       = " + strName + "\n");
+		w.write("version    = " + strVersion + "\n");
+		w.write("date       = " + strDate + "\n");
+		w.write("creator    = " + strCreator + "\n");
+		w.write("software   = " + strSoftware + "\n");
+		w.write("\n");
+		w.flush();
+		w.close();
+
+		// add the metadata file into map
+		packCreator.add(w.getBuffer().toString().getBytes(), AQM_HEADER);
+	}
+
+	private final void addLevelHeader(final MapInterface map, final Insets bounds) throws IOException {
+		int tileSize = map.getMapSource().getMapSpace().getTileSize();
+		int xMin = bounds.left / tileSize;
+		int xMax = bounds.right / tileSize;
+		int yMin = bounds.top / tileSize;
+		int yMax = bounds.bottom / tileSize;
+
+		// unique identifier for a data source / zoom (internal use)
+		final String strID = new DecimalFormat("00").format(map.getZoom());
 
 		// name of this specific map (displayed to user)
 		String strName = map.getLayer().getName();
@@ -191,41 +203,178 @@ public class AlpineQuestMap extends AtlasCreator {
 
 		// scale of the map (displayed to user)
 		String strScale = "";
-		if (zoom >= 0 && zoom < SCALES.length)
-			strScale = SCALES[zoom];
+		if (map.getZoom() >= 0 && map.getZoom() < SCALES.length)
+			strScale = SCALES[map.getZoom()];
 
-		// write metadata file
-		FileWriter w = new FileWriter(strInfFileName);
+		// source of the map data (displayed to user)
+		final String strDataSource = map.getMapSource().toString();
+
+		// copyright of map data (displayed to user)
+		final String strCopyright = map.getMapSource().toString();
+
+		// projection of tiles (internal use)
+		final String strProjection = "mercator";
+
+		// number of tiles (internal use)
+		final long nbTotalTiles = Math.round(Math.pow(2, map.getZoom()));
+
+		// check resize or resample parameters
+		String strImageFormat = null;
+		Dimension tilesSize = null;
+
+		if (map.getParameters() != null) {
+			strImageFormat = map.getParameters().getFormat().getDataWriter().getFileExt();
+			tilesSize = map.getParameters().getDimension();
+		} else {
+			strImageFormat = map.getMapSource().getTileType();
+			tilesSize = map.getTileSize();
+		}
+
+		if (strImageFormat != null)
+			strImageFormat = strImageFormat.toUpperCase();
+
+		// write metadata
+		StringWriter w = new StringWriter();
+		w.write("[level]      " + "\n");
 		w.write("id         = " + strID + "\n");
 		w.write("name       = " + strName + "\n");
-		w.write("version    = " + strVersion + "\n");
-		w.write("date       = " + strDate + "\n");
 		w.write("scale      = " + strScale + "\n");
 		w.write("datasource = " + strDataSource + "\n");
-		w.write("creator    = " + strCreator + "\n");
-		w.write("software   = " + strSoftware + "\n");
 		w.write("copyright  = " + strCopyright + "\n");
 		w.write("projection = " + strProjection + "\n");
-		w.write("xtsize     = " + (int) tileSize.getWidth() + "\n");
-		w.write("ytsize     = " + (int) tileSize.getHeight() + "\n");
-		w.write("xtratio    = " + (nbTiles / 360.0) + "\n");
-		w.write("ytratio    = " + (nbTiles / 360.0) + "\n");
-		w.write("xtoffset   = " + (nbTiles / 2.0) + "\n");
-		w.write("ytoffset   = " + (nbTiles / 2.0) + "\n");
+		w.write("xtsize     = " + (int) tilesSize.getWidth() + "\n");
+		w.write("ytsize     = " + (int) tilesSize.getHeight() + "\n");
+		w.write("xtratio    = " + (nbTotalTiles / 360.0) + "\n");
+		w.write("ytratio    = " + (nbTotalTiles / 360.0) + "\n");
+		w.write("xtoffset   = " + (nbTotalTiles / 2.0) + "\n");
+		w.write("ytoffset   = " + (nbTotalTiles / 2.0) + "\n");
 		w.write("xtmin      = " + xMin + "\n");
 		w.write("xtmax      = " + xMax + "\n");
-		w.write("ytmin      = " + (nbTiles - yMax) + "\n");
-		w.write("ytmax      = " + (nbTiles - yMin) + "\n");
+		w.write("ytmin      = " + (nbTotalTiles - yMax) + "\n");
+		w.write("ytmax      = " + (nbTotalTiles - yMin) + "\n");
 		w.write("background = " + "#FFFFFF" + "\n");
-		w.write("imgformat  = " + strFormat + "\n");
+		w.write("imgformat  = " + strImageFormat + "\n");
+		w.write("\n");
 		w.flush();
 		w.close();
 
 		// add the metadata file into map
-		packCreator.add(strInfFileName, "INF");
+		packCreator.add(w.getBuffer().toString().getBytes(), AQM_LEVEL);
+	}
 
-		// remove the metadata file
-		strInfFileName.delete();
+	@Override
+	public boolean testMapSource(final MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
+
+	@Override
+	public void initializeMap(final MapInterface map, final TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
+
+		xResizeRatio = 1.0;
+		yResizeRatio = 1.0;
+
+		if (parameters != null) {
+			if ((parameters.getWidth() != map.getMapSource().getMapSpace().getTileSize())
+					|| (parameters.getHeight() != map.getMapSource().getMapSpace().getTileSize())) {
+				// handle image re-sampling + image re-sizing
+				xResizeRatio = (double) parameters.getWidth() / (double) map.getMapSource().getMapSpace().getTileSize();
+				yResizeRatio = (double) parameters.getHeight()
+						/ (double) map.getMapSource().getMapSpace().getTileSize();
+			} else {
+				// handle only image re-sampling
+				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+			}
+		}
+	}
+
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		try {
+			if (map.getZoom() > lastZoomLevel) {
+				// metadata information at the beginning
+				this.addLevelDelimiter();
+				this.lastZoomLevel = map.getZoom();
+			}
+
+			// add tiles
+			this.addLevelTiles();
+		} catch (Exception e) {
+			throw new MapCreationException(e);
+		}
+	}
+
+	private final void addLevelDelimiter() throws IOException {
+		// add empty level delimiter file
+		packCreator.add(new byte[0], AQM_LEVEL_DELIMITER);
+	}
+
+	private final void addLevelTiles() throws InterruptedException, MapCreationException {
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+
+		// number of tiles for this zoom level
+		final long nbTotalTiles = Math.round(Math.pow(2, map.getZoom()));
+
+		// tile resizing
+		BufferedImage tileImage = null;
+		Graphics2D graphics = null;
+		ArrayOutputStream buffer = null;
+		TileImageDataWriter writer = null;
+
+		if ((xResizeRatio != 1.0) || (yResizeRatio != 1.0)) {
+			// resize image
+			tileImage = new BufferedImage(parameters.getWidth(), parameters.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+
+			// associated graphics with affine transform
+			graphics = tileImage.createGraphics();
+			graphics.setTransform(AffineTransform.getScaleInstance(xResizeRatio, yResizeRatio));
+			graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+			// image compression writer
+			writer = parameters.getFormat().getDataWriter();
+
+			// buffer to store compressed image
+			buffer = new ArrayOutputStream(3 * parameters.getWidth() * parameters.getHeight());
+		}
+
+		ImageIO.setUseCache(false);
+
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				checkUserAbort();
+
+				atlasProgress.incMapCreationProgress();
+
+				try {
+					// retrieve the tile data (already re-sampled if needed)
+					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+
+					if (sourceTileData != null) {
+						// there is some data
+						if ((graphics != null) && (buffer != null) && (writer != null)) {
+							// need to resize the tile
+							final BufferedImage tile = ImageIO.read(new ByteArrayInputStream(sourceTileData));
+							graphics.drawImage(tile, 0, 0, null);
+
+							buffer.reset();
+
+							writer.initialize();
+							writer.processImage(tileImage, buffer);
+
+							sourceTileData = buffer.toByteArray();
+
+							if (sourceTileData == null)
+								throw new MapCreationException("Image resizing failed.");
+						}
+
+						packCreator.add(sourceTileData, "" + x + "_" + (nbTotalTiles - y)); // y tiles count began by
+																							// bottom in AQM
+					}
+				} catch (IOException e) {
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 }

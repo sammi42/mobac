@@ -63,11 +63,6 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	private String databaseFile;
 
-	/**
-	 * Accumulate tiles in batch process until 10MB of heap are remaining
-	 */
-	private static final long HEAP_MIN = 10 * 1024 * 1024;
-
 	protected Connection conn = null;
 	private PreparedStatement prepStmt;
 
@@ -126,22 +121,14 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	public void abortAtlasCreation() throws IOException {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			log.error(e.getMessage());
-		}
+		SQLiteLoader.closeConnection(conn);
 		conn = null;
 		super.abortAtlasCreation();
 	}
 
 	@Override
 	public void finishAtlasCreation() throws IOException, InterruptedException {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			log.error(e.getMessage());
-		}
+		SQLiteLoader.closeConnection(conn);
 		conn = null;
 		super.finishAtlasCreation();
 	}

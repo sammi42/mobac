@@ -5,4 +5,8 @@ package mobac.program.atlascreators;
  */
 public interface RequiresSQLite {
 
+	/**
+	 * Accumulate tiles in batch process until 20MB of heap are remaining
+	 */
+	public static final long HEAP_MIN = 20 * 1024 * 1024;
 }

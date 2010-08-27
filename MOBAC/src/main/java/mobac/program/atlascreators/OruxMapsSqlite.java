@@ -49,11 +49,6 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 	private String databaseFile;
 
-	/**
-	 * Accumulate tiles in batch process until 10MB of heap are remaining
-	 */
-	private static final long HEAP_MIN = 10 * 1024 * 1024;
-
 	private Connection conn = null;
 	private PreparedStatement prepStmt;
 

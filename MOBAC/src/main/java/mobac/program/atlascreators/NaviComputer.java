@@ -70,11 +70,6 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 	private String databaseFile;
 	private int wmsTileCount = 1;
 
-	/**
-	 * Accumulate tiles in batch process until 10MB of heap are remaining
-	 */
-	private static final long HEAP_MIN = 10 * 1024 * 1024;
-
 	private static final int COMMIT_RATE = 100;
 	private int tileCommitCounter = 0;
 	protected Connection conn = null;
@@ -195,6 +190,7 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 							if (heapAvailable < HEAP_MIN || tileCommitCounter > COMMIT_RATE) {
 								conn.commit();
 								tileCommitCounter = 0;
+								System.gc();
 							}
 						}
 					} catch (IOException e) {

@@ -34,6 +34,7 @@ import mobac.mapsources.impl.Microsoft.MicrosoftOrdnanceSurveyExplorer;
 import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
+import mobac.mapsources.impl.MiscMapSources.Navitel;
 import mobac.mapsources.impl.MiscMapSources.OviMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
@@ -109,7 +110,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new FreemapSlovakiaCycling(), new Turaterkep(), new NearMap(), new HubermediaBavaria(),
 				new StatkartTopo2(), new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(),
 				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat(),
-				new MicrosoftOrdnanceSurveyExplorer(), new AeroChartsVFR(), new AeroChartsIFR(), new AeroChartsIFRH() };
+				new Navitel(), new MicrosoftOrdnanceSurveyExplorer(), new AeroChartsVFR(), new AeroChartsIFR(),
+				new AeroChartsIFRH() };
 	}
 
 	public static void initialize() {

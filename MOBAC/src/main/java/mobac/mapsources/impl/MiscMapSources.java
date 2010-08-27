@@ -232,4 +232,30 @@ public class MiscMapSources {
 
 	}
 
+	/**
+	 * http://map.navitel.su
+	 * 
+	 * @version 1.1
+	 * @author Andrey Raygorodskiy (andrey(dot)raygorodskiy(at)gmail(dot)com)
+	 * @author r_x
+	 */
+	public static class Navitel extends AbstractMapSource {
+
+		private static final String BASE_URL = "http://maps.navitel.su/navitms.fcgi?t=%08d,%08d,%02d";
+
+		public Navitel() {
+			super("Navitel.su", 3, 17, "png", TileUpdate.None);
+		}
+
+		@Override
+		public String toString() {
+			return "Navitel (Russian)";
+		}
+
+		@Override
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			tiley = (1 << zoom) - tiley - 1;
+			return String.format(BASE_URL, tilex, tiley, zoom);
+		}
+	}
 }

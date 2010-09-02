@@ -74,7 +74,7 @@ public class GpsSportsTracker extends AtlasCreator {
 				checkUserAbort();
 				atlasProgress.incMapCreationProgress();
 				try {
-					String tileFileName = map.getZoom() + "_ " + x + "_" + y + ".png";
+					String tileFileName = map.getZoom() + "_" + x + "_" + y + ".png";
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null) {
 						File f = new File(mapDir, tileFileName);

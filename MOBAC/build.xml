@@ -178,7 +178,9 @@
 				<include name="README.HTM" />
 				<include name="README-DEV.HTM" />
 				<include name="CHANGELOG.txt" />
-				<include name="start.*" />
+				<include name="start.sh" />
+				<include name=".classpath" />
+				<include name=".project" />
 				<include name="Mobile Atlas Creator.exe" />
 				<include name="misc/launch4j.xml" />
 				<include name="misc/mobac.ico" />

@@ -616,8 +616,8 @@ public class RegionalMapSources {
 
 		@Override
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://maps.mytopo.com/mytopo/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/" + tiley
-					+ ".png";
+			return "http://maps.mytopo.com/mt20100826/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/"
+					+ tiley + ".png";
 		}
 
 		@Override

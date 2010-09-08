@@ -11,7 +11,8 @@
  1.8 beta 2: (2010-??-??)
  + AlpineQuestMap atlas creator updated (patch by Camille) 
  + New map source: Navitel (Russian)
- ! GPS Sport Tracker: space removed in tile file name 
+ ! GPS Sport Tracker: space removed in tile file name
+ ! MyTopo URL updated 
 
  1.8 beta 1: (2010-08-24)
  ! Fixed PNG 256 color output

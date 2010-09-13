@@ -292,7 +292,7 @@ public class OsmMapSources {
 	public static class HikebikemapRelief extends AbstractMapSource {
 
 		public HikebikemapRelief() {
-			super("HikebikemapRelief", 0, 17, "png", TileUpdate.None);
+			super("HikebikemapRelief", 0, 16, "png", TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

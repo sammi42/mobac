@@ -28,6 +28,8 @@ import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
+import mobac.mapsources.impl.MiscMapSources.YandexMap;
+import mobac.mapsources.impl.MiscMapSources.YandexSat;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
 import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
@@ -35,6 +37,7 @@ import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
 import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
+import mobac.mapsources.impl.RegionalMapSources.CykloatlasWithRelief;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaCycling;
@@ -76,6 +79,7 @@ public class Cities {
 		TEST_COORDINATES = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
 		TEST_COORDINATES.put(GoogleMapMaker.class, Cities.BANGALORE);
 		TEST_COORDINATES.put(Cykloatlas.class, Cities.PRAHA);
+		TEST_COORDINATES.put(CykloatlasWithRelief.class, Cities.PRAHA);
 		TEST_COORDINATES.put(GoogleMapsChina.class, Cities.SHANGHAI);
 		TEST_COORDINATES.put(GoogleMapsKorea.class, Cities.SEOUL);
 		TEST_COORDINATES.put(MicrosoftMapsChina.class, Cities.SHANGHAI);
@@ -100,6 +104,8 @@ public class Cities {
 		TEST_COORDINATES.put(AeroChartsIFRH.class, Cities.NEY_YORK);
 		TEST_COORDINATES.put(AeroChartsVFR.class, Cities.NEY_YORK);
 		TEST_COORDINATES.put(MicrosoftOrdnanceSurveyExplorer.class, Cities.LONDON);
+		TEST_COORDINATES.put(YandexMap.class, Cities.MOSCOW);
+		TEST_COORDINATES.put(YandexSat.class, Cities.MOSCOW);
 	}
 
 	public static EastNorthCoordinate getTestCoordinate(MapSource mapSource, EastNorthCoordinate defaultCoordinate) {

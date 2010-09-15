@@ -16,7 +16,6 @@
  ******************************************************************************/
 package mobac.program.download;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -48,9 +47,8 @@ public class TileDownLoader {
 
 	private static Settings settings = Settings.getInstance();
 
-	public static int getImage(int layer, int x, int y, int zoom, MapSource mapSource,
-			TarIndexedArchive tileArchive) throws IOException, InterruptedException,
-			UnrecoverableDownloadException {
+	public static int getImage(int layer, int x, int y, int zoom, MapSource mapSource, TarIndexedArchive tileArchive)
+			throws IOException, InterruptedException, UnrecoverableDownloadException {
 
 		MapSpace mapSpace = mapSource.getMapSpace();
 		int maxTileIndex = mapSpace.getMaxPixels(zoom) / mapSpace.getTileSize();
@@ -68,8 +66,7 @@ public class TileDownLoader {
 		// IOException("intentionally download error");
 
 		Settings s = Settings.getInstance();
-		String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, x,
-				y);
+		String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, x, y);
 
 		TileStoreEntry tile = null;
 		if (s.tileStoreEnabled) {
@@ -141,8 +138,7 @@ public class TileDownLoader {
 			throw new DownloadFailedException(conn, code);
 		String contentType = conn.getContentType();
 		if (contentType != null && !contentType.startsWith("image/"))
-			throw new UnrecoverableDownloadException(
-					"Content type of the loaded image is unknown: " + contentType);
+			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
 
 		String eTag = conn.getHeaderField("ETag");
 		long timeLastModified = conn.getLastModified();
@@ -153,8 +149,7 @@ public class TileDownLoader {
 		if (imageFormat == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
 		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
-			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
-					timeExpires, eTag);
+			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
 		}
 		Utilities.checkForInterruption();
 		return data;
@@ -241,8 +236,7 @@ public class TileDownLoader {
 			throw new DownloadFailedException(conn, code);
 		String contentType = conn.getContentType();
 		if (contentType != null && !contentType.startsWith("image/"))
-			throw new UnrecoverableDownloadException(
-					"Content type of the loaded image is unknown: " + contentType);
+			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
 
 		String eTag = conn.getHeaderField("ETag");
 		long timeLastModified = conn.getLastModified();
@@ -253,8 +247,7 @@ public class TileDownLoader {
 		if (imageFormat == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
 		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
-			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified,
-					timeExpires, eTag);
+			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
 		}
 		Utilities.checkForInterruption();
 		return data;
@@ -266,10 +259,8 @@ public class TileDownLoader {
 		long expiredTime = tileStoreEntry.getTimeExpires();
 		if (expiredTime >= 0) {
 			// server had set an expiration time
-			long maxExpirationTime = settings.tileMaxExpirationTime
-					+ tileStoreEntry.getTimeDownloaded();
-			long minExpirationTime = settings.tileMinExpirationTime
-					+ tileStoreEntry.getTimeDownloaded();
+			long maxExpirationTime = settings.tileMaxExpirationTime + tileStoreEntry.getTimeDownloaded();
+			long minExpirationTime = settings.tileMinExpirationTime + tileStoreEntry.getTimeDownloaded();
 			expiredTime = Math.max(minExpirationTime, Math.min(maxExpirationTime, expiredTime));
 		} else {
 			// no expiration time set by server - use the default one
@@ -279,9 +270,8 @@ public class TileDownLoader {
 	}
 
 	/**
-	 * Reads all available data from the input stream of <code>conn</code> and
-	 * returns it as byte array. If no input data is available the method
-	 * returns <code>null</code>.
+	 * Reads all available data from the input stream of <code>conn</code> and returns it as byte array. If no input
+	 * data is available the method returns <code>null</code>.
 	 * 
 	 * @param conn
 	 * @return
@@ -289,37 +279,41 @@ public class TileDownLoader {
 	 */
 	protected static byte[] loadBodyDataInBuffer(HttpURLConnection conn) throws IOException {
 		InputStream input = conn.getInputStream();
-		int bufSize = Math.max(input.available(), 32768);
-		ByteArrayOutputStream bout = new ByteArrayOutputStream(bufSize);
-		byte[] buffer = new byte[2048];
-		boolean finished = false;
-		do {
-			int read = input.read(buffer);
-			if (read >= 0)
-				bout.write(buffer, 0, read);
-			else
-				finished = true;
-		} while (!finished);
-		log.trace("Retrieved " + bout.size() + " bytes for a HTTP " + conn.getResponseCode());
-		if (bout.size() == 0)
+		byte[] data = null;
+		try {
+			data = Utilities.getInputBytes(input);
+		} catch (IOException e) {
+			InputStream errorIn = conn.getErrorStream();
+			try {
+				byte[] errData = Utilities.getInputBytes(errorIn);
+				log.trace("Retrieved " + errData.length + " error bytes for a HTTP " + conn.getResponseCode());
+			} catch (Exception ee) {
+				log.debug("Error retrieving error stream content: " + e);
+			} finally {
+				Utilities.closeStream(errorIn);
+			}
+			throw e;
+		} finally {
+			Utilities.closeStream(input);
+		}
+		log.trace("Retrieved " + data.length + " bytes for a HTTP " + conn.getResponseCode());
+		if (data.length == 0)
 			return null;
-		return bout.toByteArray();
+		return data;
 	}
 
 	/**
-	 * Performs a <code>HEAD</code> request for retrieving the
-	 * <code>LastModified</code> header value.
+	 * Performs a <code>HEAD</code> request for retrieving the <code>LastModified</code> header value.
 	 */
-	protected static boolean isTileNewer(TileStoreEntry tile, MapSource mapSource)
-			throws IOException {
+	protected static boolean isTileNewer(TileStoreEntry tile, MapSource mapSource) throws IOException {
 		long oldLastModified = tile.getTimeLastModified();
 		if (oldLastModified <= 0) {
-			log.warn("Tile age comparison not possible: "
-					+ "tile in tilestore does not contain lastModified attribute");
+			log
+					.warn("Tile age comparison not possible: "
+							+ "tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
-		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile
-				.getY());
+		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());
 		conn.setRequestMethod("HEAD");
 		conn.setRequestProperty("Accept", ACCEPT);
 		long newLastModified = conn.getLastModified();
@@ -328,16 +322,13 @@ public class TileDownLoader {
 		return (newLastModified > oldLastModified);
 	}
 
-	protected static boolean hasTileETag(TileStoreEntry tile, MapSource mapSource)
-			throws IOException {
+	protected static boolean hasTileETag(TileStoreEntry tile, MapSource mapSource) throws IOException {
 		String eTag = tile.geteTag();
 		if (eTag == null || eTag.length() == 0) {
-			log.warn("ETag check not possible: "
-					+ "tile in tilestore does not contain ETag attribute");
+			log.warn("ETag check not possible: " + "tile in tilestore does not contain ETag attribute");
 			return true;
 		}
-		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile
-				.getY());
+		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());
 		conn.setRequestMethod("HEAD");
 		conn.setRequestProperty("Accept", ACCEPT);
 		String onlineETag = conn.getHeaderField("ETag");

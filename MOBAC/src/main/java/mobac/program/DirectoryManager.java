@@ -18,9 +18,7 @@ package mobac.program;
 
 import java.io.File;
 
-import mobac.utilities.OSUtilities;
 import mobac.utilities.Utilities;
-import mobac.utilities.OSUtilities.OperatingSystem;
 
 /**
  * Provides the five common directories used within Mobile Atlas Creator:
@@ -76,8 +74,7 @@ public class DirectoryManager {
 	}
 
 	/**
-	 * Returns the directory where Mobile Atlas Creator saves it's application
-	 * settings.
+	 * Returns the directory where Mobile Atlas Creator saves it's application settings.
 	 * 
 	 * Examples:
 	 * <ul>
@@ -92,26 +89,21 @@ public class DirectoryManager {
 	 * @return
 	 */
 	private static File getUserSettingsDir() {
-		if (OSUtilities.detectOs() == OperatingSystem.Windows) {
-			String appData = System.getenv("APPDATA");
-			if (appData == null)
-				throw new RuntimeException("Unable to retrieve user application data directory - "
-						+ "environment variable %APPDATA% does not exist!");
+		String appData = System.getenv("APPDATA");
+		if (appData != null) {
 			File appDataDir = new File(appData);
 			if (appDataDir.isDirectory()) {
 				File mobacDataDir = new File(appData, "Mobile Atlas Creator");
 				if (mobacDataDir.isDirectory() || mobacDataDir.mkdir())
 					return mobacDataDir;
 				else
-					throw new RuntimeException("Unable to create directory \""
-							+ mobacDataDir.getAbsolutePath() + "\"");
+					throw new RuntimeException("Unable to create directory \"" + mobacDataDir.getAbsolutePath() + "\"");
 			}
 		}
 		File userDir = new File(System.getProperty("user.home"));
 		File mobacUserDir = new File(userDir, ".mobac");
 		if (!mobacUserDir.exists() && !mobacUserDir.mkdir())
-			throw new RuntimeException("Unable to create directory \""
-					+ mobacUserDir.getAbsolutePath() + "\"");
+			throw new RuntimeException("Unable to create directory \"" + mobacUserDir.getAbsolutePath() + "\"");
 		return mobacUserDir;
 	}
 }

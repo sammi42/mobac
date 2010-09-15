@@ -111,10 +111,9 @@ public class Utilities {
 		return emptyTileData;
 	}
 
-	private static final byte[] PNG = new byte[] { (byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A,
-			0x0A };
-	private static final byte[] JPG = new byte[] { (byte) 0xFF, (byte) 0xD8, (byte) 0xFF,
-			(byte) 0xE0, (byte) 0x00, 0x10, 'J', 'F', 'I', 'F' };
+	private static final byte[] PNG = new byte[] { (byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
+	private static final byte[] JPG = new byte[] { (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, (byte) 0x00,
+			0x10, 'J', 'F', 'I', 'F' };
 	private static final byte[] GIF_1 = "GIF87a".getBytes();
 	private static final byte[] GIF_2 = "GIF89a".getBytes();
 
@@ -157,8 +156,7 @@ public class Utilities {
 	}
 
 	public static String loadTextResource(String resourcePath) throws IOException {
-		DataInputStream in = new DataInputStream(Main.class.getResourceAsStream("resources/"
-				+ resourcePath));
+		DataInputStream in = new DataInputStream(Main.class.getResourceAsStream("resources/" + resourcePath));
 		byte[] buf;
 		buf = new byte[in.available()];
 		in.readFully(buf);
@@ -201,10 +199,9 @@ public class Utilities {
 	}
 
 	/**
-	 * Checks if the current {@link Thread} has been interrupted and if so a
-	 * {@link InterruptedException}. Therefore it behaves similar to
-	 * {@link Thread#sleep(long)} without actually slowing down anything by
-	 * sleeping a certain amount of time.
+	 * Checks if the current {@link Thread} has been interrupted and if so a {@link InterruptedException}. Therefore it
+	 * behaves similar to {@link Thread#sleep(long)} without actually slowing down anything by sleeping a certain amount
+	 * of time.
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -214,10 +211,8 @@ public class Utilities {
 	}
 
 	/**
-	 * Checks if the current {@link Thread} has been interrupted and if so a
-	 * {@link RuntimeException} will be thrown. This method is useful for long
-	 * lasting operations that do not allow to throw an
-	 * {@link InterruptedException}.
+	 * Checks if the current {@link Thread} has been interrupted and if so a {@link RuntimeException} will be thrown.
+	 * This method is useful for long lasting operations that do not allow to throw an {@link InterruptedException}.
 	 * 
 	 * @throws RuntimeException
 	 */
@@ -290,8 +285,7 @@ public class Utilities {
 	}
 
 	/**
-	 * Formats a byte value depending on the size to "Bytes", "KiBytes",
-	 * "MiByte" and "GiByte"
+	 * Formats a byte value depending on the size to "Bytes", "KiBytes", "MiByte" and "GiByte"
 	 * 
 	 * @param bytes
 	 * @return Formatted {@link String}
@@ -395,8 +389,8 @@ public class Utilities {
 	}
 
 	/**
-	 * Fully reads data from <tt>in</tt> to an internal buffer until the end of
-	 * in has been reached. Then the buffer is returned.
+	 * Fully reads data from <tt>in</tt> to an internal buffer until the end of in has been reached. Then the buffer is
+	 * returned.
 	 * 
 	 * @param in
 	 *            data source to be read
@@ -404,13 +398,14 @@ public class Utilities {
 	 * @throws IOException
 	 */
 	public static byte[] getInputBytes(InputStream in) throws IOException {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream(in.available());
+		int initialBufferSize = in.available();
+		if (initialBufferSize <= 0)
+			initialBufferSize = 32768;
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream(initialBufferSize);
 		byte[] b = new byte[4096];
-		int read = 0;
-		read = in.read(b);
-		while (read >= 0) {
-			buffer.write(b, 0, read);
-			read = in.read(b);
+		int ret = 0;
+		while ((ret = in.read(b)) > 0) {
+			buffer.write(b, 0, ret);
 		}
 		return buffer.toByteArray();
 	}
@@ -472,10 +467,9 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns the file path for the selected class. If the class is located
-	 * inside a JAR file the return value contains the directory that contains
-	 * the JAR file. If the class file is executed outside of an JAR the root
-	 * directory holding the class/package structure is returned.
+	 * Returns the file path for the selected class. If the class is located inside a JAR file the return value contains
+	 * the directory that contains the JAR file. If the class file is executed outside of an JAR the root directory
+	 * holding the class/package structure is returned.
 	 * 
 	 * @param mainClass
 	 * @return
@@ -539,8 +533,7 @@ public class Utilities {
 	}
 
 	/**
-	 * Tries to delete a file or directory and throws an {@link IOException} if
-	 * that fails.
+	 * Tries to delete a file or directory and throws an {@link IOException} if that fails.
 	 * 
 	 * @param fileToDelete
 	 * @throws IOException

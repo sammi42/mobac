@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 1.8 beta 3: (2010-??-??)
+ ! Fixed: NullPointerException when renaming an GPX file entry
+
  1.8 beta 2: (2010-09-13)
  + AlpineQuestMap atlas creator updated (patch by Camille) 
  + New map source: Navitel (Russian)

@@ -74,7 +74,6 @@ public class GpxTreeListener implements MouseListener {
 		tree.setSelectionPath(selPath);
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-		node.getUserObject();
 
 		GpxEntry gpxEntry = null;
 		try {
@@ -85,12 +84,12 @@ public class GpxTreeListener implements MouseListener {
 
 		popup = new JPopupMenu();
 		JMenuItem delete = new JMenuItem("delete element");
-		delete.setName("delete");
+		delete.setName(GpxElementListener.MENU_NAME_DELETE);
 		GpxElementListener listener = new GpxElementListener(gpxEntry);
 		delete.addMouseListener(listener);
 		popup.add(delete);
 		JMenuItem rename = new JMenuItem("rename element");
-		rename.setName("rename");
+		rename.setName(GpxElementListener.MENU_NAME_RENAME);
 		rename.addMouseListener(listener);
 		popup.add(rename);
 

@@ -254,7 +254,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 		String lonMax = getDegMinFormat(longitudeMax, false);
 		String lonMin = getDegMinFormat(longitudeMin, false);
 
-		String pointLine = "Point%02d,xy, %4s, %4s,in, deg, %1s, %1s, grid," + " , , ,N\r\n";
+		String pointLine = "Point%02d,xy, %4s, %4s,in, deg, %1s, %1s, grid, , , ,N\r\n";
 
 		sbMap.append(String.format(pointLine, 1, 0, 0, latMax, lonMin));
 		sbMap.append(String.format(pointLine, 2, width - 1, 0, latMax, lonMax));

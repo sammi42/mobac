@@ -37,11 +37,16 @@ import mobac.gui.mapview.PreviewMap;
  * Listener for the gpx editor tree elements.
  * 
  * @author lhoeppner
+ * @author r_x
  * 
  */
 public class GpxElementListener implements MouseListener {
-	private JMenuItem item;
-	private GpxEntry gpxEntry;
+
+	public static final String MENU_NAME_RENAME = "rename";
+	public static final String MENU_NAME_DELETE = "delete";
+
+	private final GpxEntry gpxEntry;
+
 	private GpxMapController mapController = null;
 	private GpxEditor editor = GpxEditor.getInstance();
 
@@ -67,22 +72,24 @@ public class GpxElementListener implements MouseListener {
 	}
 
 	private void handleClick(MouseEvent e) {
-		item = (JMenuItem) e.getSource();
-		if (item.getName().equals("rename")) {
+		JMenuItem item = (JMenuItem) e.getSource();
+		if (item == null)
+			return;
+		if (MENU_NAME_RENAME.equals(item.getName())) {
 			renameEntry();
-		} else if (item.getName().equals("delete")) {
+		} else if (MENU_NAME_DELETE.equals(item.getName())) {
 			removeEntry();
 		}
 	}
 
 	/**
-	 * Removes an entry (wpt, trk, trkseg, rte) from a gpx file (and the
-	 * displayed layer) Currently only works for waypoints.
+	 * Removes an entry (wpt, trk, trkseg, rte) from a gpx file (and the displayed layer) Currently only works for
+	 * waypoints.
 	 * 
 	 */
 	private void removeEntry() {
-		int answer = JOptionPane.showConfirmDialog(null, "Do you really want to delete this node?",
-				"Delete node", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int answer = JOptionPane.showConfirmDialog(null, "Do you really want to delete this node?", "Delete node",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (answer == JOptionPane.YES_OPTION) {
 			PreviewMap map = MainGUI.getMainGUI().previewMap;
 			map.getMapSelectionController().disable();
@@ -123,36 +130,33 @@ public class GpxElementListener implements MouseListener {
 		} else {
 			if (gpxEntry.getClass().equals(RteEntry.class)) {
 				RteEntry rte = (RteEntry) gpxEntry;
-				String name = JOptionPane.showInputDialog(null, "Please input the name:", rte
-						.getRte().getName());
+				String name = JOptionPane.showInputDialog(null, "Please input the name:", rte.getRte().getName());
 				if (name == null) {
 					return;
 				}
 				rte.getRte().setName(name);
 			} else if (gpxEntry.getClass().equals(TrkEntry.class)) {
 				TrkEntry trk = (TrkEntry) gpxEntry;
-				String name = JOptionPane.showInputDialog(null, "Please input the name:", trk
-						.getTrk().getName());
+				String name = JOptionPane.showInputDialog(null, "Please input the name:", trk.getTrk().getName());
 				if (name == null) {
 					return;
 				}
 				trk.getTrk().setName(name);
 			} else if (gpxEntry.getClass().equals(WptEntry.class)) {
 				WptEntry wpt = (WptEntry) gpxEntry;
-				String name = JOptionPane.showInputDialog(null, "Please input the name:", wpt
-						.getWpt().getName());
+				String name = JOptionPane.showInputDialog(null, "Please input the name:", wpt.getWpt().getName());
 				if (name == null) {
 					return;
 				}
 				wpt.getWpt().setName(name);
 			} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
 				GpxRootEntry root = (GpxRootEntry) gpxEntry;
-				String name = JOptionPane.showInputDialog(null, "Please input the name:", root
-						.getLayer().getGpx().getMetadata().getName());
+				String initialValue = root.getMetaDataName();
+				String name = JOptionPane.showInputDialog(null, "Please input the name:", initialValue);
 				if (name == null) {
 					return;
 				}
-				root.getLayer().getGpx().getMetadata().setName(name);
+				root.setMetaDataName(name);
 			}
 		}
 	}

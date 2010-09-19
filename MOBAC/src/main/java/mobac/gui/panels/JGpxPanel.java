@@ -259,4 +259,9 @@ public class JGpxPanel extends JCollapsiblePanel {
 		model.setRoot(rootNode);
 		openedFiles = new ArrayList<String>();
 	}
+
+	public DefaultTreeModel getTreeModel() {
+		return model;
+	}
+	
 }

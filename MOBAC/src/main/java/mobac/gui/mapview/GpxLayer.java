@@ -33,10 +33,8 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
-
 /**
- * A {@link MapLayer} displaying the content of a loaded GPX file in a
- * {@link JMapViewer} instance.
+ * A {@link MapLayer} displaying the content of a loaded GPX file in a {@link JMapViewer} instance.
  */
 public class GpxLayer implements MapLayer {
 
@@ -56,7 +54,7 @@ public class GpxLayer implements MapLayer {
 	/** the associated gpx file handle */
 	private File file;
 	/** the associated gpx object */
-	private Gpx gpx;
+	private final Gpx gpx;
 	/** the associated panel that displays the nodes of the gpx file */
 	private JGpxPanel panel;
 
@@ -77,8 +75,7 @@ public class GpxLayer implements MapLayer {
 		final MapSpace mapSpace = map.getMapSource().getMapSpace();
 		if (showWaypoints) {
 			for (WptType pt : gpx.getWpt()) {
-				paintPoint(pt, wptPointColor, g, showWaypointName, mapSpace, zoom, minX, minY,
-						maxX, maxY);
+				paintPoint(pt, wptPointColor, g, showWaypointName, mapSpace, zoom, minX, minY, maxX, maxY);
 			}
 		}
 		if (showTracks) {
@@ -103,9 +100,8 @@ public class GpxLayer implements MapLayer {
 		}
 	}
 
-	private boolean paintPoint(final WptType point, Color color, final Graphics2D g,
-			boolean paintPointName, MapSpace mapSpace, int zoom, int minX, int minY, int maxX,
-			int maxY) {
+	private boolean paintPoint(final WptType point, Color color, final Graphics2D g, boolean paintPointName,
+			MapSpace mapSpace, int zoom, int minX, int minY, int maxX, int maxY) {
 		int x = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
 		if (x < minX || x > maxX)
 			return false; // Point outside of visible region
@@ -125,8 +121,8 @@ public class GpxLayer implements MapLayer {
 		return true;
 	}
 
-	private boolean paintTrack(final WptType point, Color color, final Graphics2D g,
-			MapSpace mapSpace, int zoom, int minX, int minY, int maxX, int maxY) {
+	private boolean paintTrack(final WptType point, Color color, final Graphics2D g, MapSpace mapSpace, int zoom,
+			int minX, int minY, int maxX, int maxY) {
 		// Absolute map space coordinates
 		int xAbs = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
 		int yAbs = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
@@ -143,6 +139,11 @@ public class GpxLayer implements MapLayer {
 		return true;
 	}
 
+	/**
+	 * The associated gpx object
+	 * 
+	 * @return
+	 */
 	public Gpx getGpx() {
 		return gpx;
 	}
@@ -159,6 +160,11 @@ public class GpxLayer implements MapLayer {
 		this.file = file;
 	}
 
+	/**
+	 * The associated gpx file handle
+	 * 
+	 * @return
+	 */
 	public File getFile() {
 		return file;
 	}

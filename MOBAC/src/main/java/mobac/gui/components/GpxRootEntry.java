@@ -16,21 +16,19 @@
  ******************************************************************************/
 package mobac.gui.components;
 
+import mobac.data.gpx.gpx11.Gpx;
+import mobac.data.gpx.gpx11.MetadataType;
 import mobac.gui.mapview.GpxLayer;
 
 public class GpxRootEntry extends GpxEntry {
-	
+
 	public GpxRootEntry(GpxLayer layer) {
 		this.setLayer(layer);
 		this.setWaypointParent(true);
 	}
-	
+
 	public String toString() {
-		String name = "";
-		try {
-			name = getLayer().getGpx().getMetadata().getName();
-		} catch (NullPointerException e){
-		}
+		String name = getMetaDataName();
 		if (name != null && !name.equals("")) {
 			return name;
 		} else {
@@ -41,6 +39,22 @@ public class GpxRootEntry extends GpxEntry {
 			}
 		}
 	}
+
+	public String getMetaDataName() {
+		try {
+			return getLayer().getGpx().getMetadata().getName();
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+
+	public void setMetaDataName(String name) {
+		Gpx gpx = getLayer().getGpx();
+		if (gpx.getMetadata() == null)
+			gpx.setMetadata(new MetadataType());
+		gpx.getMetadata().setName(name);
+
+		// Notify the model about the changed node text
+		getLayer().getPanel().getTreeModel().nodeChanged(getNode());
+	}
 }
-
-

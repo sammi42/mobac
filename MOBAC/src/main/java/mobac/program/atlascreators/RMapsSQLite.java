@@ -78,7 +78,6 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		performTest_MaxMapZoom(17);
 	}
 
 	@Override

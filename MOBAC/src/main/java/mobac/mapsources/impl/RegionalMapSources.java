@@ -616,8 +616,15 @@ public class RegionalMapSources {
 
 		@Override
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "http://maps.mytopo.com/mt20100826/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/"
-					+ tiley + ".png";
+			return "http://maps.mytopo.com/mytopoK55Zc3L/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/" + tiley
+					+ ".jpg";
+		}
+
+		@Override
+		public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
+			HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
+			conn.addRequestProperty("Referer", "http://www.mytopo.com/maps/");
+			return conn;
 		}
 
 		@Override

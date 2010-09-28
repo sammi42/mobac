@@ -30,6 +30,7 @@ import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.mapsources.impl.Microsoft.MicrosoftHybrid;
 import mobac.mapsources.impl.Microsoft.MicrosoftMaps;
 import mobac.mapsources.impl.Microsoft.MicrosoftMapsChina;
+import mobac.mapsources.impl.Microsoft.MicrosoftMapsHillShade;
 import mobac.mapsources.impl.Microsoft.MicrosoftOrdnanceSurveyExplorer;
 import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
 import mobac.mapsources.impl.MiscMapSources.MultimapCom;
@@ -102,11 +103,11 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new GoogleEarth(), new GoogleHybrid(), new GoogleTerrain(), new YahooMaps(), new YahooMapsJapan(),
 				new YahooMapsTaiwan(), DEFAULT, new TilesAtHome(), new CycleMap(), new OsmHikingMap(),
 				new OsmHikingMapWithBase(), new OsmHikingMapWithRelief(), new Hikebikemap(), new OsmPublicTransport(),
-				new OpenPisteMap(), new MicrosoftMaps(), new MicrosoftMapsChina(), new MicrosoftVirtualEarth(),
-				new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(), new OutdooractiveAustria(),
-				new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(), new Cykloatlas(),
-				new CykloatlasWithRelief(), new TerraserverUSA(), new MyTopo(), new UmpWawPl(), new DoCeluPL(),
-				new EmapiPl(), new Bergfex(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
+				new OpenPisteMap(), new MicrosoftMaps(), new MicrosoftMapsHillShade(), new MicrosoftMapsChina(),
+				new MicrosoftVirtualEarth(), new MicrosoftHybrid(), new OviMaps(), new OutdooractiveGermany(),
+				new OutdooractiveAustria(), new OutdooractiveSouthTyrol(), new MultimapCom(), new MultimapOSUkCom(),
+				new Cykloatlas(), new CykloatlasWithRelief(), new TerraserverUSA(), new MyTopo(), new UmpWawPl(),
+				new DoCeluPL(), new EmapiPl(), new Bergfex(), new FreemapSlovakia(), new FreemapSlovakiaHiking(),
 				new FreemapSlovakiaCycling(), new Turaterkep(), new NearMap(), new HubermediaBavaria(),
 				new StatkartTopo2(), new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(),
 				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat(),

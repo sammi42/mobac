@@ -57,7 +57,14 @@ public class Microsoft {
 		}
 
 	}
+	public static class MicrosoftMapsHillShade extends AbstractMicrosoft {
 
+		public MicrosoftMapsHillShade() {
+			super("Microsoft Maps with hill shade", "png", 'r', TileUpdate.IfNoneMatch);
+			urlAppend = "?g=563&shading=hill";
+		}
+
+	}
 	public static class MicrosoftMapsChina extends AbstractMicrosoft {
 
 		public MicrosoftMapsChina() {

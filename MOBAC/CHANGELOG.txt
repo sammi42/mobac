@@ -12,7 +12,8 @@
  ! Fixed: NullPointerException when renaming an GPX file entry
  ! MyTopo URL updated and fixed
  ~ Unnecessary restriction of RMaps / BigPlanet Tracks to zoom 17 removed
- + New map source: Microsoft Maps with hill shade 
+ + New map source: Microsoft Maps with hill shade
+ ~ Custom tile settings now possible with SportsTracker
 
  1.8 beta 2: (2010-09-13)
  + AlpineQuestMap atlas creator updated (patch by Camille) 

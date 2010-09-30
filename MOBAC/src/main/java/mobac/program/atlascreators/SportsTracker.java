@@ -26,16 +26,18 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.impl.MapTileWriter;
-import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
-import mobac.program.model.TileImageFormat;
-import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
+/**
+ * [Nokia] Sports Tracker
+ * 
+ * 
+ */
 public class SportsTracker extends AtlasCreator {
 
 	protected File mapDir = null;
@@ -49,13 +51,13 @@ public class SportsTracker extends AtlasCreator {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		for (LayerInterface layer : atlas) {
-			for (MapInterface map : layer) {
-				TileImageParameters param = map.getParameters();
-				if (param != null)
-					throw new AtlasTestException("Custom tile settings are not supported by this atlas format");
-			}
-		}
+		// for (LayerInterface layer : atlas) {
+		// for (MapInterface map : layer) {
+		// TileImageParameters param = map.getParameters();
+		// if (param != null)
+		// throw new AtlasTestException("Custom tile settings are not supported by this atlas format");
+		// }
+		// }
 	}
 
 	@Override
@@ -67,9 +69,9 @@ public class SportsTracker extends AtlasCreator {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		if (!"png".equalsIgnoreCase(mapSource.getTileType()))
-			// If the tile image format is not png we have to convert it
-			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		// if (!"png".equalsIgnoreCase(mapSource.getTileType()))
+		// // If the tile image format is not png we have to convert it
+		// mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {

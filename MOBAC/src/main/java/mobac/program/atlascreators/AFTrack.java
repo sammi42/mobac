@@ -25,13 +25,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.utilities.Utilities;
+import mobac.utilities.stream.ZipStoreOutputStream;
 import mobac.utilities.tar.TarIndex;
 
 /**
@@ -79,35 +77,18 @@ public class AFTrack extends OSMTracker {
 
 	private class OszTileWriter extends OSMTileWriter {
 
-		ZipOutputStream zipStream;
+		ZipStoreOutputStream zipStream;
 		FileOutputStream out;
-
-		private CRC32 crc = new CRC32();
 
 		public OszTileWriter(File oszFile) throws FileNotFoundException {
 			super();
 			out = new FileOutputStream(oszFile);
-			zipStream = new ZipOutputStream(out);
+			zipStream = new ZipStoreOutputStream(out);
 		}
 
-		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
-				throws IOException {
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
 			String entryName = String.format(tileFileNamePattern, zoom, tilex, tiley, tileType);
-			writeZipEntry(entryName, tileData);
-		}
-
-		private void writeZipEntry(String entryName, byte[] data) throws IOException {
-			ZipEntry entry = new ZipEntry(entryName);
-
-			entry.setMethod(ZipEntry.STORED);
-			entry.setCompressedSize(data.length);
-			entry.setSize(data.length);
-			crc.reset();
-			crc.update(data);
-			entry.setCrc(crc.getValue());
-			zipStream.putNextEntry(entry);
-			zipStream.write(data);
-			zipStream.closeEntry();
+			zipStream.writeStoredEntry(entryName, tileData);
 		}
 
 		public void finalizeMap() throws IOException {
@@ -122,7 +103,7 @@ public class AFTrack extends OSMTracker {
 			writer.append(String.format("miny=%d\r\n", min.y));
 			writer.append(String.format("maxy=%d\r\n", max.y));
 			writer.close();
-			writeZipEntry("Manifest.txt", bout.toByteArray());
+			zipStream.writeStoredEntry("Manifest.txt", bout.toByteArray());
 			Utilities.closeStream(zipStream);
 		}
 

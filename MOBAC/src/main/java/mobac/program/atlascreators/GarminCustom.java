@@ -93,7 +93,7 @@ public class GarminCustom extends GoogleEarthOverlay {
 			if (data == null)
 				throw new MapCreationException("Unable to create an image with less than 3 MB!");
 			String imageFileName = "files/" + cleanedMapName + "." + writer.getFileExt();
-			writeStoredEntry(imageFileName, data);
+			kmzOutputStream.writeStoredEntry(imageFileName, data);
 			addMapToKmz(imageFileName);
 		} catch (Exception e) {
 			throw new MapCreationException(e);

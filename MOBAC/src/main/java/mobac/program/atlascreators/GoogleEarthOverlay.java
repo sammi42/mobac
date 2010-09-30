@@ -24,11 +24,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
@@ -50,6 +47,7 @@ import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
+import mobac.utilities.stream.ZipStoreOutputStream;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
@@ -64,8 +62,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 	protected String cleanedMapName;
 
 	protected File kmzFile = null;
-	protected ZipOutputStream kmzOutputStream = null;
-	private CRC32 crc = new CRC32();
+	protected ZipStoreOutputStream kmzOutputStream = null;
 
 	private Document kmlDoc = null;
 	private Element groundOverlayRoot = null;
@@ -83,7 +80,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		super.initLayerCreation(layer);
 		Utilities.mkDirs(atlasDir);
 		kmzFile = new File(atlasDir, layer.getName() + ".kmz");
-		kmzOutputStream = new ZipOutputStream(new FileOutputStream(kmzFile));
+		kmzOutputStream = new ZipStoreOutputStream(kmzFile);
 		kmzOutputStream.setMethod(ZipOutputStream.STORED);
 		try {
 			if (layer.getMapCount() <= 1)
@@ -212,24 +209,11 @@ public class GoogleEarthOverlay extends AtlasCreator {
 			ByteArrayOutputStream buf = new ByteArrayOutputStream(initialBufferSize);
 			writer.processImage(tileImage, buf);
 			String imageFileName = "files/" + cleanedMapName + "." + writer.getFileExt();
-			writeStoredEntry(imageFileName, buf.toByteArray());
+			kmzOutputStream.writeStoredEntry(imageFileName, buf.toByteArray());
 			addMapToKmz(imageFileName);
 		} catch (Exception e) {
 			throw new MapCreationException(e);
 		}
-	}
-
-	protected void writeStoredEntry(String name, byte[] data) throws IOException {
-		ZipEntry ze = new ZipEntry(name);
-		ze.setMethod(ZipEntry.STORED);
-		ze.setCompressedSize(data.length);
-		ze.setSize(data.length);
-		crc.reset();
-		crc.update(data);
-		ze.setCrc(crc.getValue());
-		kmzOutputStream.putNextEntry(ze);
-		kmzOutputStream.write(data);
-		kmzOutputStream.closeEntry();
 	}
 
 	protected void addMapToKmz(String imageFileName) throws ParserConfigurationException,
@@ -316,7 +300,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16000);
 		serializer.transform(new DOMSource(kmlDoc), new StreamResult(bos));
-		writeStoredEntry("doc.kml", bos.toByteArray());
+		kmzOutputStream.writeStoredEntry("doc.kml", bos.toByteArray());
 		kmlDoc = null;
 		groundOverlayRoot = null;
 	}

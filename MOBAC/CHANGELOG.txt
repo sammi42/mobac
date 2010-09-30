@@ -14,6 +14,7 @@
  ~ Unnecessary restriction of RMaps / BigPlanet Tracks to zoom 17 removed
  + New map source: Microsoft Maps with hill shade
  ~ Custom tile settings now possible with SportsTracker
+ + New atlas format: Osmdroid ZIP
 
  1.8 beta 2: (2010-09-13)
  + AlpineQuestMap atlas creator updated (patch by Camille) 

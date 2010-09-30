@@ -36,6 +36,7 @@ import mobac.program.atlascreators.MobileTrailExplorer;
 import mobac.program.atlascreators.MobileTrailExplorerCache;
 import mobac.program.atlascreators.NaviComputer;
 import mobac.program.atlascreators.OSMAND;
+import mobac.program.atlascreators.Osmdroid;
 import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.OruxMapsSqlite;
@@ -70,6 +71,7 @@ public enum AtlasOutputFormat {
 	OruxMaps("OruxMaps", OruxMaps.class), //
 	OruxMapsSqlite("OruxMaps Sqlite", OruxMapsSqlite.class), //
 	OSMAND("OSMAND tile storage", OSMAND.class), //
+	Osmdroid("Osmdroid ZIP", Osmdroid.class), //
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	PathAway("PathAway tile cache", PathAway.class), //

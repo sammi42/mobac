@@ -681,4 +681,33 @@ public class RegionalMapSources {
 		}
 	}
 
+	/**
+	 * https://sourceforge.net/tracker/?func=detail&aid=3071972&group_id=238075&atid=1105496
+	 */
+	public static class Sigpac extends AbstractMapSource {
+
+		private static String sources[] = { "", "", "", "", "", "MTNSIGPAC", "MTNSIGPAC", "MTN2000", "MTN2000",
+				"MTN2000", "MTN2000", "MTN200", "MTN200", "MTN200", "MTN25", "MTN25", "ORTOFOTOS", "ORTOFOTOS" };
+
+		public Sigpac() {
+			// In some places ORTOFOTOS reaches zoom 18,
+			// but only level 17 covers the entire country
+			super("SIGPAC", 5, 17, "jpg");
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			int j = (1 << zoom) - tiley - 1;
+
+			// The tiles are downloaded from kmlserver interface,
+			// as tilesserver.mapa.es serves only UTM projections
+			return "http://sigpac.mapa.es/kmlserver/raster/" + sources[zoom] + "@3785/" + zoom + "." + tilex + "." + j
+					+ ".img";
+		}
+
+		@Override
+		public String toString() {
+			return "SIGPAC Mercator (Spain only)";
+		}
+	}
+
 }

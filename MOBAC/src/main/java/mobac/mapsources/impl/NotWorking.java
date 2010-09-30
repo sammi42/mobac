@@ -28,7 +28,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 public class NotWorking {
 
 	protected static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
-	
+
 	/**
 	 * Not working correctly:
 	 * 
@@ -145,31 +145,6 @@ public class NotWorking {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return "http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/" + zoom + "/" + tilex + "/" + tiley
 					+ ".jpg";
-		}
-
-	}
-
-	public static class SigpacEs extends AbstractMapSource {
-
-		public SigpacEs() {
-			super("sigpac.mapa.es", 0, 18, "jpg");
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			int r = 1000 * (1 << (14 - zoom));
-			int i = tilex;
-			int j = tiley;
-			// http://tilesserver.mapa.es/tilesserver/n=topografico-mtn_1250;z=30;r=256000;i=8;j=61.jpg
-			int mtn = 1250;
-			String s = "http://tilesserver.mapa.es/tilesserver/" + "n=topografico-mtn_" + mtn + ";z=30;r=" + r + ";i="
-					+ i + ";j=" + j + ".jpg";
-			System.out.println(tilex + " " + tiley + " z=" + zoom + "\n\t" + s);
-			return s;
-		}
-
-		@Override
-		public boolean allowFileStore() {
-			return false;
 		}
 
 	}

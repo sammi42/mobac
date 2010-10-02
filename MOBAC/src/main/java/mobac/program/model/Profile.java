@@ -27,10 +27,13 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 
 import mobac.gui.panels.JProfilesPanel;
 import mobac.program.DirectoryManager;
@@ -38,19 +41,22 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;
 import mobac.utilities.Utilities;
 
+import org.apache.log4j.Logger;
+
 /**
- * A profile is a saved atlas. The available profiles ({@link Profile}
- * instances) are visible in the <code>profilesCombo</code> in the
- * {@link JProfilesPanel}.
+ * A profile is a saved atlas. The available profiles ({@link Profile} instances) are visible in the
+ * <code>profilesCombo</code> in the {@link JProfilesPanel}.
  */
 public class Profile implements Comparable<Profile> {
+
+	private static Logger log = Logger.getLogger(Profile.class);
 
 	public static final String PROFILE_NAME_REGEX = "[\\w _-]+";
 
 	public static final String PROFILE_FILENAME_PREFIX = "mobac-profile-";
 
-	public static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile(PROFILE_FILENAME_PREFIX
-			+ "(" + PROFILE_NAME_REGEX + ").xml");
+	public static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile(PROFILE_FILENAME_PREFIX + "("
+			+ PROFILE_NAME_REGEX + ").xml");
 
 	private File file;
 	private String name;
@@ -153,6 +159,15 @@ public class Profile implements Comparable<Profile> {
 	public AtlasInterface load() throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(Atlas.class);
 		Unmarshaller um = context.createUnmarshaller();
+		um.setEventHandler(new ValidationEventHandler() {
+
+			public boolean handleEvent(ValidationEvent event) {
+				JOptionPane.showMessageDialog(null, "Error loading atlas: " + event.getMessage(),
+						"Error loading atlas", JOptionPane.ERROR_MESSAGE);
+				log.error(event.toString());
+				return false;
+			}
+		});
 		AtlasInterface newAtlas = (AtlasInterface) um.unmarshal(file);
 		return newAtlas;
 	}

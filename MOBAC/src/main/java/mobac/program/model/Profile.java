@@ -34,6 +34,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.ValidationEventLocator;
 
 import mobac.gui.panels.JProfilesPanel;
 import mobac.program.DirectoryManager;
@@ -162,10 +163,19 @@ public class Profile implements Comparable<Profile> {
 		um.setEventHandler(new ValidationEventHandler() {
 
 			public boolean handleEvent(ValidationEvent event) {
-				JOptionPane.showMessageDialog(null, "Error loading atlas: " + event.getMessage(),
-						"Error loading atlas", JOptionPane.ERROR_MESSAGE);
+				ValidationEventLocator loc = event.getLocator();
+				String file = loc.getURL().getFile();
+				int lastSlash = file.lastIndexOf('/');
+				if (lastSlash > 0)
+					file = file.substring(lastSlash + 1);
+				int ret = JOptionPane.showConfirmDialog(null, "<html>Error loading atlas: <pre>" + event.getMessage()
+						+ "</pre><pre>file: " + file + " line/column: " + loc.getLineNumber() + "/"
+						+ loc.getColumnNumber() + "</pre>Do you want to continue loading the current atlas?<br>"
+						+ "Continue loading may result in an incomplete or non-working atlas.<br>",
+						"Error loading atlas - continue loading?", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.ERROR_MESSAGE);
 				log.error(event.toString());
-				return false;
+				return (ret == JOptionPane.YES_OPTION);
 			}
 		});
 		AtlasInterface newAtlas = (AtlasInterface) um.unmarshal(file);

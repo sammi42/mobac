@@ -2,6 +2,8 @@ package mobac.program.atlascreators;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
@@ -10,6 +12,7 @@ import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
 import mobac.utilities.tar.TarIndex;
@@ -30,8 +33,12 @@ public class Osmdroid extends OSMTracker {
 	@Override
 	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws AtlasTestException, IOException,
 			InterruptedException {
+		if (customAtlasDir == null)
+			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());		
 		super.startAtlasCreation(atlas, customAtlasDir);
-		zipStream = new ZipStoreOutputStream(new File(atlasDir, atlas.getName() + ".zip"));
+		zipStream = new ZipStoreOutputStream(new File(atlasDir, atlasDirName + ".zip"));
 		mapTileWriter = new OSMDroidTileWriter();
 	}
 

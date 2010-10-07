@@ -50,6 +50,7 @@ public class TileImagePngDataWriter implements TileImageDataWriter {
 			log.trace(s);
 		}
 		pngImageWriter = ImageIO.getImageWritersByFormatName("png").next();
+		pngImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
 		log.debug("Used PNG image writer: " + pngImageWriter.getClass().getName());
 	}
 

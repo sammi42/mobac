@@ -43,8 +43,7 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	/**
 	 * 
 	 * @param jpegCompressionLevel
-	 *            a float between 0 and 1; 1 specifies minimum compression and
-	 *            maximum quality
+	 *            a float between 0 and 1; 1 specifies minimum compression and maximum quality
 	 */
 	public TileImageJpegDataWriter(double jpegCompressionLevel) {
 		this((float) jpegCompressionLevel);
@@ -70,6 +69,7 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 			log.trace(s);
 		}
 		jpegImageWriter = ImageIO.getImageWritersByFormatName("jpeg").next();
+		jpegImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
 		log.debug("Used JPEG image writer: " + jpegImageWriter.getClass().getName());
 		iwp = jpegImageWriter.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);

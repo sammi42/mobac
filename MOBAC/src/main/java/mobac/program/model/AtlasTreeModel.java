@@ -94,7 +94,7 @@ public class AtlasTreeModel implements TreeModel {
 			l.treeStructureChanged(event);
 	}
 
-	protected void notifyNodeInsert(TreeNode insertedNode) {
+	public void notifyNodeInsert(TreeNode insertedNode) {
 		TreeNode parent = insertedNode.getParent();
 		TreePath path = getNodePath(parent);
 		TreeNode[] childs = new TreeNode[] { insertedNode };

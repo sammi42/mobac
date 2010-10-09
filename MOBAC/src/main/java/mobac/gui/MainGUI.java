@@ -722,7 +722,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			}
 		}
 		atlasInterface.addLayer(layer);
-		jAtlasTree.getTreeModel().notifyStructureChanged();
+		jAtlasTree.getTreeModel().notifyNodeInsert(layer);
 	}
 
 	public void mapSourceChanged(MapSource newMapSource) {

@@ -21,6 +21,8 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Iterator;
 
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
@@ -35,7 +37,7 @@ import mobac.program.model.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 
-public class MapAreaHighlightingLayer implements MapLayer {
+public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 
 	private final JAtlasTree tree;
 
@@ -72,6 +74,7 @@ public class MapAreaHighlightingLayer implements MapLayer {
 			}
 		};
 		tree.addTreeSelectionListener(treeListener);
+		tree.getModel().addTreeModelListener(this);
 	}
 
 	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX,
@@ -143,6 +146,7 @@ public class MapAreaHighlightingLayer implements MapLayer {
 		if (treeListener == null)
 			return;
 		try {
+			tree.getModel().removeTreeModelListener(this);
 			tree.removeTreeSelectionListener(treeListener);
 			treeListener = null;
 		} catch (Exception e) {
@@ -155,4 +159,21 @@ public class MapAreaHighlightingLayer implements MapLayer {
 		super.finalize();
 	}
 
+	public void treeNodesChanged(TreeModelEvent e) {
+		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	public void treeNodesInserted(TreeModelEvent e) {
+		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	public void treeNodesRemoved(TreeModelEvent e) {
+		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	public void treeStructureChanged(TreeModelEvent e) {
+		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	
 }

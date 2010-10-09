@@ -10,6 +10,8 @@
 
  1.8 beta 4: (2010-10-??)
  ~ Implemented logging for ImageWriter warnings
+ ~ Display selected areas: adding a new map selection does no longer resets the 
+    map selection and therefore the highlighted area does not change. 
 
  1.8 beta 3: (2010-10-02)
  ! Fixed: NullPointerException when renaming an GPX file entry

@@ -19,7 +19,7 @@ package unittests;
 import java.io.File;
 
 import mobac.mapsources.DefaultMapSourcesManager;
-import mobac.program.atlascreators.Maplorer;
+import mobac.program.atlascreators.RunGPSAtlas;
 import mobac.program.interfaces.AtlasInterface;
 
 public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
@@ -30,18 +30,18 @@ public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
 
 	public void testGoogleEarchOverlay() throws Exception {
 		AtlasInterface atlas;
-		//atlas = loadAtlas("Germany10-12");
-		//atlas = loadAtlas("HamburgPark");
+		// atlas = loadAtlas("Germany10-12");
+		// atlas = loadAtlas("HamburgPark");
 		DefaultMapSourcesManager.initialize();
 		atlas = loadAtlas("Munich6-16");
-		File dir = createAtlas(atlas, new Maplorer());
+		File dir = createAtlas(atlas, new RunGPSAtlas());
 		assertNotNull(dir);
 	}
 
-//	public void testGarminCustom() throws Exception {
-//		AtlasInterface atlas = loadAtlas("HamburgPark");
-//		File dir = createAtlas(atlas, new GarminCustom());
-//		assertNotNull(dir);
-//	}
+	// public void testGarminCustom() throws Exception {
+	// AtlasInterface atlas = loadAtlas("HamburgPark");
+	// File dir = createAtlas(atlas, new GarminCustom());
+	// assertNotNull(dir);
+	// }
 
 }

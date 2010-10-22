@@ -43,6 +43,7 @@ import mobac.program.atlascreators.OruxMapsSqlite;
 import mobac.program.atlascreators.Ozi;
 import mobac.program.atlascreators.PathAway;
 import mobac.program.atlascreators.RMapsSQLite;
+import mobac.program.atlascreators.RunGPSAtlas;
 import mobac.program.atlascreators.SportsTracker;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TrekBuddyCustom;
@@ -76,6 +77,7 @@ public enum AtlasOutputFormat {
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	PathAway("PathAway tile cache", PathAway.class), //
 	RMaps("RMaps SQLite", RMapsSQLite.class), //
+	RunGPS("Run.GPS Atlas", RunGPSAtlas.class), //
 	NST("Sports Tracker", SportsTracker.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), // 

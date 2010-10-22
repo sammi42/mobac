@@ -239,8 +239,9 @@ public class RunGPSAtlasFile {
 			cacheFile = new File(filePath + ".cac");
 			cacheOutStream = new BufferedOutputStream(new FileOutputStream(cacheFile), 8216);
 
-			new File(filePath).delete();
 			raf = new RandomAccessFile(filePath, "rw");
+			raf.setLength(0); // delete existing content
+
 			indexLength = offset;
 			RAINode root = new RAINode();
 			root.writeNew();
@@ -320,18 +321,21 @@ public class RunGPSAtlasFile {
 	public static List<Integer> makeHierarchyFromPath(String path) {
 		// e.g. /10/3487/8345.png
 
+		// sure that replace() is correct? may be replaceAll() would be better?
+		path = path.replace(File.separatorChar, '/');
+
 		int p = path.indexOf('.');
 		if (p > 0) {
 			path = path.substring(0, p); // remove suffix
 		}
-		if (path.startsWith("" + File.separatorChar)) {
+		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
 
 		try {
 			List<Integer> hierarchy = new ArrayList<Integer>();
 			for (;;) {
-				p = path.indexOf(File.separatorChar);
+				p = path.indexOf('/');
 				if (p > 0) {
 					hierarchy.add(Integer.parseInt(path.substring(0, p)));
 					path = path.substring(p + 1);

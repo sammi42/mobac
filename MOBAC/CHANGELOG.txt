@@ -8,6 +8,10 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 1.8 RC 1: (2010-10-22)
+ + AlpineQuest handles tiles <> 256px and ellipsoid projections
+ + New atlas format: Run.GPS Atlas
+
  1.8 beta 4: (2010-10-09)
  ~ Implemented logging for ImageWriter warnings
  ~ Display selected areas: adding a new map selection does no longer resets the 

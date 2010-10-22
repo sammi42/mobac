@@ -68,7 +68,6 @@ public class RunGPSAtlas extends AtlasCreator {
 				true);
 		minZoom = Integer.MAX_VALUE;
 		maxZoom = Integer.MIN_VALUE;
-
 	}
 
 	@Override

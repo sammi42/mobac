@@ -44,6 +44,8 @@ import mobac.utilities.stream.ArrayOutputStream;
 import mobac.utilities.tar.TarIndex;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 
 /**
  * Creates maps using the AlpineQuestMap atlas format (AQM v2 complient).
@@ -159,25 +161,25 @@ public class AlpineQuestMap extends AtlasCreator {
 
 	private final void addMapHeader(final String strID, final String strName) throws IOException {
 		// version of the AQM format (internal use)
-		String strVersion = AQM_VERSION;
+		final String strVersion = AQM_VERSION;
 
 		// software used to create the map (displayed to user)
-		String strSoftware = ProgramInfo.getCompleteTitle();
+		final String strSoftware = ProgramInfo.getCompleteTitle();
 
 		// date of creation (displayed to user)
-		String strDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
+		final String strDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
 
 		// name of the person that created the map (displayed to user)
-		String strCreator = "";
+		final String strCreator = "";
 
 		StringWriter w = new StringWriter();
-		w.write("[map]        " + "\n");
-		w.write("id         = " + strID + "\n");
-		w.write("name       = " + strName + "\n");
-		w.write("version    = " + strVersion + "\n");
-		w.write("date       = " + strDate + "\n");
-		w.write("creator    = " + strCreator + "\n");
-		w.write("software   = " + strSoftware + "\n");
+		w.write("[map]\n");
+		w.write("id = " + strID + "\n");
+		w.write("name = " + strName + "\n");
+		w.write("version = " + strVersion + "\n");
+		w.write("date = " + strDate + "\n");
+		w.write("creator = " + strCreator + "\n");
+		w.write("software = " + strSoftware + "\n");
 		w.write("\n");
 		w.flush();
 		w.close();
@@ -187,11 +189,11 @@ public class AlpineQuestMap extends AtlasCreator {
 	}
 
 	private final void addLevelHeader(final MapInterface map, final Insets bounds) throws IOException {
-		int tileSize = map.getMapSource().getMapSpace().getTileSize();
-		int xMin = bounds.left / tileSize;
-		int xMax = bounds.right / tileSize;
-		int yMin = bounds.top / tileSize;
-		int yMax = bounds.bottom / tileSize;
+		final int tileSize = map.getMapSource().getMapSpace().getTileSize();
+		final int xMin = bounds.left / tileSize;
+		final int xMax = bounds.right / tileSize;
+		final int yMin = bounds.top / tileSize;
+		final int yMax = bounds.bottom / tileSize;
 
 		// unique identifier for a data source / zoom (internal use)
 		final String strID = new DecimalFormat("00").format(map.getZoom());
@@ -215,8 +217,14 @@ public class AlpineQuestMap extends AtlasCreator {
 		// projection of tiles (internal use)
 		final String strProjection = "mercator";
 
+		String strGeoid = "";
+		if (ProjectionCategory.SPHERE.equals(map.getMapSource().getMapSpace().getProjectionCategory()))
+			strGeoid = "sphere";
+		else if (ProjectionCategory.ELLIPSOID.equals(map.getMapSource().getMapSpace().getProjectionCategory()))
+			strGeoid = "wgs84";
+
 		// number of tiles (internal use)
-		final long nbTotalTiles = Math.round(Math.pow(2, map.getZoom()));
+		final long nbTotalTiles = (256 * Math.round(Math.pow(2, map.getZoom()))) / tileSize;
 
 		// check resize or resample parameters
 		String strImageFormat = null;
@@ -235,25 +243,26 @@ public class AlpineQuestMap extends AtlasCreator {
 
 		// write metadata
 		StringWriter w = new StringWriter();
-		w.write("[level]      " + "\n");
-		w.write("id         = " + strID + "\n");
-		w.write("name       = " + strName + "\n");
-		w.write("scale      = " + strScale + "\n");
+		w.write("[level]\n");
+		w.write("id = " + strID + "\n");
+		w.write("name = " + strName + "\n");
+		w.write("scale = " + strScale + "\n");
 		w.write("datasource = " + strDataSource + "\n");
-		w.write("copyright  = " + strCopyright + "\n");
+		w.write("copyright = " + strCopyright + "\n");
 		w.write("projection = " + strProjection + "\n");
-		w.write("xtsize     = " + (int) tilesSize.getWidth() + "\n");
-		w.write("ytsize     = " + (int) tilesSize.getHeight() + "\n");
-		w.write("xtratio    = " + (nbTotalTiles / 360.0) + "\n");
-		w.write("ytratio    = " + (nbTotalTiles / 360.0) + "\n");
-		w.write("xtoffset   = " + (nbTotalTiles / 2.0) + "\n");
-		w.write("ytoffset   = " + (nbTotalTiles / 2.0) + "\n");
-		w.write("xtmin      = " + xMin + "\n");
-		w.write("xtmax      = " + xMax + "\n");
-		w.write("ytmin      = " + (nbTotalTiles - yMax) + "\n");
-		w.write("ytmax      = " + (nbTotalTiles - yMin) + "\n");
+		w.write("geoid = " + strGeoid + "\n");
+		w.write("xtsize = " + (int) tilesSize.getWidth() + "\n");
+		w.write("ytsize = " + (int) tilesSize.getHeight() + "\n");
+		w.write("xtratio = " + (nbTotalTiles / 360.0) + "\n");
+		w.write("ytratio = " + (nbTotalTiles / 360.0) + "\n");
+		w.write("xtoffset = " + (nbTotalTiles / 2.0) + "\n");
+		w.write("ytoffset = " + (nbTotalTiles / 2.0) + "\n");
+		w.write("xtmin = " + xMin + "\n");
+		w.write("xtmax = " + xMax + "\n");
+		w.write("ytmin = " + (nbTotalTiles - yMax) + "\n");
+		w.write("ytmax = " + (nbTotalTiles - yMin) + "\n");
 		w.write("background = " + "#FFFFFF" + "\n");
-		w.write("imgformat  = " + strImageFormat + "\n");
+		w.write("imgformat = " + strImageFormat + "\n");
 		w.write("\n");
 		w.flush();
 		w.close();
@@ -264,7 +273,10 @@ public class AlpineQuestMap extends AtlasCreator {
 
 	@Override
 	public boolean testMapSource(final MapSource mapSource) {
-		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+		MapSpace mapSpace = mapSource.getMapSpace();
+		return (mapSpace instanceof MercatorPower2MapSpace)
+				&& (ProjectionCategory.SPHERE.equals(mapSource.getMapSpace().getProjectionCategory()) || ProjectionCategory.ELLIPSOID
+						.equals(mapSource.getMapSpace().getProjectionCategory()));
 	}
 
 	@Override
@@ -313,7 +325,7 @@ public class AlpineQuestMap extends AtlasCreator {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
 		// number of tiles for this zoom level
-		final long nbTotalTiles = Math.round(Math.pow(2, map.getZoom()));
+		final long nbTotalTiles = (256 * Math.round(Math.pow(2, map.getZoom()))) / tileSize;
 
 		// tile resizing
 		BufferedImage tileImage = null;
@@ -368,7 +380,7 @@ public class AlpineQuestMap extends AtlasCreator {
 						}
 
 						packCreator.add(sourceTileData, "" + x + "_" + (nbTotalTiles - y)); // y tiles count began by
-																							// bottom in AQM
+						// bottom in AQM
 					}
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);

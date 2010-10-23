@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
-
 /**
  * Autocomplete combobox with filtering and text inserting of new text
  * 
@@ -211,7 +210,7 @@ public class JAutoCompleteComboBox<E> extends JComboBox {
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
 		final JAutoCompleteComboBox<MapSource> combo;
-		combo = new JAutoCompleteComboBox<MapSource>(MapSourcesManager.getEnabledMapSources(),
+		combo = new JAutoCompleteComboBox<MapSource>(MapSourcesManager.getInstance().getEnabledMapSources(),
 				MapSource.class);
 		combo.addActionListener(new ActionListener() {
 

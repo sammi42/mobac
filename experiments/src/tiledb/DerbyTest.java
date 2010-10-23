@@ -1,6 +1,7 @@
 package tiledb;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,9 +36,9 @@ public class DerbyTest {
 
 	private void loadDriver() {
 		try {
-			DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
+			DriverManager.registerDriver((Driver) Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance());
 			System.out.println("Loaded the appropriate driver");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

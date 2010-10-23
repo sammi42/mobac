@@ -28,7 +28,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-
 public class JAutoFilterCombo extends JComboBox {
 
 	private static final Logger log = Logger.getLogger(JAutoFilterCombo.class);
@@ -43,23 +42,23 @@ public class JAutoFilterCombo extends JComboBox {
 		boolean arrowKeyPressed = false;
 
 		public AutoCompleteDocument() {
-			textComponent.addKeyListener(new KeyAdapter() {
-
-				@Override
-				public void keyPressed(KeyEvent e) {
-					int key = e.getKeyCode();
-					if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
-						arrowKeyPressed = true;
-						log.trace("arrow key pressed");
-					}
-				}
-			});
+			// textComponent.addKeyListener(new KeyAdapter() {
+			//
+			// @Override
+			// public void keyPressed(KeyEvent e) {
+			// int key = e.getKeyCode();
+			// if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
+			// arrowKeyPressed = true;
+			// log.trace("arrow key pressed");
+			// }
+			// }
+			// });
 		}
 
 		void updateModel() throws BadLocationException {
 			String textToMatch = getText(0, getLength());
 			log.trace("setPattern() called from updateModel()");
-			renderer.setFilter(textToMatch);
+			//renderer.setFilter(textToMatch);
 		}
 
 		@Override
@@ -85,7 +84,7 @@ public class JAutoFilterCombo extends JComboBox {
 			String text = getText(0, getLength());
 			if (arrowKeyPressed) {
 				log.trace("[insert] arrow key was pressed, updateModel() was NOT called");
-				renderer.setFilter(text);
+				//renderer.setFilter(text);
 				log.trace(String.format("[insert] model.setSelectedItem(%s)", text));
 				arrowKeyPressed = false;
 			} else {
@@ -117,8 +116,7 @@ public class JAutoFilterCombo extends JComboBox {
 		frame.setLayout(new GridLayout(3, 1));
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
-		final JAutoFilterCombo combo = new JAutoFilterCombo(MapSourcesManager
-				.getEnabledMapSources());
+		final JAutoFilterCombo combo = new JAutoFilterCombo(MapSourcesManager.getInstance().getEnabledMapSources());
 		combo.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -136,5 +134,4 @@ public class JAutoFilterCombo extends JComboBox {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
-
 }

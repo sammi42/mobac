@@ -31,7 +31,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-
 /**
  * Autocomplete combobox with filtering and text inserting of new text
  * 
@@ -139,7 +138,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 				public void keyPressed(KeyEvent e) {
 					int key = e.getKeyCode();
 					if (key == KeyEvent.VK_ESCAPE) {
-						
+
 					} else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
 						arrowKeyPressed = true;
 						log.trace("arrow key pressed");
@@ -300,7 +299,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		frame.setLayout(new GridLayout(3, 1));
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
-		final JAutoCompleteCombo combo = new JAutoCompleteCombo(MapSourcesManager.getEnabledMapSources());
+		final JAutoCompleteCombo combo = new JAutoCompleteCombo(MapSourcesManager.getInstance().getEnabledMapSources());
 		combo.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

@@ -8,7 +8,7 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 1.8 RC 1: (2010-10-22)
+ 1.8 RC 1: (2010-10-23)
  + AlpineQuest handles tiles <> 256px and ellipsoid projections
  + New atlas format: Run.GPS Atlas
  ! Fixed map source: Emapi.pl

@@ -305,13 +305,19 @@ public class RegionalMapSources {
 	 */
 	public static class EmapiPl extends AbstractMapSource {
 
+		int[] servernums = { 1, 2, 3, 4 };
+
+		int selectedServer = 0;
+
 		public EmapiPl() {
 			super("EmapiPl", 0, 19, "png", TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
-			return "http://emapi.pl/Default.aspx?tileX=" + x + "&tileY=" + y + "&zoom=" + zoom
-					+ "&layer=std&fun=GetMap&userID=pasat";
+			selectedServer = (selectedServer++) % servernums.length;
+			return "http://img" + servernums[selectedServer] + ".emapi.pl/Default.aspx?tileX=" + x + "&tileY=" + y
+					+ "&zoom=" + zoom + "&layer=std&fun=GetMap&userID=pasat";
+
 		}
 
 		@Override

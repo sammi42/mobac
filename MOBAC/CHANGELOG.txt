@@ -11,6 +11,7 @@
  1.8 RC 1: (2010-10-22)
  + AlpineQuest handles tiles <> 256px and ellipsoid projections
  + New atlas format: Run.GPS Atlas
+ ! Fixed map source: Emapi.pl
 
  1.8 beta 4: (2010-10-09)
  ~ Implemented logging for ImageWriter warnings

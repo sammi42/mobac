@@ -100,7 +100,7 @@ public class Microsoft {
 	public static class MicrosoftOrdnanceSurveyExplorer extends AbstractMapSource {
 
 		public MicrosoftOrdnanceSurveyExplorer() {
-			super("Ordnance Survey Explorer Maps (UK)", 12, 16, "png", TileUpdate.IfNoneMatch);
+			super("Ordnance Survey Explorer Maps (UK)", 12, 16, "png", TileUpdate.IfModifiedSince);
 		}
 
 		@Override

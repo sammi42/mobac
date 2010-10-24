@@ -21,16 +21,11 @@ import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageFormat;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.stream.ArrayOutputStream;
-
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 
 public class GarminCustom extends GoogleEarthOverlay {
 
@@ -38,14 +33,6 @@ public class GarminCustom extends GoogleEarthOverlay {
 	 * Each jpeg should be less than 3MB. https://forums.garmin.com/showthread.php?t=2646
 	 */
 	private static final int MAX_FILE_SIZE = 3 * 1024 * 1024;
-
-	@Override
-	public boolean testMapSource(MapSource mapSource) {
-		MapSpace mapSpace = mapSource.getMapSpace();
-		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
-				.getProjectionCategory()));
-		// TODO supports Mercator ellipsoid?
-	}
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {

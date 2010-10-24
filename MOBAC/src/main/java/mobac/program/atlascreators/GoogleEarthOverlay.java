@@ -40,6 +40,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.LayerInterface;
@@ -73,6 +74,24 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
 				.getProjectionCategory()));
 		// TODO supports Mercator ellipsoid?
+	}
+
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		Runtime r = Runtime.getRuntime();
+		long heapMaxSize = r.maxMemory();
+		int maxMapSize = (int) (Math.sqrt(heapMaxSize / 3d) * 0.8); // reduce maximum by 20%
+		maxMapSize = (maxMapSize / 100) * 100; // round by 100;
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				int w = map.getMaxTileCoordinate().x - map.getMinTileCoordinate().x;
+				int h = map.getMaxTileCoordinate().y - map.getMinTileCoordinate().y;
+				if (w > maxMapSize || h > maxMapSize)
+					throw new AtlasTestException("Map size too large for memory (is: " + Math.max(w, h) + " max:  "
+							+ maxMapSize + ")", map);
+			}
+		}
+
 	}
 
 	@Override

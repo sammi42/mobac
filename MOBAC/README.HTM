@@ -70,7 +70,7 @@ SourceForge.net: <br>
 		<li><a href="#GarminCustom">Garmin Custom maps</a></li>
 		<li><a href="#Glopus">Glopus</a></li>
 		<li><a href="#GMF">Glopus Map File / AFTrack (GMF)</a></li>
-		<!-- Google Earth Overlay (KMZ) -->
+		<li><a href="#KMZ">Google Earth Overlay (KMZ)</a></li>
 		<!-- GPS Sports Tracker -->
 		<li><a href="#Magellan">Magellan RMP</a></li>
 		<li><a href="#MAPLORER">MAPLORER</a></li>
@@ -299,6 +299,23 @@ folder.</p>
 <p>AFTrack can handle a maximum of 4096 tiles - so be sure not to
 select more.</p>
 <!-- *************************************************************************** -->
+<h3><a name="KMZ">Google Earth Overlay (KMZ)</a></h3>
+<p>For creating Google Earth Overlays you have to select <b>Google
+Earth Overlay (KMZ)</b> as format in section <b>Atlas settings</b> on the
+left side of the main window.</p>
+<p>Using this atlas output format the following features are ignored
+when creating atlases:</p>
+<ul>
+	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+</ul>
+<h4>WARNING</h4>
+<p>The Google Earth Overlay atlas format uses JPG images. The image
+size depends on the selected maximum map size (see settings dialog). The
+theoretical maximum map size for this atlas format is 25000. However it
+is <b>strongly recommended not to set the maximum map size higher
+than 10000</b> (this will result in a image with uncompressed size about 286
+MB).</p>
+<!-- *************************************************************************** -->
 <h3><a name="Magellan">Creating Magellan RMP atlases</a></h3>
 <p>For creating atlases of Creating Garmin Custom Maps you have to
 select <b>Magellan (RMP)</b> as format in section <b>Atlas settings</b>
@@ -418,9 +435,9 @@ your device (default directory: /oruxmaps/mapfiles/).</p>
 libraries; see <a href="#SQLite">SQLite atlas formats</a></p>
 <!-- *************************************************************************** -->
 <h3><a name="Osmdroid">Creating atlases for Osmdroid</a></h3>
-<p>For creating atlases compatible with Osmdroid you have to
-select <b>Osmdroid ZIP</b> as format in section <b>Atlas
-settings</b> on the left side of the main window. <br>
+<p>For creating atlases compatible with Osmdroid you have to select
+<b>Osmdroid ZIP</b> as format in section <b>Atlas settings</b> on the
+left side of the main window. <br>
 As atlases for Osmdroid do not support all features provided by Mobile
 Atlas Creator the following settings are ignored when creating atlases
 for Osmdroid:</p>

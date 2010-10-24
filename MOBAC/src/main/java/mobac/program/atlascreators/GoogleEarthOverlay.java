@@ -164,6 +164,12 @@ public class GoogleEarthOverlay extends AtlasCreator {
 					imageWidth = (int) (scaleFactor * mapWidth);
 			}
 		}
+		if (imageHeight < 0 || imageWidth < 0)
+			throw new MapCreationException("Invalid map size: (width/height: " + imageWidth + "/" + imageHeight + ")");
+		long imageSize = 3l * ((long) imageWidth) * ((long) imageHeight);
+		if (imageSize > Integer.MAX_VALUE)
+			throw new MapCreationException("Map image too large: (width/height: " + imageWidth + "/" + imageHeight
+					+ ") - reduce the map size and try again");
 		BufferedImage tileImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics = tileImage.createGraphics();
 		try {

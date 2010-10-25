@@ -543,4 +543,12 @@ public class Utilities {
 		if (!fileToDelete.delete())
 			throw new IOException("Deleting of \"" + fileToDelete + "\" failed.");
 	}
+
+	public static int getJavaMaxHeapMB() {
+		try {
+			return (int)(Runtime.getRuntime().maxMemory() / 1048576l);
+		} catch (Exception e) {
+			return -1;
+		}
+	}
 }

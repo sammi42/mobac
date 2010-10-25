@@ -37,6 +37,7 @@ import mobac.program.interfaces.MapInterface;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
+import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 import mobac.utilities.tar.TarIndexedArchive;
 
@@ -66,8 +67,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		this(atlas, atlas.getOutputFormat().createAtlasCreatorInstance());
 	}
 
-	public AtlasThread(AtlasInterface atlas, AtlasCreator atlasCreator)
-			throws AtlasTestException {
+	public AtlasThread(AtlasInterface atlas, AtlasCreator atlasCreator) throws AtlasTestException {
 		super("AtlasThread " + getNextThreadNum());
 		ap = new AtlasProgress(this);
 		this.atlas = atlas;
@@ -82,10 +82,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			for (LayerInterface layer : atlas) {
 				for (MapInterface map : layer) {
 					if (!atlasCreator.testMapSource(map.getMapSource()))
-						throw new AtlasTestException("The selected atlas output format \""
-								+ atlas.getOutputFormat()
-								+ "\" does not support the map source \"" + map.getMapSource()
-								+ "\"");
+						throw new AtlasTestException("The selected atlas output format \"" + atlas.getOutputFormat()
+								+ "\" does not support the map source \"" + map.getMapSource() + "\"");
 				}
 			}
 		} catch (AtlasTestException e) {
@@ -111,14 +109,11 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			System.gc();
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(null,
-							"Mobile Atlas Creator has run out of memory.\n"
-									+ "Please make sure you have started it via the "
-									+ "provided startup scripts 'start.cmd' (Windows) "
-									+ "/ 'start.sh' (Linux).\n"
-									+ "Those scripts are increasing the maximum memory usable "
-									+ "by Mobile Atlas Creator to 512 MB.", "Out of memory",
-							JOptionPane.ERROR_MESSAGE);
+					String message = "Mobile Atlas Creator has run out of memory.";
+					int maxMem = Utilities.getJavaMaxHeapMB();
+					if (maxMem > 0)
+						message += "\nCurrent maximum memory associated to MOBAC: " + maxMem + " MiB";
+					JOptionPane.showMessageDialog(null, message, "Out of memory", JOptionPane.ERROR_MESSAGE);
 					ap.closeWindow();
 				}
 			});
@@ -147,16 +142,16 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		long totalNrOfTiles = atlas.calculateTilesToDownload();
 
 		if (totalNrOfTiles > Integer.MAX_VALUE) {
-			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
 		try {
 			atlasCreator.startAtlasCreation(atlas, customAtlasDir);
 		} catch (AtlasTestException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(),
-					"Atlas format restriction violated", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Atlas format restriction violated",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
@@ -180,9 +175,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 					} catch (Exception e) {
 						log.error("", e);
 						String[] options = { "Continue", "Abort", "Show error report" };
-						int a = JOptionPane.showOptionDialog(null, "An error occured: "
-								+ e.getMessage() + "\n[" + e.getClass().getSimpleName() + "]\n\n",
-								"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+						int a = JOptionPane.showOptionDialog(null, "An error occured: " + e.getMessage() + "\n["
+								+ e.getClass().getSimpleName() + "]\n\n", "Error", 0, JOptionPane.ERROR_MESSAGE, null,
+								options, options[0]);
 						switch (a) {
 						case 2:
 							GUIExceptionHandler.processException(e);
@@ -214,8 +209,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	/**
 	 * 
 	 * @param map
-	 * @return true if map creation process was finished and false if something
-	 *         went wrong and the user decided to retry map download
+	 * @return true if map creation process was finished and false if something went wrong and the user decided to retry
+	 *         map download
 	 * @throws Exception
 	 */
 	public boolean createMap(MapInterface map) throws Exception {
@@ -234,9 +229,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		// ts.prepareTileStore(map.getMapSource());
 
 		/***
-		 * In this section of code below, tiles for Atlas is being downloaded
-		 * and saved in the temporary layer tar file in the system temp
-		 * directory.
+		 * In this section of code below, tiles for Atlas is being downloaded and saved in the temporary layer tar file
+		 * in the system temp directory.
 		 **/
 		int zoom = map.getZoom();
 
@@ -252,8 +246,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			tileArchiveFile.deleteOnExit();
 			log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
 			tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
-			djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive,
-					(DownloadableElement) map);
+			djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive, (DownloadableElement) map);
 
 			boolean failedMessageAnswered = false;
 
@@ -272,8 +265,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 							+ "<u>Skip</u> the current map and continue to process other maps in the atlas?<br>"
 							+ "<u>Abort</u> the current map and atlas creation process?<br></html>";
 					int answer = JOptionPane.showOptionDialog(ap, message,
-							"Multiple download errors - how to proceed?", 0,
-							JOptionPane.QUESTION_MESSAGE, null, answers, answers[0]);
+							"Multiple download errors - how to proceed?", 0, JOptionPane.QUESTION_MESSAGE, null,
+							answers, answers[0]);
 					failedMessageAnswered = true;
 					switch (answer) {
 					case 0: // Continue
@@ -301,15 +294,12 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			tileIndex = tileArchive.getTarIndex();
 			if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
 				int missing = tileCount - tileIndex.size();
-				log.debug("Expected tile count: " + tileCount + " downloaded tile count: "
-						+ tileIndex.size() + " missing: " + missing);
-				int answer = JOptionPane.showConfirmDialog(ap,
-						"Something is wrong with download of atlas tiles.\n"
-								+ "The amount of downladed tiles is not as "
-								+ "high as it was calculated.\nTherfore tiles "
-								+ "will be missing in the created atlas.\n" + missing
-								+ " tiles are missing.\n\n" + "Are you sure you want to continue "
-								+ "and create the atlas anyway?",
+				log.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
+						+ " missing: " + missing);
+				int answer = JOptionPane.showConfirmDialog(ap, "Something is wrong with download of atlas tiles.\n"
+						+ "The amount of downladed tiles is not as " + "high as it was calculated.\nTherfore tiles "
+						+ "will be missing in the created atlas.\n" + missing + " tiles are missing.\n\n"
+						+ "Are you sure you want to continue " + "and create the atlas anyway?",
 						"Error - tiles are missing - do you want to continue anyway?",
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (answer != JOptionPane.YES_OPTION)

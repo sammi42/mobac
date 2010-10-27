@@ -70,6 +70,7 @@ import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
 import mobac.mapsources.impl.RegionalMapSources.MyTopo;
 import mobac.mapsources.impl.RegionalMapSources.NearMap;
+import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
 import mobac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
@@ -113,7 +114,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new StatkartTopo2(), new StatkartToporaster2(), new StatkartSjoHovedkart2(), new EniroComMap(),
 				new EniroComAerial(), new EniroComNautical(), new MapplusCh(), new YandexMap(), new YandexSat(),
 				new Navitel(), new MicrosoftOrdnanceSurveyExplorer(), new AeroChartsVFR(), new AeroChartsIFR(),
-				new AeroChartsIFRH(), new Sigpac() };
+				new AeroChartsIFRH(), new Sigpac(), new NzTopoMaps() };
 	}
 
 	public static void initialize() {

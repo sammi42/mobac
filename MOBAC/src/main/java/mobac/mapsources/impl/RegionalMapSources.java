@@ -716,4 +716,28 @@ public class RegionalMapSources {
 		}
 	}
 
+	/**
+	 * http://www.nztopomaps.com
+	 * 
+	 * @author Tobias Wulff (camel69)
+	 */
+	public static class NzTopoMaps extends AbstractMapSource {
+
+		public NzTopoMaps() {
+			super("New Zealand Topographic Maps", 7, 15, "png", TileUpdate.IfNoneMatch);
+		}
+
+		public String getTileUrl(int zoom, int x, int y) {
+			// nzy = 2^zoom - 1 - y
+			int nzy = (1 << zoom) - 1 - y;
+			return "http://cx.nztopomaps.com/" + zoom + "/" + x + "/" + nzy + ".png";
+		}
+
+		@Override
+		public String toString() {
+			return "New Zealand Topographic Maps";
+		}
+
+	}
+
 }

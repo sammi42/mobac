@@ -45,6 +45,7 @@ import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
 import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
 import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
 import mobac.mapsources.impl.RegionalMapSources.NearMap;
+import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.program.model.EastNorthCoordinate;
 
@@ -74,6 +75,7 @@ public class Cities {
 	public static final EastNorthCoordinate INNSBRUCK = new EastNorthCoordinate(47.26, 11.39);
 	public static final EastNorthCoordinate TOKYO = new EastNorthCoordinate(35.683889, 139.774444);
 	public static final EastNorthCoordinate TAIPEI = new EastNorthCoordinate(25.033333, 121.633333);
+	public static final EastNorthCoordinate WELLINGTON = new EastNorthCoordinate(-41.283333, 174.766667);
 
 	static {
 		TEST_COORDINATES = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
@@ -106,6 +108,7 @@ public class Cities {
 		TEST_COORDINATES.put(MicrosoftOrdnanceSurveyExplorer.class, Cities.LONDON);
 		TEST_COORDINATES.put(YandexMap.class, Cities.MOSCOW);
 		TEST_COORDINATES.put(YandexSat.class, Cities.MOSCOW);
+		TEST_COORDINATES.put(NzTopoMaps.class, Cities.WELLINGTON);
 	}
 
 	public static EastNorthCoordinate getTestCoordinate(MapSource mapSource, EastNorthCoordinate defaultCoordinate) {

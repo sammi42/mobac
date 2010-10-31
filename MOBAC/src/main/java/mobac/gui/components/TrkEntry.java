@@ -17,7 +17,7 @@
 package mobac.gui.components;
 
 import mobac.data.gpx.gpx11.TrkType;
-import mobac.gui.mapview.GpxLayer;
+import mobac.gui.mapview.layer.GpxLayer;
 
 public class TrkEntry extends GpxEntry {
 	private TrkType trk;

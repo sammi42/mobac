@@ -59,7 +59,7 @@ public class Tile {
 		}
 	}
 
-	protected enum TileState {TS_NEW, TS_LOADING, TS_LOADED, TS_ERROR}; 
+	public enum TileState {TS_NEW, TS_LOADING, TS_LOADED, TS_ERROR}; 
 
 	protected MapSource mapSource;
 	protected int xtile;

@@ -257,7 +257,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		return new EastNorthCoordinate(lat, lon);
 	}
 
-	protected Point getTopLeftCoordinate() {
+	public Point getTopLeftCoordinate() {
 		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}
 

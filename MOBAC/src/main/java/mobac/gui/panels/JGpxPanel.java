@@ -46,8 +46,8 @@ import mobac.gui.components.RteEntry;
 import mobac.gui.components.TrkEntry;
 import mobac.gui.components.TrksegEntry;
 import mobac.gui.components.WptEntry;
-import mobac.gui.mapview.GpxLayer;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.layer.GpxLayer;
 import mobac.utilities.GBC;
 
 /**

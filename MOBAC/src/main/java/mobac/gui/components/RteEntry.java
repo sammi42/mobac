@@ -17,7 +17,7 @@
 package mobac.gui.components;
 
 import mobac.data.gpx.gpx11.RteType;
-import mobac.gui.mapview.GpxLayer;
+import mobac.gui.mapview.layer.GpxLayer;
 
 public class RteEntry extends GpxEntry {
 	private RteType rte;

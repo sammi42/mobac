@@ -21,8 +21,8 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 
 import mobac.gui.MainGUI;
-import mobac.gui.mapview.GpxLayer;
 import mobac.gui.mapview.interfaces.MapLayer;
+import mobac.gui.mapview.layer.GpxLayer;
 import mobac.gui.panels.JGpxPanel;
 
 

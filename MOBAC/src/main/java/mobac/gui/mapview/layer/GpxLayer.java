@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.layer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -27,6 +27,7 @@ import mobac.data.gpx.gpx11.RteType;
 import mobac.data.gpx.gpx11.TrkType;
 import mobac.data.gpx.gpx11.TrksegType;
 import mobac.data.gpx.gpx11.WptType;
+import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.gui.panels.JGpxPanel;
 import mobac.program.interfaces.MapSpace;

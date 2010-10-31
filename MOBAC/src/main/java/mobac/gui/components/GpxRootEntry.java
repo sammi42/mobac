@@ -18,7 +18,7 @@ package mobac.gui.components;
 
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.data.gpx.gpx11.MetadataType;
-import mobac.gui.mapview.GpxLayer;
+import mobac.gui.mapview.layer.GpxLayer;
 
 public class GpxRootEntry extends GpxEntry {
 

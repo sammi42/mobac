@@ -18,7 +18,7 @@ package mobac.gui.components;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import mobac.gui.mapview.GpxLayer;
+import mobac.gui.mapview.layer.GpxLayer;
 
 /**
  * Generalized entry in the gpx tree. All actual entries derive from this class.

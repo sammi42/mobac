@@ -27,7 +27,7 @@ import javax.swing.JLabel;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.mapview.MapEventListener;
 import mobac.gui.mapview.PreviewMap;
-import mobac.gui.mapview.TileStoreCoverageLayer;
+import mobac.gui.mapview.layer.TileStoreCoverageLayer;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;

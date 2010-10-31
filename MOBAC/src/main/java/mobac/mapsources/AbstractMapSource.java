@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import mobac.gui.mapview.JMapViewer;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * Abstract base class for map sources.

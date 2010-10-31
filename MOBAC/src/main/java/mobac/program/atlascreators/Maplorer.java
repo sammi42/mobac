@@ -33,14 +33,14 @@ import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageFormat;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 
 /**
  * AtlasCreator for MAPLORER ( http://maplorer.com )

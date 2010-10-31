@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer;
+package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.util.Hashtable;
 
+import mobac.gui.mapview.Tile.TileState;
+import mobac.gui.mapview.interfaces.TileImageCache;
+import mobac.program.interfaces.MapSource;
+
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.Tile.TileState;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 
 /**
  * {@link TileImageCache} implementation that stores all {@link Tile} objects in

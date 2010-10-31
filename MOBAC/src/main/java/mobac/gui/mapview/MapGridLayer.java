@@ -14,29 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer.interfaces;
+package mobac.gui.mapview;
 
-//License: GPL. Copyright 2008 by Jan Peter Stotz
+import java.awt.Graphics;
+
+import mobac.gui.mapview.interfaces.MapTileLayer;
+import mobac.program.interfaces.MapSource;
+
 
 /**
- * Interface for implementing an asynchronous tile loader. Tiles are usually
- * loaded via HTTP or from a file.
- * 
- * @author Jan Peter Stotz
+ * A simple layer that paints the tile borders.
  */
-public interface TileLoaderJobCreator {
+public class MapGridLayer implements MapTileLayer {
 
-	/**
-	 * A typical {@link #createTileLoaderJob(int, int, int)} implementation
-	 * should create and return a new {@link Job} instance that performs the
-	 * load action.
-	 * 
-	 * @param mapSource
-	 * @param tilex
-	 * @param tiley
-	 * @param zoom
-	 * @returns {@link Runnable} implementation that performs the desired load
-	 *          action.
-	 */
-	public Runnable createTileLoaderJob(MapSource mapSource, int tilex, int tiley, int zoom);
+	protected int tileSize;
+
+	public void startPainting(MapSource mapSource) {
+		tileSize = mapSource.getMapSpace().getTileSize();
+	}
+
+	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
+		g.drawRect(gx, gy, tileSize, tileSize);
+	}
+
 }

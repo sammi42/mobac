@@ -18,10 +18,10 @@ package mobac.mapsources.impl;
 
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.mapsources.UpdatableMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MultiLayerMapSource;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class Google {
 

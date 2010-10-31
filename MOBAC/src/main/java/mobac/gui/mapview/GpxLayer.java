@@ -27,11 +27,10 @@ import mobac.data.gpx.gpx11.RteType;
 import mobac.data.gpx.gpx11.TrkType;
 import mobac.data.gpx.gpx11.TrksegType;
 import mobac.data.gpx.gpx11.WptType;
+import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.gui.panels.JGpxPanel;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * A {@link MapLayer} displaying the content of a loaded GPX file in a {@link JMapViewer} instance.

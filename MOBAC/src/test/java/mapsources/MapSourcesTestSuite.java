@@ -25,15 +25,15 @@ import junit.framework.TestSuite;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.Logging;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * {@link TestSuite} that tests every available map source for operability. The

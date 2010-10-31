@@ -24,10 +24,10 @@ import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.JobDispatcher;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.interfaces.DownloadJobListener;
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 public class DownloadJob implements Job {

@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mobac.gui.mapview.JMapViewer;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class MapDataFileParser {

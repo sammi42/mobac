@@ -24,17 +24,17 @@ import java.util.Enumeration;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.download.jobenumerators.DJEMultiLayer;
 import mobac.program.download.jobenumerators.DJEPolygon;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.tar.TarIndexedArchive;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 @XmlRootElement
 public class MapPolygon extends Map {

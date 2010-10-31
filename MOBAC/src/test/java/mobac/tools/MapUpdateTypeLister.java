@@ -20,8 +20,8 @@ import java.util.Vector;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.Logging;
+import mobac.program.interfaces.MapSource;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class MapUpdateTypeLister {
 

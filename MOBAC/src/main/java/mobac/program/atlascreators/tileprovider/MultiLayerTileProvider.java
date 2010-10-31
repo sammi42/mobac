@@ -23,11 +23,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import mobac.mapsources.MultiLayerMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageFormat;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class MultiLayerTileProvider extends FilterTileProvider {
 

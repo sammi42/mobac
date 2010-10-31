@@ -62,6 +62,7 @@ import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JAtlasNameField;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.mapview.GridZoom;
+import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.MapEventListener;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.panels.JCoordinatesPanel;
@@ -74,6 +75,7 @@ import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.AtlasThread;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Layer;
 import mobac.program.model.MapSelection;
@@ -88,8 +90,6 @@ import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class MainGUI extends JFrame implements MapEventListener {
 

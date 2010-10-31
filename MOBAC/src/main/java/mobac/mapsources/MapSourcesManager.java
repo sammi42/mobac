@@ -18,7 +18,7 @@ package mobac.mapsources;
 
 import java.util.Vector;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import mobac.program.interfaces.MapSource;
 
 public abstract class MapSourcesManager {
 

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package unittests.helper;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.AtlasCreator;
+import mobac.program.interfaces.MapSource;
 
 /**
  * A simple {@link AtlasCreator} implementation that does nothing. Can be used

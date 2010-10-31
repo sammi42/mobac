@@ -19,11 +19,11 @@ package mobac.program.download.jobenumerators;
 import mobac.program.interfaces.DownloadJobEnumerator;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Map;
 import mobac.program.model.MapPolygon;
 import mobac.utilities.tar.TarIndexedArchive;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 public class DJEFactory {

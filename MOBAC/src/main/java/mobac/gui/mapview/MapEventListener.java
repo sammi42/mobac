@@ -16,9 +16,9 @@
  ******************************************************************************/
 package mobac.gui.mapview;
 
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.MercatorPixelCoordinate;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 public interface MapEventListener {

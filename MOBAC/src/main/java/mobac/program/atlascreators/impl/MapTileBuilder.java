@@ -27,12 +27,12 @@ import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageParameters;
 import mobac.utilities.MyMath;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class MapTileBuilder {
 

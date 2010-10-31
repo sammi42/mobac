@@ -23,9 +23,9 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import mobac.program.atlascreators.tileprovider.TileProvider;
+import mobac.program.interfaces.MapSpace;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class MobacTile {

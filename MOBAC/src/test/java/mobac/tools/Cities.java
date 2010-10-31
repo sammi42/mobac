@@ -47,9 +47,9 @@ import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
 import mobac.mapsources.impl.RegionalMapSources.NearMap;
 import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class Cities {
 

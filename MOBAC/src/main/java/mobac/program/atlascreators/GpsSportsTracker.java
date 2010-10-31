@@ -26,11 +26,11 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Derived from {@link MobileTrailExplorer}

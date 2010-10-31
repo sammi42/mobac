@@ -19,8 +19,8 @@ package mobac.mapsources.mapspace;
 import java.awt.Point;
 
 import mobac.gui.mapview.PreviewMap;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * Mercator projection with a world width and height of 256 * 2<sup>zoom</sup>

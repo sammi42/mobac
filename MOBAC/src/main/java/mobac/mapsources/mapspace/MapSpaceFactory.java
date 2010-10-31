@@ -16,7 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources.mapspace;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import mobac.program.interfaces.MapSpace;
 
 public class MapSpaceFactory {
 

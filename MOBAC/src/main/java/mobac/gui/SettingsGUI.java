@@ -79,6 +79,7 @@ import mobac.gui.components.JTimeSlider;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.ProxyType;
 import mobac.program.model.Settings;
 import mobac.program.model.UnitSystem;
@@ -91,7 +92,6 @@ import mobac.utilities.Utilities;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;

@@ -26,7 +26,6 @@ import javax.management.Notification;
 import javax.management.NotificationBroadcaster;
 import javax.management.NotificationListener;
 
-import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 
 public class PreviewTileCache extends MemoryTileCache implements NotificationListener {
 

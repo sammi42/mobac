@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * Custom tile store provider, configurable via settings.xml.

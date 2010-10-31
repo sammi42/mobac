@@ -20,8 +20,8 @@ import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
 import mobac.mapsources.mapspace.MercatorPower2MapSpaceEllipsoidal;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class MiscMapSources {
 

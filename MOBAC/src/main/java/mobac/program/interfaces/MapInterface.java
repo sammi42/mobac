@@ -21,7 +21,6 @@ import java.awt.Point;
 
 import mobac.program.model.TileImageParameters;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 public interface MapInterface extends AtlasObject, CapabilityDeletable {

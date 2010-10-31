@@ -27,10 +27,10 @@ import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class CacheWolf extends Ozi {
 

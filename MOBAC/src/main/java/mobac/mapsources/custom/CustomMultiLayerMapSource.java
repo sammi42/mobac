@@ -19,9 +19,9 @@ package mobac.mapsources.custom;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobac.mapsources.MultiLayerMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MultiLayerMapSource;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Custom tile store provider for multi-layer map sources, configurable via settings.xml.

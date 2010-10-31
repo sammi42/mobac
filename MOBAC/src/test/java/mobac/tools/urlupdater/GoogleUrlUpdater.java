@@ -50,9 +50,9 @@ import mobac.mapsources.impl.Google.GoogleMapsChina;
 import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.program.Logging;
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer;
+package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 

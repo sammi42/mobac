@@ -22,9 +22,9 @@ import java.awt.geom.Point2D;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 @XmlRootElement

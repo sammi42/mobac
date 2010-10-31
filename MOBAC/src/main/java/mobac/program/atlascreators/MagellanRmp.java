@@ -37,10 +37,10 @@ import mobac.program.atlascreators.impl.rmp.rmpfile.Bmp4bit;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class MagellanRmp extends AtlasCreator {
 

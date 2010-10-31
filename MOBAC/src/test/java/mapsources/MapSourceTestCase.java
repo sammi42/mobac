@@ -21,13 +21,13 @@ import java.net.HttpURLConnection;
 
 import junit.framework.TestCase;
 import mobac.program.download.TileDownLoader;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class MapSourceTestCase extends TestCase {
 

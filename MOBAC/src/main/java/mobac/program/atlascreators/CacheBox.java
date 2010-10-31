@@ -28,11 +28,11 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class CacheBox extends AtlasCreator {
 

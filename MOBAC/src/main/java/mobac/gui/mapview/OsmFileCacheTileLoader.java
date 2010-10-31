@@ -14,23 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer;
+package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.io.ByteArrayInputStream;
 
 import mobac.exceptions.DownloadFailedException;
+import mobac.gui.mapview.Tile.TileState;
+import mobac.gui.mapview.interfaces.TileImageCache;
+import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
+import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.program.download.TileDownLoader;
+import mobac.program.interfaces.MapSource;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.Tile.TileState;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
  * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via

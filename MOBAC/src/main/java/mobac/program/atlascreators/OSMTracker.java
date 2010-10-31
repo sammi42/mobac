@@ -29,11 +29,11 @@ import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Creates maps identical to the atlas format used by OSMTracker.

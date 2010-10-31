@@ -37,12 +37,12 @@ import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarArchive;
 import mobac.utilities.tar.TarIndex;
 import mobac.utilities.tar.TarTmiArchive;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public abstract class TrekBuddy extends AtlasCreator {
 

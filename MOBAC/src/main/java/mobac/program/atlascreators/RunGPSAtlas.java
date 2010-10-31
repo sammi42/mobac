@@ -31,10 +31,10 @@ import mobac.program.atlascreators.impl.rungps.RunGPSAtlasFile;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Creates maps using the Run.GPS Trainer atlas format.

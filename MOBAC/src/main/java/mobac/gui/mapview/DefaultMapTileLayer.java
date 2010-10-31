@@ -14,33 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer;
+package mobac.gui.mapview;
 
 import java.awt.Graphics;
 
-import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
-import org.openstreetmap.gui.jmapviewer.Tile.TileState;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import mobac.gui.mapview.JobDispatcher.JobThread;
+import mobac.gui.mapview.Tile.TileState;
+import mobac.gui.mapview.interfaces.MapTileLayer;
+import mobac.program.interfaces.MapSource;
 
-public class OverlayMapTileLayer implements MapTileLayer {
+
+public class DefaultMapTileLayer implements MapTileLayer {
 
 	protected JMapViewer mapViewer;
+
 	protected MapSource mapSource;
 
-	public OverlayMapTileLayer(JMapViewer mapViewer, MapSource tileSource) {
+	protected boolean usePlaceHolders;
+
+	public DefaultMapTileLayer(JMapViewer mapViewer, MapSource mapSource) {
 		this.mapViewer = mapViewer;
-		this.mapSource = tileSource;
+		this.mapSource = mapSource;
 	}
 
 	public void startPainting(MapSource mapSource) {
+		usePlaceHolders = mapViewer.usePlaceHolderTiles;
 	}
 
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
 		Tile tile = getTile(tilex, tiley, zoom);
 		if (tile == null)
 			return;
-		tile.paintTransparent(g, gx, gy);
+		tile.paint(g, gx, gy);
 	}
 
 	/**
@@ -61,6 +66,8 @@ public class OverlayMapTileLayer implements MapTileLayer {
 		if (tile == null) {
 			tile = new Tile(mapSource, tilex, tiley, zoom);
 			mapViewer.tileCache.addTile(tile);
+			if (usePlaceHolders)
+				tile.loadPlaceholderFromCache(mapViewer.tileCache);
 		}
 		if (tile.getTileState() == TileState.TS_NEW) {
 			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(mapSource,

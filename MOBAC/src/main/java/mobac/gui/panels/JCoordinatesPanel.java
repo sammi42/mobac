@@ -34,13 +34,13 @@ import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.components.JCoordinateField;
 import mobac.gui.components.JDropDownButton;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.CoordinateStringFormat;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 /**

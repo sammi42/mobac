@@ -34,12 +34,12 @@ import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class MapSourceTypeDetector {
 

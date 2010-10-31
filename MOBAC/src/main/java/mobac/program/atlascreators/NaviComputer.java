@@ -31,11 +31,11 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 

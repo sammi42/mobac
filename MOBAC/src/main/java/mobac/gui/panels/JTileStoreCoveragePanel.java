@@ -28,10 +28,10 @@ import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.mapview.MapEventListener;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.TileStoreCoverageLayer;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEventListener,
 		ActionListener {

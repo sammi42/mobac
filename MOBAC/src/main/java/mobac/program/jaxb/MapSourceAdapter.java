@@ -19,8 +19,8 @@ package mobac.program.jaxb;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import mobac.mapsources.MapSourcesManager;
+import mobac.program.interfaces.MapSource;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 

@@ -21,10 +21,10 @@ import java.awt.Polygon;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.download.DownloadJob;
 import mobac.program.interfaces.DownloadJobListener;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapPolygon;
 import mobac.utilities.tar.TarIndexedArchive;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 /**

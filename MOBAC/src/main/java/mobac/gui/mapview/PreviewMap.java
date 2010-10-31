@@ -27,19 +27,14 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 import mobac.mapsources.MapSourcesManager;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.program.model.Settings;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.DefaultMapController;
-import org.openstreetmap.gui.jmapviewer.JMapController;
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
-import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class PreviewMap extends JMapViewer implements ComponentListener {
 

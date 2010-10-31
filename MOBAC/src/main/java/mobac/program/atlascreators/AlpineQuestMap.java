@@ -39,13 +39,13 @@ import mobac.program.atlascreators.impl.aqm.FlatPackCreator;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileImageDataWriter;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.utilities.stream.ArrayOutputStream;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 
 /**
  * Creates maps using the AlpineQuestMap atlas format (AQM v2 complient).

@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
+import mobac.program.interfaces.MapSource;
 
 public class MapSourceTestFailedException extends Exception {
 

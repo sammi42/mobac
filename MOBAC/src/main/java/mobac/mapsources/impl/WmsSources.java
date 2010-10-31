@@ -19,9 +19,9 @@ package mobac.mapsources.impl;
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class WmsSources {

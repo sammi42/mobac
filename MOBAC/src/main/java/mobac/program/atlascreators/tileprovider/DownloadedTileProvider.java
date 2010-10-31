@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 public class DownloadedTileProvider implements TileProvider {

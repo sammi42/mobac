@@ -14,21 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer.interfaces;
+package mobac.gui.mapview.interfaces;
 
-import org.openstreetmap.gui.jmapviewer.Tile;
+import java.awt.Graphics2D;
 
-//License: GPL. Copyright 2008 by Jan Peter Stotz
+import mobac.gui.mapview.JMapViewer;
 
-public interface TileLoaderListener {
+/**
+ * General purpose map layer
+ */
+public interface MapLayer {
 
 	/**
-	 * Will be called if a new {@link Tile} has been loaded successfully. 
-	 * Loaded can mean downloaded or loaded from file cache. 
 	 * 
-	 * @param tile
+	 * @param map
+	 * @param g
+	 * @param zoom
+	 *            current zoom level
+	 * @param minX
+	 *            top left x coordinate of the visible map region
+	 * @param minYtop
+	 *            left y coordinate of the visible map region
+	 * @param maxX
+	 *            bottom right x coordinate of the visible map region
+	 * @param maxY
+	 *            bottom right y coordinate of the visible map region
 	 */
-	public void tileLoadingFinished(Tile tile, boolean success);
+	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY);
 
-	public TileImageCache getTileImageCache();
 }

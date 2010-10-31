@@ -20,8 +20,8 @@ import java.util.Vector;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.impl.LocalhostTestSource;
+import mobac.program.interfaces.MapSource;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class TestMapSourcesManager extends MapSourcesManager {
 

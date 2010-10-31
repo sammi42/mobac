@@ -45,15 +45,15 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileImageDataWriter;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

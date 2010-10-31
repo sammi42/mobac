@@ -16,8 +16,9 @@
  ******************************************************************************/
 package mobac.program.model;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
+import mobac.gui.mapview.JMapViewer;
+import mobac.program.interfaces.MapSpace;
+
 
 /**
  * Coordinate point in Mercator projection regarding a world with height and

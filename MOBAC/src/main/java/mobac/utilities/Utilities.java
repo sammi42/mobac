@@ -51,10 +51,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import mobac.Main;
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.file.DirectoryFileFilter;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class Utilities {
 

@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import mobac.exceptions.TileStoreException;
+import mobac.program.interfaces.MapSource;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 import mobac.program.tilestore.TileStoreInfo;
@@ -43,7 +44,6 @@ import mobac.utilities.Utilities;
 import mobac.utilities.file.DeleteFileFilter;
 import mobac.utilities.file.DirInfoFileFilter;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;

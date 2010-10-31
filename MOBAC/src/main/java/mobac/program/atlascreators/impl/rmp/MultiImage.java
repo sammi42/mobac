@@ -23,11 +23,11 @@ import java.awt.image.BufferedImage;
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.collections.SoftHashMap;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 /**

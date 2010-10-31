@@ -26,11 +26,11 @@ import java.util.LinkedList;
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.LayerInterface;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.LittleEndianOutputStream;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * General structure of an GMF file (Little Endian)

@@ -14,40 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer.interfaces;
+package mobac.gui.mapview.interfaces;
+
+import mobac.gui.mapview.Tile;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
-import java.awt.Graphics2D;
-import java.awt.Point;
-
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-
-/**
- * Interface to be implemented by all elements that can be displayed on the map.
- * 
- * @author Jan Peter Stotz
- * @see JMapViewer#addMapMarker(MapMarker)
- * @see JMapViewer#getMapMarkerList()
- */
-public interface MapMarker {
+public interface TileLoaderListener {
 
 	/**
-	 * @return Latitude of the map marker position
-	 */
-	public double getLat();
-
-	/**
-	 * @return Longitude of the map marker position
-	 */
-	public double getLon();
-
-	/**
-	 * Paints the map marker on the map. The <code>position</code> specifies the
-	 * coordinates within <code>g</code>
+	 * Will be called if a new {@link Tile} has been loaded successfully. 
+	 * Loaded can mean downloaded or loaded from file cache. 
 	 * 
-	 * @param g
-	 * @param position
+	 * @param tile
 	 */
-	public void paint(Graphics2D g, Point position);
+	public void tileLoadingFinished(Tile tile, boolean success);
+
+	public TileImageCache getTileImageCache();
 }

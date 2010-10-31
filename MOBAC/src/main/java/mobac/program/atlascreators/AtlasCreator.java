@@ -25,7 +25,6 @@ import java.util.EnumSet;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.gui.AtlasProgress;
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.AtlasThread;
 import mobac.program.PauseResumeHandler;
 import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
@@ -34,6 +33,8 @@ import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageFormat;
@@ -42,7 +43,6 @@ import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Abstract base class for all AtlasCreator implementations.

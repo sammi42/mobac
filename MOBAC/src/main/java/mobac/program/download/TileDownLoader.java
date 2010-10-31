@@ -23,6 +23,9 @@ import java.net.HttpURLConnection;
 import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSource.TileUpdate;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
@@ -30,9 +33,6 @@ import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource.TileUpdate;
 
 public class TileDownLoader {
 

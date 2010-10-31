@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer;
+package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
@@ -29,10 +29,10 @@ import java.net.HttpURLConnection;
 
 import javax.imageio.ImageIO;
 
+import mobac.gui.mapview.interfaces.TileImageCache;
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
 
 
 /**

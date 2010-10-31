@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 import mobac.Main;
 import mobac.exceptions.MapSourcesUpdateException;
 import mobac.program.DirectoryManager;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class MapSourcesUpdater {
 

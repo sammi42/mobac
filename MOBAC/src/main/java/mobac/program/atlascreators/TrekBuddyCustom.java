@@ -20,12 +20,12 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace.ProjectionCategory;
 
 /**
  * Extends the {@link TrekBuddy} so that custom tiles are written. Custom tiles

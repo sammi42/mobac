@@ -27,10 +27,10 @@ import java.util.Locale;
 import mobac.exceptions.MapCreationException;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class TTQV extends Ozi {

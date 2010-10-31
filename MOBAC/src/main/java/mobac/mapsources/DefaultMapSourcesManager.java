@@ -80,9 +80,9 @@ import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
 import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
 import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import mobac.mapsources.impl.WmsSources.TerraserverUSA;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public class DefaultMapSourcesManager extends MapSourcesManager {
 

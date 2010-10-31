@@ -22,10 +22,10 @@ import mobac.program.JobDispatcher.Job;
 import mobac.program.download.DownloadJob;
 import mobac.program.interfaces.DownloadJobEnumerator;
 import mobac.program.interfaces.DownloadJobListener;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Map;
 import mobac.utilities.tar.TarIndexedArchive;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 /**

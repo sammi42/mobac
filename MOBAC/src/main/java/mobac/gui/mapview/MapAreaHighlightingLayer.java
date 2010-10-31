@@ -28,14 +28,13 @@ import javax.swing.event.TreeSelectionListener;
 
 import mobac.gui.MainGUI;
 import mobac.gui.atlastree.JAtlasTree;
+import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.MapPolygon;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
 
 public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 

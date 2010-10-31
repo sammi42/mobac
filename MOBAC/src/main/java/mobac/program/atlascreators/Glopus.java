@@ -23,10 +23,10 @@ import java.io.OutputStreamWriter;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class Glopus extends Ozi {

@@ -18,12 +18,12 @@ package mobac.program.model;
 
 import java.awt.Point;
 
-import mobac.mapsources.MultiLayerMapSource;
+import mobac.gui.mapview.JMapViewer;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MultiLayerMapSource;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class MapSelection {

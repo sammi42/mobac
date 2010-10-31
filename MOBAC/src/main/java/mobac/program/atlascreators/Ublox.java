@@ -23,9 +23,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Locale;
 
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class Ublox extends Ozi {
 

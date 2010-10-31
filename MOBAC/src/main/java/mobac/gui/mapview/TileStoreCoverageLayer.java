@@ -24,13 +24,12 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
+import mobac.gui.mapview.interfaces.MapLayer;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class TileStoreCoverageLayer implements MapLayer {
 

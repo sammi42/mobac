@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import mobac.exceptions.InvalidNameException;
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.download.jobenumerators.DJEMultiLayer;
 import mobac.program.download.jobenumerators.DJERectangle;
@@ -36,12 +35,13 @@ import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.DownloadableElement;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode,

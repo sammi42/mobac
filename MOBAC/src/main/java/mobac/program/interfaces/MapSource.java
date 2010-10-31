@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer.interfaces;
+package mobac.program.interfaces;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -22,10 +22,9 @@ import java.net.HttpURLConnection;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import mobac.mapsources.MultiLayerMapSource;
+import mobac.gui.mapview.JMapViewer;
 import mobac.program.jaxb.MapSourceAdapter;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz

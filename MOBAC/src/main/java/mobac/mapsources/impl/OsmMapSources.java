@@ -19,11 +19,11 @@ package mobac.mapsources.impl;
 import java.awt.Color;
 
 import mobac.mapsources.AbstractMapSource;
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MultiLayerMapSource;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class OsmMapSources {
 

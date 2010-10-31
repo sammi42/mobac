@@ -80,9 +80,8 @@
 			-outjars    build/temp.jar
 			-keepattributes *Annotation*
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
-			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource$TileUpdate { public *; }
-			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSource { public *; }
-			-keep class org.openstreetmap.gui.jmapviewer.interfaces.MapSpace { public *; }
+			-keep class mobac.program.interfaces.MapSource { public *; }
+			-keep class mobac.program.interfaces.MapSpace { public *; }
 			-keep class org.apache.log4j.Layout { public *; }
 			-keep class org.apache.log4j.Level { public *; }
 			-keep class org.apache.log4j.Category { public *; }

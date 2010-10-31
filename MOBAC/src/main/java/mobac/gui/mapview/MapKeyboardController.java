@@ -29,7 +29,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.gui.jmapviewer.JMapController;
 
 /**
  * Implements the GUI logic for the preview map panel that manages the map

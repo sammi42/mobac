@@ -38,12 +38,12 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.CapabilityDeletable;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.utilities.MyMath;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * A layer holding one or multiple maps of the same map source and the same zoom

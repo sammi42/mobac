@@ -27,9 +27,9 @@ import mobac.mapsources.impl.Google.GoogleMaps;
 import mobac.mapsources.impl.Google.GoogleTerrain;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Creates a tile cache structure as used by <a href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile,

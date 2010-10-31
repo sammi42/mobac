@@ -16,9 +16,10 @@
  ******************************************************************************/
 package mobac.mapsources;
 
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 /**
  * Utility methods used by several map sources.

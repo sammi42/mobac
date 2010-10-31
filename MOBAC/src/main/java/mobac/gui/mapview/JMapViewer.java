@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer;
+package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
@@ -37,17 +37,17 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import mobac.mapsources.MultiLayerMapSource;
+import mobac.gui.mapview.interfaces.MapLayer;
+import mobac.gui.mapview.interfaces.MapMarker;
+import mobac.gui.mapview.interfaces.MapTileLayer;
+import mobac.gui.mapview.interfaces.TileImageCache;
+import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
+import mobac.gui.mapview.interfaces.TileLoaderListener;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.Utilities;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapLayer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapTileLayer;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileImageCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderJobCreator;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
  * 

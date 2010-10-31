@@ -31,10 +31,8 @@ import mobac.gui.components.GpxRootEntry;
 import mobac.gui.components.RteEntry;
 import mobac.gui.components.TrksegEntry;
 import mobac.gui.panels.JGpxPanel;
+import mobac.program.interfaces.MapSpace;
 
-import org.openstreetmap.gui.jmapviewer.JMapController;
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class GpxMapController extends JMapController implements MouseListener {
 

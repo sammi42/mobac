@@ -26,10 +26,10 @@ import java.awt.Stroke;
 
 import javax.swing.JComponent;
 
+import mobac.program.interfaces.MapSpace;
 import mobac.program.model.UnitSystem;
 import mobac.utilities.MyMath;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 
 /**

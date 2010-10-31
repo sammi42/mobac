@@ -28,10 +28,10 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * [Nokia] Sports Tracker

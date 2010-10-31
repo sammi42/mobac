@@ -25,11 +25,11 @@ import javax.swing.JOptionPane;
 
 import mobac.exceptions.TileStoreException;
 import mobac.program.DirectoryManager;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 public abstract class TileStore {
 

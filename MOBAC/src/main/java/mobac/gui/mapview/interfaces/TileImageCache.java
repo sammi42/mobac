@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.openstreetmap.gui.jmapviewer.interfaces;
+package mobac.gui.mapview.interfaces;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.Tile;
+import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.Tile;
+import mobac.program.interfaces.MapSource;
+
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 

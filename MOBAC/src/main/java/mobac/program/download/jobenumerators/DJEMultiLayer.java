@@ -16,14 +16,14 @@
  ******************************************************************************/
 package mobac.program.download.jobenumerators;
 
-import mobac.mapsources.MultiLayerMapSource;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.interfaces.DownloadJobEnumerator;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.tar.TarIndexedArchive;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 
 /**

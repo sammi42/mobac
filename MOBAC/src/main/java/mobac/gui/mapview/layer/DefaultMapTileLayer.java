@@ -20,7 +20,6 @@ import java.awt.Graphics;
 
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.Tile;
-import mobac.gui.mapview.JobDispatcher.JobThread;
 import mobac.gui.mapview.Tile.TileState;
 import mobac.gui.mapview.interfaces.MapTileLayer;
 import mobac.program.interfaces.MapSource;

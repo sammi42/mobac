@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 
 import mobac.exceptions.DownloadFailedException;
 import mobac.gui.mapview.Tile.TileState;
-import mobac.gui.mapview.interfaces.TileImageCache;
 import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.program.download.TileDownLoader;
@@ -73,7 +72,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		}
 
 		public void run() {
-			TileImageCache cache = listener.getTileImageCache();
+			MemoryTileCache cache = listener.getTileImageCache();
 			synchronized (cache) {
 				tile = cache.getTile(mapSource, tilex, tiley, zoom);
 				if (tile == null || tile.tileState != TileState.TS_NEW)

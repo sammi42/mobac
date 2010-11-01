@@ -40,7 +40,6 @@ import javax.swing.event.ChangeListener;
 import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.gui.mapview.interfaces.MapMarker;
 import mobac.gui.mapview.interfaces.MapTileLayer;
-import mobac.gui.mapview.interfaces.TileImageCache;
 import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.gui.mapview.layer.DefaultMapTileLayer;
@@ -51,11 +50,9 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.Utilities;
 
-
 /**
  * 
- * Provides a simple panel that displays pre-rendered map tiles loaded from the
- * OpenStreetMap project.
+ * Provides a simple panel that displays pre-rendered map tiles loaded from the OpenStreetMap project.
  * 
  * @author Jan Peter Stotz
  * 
@@ -67,14 +64,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	/**
 	 * Vectors for clock-wise tile painting
 	 */
-	protected static final Point[] move = { new Point(1, 0), new Point(0, 1), new Point(-1, 0),
-			new Point(0, -1) };
+	protected static final Point[] move = { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
 
 	public static final int MAX_ZOOM = 22;
 	public static final int MIN_ZOOM = 0;
 
 	protected TileLoaderJobCreator tileLoader;
-	protected TileImageCache tileCache;
+	protected MemoryTileCache tileCache;
 	protected MapSource mapSource;
 	protected boolean usePlaceHolderTiles = true;
 
@@ -86,8 +82,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public List<MapLayer> mapLayers;
 
 	/**
-	 * x- and y-position of the center of this map-panel on the world map
-	 * denoted in screen pixel regarding the current zoom level.
+	 * x- and y-position of the center of this map-panel on the world map denoted in screen pixel regarding the current
+	 * zoom level.
 	 */
 	protected Point center;
 
@@ -102,12 +98,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	protected JobDispatcher jobDispatcher;
 
-	public JMapViewer(MapSource defaultMapSource, TileImageCache tileCache, int downloadThreadCount) {
+	public JMapViewer(MapSource defaultMapSource, int downloadThreadCount) {
 		super();
 		mapTileLayers = new LinkedList<MapTileLayer>();
 		mapLayers = new LinkedList<MapLayer>();
 		tileLoader = new OsmTileLoader(this);
-		this.tileCache = tileCache;
+		tileCache = new MemoryTileCache();
 		jobDispatcher = JobDispatcher.getInstance();
 		mapMarkerList = new LinkedList<MapMarker>();
 		mapMarkersVisible = true;
@@ -165,8 +161,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Changes the map pane so that it is centered on the specified coordinate
-	 * at the given zoom level.
+	 * Changes the map pane so that it is centered on the specified coordinate at the given zoom level.
 	 * 
 	 * @param lat
 	 *            latitude of the specified coordinate
@@ -180,20 +175,17 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Changes the map pane so that the specified coordinate at the given zoom
-	 * level is displayed on the map at the screen coordinate
-	 * <code>mapPoint</code>.
+	 * Changes the map pane so that the specified coordinate at the given zoom level is displayed on the map at the
+	 * screen coordinate <code>mapPoint</code>.
 	 * 
 	 * @param mapPoint
-	 *            point on the map denoted in pixels where the coordinate should
-	 *            be set
+	 *            point on the map denoted in pixels where the coordinate should be set
 	 * @param lat
 	 *            latitude of the specified coordinate
 	 * @param lon
 	 *            longitude of the specified coordinate
 	 * @param zoom
-	 *            {@link #MIN_ZOOM} <= zoom level <=
-	 *            {@link MapSource#getMaxZoom()}
+	 *            {@link #MIN_ZOOM} <= zoom level <= {@link MapSource#getMaxZoom()}
 	 */
 	public void setDisplayPositionByLatLon(Point mapPoint, double lat, double lon, int zoom) {
 		MapSpace mapSpace = mapSource.getMapSpace();
@@ -230,8 +222,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Sets the displayed map pane and zoom level so that all map markers are
-	 * visible.
+	 * Sets the displayed map pane and zoom level so that all map markers are visible.
 	 */
 	public void setDisplayToFitMapMarkers() {
 		if (mapMarkerList == null || mapMarkerList.size() == 0)
@@ -253,9 +244,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Sets the displayed map pane and zoom level so that the two points (x1/y1)
-	 * and (x2/y2) visible. Please note that the coordinates have to be
-	 * specified regarding {@link #MAX_ZOOM}.
+	 * Sets the displayed map pane and zoom level so that the two points (x1/y1) and (x2/y2) visible. Please note that
+	 * the coordinates have to be specified regarding {@link #MAX_ZOOM}.
 	 * 
 	 * @param x1
 	 * @param y1
@@ -486,9 +476,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Every time the zoom level changes this method is called. Override it in
-	 * derived implementations for adapting zoom dependent values. The new zoom
-	 * level can be obtained via {@link #getZoom()}.
+	 * Every time the zoom level changes this method is called. Override it in derived implementations for adapting zoom
+	 * dependent values. The new zoom level can be obtained via {@link #getZoom()}.
 	 * 
 	 * @param oldZoom
 	 *            the previous zoom level
@@ -557,7 +546,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		return zoomSlider.isVisible();
 	}
 
-	public TileImageCache getTileImageCache() {
+	public MemoryTileCache getTileImageCache() {
 		return tileCache;
 	}
 
@@ -604,7 +593,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public JobDispatcher getJobDispatcher() {
 		return jobDispatcher;
 	}
-	
+
 	public boolean isUsePlaceHolderTiles() {
 		return usePlaceHolderTiles;
 	}

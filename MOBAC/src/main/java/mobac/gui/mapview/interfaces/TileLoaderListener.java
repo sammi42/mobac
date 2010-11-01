@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.gui.mapview.interfaces;
 
+import mobac.gui.mapview.MemoryTileCache;
 import mobac.gui.mapview.Tile;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
@@ -30,5 +31,5 @@ public interface TileLoaderListener {
 	 */
 	public void tileLoadingFinished(Tile tile, boolean success);
 
-	public TileImageCache getTileImageCache();
+	public MemoryTileCache getTileImageCache();
 }

@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 import mobac.gui.mapview.Tile.TileState;
-import mobac.gui.mapview.interfaces.TileImageCache;
 import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.program.interfaces.MapSource;
@@ -31,8 +30,7 @@ import mobac.program.interfaces.MapSource;
 import org.apache.log4j.Logger;
 
 /**
- * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via
- * HTTP.
+ * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via HTTP.
  * 
  * @author Jan Peter Stotz
  */
@@ -46,19 +44,17 @@ public class OsmTileLoader implements TileLoaderJobCreator {
 		this.listener = listener;
 	}
 
-	public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley,
-			final int zoom) {
+	public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley, final int zoom) {
 		return new Runnable() {
 
 			InputStream input = null;
 
 			public void run() {
-				TileImageCache cache = listener.getTileImageCache();
+				MemoryTileCache cache = listener.getTileImageCache();
 				Tile tile;
 				synchronized (cache) {
 					tile = cache.getTile(source, tilex, tiley, zoom);
-					if (tile == null || tile.tileState == TileState.TS_LOADED
-							|| tile.tileState == TileState.TS_ERROR)
+					if (tile == null || tile.tileState == TileState.TS_LOADED || tile.tileState == TileState.TS_ERROR)
 						return;
 				}
 				try {
@@ -73,8 +69,7 @@ public class OsmTileLoader implements TileLoaderJobCreator {
 					tile.setErrorImage();
 					listener.tileLoadingFinished(tile, false);
 					if (input == null)
-						log.error("failed loading " + zoom + "/" + tilex + "/" + tiley + " "
-								+ e.getMessage());
+						log.error("failed loading " + zoom + "/" + tilex + "/" + tiley + " " + e.getMessage());
 				}
 			}
 

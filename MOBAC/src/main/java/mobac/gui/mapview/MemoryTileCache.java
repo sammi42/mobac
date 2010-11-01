@@ -30,7 +30,6 @@ import javax.management.NotificationBroadcaster;
 import javax.management.NotificationListener;
 
 import mobac.gui.mapview.Tile.TileState;
-import mobac.gui.mapview.interfaces.TileImageCache;
 import mobac.program.interfaces.MapSource;
 
 import org.apache.log4j.Logger;
@@ -42,7 +41,7 @@ import org.apache.log4j.Logger;
  * @author Jan Peter Stotz
  * @author r_x
  */
-public class MemoryTileCache implements TileImageCache, NotificationListener {
+public class MemoryTileCache implements NotificationListener {
 
 	protected final Logger log;
 

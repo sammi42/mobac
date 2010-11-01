@@ -83,7 +83,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	protected JMapController mapSelectionController;
 
 	public PreviewMap() {
-		super(MapSourcesManager.getInstance().getDefaultMapSource(), new MemoryTileCache(), 5);
+		super(MapSourcesManager.getInstance().getDefaultMapSource(), 5);
 		setEnabled(false);
 		new DefaultMapController(this);
 		// tileLoader = new OsmTileLoader(this);
@@ -443,7 +443,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	 * if not present from the map source via network).
 	 */
 	public void refreshMap() {
-		((MemoryTileCache) tileCache).clear();
+		tileCache.clear();
 		repaint();
 	}
 

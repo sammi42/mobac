@@ -29,15 +29,11 @@ import java.net.HttpURLConnection;
 
 import javax.imageio.ImageIO;
 
-import mobac.gui.mapview.interfaces.TileImageCache;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 
-
-
 /**
- * Holds one map tile. Additionally the code for loading the tile image and
- * painting it is also included in this class.
+ * Holds one map tile. Additionally the code for loading the tile image and painting it is also included in this class.
  * 
  * @author Jan Peter Stotz
  */
@@ -59,7 +55,9 @@ public class Tile {
 		}
 	}
 
-	public enum TileState {TS_NEW, TS_LOADING, TS_LOADED, TS_ERROR}; 
+	public enum TileState {
+		TS_NEW, TS_LOADING, TS_LOADED, TS_ERROR
+	};
 
 	protected MapSource mapSource;
 	protected int xtile;
@@ -69,7 +67,6 @@ public class Tile {
 	protected String key;
 	protected TileState tileState = TileState.TS_NEW;
 
-	
 	/**
 	 * Creates a tile with empty image.
 	 * 
@@ -94,11 +91,10 @@ public class Tile {
 	}
 
 	/**
-	 * Tries to get tiles of a lower or higher zoom level (one or two level
-	 * difference) from cache and use it as a placeholder until the tile has
-	 * been loaded.
+	 * Tries to get tiles of a lower or higher zoom level (one or two level difference) from cache and use it as a
+	 * placeholder until the tile has been loaded.
 	 */
-	public void loadPlaceholderFromCache(TileImageCache cache) {
+	public void loadPlaceholderFromCache(MemoryTileCache cache) {
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		BufferedImage tmpImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = (Graphics2D) tmpImage.getGraphics();
@@ -116,8 +112,7 @@ public class Tile {
 				int paintedTileCount = 0;
 				for (int x = 0; x < factor; x++) {
 					for (int y = 0; y < factor; y++) {
-						Tile tile = cache.getTile(mapSource, xtile_high + x, ytile_high + y,
-								zoom_high);
+						Tile tile = cache.getTile(mapSource, xtile_high + x, ytile_high + y, zoom_high);
 						if (tile != null && tile.tileState == TileState.TS_LOADED) {
 							paintedTileCount++;
 							tile.paint(g, x * tileSize, y * tileSize);
@@ -217,8 +212,7 @@ public class Tile {
 	}
 
 	/**
-	 * Paints the tile-image on the {@link Graphics} <code>g</code> at the
-	 * position <code>x</code>/<code>y</code>.
+	 * Paints the tile-image on the {@link Graphics} <code>g</code> at the position <code>x</code>/<code>y</code>.
 	 * 
 	 * @param g
 	 * @param x

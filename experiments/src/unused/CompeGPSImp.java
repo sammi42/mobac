@@ -1,6 +1,5 @@
 package unused;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,10 +8,9 @@ import java.io.OutputStreamWriter;
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.Ozi;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
-
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class CompeGPSImp extends Ozi {
 

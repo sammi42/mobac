@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import mobac.program.DirectoryManager;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.DeleteFileFilter;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 import tiledb.berkeley.TileDbEntry.TileDbKey;
 

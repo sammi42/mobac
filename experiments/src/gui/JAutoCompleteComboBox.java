@@ -21,12 +21,12 @@ import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import mobac.mapsources.MapSourcesManager;
+import mobac.program.interfaces.MapSource;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
 
 /**
  * Autocomplete combobox with filtering and text inserting of new text

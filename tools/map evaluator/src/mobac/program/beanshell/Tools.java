@@ -8,11 +8,11 @@ import java.security.SecureRandom;
 
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSpace;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 public class Tools {
 

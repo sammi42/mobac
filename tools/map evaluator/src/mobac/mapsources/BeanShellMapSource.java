@@ -8,10 +8,10 @@ import java.net.URL;
 import mobac.gui.MapEvaluator;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 
 import org.apache.log4j.Logger;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapSpace;
 
 import bsh.EvalError;
 import bsh.Interpreter;

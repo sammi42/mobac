@@ -30,8 +30,8 @@ import mobac.gui.components.RteEntry;
 import mobac.gui.components.TrkEntry;
 import mobac.gui.components.TrksegEntry;
 import mobac.gui.components.WptEntry;
-import mobac.gui.mapview.GpxMapController;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.controller.GpxMapController;
 
 /**
  * Listener for the gpx editor tree elements.

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -28,6 +28,8 @@ import javax.swing.ComponentInputMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+
+import mobac.gui.mapview.PreviewMap;
 
 
 /**

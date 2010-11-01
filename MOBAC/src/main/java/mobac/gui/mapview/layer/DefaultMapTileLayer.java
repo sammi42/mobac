@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.layer;
 
 import java.awt.Graphics;
 
+import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.Tile;
 import mobac.gui.mapview.JobDispatcher.JobThread;
 import mobac.gui.mapview.Tile.TileState;
 import mobac.gui.mapview.interfaces.MapTileLayer;
 import mobac.program.interfaces.MapSource;
-
 
 public class DefaultMapTileLayer implements MapTileLayer {
 
@@ -38,7 +39,7 @@ public class DefaultMapTileLayer implements MapTileLayer {
 	}
 
 	public void startPainting(MapSource mapSource) {
-		usePlaceHolders = mapViewer.usePlaceHolderTiles;
+		usePlaceHolders = mapViewer.isUsePlaceHolderTiles();
 	}
 
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
@@ -49,29 +50,28 @@ public class DefaultMapTileLayer implements MapTileLayer {
 	}
 
 	/**
-	 * retrieves a tile from the cache. If the tile is not present in the cache
-	 * a load job is added to the working queue of {@link JobThread}.
+	 * retrieves a tile from the cache. If the tile is not present in the cache a load job is added to the working queue
+	 * of {@link JobThread}.
 	 * 
 	 * @param tilex
 	 * @param tiley
 	 * @param zoom
-	 * @return specified tile from the cache or <code>null</code> if the tile
-	 *         was not found in the cache.
+	 * @return specified tile from the cache or <code>null</code> if the tile was not found in the cache.
 	 */
 	protected Tile getTile(int tilex, int tiley, int zoom) {
 		int max = (1 << zoom);
 		if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max)
 			return null;
-		Tile tile = mapViewer.tileCache.getTile(mapSource, tilex, tiley, zoom);
+		Tile tile = mapViewer.getTileImageCache().getTile(mapSource, tilex, tiley, zoom);
 		if (tile == null) {
 			tile = new Tile(mapSource, tilex, tiley, zoom);
-			mapViewer.tileCache.addTile(tile);
+			mapViewer.getTileImageCache().addTile(tile);
 			if (usePlaceHolders)
-				tile.loadPlaceholderFromCache(mapViewer.tileCache);
+				tile.loadPlaceholderFromCache(mapViewer.getTileImageCache());
 		}
 		if (tile.getTileState() == TileState.TS_NEW) {
-			mapViewer.jobDispatcher.addJob(mapViewer.tileLoader.createTileLoaderJob(mapSource,
-					tilex, tiley, zoom));
+			mapViewer.getJobDispatcher().addJob(
+					mapViewer.getTileLoader().createTileLoaderJob(mapSource, tilex, tiley, zoom));
 		}
 		return tile;
 	}

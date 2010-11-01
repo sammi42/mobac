@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.controller;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
+
+import mobac.gui.mapview.JMapViewer;
 
 /**
  * Abstract base class for all mouse controller implementations. For

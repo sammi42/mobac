@@ -102,7 +102,7 @@ public class JobDispatcher {
 		return jobThread;
 	}
 
-	protected class JobThread extends DelayedInterruptThread {
+	public class JobThread extends DelayedInterruptThread {
 
 		private Runnable job;
 		private boolean firstThread = false;

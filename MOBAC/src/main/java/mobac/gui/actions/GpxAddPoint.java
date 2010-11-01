@@ -23,8 +23,8 @@ import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
 import mobac.gui.components.GpxEntry;
-import mobac.gui.mapview.GpxMapController;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.controller.GpxMapController;
 import mobac.gui.panels.JGpxPanel;
 
 

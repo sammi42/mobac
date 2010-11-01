@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.layer;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -28,6 +28,8 @@ import javax.swing.event.TreeSelectionListener;
 
 import mobac.gui.MainGUI;
 import mobac.gui.atlastree.JAtlasTree;
+import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;

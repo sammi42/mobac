@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.controller;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -30,6 +30,8 @@ import mobac.gui.components.GpxEntry;
 import mobac.gui.components.GpxRootEntry;
 import mobac.gui.components.RteEntry;
 import mobac.gui.components.TrksegEntry;
+import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.PreviewMap;
 import mobac.gui.panels.JGpxPanel;
 import mobac.program.interfaces.MapSpace;
 

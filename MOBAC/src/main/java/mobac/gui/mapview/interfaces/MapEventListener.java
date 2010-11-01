@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview;
+package mobac.gui.mapview.interfaces;
 
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MercatorPixelCoordinate;

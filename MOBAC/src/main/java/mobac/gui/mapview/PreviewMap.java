@@ -26,6 +26,11 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
+import mobac.gui.mapview.controller.DefaultMapController;
+import mobac.gui.mapview.controller.JMapController;
+import mobac.gui.mapview.controller.MapKeyboardController;
+import mobac.gui.mapview.controller.PreviewMapController;
+import mobac.gui.mapview.interfaces.MapEventListener;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
@@ -78,7 +83,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	protected JMapController mapSelectionController;
 
 	public PreviewMap() {
-		super(MapSourcesManager.getInstance().getDefaultMapSource(), new PreviewTileCache(), 5);
+		super(MapSourcesManager.getInstance().getDefaultMapSource(), new MemoryTileCache(), 5);
 		setEnabled(false);
 		new DefaultMapController(this);
 		// tileLoader = new OsmTileLoader(this);

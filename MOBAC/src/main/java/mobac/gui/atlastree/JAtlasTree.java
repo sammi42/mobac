@@ -40,8 +40,8 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import mobac.gui.MainGUI;
-import mobac.gui.mapview.MapAreaHighlightingLayer;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.layer.MapAreaHighlightingLayer;
 import mobac.program.atlascreators.RequiresSQLite;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.AtlasObject;

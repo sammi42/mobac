@@ -18,7 +18,16 @@ package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryNotificationInfo;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.Hashtable;
+
+import javax.management.Notification;
+import javax.management.NotificationBroadcaster;
+import javax.management.NotificationListener;
 
 import mobac.gui.mapview.Tile.TileState;
 import mobac.gui.mapview.interfaces.TileImageCache;
@@ -27,13 +36,13 @@ import mobac.program.interfaces.MapSource;
 import org.apache.log4j.Logger;
 
 /**
- * {@link TileImageCache} implementation that stores all {@link Tile} objects in
- * memory up to a certain limit ({@link #getCacheSize()}). If the limit is
- * exceeded the least recently used {@link Tile} objects will be deleted.
+ * {@link TileImageCache} implementation that stores all {@link Tile} objects in memory up to a certain limit (
+ * {@link #getCacheSize()}). If the limit is exceeded the least recently used {@link Tile} objects will be deleted.
  * 
  * @author Jan Peter Stotz
+ * @author r_x
  */
-public class MemoryTileCache implements TileImageCache {
+public class MemoryTileCache implements TileImageCache, NotificationListener {
 
 	protected final Logger log;
 
@@ -53,6 +62,41 @@ public class MemoryTileCache implements TileImageCache {
 		log = Logger.getLogger(this.getClass());
 		hashtable = new Hashtable<String, CacheEntry>(cacheSize);
 		lruTiles = new CacheLinkedListElement();
+		
+		cacheSize = 500;
+		MemoryMXBean mbean = ManagementFactory.getMemoryMXBean();
+		NotificationBroadcaster emitter = (NotificationBroadcaster) mbean;
+		emitter.addNotificationListener(this, null, null);
+		// Set-up each memory pool to notify if the free memory falls below 10%
+		for (MemoryPoolMXBean memPool : ManagementFactory.getMemoryPoolMXBeans()) {
+			if (memPool.isUsageThresholdSupported()) {
+				MemoryUsage memUsage = memPool.getUsage();
+				memPool.setUsageThreshold((long) (memUsage.getMax() * 0.95));
+			}
+		}
+	}
+
+	/**
+	 * In case we are running out of memory we free half of the cached down to a minimum of 25 cached tiles.
+	 */
+	public void handleNotification(Notification notification, Object handback) {
+		log.trace("Memory notification: " + notification.toString());
+		if (!MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED.equals(notification.getType()))
+			return;
+		synchronized (lruTiles) {
+			int count_half = lruTiles.getElementCount() / 2;
+			count_half = Math.max(25, count_half);
+			if (lruTiles.getElementCount() <= count_half)
+				return;
+			log.warn("memory low - freeing cached tiles: " + lruTiles.getElementCount() + " -> " + count_half);
+			try {
+				while (lruTiles.getElementCount() > count_half) {
+					removeEntry(lruTiles.getLastElement());
+				}
+			} catch (Exception e) {
+				log.error("", e);
+			}
+		}
 	}
 
 	public void addTile(Tile tile) {
@@ -129,8 +173,7 @@ public class MemoryTileCache implements TileImageCache {
 	}
 
 	/**
-	 * Linked list element holding the {@link Tile} and links to the
-	 * {@link #next} and {@link #prev} item in the list.
+	 * Linked list element holding the {@link Tile} and links to the {@link #next} and {@link #prev} item in the list.
 	 */
 	protected static class CacheEntry {
 		Tile tile;
@@ -157,9 +200,8 @@ public class MemoryTileCache implements TileImageCache {
 	}
 
 	/**
-	 * Special implementation of a double linked list for {@link CacheEntry}
-	 * elements. It supports element removal in constant time - in difference to
-	 * the Java implementation which needs O(n).
+	 * Special implementation of a double linked list for {@link CacheEntry} elements. It supports element removal in
+	 * constant time - in difference to the Java implementation which needs O(n).
 	 * 
 	 * @author Jan Peter Stotz
 	 */

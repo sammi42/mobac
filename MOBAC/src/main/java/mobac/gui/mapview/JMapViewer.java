@@ -43,6 +43,7 @@ import mobac.gui.mapview.interfaces.MapTileLayer;
 import mobac.gui.mapview.interfaces.TileImageCache;
 import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
+import mobac.gui.mapview.layer.DefaultMapTileLayer;
 import mobac.gui.mapview.layer.MapGridLayer;
 import mobac.gui.mapview.layer.OverlayMapTileLayer;
 import mobac.program.interfaces.MapSource;
@@ -602,6 +603,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	public JobDispatcher getJobDispatcher() {
 		return jobDispatcher;
+	}
+	
+	public boolean isUsePlaceHolderTiles() {
+		return usePlaceHolderTiles;
 	}
 
 	public void tileLoadingFinished(Tile tile, boolean success) {

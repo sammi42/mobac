@@ -32,9 +32,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;
 
-
-public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEventListener,
-		ActionListener {
+public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEventListener, ActionListener {
 
 	JButton showCoverage;
 	JComboBox zoomCombo;
@@ -46,11 +44,11 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 
 		showCoverage = new JButton("Show coverage");
 		showCoverage.addActionListener(this);
-		showCoverage.setToolTipText("Display tile store coverage for the current map "
-				+ "source and the selected zoom level");
+		showCoverage.setToolTipText("<html>Display tile store coverage for the current map "
+				+ "source,<br>the selected zoom level and the current visible map region.<br>"
+				+ "Green regions are present in the cache, gray regions are not covered.</html>");
 		zoomCombo = new JComboBox();
-		zoomCombo.setToolTipText("Select the zoom level you wish "
-				+ "to display tile store coverage");
+		zoomCombo.setToolTipText("Select the zoom level you wish " + "to display tile store coverage");
 		titlePanel.setToolTipText("<html>Displays the regions for the curently "
 				+ "selected map source that has been <br> downloaded and "
 				+ "which are therefore offline available in the tile store (tile cache)</html>");
@@ -66,8 +64,9 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		Integer zoom = (Integer) zoomCombo.getSelectedItem();
 		if (zoom == null)
 			return;
-		TileStoreCoverageLayer tscl = new TileStoreCoverageLayer(mapViewer, zoom);
 		TileStoreCoverageLayer.removeCacheCoverageLayers();
+		mapViewer.repaint();
+		TileStoreCoverageLayer tscl = new TileStoreCoverageLayer(mapViewer, zoom);
 		mapViewer.mapLayers.add(tscl);
 	}
 

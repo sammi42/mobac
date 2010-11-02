@@ -17,7 +17,6 @@
 package mobac.program.tilestore.berkeleydb;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
@@ -43,7 +42,6 @@ import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.DeleteFileFilter;
 import mobac.utilities.file.DirInfoFileFilter;
-
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -112,8 +110,8 @@ public class BerkeleyDbTileStore extends TileStore {
 				try {
 					Utilities.mkDirs(tileStoreDir);
 				} catch (IOException e) {
-					throw new TileStoreException("Unable to create tile store directory: \""
-							+ tileStoreDir.getPath() + "\"");
+					throw new TileStoreException("Unable to create tile store directory: \"" + tileStoreDir.getPath()
+							+ "\"");
 				}
 			FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
 
@@ -139,8 +137,8 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	@Override
-	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data,
-			long timeLastModified, long timeExpires, String eTag) {
+	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires,
+			String eTag) {
 		return new TileDbEntry(x, y, zoom, data, timeLastModified, timeExpires, eTag);
 	}
 
@@ -179,18 +177,16 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	@Override
-	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource)
-			throws IOException {
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
 		this.putTileData(tileData, x, y, zoom, mapSource, -1, -1, null);
 	}
 
 	@Override
-	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource,
-			long timeLastModified, long timeExpires, String eTag) throws IOException {
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
+			long timeExpires, String eTag) throws IOException {
 		if (!mapSource.allowFileStore())
 			return;
-		TileDbEntry tile = new TileDbEntry(x, y, zoom, tileData, timeLastModified, timeExpires,
-				eTag);
+		TileDbEntry tile = new TileDbEntry(x, y, zoom, tileData, timeLastModified, timeExpires, eTag);
 		TileDatabase db = null;
 		try {
 			if (log.isTraceEnabled())
@@ -241,8 +237,7 @@ public class BerkeleyDbTileStore extends TileStore {
 		} catch (Exception e) {
 			if (db != null)
 				db.close();
-			log.error("failed to retrieve tile from tile store \"" + mapSource.getStoreName()
-					+ "\"", e);
+			log.error("failed to retrieve tile from tile store \"" + mapSource.getStoreName() + "\"", e);
 			return null;
 		}
 	}
@@ -284,8 +279,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	/**
-	 * This method returns the amount of tiles in the store of tiles which is
-	 * specified by the {@link MapSource} object.
+	 * This method returns the amount of tiles in the store of tiles which is specified by the {@link MapSource} object.
 	 * 
 	 * @param mapSource
 	 *            the store to calculate number of tiles in
@@ -322,8 +316,8 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
-	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin,
-			Point tileNumMax) {
+	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
+			throws InterruptedException {
 		TileDatabase db;
 		try {
 			db = getTileDatabase(mapSource);
@@ -385,8 +379,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	/**
-	 * Returns <code>true</code> if the tile store directory of the specified
-	 * {@link MapSource} exists.
+	 * Returns <code>true</code> if the tile store directory of the specified {@link MapSource} exists.
 	 * 
 	 * @param mapSource
 	 * @return
@@ -398,8 +391,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	/**
 	 * @param mapSource
-	 * @return directory used for storing the tile database belonging to
-	 *         <code>mapSource</code>
+	 * @return directory used for storing the tile database belonging to <code>mapSource</code>
 	 */
 	protected File getStoreDir(MapSource mapSource) {
 		return new File(tileStoreDir, "db-" + mapSource.getStoreName());
@@ -415,8 +407,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		long lastAccess;
 
-		public TileDatabase(MapSource mapSource) throws IOException, EnvironmentLockedException,
-				DatabaseException {
+		public TileDatabase(MapSource mapSource) throws IOException, EnvironmentLockedException, DatabaseException {
 			log.debug("Opening tile store db: \"" + mapSource.getStoreName() + "\"");
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			try {
@@ -472,8 +463,9 @@ public class BerkeleyDbTileStore extends TileStore {
 			return tileIndex.get(key);
 		}
 
-		public BufferedImage getCacheCoverage(int zoom, Point tileNumMin, Point tileNumMax)
-				throws DatabaseException {
+		public BufferedImage getCacheCoverage(int zoom, Point tileNumMin, Point tileNumMax) throws DatabaseException,
+				InterruptedException {
+			log.debug("Loading cache coverage for region " + tileNumMin + " " + tileNumMax + " of zoom level " + zoom);
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			int width = tileNumMax.x - tileNumMin.x + 1;
 			int height = tileNumMax.y - tileNumMin.y + 1;
@@ -484,8 +476,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			IndexColorModel colorModel = new IndexColorModel(2, 2, colors, 0, true);
 			BufferedImage image = null;
 			try {
-				image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED,
-						colorModel);
+				image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
 			} catch (Throwable e) {
 				log.error("Failed to create coverage image: " + e.toString());
 				image = null;
@@ -494,22 +485,28 @@ public class BerkeleyDbTileStore extends TileStore {
 			}
 			WritableRaster raster = image.getRaster();
 
-			TileDbKey fromKey = new TileDbKey(tileNumMin.x, tileNumMin.y, zoom);
-			TileDbKey toKey = new TileDbKey(tileNumMax.x, tileNumMax.y, zoom);
-			EntityCursor<TileDbKey> cursor = tileIndex.keys(fromKey, true, toKey, true);
-			try {
-				Rectangle r = new Rectangle(tileNumMin.x, tileNumMin.y, width, height);
-				TileDbKey key = cursor.next();
-				while (key != null) {
-					if (r.contains(key.x, key.y)) {
-						raster.setSample(key.x - tileNumMin.x, key.y - tileNumMin.y, 0, 1);
+			// We are loading the coverage of the selected area column by column which is much faster than loading the
+			// whole region at once
+			for (int x = tileNumMin.x; x <= tileNumMax.x; x++) {
+				TileDbKey fromKey = new TileDbKey(x, tileNumMin.y, zoom);
+				TileDbKey toKey = new TileDbKey(x, tileNumMax.y, zoom);
+				EntityCursor<TileDbKey> cursor = null;
+				try {
+					cursor = tileIndex.keys(fromKey, true, toKey, true);
+					TileDbKey key = cursor.next();
+					while (key != null) {
+						int pixelx = key.x - tileNumMin.x;
+						int pixely = key.y - tileNumMin.y;
+						raster.setSample(pixelx, pixely, 0, 1);
+						key = cursor.next();
+						if (t.isInterrupted()) {
+							log.debug("Cache coverage loading aborted");
+							throw new InterruptedException();
+						}
 					}
-					key = cursor.next();
-					if (t.interruptedWhilePaused())
-						return null;
+				} finally {
+					cursor.close();
 				}
-			} finally {
-				cursor.close();
 			}
 			return image;
 		}

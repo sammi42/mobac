@@ -24,6 +24,7 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
+import mobac.gui.WorkinprogressDialog;
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.interfaces.MapLayer;
@@ -31,7 +32,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
-
+import mobac.utilities.GUIExceptionHandler;
 
 public class TileStoreCoverageLayer implements MapLayer {
 
@@ -72,8 +73,7 @@ public class TileStoreCoverageLayer implements MapLayer {
 
 		tileNumMax = new Point(max.x / tileSize, max.y / tileSize);
 		tileNumMin = new Point(min.x / tileSize, min.y / tileSize);
-		pixelCoordinateMax = new Point(tileNumMax.x * tileSize + tileSize - 1, tileNumMax.y
-				* tileSize + tileSize - 1);
+		pixelCoordinateMax = new Point(tileNumMax.x * tileSize + tileSize - 1, tileNumMax.y * tileSize + tileSize - 1);
 		pixelCoordinateMin = new Point(tileNumMin.x * tileSize, tileNumMin.y * tileSize);
 		updateCoverageImage();
 	}
@@ -83,28 +83,28 @@ public class TileStoreCoverageLayer implements MapLayer {
 		Runnable r = new Runnable() {
 
 			public void run() {
-				coverageImage = TileStore.getInstance().getCacheCoverage(mapSource, zoom,
-						tileNumMin, tileNumMax);
+				try {
+					coverageImage = TileStore.getInstance().getCacheCoverage(mapSource, zoom, tileNumMin, tileNumMax);
+					if (coverageImage == null)
+						JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
+								"Failed to retrieve tile store coverage data.\n"
+										+ "May be the selected area and zoom is too large.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+				} catch (InterruptedException e) {
+				} catch (Exception e) {
+					GUIExceptionHandler.processException(e);
+				}
+				if (coverageImage == null)
+					removeCacheCoverageLayers();
+				MainGUI.getMainGUI().previewMap.repaint();
 			}
 		};
-		DelayedInterruptThread thread = new DelayedInterruptThread(r);
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-		}
-		if (coverageImage == null) {
-			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
-					"Failed to retrieve tile store coverage data.\n"
-							+ "May be the selected area and zoom is too large.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			removeCacheCoverageLayers();
-		}
-		MainGUI.getMainGUI().previewMap.repaint();
+		WorkinprogressDialog dialog = new WorkinprogressDialog(MainGUI.getMainGUI(), "Loading coverage data",
+				DelayedInterruptThread.createThreadFactory());
+		dialog.startWork(r);
 	}
 
-	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX,
-			int maxY) {
+	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
 		if (coverageImage == null)
 			return;
 		paintCoverage(g, zoom, minX, minY, maxX, maxY);

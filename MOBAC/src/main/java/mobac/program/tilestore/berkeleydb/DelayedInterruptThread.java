@@ -16,13 +16,13 @@
  ******************************************************************************/
 package mobac.program.tilestore.berkeleydb;
 
+import java.util.concurrent.ThreadFactory;
+
 /**
- * The Berkeley DB has some problems when someone interrupts the thread that is
- * currently performing IO activity. Therefore before executing any DB we allow
- * to disable the {@link #interrupt()} method via {@link #pauseInterrupt()}.
- * After the "interrupt sensitive section" {@link #resumeInterrupt()} restores
- * the regular behavior. If the thread has been interrupted while interrupt was
- * disabled {@link #resumeInterrupt()} catches up this.
+ * The Berkeley DB has some problems when someone interrupts the thread that is currently performing IO activity.
+ * Therefore before executing any DB we allow to disable the {@link #interrupt()} method via {@link #pauseInterrupt()}.
+ * After the "interrupt sensitive section" {@link #resumeInterrupt()} restores the regular behavior. If the thread has
+ * been interrupted while interrupt was disabled {@link #resumeInterrupt()} catches up this.
  */
 public class DelayedInterruptThread extends Thread {
 
@@ -63,4 +63,15 @@ public class DelayedInterruptThread extends Thread {
 		return interruptedWhilePaused;
 	}
 
+	public static ThreadFactory createThreadFactory() {
+		return new DIThreadFactory();
+	}
+
+	private static class DIThreadFactory implements ThreadFactory {
+
+		public Thread newThread(Runnable r) {
+			return new DelayedInterruptThread(r);
+		}
+
+	}
 }

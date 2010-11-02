@@ -18,8 +18,6 @@ package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
-import java.io.ByteArrayInputStream;
-
 import mobac.exceptions.DownloadFailedException;
 import mobac.gui.mapview.Tile.TileState;
 import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
@@ -32,9 +30,8 @@ import mobac.program.tilestore.TileStoreEntry;
 import org.apache.log4j.Logger;
 
 /**
- * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via
- * HTTP and saves all loaded files in a directory located in the the temporary
- * directory. If a tile is present in this file cache it will not be loaded from
+ * A {@link TileLoaderJobCreator} implementation that loads tiles from OSM via HTTP and saves all loaded files in a
+ * directory located in the the temporary directory. If a tile is present in this file cache it will not be loaded from
  * OSM again.
  * 
  * @author Jan Peter Stotz
@@ -50,8 +47,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		tileStore = TileStore.getInstance();
 	}
 
-	public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley,
-			final int zoom) {
+	public Runnable createTileLoaderJob(final MapSource source, final int tilex, final int tiley, final int zoom) {
 		return new TileAsyncLoadJob(source, tilex, tiley, zoom);
 	}
 
@@ -99,14 +95,13 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 			try {
 				byte[] buffer;
 				if (tileStoreEntry == null)
-					buffer = TileDownLoader.downloadTileAndUpdateStore(tilex, tiley, zoom,
-							mapSource);
+					buffer = TileDownLoader.downloadTileAndUpdateStore(tilex, tiley, zoom, mapSource);
 				else {
 					TileDownLoader.updateStoredTile(tileStoreEntry, mapSource);
 					buffer = tileStoreEntry.getData();
 				}
 				if (buffer != null) {
-					tile.loadImage(new ByteArrayInputStream(buffer));
+					tile.loadImage(buffer);
 					tile.setTileState(TileState.TS_LOADED);
 					listener.tileLoadingFinished(tile, true);
 				} else {
@@ -128,7 +123,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 				tileStoreEntry = tileStore.getTile(tilex, tiley, zoom, mapSource);
 				if (tileStoreEntry == null)
 					return false;
-				tile.loadImage(new ByteArrayInputStream(tileStoreEntry.getData()));
+				tile.loadImage(tileStoreEntry.getData());
 				listener.tileLoadingFinished(tile, true);
 				if (TileDownLoader.isTileExpired(tileStoreEntry))
 					return false;

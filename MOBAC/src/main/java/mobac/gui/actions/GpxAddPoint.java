@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
-import mobac.gui.components.GpxEntry;
+import mobac.gui.gpxtree.GpxEntry;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.controller.GpxMapController;
 import mobac.gui.panels.JGpxPanel;

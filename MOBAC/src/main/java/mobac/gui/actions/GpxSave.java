@@ -27,7 +27,7 @@ import javax.xml.bind.JAXBException;
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.gui.MainGUI;
-import mobac.gui.components.GpxEntry;
+import mobac.gui.gpxtree.GpxEntry;
 import mobac.gui.panels.JGpxPanel;
 import mobac.program.model.Settings;
 import mobac.utilities.file.GpxFileFilter;

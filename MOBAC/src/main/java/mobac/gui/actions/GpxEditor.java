@@ -25,10 +25,10 @@ import mobac.data.gpx.gpx11.RteType;
 import mobac.data.gpx.gpx11.TrkType;
 import mobac.data.gpx.gpx11.TrksegType;
 import mobac.data.gpx.gpx11.WptType;
-import mobac.gui.components.GpxEntry;
-import mobac.gui.components.RteEntry;
-import mobac.gui.components.TrkEntry;
-import mobac.gui.components.TrksegEntry;
+import mobac.gui.gpxtree.GpxEntry;
+import mobac.gui.gpxtree.RteEntry;
+import mobac.gui.gpxtree.TrkEntry;
+import mobac.gui.gpxtree.TrksegEntry;
 
 /**
  * Encapsulates all functionality regarding edits of loaded gpx files.

@@ -14,35 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.components;
+package mobac.gui.gpxtree;
 
-import mobac.data.gpx.gpx11.TrkType;
+import mobac.data.gpx.gpx11.TrksegType;
 import mobac.gui.mapview.layer.GpxLayer;
 
-public class TrkEntry extends GpxEntry {
-	private TrkType trk;
+public class TrksegEntry extends GpxEntry {
+	private TrksegType trkseg;
+	private String name;
 	
-	public TrkEntry(TrkType trk, GpxLayer layer) {
-		this.trk = trk;
+	public TrksegEntry(TrksegType trkseg, int segnum, GpxLayer layer) {
+		this.trkseg = trkseg;
+		this.name = "segment " + Integer.toString(segnum);
 		this.setLayer(layer);
-		this.setWaypointParent(false);
+		this.setWaypointParent(true);
 	}	
 	
 	public String toString() {
-		String name = "";
-		try {
-			name = trk.getName();
-		} catch (NullPointerException e) {
-			// no name set
-		}
-		if (name != null && !name.equals("")) {
-			return name;
-		} else {
-			return "unnamed track";
-		}
-	}
-
-	public TrkType getTrk() {
-		return trk;
+		return name;
 	}		
+	
+	public TrksegType getTrkSeg() {
+		return trkseg;
+	}
 }

@@ -24,9 +24,8 @@ import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 import org.apache.log4j.Logger;
 
 /**
- * Controls the worker threads that are downloading the map tiles in parallel.
- * Additionally the job queue containing the unprocessed tile download jobs can
- * be accessed via this class.
+ * Controls the worker threads that are downloading the map tiles in parallel. Additionally the job queue containing the
+ * unprocessed tile download jobs can be accessed via this class.
  */
 public class JobDispatcher {
 
@@ -127,8 +126,8 @@ public class JobDispatcher {
 	}
 
 	/**
-	 * Each worker thread takes the first job from the job queue and executes
-	 * it. If the queue is empty the worker blocks, waiting for the next job.
+	 * Each worker thread takes the first job from the job queue and executes it. If the queue is empty the worker
+	 * blocks, waiting for the next job.
 	 */
 	protected class WorkerThread extends DelayedInterruptThread {
 
@@ -160,7 +159,7 @@ public class JobDispatcher {
 					idle = true;
 					job = jobQueue.take();
 					idle = false;
-				} catch (InterruptedException e1) {
+				} catch (InterruptedException e) {
 					return;
 				}
 				if (job == null)
@@ -168,9 +167,8 @@ public class JobDispatcher {
 				try {
 					job.run(JobDispatcher.this);
 					job = null;
+				} catch (InterruptedException e) {
 				} catch (Exception e) {
-					if (e instanceof InterruptedException)
-						return;
 					log.error("Unknown error occured while executing the job: ", e);
 				} catch (OutOfMemoryError e) {
 					log.error("", e);

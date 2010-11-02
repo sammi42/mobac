@@ -23,6 +23,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -186,6 +187,10 @@ public class Tile {
 
 	public void loadImage(InputStream input) throws IOException {
 		image = ImageIO.read(input);
+	}
+
+	public void loadImage(byte[] data) throws IOException {
+		loadImage(new ByteArrayInputStream(data));
 	}
 
 	/**

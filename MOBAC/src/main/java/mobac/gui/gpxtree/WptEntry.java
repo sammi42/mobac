@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.components;
+package mobac.gui.gpxtree;
 
 import mobac.data.gpx.gpx11.WptType;
 import mobac.gui.mapview.layer.GpxLayer;

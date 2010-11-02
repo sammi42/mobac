@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.gui.MainGUI;
-import mobac.gui.components.GpxRootEntry;
+import mobac.gui.gpxtree.GpxRootEntry;
 import mobac.gui.mapview.layer.GpxLayer;
 import mobac.gui.panels.JGpxPanel;
 //import mobac.gui.panels.JGpxPanel.ListModelEntry;

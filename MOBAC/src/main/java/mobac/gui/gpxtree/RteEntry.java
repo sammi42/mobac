@@ -14,47 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.components;
+package mobac.gui.gpxtree;
 
-import mobac.data.gpx.gpx11.Gpx;
-import mobac.data.gpx.gpx11.MetadataType;
+import mobac.data.gpx.gpx11.RteType;
 import mobac.gui.mapview.layer.GpxLayer;
 
-public class GpxRootEntry extends GpxEntry {
-
-	public GpxRootEntry(GpxLayer layer) {
+public class RteEntry extends GpxEntry {
+	private RteType rte;
+	
+	public RteEntry(RteType rte, GpxLayer layer) {
+		this.setRte(rte);
 		this.setLayer(layer);
 		this.setWaypointParent(true);
-	}
-
+	}	
+		
 	public String toString() {
-		String name = getMetaDataName();
+		String name = "";
+		try {
+			name = getRte().getName();
+		} catch (NullPointerException e) {
+			// no name set
+		}
 		if (name != null && !name.equals("")) {
 			return name;
 		} else {
-			if (getLayer().getFile() == null) {
-				return "unnamed (new gpx)";
-			} else {
-				return "unnamed (file " + getLayer().getFile().getName() + ")";
-			}
+			return "unnamed route";
 		}
 	}
 
-	public String getMetaDataName() {
-		try {
-			return getLayer().getGpx().getMetadata().getName();
-		} catch (NullPointerException e) {
-			return null;
-		}
+	private void setRte(RteType rte) {
+		this.rte = rte;
 	}
 
-	public void setMetaDataName(String name) {
-		Gpx gpx = getLayer().getGpx();
-		if (gpx.getMetadata() == null)
-			gpx.setMetadata(new MetadataType());
-		gpx.getMetadata().setName(name);
-
-		// Notify the model about the changed node text
-		getLayer().getPanel().getTreeModel().nodeChanged(getNode());
-	}
+	public RteType getRte() {
+		return rte;
+	}		
 }

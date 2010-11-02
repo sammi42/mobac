@@ -24,12 +24,12 @@ import javax.swing.JOptionPane;
 
 import mobac.data.gpx.gpx11.WptType;
 import mobac.gui.MainGUI;
-import mobac.gui.components.GpxEntry;
-import mobac.gui.components.GpxRootEntry;
-import mobac.gui.components.RteEntry;
-import mobac.gui.components.TrkEntry;
-import mobac.gui.components.TrksegEntry;
-import mobac.gui.components.WptEntry;
+import mobac.gui.gpxtree.GpxEntry;
+import mobac.gui.gpxtree.GpxRootEntry;
+import mobac.gui.gpxtree.RteEntry;
+import mobac.gui.gpxtree.TrkEntry;
+import mobac.gui.gpxtree.TrksegEntry;
+import mobac.gui.gpxtree.WptEntry;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.controller.GpxMapController;
 

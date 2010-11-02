@@ -27,7 +27,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import mobac.gui.components.GpxEntry;
+import mobac.gui.gpxtree.GpxEntry;
 
 /**
  * Listener for the gpx editor tree.

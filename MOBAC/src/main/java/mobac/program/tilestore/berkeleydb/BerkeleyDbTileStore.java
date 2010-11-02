@@ -490,9 +490,8 @@ public class BerkeleyDbTileStore extends TileStore {
 			for (int x = tileNumMin.x; x <= tileNumMax.x; x++) {
 				TileDbKey fromKey = new TileDbKey(x, tileNumMin.y, zoom);
 				TileDbKey toKey = new TileDbKey(x, tileNumMax.y, zoom);
-				EntityCursor<TileDbKey> cursor = null;
+				EntityCursor<TileDbKey> cursor = tileIndex.keys(fromKey, true, toKey, true);
 				try {
-					cursor = tileIndex.keys(fromKey, true, toKey, true);
 					TileDbKey key = cursor.next();
 					while (key != null) {
 						int pixelx = key.x - tileNumMin.x;

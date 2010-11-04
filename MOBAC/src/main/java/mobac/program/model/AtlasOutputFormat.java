@@ -22,6 +22,7 @@ import mobac.program.atlascreators.AFTrack;
 import mobac.program.atlascreators.AlpineQuestMap;
 import mobac.program.atlascreators.AndNav;
 import mobac.program.atlascreators.AtlasCreator;
+import mobac.program.atlascreators.BackCountryNavigator;
 import mobac.program.atlascreators.CacheBox;
 import mobac.program.atlascreators.CacheWolf;
 import mobac.program.atlascreators.GarminCustom;
@@ -36,10 +37,10 @@ import mobac.program.atlascreators.MobileTrailExplorer;
 import mobac.program.atlascreators.MobileTrailExplorerCache;
 import mobac.program.atlascreators.NaviComputer;
 import mobac.program.atlascreators.OSMAND;
-import mobac.program.atlascreators.Osmdroid;
 import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.OruxMapsSqlite;
+import mobac.program.atlascreators.Osmdroid;
 import mobac.program.atlascreators.Ozi;
 import mobac.program.atlascreators.PathAway;
 import mobac.program.atlascreators.RMapsSQLite;
@@ -55,6 +56,7 @@ public enum AtlasOutputFormat {
 	AFTrack("AFTrack (OSZ)", AFTrack.class), //
 	AlpineQuestMap("AlpineQuestMap (AQM)", AlpineQuestMap.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
+	BackCountryNavigator("BackCountry Navigator", BackCountryNavigator.class), //
 	BigPlanet("Big Planet Tracks SQLite", RMapsSQLite.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //

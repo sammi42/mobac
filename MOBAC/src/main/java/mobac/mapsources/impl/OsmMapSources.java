@@ -29,9 +29,9 @@ public class OsmMapSources {
 
 	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
-	public static final String MAP_HIKING_TRAILS = "http://topo.openstreetmap.de/topo/";
-	public static final String MAP_HIKING_BASE = "http://topo.openstreetmap.de/base/";
-	public static final String MAP_HIKING_RELIEF = "http://hills-nc.openstreetmap.de/";
+	public static final String MAP_HIKING_TRAILS = "http://www.wanderreitkarte.de/topo/";
+	public static final String MAP_HIKING_BASE = "http://www.wanderreitkarte.de/base/";
+	public static final String MAP_HIKING_RELIEF = "http://www.wanderreitkarte.de/hills/";
 	protected static final String MAP_PISTE = "http://tiles.openpistemap.org/contours/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {

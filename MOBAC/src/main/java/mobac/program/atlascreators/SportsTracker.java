@@ -26,12 +26,13 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.impl.MapTileWriter;
+import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
-
 
 /**
  * [Nokia] Sports Tracker
@@ -43,6 +44,8 @@ public class SportsTracker extends AtlasCreator {
 	protected File mapDir = null;
 
 	protected MapTileWriter mapTileWriter = null;
+
+	protected String tileType = null;
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
@@ -69,9 +72,13 @@ public class SportsTracker extends AtlasCreator {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		// if (!"png".equalsIgnoreCase(mapSource.getTileType()))
-		// // If the tile image format is not png we have to convert it
-		// mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		tileType = map.getMapSource().getTileType();
+		TileImageParameters param = map.getParameters();
+		if (param != null) {
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());
+			tileType = param.getFormat().getDataWriter().getFileExt();
+		}
+
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
@@ -110,7 +117,7 @@ public class SportsTracker extends AtlasCreator {
 			String dirName = tileName.substring(start, start + 3);
 			tileDir = new File(tileDir, dirName);
 		}
-		String fileName = tileName + ".jpg";
+		String fileName = tileName + "." + tileType;
 		File file = new File(tileDir, fileName);
 		writeTile(file, tileData);
 	}

@@ -131,7 +131,7 @@ public class Maplorer extends AtlasCreator {
 
 		ImageIO.setUseCache(false);
 		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
-		String tileType = mapSource.getTileType().getFileExt();
+		String tileType = mapSource.getTileImageType().getFileExt();
 		for (int x = xMin; x <= xMax; x++) {
 			tiley = 0;
 			for (int y = yMin; y <= yMax; y++) {

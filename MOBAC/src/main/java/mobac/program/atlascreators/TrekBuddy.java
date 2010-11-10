@@ -87,7 +87,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 	}
 
 	protected void writeMapFile(OutputStream stream) throws IOException {
-		writeMapFile("t_." + mapSource.getTileType(), stream);
+		writeMapFile("t_." + mapSource.getTileImageType(), stream);
 	}
 
 	protected void writeMapFile(String imageFileName, OutputStream stream) throws IOException {
@@ -117,7 +117,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 		ImageIO.setUseCache(false);
 		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
-		String tileType = mapSource.getTileType().getFileExt();
+		String tileType = mapSource.getTileImageType().getFileExt();
 		for (int x = xMin; x <= xMax; x++) {
 			tiley = 0;
 			for (int y = yMin; y <= yMax; y++) {

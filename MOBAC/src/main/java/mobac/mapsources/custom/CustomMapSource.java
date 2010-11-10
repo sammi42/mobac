@@ -86,7 +86,7 @@ public class CustomMapSource implements MapSource {
 		return name;
 	}
 
-	public TileImageType getTileType() {
+	public TileImageType getTileImageType() {
 		return tileType;
 	}
 

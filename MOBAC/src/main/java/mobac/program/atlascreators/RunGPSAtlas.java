@@ -108,7 +108,7 @@ public class RunGPSAtlas extends AtlasCreator {
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
-		if (mapSource.getTileType() != TileImageType.PNG)
+		if (mapSource.getTileImageType() != TileImageType.PNG)
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
 		createTiles();

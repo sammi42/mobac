@@ -119,7 +119,7 @@ public interface MapSource {
 	 * 
 	 * @return file extension of the tile image type
 	 */
-	public TileImageType getTileType();
+	public TileImageType getTileImageType();
 
 	/**
 	 * Usually this method shoud return <code>true</code> but for debugging

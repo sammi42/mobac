@@ -233,7 +233,7 @@ public class AlpineQuestMap extends AtlasCreator {
 			strImageFormat = map.getParameters().getFormat().getFileExt();
 			tilesSize = map.getParameters().getDimension();
 		} else {
-			strImageFormat = map.getMapSource().getTileType().getFileExt();
+			strImageFormat = map.getMapSource().getTileImageType().getFileExt();
 			tilesSize = map.getTileSize();
 		}
 

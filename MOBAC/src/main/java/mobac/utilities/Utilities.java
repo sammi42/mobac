@@ -104,7 +104,7 @@ public class Utilities {
 		BufferedImage emptyImage = createEmptyTileImage(mapSource);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
 		try {
-			ImageIO.write(emptyImage, mapSource.getTileType().getFileExt(), buf);
+			ImageIO.write(emptyImage, mapSource.getTileImageType().getFileExt(), buf);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

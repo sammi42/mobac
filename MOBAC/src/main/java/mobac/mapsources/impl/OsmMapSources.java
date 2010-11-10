@@ -45,7 +45,7 @@ public class OsmMapSources {
 			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
-		public TileImageType getTileType() {
+		public TileImageType getTileImageType() {
 			return TileImageType.PNG;
 		}
 

@@ -83,7 +83,7 @@ public abstract class AbstractMapSource implements MapSource {
 		return name;
 	}
 
-	public TileImageType getTileType() {
+	public TileImageType getTileImageType() {
 		return tileType;
 	}
 

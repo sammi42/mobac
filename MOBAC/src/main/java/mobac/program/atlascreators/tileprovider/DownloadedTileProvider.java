@@ -37,7 +37,7 @@ public class DownloadedTileProvider implements TileProvider {
 
 	public DownloadedTileProvider(TarIndex tarIndex, MapSource mapSource) {
 		this.tarIndex = tarIndex;
-		this.mapTileType = mapSource.getTileType();
+		this.mapTileType = mapSource.getTileImageType();
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {

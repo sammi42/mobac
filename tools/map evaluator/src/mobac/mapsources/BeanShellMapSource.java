@@ -10,6 +10,7 @@ import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
 
@@ -117,7 +118,7 @@ public class BeanShellMapSource implements MapSource {
 	}
 
 	@Override
-	public String getTileType() {
+	public TileImageType getTileImageType() {
 		return null;
 	}
 

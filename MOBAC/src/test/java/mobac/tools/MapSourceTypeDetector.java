@@ -38,6 +38,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
+import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
 
@@ -140,7 +141,7 @@ public class MapSourceTypeDetector {
 			// printHeaders();
 
 			byte[] content = Utilities.getInputBytes(c.getInputStream());
-			String detectedContentType = Utilities.getImageDataFormat(content);
+			TileImageType detectedContentType = Utilities.getImageType(content);
 
 			String contentType = c.getContentType();
 			contentType = contentType.substring(6);
@@ -150,7 +151,7 @@ public class MapSourceTypeDetector {
 				contentType = "jpg";
 			else
 				contentType = "unknown: " + c.getContentType();
-			if (contentType.equals(detectedContentType))
+			if (contentType.equals(detectedContentType.getFileExt()))
 				contentType += " (verified)";
 			else
 				contentType += " (unverified)";

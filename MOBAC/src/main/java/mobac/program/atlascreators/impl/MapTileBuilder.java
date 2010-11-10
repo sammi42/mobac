@@ -153,7 +153,7 @@ public class MapTileBuilder {
 		int currentTileHeight = realHeight;
 		int currentTileWidth = realWidth;
 		try {
-			String tileType = tileImageDataWriter.getFileExt();
+			String tileType = tileImageDataWriter.getType().getFileExt();
 			int tiley = 0;
 			while (yAbsPos < yEnd) {
 				int tilex = 0;

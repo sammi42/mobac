@@ -29,6 +29,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
+import mobac.program.model.TileImageType;
 
 
 /**
@@ -46,8 +47,8 @@ public class CustomMapSource implements MapSource {
 	@XmlElement(required = true)
 	private int maxZoom = 0;
 
-	@XmlElement(defaultValue = "png")
-	private String tileType = "png";
+	@XmlElement(defaultValue = "PNG")
+	private TileImageType tileType = TileImageType.PNG;
 
 	@XmlElement(defaultValue = "NONE")
 	private TileUpdate tileUpdate;
@@ -85,7 +86,7 @@ public class CustomMapSource implements MapSource {
 		return name;
 	}
 
-	public String getTileType() {
+	public TileImageType getTileType() {
 		return tileType;
 	}
 

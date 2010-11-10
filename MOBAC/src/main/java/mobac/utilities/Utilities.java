@@ -52,6 +52,7 @@ import javax.swing.JComponent;
 
 import mobac.Main;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.TileImageType;
 import mobac.utilities.file.DirectoryFileFilter;
 
 import org.apache.log4j.Logger;
@@ -103,7 +104,7 @@ public class Utilities {
 		BufferedImage emptyImage = createEmptyTileImage(mapSource);
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
 		try {
-			ImageIO.write(emptyImage, mapSource.getTileType(), buf);
+			ImageIO.write(emptyImage, mapSource.getTileType().getFileExt(), buf);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -117,13 +118,13 @@ public class Utilities {
 	private static final byte[] GIF_1 = "GIF87a".getBytes();
 	private static final byte[] GIF_2 = "GIF89a".getBytes();
 
-	public static String getImageDataFormat(byte[] imageData) {
+	public static TileImageType getImageType(byte[] imageData) {
 		if (startsWith(imageData, PNG))
-			return "png";
+			return TileImageType.PNG;
 		if (startsWith(imageData, JPG))
-			return "jpg";
+			return TileImageType.JPG;
 		if (startsWith(imageData, GIF_1) || startsWith(imageData, GIF_2))
-			return "gif";
+			return TileImageType.GIF;
 		return null;
 	}
 
@@ -546,7 +547,7 @@ public class Utilities {
 
 	public static int getJavaMaxHeapMB() {
 		try {
-			return (int)(Runtime.getRuntime().maxMemory() / 1048576l);
+			return (int) (Runtime.getRuntime().maxMemory() / 1048576l);
 		} catch (Exception e) {
 			return -1;
 		}

@@ -72,11 +72,11 @@ public class SportsTracker extends AtlasCreator {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		tileType = map.getMapSource().getTileType();
+		tileType = map.getMapSource().getTileType().getFileExt();
 		TileImageParameters param = map.getParameters();
 		if (param != null) {
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());
-			tileType = param.getFormat().getDataWriter().getFileExt();
+			tileType = param.getFormat().getFileExt();
 		}
 
 	}

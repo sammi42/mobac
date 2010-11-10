@@ -28,6 +28,7 @@ import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
+import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
@@ -68,7 +69,7 @@ public class MobileTrailExplorer extends AtlasCreator {
 		} catch (IOException e1) {
 			throw new MapCreationException(e1);
 		}
-		if (!"png".equalsIgnoreCase(mapSource.getTileType()))
+		if (mapSource.getTileType() != TileImageType.PNG)
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
 		createTiles();

@@ -21,7 +21,7 @@ import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
 import mobac.mapsources.mapspace.MercatorPower2MapSpaceEllipsoidal;
 import mobac.program.interfaces.MapSpace;
-
+import mobac.program.model.TileImageType;
 
 public class MiscMapSources {
 
@@ -35,7 +35,7 @@ public class MiscMapSources {
 			// 0 (fixed url) world.png
 			// 1-5 "mergend binary encoding"
 			// 6-? uses MS MAP tiles at some parts of the world
-			super("Multimap.com", 1, 17, "png", TileUpdate.IfModifiedSince);
+			super("Multimap.com", 1, 17, TileImageType.PNG, TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -65,7 +65,7 @@ public class MiscMapSources {
 			// 0 (fixed url) world.png
 			// 1-5 "mergend binary encoding"
 			// 6-? uses MS MAP tiles at some parts of the world
-			super("Multimap UK OS Map", 1, 16, "png", TileUpdate.IfModifiedSince);
+			super("Multimap UK OS Map", 1, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -93,7 +93,7 @@ public class MiscMapSources {
 	public static class YahooMaps extends AbstractMapSource {
 
 		public YahooMaps() {
-			super("Yahoo Maps", 1, 16, "jpg", TileUpdate.IfModifiedSince);
+			super("Yahoo Maps", 1, 16, TileImageType.JPG, TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -108,7 +108,7 @@ public class MiscMapSources {
 	public static class YahooMapsJapan extends AbstractMapSource {
 
 		public YahooMapsJapan() {
-			super("Yahoo Maps Japan", 1, 19, "png", TileUpdate.IfModifiedSince);
+			super("Yahoo Maps Japan", 1, 19, TileImageType.PNG, TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -122,7 +122,7 @@ public class MiscMapSources {
 	public static class YahooMapsTaiwan extends AbstractMapSource {
 
 		public YahooMapsTaiwan() {
-			super("Yahoo Maps Taiwan", 1, 18, "png", TileUpdate.None);
+			super("Yahoo Maps Taiwan", 1, 18, TileImageType.PNG, TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
@@ -135,7 +135,7 @@ public class MiscMapSources {
 	public static class OviMaps extends AbstractMapSource {
 
 		public OviMaps() {
-			super("Ovi Maps", 1, 18, "png");
+			super("Ovi Maps", 1, 18, TileImageType.PNG);
 			tileUpdate = TileUpdate.IfModifiedSince;
 		}
 
@@ -162,7 +162,7 @@ public class MiscMapSources {
 		String urlPattern;
 
 		public YandexMap() {
-			super("YandexMap", 1, 17, "png", TileUpdate.IfModifiedSince);
+			super("YandexMap", 1, 17, TileImageType.PNG, TileUpdate.IfModifiedSince);
 			update();
 		}
 
@@ -202,7 +202,7 @@ public class MiscMapSources {
 		private String urlPattern;
 
 		public YandexSat() {
-			super("YandexSat", 1, 18, "jpg", TileUpdate.IfModifiedSince);
+			super("YandexSat", 1, 18, TileImageType.JPG, TileUpdate.IfModifiedSince);
 			update();
 		}
 
@@ -244,7 +244,7 @@ public class MiscMapSources {
 		private static final String BASE_URL = "http://maps.navitel.su/navitms.fcgi?t=%08d,%08d,%02d";
 
 		public Navitel() {
-			super("Navitel.su", 3, 17, "png", TileUpdate.None);
+			super("Navitel.su", 3, 17, TileImageType.PNG, TileUpdate.None);
 		}
 
 		@Override

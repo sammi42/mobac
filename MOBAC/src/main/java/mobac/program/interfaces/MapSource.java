@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.gui.mapview.JMapViewer;
 import mobac.program.jaxb.MapSourceAdapter;
+import mobac.program.model.TileImageType;
 
 
 
@@ -114,11 +115,11 @@ public interface MapSource {
 
 	/**
 	 * Specifies the tile image type. For tiles rendered by Mapnik or
-	 * Osmarenderer this is usually <code>"png"</code>.
+	 * Osmarenderer this is usually {@link TileImageType#PNG}.
 	 * 
 	 * @return file extension of the tile image type
 	 */
-	public String getTileType();
+	public TileImageType getTileType();
 
 	/**
 	 * Usually this method shoud return <code>true</code> but for debugging

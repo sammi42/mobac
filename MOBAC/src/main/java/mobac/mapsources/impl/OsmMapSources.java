@@ -23,6 +23,7 @@ import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MultiLayerMapSource;
+import mobac.program.model.TileImageType;
 
 
 public class OsmMapSources {
@@ -37,15 +38,15 @@ public class OsmMapSources {
 	protected static abstract class AbstractOsmTileSource extends AbstractMapSource {
 
 		public AbstractOsmTileSource(String name) {
-			super(name, 0, 18, "png");
+			super(name, 0, 18, TileImageType.PNG);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
-		public String getTileType() {
-			return "png";
+		public TileImageType getTileType() {
+			return TileImageType.PNG;
 		}
 
 		public boolean allowFileStore() {
@@ -150,7 +151,7 @@ public class OsmMapSources {
 	public static class OsmHikingMap extends AbstractMapSource {
 
 		public OsmHikingMap() {
-			super("OSM Hiking", 4, 18, "png", TileUpdate.IfNoneMatch);
+			super("OSM Hiking", 4, 18, TileImageType.PNG, TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -167,7 +168,7 @@ public class OsmMapSources {
 	public static class OsmHikingRelief extends AbstractMapSource {
 
 		public OsmHikingRelief() {
-			super("OSM Hiking Relief", 4, 15, "png", TileUpdate.IfNoneMatch);
+			super("OSM Hiking Relief", 4, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -184,7 +185,7 @@ public class OsmMapSources {
 	public static class OsmHikingBase extends AbstractMapSource {
 
 		public OsmHikingBase() {
-			super("OSM Hiking Base", 4, 18, "png", TileUpdate.IfNoneMatch);
+			super("OSM Hiking Base", 4, 18, TileImageType.PNG, TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -250,7 +251,7 @@ public class OsmMapSources {
 	public static class OpenPisteMap extends AbstractMapSource {
 
 		public OpenPisteMap() {
-			super("OpenPisteMap", 0, 17, "png", TileUpdate.LastModified);
+			super("OpenPisteMap", 0, 17, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		@Override
@@ -270,7 +271,7 @@ public class OsmMapSources {
 	public static class HikebikemapBase extends AbstractMapSource {
 
 		public HikebikemapBase() {
-			super("HikebikemapTiles", 0, 18, "png", TileUpdate.None);
+			super("HikebikemapTiles", 0, 18, TileImageType.PNG, TileUpdate.None);
 		}
 
 		@Override
@@ -292,7 +293,7 @@ public class OsmMapSources {
 	public static class HikebikemapRelief extends AbstractMapSource {
 
 		public HikebikemapRelief() {
-			super("HikebikemapRelief", 0, 16, "png", TileUpdate.None);
+			super("HikebikemapRelief", 0, 16, TileImageType.PNG, TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -324,7 +325,7 @@ public class OsmMapSources {
 		private static MapSpace space = MapSpaceFactory.getInstance(512, true);
 
 		public Turaterkep() {
-			super("Turaterkep", 7, 16, "png", TileUpdate.IfNoneMatch);
+			super("Turaterkep", 7, 16, TileImageType.PNG, TileUpdate.IfNoneMatch);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

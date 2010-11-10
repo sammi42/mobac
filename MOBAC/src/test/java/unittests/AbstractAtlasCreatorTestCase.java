@@ -37,6 +37,7 @@ import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.model.Atlas;
 import mobac.program.model.Profile;
+import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.tools.testtileserver.TestTileServer;
 import mobac.tools.testtileserver.servlets.JpgTileGeneratorServlet;
@@ -65,7 +66,7 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 		// TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));
 		TEST_TILE_SERVER.setTileServlet(new JpgTileGeneratorServlet(90));
 		TEST_TILE_SERVER.start();
-		TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort(), "jpg");
+		TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort(), TileImageType.JPG);
 	}
 
 	public AbstractAtlasCreatorTestCase() {

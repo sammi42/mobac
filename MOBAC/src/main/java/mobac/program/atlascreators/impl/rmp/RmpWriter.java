@@ -44,6 +44,9 @@ import org.apache.log4j.Logger;
  */
 public class RmpWriter {
 
+	/**
+	 * Max file size: 2147483647 bytes = 2047,99 MiB
+	 */
 	public static final long MAX_FILE_SIZE = 0x7fffffffl;
 
 	private static final Logger log = Logger.getLogger(RmpWriter.class);

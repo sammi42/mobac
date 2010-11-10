@@ -17,6 +17,7 @@
 package mobac.mapsources.impl;
 
 import mobac.mapsources.AbstractMapSource;
+import mobac.program.model.TileImageType;
 
 public class LocalhostTestSource extends AbstractMapSource {
 
@@ -24,11 +25,11 @@ public class LocalhostTestSource extends AbstractMapSource {
 
 	private String baseUrl;
 
-	public LocalhostTestSource(String name, String tileType, boolean allowStore) {
+	public LocalhostTestSource(String name, TileImageType tileType, boolean allowStore) {
 		this(name, 80, tileType, allowStore);
 	}
 
-	public LocalhostTestSource(String name, int port, String tileType, boolean allowStore) {
+	public LocalhostTestSource(String name, int port, TileImageType tileType, boolean allowStore) {
 		super(name, 0, 22, tileType);
 		this.allowStore = allowStore;
 		baseUrl = "http://127.0.0.1:" + port + "/tile." + tileType + "?";

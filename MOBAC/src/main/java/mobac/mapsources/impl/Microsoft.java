@@ -18,6 +18,7 @@ package mobac.mapsources.impl;
 
 import mobac.mapsources.AbstractMapSource;
 import mobac.mapsources.MapSourceTools;
+import mobac.program.model.TileImageType;
 
 public class Microsoft {
 
@@ -33,7 +34,7 @@ public class Microsoft {
 		protected int serverNumMax = 4;
 		protected char mapTypeChar;
 
-		public AbstractMicrosoft(String name, String tileType, char mapTypeChar, TileUpdate tileUpdate) {
+		public AbstractMicrosoft(String name, TileImageType tileType, char mapTypeChar, TileUpdate tileUpdate) {
 			super(name, 1, 19, tileType, tileUpdate);
 			this.mapTypeChar = mapTypeChar;
 		}
@@ -53,22 +54,24 @@ public class Microsoft {
 	public static class MicrosoftMaps extends AbstractMicrosoft {
 
 		public MicrosoftMaps() {
-			super("Microsoft Maps", "png", 'r', TileUpdate.IfNoneMatch);
+			super("Microsoft Maps", TileImageType.PNG, 'r', TileUpdate.IfNoneMatch);
 		}
 
 	}
+
 	public static class MicrosoftMapsHillShade extends AbstractMicrosoft {
 
 		public MicrosoftMapsHillShade() {
-			super("Microsoft Maps with hill shade", "png", 'r', TileUpdate.IfNoneMatch);
+			super("Microsoft Maps with hill shade", TileImageType.PNG, 'r', TileUpdate.IfNoneMatch);
 			urlAppend = "?g=563&shading=hill";
 		}
 
 	}
+
 	public static class MicrosoftMapsChina extends AbstractMicrosoft {
 
 		public MicrosoftMapsChina() {
-			super("Microsoft Maps China", "png", 'r', TileUpdate.IfNoneMatch);
+			super("Microsoft Maps China", TileImageType.PNG, 'r', TileUpdate.IfNoneMatch);
 			urlBase = ".tiles.ditu.live.com/tiles/";
 			urlAppend = "?g=1";
 			maxZoom = 18;
@@ -79,7 +82,7 @@ public class Microsoft {
 	public static class MicrosoftVirtualEarth extends AbstractMicrosoft {
 
 		public MicrosoftVirtualEarth() {
-			super("Microsoft Virtual Earth", "jpg", 'a', TileUpdate.IfNoneMatch);
+			super("Microsoft Virtual Earth", TileImageType.JPG, 'a', TileUpdate.IfNoneMatch);
 		}
 
 	}
@@ -87,7 +90,7 @@ public class Microsoft {
 	public static class MicrosoftHybrid extends AbstractMicrosoft {
 
 		public MicrosoftHybrid() {
-			super("Microsoft Hybrid", "jpg", 'h', TileUpdate.None);
+			super("Microsoft Hybrid", TileImageType.JPG, 'h', TileUpdate.None);
 		}
 
 		@Override
@@ -100,7 +103,7 @@ public class Microsoft {
 	public static class MicrosoftOrdnanceSurveyExplorer extends AbstractMapSource {
 
 		public MicrosoftOrdnanceSurveyExplorer() {
-			super("Ordnance Survey Explorer Maps (UK)", 12, 16, "png", TileUpdate.IfModifiedSince);
+			super("Ordnance Survey Explorer Maps (UK)", 12, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
 		}
 
 		@Override
@@ -109,8 +112,7 @@ public class Microsoft {
 			String urlAppend = "?g=41&productSet=mmOS";
 			return "http://ecn.t2.tiles.virtualearth.net/tiles/r" + tileNum + "." + tileType + urlAppend;
 		}
-		
-		
+
 	}
-	
+
 }

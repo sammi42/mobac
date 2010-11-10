@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 
 import mobac.program.interfaces.TileImageDataWriter;
+import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
 
@@ -65,8 +66,8 @@ public class TileImagePngDataWriter implements TileImageDataWriter {
 		pngImageWriter = null;
 	}
 
-	public String getFileExt() {
-		return "png";
+	public TileImageType getType() {
+		return TileImageType.PNG;
 	}
 
 }

@@ -27,13 +27,10 @@ import mobac.program.tiledatawriter.TileImagePng4DataWriter;
 import mobac.program.tiledatawriter.TileImagePng8DataWriter;
 import mobac.program.tiledatawriter.TileImagePngDataWriter;
 
-
 /**
- * Defines all available image formats selectable in the {@link JComboBox} in
- * the {@link MainGUI}. Each element of this enumeration contains one instance
- * of an {@link TileImageDataWriter} instance that can perform one or more image
- * operations (e.g. color reduction) and then saves the image to an
- * {@link OutputStream}.
+ * Defines all available image formats selectable in the {@link JComboBox} in the {@link MainGUI}. Each element of this
+ * enumeration contains one instance of an {@link TileImageDataWriter} instance that can perform one or more image
+ * operations (e.g. color reduction) and then saves the image to an {@link OutputStream}.
  * 
  * @see TileImageDataWriter
  * @see TileImagePngDataWriter
@@ -74,4 +71,11 @@ public enum TileImageFormat {
 		return dataWriter;
 	}
 
+	public TileImageType getType() {
+		return dataWriter.getType();
+	}
+
+	public String getFileExt() {
+		return dataWriter.getType().getFileExt();
+	}
 }

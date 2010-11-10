@@ -18,7 +18,6 @@ package unittests;
 
 import java.io.File;
 
-import mobac.program.atlascreators.GarminCustom;
 import mobac.program.atlascreators.GoogleEarthOverlay;
 import mobac.program.interfaces.AtlasInterface;
 

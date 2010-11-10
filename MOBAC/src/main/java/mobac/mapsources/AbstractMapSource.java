@@ -25,6 +25,7 @@ import mobac.gui.mapview.JMapViewer;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.TileImageType;
 
 
 /**
@@ -35,14 +36,14 @@ public abstract class AbstractMapSource implements MapSource {
 	protected String name;
 	protected int minZoom;
 	protected int maxZoom;
-	protected String tileType;
+	protected TileImageType tileType;
 	protected TileUpdate tileUpdate;
 
-	public AbstractMapSource(String name, int minZoom, int maxZoom, String tileType) {
+	public AbstractMapSource(String name, int minZoom, int maxZoom, TileImageType tileType) {
 		this(name, minZoom, maxZoom, tileType, TileUpdate.None);
 	}
 
-	public AbstractMapSource(String name, int minZoom, int maxZoom, String tileType,
+	public AbstractMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
 			TileUpdate tileUpdate) {
 		this.name = name;
 		this.minZoom = minZoom;
@@ -82,7 +83,7 @@ public abstract class AbstractMapSource implements MapSource {
 		return name;
 	}
 
-	public String getTileType() {
+	public TileImageType getTileType() {
 		return tileType;
 	}
 

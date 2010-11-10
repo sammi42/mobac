@@ -33,8 +33,8 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
+import mobac.program.model.TileImageType;
 import mobac.utilities.tar.TarIndex;
-
 
 /**
  * Creates maps using the Run.GPS Trainer atlas format.
@@ -108,7 +108,8 @@ public class RunGPSAtlas extends AtlasCreator {
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
-		if (!"png".equalsIgnoreCase(mapSource.getTileType())) // If the tile image format is not png we have to convert it
+		if (mapSource.getTileType() != TileImageType.PNG)
+			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
 		createTiles();
 	}

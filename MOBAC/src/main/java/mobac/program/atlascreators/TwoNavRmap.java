@@ -322,7 +322,7 @@ public class TwoNavRmap extends AtlasCreator {
 
 		LayerInterface layer = atlas.getLayer(0);
 
-		rmapFile = new RmapFile(atlasDir + "\\" + layer.getName() + ".rmap");
+		rmapFile = new RmapFile(atlasDir + File.pathSeparator + layer.getName() + ".rmap");
 
 		int DefaultMap = 0;
 
@@ -428,7 +428,7 @@ public class TwoNavRmap extends AtlasCreator {
 			try {
 				rmapFile.zoomLevels[index].writeHeader();
 			} catch (IOException e) {
-				throw new MapCreationException("rmapFile.zoomLevels[Index].writeHeader() failed: " + e.getMessage());
+				throw new MapCreationException("rmapFile.zoomLevels[Index].writeHeader() failed: " + e.getMessage(), e);
 			}
 
 			int tilex = 0;
@@ -509,7 +509,7 @@ public class TwoNavRmap extends AtlasCreator {
 			}
 			rmapFile.close();
 		} catch (Exception e) {
-			log.error("Failed writing rmap file \"" + rmapFile.name + "\": " + e.getMessage());
+			log.error("Failed writing rmap file \"" + rmapFile.name + "\": " + e.getMessage(), e);
 		}
 		rmapFile = null;
 	}

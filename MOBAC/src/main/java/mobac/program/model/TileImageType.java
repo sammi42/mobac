@@ -14,34 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.tiledatawriter;
+package mobac.program.model;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
+/**
+ * Supported file extensions of all {@link TileImageFormat} enums.
+ */
+public enum TileImageType {
+	PNG, JPG, GIF;
 
-import mobac.optional.JavaAdvancedImaging;
-import mobac.program.interfaces.TileImageDataWriter;
-import mobac.program.model.TileImageType;
-import mobac.utilities.imageio.Png4BitWriter;
-
-public class TileImagePng4DataWriter implements TileImageDataWriter {
-
-	public TileImagePng4DataWriter() {
-	}
-
-	public void initialize() {
-	}
-
-	public void processImage(BufferedImage image, OutputStream out) throws IOException {
-		BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 16);
-		Png4BitWriter.writeImage(out, image2);
-	}
-
-	public void dispose() {
-	}
-
-	public TileImageType getType() {
-		return TileImageType.PNG;
+	public String getFileExt() {
+		return name().toLowerCase();
 	}
 }

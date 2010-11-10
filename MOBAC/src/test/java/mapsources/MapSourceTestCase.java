@@ -77,7 +77,7 @@ public class MapSourceTestCase extends TestCase {
 			byte[] imageData = Utilities.getInputBytes(c.getInputStream());
 			if (imageData.length == 0)
 				throw new MapSourceTestFailedException(mapSource, "Image data empty", c);
-			if (Utilities.getImageDataFormat(imageData) == null) {
+			if (Utilities.getImageType(imageData) == null) {
 				throw new MapSourceTestFailedException(mapSource, "Image data of unknown format", c);
 			}
 			switch (mapSource.getTileUpdate()) {

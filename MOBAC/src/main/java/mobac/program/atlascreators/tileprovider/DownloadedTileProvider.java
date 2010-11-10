@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.TileImageType;
 import mobac.utilities.tar.TarIndex;
 
 
@@ -32,7 +33,7 @@ public class DownloadedTileProvider implements TileProvider {
 	public static final String TILE_FILENAME_PATTERN = "l%dx%dy%d";
 
 	protected final TarIndex tarIndex;
-	protected final String mapTileType;
+	protected final TileImageType mapTileType;
 
 	public DownloadedTileProvider(TarIndex tarIndex, MapSource mapSource) {
 		this.tarIndex = tarIndex;

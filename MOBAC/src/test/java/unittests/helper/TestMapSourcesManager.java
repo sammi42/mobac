@@ -21,13 +21,13 @@ import java.util.Vector;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.program.interfaces.MapSource;
-
+import mobac.program.model.TileImageType;
 
 public class TestMapSourcesManager extends MapSourcesManager {
 
 	private final MapSource theMapSource;
 
-	public TestMapSourcesManager(int port, String tileType) {
+	public TestMapSourcesManager(int port, TileImageType tileType) {
 		super();
 		theMapSource = new LocalhostTestSource("Localhost test", port, tileType, false);
 		install();

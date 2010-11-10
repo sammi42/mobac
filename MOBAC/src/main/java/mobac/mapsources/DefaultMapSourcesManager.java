@@ -82,17 +82,17 @@ import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import mobac.mapsources.impl.WmsSources.TerraserverUSA;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
-
+import mobac.program.model.TileImageType;
 
 public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	public static final MapSource DEFAULT = new Mapnik();
 	private MapSource[] MAP_SOURCES;
 
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource("Localhost (stored)", "png",
-			true);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource("Localhost (stored)",
+			TileImageType.PNG, true);
 	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource("Localhost (unstored)",
-			"png", false);
+			TileImageType.PNG, false);
 
 	static {
 		MapSourcesUpdater.loadMapSourceProperties();

@@ -43,7 +43,6 @@ import mobac.utilities.tar.TarArchive;
 import mobac.utilities.tar.TarIndex;
 import mobac.utilities.tar.TarTmiArchive;
 
-
 public abstract class TrekBuddy extends AtlasCreator {
 
 	public static final String FILENAME_PATTERN = "t_%d_%d.%s";
@@ -118,7 +117,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 		ImageIO.setUseCache(false);
 		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
-		String tileType = mapSource.getTileType();
+		String tileType = mapSource.getTileType().getFileExt();
 		for (int x = xMin; x <= xMax; x++) {
 			tiley = 0;
 			for (int y = yMin; y <= yMax; y++) {

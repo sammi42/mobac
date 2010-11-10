@@ -74,11 +74,11 @@ public class OSMTracker extends AtlasCreator {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		mapDir = new File(atlasDir, map.getMapSource().getName());
-		tileType = mapSource.getTileType();
+		tileType = mapSource.getTileType().getFileExt();
 		if (parameters != null) {
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters
 					.getFormat());
-			tileType = parameters.getFormat().getDataWriter().getFileExt();
+			tileType = parameters.getFormat().getFileExt();
 		}
 	}
 

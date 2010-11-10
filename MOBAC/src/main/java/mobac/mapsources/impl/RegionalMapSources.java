@@ -25,7 +25,7 @@ import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MultiLayerMapSource;
-
+import mobac.program.model.TileImageType;
 
 /**
  * Map sources that do not cover the whole world
@@ -43,7 +43,7 @@ public class RegionalMapSources {
 		private String baseUrl;
 
 		public DoCeluPL() {
-			super("DoCeluPL", 2, 16, "png", TileUpdate.LastModified);
+			super("DoCeluPL", 2, 16, TileImageType.PNG, TileUpdate.LastModified);
 			update();
 		}
 
@@ -82,7 +82,7 @@ public class RegionalMapSources {
 		private static final int MAX_SERVER_NUM = 4;
 
 		public UmpWawPl() {
-			super("UMP-pcPL", 0, 18, "png", TileUpdate.LastModified);
+			super("UMP-pcPL", 0, 18, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -106,7 +106,7 @@ public class RegionalMapSources {
 		protected String mapName = "portal";
 
 		public OutdooractiveGermany() {
-			super("Outdooractive.com", 8, 17, "png", TileUpdate.LastModified);
+			super("Outdooractive.com", 8, 17, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -163,7 +163,7 @@ public class RegionalMapSources {
 	public static class Cykloatlas extends AbstractMapSource {
 
 		public Cykloatlas() {
-			super("Cykloatlas", 7, 15, "png", TileUpdate.LastModified);
+			super("Cykloatlas", 7, 15, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -186,7 +186,7 @@ public class RegionalMapSources {
 	public static class CykloatlasRelief extends AbstractMapSource {
 
 		public CykloatlasRelief() {
-			super("CykloatlasRelief", 7, 15, "png", TileUpdate.LastModified);
+			super("CykloatlasRelief", 7, 15, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -219,7 +219,7 @@ public class RegionalMapSources {
 	public static class TuristikaMapSk extends AbstractMapSource {
 
 		public TuristikaMapSk() {
-			super("TuristikaMapSk (Slovakia)", 12, 15, "png");
+			super("TuristikaMapSk (Slovakia)", 12, 15, TileImageType.PNG);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -243,7 +243,7 @@ public class RegionalMapSources {
 	public static class FreemapSlovakia extends AbstractMapSource {
 
 		public FreemapSlovakia() {
-			super("FreemapSlovakia", 5, 16, "png", TileUpdate.None);
+			super("FreemapSlovakia", 5, 16, TileImageType.PNG, TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -265,7 +265,7 @@ public class RegionalMapSources {
 	public static class FreemapSlovakiaHiking extends AbstractMapSource {
 
 		public FreemapSlovakiaHiking() {
-			super("FreemapSlovakiaHiking", 6, 16, "png", TileUpdate.None);
+			super("FreemapSlovakiaHiking", 6, 16, TileImageType.PNG, TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -284,7 +284,7 @@ public class RegionalMapSources {
 	public static class FreemapSlovakiaCycling extends AbstractMapSource {
 
 		public FreemapSlovakiaCycling() {
-			super("FreemapSlovakiaCyclo", 6, 16, "png", TileUpdate.None);
+			super("FreemapSlovakiaCyclo", 6, 16, TileImageType.PNG, TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -310,7 +310,7 @@ public class RegionalMapSources {
 		int selectedServer = 0;
 
 		public EmapiPl() {
-			super("EmapiPl", 0, 19, "png", TileUpdate.None);
+			super("EmapiPl", 0, 19, TileImageType.PNG, TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {
@@ -336,7 +336,7 @@ public class RegionalMapSources {
 
 	public static class NearMap extends AbstractMapSource {
 		public NearMap() {
-			super("NearMap Australia", 0, 24, "jpg", TileUpdate.IfModifiedSince);
+			super("NearMap Australia", 0, 24, TileImageType.JPG, TileUpdate.IfModifiedSince);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -355,7 +355,7 @@ public class RegionalMapSources {
 		int serverNum = 0;
 
 		public HubermediaBavaria() {
-			super("Hubermedia Bavaria", 10, 16, "png", TileUpdate.IfNoneMatch);
+			super("Hubermedia Bavaria", 10, 16, TileImageType.PNG, TileUpdate.IfNoneMatch);
 			mapUrls = new String[17];
 
 			mapUrls[10] = "http://t0.hubermedia.de/TK500/DE/Bayern/";
@@ -440,10 +440,10 @@ public class RegionalMapSources {
 		final String service;
 
 		public StatkartTopo2() {
-			this("topo2", "Statkart Topo 2", 0, 17, "png", TileUpdate.None);
+			this("topo2", "Statkart Topo 2", 0, 17, TileImageType.PNG, TileUpdate.None);
 		}
 
-		public StatkartTopo2(String service, String name, int minZoom, int maxZoom, String tileType,
+		public StatkartTopo2(String service, String name, int minZoom, int maxZoom, TileImageType tileType,
 				TileUpdate tileUpdate) {
 			super(name, minZoom, maxZoom, tileType, tileUpdate);
 			this.service = service;
@@ -465,7 +465,7 @@ public class RegionalMapSources {
 	public static class StatkartToporaster2 extends StatkartTopo2 {
 
 		public StatkartToporaster2() {
-			super("toporaster2", "Statkart Toporaster 2", 0, 17, "png", TileUpdate.None);
+			super("toporaster2", "Statkart Toporaster 2", 0, 17, TileImageType.PNG, TileUpdate.None);
 		}
 
 	}
@@ -473,7 +473,7 @@ public class RegionalMapSources {
 	public static class StatkartSjoHovedkart2 extends StatkartTopo2 {
 
 		public StatkartSjoHovedkart2() {
-			super("sjo_hovedkart2", "Statkart sea/nautical", 0, 17, "png", TileUpdate.None);
+			super("sjo_hovedkart2", "Statkart sea/nautical", 0, 17, TileImageType.PNG, TileUpdate.None);
 		}
 
 	}
@@ -487,7 +487,7 @@ public class RegionalMapSources {
 		}
 
 		protected EniroComMap(String mapType) {
-			super("Eniro.com-" + mapType, 0, 20, "png", TileUpdate.IfModifiedSince);
+			super("Eniro.com-" + mapType, 0, 20, TileImageType.PNG, TileUpdate.IfModifiedSince);
 			this.mapType = mapType;
 		}
 
@@ -541,7 +541,7 @@ public class RegionalMapSources {
 				'f' };
 
 		public MapplusCh() {
-			super("MapplusCh", 7, 16, "jpg", TileUpdate.ETag);
+			super("MapplusCh", 7, 16, TileImageType.JPG, TileUpdate.ETag);
 			char[] sessID = new char[32];
 			Random rnd = new Random();
 			for (int i = 0; i < sessID.length; i++)
@@ -588,7 +588,7 @@ public class RegionalMapSources {
 		int SERVERNUM = 0;
 
 		public Bergfex() {
-			super("Bergfex", 8, 15, "png", TileUpdate.IfNoneMatch);
+			super("Bergfex", 8, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
 		}
 
 		@Override
@@ -617,7 +617,7 @@ public class RegionalMapSources {
 	public static class MyTopo extends AbstractMapSource {
 
 		public MyTopo() {
-			super("MyTopo", 6, 16, "jpg", TileUpdate.None);
+			super("MyTopo", 6, 16, TileImageType.JPG, TileUpdate.None);
 		}
 
 		@Override
@@ -650,7 +650,7 @@ public class RegionalMapSources {
 		protected String service;
 
 		public AeroCharts(String name, String service, int minZoom, int maxZoom) {
-			super(name, minZoom, maxZoom, "jpg", TileUpdate.LastModified);
+			super(name, minZoom, maxZoom, TileImageType.JPG, TileUpdate.LastModified);
 			this.service = service;
 		}
 
@@ -698,7 +698,7 @@ public class RegionalMapSources {
 		public Sigpac() {
 			// In some places ORTOFOTOS reaches zoom 18,
 			// but only level 17 covers the entire country
-			super("SIGPAC", 5, 17, "jpg");
+			super("SIGPAC", 5, 17, TileImageType.JPG);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -724,7 +724,7 @@ public class RegionalMapSources {
 	public static class NzTopoMaps extends AbstractMapSource {
 
 		public NzTopoMaps() {
-			super("New Zealand Topographic Maps", 7, 15, "png", TileUpdate.IfNoneMatch);
+			super("New Zealand Topographic Maps", 7, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
 		}
 
 		public String getTileUrl(int zoom, int x, int y) {

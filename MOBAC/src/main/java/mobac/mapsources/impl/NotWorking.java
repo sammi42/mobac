@@ -23,6 +23,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MultiLayerMapSource;
+import mobac.program.model.TileImageType;
 
 
 public class NotWorking {
@@ -38,7 +39,7 @@ public class NotWorking {
 	public static class OpenSeaMapLayer extends AbstractMapSource {
 
 		public OpenSeaMapLayer(String name) {
-			super(name, 11, 17, "png", TileUpdate.LastModified);
+			super(name, 11, 17, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -75,7 +76,7 @@ public class NotWorking {
 	public static class AustrianMap extends AbstractMapSource {
 
 		public AustrianMap() {
-			super("AustrianMap", 14, 15, "png");
+			super("AustrianMap", 14, 15, TileImageType.PNG);
 			tileUpdate = TileUpdate.ETag;
 		}
 
@@ -98,7 +99,7 @@ public class NotWorking {
 				+ "EBAD2551A496FE8CAE24093F9D3AA862E6BDB31F96A23D20030D" + "DA6B1D212552D6802ED3328E0BB1926";
 
 		public StatKartNo() {
-			super("StatKartNo", 0, 17, "png");
+			super("StatKartNo", 0, 17, TileImageType.PNG);
 		}
 
 		public MapSpace getMapSpace() {
@@ -125,7 +126,7 @@ public class NotWorking {
 	public static class Doculeo extends AbstractMapSource {
 
 		public Doculeo() {
-			super("Doculeo (Poland)", 7, 16, "jpg");
+			super("Doculeo (Poland)", 7, 16, TileImageType.JPG);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -139,7 +140,7 @@ public class NotWorking {
 	public static class OpenArialMap extends AbstractMapSource {
 
 		public OpenArialMap() {
-			super("OpenArialMap", 0, 18, "jpg");
+			super("OpenArialMap", 0, 18, TileImageType.JPG);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

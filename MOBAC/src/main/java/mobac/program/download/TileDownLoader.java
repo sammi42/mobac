@@ -27,6 +27,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MapSource.TileUpdate;
 import mobac.program.model.Settings;
+import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 import mobac.utilities.Utilities;
@@ -145,8 +146,8 @@ public class TileDownLoader {
 		long timeExpires = conn.getExpiration();
 
 		Utilities.checkForInterruption();
-		String imageFormat = Utilities.getImageDataFormat(data);
-		if (imageFormat == null)
+		TileImageType imageType = Utilities.getImageType(data);
+		if (imageType == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
 		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
@@ -243,8 +244,8 @@ public class TileDownLoader {
 		long timeExpires = conn.getExpiration();
 
 		Utilities.checkForInterruption();
-		String imageFormat = Utilities.getImageDataFormat(data);
-		if (imageFormat == null)
+		TileImageType imageType = Utilities.getImageType(data);
+		if (imageType == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
 		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);

@@ -233,7 +233,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 			int initialBufferSize = tileImage.getWidth() * tileImage.getHeight() / 4;
 			ByteArrayOutputStream buf = new ByteArrayOutputStream(initialBufferSize);
 			writer.processImage(tileImage, buf);
-			String imageFileName = "files/" + cleanedMapName + "." + writer.getFileExt();
+			String imageFileName = "files/" + cleanedMapName + "." + writer.getType();
 			kmzOutputStream.writeStoredEntry(imageFileName, buf.toByteArray());
 			addMapToKmz(imageFileName);
 		} catch (Exception e) {

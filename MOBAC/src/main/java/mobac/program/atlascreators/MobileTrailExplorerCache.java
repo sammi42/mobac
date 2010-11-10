@@ -35,9 +35,9 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
+import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
-
 
 /**
  * Creates maps using the Mobile Trail Explorer (MTE) cache format.
@@ -83,7 +83,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
-		if (!"png".equalsIgnoreCase(mapSource.getTileType()))
+		if (mapSource.getTileType() != TileImageType.PNG)
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
 		createTiles();
@@ -109,8 +109,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 		}
 	}
 
-	protected boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom)
-			throws IOException {
+	protected boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom) throws IOException {
 		String url = "not used";
 		String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
 

@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import mobac.program.model.TileImageType;
+
 public interface TileImageDataWriter {
 
 	public void initialize();
@@ -41,5 +43,6 @@ public interface TileImageDataWriter {
 	
 	public void dispose();
 	
-	public String getFileExt();
+	public TileImageType getType();
+
 }

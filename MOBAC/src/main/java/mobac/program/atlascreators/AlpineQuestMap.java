@@ -46,7 +46,6 @@ import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.utilities.stream.ArrayOutputStream;
 import mobac.utilities.tar.TarIndex;
 
-
 /**
  * Creates maps using the AlpineQuestMap atlas format (AQM v2 complient).
  * 
@@ -287,12 +286,11 @@ public class AlpineQuestMap extends AtlasCreator {
 		yResizeRatio = 1.0;
 
 		if (parameters != null) {
-			if ((parameters.getWidth() != map.getMapSource().getMapSpace().getTileSize())
-					|| (parameters.getHeight() != map.getMapSource().getMapSpace().getTileSize())) {
+			int mapTileSize = map.getMapSource().getMapSpace().getTileSize();
+			if ((parameters.getWidth() != mapTileSize) || (parameters.getHeight() != mapTileSize)) {
 				// handle image re-sampling + image re-sizing
-				xResizeRatio = (double) parameters.getWidth() / (double) map.getMapSource().getMapSpace().getTileSize();
-				yResizeRatio = (double) parameters.getHeight()
-						/ (double) map.getMapSource().getMapSpace().getTileSize();
+				xResizeRatio = (double) parameters.getWidth() / (double) mapTileSize;
+				yResizeRatio = (double) parameters.getHeight() / (double) mapTileSize;
 			} else {
 				// handle only image re-sampling
 				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());

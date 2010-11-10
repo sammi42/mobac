@@ -292,6 +292,9 @@ public class TwoNavRmap extends AtlasCreator {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
+		if (atlas.getLayerCount() != 1) {
+			throw new AtlasTestException("Only 1 layer, please");
+		}
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				if (map.getParameters() == null)
@@ -307,7 +310,6 @@ public class TwoNavRmap extends AtlasCreator {
 		MapSpace mapSpace = mapSource.getMapSpace();
 		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
 				.getProjectionCategory()));
-		// TODO supports Mercator ellipsoid?
 	}
 
 	@Override
@@ -317,10 +319,6 @@ public class TwoNavRmap extends AtlasCreator {
 		super.startAtlasCreation(atlas, customAtlasDir);
 
 		// Logging.configureConsoleLogging(org.apache.log4j.Level.ALL, new SimpleLayout());
-
-		if (atlas.getLayerCount() != 1) {
-			throw new InterruptedException("Only 1 layer, please");
-		}
 
 		LayerInterface layer = atlas.getLayer(0);
 
@@ -413,7 +411,6 @@ public class TwoNavRmap extends AtlasCreator {
 		}
 
 		rmapFile.writeHeader();
-
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {

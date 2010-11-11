@@ -44,7 +44,6 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
-import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -52,11 +51,20 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageFormat;
+import mobac.program.model.TileImageType;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 
 import org.apache.log4j.Level;
 
+/**
+ * 
+ * Creates one RMAP file per layer.
+ * 
+ * @author Luka Logar
+ * @author r_x
+ * 
+ */
 public class TwoNavRmap extends AtlasCreator {
 
 	private RmapFile rmapFile = null;
@@ -179,9 +187,9 @@ public class TwoNavRmap extends AtlasCreator {
 		private long impOffset = 0;
 		private ZoomLevel zoomLevels[] = null;
 
-		private RmapFile(String name) throws FileNotFoundException {
-			super(name, "rw");
-			this.name = name;
+		private RmapFile(File file) throws FileNotFoundException {
+			super(file, "rw");
+			this.name = file.getName();
 		}
 
 		private int readIntI() throws IOException {
@@ -254,7 +262,7 @@ public class TwoNavRmap extends AtlasCreator {
 			sbMap.append("Datum=WGS 84\r\n");
 			sbMap.append("</Header>\r\n");
 			sbMap.append("<Map>\r\n");
-			sbMap.append("Bitmap=" + new File(name).getName() + "\r\n");
+			sbMap.append("Bitmap=" + name + "\r\n");
 			sbMap.append("BitsPerPixel=0\r\n");
 			sbMap.append(String.format("BitmapWidth=%d\r\n", width));
 			sbMap.append(String.format("BitmapHeight=%d\r\n", height));
@@ -292,9 +300,6 @@ public class TwoNavRmap extends AtlasCreator {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		if (atlas.getLayerCount() != 1) {
-			throw new AtlasTestException("Only 1 layer, please");
-		}
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				if (map.getParameters() == null)
@@ -313,16 +318,14 @@ public class TwoNavRmap extends AtlasCreator {
 	}
 
 	@Override
-	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException, InterruptedException,
-			AtlasTestException {
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		if (rmapFile != null)
+			throw new RuntimeException("Layer mismatch - last layer has not been finished correctly!");
 
-		super.startAtlasCreation(atlas, customAtlasDir);
-
+		super.initLayerCreation(layer);
 		// Logging.configureConsoleLogging(org.apache.log4j.Level.ALL, new SimpleLayout());
 
-		LayerInterface layer = atlas.getLayer(0);
-
-		rmapFile = new RmapFile(atlasDir + File.pathSeparator + layer.getName() + ".rmap");
+		rmapFile = new RmapFile(new File(atlasDir, layer.getName() + ".rmap"));
 
 		int DefaultMap = 0;
 
@@ -397,7 +400,8 @@ public class TwoNavRmap extends AtlasCreator {
 						&& (rmapFile.zoomLevels[m].height == layer.getMap(n).getMaxTileCoordinate().y
 								- layer.getMap(n).getMinTileCoordinate().y + 1)) {
 					if (rmapFile.zoomLevels[m].map != null) {
-						throw new InterruptedException("Only 1 map per ZoomLevel please");
+						// TODO: Move one-map-per-zoomlevel-check to testAtlas() method
+						throw new RuntimeException("Only 1 map per ZoomLevel please");
 					}
 					rmapFile.zoomLevels[m].map = layer.getMap(n);
 				}
@@ -411,6 +415,7 @@ public class TwoNavRmap extends AtlasCreator {
 		}
 
 		rmapFile.writeHeader();
+
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
@@ -436,7 +441,7 @@ public class TwoNavRmap extends AtlasCreator {
 
 			atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
-			if (!"png".equals(map.getMapSource().getTileImageType()) || map.getParameters() != null) {
+			if ((map.getMapSource().getTileImageType() != TileImageType.PNG) || (map.getParameters() != null)) {
 				// Tiles have to be converted to jpeg format
 				TileImageFormat imageFormat = TileImageFormat.JPEG90;
 				if (map.getParameters() != null)
@@ -492,12 +497,12 @@ public class TwoNavRmap extends AtlasCreator {
 	}
 
 	@Override
-	public void finishAtlasCreation() {
+	public void finishLayerCreation() throws IOException {
 		try {
 			for (int n = 0; n < rmapFile.zoomLevels.length; n++) {
 				if (rmapFile.zoomLevels[n].offset == 0) {
 					if (n == 0) {
-						throw new Exception("Missing top level map");
+						throw new IOException("Missing top level map");
 					}
 					rmapFile.zoomLevels[n].shrinkFrom(rmapFile.zoomLevels[n - 1]);
 				}
@@ -508,9 +513,13 @@ public class TwoNavRmap extends AtlasCreator {
 				rmapFile.zoomLevels[n].writeHeader();
 			}
 			rmapFile.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error("Failed writing rmap file \"" + rmapFile.name + "\": " + e.getMessage(), e);
+			abortAtlasCreation();
+			throw e;
 		}
 		rmapFile = null;
+		super.finishLayerCreation();
 	}
+
 }

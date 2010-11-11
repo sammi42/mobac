@@ -78,7 +78,8 @@ public class TwoNavRmap extends AtlasCreator {
 		private int xTiles = 0;
 		private int yTiles = 0;
 		private long jpegOffsets[][] = null;
-		private MapInterface map = null;
+		private int zoom = 0;
+		private boolean dl = false;
 
 		private void writeHeader() throws IOException {
 			if (offset == 0) {
@@ -119,14 +120,16 @@ public class TwoNavRmap extends AtlasCreator {
 		}
 
 		private byte[] getTileData(ZoomLevel source, int x, int y) throws IOException {
-			log.trace(String.format("Shrinking jpegs (%d,%d,%d - %d,%d,%d)", source.index, x, y, source.index, x + 1,
-					y + 1));
+			log.trace(String.format("Shrinking jpegs (%d,%d,%d - %d,%d,%d)", source.index, x, y, source.index,
+					(x + 1 < source.xTiles) ? x + 1 : x, (y + 1 < source.yTiles) ? y + 1 : y));
 			BufferedImage bi11 = loadJpegAtOffset(source.jpegOffsets[x][y]);
 			BufferedImage bi21 = (x + 1 < source.xTiles) ? loadJpegAtOffset(source.jpegOffsets[x + 1][y]) : null;
 			BufferedImage bi12 = (y + 1 < source.yTiles) ? loadJpegAtOffset(source.jpegOffsets[x][y + 1]) : null;
 			BufferedImage bi22 = (x + 1 < source.xTiles) && (y + 1 < source.yTiles) ? loadJpegAtOffset(source.jpegOffsets[x + 1][y + 1])
 					: null;
-			BufferedImage bi = new BufferedImage(width * 2, height * 2, BufferedImage.TYPE_3BYTE_BGR);
+			int biWidth = bi11.getWidth() + (bi21 != null ? bi21.getWidth() : 0);
+			int biHeight = bi11.getHeight() + (bi12 != null ? bi12.getHeight() : 0);
+			BufferedImage bi = new BufferedImage(biWidth, biHeight, BufferedImage.TYPE_3BYTE_BGR);
 			Graphics2D g = bi.createGraphics();
 			g.drawImage(bi11, 0, 0, null);
 			if (bi21 != null) {
@@ -140,9 +143,9 @@ public class TwoNavRmap extends AtlasCreator {
 			}
 			AffineTransformOp op = new AffineTransformOp(new AffineTransform(0.5, 0, 0, 0.5, 0, 0),
 					AffineTransformOp.TYPE_BILINEAR);
-			BufferedImage biOut = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+			BufferedImage biOut = new BufferedImage(biWidth / 2, biHeight / 2, BufferedImage.TYPE_3BYTE_BGR);
 			op.filter(bi, biOut);
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * 4);
+			ByteArrayOutputStream buffer = new ByteArrayOutputStream(biOut.getWidth() * biOut.getHeight() * 4);
 			TileImageDataWriter writer = new TileImageJpegDataWriter(0.9);
 			writer.initialize();
 			writer.processImage(biOut, buffer);
@@ -176,15 +179,15 @@ public class TwoNavRmap extends AtlasCreator {
 	private class RmapFile extends RandomAccessFile {
 
 		private String name = "";
-		private int width;
-		private int height;
+		private int width = 0;
+		private int height = 0;
 		private int tileWidth = 0;
 		private int tileHeight = 0;
 		private double longitudeMin = 0;
 		private double longitudeMax = 0;
 		private double latitudeMin = 0;
 		private double latitudeMax = 0;
-		private long impOffset = 0;
+		private long mapDataOffset = 0;
 		private ZoomLevel zoomLevels[] = null;
 
 		private RmapFile(File file) throws FileNotFoundException {
@@ -237,7 +240,7 @@ public class TwoNavRmap extends AtlasCreator {
 			writeIntI(1);
 			writeIntI(tileWidth);
 			writeIntI(tileHeight);
-			writeLongI(impOffset);
+			writeLongI(mapDataOffset);
 			writeIntI(0);
 			writeIntI(zoomLevels.length);
 			for (int n = 0; n < zoomLevels.length; n++) {
@@ -246,12 +249,12 @@ public class TwoNavRmap extends AtlasCreator {
 		}
 
 		private void writeMapInfo() throws IOException {
-			if (impOffset == 0) {
-				impOffset = getFilePointer();
+			if (mapDataOffset == 0) {
+				mapDataOffset = getFilePointer();
 			} else {
-				seek(impOffset);
+				seek(mapDataOffset);
 			}
-			log.trace("Writing MAP data at offset %d" + impOffset);
+			log.trace("Writing MAP data at offset %d" + mapDataOffset);
 			StringBuffer sbMap = new StringBuffer();
 			sbMap.append("CompeGPS MAP File\r\n");
 			sbMap.append("<Header>\r\n");
@@ -307,6 +310,32 @@ public class TwoNavRmap extends AtlasCreator {
 				TileImageFormat format = map.getParameters().getFormat();
 				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
 					throw new AtlasTestException("Only JPEG tile format is supported by this atlas format!", map);
+			}
+			MapInterface map0 = layer.getMap(0);
+			MapSpace mapSpace0 = map0.getMapSource().getMapSpace();
+			double longitudeMin = mapSpace0.cXToLon(map0.getMinTileCoordinate().x, map0.getZoom());
+			double longitudeMax = mapSpace0.cXToLon(map0.getMaxTileCoordinate().x + 1, map0.getZoom());
+			double latitudeMin = mapSpace0.cYToLat(map0.getMaxTileCoordinate().y + 1, map0.getZoom());
+			double latitudeMax = mapSpace0.cYToLat(map0.getMinTileCoordinate().y, map0.getZoom());
+			for (int n = 1; n < layer.getMapCount(); n++) {
+				MapInterface mapN = layer.getMap(n);
+				MapSpace mapSpaceN = mapN.getMapSource().getMapSpace();
+
+				double longitudeMinN = mapSpaceN.cXToLon(mapN.getMinTileCoordinate().x, mapN.getZoom());
+				double longitudeMaxN = mapSpaceN.cXToLon(mapN.getMaxTileCoordinate().x + 1, mapN.getZoom());
+				double latitudeMinN = mapSpaceN.cYToLat(mapN.getMaxTileCoordinate().y + 1, mapN.getZoom());
+				double latitudeMaxN = mapSpaceN.cYToLat(mapN.getMinTileCoordinate().y, mapN.getZoom());
+				if ((longitudeMin != longitudeMinN) || (longitudeMax != longitudeMaxN) || (latitudeMin != latitudeMinN)
+						|| (latitudeMax != latitudeMaxN)) {
+					throw new AtlasTestException("All maps in one layer have to cover the same area!\n"
+							+ "Use grid zoom on the lowest zoom level to get an acceptable result.");
+				}
+				for (int m = 0; m < layer.getMapCount(); m++) {
+					if ((mapN.getZoom() == layer.getMap(m).getZoom()) && (m != n)) {
+						throw new AtlasTestException("Several maps with the same zoom level within the same layer "
+								+ "are not supported!");
+					}
+				}
 			}
 		}
 	}
@@ -367,8 +396,8 @@ public class TwoNavRmap extends AtlasCreator {
 
 		double width = rmapFile.width;
 		double height = rmapFile.height;
-		int count = 0;
-		while ((width >= 128.0) || (height >= 128.0)) {
+		int count = 1;
+		while ((width >= 256.0) || (height >= 256.0)) {
 			width = Math.ceil(width / 2.0);
 			height = Math.ceil(height / 2.0);
 			count++;
@@ -389,29 +418,22 @@ public class TwoNavRmap extends AtlasCreator {
 			rmapFile.zoomLevels[n].yTiles = (int) Math.ceil((double) rmapFile.zoomLevels[n].height
 					/ (double) rmapFile.tileHeight);
 			rmapFile.zoomLevels[n].jpegOffsets = new long[rmapFile.zoomLevels[n].xTiles][rmapFile.zoomLevels[n].yTiles];
+			rmapFile.zoomLevels[n].zoom = layer.getMap(DefaultMap).getZoom() - n;
+			rmapFile.zoomLevels[n].dl = false;
+			for (int m = 0; m < layer.getMapCount(); m++) {
+				if ((rmapFile.zoomLevels[n].zoom == layer.getMap(m).getZoom())) {
+					rmapFile.zoomLevels[n].dl = true;
+				}
+			}
 			width = Math.ceil(width / 2.0);
 			height = Math.ceil(height / 2.0);
 		}
 
-		for (int n = 0; n < layer.getMapCount(); n++) {
-			for (int m = 0; m < rmapFile.zoomLevels.length; m++) {
-				if ((rmapFile.zoomLevels[m].width == layer.getMap(n).getMaxTileCoordinate().x
-						- layer.getMap(n).getMinTileCoordinate().x + 1)
-						&& (rmapFile.zoomLevels[m].height == layer.getMap(n).getMaxTileCoordinate().y
-								- layer.getMap(n).getMinTileCoordinate().y + 1)) {
-					if (rmapFile.zoomLevels[m].map != null) {
-						// TODO: Move one-map-per-zoomlevel-check to testAtlas() method
-						throw new RuntimeException("Only 1 map per ZoomLevel please");
-					}
-					rmapFile.zoomLevels[m].map = layer.getMap(n);
-				}
-			}
-		}
-
 		for (int n = 0; n < rmapFile.zoomLevels.length; n++) {
-			log.trace(String.format("zoomLevels[%d] %dx%d pixels, %dx%d tiles %s", rmapFile.zoomLevels[n].index,
-					rmapFile.zoomLevels[n].width, rmapFile.zoomLevels[n].height, rmapFile.zoomLevels[n].xTiles,
-					rmapFile.zoomLevels[n].yTiles, rmapFile.zoomLevels[n].map == null ? "calc" : "dl"));
+			log.trace(String.format("zoomLevels[%d] zoom=%d %dx%d pixels, %dx%d tiles %s",
+					rmapFile.zoomLevels[n].index, rmapFile.zoomLevels[n].zoom, rmapFile.zoomLevels[n].width,
+					rmapFile.zoomLevels[n].height, rmapFile.zoomLevels[n].xTiles, rmapFile.zoomLevels[n].yTiles,
+					rmapFile.zoomLevels[n].dl == false ? "calc" : "dl"));
 		}
 
 		rmapFile.writeHeader();
@@ -423,12 +445,12 @@ public class TwoNavRmap extends AtlasCreator {
 
 			int index;
 			for (index = 0; index < rmapFile.zoomLevels.length; index++) {
-				if (rmapFile.zoomLevels[index].map == map) {
+				if (rmapFile.zoomLevels[index].zoom == map.getZoom()) {
 					break;
 				}
 			}
 			if (index == rmapFile.zoomLevels.length) {
-				throw new MapCreationException("zoomLevel not found");
+				throw new MapCreationException("Map not found in the zoomLevels list");
 			}
 			try {
 				rmapFile.zoomLevels[index].writeHeader();

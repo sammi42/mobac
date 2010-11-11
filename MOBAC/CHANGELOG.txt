@@ -10,6 +10,7 @@
 
  1.9 alpha 1 (2010-11-??)
  + New atlas format: BackCountry Navigator
+ + New atlas format: TwoNav (RMAP)
 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps

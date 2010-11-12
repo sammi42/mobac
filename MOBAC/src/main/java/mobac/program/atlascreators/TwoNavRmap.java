@@ -463,7 +463,7 @@ public class TwoNavRmap extends AtlasCreator {
 
 			atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
-			if ((map.getMapSource().getTileImageType() != TileImageType.PNG) || (map.getParameters() != null)) {
+			if ((map.getMapSource().getTileImageType() != TileImageType.JPG) || (map.getParameters() != null)) {
 				// Tiles have to be converted to jpeg format
 				TileImageFormat imageFormat = TileImageFormat.JPEG90;
 				if (map.getParameters() != null)

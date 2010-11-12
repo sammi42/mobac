@@ -87,6 +87,7 @@ SourceForge.net: <br>
 		<li><a href="#SportsTracker">[Nokia] Sports Tracker</a></li>
 		<li><a href="#TTQV">Touratech QV</a></li>
 		<li><a href="#TrekBuddy">TrekBuddy</a></li>
+		<li><a href="#TwoNav">TwoNav (RMAP)</a></li>
 		<!-- UBlox -->
 	</ul>
 	</li>
@@ -586,6 +587,33 @@ subdirectories containing the different maps of the atlas. For using the
 atlas with TrekBuddy copy the whole directory onto your J2ME device.
 Then use the <b>Load Atlas</b> function of TrekBuddy and open <tt>cr.tar</tt>/<tt>cr.tba</tt>
 (in the atlas root directory).</p>
+<!-- *************************************************************************** -->
+<h3><a name="TwoNav">Creating and using atlases with TwoNav &amp; 
+CompeGPS Land/Air</a></h3>
+<p>To create atlases compatible with TwoNav software you have to select 
+<b>TwoNav (RMAP)</b> as a format in section <b>Atlas settings</b> on the left 
+side of the main window. Atlases created for TwoNav are stored in a format 
+called rmap. It's a binary format that holds the same map data stored at 
+different resolutions - in order to make zooming in and out on low performance
+mobile devices fast and efficient. However, this causes some restrictions 
+which have to be taken into account:</p>
+<ul>
+	<li>Each map within a layer has to have the same geographical bounds.</li>
+	<li>There only can be one map in a layer with a given zoom level</li>
+</ul>
+<p>If there are several layers in one atlas, each layer will be stored as a 
+separate rmap file.</p>
+<p>The easiest way to create a correct atlas content is: first select the 
+appropriate grid zoom (combobox next to the zoom slider), then pick zoom levels 
+from the selected grid zoom up to the zoom level of the desired most detailed 
+level, and finally add a selection to the Atlas content by clicking on 
+the "Add selection" button.</p>
+<p>Rmap format also requires no gaps in a zoom level range from 
+the maximum to the minimum selected zoom level. If there are missing zoom 
+levels, they will be created internally by shrinking the existing downloaded 
+tiles. If the missing zoom levels contain a lot of tiles, this operation could 
+take a while.</p>
+<p>Finally copy the <tt>layer.rmap</tt> file from the <tt>atlases\[atlas name]_[current date and time]</tt> folder to your TwoNav <tt>maps</tt> folder.</p>
 <!-- *************************************************************************** -->
 <h2><a name="Enhancement">Enhancement requests</a></h2>
 <p>If you are missing the map provider of your choice or have other

@@ -16,6 +16,10 @@
  ******************************************************************************/
 package mobac.program.download.jobenumerators;
 
+import java.util.ArrayList;
+
+import mobac.mapsources.MapSourceTools;
+import mobac.program.Logging;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.interfaces.DownloadJobEnumerator;
 import mobac.program.interfaces.DownloadJobListener;
@@ -24,18 +28,15 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.tar.TarIndexedArchive;
 
-
-
 /**
- * Enumerates / creates the download jobs for a map that uses a
- * {@link MultiLayerMapSource}. A maximum of two layers are supported.
+ * Enumerates / creates the download jobs for a map that uses a {@link MultiLayerMapSource}. The number of layers is not
+ * restricted.
  * 
- * Internally for each layer an own {@link DownloadJobEnumerator} is created and
- * used alternating.
+ * Internally for each layer an own {@link DownloadJobEnumerator} is created and used alternating.
  */
 public class DJEMultiLayer implements DownloadJobEnumerator {
 
-	protected final DownloadJobEnumerator[] layerDJE = new DownloadJobEnumerator[2];
+	protected ArrayList<DownloadJobEnumerator> layerDJE = new ArrayList<DownloadJobEnumerator>();
 
 	int activeLayer = 0;
 
@@ -46,21 +47,31 @@ public class DJEMultiLayer implements DownloadJobEnumerator {
 	 * @param tileArchive
 	 * @param listener
 	 */
-	public DJEMultiLayer(MapInterface map, TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
-		MultiLayerMapSource overlayMapSource = (MultiLayerMapSource) map.getMapSource();
-		MapSource baseMapSource = overlayMapSource.getBackgroundMapSource();
-		layerDJE[0] = DJEFactory.createInstance(map, baseMapSource, 0, tileArchive, listener);
-		layerDJE[1] = DJEFactory.createInstance(map, overlayMapSource, 1, tileArchive, listener);
+	public DJEMultiLayer(MapInterface map, TarIndexedArchive tileArchive, DownloadJobListener listener) {
+		MapSource[] mapSources = MapSourceTools.getMultiLayerMapSources(map.getMapSource());
+		int layerNum = mapSources.length;
+
+		for (MapSource ms : mapSources) {
+			layerDJE.add(DJEFactory.createInstance(map, ms, --layerNum, tileArchive, listener));
+		}
 	}
 
 	public boolean hasMoreElements() {
-		return layerDJE[0].hasMoreElements() || layerDJE[1].hasMoreElements();
+		for (DownloadJobEnumerator dje : layerDJE) {
+			if (dje.hasMoreElements())
+				return true;
+		}
+		return false;
 	}
 
 	public Job nextElement() {
-		Job job = layerDJE[activeLayer].nextElement();
-		activeLayer = (activeLayer + 1) % 2;
+		Job job = layerDJE.get(activeLayer).nextElement();
+		if (job == null) {
+			layerDJE.remove(activeLayer);
+			return nextElement();
+		}
+		activeLayer = (activeLayer + 1) % layerDJE.size();
+		Logging.LOG.debug("Next job: " + job);
 		return job;
 	}
 

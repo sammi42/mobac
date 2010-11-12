@@ -16,8 +16,11 @@
  ******************************************************************************/
 package mobac.mapsources;
 
+import java.util.ArrayList;
+
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MultiLayerMapSource;
 
 import org.apache.log4j.Logger;
 
@@ -61,14 +64,15 @@ public class MapSourceTools {
 	}
 
 	/**
-	 * Calculates latitude and longitude of the upper left corner of the
-	 * specified tile of <code>mapsource</code> regarding the zoom level
-	 * specified by <code>zoom</code>.
+	 * Calculates latitude and longitude of the upper left corner of the specified tile of <code>mapsource</code>
+	 * regarding the zoom level specified by <code>zoom</code>.
 	 * 
 	 * @param mapSource
 	 * @param zoom
-	 * @param tilex horizontal tile number 
-	 * @param tiley vertical tile number
+	 * @param tilex
+	 *            horizontal tile number
+	 * @param tiley
+	 *            vertical tile number
 	 * @return <code>double[] {lon_min , lat_min , lon_max , lat_max}</code>
 	 */
 	public static double[] calculateLatLon(MapSource mapSource, int zoom, int tilex, int tiley) {
@@ -101,4 +105,25 @@ public class MapSourceTools {
 		return tmp;
 	}
 
+	/**
+	 * Returns the list of map sources including all background maps
+	 * 
+	 * @param mapSource
+	 * @return
+	 */
+	public static MapSource[] getMultiLayerMapSources(MapSource mapSource) {
+		ArrayList<MapSource> mapSources = new ArrayList<MapSource>();
+		MapSource ms = mapSource;
+		while (ms != null) {
+			mapSources.add(ms);
+			if (ms instanceof MultiLayerMapSource) {
+				ms = ((MultiLayerMapSource) ms).getBackgroundMapSource();
+			} else {
+				break;
+			}
+		}
+		MapSource[] result = new MapSource[mapSources.size()];
+		mapSources.toArray(result);
+		return result;
+	}
 }

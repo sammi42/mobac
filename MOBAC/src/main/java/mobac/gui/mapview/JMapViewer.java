@@ -50,6 +50,8 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.Utilities;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * Provides a simple panel that displays pre-rendered map tiles loaded from the OpenStreetMap project.
@@ -60,6 +62,8 @@ import mobac.utilities.Utilities;
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	private static final long serialVersionUID = 1L;
+
+	private static Logger log = Logger.getLogger(JMapViewer.class);
 
 	/**
 	 * Vectors for clock-wise tile painting
@@ -578,16 +582,21 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		if (zoom > mapSource.getMaxZoom())
 			setZoom(mapSource.getMaxZoom());
 		mapTileLayers.clear();
-		if (mapSource instanceof MultiLayerMapSource) {
-			MapSource background = ((MultiLayerMapSource) mapSource).getBackgroundMapSource();
-			mapTileLayers.add(new DefaultMapTileLayer(this, background));
-			mapTileLayers.add(new OverlayMapTileLayer(this, mapSource));
-		} else {
-			mapTileLayers.add(new DefaultMapTileLayer(this, mapSource));
-		}
+		addNewMapsourceLayers(mapSource);
 		if (mapGridLayer != null)
 			mapTileLayers.add(mapGridLayer);
 		repaint();
+	}
+
+	private void addNewMapsourceLayers(MapSource newMapSource) {
+		if (newMapSource instanceof MultiLayerMapSource) {
+			addNewMapsourceLayers(((MultiLayerMapSource) newMapSource).getBackgroundMapSource());
+			log.info("new overlay layer added: " + newMapSource);
+			mapTileLayers.add(new OverlayMapTileLayer(this, newMapSource));
+		} else {
+			log.info("new map layer added: " + newMapSource);
+			mapTileLayers.add(new DefaultMapTileLayer(this, newMapSource));
+		}
 	}
 
 	public JobDispatcher getJobDispatcher() {

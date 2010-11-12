@@ -28,7 +28,6 @@ import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageFormat;
 
-
 public class MultiLayerTileProvider extends FilterTileProvider {
 
 	private final MapSource mapSource;
@@ -37,14 +36,24 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 
 	private int layerCount;
 
-	public MultiLayerTileProvider(MultiLayerMapSource mapSource, TileProvider tileProvider, int layerCount) {
+	public MultiLayerTileProvider(MultiLayerMapSource mapSource, TileProvider tileProvider) {
 		super(tileProvider);
 		this.mapSource = mapSource;
-		this.layerCount = layerCount;
+
+		layerCount = 1;
+		MapSource ms = mapSource;
+		while (ms != null) {
+			if (ms instanceof MultiLayerMapSource) {
+				ms = ((MultiLayerMapSource) ms).getBackgroundMapSource();
+				layerCount++;
+			} else
+				break;
+		}
 		TileImageFormat tileImageFormat = TileImageFormat.PNG;
 		writer = tileImageFormat.getDataWriter();
 		writer.initialize();
 		ImageIO.setUseCache(false);
+		log.trace("Multi-layer tile provider for " + layerCount + " layers has been created");
 	}
 
 	@Override
@@ -64,7 +73,7 @@ public class MultiLayerTileProvider extends FilterTileProvider {
 
 	@Override
 	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
-		log.trace("Creting multi-layer tile x=" + x + " y=" + y + " layer=" + layer);
+		log.trace("Creating multi-layer tile x=" + x + " y=" + y + " layer=" + layer);
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		BufferedImage combinedImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics g = combinedImage.getGraphics();

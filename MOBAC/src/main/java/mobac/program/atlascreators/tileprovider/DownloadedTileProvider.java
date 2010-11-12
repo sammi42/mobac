@@ -26,9 +26,11 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 import mobac.utilities.tar.TarIndex;
 
-
+import org.apache.log4j.Logger;
 
 public class DownloadedTileProvider implements TileProvider {
+
+	private static final Logger log = Logger.getLogger(DownloadedTileProvider.class);
 
 	public static final String TILE_FILENAME_PATTERN = "l%dx%dy%d";
 
@@ -45,6 +47,7 @@ public class DownloadedTileProvider implements TileProvider {
 	}
 
 	public byte[] getTileData(int x, int y, int layer) throws IOException {
+		log.trace("Reading tile x=" + x + " y=" + y + " layer=" + layer);
 		return tarIndex.getEntryContent(String.format(TILE_FILENAME_PATTERN, layer, x, y));
 	}
 

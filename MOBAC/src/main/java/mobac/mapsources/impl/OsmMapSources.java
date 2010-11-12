@@ -25,7 +25,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
 
-
 public class OsmMapSources {
 
 	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
@@ -195,6 +194,46 @@ public class OsmMapSources {
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return MAP_HIKING_BASE + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+	}
+
+	public static class OsmHikingMapWithReliefBase extends OsmHikingMap implements MultiLayerMapSource {
+
+		private MapSource background = new OsmHikingReliefBg();
+
+		@Override
+		public String toString() {
+			return "OpenStreetMap Hiking with Base&Hill";
+		}
+
+		@Override
+		public String getName() {
+			return "OSM Hiking with Relief and Base";
+		}
+
+		@Override
+		public int getMaxZoom() {
+			return 15;
+		}
+
+		public MapSource getBackgroundMapSource() {
+			return background;
+		}
+
+		@Override
+		public Color getBackgroundColor() {
+			return Color.WHITE;
+		}
+
+	}
+
+	public static class OsmHikingReliefBg extends OsmHikingRelief implements MultiLayerMapSource {
+
+		private MapSource background = new OsmHikingBase();
+
+		public MapSource getBackgroundMapSource() {
+			return background;
 		}
 
 	}

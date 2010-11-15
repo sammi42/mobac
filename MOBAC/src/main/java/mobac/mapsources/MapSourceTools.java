@@ -16,11 +16,8 @@
  ******************************************************************************/
 package mobac.mapsources;
 
-import java.util.ArrayList;
-
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
 
 import org.apache.log4j.Logger;
 
@@ -103,27 +100,5 @@ public class MapSourceTools {
 		tmp = tmp.replace("{$y}", Integer.toString(tiley));
 		tmp = tmp.replace("{$z}", Integer.toString(zoom));
 		return tmp;
-	}
-
-	/**
-	 * Returns the list of map sources including all background maps
-	 * 
-	 * @param mapSource
-	 * @return
-	 */
-	public static MapSource[] getMultiLayerMapSources(MapSource mapSource) {
-		ArrayList<MapSource> mapSources = new ArrayList<MapSource>();
-		MapSource ms = mapSource;
-		while (ms != null) {
-			mapSources.add(ms);
-			if (ms instanceof MultiLayerMapSource) {
-				ms = ((MultiLayerMapSource) ms).getBackgroundMapSource();
-			} else {
-				break;
-			}
-		}
-		MapSource[] result = new MapSource[mapSources.size()];
-		mapSources.toArray(result);
-		return result;
 	}
 }

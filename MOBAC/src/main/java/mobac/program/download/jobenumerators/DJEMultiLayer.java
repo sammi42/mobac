@@ -18,7 +18,6 @@ package mobac.program.download.jobenumerators;
 
 import java.util.ArrayList;
 
-import mobac.mapsources.MapSourceTools;
 import mobac.program.Logging;
 import mobac.program.JobDispatcher.Job;
 import mobac.program.interfaces.DownloadJobEnumerator;
@@ -26,6 +25,7 @@ import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MultiLayerMapSource;
+import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndexedArchive;
 
 /**
@@ -48,7 +48,7 @@ public class DJEMultiLayer implements DownloadJobEnumerator {
 	 * @param listener
 	 */
 	public DJEMultiLayer(MapInterface map, TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		MapSource[] mapSources = MapSourceTools.getMultiLayerMapSources(map.getMapSource());
+		MapSource[] mapSources = Utilities.getMultiLayerMapSources(map.getMapSource());
 		int layerNum = mapSources.length;
 
 		for (MapSource ms : mapSources) {

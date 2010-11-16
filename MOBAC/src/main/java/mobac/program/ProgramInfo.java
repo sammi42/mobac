@@ -39,8 +39,7 @@ public class ProgramInfo {
 			Properties props = new Properties();
 			props.load(propIn);
 			version = props.getProperty("mobac.version");
-			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide",
-					"false"));
+			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
 			System.getProperties().putAll(props);
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac.properties", e);
@@ -58,7 +57,6 @@ public class ProgramInfo {
 			int index = revision.indexOf(':');
 			if (index > 0)
 				revision = revision.substring(index + 1, revision.length());
-			revision = "(" + revision + ")";
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac-rev.properties", e);
 		} finally {
@@ -89,7 +87,7 @@ public class ProgramInfo {
 	public static String getCompleteTitle() {
 		String title = getVersionTitle();
 		if (!titleHideRevision)
-			title += " " + revision;
+			title += " (" + revision + ")";
 		return title;
 	}
 

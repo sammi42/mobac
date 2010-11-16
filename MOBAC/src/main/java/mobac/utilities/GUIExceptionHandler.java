@@ -44,7 +44,6 @@ import mobac.program.ProgramInfo;
 
 import org.apache.log4j.Logger;
 
-
 import com.sleepycat.je.ExceptionEvent;
 import com.sleepycat.je.ExceptionListener;
 
@@ -62,8 +61,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 	public static void registerForCurrentThread() {
 		Thread t = Thread.currentThread();
-		log.trace("Registering MOBAC exception handler for thread \"" + t.getName() + "\" ["
-				+ t.getId() + "]");
+		log.trace("Registering MOBAC exception handler for thread \"" + t.getName() + "\" [" + t.getId() + "]");
 		t.setUncaughtExceptionHandler(instance);
 	}
 
@@ -150,14 +148,12 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			if (dist != null)
 				sb.append("\nDistribution name: " + dist);
 
-			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version")
-					+ ")");
+			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version") + ")");
 			if (t.getClass().equals(java.lang.OutOfMemoryError.class)) {
 				Runtime r = Runtime.getRuntime();
 				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
 			}
-			sb.append("\nMapsources rev: "
-					+ MapSourcesUpdater.getMapSourcesRev(System.getProperties()));
+			sb.append("\nMapsources rev: " + MapSourcesUpdater.getCurrentMapSourcesRev());
 
 			if (additionalInfo != null)
 				sb.append("\n\n" + additionalInfo);
@@ -181,8 +177,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 					+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + url
 					+ "\">SourceForge.net</a><br>"
 					+ "<b>Please include a detailed description of your performed actions <br>"
-					+ "before the error occurred.</b></p>"
-					+ "Be sure to include the following information:";
+					+ "before the error occurred.</b></p>" + "Be sure to include the following information:";
 			JEditorPane text = new JEditorPane("text/html", "");
 			text.setOpaque(true);
 			text.setBackground(UIManager.getColor("JFrame.background"));
@@ -235,8 +230,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	/**
 	 * Catching all Runtime Exceptions in Swing
 	 * 
-	 * http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions-
-	 * in-swing/
+	 * http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions- in-swing/
 	 */
 	protected static class EventQueueProxy extends EventQueue {
 
@@ -248,8 +242,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 					StackTraceElement[] st = e.getStackTrace();
 					if (st.length > 0) {
 						if ("sun.font.FontDesignMetrics".equals(st[0].getClassName())) {
-							log.error("Ignored JRE bug exception " + e.getMessage()
-									+ " caused by : " + st[0]);
+							log.error("Ignored JRE bug exception " + e.getMessage() + " caused by : " + st[0]);
 							// This is a known JRE bug - we just ignore it
 							return;
 						}

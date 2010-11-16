@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui;
+package mobac.gui.dialogs;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import mobac.Main;
+import mobac.gui.MainGUI;
 import mobac.utilities.GBC;
 
 

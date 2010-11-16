@@ -71,6 +71,10 @@ public class MapSourcesUpdater {
 		MapSourcesUpdater.loadMapSourceProperties(systemProps);
 	}
 
+	public static int getCurrentMapSourcesRev() {
+		return getMapSourcesRev(System.getProperties());
+	}
+
 	public static int getMapSourcesRev(Properties p) {
 		String revS = p.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY);
 		if (revS == null)

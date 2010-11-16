@@ -19,7 +19,7 @@ package mobac.gui.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import mobac.gui.Help;
+import mobac.gui.dialogs.Help;
 
 
 public class ShowHelpAction implements ActionListener {

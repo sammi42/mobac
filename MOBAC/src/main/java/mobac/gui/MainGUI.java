@@ -108,6 +108,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private static MainGUI mainGUI = null;
 	public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<Image>(3);
 
+	static {
+		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac48.png").getImage());
+		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac32.png").getImage());
+		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac16.png").getImage());
+	}
+
 	protected JMenuBar menuBar;
 
 	protected JAtlasTree jAtlasTree;
@@ -117,7 +123,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JComboBox gridZoomCombo;
 	private JSlider zoomSlider;
 	private JComboBox mapSourceCombo;
-	private JButton helpButton;
 	private JButton settingsButton;
 	private JAtlasNameField atlasNameTextField;
 	private JComboBox atlasOutputFormatCombo;
@@ -152,9 +157,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private MainGUI() {
 		super();
-		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac48.png").getImage());
-		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac32.png").getImage());
-		MOBAC_ICONS.add(Utilities.loadResourceImageIcon("mobac16.png").getImage());
 		setIconImages(MOBAC_ICONS);
 		GUIExceptionHandler.registerForCurrentThread();
 		setTitle(ProgramInfo.getCompleteTitle());
@@ -226,11 +228,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		mapSourceCombo.setMaximumRowCount(20);
 		mapSourceCombo.addActionListener(new MapSourceComboListener());
 		mapSourceCombo.setToolTipText("Select map source");
-
-		// help button
-		helpButton = new JButton("Help");
-		helpButton.addActionListener(new ShowHelpAction());
-		helpButton.setToolTipText("Display some help information");
 
 		// settings button
 		settingsButton = new JButton("Settings");
@@ -394,7 +391,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		topControls.add(zoomLevelText, GBC.std().insets(0, 5, 0, 0));
 		topControls.add(gridZoomCombo, GBC.std().insets(10, 5, 0, 0));
 		topControls.add(Box.createHorizontalGlue(), GBC.std().fillH());
-		topControls.add(helpButton, GBC.std().insets(10, 5, 5, 0));
 		mapControlPanel.add(topControls, BorderLayout.NORTH);
 
 		// bottom panel

@@ -24,7 +24,7 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
-import mobac.gui.WorkinprogressDialog;
+import mobac.gui.dialogs.WorkinprogressDialog;
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.interfaces.MapLayer;

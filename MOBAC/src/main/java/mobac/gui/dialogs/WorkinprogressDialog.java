@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui;
+package mobac.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

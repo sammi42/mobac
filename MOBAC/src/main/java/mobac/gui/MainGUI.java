@@ -43,6 +43,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -56,7 +59,9 @@ import javax.xml.bind.JAXBException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.InvalidNameException;
+import mobac.gui.actions.ShowAboutDialog;
 import mobac.gui.actions.ShowHelpAction;
+import mobac.gui.actions.ShowReadme;
 import mobac.gui.atlastree.JAtlasTree;
 import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JAtlasNameField;
@@ -102,6 +107,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private static MainGUI mainGUI = null;
 	public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<Image>(3);
+
+	protected JMenuBar menuBar;
 
 	protected JAtlasTree jAtlasTree;
 	public PreviewMap previewMap;
@@ -174,6 +181,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		add(layeredPane, BorderLayout.CENTER);
 
 		updatePanels();
+		menuBar = new JMenuBar();
+		prepareMenuBar();
+		setJMenuBar(menuBar);
+
 		loadSettings();
 		profilesPanel.initialize();
 		mapSourceChanged(previewMap.getMapSource());
@@ -265,6 +276,23 @@ public class MainGUI extends JFrame implements MapEventListener {
 		profilesPanel = new JProfilesPanel(jAtlasTree);
 		profilesPanel.getLoadButton().addActionListener(new LoadProfileListener());
 		tileStoreCoveragePanel = new JTileStoreCoveragePanel(previewMap);
+	}
+
+	private void prepareMenuBar() {
+		JMenu help = new JMenu("Help");
+		JMenuItem readme = new JMenuItem("Show Readme");
+		JMenuItem howToMap = new JMenuItem("How to use preview map");
+		JMenuItem about = new JMenuItem("About");
+		readme.addActionListener(new ShowReadme());
+		about.addActionListener(new ShowAboutDialog());
+		howToMap.addActionListener(new ShowHelpAction());
+		help.add(readme);
+		help.add(howToMap);
+		help.addSeparator();
+		help.add(about);
+		menuBar.add(new JMenu("File"));
+		menuBar.add(Box.createHorizontalGlue());
+		menuBar.add(help);
 	}
 
 	private void updateLeftPanel() {

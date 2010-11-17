@@ -49,7 +49,6 @@ import mobac.mapsources.impl.Google.GoogleMaps;
 import mobac.mapsources.impl.Google.GoogleMapsChina;
 import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Google.GoogleTerrain;
-import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 
@@ -60,22 +59,21 @@ import org.w3c.tidy.Tidy;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 /**
- * Stand alone tool for updating several Google map sources. Google changes the
- * tile url of each map source very often - sometimes daily. This tool checks
- * the map html pages and extracts the relevant URLs.
+ * Stand alone tool for updating several Google map sources. Google changes the tile url of each map source very often -
+ * sometimes daily. This tool checks the map html pages and extracts the relevant URLs.
  */
 public class GoogleUrlUpdater implements Runnable {
 
 	/**
 	 * <p>
-	 * Recalculates the tile urls for Google Maps, Earth and Terrain and prints
-	 * it to std out. Other map sources can not be updated this way.
+	 * Recalculates the tile urls for Google Maps, Earth and Terrain and prints it to std out. Other map sources can not
+	 * be updated this way.
 	 * </p>
 	 * 
 	 * Requires <a href="http://jtidy.sourceforge.net/">JTidy</a> library.
 	 */
 	public static void main(String[] args) {
-		Logging.disableLogging();
+
 		// Logging.configureConsoleLogging(Level.TRACE);
 
 		// just for initializing the MapSourcesManager
@@ -86,24 +84,21 @@ public class GoogleUrlUpdater implements Runnable {
 
 		UrlUpdater.getInstance().writeUpdatedMapsourcesPropertiesFile();
 
-		System.out
-				.println("Updated map sources: " + UrlUpdater.getInstance().getUpdatedUrlsCount());
+		System.out.println("Updated map sources: " + UrlUpdater.getInstance().getUpdatedUrlsCount());
 	}
 
 	public void run() {
-		testMapSource(new UpdateableMapSource("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2",
-				GoogleMaps.class));
-		testMapSource(new UpdateableMapSource(
-				"http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2", GoogleEarth.class));
-		testMapSource(new UpdateableMapSource(
-				"http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2", GoogleTerrain.class));
-		testMapSource(new UpdateableMapSource(
-				"http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&t=h&z=4",
+		testMapSource(new UpdateableMapSource("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2", GoogleMaps.class));
+		testMapSource(new UpdateableMapSource("http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2",
+				GoogleEarth.class));
+		testMapSource(new UpdateableMapSource("http://maps.google.com/?ie=UTF8&t=p&ll=0,0&spn=0,0&z=2",
+				GoogleTerrain.class));
+		testMapSource(new UpdateableMapSource("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&t=h&z=4",
 				GoogleEarthMapsOverlay.class));
 
 		testMapSource(new UpdateableMapSource(
-				"http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8",
-				GoogleMapsKorea.class, false) {
+				"http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8", GoogleMapsKorea.class,
+				false) {
 
 			@Override
 			protected String processFoundUrl(String url) {
@@ -213,8 +208,7 @@ public class GoogleUrlUpdater implements Runnable {
 		return list;
 	}
 
-	public String getUpdatedUrl(UpdateableMapSource ums, String serviceUrl,
-			boolean useImgSrcUrlsOnly) {
+	public String getUpdatedUrl(UpdateableMapSource ums, String serviceUrl, boolean useImgSrcUrlsOnly) {
 
 		try {
 			List<String> urls;
@@ -234,6 +228,7 @@ public class GoogleUrlUpdater implements Runnable {
 						continue;
 					imgUrl = imgUrl.replaceAll("\\\\x26", "&");
 					imgUrl = imgUrl.replaceAll("\\\\x3d", "=");
+					imgUrl = imgUrl.replaceAll("&amp;", "&");
 
 					// System.out.println(imgUrl);
 
@@ -302,8 +297,7 @@ public class GoogleUrlUpdater implements Runnable {
 
 	private String getUppdatedGoogleMapMakerUrl() {
 		try {
-			HttpURLConnection c = (HttpURLConnection) new URL("http://www.google.com/mapmaker")
-					.openConnection();
+			HttpURLConnection c = (HttpURLConnection) new URL("http://www.google.com/mapmaker").openConnection();
 			InputStream in = c.getInputStream();
 			String html = new String(Utilities.getInputBytes(in));
 			in.close();
@@ -312,8 +306,7 @@ public class GoogleUrlUpdater implements Runnable {
 			if (!m.find())
 				throw new RuntimeException("pattern not found");
 			String number = m.group(1);
-			String url = "http://gt{$servernum}.google.com/mt/n=404&v=gwm." + number
-					+ "&x={$x}&y={$y}&z={$z}";
+			String url = "http://gt{$servernum}.google.com/mt/n=404&v=gwm." + number + "&x={$x}&y={$y}&z={$z}";
 			c.disconnect();
 			return url;
 		} catch (Exception e) {
@@ -324,23 +317,24 @@ public class GoogleUrlUpdater implements Runnable {
 
 	private String getUpdateGoogleMapsChinaUrl() {
 		try {
-			HttpURLConnection c = (HttpURLConnection) new URL("http://ditu.google.com/")
-					.openConnection();
+			HttpURLConnection c = (HttpURLConnection) new URL("http://ditu.google.com/").openConnection();
 			InputStream in = c.getInputStream();
 			String html = new String(Utilities.getInputBytes(in));
 			in.close();
 			c.disconnect();
-			
+
 			Pattern p = Pattern.compile("\\\"(http://mt\\d.google.cn/vt/lyrs=[^\\\"]*)\\\"");
 			Matcher m = p.matcher(html);
 			if (!m.find())
 				throw new RuntimeException("pattern not found");
 			String url = m.group(1);
-			url = url.replaceAll("\\\\x26", "&");
+			url = url.replaceAll("&amp;", "&");
 			url = url.replaceFirst("[0-3]", "{\\$servernum}");
 			if (!url.endsWith("&"))
 				url += "&";
 			url = url.replaceFirst("hl=[^&]+", "hl={\\$lang}");
+			url = url.replaceAll("&[xyz]=\\d+", "");
+			url = url.replaceAll("&s=[^&]+", "");
 			url += "x={$x}&y={$y}&z={$z}";
 			return url;
 		} catch (Exception e) {

@@ -147,8 +147,11 @@ public class BerkeleyDbTileStore extends TileStore {
 		if (tileDbMap == null)
 			// Tile store has been closed already
 			return null;
+		String storeName = mapSource.getStoreName();
+		if (storeName == null)
+			return null;
 		synchronized (tileDbMap) {
-			db = tileDbMap.get(mapSource.getStoreName());
+			db = tileDbMap.get(storeName);
 		}
 		if (db != null)
 			return db;
@@ -184,8 +187,6 @@ public class BerkeleyDbTileStore extends TileStore {
 	@Override
 	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
 			long timeExpires, String eTag) throws IOException {
-		if (!mapSource.allowFileStore())
-			return;
 		TileDbEntry tile = new TileDbEntry(x, y, zoom, tileData, timeLastModified, timeExpires, eTag);
 		TileDatabase db = null;
 		try {
@@ -203,8 +204,6 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	@Override
 	public void putTile(TileStoreEntry tile, MapSource mapSource) {
-		if (!mapSource.allowFileStore())
-			return;
 		TileDatabase db = null;
 		try {
 			if (log.isTraceEnabled())
@@ -220,11 +219,11 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	@Override
 	public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
-		if (!mapSource.allowFileStore())
-			return null;
 		TileDatabase db = null;
 		try {
 			db = getTileDatabase(mapSource);
+			if (db == null)
+				return null;
 			TileStoreEntry tile = db.get(new TileDbKey(x, y, zoom));
 			if (log.isTraceEnabled()) {
 				if (tile == null)
@@ -252,8 +251,6 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	public void prepareTileStore(MapSource mapSource) {
-		if (!mapSource.allowFileStore())
-			return;
 		try {
 			getTileDatabase(mapSource);
 		} catch (DatabaseException e) {

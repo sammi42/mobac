@@ -24,22 +24,25 @@
   <logger name="mobac.program">
   	<level value="DEBUG" />
   </logger>
-  
+
+  <logger name="mobac.program.download">
+  	<level value="TRACE" />
+  </logger>
+      
   <logger name="mobac.program.tilestore">
   	<level value="DEBUG" />
   </logger>
   
   <logger name="mobac.program.atlascreators">
-  	<level value="DEBUG" />
+  	<level value="TRACE" />
   </logger>
   
   <logger name="mobac.program.atlascreators.tileprovider.CacheTileProvider">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
     
-  
   <logger name="mobac.utilities.tar">
-  	<level value="DEBUG" />
+  	<level value="TRACE" />
   </logger>
   
   <logger name="mobac.program.atlascreators.impl.rmp.RmpWriter">
@@ -47,7 +50,7 @@
   </logger>
   
   <logger name="SysInfo">
-  	<level value="ERROR" />
+  	<level value="INFO" />
   </logger>
       
   <root>

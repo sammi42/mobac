@@ -29,7 +29,7 @@ public class TestMapSourcesManager extends MapSourcesManager {
 
 	public TestMapSourcesManager(int port, TileImageType tileType) {
 		super();
-		theMapSource = new LocalhostTestSource("Localhost test", port, tileType, false);
+		theMapSource = new LocalhostTestSource("Localhost test", port, tileType);
 		install();
 	}
 

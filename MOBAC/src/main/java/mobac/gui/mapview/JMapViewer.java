@@ -106,7 +106,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		super();
 		mapTileLayers = new LinkedList<MapTileLayer>();
 		mapLayers = new LinkedList<MapLayer>();
-		tileLoader = new OsmTileLoader(this);
+		tileLoader = new TileLoader(this);
 		tileCache = new MemoryTileCache();
 		jobDispatcher = JobDispatcher.getInstance();
 		mapMarkerList = new LinkedList<MapMarker>();

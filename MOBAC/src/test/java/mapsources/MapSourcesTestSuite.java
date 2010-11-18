@@ -26,6 +26,7 @@ import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.EastNorthCoordinate;
@@ -36,13 +37,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * {@link TestSuite} that tests every available map source for operability. The
- * operability test consists of the download of one map tile at the highest
- * available zoom level of the map source. By default the map tile to be
- * downloaded is located in the middle of Berlin (at the coordinate of
- * {@link #BERLIN}). As some map providers do not cover Berlin for each
- * {@link MapSource} a different test coordinate can be specified using
- * {@link #testCoordinates}.
+ * {@link TestSuite} that tests every available map source for operability. The operability test consists of the
+ * download of one map tile at the highest available zoom level of the map source. By default the map tile to be
+ * downloaded is located in the middle of Berlin (at the coordinate of {@link #BERLIN}). As some map providers do not
+ * cover Berlin for each {@link MapSource} a different test coordinate can be specified using {@link #testCoordinates}.
  * 
  */
 public class MapSourcesTestSuite extends TestSuite {
@@ -64,17 +62,18 @@ public class MapSourcesTestSuite extends TestSuite {
 		DefaultMapSourcesManager.initialize();
 		Settings.load();
 		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources())
-			addMapSourcesTestCase(mapSource);
+			if (mapSource instanceof HttpMapSource)
+				addMapSourcesTestCase((HttpMapSource) mapSource);
 	}
 
-	private void addMapSourcesTestCase(MapSource mapSource) {
+	private void addMapSourcesTestCase(HttpMapSource mapSource) {
 		if (testedMapSources.contains(mapSource.getStoreName()))
 			return;
 		EastNorthCoordinate coordinate = Cities.getTestCoordinate(mapSource, C_DEFAULT);
 		addTest(new MapSourceTestCase(mapSource, coordinate));
 		testedMapSources.add(mapSource.getStoreName());
 		if (mapSource instanceof MultiLayerMapSource)
-			addMapSourcesTestCase(((MultiLayerMapSource) mapSource).getBackgroundMapSource());
+			addMapSourcesTestCase((HttpMapSource)((MultiLayerMapSource) mapSource).getBackgroundMapSource());
 	}
 
 	public static TestSuite suite() throws JAXBException {

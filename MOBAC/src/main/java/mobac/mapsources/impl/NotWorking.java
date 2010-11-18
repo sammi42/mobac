@@ -16,10 +16,11 @@
  ******************************************************************************/
 package mobac.mapsources.impl;
 
-import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MultiLayerMapSource;
@@ -36,10 +37,10 @@ public class NotWorking {
 	 * 1. The map is a "sparse map" (only tiles are present that have content - the other are missing) <br>
 	 * 2. The map layer's background is not transparent!
 	 */
-	public static class OpenSeaMapLayer extends AbstractMapSource {
+	public static class OpenSeaMapLayer extends AbstractHttpMapSource {
 
 		public OpenSeaMapLayer(String name) {
-			super(name, 11, 17, TileImageType.PNG, TileUpdate.LastModified);
+			super(name, 11, 17, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -73,11 +74,11 @@ public class NotWorking {
 	 * <a href="http://www.austrianmap.at">www.austrianmap.at</a>
 	 * </p>
 	 */
-	public static class AustrianMap extends AbstractMapSource {
+	public static class AustrianMap extends AbstractHttpMapSource {
 
 		public AustrianMap() {
 			super("AustrianMap", 14, 15, TileImageType.PNG);
-			tileUpdate = TileUpdate.ETag;
+			tileUpdate = HttpMapSource.TileUpdate.ETag;
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -93,7 +94,7 @@ public class NotWorking {
 
 	}
 
-	public static class StatKartNo extends AbstractMapSource {
+	public static class StatKartNo extends AbstractHttpMapSource {
 
 		String token = "58C7907E4A6308544E93B6E4458742D323B111CD6CDD9"
 				+ "EBAD2551A496FE8CAE24093F9D3AA862E6BDB31F96A23D20030D" + "DA6B1D212552D6802ED3328E0BB1926";
@@ -123,7 +124,7 @@ public class NotWorking {
 		}
 	}
 
-	public static class Doculeo extends AbstractMapSource {
+	public static class Doculeo extends AbstractHttpMapSource {
 
 		public Doculeo() {
 			super("Doculeo (Poland)", 7, 16, TileImageType.JPG);
@@ -137,7 +138,7 @@ public class NotWorking {
 
 	}
 
-	public static class OpenArialMap extends AbstractMapSource {
+	public static class OpenArialMap extends AbstractHttpMapSource {
 
 		public OpenArialMap() {
 			super("OpenArialMap", 0, 18, TileImageType.JPG);

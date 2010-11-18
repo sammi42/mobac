@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 
 import javax.imageio.ImageIO;
 
@@ -210,10 +209,6 @@ public class Tile {
 
 	public void setTileState(TileState tileState) {
 		this.tileState = tileState;
-	}
-
-	public HttpURLConnection getUrlConnection() throws IOException {
-		return mapSource.getTileUrlConnection(zoom, xtile, ytile);
 	}
 
 	/**

@@ -17,26 +17,30 @@
 package mobac.mapsources.custom;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.interfaces.MapSource;
+import mobac.program.download.TileDownLoader;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
-
 
 /**
  * Custom tile store provider, configurable via settings.xml.
  */
 @XmlRootElement
-public class CustomMapSource implements MapSource {
+public class CustomMapSource implements HttpMapSource {
 
 	@XmlElement(nillable = false, defaultValue = "Custom")
 	private String name = "Custom";
@@ -51,7 +55,7 @@ public class CustomMapSource implements MapSource {
 	private TileImageType tileType = TileImageType.PNG;
 
 	@XmlElement(defaultValue = "NONE")
-	private TileUpdate tileUpdate;
+	private HttpMapSource.TileUpdate tileUpdate;
 
 	@XmlElement(required = true, nillable = false)
 	private String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
@@ -66,7 +70,7 @@ public class CustomMapSource implements MapSource {
 	public CustomMapSource() {
 	}
 
-	public TileUpdate getTileUpdate() {
+	public HttpMapSource.TileUpdate getTileUpdate() {
 		return tileUpdate;
 	}
 
@@ -105,8 +109,14 @@ public class CustomMapSource implements MapSource {
 		return tmp;
 	}
 
-	public boolean allowFileStore() {
-		return true;
+	public byte[] getTileData(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+			InterruptedException {
+		return TileDownLoader.downloadTileAndUpdateStore(x, y, zoom, this);
+	}
+
+	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+			InterruptedException {
+		return ImageIO.read(new ByteArrayInputStream(getTileData(zoom, x, y)));
 	}
 
 	@Override

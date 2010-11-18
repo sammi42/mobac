@@ -16,7 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources.impl;
 
-import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
@@ -25,7 +25,7 @@ import mobac.program.model.TileImageType;
 
 public class WmsSources {
 
-	public static class TerraserverUSA extends AbstractMapSource {
+	public static class TerraserverUSA extends AbstractHttpMapSource {
 
 		public TerraserverUSA() {
 			super("Terraserver-USA", 3, 17, TileImageType.JPG);
@@ -53,7 +53,7 @@ public class WmsSources {
 	/**
 	 * DOES NOT WORK!!!
 	 */
-	public static class OsmWms extends AbstractMapSource {
+	public static class OsmWms extends AbstractHttpMapSource {
 		public OsmWms() {
 			super("OSM-WMS", 0, 19, TileImageType.PNG);
 		}

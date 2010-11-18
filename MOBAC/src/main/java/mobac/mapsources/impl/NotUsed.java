@@ -16,18 +16,19 @@
  ******************************************************************************/
 package mobac.mapsources.impl;
 
-import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 public class NotUsed {
 
-	public static class MapSurfer extends AbstractMapSource {
+	public static class MapSurfer extends AbstractHttpMapSource {
 		public static final String URL = "http://tiles1.mapsurfer.net/tms_r.ashx?";
 
 		public MapSurfer() {
 			super("MapSurfer", 0, 19, TileImageType.PNG);
-			tileUpdate = TileUpdate.LastModified;
+			tileUpdate = HttpMapSource.TileUpdate.LastModified;
 		}
 
 		@Override
@@ -44,12 +45,12 @@ public class NotUsed {
 	/**
 	 * hubermedia http://maps.hubermedia.de/
 	 */
-	public static class Hubermedia extends AbstractMapSource {
+	public static class Hubermedia extends AbstractHttpMapSource {
 
 		String mapUrl;
 
 		public Hubermedia() {
-			super("Hubermedia", 12, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
+			super("Hubermedia", 12, 15, TileImageType.PNG, HttpMapSource.TileUpdate.IfNoneMatch);
 			mapUrl = "http://t1.hubermedia.de/TK50/AT/Kompass_Neu//Z{$z}/{$y}/{$x}.png";
 		}
 

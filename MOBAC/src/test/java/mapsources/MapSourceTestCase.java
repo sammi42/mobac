@@ -21,29 +21,28 @@ import java.net.HttpURLConnection;
 
 import junit.framework.TestCase;
 import mobac.program.download.TileDownLoader;
-import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
 import mobac.utilities.Utilities;
 
-
 public class MapSourceTestCase extends TestCase {
 
-	private final MapSource mapSource;
+	private final HttpMapSource mapSource;
 	private final EastNorthCoordinate testCoordinate;
 
-	public MapSourceTestCase(Class<? extends MapSource> mapSourceClass)
-			throws InstantiationException, IllegalAccessException {
+	public MapSourceTestCase(Class<? extends HttpMapSource> mapSourceClass) throws InstantiationException,
+			IllegalAccessException {
 		this(mapSourceClass.newInstance());
 	}
 
-	public MapSourceTestCase(MapSource mapSource) {
+	public MapSourceTestCase(HttpMapSource mapSource) {
 		this(mapSource, Cities.getTestCoordinate(mapSource, Cities.BERLIN));
 	}
 
-	public MapSourceTestCase(MapSource mapSource, EastNorthCoordinate testCoordinate) {
+	public MapSourceTestCase(HttpMapSource mapSource, EastNorthCoordinate testCoordinate) {
 		super(mapSource.getName());
 		this.mapSource = mapSource;
 		this.testCoordinate = testCoordinate;
@@ -84,16 +83,15 @@ public class MapSourceTestCase extends TestCase {
 			case ETag:
 			case IfNoneMatch:
 				if (c.getHeaderField("ETag") == null) {
-					throw new MapSourceTestFailedException(mapSource,
-							"No ETag present but map sources uses " + mapSource.getTileUpdate()
-									+ "\n", c);
+					throw new MapSourceTestFailedException(mapSource, "No ETag present but map sources uses "
+							+ mapSource.getTileUpdate() + "\n", c);
 				}
 				break;
 			case LastModified:
 				if (c.getHeaderField("Last-Modified") == null)
 					throw new MapSourceTestFailedException(mapSource,
-							"No Last-Modified entry present but map sources uses "
-									+ mapSource.getTileUpdate() + "\n", c);
+							"No Last-Modified entry present but map sources uses " + mapSource.getTileUpdate() + "\n",
+							c);
 				break;
 			}
 		} finally {

@@ -23,12 +23,12 @@ import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.JobDispatcher;
 import mobac.program.JobDispatcher.Job;
+import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
-
 
 public class DownloadJob implements Job {
 
@@ -61,9 +61,12 @@ public class DownloadJob implements Job {
 		try {
 			// Thread.sleep(1500);
 			listener.jobStarted();
-			int bytes = TileDownLoader.getImage(layer, xValue, yValue, zoomValue, mapSource,
-					tileArchive);
-			listener.jobFinishedSuccessfully(bytes);
+			byte[] tileData = mapSource.getTileData(zoomValue, xValue, yValue);
+			String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, xValue, yValue);
+			synchronized (tileArchive) {
+				tileArchive.writeFileFromData(tileFileName, tileData);
+			}
+			listener.jobFinishedSuccessfully(tileData.length);
 		} catch (UnrecoverableDownloadException e) {
 			listener.jobFinishedWithError(false);
 			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
@@ -87,15 +90,13 @@ public class DownloadJob implements Job {
 		// Reschedule job to try it later again
 		if (errorCounter <= MAX_RETRIES) {
 			listener.jobFinishedWithError(true);
-			log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-					+ " failed: \"" + e.getMessage() + "\" (tries: " + errorCounter
-					+ ") - rescheduling download job");
+			log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue + " failed: \"" + e.getMessage()
+					+ "\" (tries: " + errorCounter + ") - rescheduling download job");
 			dispatcher.addErrorJob(this);
 		} else {
 			listener.jobFinishedWithError(false);
-			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-					+ " failed again: \"" + e.getMessage() + "\". Retry limit reached, "
-					+ "job will not be rescheduled (no further try)");
+			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue + " failed again: \""
+					+ e.getMessage() + "\". Retry limit reached, " + "job will not be rescheduled (no further try)");
 		}
 	}
 

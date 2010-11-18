@@ -17,34 +17,40 @@
 package mobac.mapsources;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
+
+import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.gui.mapview.JMapViewer;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.download.TileDownLoader;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
 
-
 /**
  * Abstract base class for map sources.
  */
-public abstract class AbstractMapSource implements MapSource {
+public abstract class AbstractHttpMapSource implements HttpMapSource {
 
 	protected String name;
 	protected int minZoom;
 	protected int maxZoom;
 	protected TileImageType tileType;
-	protected TileUpdate tileUpdate;
+	protected HttpMapSource.TileUpdate tileUpdate;
 
-	public AbstractMapSource(String name, int minZoom, int maxZoom, TileImageType tileType) {
-		this(name, minZoom, maxZoom, tileType, TileUpdate.None);
+	public AbstractHttpMapSource(String name, int minZoom, int maxZoom, TileImageType tileType) {
+		this(name, minZoom, maxZoom, tileType, HttpMapSource.TileUpdate.None);
 	}
 
-	public AbstractMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
-			TileUpdate tileUpdate) {
+	public AbstractHttpMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
+			HttpMapSource.TileUpdate tileUpdate) {
 		this.name = name;
 		this.minZoom = minZoom;
 		this.maxZoom = Math.min(maxZoom, JMapViewer.MAX_ZOOM);
@@ -52,8 +58,7 @@ public abstract class AbstractMapSource implements MapSource {
 		this.tileUpdate = tileUpdate;
 	}
 
-	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley)
-			throws IOException {
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
 		String url = getTileUrl(zoom, tilex, tiley);
 		if (url == null)
 			return null;
@@ -61,6 +66,16 @@ public abstract class AbstractMapSource implements MapSource {
 	}
 
 	public abstract String getTileUrl(int zoom, int tilex, int tiley);
+
+	public byte[] getTileData(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+			InterruptedException {
+		return TileDownLoader.getImage(x, y, zoom, this);
+	}
+
+	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+			InterruptedException {
+		return ImageIO.read(new ByteArrayInputStream(getTileData(zoom, x, y)));
+	}
 
 	public int getMaxZoom() {
 		return maxZoom;
@@ -87,7 +102,7 @@ public abstract class AbstractMapSource implements MapSource {
 		return tileType;
 	}
 
-	public TileUpdate getTileUpdate() {
+	public HttpMapSource.TileUpdate getTileUpdate() {
 		return tileUpdate;
 	}
 

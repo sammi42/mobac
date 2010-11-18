@@ -16,9 +16,10 @@
  ******************************************************************************/
 package mobac.mapsources.impl;
 
-import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
@@ -27,13 +28,13 @@ public class Google {
 
 	public static String LANG = "en";
 
-	public static abstract class GoogleSource extends AbstractMapSource implements UpdatableMapSource {
+	public static abstract class GoogleSource extends AbstractHttpMapSource implements UpdatableMapSource {
 
 		private int serverNum = 0;
 
 		public String serverUrl;
 
-		public GoogleSource(String name, int minZoom, int maxZoom, TileImageType tileType, TileUpdate tileUpdate) {
+		public GoogleSource(String name, int minZoom, int maxZoom, TileImageType tileType, HttpMapSource.TileUpdate tileUpdate) {
 			super(name, minZoom, maxZoom, tileType, tileUpdate);
 			update();
 		}
@@ -63,7 +64,7 @@ public class Google {
 	public static class GoogleMaps extends GoogleSource {
 
 		public GoogleMaps() {
-			super("Google Maps", 0, 19, TileImageType.PNG, TileUpdate.None);
+			super("Google Maps", 0, 19, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 		}
 
 	}
@@ -74,7 +75,7 @@ public class Google {
 	public static class GoogleMapMaker extends GoogleSource {
 
 		public GoogleMapMaker() {
-			super("Google Map Maker", 1, 17, TileImageType.PNG, TileUpdate.LastModified);
+			super("Google Map Maker", 1, 17, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
 		}
 
 	}
@@ -82,7 +83,7 @@ public class Google {
 	public static class GoogleTerrain extends GoogleSource {
 
 		public GoogleTerrain() {
-			super("Google Terrain", 0, 15, TileImageType.JPG, TileUpdate.None);
+			super("Google Terrain", 0, 15, TileImageType.JPG, HttpMapSource.TileUpdate.None);
 		}
 
 	}
@@ -93,7 +94,7 @@ public class Google {
 	public static class GoogleMapsChina extends GoogleSource {
 
 		public GoogleMapsChina() {
-			super("Google Maps China", 0, 19, TileImageType.PNG, TileUpdate.None);
+			super("Google Maps China", 0, 19, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 		}
 
 		@Override
@@ -111,7 +112,7 @@ public class Google {
 	public static class GoogleMapsKorea extends GoogleSource {
 
 		public GoogleMapsKorea() {
-			super("Google Maps Korea", 0, 18, TileImageType.PNG, TileUpdate.None);
+			super("Google Maps Korea", 0, 18, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 		}
 
 		@Override
@@ -124,7 +125,7 @@ public class Google {
 	public static class GoogleEarth extends GoogleSource {
 
 		public GoogleEarth() {
-			super("Google Earth", 0, 20, TileImageType.JPG, TileUpdate.None);
+			super("Google Earth", 0, 20, TileImageType.JPG, HttpMapSource.TileUpdate.None);
 		}
 
 	}
@@ -132,7 +133,7 @@ public class Google {
 	public static class GoogleEarthMapsOverlay extends GoogleSource {
 
 		public GoogleEarthMapsOverlay() {
-			super("Google Earth Maps Overlay", 0, 20, TileImageType.PNG, TileUpdate.None);
+			super("Google Earth Maps Overlay", 0, 20, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 		}
 
 	}

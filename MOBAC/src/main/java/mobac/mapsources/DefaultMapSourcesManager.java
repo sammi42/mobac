@@ -19,6 +19,7 @@ package mobac.mapsources;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.mapsources.impl.Google.GoogleEarth;
 import mobac.mapsources.impl.Google.GoogleHybrid;
@@ -47,9 +48,9 @@ import mobac.mapsources.impl.OsmMapSources.Hikebikemap;
 import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMap;
-import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithReliefBase;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithBase;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
+import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithReliefBase;
 import mobac.mapsources.impl.OsmMapSources.OsmPublicTransport;
 import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
 import mobac.mapsources.impl.OsmMapSources.Turaterkep;
@@ -90,10 +91,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	public static final MapSource DEFAULT = new Mapnik();
 	private MapSource[] MAP_SOURCES;
 
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_ON = new LocalhostTestSource("Localhost (stored)",
-			TileImageType.PNG, true);
-	private static MapSource LOCALHOST_TEST_MAPSOURCE_STORE_OFF = new LocalhostTestSource("Localhost (unstored)",
-			TileImageType.PNG, false);
+	private static MapSource LOCALHOST_TEST_MAPSOURCE = new LocalhostTestSource("Localhost", TileImageType.PNG);
+	private static MapSource DEBUG_TEST_MAPSOURCE = new DebugMapSource();
 
 	static {
 		MapSourcesUpdater.loadMapSourceProperties();
@@ -174,8 +173,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	public Vector<MapSource> getAllMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
 		if (Settings.getInstance().isDevModeEnabled()) {
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_OFF);
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_ON);
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE);
+			mapSources.add(DEBUG_TEST_MAPSOURCE);
 		}
 		for (MapSource ms : MAP_SOURCES)
 			mapSources.add(ms);
@@ -188,8 +187,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	public Vector<MapSource> getEnabledMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
 		if (Settings.getInstance().isDevModeEnabled()) {
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_OFF);
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE_STORE_ON);
+			mapSources.add(LOCALHOST_TEST_MAPSOURCE);
+			mapSources.add(DEBUG_TEST_MAPSOURCE);
 		}
 		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance().getDisabledMapSources());
 		for (MapSource ms : MAP_SOURCES) {
@@ -217,10 +216,10 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				return ms;
 		}
 		if (Settings.getInstance().isDevModeEnabled()) {
-			if (LOCALHOST_TEST_MAPSOURCE_STORE_ON.getName().equals(name))
-				return LOCALHOST_TEST_MAPSOURCE_STORE_ON;
-			if (LOCALHOST_TEST_MAPSOURCE_STORE_OFF.getName().equals(name))
-				return LOCALHOST_TEST_MAPSOURCE_STORE_OFF;
+			if (LOCALHOST_TEST_MAPSOURCE.getName().equals(name))
+				return LOCALHOST_TEST_MAPSOURCE;
+			if (DEBUG_TEST_MAPSOURCE.getName().equals(name))
+				return DEBUG_TEST_MAPSOURCE;
 		}
 		return null;
 	}

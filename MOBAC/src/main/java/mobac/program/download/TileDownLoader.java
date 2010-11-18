@@ -22,16 +22,13 @@ import java.net.HttpURLConnection;
 
 import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.UnrecoverableDownloadException;
-import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
-import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MapSource.TileUpdate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
 
@@ -48,8 +45,8 @@ public class TileDownLoader {
 
 	private static Settings settings = Settings.getInstance();
 
-	public static int getImage(int layer, int x, int y, int zoom, MapSource mapSource, TarIndexedArchive tileArchive)
-			throws IOException, InterruptedException, UnrecoverableDownloadException {
+	public static byte[] getImage(int x, int y, int zoom, HttpMapSource mapSource) throws IOException,
+			InterruptedException, UnrecoverableDownloadException {
 
 		MapSpace mapSpace = mapSource.getMapSpace();
 		int maxTileIndex = mapSpace.getMaxPixels(zoom) / mapSpace.getTileSize();
@@ -67,7 +64,6 @@ public class TileDownLoader {
 		// IOException("intentionally download error");
 
 		Settings s = Settings.getInstance();
-		String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, x, y);
 
 		TileStoreEntry tile = null;
 		if (s.tileStoreEnabled) {
@@ -80,11 +76,8 @@ public class TileDownLoader {
 				if (expired) {
 					log.trace("Expired: " + mapSource.getName() + " " + tile);
 				} else {
-					synchronized (tileArchive) {
-						log.trace("Tile used from tilestore");
-						tileArchive.writeFileFromData(tileFileName, tile.getData());
-					}
-					return 0;
+					log.trace("Tile used from tilestore");
+					return tile.getData();
 				}
 			}
 		}
@@ -95,12 +88,8 @@ public class TileDownLoader {
 			updateStoredTile(tile, mapSource);
 			data = tile.getData();
 		}
-		if (data == null)
-			return 0;
-		synchronized (tileArchive) {
-			tileArchive.writeFileFromData(tileFileName, data);
-		}
-		return data.length;
+
+		return data;
 	}
 
 	/**
@@ -114,7 +103,7 @@ public class TileDownLoader {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, MapSource mapSource)
+	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, HttpMapSource mapSource)
 			throws UnrecoverableDownloadException, IOException, InterruptedException {
 		HttpURLConnection conn = mapSource.getTileUrlConnection(zoom, x, y);
 		if (conn == null)
@@ -149,19 +138,19 @@ public class TileDownLoader {
 		TileImageType imageType = Utilities.getImageType(data);
 		if (imageType == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
-		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+		if (s.tileStoreEnabled) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
 		}
 		Utilities.checkForInterruption();
 		return data;
 	}
 
-	public static byte[] updateStoredTile(TileStoreEntry tile, MapSource mapSource)
+	public static byte[] updateStoredTile(TileStoreEntry tile, HttpMapSource mapSource)
 			throws UnrecoverableDownloadException, IOException, InterruptedException {
 		final int x = tile.getX();
 		final int y = tile.getY();
 		final int zoom = tile.getZoom();
-		final TileUpdate tileUpdate = mapSource.getTileUpdate();
+		final HttpMapSource.TileUpdate tileUpdate = mapSource.getTileUpdate();
 
 		switch (tileUpdate) {
 		case ETag: {
@@ -223,7 +212,7 @@ public class TileDownLoader {
 
 		if (conditionalRequest && code == HttpURLConnection.HTTP_NOT_MODIFIED) {
 			// Data unchanged on server
-			if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+			if (s.tileStoreEnabled) {
 				tile.update(conn.getExpiration());
 				TileStore.getInstance().putTile(tile, mapSource);
 			}
@@ -247,7 +236,7 @@ public class TileDownLoader {
 		TileImageType imageType = Utilities.getImageType(data);
 		if (imageType == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
-		if (mapSource.allowFileStore() && s.tileStoreEnabled) {
+		if (s.tileStoreEnabled) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
 		}
 		Utilities.checkForInterruption();
@@ -306,7 +295,7 @@ public class TileDownLoader {
 	/**
 	 * Performs a <code>HEAD</code> request for retrieving the <code>LastModified</code> header value.
 	 */
-	protected static boolean isTileNewer(TileStoreEntry tile, MapSource mapSource) throws IOException {
+	protected static boolean isTileNewer(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		long oldLastModified = tile.getTimeLastModified();
 		if (oldLastModified <= 0) {
 			log
@@ -323,7 +312,7 @@ public class TileDownLoader {
 		return (newLastModified > oldLastModified);
 	}
 
-	protected static boolean hasTileETag(TileStoreEntry tile, MapSource mapSource) throws IOException {
+	protected static boolean hasTileETag(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		String eTag = tile.geteTag();
 		if (eTag == null || eTag.length() == 0) {
 			log.warn("ETag check not possible: " + "tile in tilestore does not contain ETag attribute");

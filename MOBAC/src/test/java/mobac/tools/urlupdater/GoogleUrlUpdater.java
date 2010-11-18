@@ -49,6 +49,7 @@ import mobac.mapsources.impl.Google.GoogleMaps;
 import mobac.mapsources.impl.Google.GoogleMapsChina;
 import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Google.GoogleTerrain;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 
@@ -346,14 +347,14 @@ public class GoogleUrlUpdater implements Runnable {
 	public static class UpdateableMapSource {
 		public final String updateUrl;
 		public final String key;
-		public final Class<? extends MapSource> mapSourceClass;
+		public final Class<? extends HttpMapSource> mapSourceClass;
 		public final boolean useImgSrcUrlsOnly;
 
-		public UpdateableMapSource(String updateUrl, Class<? extends MapSource> mapSourceClass) {
+		public UpdateableMapSource(String updateUrl, Class<? extends HttpMapSource> mapSourceClass) {
 			this(updateUrl, mapSourceClass, true);
 		}
 
-		public UpdateableMapSource(String updateUrl, Class<? extends MapSource> mapSourceClass,
+		public UpdateableMapSource(String updateUrl, Class<? extends HttpMapSource> mapSourceClass,
 				boolean useImgSrcUrlsOnly) {
 			super();
 			this.updateUrl = updateUrl;

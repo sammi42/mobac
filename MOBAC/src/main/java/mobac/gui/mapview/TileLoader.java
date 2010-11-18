@@ -18,6 +18,8 @@ package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
+import java.awt.image.BufferedImage;
+
 import mobac.exceptions.DownloadFailedException;
 import mobac.gui.mapview.Tile.TileState;
 import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
@@ -35,15 +37,18 @@ import org.apache.log4j.Logger;
  * OSM again.
  * 
  * @author Jan Peter Stotz
+ * @author r_x
  */
-public class OsmFileCacheTileLoader extends OsmTileLoader {
+public class TileLoader implements TileLoaderJobCreator {
 
-	private static final Logger log = Logger.getLogger(OsmFileCacheTileLoader.class);
+	private static final Logger log = Logger.getLogger(TileLoader.class);
 
 	protected TileStore tileStore;
+	protected TileLoaderListener listener;
 
-	public OsmFileCacheTileLoader(TileLoaderListener map) {
-		super(map);
+	public TileLoader(TileLoaderListener listener) {
+		super();
+		this.listener = listener;
 		tileStore = TileStore.getInstance();
 	}
 
@@ -91,17 +96,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 		}
 
 		protected void loadOrUpdateTile() {
-
 			try {
-				byte[] buffer;
-				if (tileStoreEntry == null)
-					buffer = TileDownLoader.downloadTileAndUpdateStore(tilex, tiley, zoom, mapSource);
-				else {
-					TileDownLoader.updateStoredTile(tileStoreEntry, mapSource);
-					buffer = tileStoreEntry.getData();
-				}
-				if (buffer != null) {
-					tile.loadImage(buffer);
+				BufferedImage image = mapSource.getTileImage(zoom, tilex, tiley);
+				if (image != null) {
+					tile.setImage(image);
 					tile.setTileState(TileState.TS_LOADED);
 					listener.tileLoadingFinished(tile, true);
 				} else {

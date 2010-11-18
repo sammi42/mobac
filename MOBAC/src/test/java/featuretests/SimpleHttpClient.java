@@ -58,6 +58,8 @@ public class SimpleHttpClient implements Runnable {
 		conn.connect();
 
 		int code = conn.getResponseCode();
+		if (code != 200)
+			throw new IOException("Invalid HTTP response");
 		InputStream in = conn.getInputStream();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream(32000);
 		byte[] buffer = new byte[2049];

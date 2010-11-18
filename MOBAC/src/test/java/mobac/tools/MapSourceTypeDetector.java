@@ -34,13 +34,12 @@ import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
-import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
-
 
 public class MapSourceTypeDetector {
 
@@ -60,11 +59,11 @@ public class MapSourceTypeDetector {
 		testMapSource(NzTopoMaps.class);
 	}
 
-	public static void testMapSource(Class<? extends MapSource> mapSourceClass) {
+	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {
 		testMapSource(mapSourceClass, Cities.getTestCoordinate(mapSourceClass, C_DEFAULT));
 	}
 
-	public static void testMapSource(Class<? extends MapSource> mapSourceClass, EastNorthCoordinate coordinate) {
+	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass, EastNorthCoordinate coordinate) {
 		if (coordinate == null)
 			throw new NullPointerException("Coordinate not set for " + mapSourceClass.getSimpleName());
 		MapSourceTypeDetector mstd;
@@ -82,7 +81,7 @@ public class MapSourceTypeDetector {
 		System.out.println(mstd);
 	}
 
-	private final MapSource mapSource;
+	private final HttpMapSource mapSource;
 	private URL url;
 	private HttpURLConnection c;
 
@@ -93,16 +92,16 @@ public class MapSourceTypeDetector {
 	private boolean ifModifiedSinceSupported = false;
 	private boolean ifNoneMatchSupported = false;
 
-	public MapSourceTypeDetector(Class<? extends MapSource> mapSourceClass) throws InstantiationException,
+	public MapSourceTypeDetector(Class<? extends HttpMapSource> mapSourceClass) throws InstantiationException,
 			IllegalAccessException {
 		this(mapSourceClass.newInstance());
 	}
 
 	public MapSourceTypeDetector(String mapSourceName) {
-		this(MapSourcesManager.getInstance().getSourceByName(mapSourceName));
+		this((HttpMapSource) MapSourcesManager.getInstance().getSourceByName(mapSourceName));
 	}
 
-	public MapSourceTypeDetector(MapSource mapSource) {
+	public MapSourceTypeDetector(HttpMapSource mapSource) {
 		this.mapSource = mapSource;
 		if (mapSource == null)
 			throw new NullPointerException("MapSource not set");

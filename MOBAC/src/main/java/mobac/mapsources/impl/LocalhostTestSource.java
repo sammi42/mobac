@@ -16,32 +16,24 @@
  ******************************************************************************/
 package mobac.mapsources.impl;
 
-import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class LocalhostTestSource extends AbstractMapSource {
-
-	private final boolean allowStore;
+public class LocalhostTestSource extends AbstractHttpMapSource {
 
 	private String baseUrl;
 
-	public LocalhostTestSource(String name, TileImageType tileType, boolean allowStore) {
-		this(name, 80, tileType, allowStore);
+	public LocalhostTestSource(String name, TileImageType tileType) {
+		this(name, 80, tileType);
 	}
 
-	public LocalhostTestSource(String name, int port, TileImageType tileType, boolean allowStore) {
+	public LocalhostTestSource(String name, int port, TileImageType tileType) {
 		super(name, 0, 22, tileType);
-		this.allowStore = allowStore;
 		baseUrl = "http://127.0.0.1:" + port + "/tile." + tileType + "?";
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		return baseUrl + "x=" + tilex + "&y=" + tiley + "&z=" + zoom;
-	}
-
-	@Override
-	public boolean allowFileStore() {
-		return allowStore;
 	}
 
 }

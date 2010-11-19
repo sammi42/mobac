@@ -22,13 +22,13 @@ import java.util.HashSet;
 import javax.xml.bind.JAXBException;
 
 import junit.framework.TestSuite;
+import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
@@ -61,19 +61,23 @@ public class MapSourcesTestSuite extends TestSuite {
 		MapSourcesUpdater.loadMapSourceProperties();
 		DefaultMapSourcesManager.initialize();
 		Settings.load();
-		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources())
-			if (mapSource instanceof HttpMapSource)
-				addMapSourcesTestCase((HttpMapSource) mapSource);
+		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {
+			if (mapSource instanceof AbstractMultiLayerMapSource) {
+				for (MapSource ms : (AbstractMultiLayerMapSource) mapSource)
+					addMapSourcesTestCase((HttpMapSource) ms);
+			} else
+				addMapSourcesTestCase(mapSource);
+		}
 	}
 
-	private void addMapSourcesTestCase(HttpMapSource mapSource) {
+	private void addMapSourcesTestCase(MapSource mapSource) {
+		if (!(mapSource instanceof HttpMapSource))
+			return;
 		if (testedMapSources.contains(mapSource.getStoreName()))
 			return;
 		EastNorthCoordinate coordinate = Cities.getTestCoordinate(mapSource, C_DEFAULT);
-		addTest(new MapSourceTestCase(mapSource, coordinate));
+		addTest(new MapSourceTestCase((HttpMapSource) mapSource, coordinate));
 		testedMapSources.add(mapSource.getStoreName());
-		if (mapSource instanceof MultiLayerMapSource)
-			addMapSourcesTestCase((HttpMapSource)((MultiLayerMapSource) mapSource).getBackgroundMapSource());
 	}
 
 	public static TestSuite suite() throws JAXBException {

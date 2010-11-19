@@ -22,9 +22,6 @@ import mobac.gui.mapview.JMapViewer;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
-
-
 
 public class MapSelection {
 
@@ -56,8 +53,7 @@ public class MapSelection {
 	}
 
 	public MapSelection(MapInterface map) {
-		this(map.getMapSource(), map.getMaxTileCoordinate(), map.getMinTileCoordinate(), map
-				.getZoom());
+		this(map.getMapSource(), map.getMaxTileCoordinate(), map.getMinTileCoordinate(), map.getZoom());
 	}
 
 	/**
@@ -100,8 +96,7 @@ public class MapSelection {
 	 * @return
 	 */
 	public boolean isAreaSelected() {
-		boolean result = maxTileCoordinate_x != minTileCoordinate_x
-				&& maxTileCoordinate_y != minTileCoordinate_y;
+		boolean result = maxTileCoordinate_x != minTileCoordinate_x && maxTileCoordinate_y != minTileCoordinate_y;
 		return result;
 	}
 
@@ -124,8 +119,7 @@ public class MapSelection {
 	}
 
 	/**
-	 * Returns the top left tile x- and y-tile-number (minimum) of the selected
-	 * area marked by the {@link MapSelection}.
+	 * Returns the top left tile x- and y-tile-number (minimum) of the selected area marked by the {@link MapSelection}.
 	 * 
 	 * @param aZoomLevel
 	 * @return tile number [0..2<sup>zoom</sup>]
@@ -142,8 +136,8 @@ public class MapSelection {
 	}
 
 	/**
-	 * Returns the top left tile x- and y-tile-coordinate (minimum) of the
-	 * selected area marked by the {@link MapSelection}.
+	 * Returns the top left tile x- and y-tile-coordinate (minimum) of the selected area marked by the
+	 * {@link MapSelection}.
 	 * 
 	 * @param aZoomlevel
 	 * @return tile coordinate [0..(256 * 2<sup>zoom</sup>)]
@@ -164,8 +158,8 @@ public class MapSelection {
 	}
 
 	/**
-	 * Returns the bottom right tile x- and y-tile-number (minimum) of the
-	 * selected area marked by the {@link MapSelection}.
+	 * Returns the bottom right tile x- and y-tile-number (minimum) of the selected area marked by the
+	 * {@link MapSelection}.
 	 * 
 	 * @param aZoomlevel
 	 * @return tile number [0..2<sup>zoom</sup>]
@@ -178,9 +172,8 @@ public class MapSelection {
 	}
 
 	/**
-	 * Returns the bottom right tile x- and y-tile-coordinate (minimum) of the
-	 * selected area regarding the zoom level specified at creation time of this
-	 * {@link MapSelection} instance.
+	 * Returns the bottom right tile x- and y-tile-coordinate (minimum) of the selected area regarding the zoom level
+	 * specified at creation time of this {@link MapSelection} instance.
 	 * 
 	 * @return tile coordinate [0..(256 * 2<sup>zoom</sup>)]
 	 */
@@ -189,8 +182,8 @@ public class MapSelection {
 	}
 
 	/**
-	 * Returns the bottom right tile x- and y-tile-coordinate (minimum) of the
-	 * selected area marked by the {@link MapSelection}.
+	 * Returns the bottom right tile x- and y-tile-coordinate (minimum) of the selected area marked by the
+	 * {@link MapSelection}.
 	 * 
 	 * @param aZoomlevel
 	 * @return tile coordinate [0..(256 * 2<sup>zoom</sup>)]
@@ -211,13 +204,11 @@ public class MapSelection {
 	}
 
 	/**
-	 * Return the amount of tiles for the current selection in the specified
-	 * zoom level.
+	 * Return the amount of tiles for the current selection in the specified zoom level.
 	 * 
 	 * @param zoom
 	 *            is the zoom level to calculate the amount of tiles for
-	 * @return the amount of tiles in the current selection in the supplied zoom
-	 *         level
+	 * @return the amount of tiles in the current selection in the supplied zoom level
 	 */
 	public long calculateNrOfTiles(int zoom) {
 		Point max = getBottomRightTileNumber(zoom);
@@ -225,8 +216,9 @@ public class MapSelection {
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
 		long tileCount = width * height;
-		if (mapSource instanceof MultiLayerMapSource)
-			tileCount *= 2;
+		// TODO: Correct multi-layer case
+		// if (mapSource instanceof MultiLayerMapSource)
+		// tileCount *= 2;
 		return tileCount;
 	}
 
@@ -236,8 +228,9 @@ public class MapSelection {
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
 		long tileCount = width * height;
-		if (mapSource instanceof MultiLayerMapSource)
-			tileCount *= 2;
+		// TODO: Correct multi-layer case
+		// if (mapSource instanceof MultiLayerMapSource)
+		// tileCount *= 2;
 		return new long[] { tileCount, width, height };
 	}
 
@@ -245,8 +238,7 @@ public class MapSelection {
 	public String toString() {
 		EastNorthCoordinate max = getMax();
 		EastNorthCoordinate min = getMin();
-		return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[] { max.lat, max.lon,
-				min.lat, min.lon });
+		return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[] { max.lat, max.lon, min.lat, min.lon });
 	}
 
 }

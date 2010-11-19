@@ -38,16 +38,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import mobac.gui.mapview.interfaces.MapLayer;
-import mobac.gui.mapview.interfaces.MapMarker;
 import mobac.gui.mapview.interfaces.MapTileLayer;
-import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.gui.mapview.layer.DefaultMapTileLayer;
 import mobac.gui.mapview.layer.MapGridLayer;
-import mobac.gui.mapview.layer.OverlayMapTileLayer;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
@@ -73,12 +69,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	public static final int MAX_ZOOM = 22;
 	public static final int MIN_ZOOM = 0;
 
-	protected TileLoaderJobCreator tileLoader;
+	protected TileLoader tileLoader;
 	protected MemoryTileCache tileCache;
 	protected MapSource mapSource;
 	protected boolean usePlaceHolderTiles = true;
 
-	protected List<MapMarker> mapMarkerList;
 	protected boolean mapMarkersVisible;
 	protected MapGridLayer mapGridLayer = null;
 
@@ -109,7 +104,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		tileLoader = new TileLoader(this);
 		tileCache = new MemoryTileCache();
 		jobDispatcher = JobDispatcher.getInstance();
-		mapMarkerList = new LinkedList<MapMarker>();
 		mapMarkersVisible = true;
 		setLayout(null);
 		setMapSource(defaultMapSource);
@@ -223,28 +217,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			setIgnoreRepaint(false);
 			repaint();
 		}
-	}
-
-	/**
-	 * Sets the displayed map pane and zoom level so that all map markers are visible.
-	 */
-	public void setDisplayToFitMapMarkers() {
-		if (mapMarkerList == null || mapMarkerList.size() == 0)
-			return;
-		MapSpace mapSpace = mapSource.getMapSpace();
-		int x_min = Integer.MAX_VALUE;
-		int y_min = Integer.MAX_VALUE;
-		int x_max = Integer.MIN_VALUE;
-		int y_max = Integer.MIN_VALUE;
-		for (MapMarker marker : mapMarkerList) {
-			int x = mapSpace.cLonToX(marker.getLon(), MAX_ZOOM);
-			int y = mapSpace.cLatToY(marker.getLat(), MAX_ZOOM);
-			x_max = Math.max(x_max, x);
-			y_max = Math.max(y_max, y);
-			x_min = Math.min(x_min, x);
-			y_min = Math.min(y_min, y);
-		}
-		setDisplayToFitPixelCoordinates(x_max, y_max, x_min, y_min);
 	}
 
 	/**
@@ -407,13 +379,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		g.drawRect(w2 - center.x, h2 - center.y, mapSize, mapSize);
 
 		// g.drawString("Tiles in cache: " + tileCache.getTileCount(), 50, 20);
-		if (!mapMarkersVisible || mapMarkerList == null)
-			return;
-		for (MapMarker marker : mapMarkerList) {
-			Point p = getMapPosition(marker.getLat(), marker.getLon());
-			if (p != null)
-				marker.paint(g, p);
-		}
 	}
 
 	/**
@@ -515,31 +480,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		return mapMarkersVisible;
 	}
 
-	/**
-	 * Enables or disables painting of the {@link MapMarker}
-	 * 
-	 * @param mapMarkersVisible
-	 * @see #addMapMarker(MapMarker)
-	 * @see #getMapMarkerList()
-	 */
-	public void setMapMarkerVisible(boolean mapMarkersVisible) {
-		this.mapMarkersVisible = mapMarkersVisible;
-		repaint();
-	}
-
-	public void setMapMarkerList(List<MapMarker> mapMarkerList) {
-		this.mapMarkerList = mapMarkerList;
-		repaint();
-	}
-
-	public List<MapMarker> getMapMarkerList() {
-		return mapMarkerList;
-	}
-
-	public void addMapMarker(MapMarker marker) {
-		mapMarkerList.add(marker);
-	}
-
 	public void setZoomContolsVisible(boolean visible) {
 		zoomSlider.setVisible(visible);
 		zoomInButton.setVisible(visible);
@@ -554,16 +494,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		return tileCache;
 	}
 
-	public TileLoaderJobCreator getTileLoader() {
+	public TileLoader getTileLoader() {
 		return tileLoader;
-	}
-
-	public void setTileLoader(TileLoaderJobCreator tileLoader) {
-		this.tileLoader = tileLoader;
-	}
-
-	public MapSource getTileLayerSource() {
-		return mapSource;
 	}
 
 	public MapSource getMapSource() {
@@ -582,21 +514,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		if (zoom > mapSource.getMaxZoom())
 			setZoom(mapSource.getMaxZoom());
 		mapTileLayers.clear();
-		addNewMapsourceLayers(mapSource);
+		log.info("new map layer added: " + mapSource);
+		mapTileLayers.add(new DefaultMapTileLayer(this, mapSource));
 		if (mapGridLayer != null)
 			mapTileLayers.add(mapGridLayer);
 		repaint();
-	}
-
-	private void addNewMapsourceLayers(MapSource newMapSource) {
-		if (newMapSource instanceof MultiLayerMapSource) {
-			addNewMapsourceLayers(((MultiLayerMapSource) newMapSource).getBackgroundMapSource());
-			log.info("new overlay layer added: " + newMapSource);
-			mapTileLayers.add(new OverlayMapTileLayer(this, newMapSource));
-		} else {
-			log.info("new map layer added: " + newMapSource);
-			mapTileLayers.add(new DefaultMapTileLayer(this, newMapSource));
-		}
 	}
 
 	public JobDispatcher getJobDispatcher() {

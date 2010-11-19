@@ -18,8 +18,14 @@ package mobac.utilities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -39,7 +45,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.ParsePosition;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +58,6 @@ import javax.swing.JComponent;
 
 import mobac.Main;
 import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
 import mobac.utilities.file.DirectoryFileFilter;
 
@@ -112,6 +116,26 @@ public class Utilities {
 		}
 		byte[] emptyTileData = buf.toByteArray();
 		return emptyTileData;
+	}
+
+	public static Image makeColorTransparent(Image im, final Color color) {
+		ImageFilter filter = new RGBImageFilter() {
+			// the color we are looking for... Alpha bits are set to opaque
+			public int markerRGB = color.getRGB() | 0xFF000000;
+
+			public final int filterRGB(int x, int y, int rgb) {
+				if ((rgb | 0xFF000000) == markerRGB) {
+					// Mark the alpha bits as zero - transparent
+					return 0x00FFFFFF & rgb;
+				} else {
+					// nothing to do
+					return rgb;
+				}
+			}
+		};
+
+		ImageProducer ip = new FilteredImageSource(im.getSource(), filter);
+		return Toolkit.getDefaultToolkit().createImage(ip);
 	}
 
 	private static final byte[] PNG = new byte[] { (byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
@@ -555,25 +579,4 @@ public class Utilities {
 		}
 	}
 
-	/**
-	 * Returns the list of map sources including all background maps
-	 * 
-	 * @param mapSource
-	 * @return
-	 */
-	public static MapSource[] getMultiLayerMapSources(MapSource mapSource) {
-		ArrayList<MapSource> mapSources = new ArrayList<MapSource>();
-		MapSource ms = mapSource;
-		while (ms != null) {
-			mapSources.add(ms);
-			if (ms instanceof MultiLayerMapSource) {
-				ms = ((MultiLayerMapSource) ms).getBackgroundMapSource();
-			} else {
-				break;
-			}
-		}
-		MapSource[] result = new MapSource[mapSources.size()];
-		mapSources.toArray(result);
-		return result;
-	}
 }

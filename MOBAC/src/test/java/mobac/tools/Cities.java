@@ -37,7 +37,7 @@ import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
 import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
 import mobac.mapsources.impl.RegionalMapSources.Bergfex;
 import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
-import mobac.mapsources.impl.RegionalMapSources.CykloatlasWithRelief;
+import mobac.mapsources.impl.RegionalMapSources.CykloatlasRelief;
 import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
 import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaCycling;
@@ -81,7 +81,7 @@ public class Cities {
 		TEST_COORDINATES = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
 		TEST_COORDINATES.put(GoogleMapMaker.class, Cities.BANGALORE);
 		TEST_COORDINATES.put(Cykloatlas.class, Cities.PRAHA);
-		TEST_COORDINATES.put(CykloatlasWithRelief.class, Cities.PRAHA);
+		TEST_COORDINATES.put(CykloatlasRelief.class, Cities.PRAHA);
 		TEST_COORDINATES.put(GoogleMapsChina.class, Cities.SHANGHAI);
 		TEST_COORDINATES.put(GoogleMapsKorea.class, Cities.SEOUL);
 		TEST_COORDINATES.put(MicrosoftMapsChina.class, Cities.SHANGHAI);

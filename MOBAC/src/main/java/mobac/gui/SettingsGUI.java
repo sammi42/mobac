@@ -378,12 +378,12 @@ public class SettingsGUI extends JDialog {
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-		for (MapSource ts : MapSourcesManager.getInstance().getAllMapSources()) {
+		for (MapSource ts : MapSourcesManager.getInstance().getAllLayerMapSources()) {
 			if (!tileStore.storeExists(ts))
 				continue;
 			String mapTileCountText = "  ?  ";
 			String mapTileSizeText = "    ?    ";
-			final JLabel mapSourceNameLabel = new JLabel(ts.toString());
+			final JLabel mapSourceNameLabel = new JLabel(ts.getName());
 			final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
 			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
 			final JButton deleteButton = new JButton(trash);

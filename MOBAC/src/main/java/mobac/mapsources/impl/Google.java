@@ -17,11 +17,11 @@
 package mobac.mapsources.impl;
 
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
 
 public class Google {
@@ -34,7 +34,8 @@ public class Google {
 
 		public String serverUrl;
 
-		public GoogleSource(String name, int minZoom, int maxZoom, TileImageType tileType, HttpMapSource.TileUpdate tileUpdate) {
+		public GoogleSource(String name, int minZoom, int maxZoom, TileImageType tileType,
+				HttpMapSource.TileUpdate tileUpdate) {
 			super(name, minZoom, maxZoom, tileType, tileUpdate);
 			update();
 		}
@@ -138,26 +139,12 @@ public class Google {
 
 	}
 
-	public static class GoogleHybrid extends GoogleEarthMapsOverlay implements MultiLayerMapSource {
-
-		private final MapSource background = new GoogleEarth();
+	public static class GoogleHybrid extends AbstractMultiLayerMapSource {
 
 		public GoogleHybrid() {
-			super();
-		}
-
-		@Override
-		public String getName() {
-			return "Google Hybrid";
-		}
-
-		@Override
-		public String toString() {
-			return "Google Hybrid";
-		}
-
-		public MapSource getBackgroundMapSource() {
-			return background;
+			super("Google Hybrid", TileImageType.PNG);
+			mapSources = new MapSource[] { new GoogleEarth(), new GoogleEarthMapsOverlay() };
+			initializeValues();
 		}
 
 	}

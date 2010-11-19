@@ -36,6 +36,8 @@ import mobac.program.model.TileImageType;
 @XmlJavaTypeAdapter(MapSourceAdapter.class)
 public interface MapSource {
 
+	public enum LOAD_METHOD  {DEFAULT, CACHE, SOURCE };
+	
 	/**
 	 * Specifies the maximum zoom value. The number of zoom levels is [0.. {@link #getMaxZoom()}].
 	 * 

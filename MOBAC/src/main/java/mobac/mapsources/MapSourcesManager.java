@@ -30,6 +30,8 @@ public abstract class MapSourcesManager {
 
 	public abstract Vector<MapSource> getAllMapSources();
 
+	public abstract Vector<MapSource> getAllLayerMapSources();
+
 	public abstract Vector<MapSource> getEnabledMapSources();
 
 	public abstract MapSource getDefaultMapSource();

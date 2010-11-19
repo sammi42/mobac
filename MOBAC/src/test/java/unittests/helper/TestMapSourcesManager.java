@@ -51,6 +51,11 @@ public class TestMapSourcesManager extends MapSourcesManager {
 	}
 
 	@Override
+	public Vector<MapSource> getAllLayerMapSources() {
+		return getAllMapSources();
+	}
+
+	@Override
 	public MapSource getDefaultMapSource() {
 		return theMapSource;
 	}

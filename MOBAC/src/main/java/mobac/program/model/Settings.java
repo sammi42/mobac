@@ -174,7 +174,7 @@ public class Settings {
 
 	@XmlElementWrapper(name = "customMapSources")
 	@XmlElements( { @XmlElement(name = "customMapSource", type = CustomMapSource.class),
-			@XmlElement(name = "customMultiLayerMapSource", type = CustomMultiLayerMapSource.class) })
+	/* @XmlElement(name = "customMultiLayerMapSource", type = CustomMultiLayerMapSource.class) */})
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
 	@XmlElement(name = "MapSourcesUpdate")

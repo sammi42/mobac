@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac;
 
+import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -44,6 +45,7 @@ public class Main {
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
 			DefaultMapSourcesManager.initialize();
+			ImageIO.setUseCache(false);
 			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();

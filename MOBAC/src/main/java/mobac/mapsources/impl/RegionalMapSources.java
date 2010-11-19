@@ -21,11 +21,11 @@ import java.net.HttpURLConnection;
 import java.util.Random;
 
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.UpdatableMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
 
 /**
@@ -196,12 +196,12 @@ public class RegionalMapSources {
 
 	}
 
-	public static class CykloatlasWithRelief extends CykloatlasRelief implements MultiLayerMapSource {
+	public static class CykloatlasWithRelief extends AbstractMultiLayerMapSource {
 
-		private MapSource background = new Cykloatlas();
-
-		public MapSource getBackgroundMapSource() {
-			return background;
+		public CykloatlasWithRelief() {
+			super("CykloatlasWithRelief", TileImageType.PNG);
+			mapSources = new MapSource[] { new Cykloatlas(), new CykloatlasRelief() };
+			initializeValues();
 		}
 
 		@Override

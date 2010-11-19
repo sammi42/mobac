@@ -28,13 +28,11 @@ import mobac.gui.AtlasProgress;
 import mobac.program.AtlasThread;
 import mobac.program.PauseResumeHandler;
 import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
-import mobac.program.atlascreators.tileprovider.MultiLayerTileProvider;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageFormat;
@@ -174,8 +172,6 @@ public abstract class AtlasCreator {
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
 		mapDlTileProvider = new DownloadedTileProvider(tarTileIndex, mapSource);
-		if (mapSource instanceof MultiLayerMapSource)
-			mapDlTileProvider = new MultiLayerTileProvider((MultiLayerMapSource) mapSource, mapDlTileProvider);
 		Thread t = Thread.currentThread();
 		if (!(t instanceof AtlasThread))
 			throw new RuntimeException("Calling thread must be AtlasThread!");

@@ -16,24 +16,21 @@
  ******************************************************************************/
 package mobac.mapsources.custom;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MultiLayerMapSource;
-
+import mobac.mapsources.AbstractMultiLayerMapSource;
+import mobac.program.model.TileImageType;
 
 /**
+ * TODO: Finish implementation
  * Custom tile store provider for multi-layer map sources, configurable via settings.xml.
  */
-@XmlRootElement
-public class CustomMultiLayerMapSource extends CustomMapSource implements MultiLayerMapSource {
+//@XmlRootElement
+public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 
-	@XmlElement(required = true, name="backgroundMapSource")
-	private CustomMapSource background = null;
-
-	public MapSource getBackgroundMapSource() {
-		return background;
+	public CustomMultiLayerMapSource() {
+		super("", TileImageType.PNG);
 	}
 
+	
 }

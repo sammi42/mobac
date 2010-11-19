@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobac.exceptions.InvalidNameException;
 import mobac.program.JobDispatcher.Job;
-import mobac.program.download.jobenumerators.DJEMultiLayer;
 import mobac.program.download.jobenumerators.DJERectangle;
 import mobac.program.interfaces.CapabilityDeletable;
 import mobac.program.interfaces.DownloadJobListener;
@@ -37,15 +36,12 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
 
-
-public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode,
-		DownloadableElement {
+public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode, DownloadableElement {
 
 	protected String name;
 
@@ -137,20 +133,16 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 
 	public String getToolTip() {
 		MapSpace mapSpace = mapSource.getMapSpace();
-		EastNorthCoordinate tl = new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate.x,
-				minTileCoordinate.y);
-		EastNorthCoordinate br = new EastNorthCoordinate(mapSpace, zoom, maxTileCoordinate.x,
-				maxTileCoordinate.y);
+		EastNorthCoordinate tl = new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate.x, minTileCoordinate.y);
+		EastNorthCoordinate br = new EastNorthCoordinate(mapSpace, zoom, maxTileCoordinate.x, maxTileCoordinate.y);
 
 		StringWriter sw = new StringWriter(1024);
 		sw.write("<html>");
 		sw.write("<b>Map</b><br>");
 		sw.write("Map source: " + mapSource.getName() + "<br>");
 		sw.write("Zoom level: " + zoom + "<br>");
-		sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y
-				+ ")<br>");
-		sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
-				+ ")<br>");
+		sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y + ")<br>");
+		sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y + ")<br>");
 		sw.write("Map size: " + (maxTileCoordinate.x - minTileCoordinate.x + 1) + "x"
 				+ (maxTileCoordinate.y - minTileCoordinate.y + 1) + " pixel<br>");
 		if (parameters != null) {
@@ -221,11 +213,12 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		int width = xMax - xMin + 1;
 		int height = yMax - yMin + 1;
 		int tileCount = width * height;
-		if (mapSource instanceof MultiLayerMapSource) {
-			// We have a map with two layers and for each layer we have to
-			// download the tiles - therefore double the tileCount
-			tileCount *= 2;
-		}
+		// TODO correct tile count in case of multi-layer maps
+		// if (mapSource instanceof MultiLayerMapSource) {
+		// // We have a map with two layers and for each layer we have to
+		// // download the tiles - therefore double the tileCount
+		// tileCount *= 2;
+		// }
 		return tileCount;
 	}
 
@@ -287,12 +280,8 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		calculateRuntimeValues();
 	}
 
-	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return new DJEMultiLayer(this, tileArchive, listener);
-		else
-			return new DJERectangle(this, tileArchive, listener);
+	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener) {
+		return new DJERectangle(this, tileArchive, listener);
 	}
 
 }

@@ -74,7 +74,8 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 
 	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
 			InterruptedException {
-		return ImageIO.read(new ByteArrayInputStream(getTileData(zoom, x, y)));
+		byte[] data = getTileData(zoom, x, y);
+		return ImageIO.read(new ByteArrayInputStream(data));
 	}
 
 	public int getMaxZoom() {

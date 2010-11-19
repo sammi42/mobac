@@ -22,7 +22,6 @@ import java.awt.image.BufferedImage;
 
 import mobac.exceptions.DownloadFailedException;
 import mobac.gui.mapview.Tile.TileState;
-import mobac.gui.mapview.interfaces.TileLoaderJobCreator;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.MapSource;
@@ -39,7 +38,7 @@ import org.apache.log4j.Logger;
  * @author Jan Peter Stotz
  * @author r_x
  */
-public class TileLoader implements TileLoaderJobCreator {
+public class TileLoader {
 
 	private static final Logger log = Logger.getLogger(TileLoader.class);
 

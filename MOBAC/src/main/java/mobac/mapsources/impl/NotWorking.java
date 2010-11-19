@@ -18,55 +18,12 @@ package mobac.mapsources.impl;
 
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.HttpMapSource;
-import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
 
-
 public class NotWorking {
-
-	protected static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
-
-	/**
-	 * Not working correctly:
-	 * 
-	 * 1. The map is a "sparse map" (only tiles are present that have content - the other are missing) <br>
-	 * 2. The map layer's background is not transparent!
-	 */
-	public static class OpenSeaMapLayer extends AbstractHttpMapSource {
-
-		public OpenSeaMapLayer(String name) {
-			super(name, 11, 17, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return LAYER_OPENSEA + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-	}
-
-	/**
-	 * Not working correctly!
-	 * 
-	 *@see OpenSeaMapLayer
-	 */
-	public static class OpenSeaMap extends OpenSeaMapLayer implements MultiLayerMapSource {
-
-		private MapSource mapnik = new Mapnik();
-
-		public OpenSeaMap() {
-			super("OpenSeaMap");
-		}
-
-		public MapSource getBackgroundMapSource() {
-			return mapnik;
-		}
-
-	}
 
 	/**
 	 * AustrianMap

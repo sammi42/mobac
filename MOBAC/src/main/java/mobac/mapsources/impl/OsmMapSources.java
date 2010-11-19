@@ -17,23 +17,38 @@
 package mobac.mapsources.impl;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.MemoryCacheImageInputStream;
+
+import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.program.model.TileImageType;
+import mobac.utilities.Utilities;
 
 public class OsmMapSources {
 
-	protected static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
-	protected static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
+	public static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
+	public static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 	public static final String MAP_HIKING_TRAILS = "http://www.wanderreitkarte.de/topo/";
 	public static final String MAP_HIKING_BASE = "http://www.wanderreitkarte.de/base/";
 	public static final String MAP_HIKING_RELIEF = "http://www.wanderreitkarte.de/hills/";
-	protected static final String MAP_PISTE = "http://tiles.openpistemap.org/contours/";
+	public static final String MAP_PISTE = "http://tiles.openpistemap.org/contours/";
+	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
 
 	protected static abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
 
@@ -180,6 +195,11 @@ public class OsmMapSources {
 			return MAP_HIKING_RELIEF + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
+		@Override
+		public Color getBackgroundColor() {
+			return Color.WHITE;
+		}
+
 	}
 
 	public static class OsmHikingBase extends AbstractHttpMapSource {
@@ -199,27 +219,12 @@ public class OsmMapSources {
 
 	}
 
-	public static class OsmHikingMapWithReliefBase extends OsmHikingMap implements MultiLayerMapSource {
+	public static class OsmHikingMapWithReliefBase extends AbstractMultiLayerMapSource {
 
-		private MapSource background = new OsmHikingReliefBg();
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Hiking with Base&Hill";
-		}
-
-		@Override
-		public String getName() {
-			return "OSM Hiking with Relief and Base";
-		}
-
-		@Override
-		public int getMaxZoom() {
-			return 15;
-		}
-
-		public MapSource getBackgroundMapSource() {
-			return background;
+		public OsmHikingMapWithReliefBase() {
+			super("OSM Hiking with Relief and Base", TileImageType.PNG);
+			mapSources = new MapSource[] { new OsmHikingBase(), new OsmHikingRelief(), new OsmHikingMap() };
+			initializeValues();
 		}
 
 		@Override
@@ -229,63 +234,39 @@ public class OsmMapSources {
 
 	}
 
-	public static class OsmHikingReliefBg extends OsmHikingRelief implements MultiLayerMapSource {
+	public static class OsmHikingMapWithRelief extends AbstractMultiLayerMapSource {
 
-		private MapSource background = new OsmHikingBase();
-
-		public MapSource getBackgroundMapSource() {
-			return background;
+		public OsmHikingMapWithRelief() {
+			super("OSM Hiking with Relief", TileImageType.PNG);
+			mapSources = new MapSource[] { new OsmHikingMap(), new OsmHikingRelief() };
+			initializeValues();
 		}
 
-	}
-
-	public static class OsmHikingMapWithRelief extends OsmHikingMap implements MultiLayerMapSource {
-
-		private MapSource background = new OsmHikingRelief();
+		@Override
+		public Color getBackgroundColor() {
+			return Color.WHITE;
+		}
 
 		@Override
 		public String toString() {
 			return "OpenStreetMap Hiking with Relief";
 		}
 
-		@Override
-		public String getName() {
-			return "OSM Hiking with Relief";
-		}
-
-		@Override
-		public int getMaxZoom() {
-			return 15;
-		}
-
-		public MapSource getBackgroundMapSource() {
-			return background;
-		}
-
-		@Override
-		public Color getBackgroundColor() {
-			return Color.WHITE;
-		}
-
 	}
 
-	public static class OsmHikingMapWithBase extends OsmHikingMap implements MultiLayerMapSource {
+	public static class OsmHikingMapWithBase extends AbstractMultiLayerMapSource {
 
-		private MapSource background = new OsmHikingBase();
+		public OsmHikingMapWithBase() {
+			super("OSM Hiking with Base", TileImageType.PNG);
+			mapSources = new MapSource[] { new OsmHikingBase(), new OsmHikingMap() };
+			initializeValues();
+		}
 
 		@Override
 		public String toString() {
 			return "OpenStreetMap Hiking with Base";
 		}
 
-		@Override
-		public String getName() {
-			return "OSM Hiking with Base";
-		}
-
-		public MapSource getBackgroundMapSource() {
-			return background;
-		}
 	}
 
 	public static class OpenPisteMap extends AbstractHttpMapSource {
@@ -342,17 +323,80 @@ public class OsmMapSources {
 
 	}
 
-	public static class Hikebikemap extends HikebikemapRelief implements MultiLayerMapSource {
+	public static class Hikebikemap extends AbstractMultiLayerMapSource {
 
-		private final MapSource BASE = new HikebikemapBase();
+		public Hikebikemap() {
+			super("OpenStreetMap Hikebikemap.de", TileImageType.PNG);
+			mapSources = new MapSource[] { new HikebikemapBase(), new HikebikemapRelief() };
+			initializeValues();
+		}
 
-		public MapSource getBackgroundMapSource() {
-			return BASE;
+	}
+
+	/**
+	 * Not working correctly:
+	 * 
+	 * 1. The map is a "sparse map" (only tiles are present that have content - the other are missing) <br>
+	 * 2. The map layer's background is not transparent!
+	 */
+	public static class OpenSeaMapLayer extends AbstractHttpMapSource {
+
+		public OpenSeaMapLayer() {
+			super("OpenSeaMap", 11, 17, TileImageType.PNG, TileUpdate.LastModified);
+		}
+
+		public String getTileUrl(int zoom, int tilex, int tiley) {
+			return LAYER_OPENSEA + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 		@Override
-		public String toString() {
-			return "OpenStreetMap Hikebikemap.de";
+		public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+				InterruptedException {
+			try {
+				ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
+				byte[] data = getTileData(zoom, x, y);
+				reader.setInput(new MemoryCacheImageInputStream(new ByteArrayInputStream(data)), false, false);
+				BufferedImage image = reader.read(0);
+				System.out.println(getTileUrl(zoom, x, y) + " " + image.getColorModel().getClass());
+				if (image.getTransparency() == Transparency.OPAQUE
+						&& image.getColorModel() instanceof ComponentColorModel) {
+
+					// IIOMetadata meta = reader.getImageMetadata(0);
+					// Node node = meta.getAsTree("javax_imageio_png_1.0");
+					// IIOMetadataNode tRNS = node.
+					// IIOMetadataNode node = meta.getStandardTransparencyNode().getAttributeNode("tRNS_RGB");
+					// meta.getStandardTransparencyNode().getAttribute("tRNS_RGB");
+					Image correctedImage = Utilities.makeColorTransparent(image, new Color(248, 248, 248));
+					BufferedImage image2 = new BufferedImage(image.getWidth(), image.getHeight(),
+							BufferedImage.TYPE_INT_ARGB);
+					Graphics2D g = image2.createGraphics();
+					try {
+						g.drawImage(correctedImage, 0, 0, null);
+						g.drawRect(0, 0, image.getWidth() - 1, image.getHeight() - 1);
+						image = image2;
+					} finally {
+						g.dispose();
+					}
+				}
+				return image;
+			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
+				System.err.println(getTileUrl(zoom, x, y));
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
+	/**
+	 *@see OpenSeaMapLayer
+	 */
+	public static class OpenSeaMap extends AbstractMultiLayerMapSource {
+
+		public OpenSeaMap() {
+			super("OpenSeaMap", TileImageType.PNG);
+			mapSources = new MapSource[] { new Mapnik(), new OpenSeaMapLayer() };
+			initializeValues();
 		}
 
 	}

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -47,6 +48,7 @@ import mobac.mapsources.impl.OsmMapSources.CycleMap;
 import mobac.mapsources.impl.OsmMapSources.Hikebikemap;
 import mobac.mapsources.impl.OsmMapSources.Mapnik;
 import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
+import mobac.mapsources.impl.OsmMapSources.OpenSeaMap;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMap;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithBase;
 import mobac.mapsources.impl.OsmMapSources.OsmHikingMapWithRelief;
@@ -118,6 +120,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new OsmHikingMapWithBase(), //
 				new OsmHikingMapWithRelief(), // 
 				new OsmHikingMapWithReliefBase(), //
+				new OpenSeaMap(), //
 				new Hikebikemap(), //
 				new OsmPublicTransport(), // 
 				new OpenPisteMap(), //
@@ -181,6 +184,28 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		for (MapSource ms : Settings.getInstance().customMapSources)
 			mapSources.add(ms);
 		return mapSources;
+	}
+
+	@Override
+	public Vector<MapSource> getAllLayerMapSources() {
+		Vector<MapSource> all = getAllMapSources();
+		TreeSet<MapSource> uniqueSources = new TreeSet<MapSource>(new Comparator<MapSource>() {
+
+			public int compare(MapSource o1, MapSource o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+			
+		});
+		for (MapSource ms : all) {
+			if (ms instanceof AbstractMultiLayerMapSource) {
+				for (MapSource lms : ((AbstractMultiLayerMapSource) ms)) {
+					uniqueSources.add(lms);
+				}
+			} else
+				uniqueSources.add(ms);
+		}
+		Vector<MapSource> result = new Vector<MapSource>(uniqueSources);
+		return result;
 	}
 
 	@Override

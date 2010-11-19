@@ -25,16 +25,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobac.program.JobDispatcher.Job;
-import mobac.program.download.jobenumerators.DJEMultiLayer;
 import mobac.program.download.jobenumerators.DJEPolygon;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MultiLayerMapSource;
 import mobac.utilities.tar.TarIndexedArchive;
-
 
 @XmlRootElement
 public class MapPolygon extends Map {
@@ -45,8 +42,8 @@ public class MapPolygon extends Map {
 	protected MapPolygon() {
 	}
 
-	public MapPolygon(Layer layer, String name, MapSource mapSource, int zoom,
-			Point minTileCoordinate, Point maxTileCoordinate, TileImageParameters parameters) {
+	public MapPolygon(Layer layer, String name, MapSource mapSource, int zoom, Point minTileCoordinate,
+			Point maxTileCoordinate, TileImageParameters parameters) {
 		super(layer, name, mapSource, zoom, minTileCoordinate, maxTileCoordinate, parameters);
 
 		// Example diamond
@@ -80,10 +77,8 @@ public class MapPolygon extends Map {
 	@Override
 	public String getToolTip() {
 		MapSpace mapSpace = mapSource.getMapSpace();
-		EastNorthCoordinate tl = new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate.x,
-				minTileCoordinate.y);
-		EastNorthCoordinate br = new EastNorthCoordinate(mapSpace, zoom, maxTileCoordinate.x,
-				maxTileCoordinate.y);
+		EastNorthCoordinate tl = new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate.x, minTileCoordinate.y);
+		EastNorthCoordinate br = new EastNorthCoordinate(mapSpace, zoom, maxTileCoordinate.x, maxTileCoordinate.y);
 
 		StringWriter sw = new StringWriter(1024);
 		sw.write("<html>");
@@ -91,10 +86,8 @@ public class MapPolygon extends Map {
 		sw.write("Map source: " + mapSource.getName() + "<br>");
 		sw.write("Zoom level: " + zoom + "<br>");
 		sw.write("Polygon points: " + polygon.npoints + "<br>");
-		sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y
-				+ ")<br>");
-		sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y
-				+ ")<br>");
+		sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y + ")<br>");
+		sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y + ")<br>");
 		sw.write("Map size: " + (maxTileCoordinate.x - minTileCoordinate.x + 1) + "x"
 				+ (maxTileCoordinate.y - minTileCoordinate.y + 1) + " pixel<br>");
 		if (parameters != null) {
@@ -108,12 +101,8 @@ public class MapPolygon extends Map {
 	}
 
 	@Override
-	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
-		if (mapSource instanceof MultiLayerMapSource)
-			return new DJEMultiLayer(this, tileArchive, listener);
-		else
-			return new DJEPolygon(this, tileArchive, listener);
+	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener) {
+		return new DJEPolygon(this, tileArchive, listener);
 	}
 
 	public Polygon getPolygon() {

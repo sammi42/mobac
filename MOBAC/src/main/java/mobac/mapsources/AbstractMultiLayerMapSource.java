@@ -48,6 +48,10 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 		}
 	}
 
+	public MapSource[] getLayerMapSources() {
+		return mapSources;
+	}
+
 	public Color getBackgroundColor() {
 		return Color.BLACK;
 	}

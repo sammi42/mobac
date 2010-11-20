@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.gui.panels;
 
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -28,18 +29,21 @@ import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.interfaces.MapEventListener;
 import mobac.gui.mapview.layer.TileStoreCoverageLayer;
+import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;
 
 public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEventListener, ActionListener {
 
-	JButton showCoverage;
-	JComboBox zoomCombo;
-	PreviewMap mapViewer;
+	private JButton showCoverage;
+	private JComboBox layerSelector;
+	private JComboBox zoomCombo;
+	private PreviewMap mapViewer;
 
 	public JTileStoreCoveragePanel(PreviewMap mapViewer) {
 		super("Tile store coverage");
+		contentContainer.setLayout(new GridBagLayout());
 		this.mapViewer = mapViewer;
 
 		showCoverage = new JButton("Show coverage");
@@ -52,10 +56,13 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		titlePanel.setToolTipText("<html>Displays the regions for the curently "
 				+ "selected map source that has been <br> downloaded and "
 				+ "which are therefore offline available in the tile store (tile cache)</html>");
+		layerSelector = new JComboBox();
 
 		contentContainer.add(new JLabel("zoom level"), GBC.std());
 		contentContainer.add(zoomCombo, GBC.std());
-		contentContainer.add(showCoverage, GBC.std());
+		contentContainer.add(showCoverage, GBC.eol());
+		contentContainer.add(new JLabel("Layer:"), GBC.std());
+		contentContainer.add(layerSelector, GBC.std().gridwidth(2));
 		mapSourceChanged(mapViewer.getMapSource());
 		mapViewer.addMapEventListener(this);
 	}
@@ -66,7 +73,8 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 			return;
 		TileStoreCoverageLayer.removeCacheCoverageLayers();
 		mapViewer.repaint();
-		TileStoreCoverageLayer tscl = new TileStoreCoverageLayer(mapViewer, zoom);
+		TileStoreCoverageLayer tscl = new TileStoreCoverageLayer(mapViewer,
+				(MapSource) layerSelector.getSelectedItem(), zoom);
 		mapViewer.mapLayers.add(tscl);
 	}
 
@@ -86,6 +94,16 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		zoomCombo.setModel(new DefaultComboBoxModel(items));
 		zoomCombo.setMaximumRowCount(10);
 		zoomCombo.setSelectedItem(selZoom);
+		MapSource[] layers;
+		if (newMapSource instanceof AbstractMultiLayerMapSource) {
+			layers = ((AbstractMultiLayerMapSource) newMapSource).getLayerMapSources();
+			layerSelector.setEnabled(true);
+		} else {
+			layers = new MapSource[] { newMapSource };
+			layerSelector.setEnabled(false);
+		}
+		layerSelector.setModel(new DefaultComboBoxModel(layers));
+		layerSelector.setSelectedIndex(0);
 	}
 
 	public void selectNextMapSource() {

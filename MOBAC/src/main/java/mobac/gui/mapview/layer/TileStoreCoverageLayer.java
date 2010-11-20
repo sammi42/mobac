@@ -59,8 +59,8 @@ public class TileStoreCoverageLayer implements MapLayer {
 		}
 	}
 
-	public TileStoreCoverageLayer(PreviewMap mapViewer, int zoom) {
-		this.mapSource = mapViewer.getMapSource();
+	public TileStoreCoverageLayer(PreviewMap mapViewer, MapSource mapSource, int zoom) {
+		this.mapSource = mapSource;
 		this.zoom = zoom;
 
 		MapSpace mapSpace = mapSource.getMapSpace();

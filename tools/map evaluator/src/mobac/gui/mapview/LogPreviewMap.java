@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.TimerTask;
 
 import mobac.gui.mapview.layer.MapGridLayer;
-import mobac.mapsources.AbstractMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.BeanShellMapSource;
 
 
@@ -118,8 +118,8 @@ public class LogPreviewMap extends PreviewMap {
 			try {
 				if (mapSource instanceof BeanShellMapSource)
 					tileUrl = ((BeanShellMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
-				if (mapSource instanceof AbstractMapSource)
-					tileUrl = ((AbstractMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
+				if (mapSource instanceof AbstractHttpMapSource)
+					tileUrl = ((AbstractHttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				if (tileUrl != null) {
 					URL url = new URL(tileUrl);
 					String strUrl = url.getHost() + url.getPath();

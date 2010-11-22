@@ -56,7 +56,7 @@ public class MapEvaluator extends JFrame {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		previewMap = new LogPreviewMap();
-		previewMap.setMapMarkerVisible(true);
+		//previewMap.setMapMarkerVisible(true);
 
 		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
 

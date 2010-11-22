@@ -1,14 +1,20 @@
 package mobac.mapsources;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
+
+import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.gui.MapEvaluator;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.interfaces.MapSource;
+import mobac.program.download.TileDownLoader;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
 
@@ -17,7 +23,7 @@ import org.apache.log4j.Logger;
 import bsh.EvalError;
 import bsh.Interpreter;
 
-public class BeanShellMapSource implements MapSource {
+public class BeanShellMapSource implements HttpMapSource {
 
 	private static final String AH_ERROR = "Sourced file: inline evaluation of: "
 			+ "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
@@ -33,6 +39,7 @@ public class BeanShellMapSource implements MapSource {
 	private final Interpreter i;
 
 	public BeanShellMapSource(String code) throws EvalError {
+		super();
 		name = "TestMapSource" + NUM++;
 		i = new Interpreter();
 		i.eval("import java.net.HttpURLConnection;");
@@ -91,6 +98,21 @@ public class BeanShellMapSource implements MapSource {
 			throw new IOException(e);
 		}
 	}
+	
+	
+
+	@Override
+	public byte[] getTileData(int zoom, int x, int y) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
+		return TileDownLoader.getImage(x, y, zoom, this);
+	}
+
+	@Override
+	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
+		byte[] data = getTileData(zoom, x, y);
+		return ImageIO.read(new ByteArrayInputStream(data));
+	}
 
 	@Override
 	public MapSpace getMapSpace() {
@@ -125,11 +147,6 @@ public class BeanShellMapSource implements MapSource {
 	@Override
 	public TileUpdate getTileUpdate() {
 		return TileUpdate.None;
-	}
-
-	@Override
-	public boolean allowFileStore() {
-		return false;
 	}
 
 	public Color getBackgroundColor() {

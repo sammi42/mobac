@@ -119,6 +119,8 @@ public class TileLoader {
 		protected boolean loadTileFromStore() {
 			try {
 				BufferedImage image = mapSource.getTileImage(zoom, tilex, tiley, LoadMethod.CACHE);
+				if (image == null)
+					return false;
 				tile.setImage(image);
 				listener.tileLoadingFinished(tile, true);
 				if (TileDownLoader.isTileExpired(tileStoreEntry))

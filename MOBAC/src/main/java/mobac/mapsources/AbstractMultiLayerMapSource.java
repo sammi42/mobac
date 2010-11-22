@@ -14,7 +14,6 @@ import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
@@ -77,7 +76,8 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 		return null;
 	}
 
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException, TileException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException,
+			TileException {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
 		BufferedImage image = getTileImage(zoom, x, y, loadMethod);
 		if (image == null)
@@ -86,7 +86,8 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 		return buf.toByteArray();
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException, TileException {
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+			InterruptedException, TileException {
 		int tileSize = mapSpace.getTileSize();
 		BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D g2 = image.createGraphics();

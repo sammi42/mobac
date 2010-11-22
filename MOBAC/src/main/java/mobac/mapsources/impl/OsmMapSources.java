@@ -31,6 +31,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import mobac.exceptions.TileException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.AbstractMultiLayerMapSource;
@@ -39,7 +40,6 @@ import mobac.program.Logging;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
@@ -356,8 +356,8 @@ public class OsmMapSources {
 		}
 
 		@Override
-		public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
-				InterruptedException {
+		public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+				InterruptedException, TileException {
 			byte[] data = super.getTileData(zoom, x, y, loadMethod);
 			if (data != null && data.length == 0)
 				// Non-existent tile loaded from tile store
@@ -375,7 +375,6 @@ public class OsmMapSources {
 					return null;
 				reader.setInput(new MemoryCacheImageInputStream(new ByteArrayInputStream(data)), false, false);
 				BufferedImage image = reader.read(0);
-				System.out.println(getTileUrl(zoom, x, y) + " " + image.getColorModel().getClass());
 				if (image.getTransparency() == Transparency.OPAQUE
 						&& image.getColorModel() instanceof ComponentColorModel) {
 

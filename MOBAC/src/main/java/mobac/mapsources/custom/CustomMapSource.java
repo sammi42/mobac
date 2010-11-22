@@ -33,7 +33,6 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
 
@@ -110,13 +109,13 @@ public class CustomMapSource implements HttpMapSource {
 		return tmp;
 	}
 
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
-			InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
 		return TileDownLoader.downloadTileAndUpdateStore(x, y, zoom, this);
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
-			InterruptedException {
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
 		return ImageIO.read(new ByteArrayInputStream(getTileData(zoom, x, y, LoadMethod.DEFAULT)));
 	}
 

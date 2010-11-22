@@ -83,8 +83,6 @@ public class TileStore {
 	}
 
 	public TileDbEntry getTile(int x, int y, int zoom, MapSource mapSource) {
-		if (!mapSource.allowFileStore())
-			return null;
 		try {
 			return getTileDatabase(mapSource).get(new TileDbKey(zoom, x, y));
 		} catch (DatabaseException e) {
@@ -102,8 +100,6 @@ public class TileStore {
 	}
 
 	public void prepareTileStore(MapSource mapSource) {
-		if (!mapSource.allowFileStore())
-			return;
 		try {
 			getTileDatabase(mapSource);
 		} catch (DatabaseException e) {

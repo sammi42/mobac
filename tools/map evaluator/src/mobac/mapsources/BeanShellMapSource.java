@@ -98,19 +98,17 @@ public class BeanShellMapSource implements HttpMapSource {
 			throw new IOException(e);
 		}
 	}
-	
-	
 
 	@Override
-	public byte[] getTileData(int zoom, int x, int y) throws IOException,
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
 		return TileDownLoader.getImage(x, y, zoom, this);
 	}
 
 	@Override
-	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException,
-			UnrecoverableDownloadException, InterruptedException {
-		byte[] data = getTileData(zoom, x, y);
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, UnrecoverableDownloadException, InterruptedException {
+		byte[] data = getTileData(zoom, x, y, LoadMethod.DEFAULT);
 		return ImageIO.read(new ByteArrayInputStream(data));
 	}
 
@@ -132,11 +130,6 @@ public class BeanShellMapSource implements HttpMapSource {
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	public String getStoreName() {
-		return getName();
 	}
 
 	@Override

@@ -32,7 +32,9 @@ import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.TileImageType;
+import mobac.program.tilestore.TileStore;
 
 /**
  * Abstract base class for map sources.
@@ -67,14 +69,17 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 
 	public abstract String getTileUrl(int zoom, int tilex, int tiley);
 
-	public byte[] getTileData(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
-			InterruptedException {
-		return TileDownLoader.getImage(x, y, zoom, this);
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
+		if (loadMethod == LoadMethod.CACHE) {
+			return TileStore.getInstance().getTile(x, y, zoom, this).getData();
+		} else
+			return TileDownLoader.getImage(x, y, zoom, this);
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
-			InterruptedException {
-		byte[] data = getTileData(zoom, x, y);
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
+		byte[] data = getTileData(zoom, x, y, loadMethod);
 		return ImageIO.read(new ByteArrayInputStream(data));
 	}
 

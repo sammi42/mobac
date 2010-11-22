@@ -36,7 +36,7 @@ public class Osmdroid extends OSMTracker {
 		if (customAtlasDir == null)
 			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());		
+		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
 		super.startAtlasCreation(atlas, customAtlasDir);
 		zipStream = new ZipStoreOutputStream(new File(atlasDir, atlasDirName + ".zip"));
 		mapTileWriter = new OSMDroidTileWriter();
@@ -57,7 +57,7 @@ public class Osmdroid extends OSMTracker {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
-		currentMapStoreName = map.getMapSource().getStoreName();
+		currentMapStoreName = map.getMapSource().getName();
 		Class<?> mapSourceClass = map.getMapSource().getClass();
 		if (TilesAtHome.class.equals(mapSourceClass))
 			currentMapStoreName = "Osmarender";

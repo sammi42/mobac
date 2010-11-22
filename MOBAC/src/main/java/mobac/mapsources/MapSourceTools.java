@@ -53,7 +53,7 @@ public class MapSourceTools {
 	}
 
 	public static String loadMapUrl(MapSource mapSource, String type) {
-		String name = mapSource.getStoreName().replaceAll(" ", "");
+		String name = mapSource.getName().replaceAll(" ", "");
 		String url = System.getProperty(name + "." + type);
 		if (url == null)
 			log.error("Unable to load url for map source " + mapSource.getClass().getSimpleName());

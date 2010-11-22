@@ -35,14 +35,16 @@ import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
+import mobac.program.Logging;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.TileImageType;
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.TileStoreEntry;
 import mobac.utilities.Utilities;
 import mobac.utilities.imageio.PngConstants;
-
-import org.w3c.dom.Node;
 
 public class OsmMapSources {
 
@@ -354,11 +356,23 @@ public class OsmMapSources {
 		}
 
 		@Override
-		public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+		public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
+				InterruptedException {
+			byte[] data = super.getTileData(zoom, x, y, loadMethod);
+			if (data != null && data.length == 0)
+				// Non-existent tile loaded from tile store
+				return null;
+			return data;
+		}
+
+		@Override
+		public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
 				InterruptedException {
 			try {
 				ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
-				byte[] data = getTileData(zoom, x, y);
+				byte[] data = getTileData(zoom, x, y, LoadMethod.DEFAULT);
+				if (data == null)
+					return null;
 				reader.setInput(new MemoryCacheImageInputStream(new ByteArrayInputStream(data)), false, false);
 				BufferedImage image = reader.read(0);
 				System.out.println(getTileUrl(zoom, x, y) + " " + image.getColorModel().getClass());
@@ -399,9 +413,13 @@ public class OsmMapSources {
 				}
 				return image;
 			} catch (FileNotFoundException e) {
+				TileStore ts = TileStore.getInstance();
+				long time = System.currentTimeMillis();
+				TileStoreEntry entry = ts.createNewEntry(x, y, zoom, new byte[] {}, time, time + (1000 * 60 * 60 * 60),
+						"");
+				ts.putTile(entry, this);
 			} catch (Exception e) {
-				System.err.println(getTileUrl(zoom, x, y));
-				e.printStackTrace();
+				Logging.LOG.error("Unknown error in OpenSeaMap", e);
 			}
 			return null;
 		}

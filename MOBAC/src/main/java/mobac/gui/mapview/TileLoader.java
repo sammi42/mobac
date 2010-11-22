@@ -25,6 +25,7 @@ import mobac.gui.mapview.Tile.TileState;
 import mobac.gui.mapview.interfaces.TileLoaderListener;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 
@@ -96,7 +97,7 @@ public class TileLoader {
 
 		protected void loadOrUpdateTile() {
 			try {
-				BufferedImage image = mapSource.getTileImage(zoom, tilex, tiley);
+				BufferedImage image = mapSource.getTileImage(zoom, tilex, tiley, LoadMethod.DEFAULT);
 				if (image != null) {
 					tile.setImage(image);
 					tile.setTileState(TileState.TS_LOADED);
@@ -117,10 +118,8 @@ public class TileLoader {
 
 		protected boolean loadTileFromStore() {
 			try {
-				tileStoreEntry = tileStore.getTile(tilex, tiley, zoom, mapSource);
-				if (tileStoreEntry == null)
-					return false;
-				tile.loadImage(tileStoreEntry.getData());
+				BufferedImage image = mapSource.getTileImage(zoom, tilex, tiley, LoadMethod.CACHE);
+				tile.setImage(image);
 				listener.tileLoadingFinished(tile, true);
 				if (TileDownLoader.isTileExpired(tileStoreEntry))
 					return false;

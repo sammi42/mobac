@@ -10,10 +10,11 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
-import mobac.exceptions.UnrecoverableDownloadException;
+import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
@@ -76,18 +77,16 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 		return null;
 	}
 
-	public byte[] getTileData(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
-			InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException, TileException {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-		BufferedImage image = getTileImage(zoom, x, y);
+		BufferedImage image = getTileImage(zoom, x, y, loadMethod);
 		if (image == null)
 			return null;
 		ImageIO.write(image, tileImageType.getFileExt(), buf);
 		return buf.toByteArray();
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
-			InterruptedException {
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException, TileException {
 		int tileSize = mapSpace.getTileSize();
 		BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D g2 = image.createGraphics();
@@ -96,9 +95,9 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 			g2.fillRect(0, 0, tileSize, tileSize);
 			boolean used = false;
 			for (MapSource layerMapSource : mapSources) {
-				BufferedImage layerImage = layerMapSource.getTileImage(zoom, x, y);
+				BufferedImage layerImage = layerMapSource.getTileImage(zoom, x, y, loadMethod);
 				if (layerImage != null) {
-					log.debug("Loading " + layerMapSource + " " + x + " " + y + " " + zoom);
+					// log.trace("Multi layer loading: " + layerMapSource + " " + x + " " + y + " " + zoom);
 					g2.drawImage(layerImage, 0, 0, null);
 					used = true;
 				}

@@ -26,6 +26,7 @@ import mobac.program.JobDispatcher.Job;
 import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
@@ -61,7 +62,7 @@ public class DownloadJob implements Job {
 		try {
 			// Thread.sleep(1500);
 			listener.jobStarted();
-			byte[] tileData = mapSource.getTileData(zoomValue, xValue, yValue);
+			byte[] tileData = mapSource.getTileData(zoomValue, xValue, yValue, LoadMethod.DEFAULT);
 			String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, xValue, yValue);
 			synchronized (tileArchive) {
 				tileArchive.writeFileFromData(tileFileName, tileData);

@@ -17,7 +17,7 @@
     </layout>
   </appender>
   
-  <logger name="org.openstreetmap.gui.jmapviewer">
+  <logger name="mobac.mapsources">
   	<level value="DEBUG" />
   </logger>
   
@@ -30,7 +30,7 @@
   </logger>
       
   <logger name="mobac.program.tilestore">
-  	<level value="DEBUG" />
+  	<level value="TRACE" />
   </logger>
   
   <logger name="mobac.program.atlascreators">
@@ -43,10 +43,6 @@
     
   <logger name="mobac.utilities.tar">
   	<level value="TRACE" />
-  </logger>
-  
-  <logger name="mobac.program.atlascreators.impl.rmp.RmpWriter">
-   	<level value="TRACE" /> 
   </logger>
   
   <logger name="SysInfo">

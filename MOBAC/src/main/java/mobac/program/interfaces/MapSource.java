@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import mobac.exceptions.TileException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.gui.mapview.JMapViewer;
 import mobac.program.jaxb.MapSourceAdapter;
@@ -36,8 +37,10 @@ import mobac.program.model.TileImageType;
 @XmlJavaTypeAdapter(MapSourceAdapter.class)
 public interface MapSource {
 
-	public enum LOAD_METHOD  {DEFAULT, CACHE, SOURCE };
-	
+	public enum LoadMethod {
+		DEFAULT, CACHE, SOURCE
+	};
+
 	/**
 	 * Specifies the maximum zoom value. The number of zoom levels is [0.. {@link #getMaxZoom()}].
 	 * 
@@ -65,25 +68,26 @@ public interface MapSource {
 	 * @param zoom
 	 * @param x
 	 * @param y
+	 * @param loadMethod TODO
 	 * @return
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws UnrecoverableDownloadException
 	 */
-	public byte[] getTileData(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
-			InterruptedException;
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException, InterruptedException;
 
 	/**
 	 * 
 	 * @param zoom
 	 * @param x
 	 * @param y
+	 * @param loadMethod
 	 * @return
 	 * @throws IOException
 	 * @throws UnrecoverableDownloadException
 	 * @throws InterruptedException
 	 */
-	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
 			InterruptedException;
 
 	/**
@@ -98,12 +102,4 @@ public interface MapSource {
 
 	public Color getBackgroundColor();
 
-	/**
-	 * Returns the tile store name. Usually this is identically to {@link #getName()} - only for
-	 * {@link MultiLayerMapSource} this is usually a different name as the name refers to both layers and the store name
-	 * only to the current overlay.
-	 * 
-	 * @return store name used for identifying the tile store on disk (offline cache)
-	 */
-	public String getStoreName();
 }

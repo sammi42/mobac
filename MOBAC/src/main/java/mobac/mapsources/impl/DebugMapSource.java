@@ -15,6 +15,7 @@ import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.TileImageType;
 
 public class DebugMapSource implements MapSource {
@@ -55,14 +56,14 @@ public class DebugMapSource implements MapSource {
 		return null;
 	}
 
-	public byte[] getTileData(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
 			InterruptedException {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-		ImageIO.write(getTileImage(zoom, x, y), "png", buf);
+		ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
 		return buf.toByteArray();
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y) throws IOException, UnrecoverableDownloadException,
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, UnrecoverableDownloadException,
 			InterruptedException {
 		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_INDEXED, COLORMODEL);
 		Graphics2D g2 = image.createGraphics();

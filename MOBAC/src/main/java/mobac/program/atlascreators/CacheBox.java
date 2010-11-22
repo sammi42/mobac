@@ -72,7 +72,7 @@ public class CacheBox extends AtlasCreator {
 		 * We use the mapsource name as layer name. See feature request #2987674
 		 * for details.
 		 */
-		writeString(layer.getMap(0).getMapSource().getStoreName(), 32); // layer
+		writeString(layer.getMap(0).getMapSource().getName(), 32); // layer
 		// name
 		writeString(layer.getName(), 128); // layer friendly name
 		writeString("", 256); // layer url - unused

@@ -48,12 +48,11 @@ import java.util.zip.DeflaterOutputStream;
 
 import mobac.utilities.MyMath;
 
-
 /**
  * 4 Bit PNG Writer
  * <p>
- * Writes a color png image with pallette containing 16 colors. Currently the
- * image data is saved without any PNG filtering.
+ * Writes a color png image with pallette containing 16 colors. Currently the image data is saved without any PNG
+ * filtering.
  * </p>
  * 
  * Bases on the PNGWriter written by Matthias Mann - www.matthiasmann.de
@@ -75,8 +74,7 @@ public class Png4BitWriter {
 	 * 
 	 * @param out
 	 * @param image
-	 *            Must be an image with {@link ColorModel}
-	 *            {@link IndexColorModel}
+	 *            Must be an image with {@link ColorModel} {@link IndexColorModel}
 	 * @throws IOException
 	 */
 	public static void writeImage(OutputStream out, BufferedImage image) throws IOException {
@@ -87,21 +85,29 @@ public class Png4BitWriter {
 	 * 
 	 * @param out
 	 * @param image
-	 *            Must be an image with {@link ColorModel}
-	 *            {@link IndexColorModel}
+	 *            Must be an image with {@link ColorModel} {@link IndexColorModel}
 	 * @param compression
-	 *            deflater method used for compression - possible values are for
-	 *            example {@link Deflater#BEST_COMPRESSION},
-	 *            {@link Deflater#BEST_SPEED},{@link Deflater#NO_COMPRESSION}
+	 *            deflater method used for compression - possible values are for example
+	 *            {@link Deflater#BEST_COMPRESSION}, {@link Deflater#BEST_SPEED},{@link Deflater#NO_COMPRESSION}
 	 * @throws IOException
 	 */
-	public static void writeImage(OutputStream out, BufferedImage image, int compression)
-			throws IOException {
+	public static void writeImage(OutputStream out, BufferedImage image, int compression) throws IOException {
 		writeImage(out, image, compression, null);
 	}
 
-	public static void writeImage(OutputStream out, BufferedImage image, int compression,
-			String description) throws IOException {
+	/**
+	 * 
+	 * @param out
+	 *            Must be an image with {@link ColorModel} {@link IndexColorModel}
+	 * @param image
+	 *            deflater method used for compression - possible values are for example
+	 *            {@link Deflater#BEST_COMPRESSION}, {@link Deflater#BEST_SPEED},{@link Deflater#NO_COMPRESSION}
+	 * @param description
+	 *            PNG comment text (meta info)
+	 * @throws IOException
+	 */
+	public static void writeImage(OutputStream out, BufferedImage image, int compression, String description)
+			throws IOException {
 		DataOutputStream dos = new DataOutputStream(out);
 
 		int width = image.getWidth();

@@ -7,8 +7,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.util.zip.Deflater;
 
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.gui.mapview.PreviewMap;
@@ -16,8 +15,12 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
+import mobac.utilities.imageio.Png4BitWriter;
 
 public class DebugMapSource implements MapSource {
+	
+	private int pngCompressionLevel = Deflater.BEST_SPEED;
+	
 	private static final byte[] COLORS = { 0,// 
 			(byte) 0xff, (byte) 0xff, (byte) 0xff, // white
 			(byte) 0xff, (byte) 0x00, (byte) 0x00 // red
@@ -58,7 +61,9 @@ public class DebugMapSource implements MapSource {
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-		ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
+		//ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
+		String pngMetaText = String.format("zoom=%d x=%d y=%d",zoom,x,y);
+		Png4BitWriter.writeImage(buf, getTileImage(zoom, x, y, loadMethod), pngCompressionLevel, pngMetaText);
 		return buf.toByteArray();
 	}
 

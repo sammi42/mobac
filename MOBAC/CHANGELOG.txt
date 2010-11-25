@@ -14,6 +14,7 @@
  + Multi-layer maps with more than two layers are now possible
  + New map source: OSM Hiking with relief and base 
  + New map source: Open Sea Map (sea layer joined with Mapnik) 
+ + New atlas format: MGMaps/MyTrails (MGM)
 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps

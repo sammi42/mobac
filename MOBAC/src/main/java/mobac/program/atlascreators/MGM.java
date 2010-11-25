@@ -78,18 +78,6 @@ public class MGM extends AtlasCreator {
 	}
 
 	@Override
-	public void abortAtlasCreation() throws IOException {
-		// todo close files
-		/*
-		 * if (packCreator != null) packCreator.close(); packCreator = null;
-		 * 
-		 * if (filePack != null) filePack.delete(); filePack = null;
-		 */
-
-		super.abortAtlasCreation();
-	}
-
-	@Override
 	public void initializeMap(final MapInterface map, final TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 

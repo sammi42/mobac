@@ -34,7 +34,6 @@ import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
-
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline SQLite maps)
  * http://code.google.com/p/bigplanet/
@@ -147,7 +146,8 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		atlasProgress.initMapCreation(2 * (xMax - xMin + 1) * (yMax - yMin + 1));
+		int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
+		atlasProgress.initMapCreation(maxMapProgress);
 		try {
 			conn.setAutoCommit(false);
 			int batchTileCount = 0;
@@ -166,13 +166,13 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 							batchTileCount++;
 							if (heapAvailable < HEAP_MIN) {
-								log.trace("Batch commited containing " + batchTileCount + " tiles");
+								log.trace("Executing batch containing " + batchTileCount + " tiles");
 								prepStmt.executeBatch();
 								prepStmt.clearBatch();
-								atlasProgress.incMapCreationProgress(batchTileCount);
+								System.gc();
 								batchTileCount = 0;
 								conn.commit();
-								System.gc();
+								atlasProgress.incMapCreationProgress(batchTileCount);
 							}
 						}
 					} catch (IOException e) {
@@ -181,11 +181,12 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 				}
 			}
 			prepStmt.executeBatch();
-			conn.commit();
 			prepStmt.clearBatch();
-			atlasProgress.incMapCreationProgress(batchTileCount);
+			System.gc();
 			updateTileMetaInfo();
+			log.trace("Final commit");
 			conn.commit();
+			atlasProgress.setMapCreationProgress(maxMapProgress);
 		} catch (SQLException e) {
 			throw new MapCreationException(e);
 		}

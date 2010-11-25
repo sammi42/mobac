@@ -66,6 +66,7 @@ import mobac.gui.atlastree.JAtlasTree;
 import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JAtlasNameField;
 import mobac.gui.components.JCollapsiblePanel;
+import mobac.gui.components.JZoomCheckBox;
 import mobac.gui.mapview.GridZoom;
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
@@ -128,7 +129,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JComboBox atlasOutputFormatCombo;
 	private JButton createAtlasButton;
 	private JPanel zoomLevelPanel;
-	private JCheckBox[] cbZoom = new JCheckBox[0];
+	private JZoomCheckBox[] cbZoom = new JZoomCheckBox[0];
 	private JLabel amountOfTilesLabel;
 
 	private JCoordinatesPanel coordinatesPanel;
@@ -407,8 +408,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		updateMapControlsPanel();
 		updateLeftPanel();
 		leftPanel.setVisible(true);
-		calculateNrOfTilesToDownload();
 		updateZoomLevelCheckBoxes();
+		calculateNrOfTilesToDownload();
 		previewMap.grabFocus();
 	}
 
@@ -573,6 +574,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			zoomSlider.setMaximum(previewMap.getMapSource().getMaxZoom());
 			updateGridSizeCombo();
 			updateZoomLevelCheckBoxes();
+			calculateNrOfTilesToDownload();
 		}
 	}
 
@@ -628,7 +630,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		MapSource tileSource = previewMap.getMapSource();
 		int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
 		JCheckBox oldZoomLevelCheckBoxes[] = cbZoom;
-		cbZoom = new JCheckBox[zoomLevels];
+		int oldMinZoom = 0;
+		if (cbZoom.length > 0)
+			oldMinZoom = cbZoom[0].getZoomLevel();
+		cbZoom = new JZoomCheckBox[zoomLevels];
 		zoomLevelPanel.removeAll();
 
 		zoomLevelPanel.setLayout(new GridLayout(0, 10, 1, 2));
@@ -636,15 +641,17 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		for (int i = cbZoom.length - 1; i >= 0; i--) {
 			int cbz = i + tileSource.getMinZoom();
-			JCheckBox cb = new JCheckBox();
+			JZoomCheckBox cb = new JZoomCheckBox(cbz);
 			cb.setPreferredSize(new Dimension(22, 11));
 			cb.setMinimumSize(cb.getPreferredSize());
 			cb.setOpaque(false);
 			cb.setFocusable(false);
-			if (i < oldZoomLevelCheckBoxes.length)
-				cb.setSelected(oldZoomLevelCheckBoxes[i].isSelected());
+			cb.setName(Integer.toString(cbz));
+			int oldCbIndex = cbz - oldMinZoom;
+			if (oldCbIndex >= 0 && oldCbIndex < (oldZoomLevelCheckBoxes.length))
+				cb.setSelected(oldZoomLevelCheckBoxes[oldCbIndex].isSelected());
 			cb.addActionListener(cbl);
-			cb.setToolTipText("Select zoom level " + cbz + " for atlas");
+			// cb.setToolTipText("Select zoom level " + cbz + " for atlas");
 			zoomLevelPanel.add(cb);
 			cbZoom[i] = cb;
 
@@ -703,7 +710,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
 		String name = atlasNameTextField.getText();
 		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
-		SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(), cbZoom);
+		SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 		MapSelection ms = getMapSelectionCoordinates();
 		if (ms == null) {
 			JOptionPane.showMessageDialog(this, "Please select an area");
@@ -796,7 +803,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			amountOfTilesLabel.setToolTipText("");
 		} else {
 			try {
-				SelectedZoomLevels sZL = new SelectedZoomLevels(previewMap.getMapSource().getMinZoom(), cbZoom);
+				SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
 
 				int[] zoomLevels = sZL.getZoomLevels();
 

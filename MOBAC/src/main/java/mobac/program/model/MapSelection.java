@@ -19,6 +19,7 @@ package mobac.program.model;
 import java.awt.Point;
 
 import mobac.gui.mapview.JMapViewer;
+import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
@@ -216,9 +217,10 @@ public class MapSelection {
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
 		long tileCount = width * height;
-		// TODO: Correct multi-layer case
-		// if (mapSource instanceof MultiLayerMapSource)
-		// tileCount *= 2;
+		if (mapSource instanceof AbstractMultiLayerMapSource) {
+			int mapLayerCount = ((AbstractMultiLayerMapSource) mapSource).getLayerMapSources().length;
+			tileCount *= mapLayerCount;
+		}
 		return tileCount;
 	}
 
@@ -228,9 +230,10 @@ public class MapSelection {
 		long width = max.x - min.x + 1;
 		long height = max.y - min.y + 1;
 		long tileCount = width * height;
-		// TODO: Correct multi-layer case
-		// if (mapSource instanceof MultiLayerMapSource)
-		// tileCount *= 2;
+		if (mapSource instanceof AbstractMultiLayerMapSource) {
+			int mapLayerCount = ((AbstractMultiLayerMapSource) mapSource).getLayerMapSources().length;
+			tileCount *= mapLayerCount;
+		}
 		return new long[] { tileCount, width, height };
 	}
 

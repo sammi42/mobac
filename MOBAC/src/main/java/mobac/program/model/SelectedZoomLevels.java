@@ -16,25 +16,22 @@
  ******************************************************************************/
 package mobac.program.model;
 
-import javax.swing.JCheckBox;
+import mobac.gui.components.JZoomCheckBox;
 
 public class SelectedZoomLevels {
 	private boolean[] zoomLevels;
 	private int nrOfLayers;
 
-	public SelectedZoomLevels(int minZoom, JCheckBox[] zoomCheckboxes) {
-		this(minZoom + zoomCheckboxes.length);
-		for (int i = 0; i < zoomCheckboxes.length; i++) {
-			if (zoomCheckboxes[i].isSelected())
-				setZoomLevelSelected(minZoom + i);
-		}
-	}
-
-	public SelectedZoomLevels(int zommLevelCount) {
-		zoomLevels = new boolean[zommLevelCount];
+	public SelectedZoomLevels(JZoomCheckBox[] zoomCheckboxes) {
+		int maxZoomLevel = zoomCheckboxes[zoomCheckboxes.length - 1].getZoomLevel();
+		zoomLevels = new boolean[maxZoomLevel];
 		for (int i = 0; i < zoomLevels.length; i++)
 			zoomLevels[i] = false;
 		nrOfLayers = 0;
+		for (JZoomCheckBox cb : zoomCheckboxes) {
+			if (cb.isSelected())
+				setZoomLevelSelected(cb.getZoomLevel());
+		}
 	}
 
 	public void setZoomLevelSelected(int zoomLevel) {

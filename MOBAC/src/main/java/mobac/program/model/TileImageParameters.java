@@ -21,8 +21,11 @@ import java.awt.Dimension;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobac.program.interfaces.AtlasCreatorParameters;
+import mobac.program.interfaces.MapInterface;
+
 @XmlRootElement
-public class TileImageParameters implements Cloneable {
+public class TileImageParameters implements AtlasCreatorParameters<MapInterface> {
 
 	@XmlAttribute
 	private int width;

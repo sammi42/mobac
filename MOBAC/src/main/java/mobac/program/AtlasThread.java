@@ -160,7 +160,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 		Settings s = Settings.getInstance();
 
-		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler);
+		downloadJobDispatcher = new JobDispatcher(s.downloadThreadCount, pauseResumeHandler, ap);
 		try {
 			for (LayerInterface layer : atlas) {
 				atlasCreator.initLayerCreation(layer);
@@ -367,7 +367,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 
 	public void jobFinishedSuccessfully(int bytesDownloaded) {
 		synchronized (this) {
-			ap.addDownloadedBytes(bytesDownloaded);
 			ap.incMapDownloadProgress();
 			activeDownloads--;
 			jobsCompleted++;

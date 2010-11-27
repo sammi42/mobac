@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
@@ -77,19 +78,40 @@ public class TileDownLoader {
 					log.trace("Expired: " + mapSource.getName() + " " + tile);
 				} else {
 					log.trace("Tile used from tilestore");
-					return tile.getData();
+					byte[] data = tile.getData();
+					notifyCachedTileUsed(data.length);
+					return data;
 				}
 			}
 		}
 		byte[] data = null;
 		if (tile == null) {
 			data = downloadTileAndUpdateStore(x, y, zoom, mapSource);
+			notifyTileDownloaded(data.length);
 		} else {
-			updateStoredTile(tile, mapSource);
-			data = tile.getData();
+			byte[] updatedData = updateStoredTile(tile, mapSource);
+			if (updatedData != null) {
+				data = updatedData;
+				notifyTileDownloaded(data.length);
+			} else {
+				data = tile.getData();
+				notifyCachedTileUsed(data.length);
+			}
+		}
+		return data;
+	}
+
+	private static void notifyTileDownloaded(int size) {
+		if (Thread.currentThread() instanceof MapSourceListener) {
+			((MapSourceListener) Thread.currentThread()).tileDownloaded(size);
 		}
 
-		return data;
+	}
+
+	private static void notifyCachedTileUsed(int size) {
+		if (Thread.currentThread() instanceof MapSourceListener) {
+			((MapSourceListener) Thread.currentThread()).tileLoadedFromCache(size);
+		}
 	}
 
 	/**
@@ -126,6 +148,7 @@ public class TileDownLoader {
 
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new DownloadFailedException(conn, code);
+
 		String contentType = conn.getContentType();
 		if (contentType != null && !contentType.startsWith("image/"))
 			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);

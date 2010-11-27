@@ -31,6 +31,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
@@ -75,7 +76,11 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 			TileStoreEntry entry = TileStore.getInstance().getTile(x, y, zoom, this);
 			if (entry == null)
 				return null;
-			return entry.getData();
+			byte[] data = entry.getData();
+			if (Thread.currentThread() instanceof MapSourceListener) {
+				((MapSourceListener) Thread.currentThread()).tileDownloaded(data.length);
+			}
+			return data;
 		} else
 			return TileDownLoader.getImage(x, y, zoom, this);
 	}

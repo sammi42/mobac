@@ -45,6 +45,7 @@ import mobac.program.Logging;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.model.Settings;
 import mobac.utilities.GBC;
 import mobac.utilities.GUIExceptionHandler;
@@ -54,11 +55,10 @@ import mobac.utilities.Utilities;
 import org.apache.log4j.Logger;
 
 /**
- * A window showing the progress while {@link AtlasThread} downloads and
- * processes the map tiles.
+ * A window showing the progress while {@link AtlasThread} downloads and processes the map tiles.
  * 
  */
-public class AtlasProgress extends JFrame implements ActionListener {
+public class AtlasProgress extends JFrame implements ActionListener, MapSourceListener {
 
 	private static Logger log = Logger.getLogger(AtlasProgress.class);
 
@@ -80,6 +80,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		MapInterface map;
 		MapInfo mapInfo;
 		long numberOfDownloadedBytes = 0;
+		long numberOfBytesLoadedFromCache = 0;
 		int totalNumberOfTiles = 0;
 		int totalNumberOfMaps = 0;
 		int totalProgress = 0;
@@ -116,6 +117,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 	private JLabel nrOfDownloadedBytesValue;
 	private JLabel nrOfDownloadedBytesPerSecond;
 	private JLabel nrOfDownloadedBytesPerSecondValue;
+	private JLabel nrOfCacheBytes;
+	private JLabel nrOfCacheBytesValue;
 	private JLabel activeDownloads;
 	private JLabel activeDownloadsValue;
 	private JLabel downloadErrors;
@@ -151,7 +154,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		guiUpdater = new GUIUpdater();
 
 		createComponents();
-
+		guiUpdater.run();
 		// Initialize the layout in respect to the layout (font size ...)
 		pack();
 
@@ -195,8 +198,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 		nrOfDownloadedBytesPerSecond = new JLabel("Average download speed");
 		nrOfDownloadedBytesPerSecondValue = new JLabel();
-		nrOfDownloadedBytes = new JLabel("Total download size");
+		nrOfDownloadedBytes = new JLabel("Downloaded");
 		nrOfDownloadedBytesValue = new JLabel();
+		nrOfCacheBytes = new JLabel("Loaded from tile store");
+		nrOfCacheBytesValue = new JLabel();
+
 		activeDownloads = new JLabel("Active tile fetcher threads");
 		activeDownloadsValue = new JLabel();
 		downloadErrors = new JLabel("Download errors");
@@ -255,6 +261,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		GBC gbci = GBC.std().insets(0, 3, 3, 3);
 		infoPanel.add(nrOfDownloadedBytes, gbci);
 		infoPanel.add(nrOfDownloadedBytesValue, gbci.toggleEol());
+		infoPanel.add(nrOfCacheBytes, gbci.toggleEol());
+		infoPanel.add(nrOfCacheBytesValue, gbci.toggleEol());
 		infoPanel.add(nrOfDownloadedBytesPerSecond, gbci.toggleEol());
 		infoPanel.add(nrOfDownloadedBytesPerSecondValue, gbci.toggleEol());
 		infoPanel.add(activeDownloads, gbci.toggleEol());
@@ -265,7 +273,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		infoPanel.add(totalDownloadTimeValue, gbci.toggleEol());
 
 		JPanel bottomPanel = new JPanel(new GridBagLayout());
-		bottomPanel.add(infoPanel, GBC.std().gridheight(2));
+		bottomPanel.add(infoPanel, GBC.std().gridheight(2).fillH());
 		bottomPanel.add(ignoreDlErrors, GBC.eol().anchor(GBC.EAST));
 
 		GBC gbcRight = GBC.std().anchor(GBC.SOUTHEAST).insets(5, 0, 0, 0);
@@ -362,12 +370,22 @@ public class AtlasProgress extends JFrame implements ActionListener {
 		updateGUI();
 	}
 
-	public void addDownloadedBytes(int bytes) {
-		data.numberOfDownloadedBytes += bytes;
-	}
-
 	public boolean ignoreDownloadErrors() {
 		return ignoreDlErrors.isSelected();
+	}
+
+	public void tileDownloaded(int size) {
+		synchronized (data) {
+			data.numberOfDownloadedBytes += size;
+		}
+		updateGUI();
+	}
+
+	public void tileLoadedFromCache(int size) {
+		synchronized (data) {
+			data.numberOfBytesLoadedFromCache += size;
+		}
+		updateGUI();
 	}
 
 	private String formatRemainingTime(long seconds) {
@@ -380,11 +398,11 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			minutesLeft = (int) (seconds / 60);
 			int secondsLeft = (int) (seconds % 60);
 			if (secondsLeft > 119) {
-				timeLeftString = Integer.toString(minutesLeft) + " " + "minutes" + " "
-						+ Integer.toString(secondsLeft) + " " + "seconds";
+				timeLeftString = Integer.toString(minutesLeft) + " " + "minutes" + " " + Integer.toString(secondsLeft)
+						+ " " + "seconds";
 			} else {
-				timeLeftString = Integer.toString(minutesLeft) + " " + "minute" + " "
-						+ Integer.toString(secondsLeft) + " " + "seconds";
+				timeLeftString = Integer.toString(minutesLeft) + " " + "minute" + " " + Integer.toString(secondsLeft)
+						+ " " + "seconds";
 			}
 		} else {
 			if (seconds > 1) {
@@ -408,12 +426,10 @@ public class AtlasProgress extends JFrame implements ActionListener {
 				abortAtlasCreationButton.setEnabled(false);
 
 				if (aborted) {
-					windowTitle.setText("<html><h2>ATLAS CREATION HAS BEEN "
-							+ "ABORTED BY USER</h2></html>");
+					windowTitle.setText("<html><h2>ATLAS CREATION HAS BEEN " + "ABORTED BY USER</h2></html>");
 					setTitle("Atlas creation aborted");
 				} else {
-					windowTitle.setText("<html><h2>ATLAS CREATION FINISHED "
-							+ "SUCCESSFULLY</h2></html>");
+					windowTitle.setText("<html><h2>ATLAS CREATION FINISHED " + "SUCCESSFULLY</h2></html>");
 					setTitle("Atlas creation finished successfully");
 				}
 				mapInfoLabel.setText("");
@@ -508,9 +524,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			}
 
 			if (data.map != null) {
-				String text = "<html>Processing map \"<b>" + data.map.getName()
-						+ "</b>\" of layer <b>\"" + data.map.getLayer().getName()
-						+ "\"</b> map source: " + data.map.getMapSource() + "</html>";
+				String text = "<html>Processing map \"<b>" + data.map.getName() + "</b>\" of layer <b>\""
+						+ data.map.getLayer().getName() + "\"</b> map source: " + data.map.getMapSource() + "</html>";
 				mapInfoLabel.setText(text);
 			}
 
@@ -519,19 +534,22 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			atlasProgressBar.setValue(data.totalProgress);
 
 			int newPercent = (int) (atlasProgressBar.getPercentComplete() * 100);
-			boolean pauseState = atlasThread.isPaused();
-			if (data.totalProgressPercent != newPercent || pauseState != data.paused) {
-				data.totalProgressPercent = newPercent;
-				atlasPercent.setText(String.format(TEXT_PERCENT, data.totalProgressPercent));
-				if (data.atlasInterface != null) {
-					String text = String.format("%d%% - Processing atlas \"%s\"",
-							data.totalProgressPercent, data.atlasInterface.getName());
-					if (pauseState)
-						text += " [PAUSED]";
-					AtlasProgress.this.setTitle(text);
+			try {
+				boolean pauseState = atlasThread.isPaused();
+				if (data.totalProgressPercent != newPercent || pauseState != data.paused) {
+					data.totalProgressPercent = newPercent;
+					atlasPercent.setText(String.format(TEXT_PERCENT, data.totalProgressPercent));
+					if (data.atlasInterface != null) {
+						String text = String.format("%d%% - Processing atlas \"%s\"", data.totalProgressPercent,
+								data.atlasInterface.getName());
+						if (pauseState)
+							text += " [PAUSED]";
+						AtlasProgress.this.setTitle(text);
+					}
 				}
+				data.paused = pauseState;
+			} catch (NullPointerException e) {
 			}
-			data.paused = pauseState;
 
 			long seconds = -1;
 			int totalProgress = data.totalProgress;
@@ -547,8 +565,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			mapDownloadProgressBar.setMaximum(data.mapDownloadNumberOfTiles);
 			mapDownloadProgressBar.setValue(data.mapDownloadProgress);
 
-			mapDownloadPercent.setText(String.format(TEXT_PERCENT, (int) (mapDownloadProgressBar
-					.getPercentComplete() * 100)));
+			mapDownloadPercent.setText(String.format(TEXT_PERCENT,
+					(int) (mapDownloadProgressBar.getPercentComplete() * 100)));
 
 			mapDownloadElementsDone.setText(Integer.toString(data.mapDownloadProgress) + " of "
 					+ data.mapDownloadNumberOfTiles + " tiles done");
@@ -564,8 +582,7 @@ public class AtlasProgress extends JFrame implements ActionListener {
 			mapCreation.setText("Map creation");
 			mapCreationProgressBar.setValue(data.mapCreationProgress);
 			mapCreationProgressBar.setMaximum(data.mapCreationMax);
-			atlasMapsDone
-					.setText(data.currentMapNumber + " of " + data.totalNumberOfMaps + " done");
+			atlasMapsDone.setText(data.currentMapNumber + " of " + data.totalNumberOfMaps + " done");
 
 			// bytes per second
 			long rate = data.numberOfDownloadedBytes * 1000;
@@ -575,14 +592,13 @@ public class AtlasProgress extends JFrame implements ActionListener {
 					nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
 				} else {
 					rate = rate / time;
-					nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate)
-							+ " / Second");
+					nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate) + " / Second");
 				}
 			}
 
 			// downloaded bytes
-			nrOfDownloadedBytesValue.setText(": "
-					+ Utilities.formatBytes(data.numberOfDownloadedBytes));
+			nrOfDownloadedBytesValue.setText(": " + Utilities.formatBytes(data.numberOfDownloadedBytes));
+			nrOfCacheBytesValue.setText(": " + Utilities.formatBytes(data.numberOfBytesLoadedFromCache));
 
 			// total creation time
 			String timeString = "";
@@ -612,9 +628,8 @@ public class AtlasProgress extends JFrame implements ActionListener {
 
 			int totalPermanentErrors = data.prevMapsPermanentErrors + data.mapPermanentErrors;
 			int totalRetylableErrors = data.prevMapsRetryErrors + data.mapRetryErrors;
-			downloadErrorsValue.setText(": map: " + data.mapRetryErrors + " / "
-					+ data.mapPermanentErrors + " total: " + totalRetylableErrors + " / "
-					+ totalPermanentErrors);
+			downloadErrorsValue.setText(": map: " + data.mapRetryErrors + " / " + data.mapPermanentErrors + " total: "
+					+ totalRetylableErrors + " / " + totalPermanentErrors);
 			downloadErrorsValue.repaint();
 		}
 	}

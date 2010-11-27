@@ -19,6 +19,7 @@ package mobac.program;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
 import org.apache.log4j.Logger;
@@ -38,10 +39,13 @@ public class JobDispatcher {
 
 	protected PauseResumeHandler pauseResumeHandler;
 
+	protected MapSourceListener mapSourceListener;
+
 	protected BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<Job>();
 
-	public JobDispatcher(int threadCount, PauseResumeHandler pauseResumeHandler) {
+	public JobDispatcher(int threadCount, PauseResumeHandler pauseResumeHandler, MapSourceListener mapSourceListener) {
 		this.pauseResumeHandler = pauseResumeHandler;
+		this.mapSourceListener = mapSourceListener;
 		workers = new WorkerThread[threadCount];
 		for (int i = 0; i < threadCount; i++)
 			workers[i] = new WorkerThread(i);
@@ -129,7 +133,7 @@ public class JobDispatcher {
 	 * Each worker thread takes the first job from the job queue and executes it. If the queue is empty the worker
 	 * blocks, waiting for the next job.
 	 */
-	protected class WorkerThread extends DelayedInterruptThread {
+	protected class WorkerThread extends DelayedInterruptThread implements MapSourceListener {
 
 		Job job = null;
 
@@ -178,6 +182,15 @@ public class JobDispatcher {
 			}
 		}
 
+		public void tileDownloaded(int size) {
+			mapSourceListener.tileDownloaded(size);
+		}
+
+		public void tileLoadedFromCache(int size) {
+			mapSourceListener.tileLoadedFromCache(size);
+		}
+
+		
 	}
 
 }

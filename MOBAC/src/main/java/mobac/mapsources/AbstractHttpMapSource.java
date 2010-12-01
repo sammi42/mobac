@@ -37,11 +37,15 @@ import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 
+import org.apache.log4j.Logger;
+
 /**
  * Abstract base class for map sources.
  */
 public abstract class AbstractHttpMapSource implements HttpMapSource {
 
+	protected Logger log;
+	private boolean initialized = false;
 	protected String name;
 	protected int minZoom;
 	protected int maxZoom;
@@ -54,6 +58,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 
 	public AbstractHttpMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
 			HttpMapSource.TileUpdate tileUpdate) {
+		log = Logger.getLogger(this.getClass());
 		this.name = name;
 		this.minZoom = minZoom;
 		this.maxZoom = Math.min(maxZoom, JMapViewer.MAX_ZOOM);
@@ -70,6 +75,26 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 
 	public abstract String getTileUrl(int zoom, int tilex, int tiley);
 
+	/**
+	 * Can be used to e.g. retrieve the url pattern before the first call
+	 */
+	protected final void initialize() {
+		if (initialized)
+			return;
+		// Prevent multiple initializations in case of multi-threaded access
+		synchronized (this.getClass()) {
+			if (initialized)
+				// Another thread has already completed initialization while this one was blocked
+				return;
+			initernalInitialize();
+		}
+	}
+
+	protected void initernalInitialize() {
+		log.debug("Map source has been initialized");
+		initialized = true;
+	}
+
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
 			InterruptedException {
 		if (loadMethod == LoadMethod.CACHE) {
@@ -81,8 +106,10 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 				((MapSourceListener) Thread.currentThread()).tileDownloaded(data.length);
 			}
 			return data;
-		} else
+		} else {
+			initialize();
 			return TileDownLoader.getImage(x, y, zoom, this);
+		}
 	}
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,

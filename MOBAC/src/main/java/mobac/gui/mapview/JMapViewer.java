@@ -514,7 +514,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		if (zoom > mapSource.getMaxZoom())
 			setZoom(mapSource.getMaxZoom());
 		mapTileLayers.clear();
-		log.info("new map layer added: " + mapSource);
+		log.info("Map layer changed to: " + mapSource);
 		mapTileLayers.add(new DefaultMapTileLayer(this, mapSource));
 		if (mapGridLayer != null)
 			mapTileLayers.add(mapGridLayer);

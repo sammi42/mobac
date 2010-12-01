@@ -30,6 +30,13 @@ public abstract class MapSourcesManager {
 
 	public abstract Vector<MapSource> getAllMapSources();
 
+	/**
+	 * Returns all {@link MapSource} used implementations that represent a map layer (have a visible result).
+	 * Meta-map-sources like multi-layer map sources are ignored. The result does contain each {@link MapSource} only
+	 * once (no duplicates).
+	 * 
+	 * @return
+	 */
 	public abstract Vector<MapSource> getAllLayerMapSources();
 
 	public abstract Vector<MapSource> getEnabledMapSources();

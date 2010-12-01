@@ -90,7 +90,6 @@ import mobac.program.model.Profile;
 import mobac.program.model.SelectedZoomLevels;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters;
-import mobac.program.tilestore.TileStore;
 import mobac.utilities.GBC;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
@@ -863,7 +862,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		public void windowClosing(WindowEvent event) {
 			saveSettings();
-			TileStore.getInstance().closeAll(true);
 		}
 	}
 

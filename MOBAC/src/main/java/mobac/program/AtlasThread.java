@@ -73,7 +73,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		this.atlas = atlas;
 		this.atlasCreator = atlasCreator;
 		testAtlas();
-		TileStore.getInstance().closeAll(false);
+		TileStore.getInstance().closeAll();
 		pauseResumeHandler = new PauseResumeHandler();
 	}
 

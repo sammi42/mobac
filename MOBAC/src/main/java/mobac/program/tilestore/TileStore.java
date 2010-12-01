@@ -118,12 +118,7 @@ public abstract class TileStore {
 	public abstract BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
 			throws InterruptedException;
 
-	/**
-	 * 
-	 * @param shutdown
-	 *            if <code>true</code> the application wide tile store will shutdown so that it can not be used again.
-	 */
-	public abstract void closeAll(boolean shutdown);
+	public abstract void closeAll();
 
 	public abstract void putTile(TileStoreEntry tile, MapSource mapSource);
 

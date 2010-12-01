@@ -100,6 +100,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		// for (Renamer r : mutations.getRenamers())
 		// log.debug(r.toString());
+		Runtime.getRuntime().addShutdownHook(new ShutdownThread(true));
 	}
 
 	protected void acquireTileStoreLock() throws TileStoreException {
@@ -227,8 +228,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			TileStoreEntry tile = db.get(new TileDbKey(x, y, zoom));
 			if (log.isTraceEnabled()) {
 				if (tile == null)
-					log.trace("Tile store cache miss: (x,y,z)" + x + "/" + y + "/" + zoom + " "
-							+ mapSource.getName());
+					log.trace("Tile store cache miss: (x,y,z)" + x + "/" + y + "/" + zoom + " " + mapSource.getName());
 				else
 					log.trace("Loaded " + mapSource.getName() + " " + tile);
 			}
@@ -343,30 +343,8 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
-	public void closeAll(final boolean shutdown) {
-		Thread t = new DelayedInterruptThread("DBShutdown") {
-
-			@Override
-			public void run() {
-				log.debug("Closing all tile databases...");
-				synchronized (tileDbMap) {
-					for (TileDatabase db : tileDbMap.values()) {
-						db.close(false);
-					}
-					tileDbMap.clear();
-					if (shutdown) {
-						tileDbMap = null;
-						try {
-							tileStoreLock.release();
-						} catch (IOException e) {
-							log.error("", e);
-						}
-					}
-				}
-				log.debug("All tile databases has been closed");
-			}
-
-		};
+	public void closeAll() {
+		Thread t = new ShutdownThread(false);
 		t.start();
 		try {
 			t.join();
@@ -392,6 +370,36 @@ public class BerkeleyDbTileStore extends TileStore {
 	 */
 	protected File getStoreDir(MapSource mapSource) {
 		return new File(tileStoreDir, "db-" + mapSource.getName());
+	}
+
+	private class ShutdownThread extends DelayedInterruptThread {
+
+		private final boolean shutdown;
+
+		public ShutdownThread(boolean shutdown) {
+			super("DBShutdown");
+			this.shutdown = shutdown;
+		}
+
+		@Override
+		public void run() {
+			log.debug("Closing all tile databases...");
+			synchronized (tileDbMap) {
+				for (TileDatabase db : tileDbMap.values()) {
+					db.close(false);
+				}
+				tileDbMap.clear();
+				if (shutdown) {
+					tileDbMap = null;
+					try {
+						tileStoreLock.release();
+					} catch (IOException e) {
+						log.error("", e);
+					}
+				}
+			}
+			log.debug("All tile databases has been closed");
+		}
 	}
 
 	protected class TileDatabase {

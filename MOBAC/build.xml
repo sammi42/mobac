@@ -2,7 +2,7 @@
 <project default="all" name="Compile and build java classes plus jar archives">
 
 	<property file="src/main/resources/mobac/mobac.properties" />
-	
+
 	<property name="rev.prop.file" value="src/main/resources/mobac/mobac-rev.properties" />
 	<property name="jar.name" value="Mobile_Atlas_Creator.jar" />
 	<property name="zip.name" value="Mobile Atlas Creator ${mobac.version}.zip" />
@@ -10,6 +10,12 @@
 	<property name="main.class" value="mobac.StartMOBAC" />
 
 	<property name="je-version" value="3.3.93" />
+
+	<path id="maincp">
+		<fileset dir="lib" includes="log*.jar" />
+		<fileset dir="lib" includes="jai*.jar" />
+		<fileset dir="lib" includes="je-${je-version}.jar" />
+	</path>
 
 	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release,create_release_src" />
 
@@ -33,11 +39,6 @@
 
 	<target name="build">
 		<mkdir dir="build" />
-		<path id="maincp">
-			<fileset dir="lib" includes="log*.jar" />
-			<fileset dir="lib" includes="jai*.jar" />
-			<fileset dir="lib" includes="je-${je-version}.jar" />
-		</path>
 		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
 		<javac srcdir="src/main/java" destdir="build" target="1.4" source="1.4" debug="true">
@@ -48,13 +49,40 @@
 		<javac srcdir="src/main/java" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<exclude name="mobac/StartMOBAC.java" />
-			<include name="org/openstreetmap/**" />
 			<include name="mobac/**" />
 		</javac>
 		<copy todir="build" overwrite="true">
 			<fileset dir="src/main/resources" />
 		</copy>
 	</target>
+
+	<target name="build_mapsources" depends="clean_build,build">
+		<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
+			<classpath>
+				<pathelement location="lib/ant-contrib-for.jar" />
+			</classpath>
+		</taskdef>
+		<dirset id="mappacks" dir="src/main/java/mobac/mapsources/mappacks/" includes="*" />
+		<pathconvert pathsep=";" property="mappacklist" refid="mappacks">
+			<mapper type="flatten" />
+		</pathconvert>
+		<for list="${mappacklist}" param="mappack" delimiter=";">
+			<sequential>
+				<echo message="@{mappack}" />
+				<delete file="mapsources/mp-@{mappack}.jar" failonerror="false" />
+				<jar destfile="mapsources/mp-@{mappack}.jar">
+					<manifest>
+						<attribute name="MapPackVersion" value="${mobac.mappackversion}" />
+						<attribute name="MapPackName" value="@{mappack}" />
+					</manifest>
+					<fileset dir="build" defaultexcludes="true">
+						<include name="mobac/mapsources/mappacks/@{mappack}/**" />
+					</fileset>
+				</jar>
+			</sequential>
+		</for>
+	</target>
+
 
 	<target name="create_jar">
 		<delete file="${jar.name}" />

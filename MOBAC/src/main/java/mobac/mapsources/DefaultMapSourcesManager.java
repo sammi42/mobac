@@ -39,6 +39,7 @@ import mobac.mapsources.impl.MiscMapSources.MultimapCom;
 import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
 import mobac.mapsources.impl.MiscMapSources.Navitel;
 import mobac.mapsources.impl.MiscMapSources.OviMaps;
+import mobac.mapsources.impl.MiscMapSources.Topomapper;
 import mobac.mapsources.impl.MiscMapSources.YahooMaps;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
@@ -164,7 +165,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				new AeroChartsIFR(),// 
 				new AeroChartsIFRH(), // 
 				new Sigpac(), // 
-				new NzTopoMaps() // 
+				new NzTopoMaps(), //
+				new Topomapper() //
 		};
 	}
 
@@ -194,7 +196,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			public int compare(MapSource o1, MapSource o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
-			
+
 		});
 		for (MapSource ms : all) {
 			if (ms instanceof AbstractMultiLayerMapSource) {

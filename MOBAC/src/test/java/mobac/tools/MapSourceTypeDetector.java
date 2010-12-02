@@ -31,7 +31,7 @@ import java.util.Map;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
+import mobac.mapsources.impl.MiscMapSources.Topomapper;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
@@ -56,7 +56,7 @@ public class MapSourceTypeDetector {
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 
-		testMapSource(NzTopoMaps.class);
+		testMapSource(Topomapper.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

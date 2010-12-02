@@ -58,7 +58,7 @@ public class TileCoverageTest {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			tileStore.closeAll(true);
+			tileStore.closeAll();
 		}
 
 	}

@@ -8,13 +8,14 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 1.9 alpha 1 (2010-11-??)
+ 1.9 preview 1 (2010-12-??)
  + New atlas format: BackCountry Navigator
  + New atlas format: TwoNav (RMAP)
  + Multi-layer maps with more than two layers are now possible
  + New map source: OSM Hiking with relief and base 
  + New map source: Open Sea Map (sea layer joined with Mapnik) 
  + New atlas format: MGMaps/MyTrails (MGM)
+ + New map source: Topomapper.com
 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps

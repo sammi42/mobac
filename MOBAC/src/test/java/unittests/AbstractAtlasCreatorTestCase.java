@@ -148,7 +148,6 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 	@Override
 	public TestResult run() {
 		TestResult result = super.run();
-		TileStore.getInstance().closeAll(true);
 		return result;
 	}
 

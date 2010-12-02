@@ -262,6 +262,11 @@ public class MiscMapSources {
 		}
 	}
 
+	/**
+	 * http://www.topomapper.com/
+	 * 
+	 * @author "leo-kn"
+	 */
 	public static class Topomapper extends AbstractHttpMapSource {
 
 		private static final String URL = "http://78.46.61.141/cgi-bin/tilecache-2.10/tilecache.py?"
@@ -278,8 +283,8 @@ public class MiscMapSources {
 
 			double x1 = -20037508.3427892431 + tilex * f;
 			double x2 = -20037508.3427892431 + (tilex + 1) * f;
-			double y1 = +20037508.3427892431 - (tiley + 1) * f;
-			double y2 = +20037508.3427892431 - (tiley + 2) * f;
+			double y1 = 20037508.3427892431 - (tiley + 1) * f;
+			double y2 = 20037508.3427892431 - (tiley + 2) * f;
 
 			return String.format(Locale.ENGLISH, URL, x1, y1, x2, y2);
 		}

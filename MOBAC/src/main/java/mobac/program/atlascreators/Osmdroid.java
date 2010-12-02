@@ -7,8 +7,8 @@ import java.util.Date;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.impl.OsmMapSources.CycleMap;
-import mobac.mapsources.impl.OsmMapSources.TilesAtHome;
+import mobac.mapsources.mappacks.openstreetmap.CycleMap;
+import mobac.mapsources.mappacks.openstreetmap.TilesAtHome;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;

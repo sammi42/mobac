@@ -18,9 +18,6 @@ package mobac.tools;
 
 import java.util.HashMap;
 
-import mobac.mapsources.impl.Google.GoogleMapMaker;
-import mobac.mapsources.impl.Google.GoogleMapsChina;
-import mobac.mapsources.impl.Google.GoogleMapsKorea;
 import mobac.mapsources.impl.Microsoft.MicrosoftMapsChina;
 import mobac.mapsources.impl.Microsoft.MicrosoftOrdnanceSurveyExplorer;
 import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
@@ -30,8 +27,6 @@ import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
 import mobac.mapsources.impl.MiscMapSources.YandexMap;
 import mobac.mapsources.impl.MiscMapSources.YandexSat;
-import mobac.mapsources.impl.OsmMapSources.OpenPisteMap;
-import mobac.mapsources.impl.OsmMapSources.Turaterkep;
 import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
 import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
 import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
@@ -47,6 +42,11 @@ import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
 import mobac.mapsources.impl.RegionalMapSources.NearMap;
 import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
 import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
+import mobac.mapsources.mappacks.google.GoogleMapMaker;
+import mobac.mapsources.mappacks.google.GoogleMapsChina;
+import mobac.mapsources.mappacks.google.GoogleMapsKorea;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OpenPisteMap;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.Turaterkep;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
 

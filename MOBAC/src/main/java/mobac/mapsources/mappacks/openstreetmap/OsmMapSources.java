@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.impl;
+package mobac.mapsources.mappacks.openstreetmap;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -75,56 +75,6 @@ public class OsmMapSources {
 		}
 	}
 
-	public static class Mapnik extends AbstractOsmTileSource {
-
-		public Mapnik() {
-			super("Mapnik");
-		}
-
-		@Override
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return MAP_MAPNIK + super.getTileUrl(zoom, tilex, tiley);
-		}
-
-		public HttpMapSource.TileUpdate getTileUpdate() {
-			return HttpMapSource.TileUpdate.IfNoneMatch;
-		}
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Mapnik";
-		}
-
-	}
-
-	public static class CycleMap extends AbstractOsmTileSource {
-
-		private static final String PATTERN = "http://%s.andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png";
-
-		private static final String[] SERVER = { "a", "b", "c" };
-
-		private int SERVER_NUM = 0;
-
-		public CycleMap() {
-			super("OSM Cycle Map");
-			this.maxZoom = 17;
-			this.tileUpdate = HttpMapSource.TileUpdate.ETag;
-		}
-
-		@Override
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			String url = String.format(PATTERN, new Object[] { SERVER[SERVER_NUM], zoom, tilex, tiley });
-			SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
-			return url;
-		}
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Cyclemap";
-		}
-
-	}
-
 	public static class OsmPublicTransport extends AbstractOsmTileSource {
 
 		private static final String PATTERN = "http://tile.xn--pnvkarte-m4a.de/tilegen/%d/%d/%d.png";
@@ -145,26 +95,6 @@ public class OsmMapSources {
 		@Override
 		public String toString() {
 			return "OpenStreetMap Public Transport";
-		}
-
-	}
-
-	public static class TilesAtHome extends AbstractOsmTileSource {
-
-		public TilesAtHome() {
-			super("TilesAtHome");
-			this.maxZoom = 17;
-			this.tileUpdate = HttpMapSource.TileUpdate.IfModifiedSince;
-		}
-
-		@Override
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return MAP_OSMA + super.getTileUrl(zoom, tilex, tiley);
-		}
-
-		@Override
-		public String toString() {
-			return "OpenStreetMap Osmarenderer";
 		}
 
 	}

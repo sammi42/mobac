@@ -46,8 +46,7 @@ import mobac.gui.mapview.ScaleBar;
 import mobac.gui.panels.JCoordinatesPanel;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.CustomMapSource;
-import mobac.mapsources.custom.CustomMultiLayerMapSource;
-import mobac.mapsources.impl.Google;
+import mobac.mapsources.mappacks.google.GoogleMapSource;
 import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
 import mobac.program.download.UserAgent;
@@ -173,7 +172,7 @@ public class Settings {
 	private Vector<String> disabledMapSources = new Vector<String>();
 
 	@XmlElementWrapper(name = "customMapSources")
-	@XmlElements( { @XmlElement(name = "customMapSource", type = CustomMapSource.class),
+	@XmlElements( { @XmlElement(name = "customMapSource", type = CustomMapSource.class)
 	/* @XmlElement(name = "customMultiLayerMapSource", type = CustomMultiLayerMapSource.class) */})
 	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
@@ -274,7 +273,7 @@ public class Settings {
 
 	public void setGoogleLanguage(String googleLanguage) {
 		this.googleLanguage = googleLanguage;
-		Google.LANG = googleLanguage;
+		GoogleMapSource.LANG = googleLanguage;
 	}
 
 	public boolean isCustomTileSize() {

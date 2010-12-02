@@ -21,10 +21,11 @@ import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.impl.OsmMapSources;
-import mobac.mapsources.impl.Google.GoogleEarth;
-import mobac.mapsources.impl.Google.GoogleMaps;
-import mobac.mapsources.impl.Google.GoogleTerrain;
+import mobac.mapsources.mappacks.google.GoogleEarth;
+import mobac.mapsources.mappacks.google.GoogleMaps;
+import mobac.mapsources.mappacks.google.GoogleTerrain;
+import mobac.mapsources.mappacks.openstreetmap.CycleMap;
+import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -54,9 +55,9 @@ public class PathAway extends OSMTracker {
 			shortMapDir = "G2";
 		else if (mapSource.getClass().equals(GoogleTerrain.class))
 			shortMapDir = "G3";
-		else if (mapSource.getClass().equals(OsmMapSources.Mapnik.class))
+		else if (mapSource.getClass().equals(Mapnik.class))
 			shortMapDir = "OSM1";
-		else if (mapSource.getClass().equals(OsmMapSources.CycleMap.class))
+		else if (mapSource.getClass().equals(CycleMap.class))
 			shortMapDir = "OCM1";
 		if (shortMapDir != null)
 			mapDir = new File(atlasDir, shortMapDir);

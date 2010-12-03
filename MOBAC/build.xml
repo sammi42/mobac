@@ -57,12 +57,13 @@
 	</target>
 
 	<target name="build_mapsources" depends="clean_build,build">
+		<property name="mappack.srcbasedir" value="src/main/java/mobac/mapsources/mappacks" />
 		<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
 			<classpath>
 				<pathelement location="lib/ant-contrib-for.jar" />
 			</classpath>
 		</taskdef>
-		<dirset id="mappacks" dir="src/main/java/mobac/mapsources/mappacks/" includes="*" />
+		<dirset id="mappacks" dir="${mappack.srcbasedir}/" includes="*" />
 		<pathconvert pathsep=";" property="mappacklist" refid="mappacks">
 			<mapper type="flatten" />
 		</pathconvert>
@@ -76,8 +77,9 @@
 						<attribute name="MapPackName" value="@{mappack}" />
 					</manifest>
 					<fileset dir="build" defaultexcludes="true">
-						<include name="mobac/mapsources/mappacks/@{mappack}/**" />
+						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
 					</fileset>
+					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />
 				</jar>
 			</sequential>
 		</for>

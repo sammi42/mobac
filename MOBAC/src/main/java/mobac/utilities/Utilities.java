@@ -438,6 +438,18 @@ public class Utilities {
 	}
 
 	/**
+	 * Fully reads data from <tt>in</tt> the read data is discarded.
+	 * 
+	 * @param in
+	 * @throws IOException
+	 */
+	public static void readFully(InputStream in) throws IOException {
+		byte[] b = new byte[4096];
+		while ((in.read(b)) > 0) {
+		}
+	}
+
+	/**
 	 * Lists all direct sub directories of <code>dir</code>
 	 * 
 	 * @param dir

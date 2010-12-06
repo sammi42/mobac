@@ -58,6 +58,7 @@
 
 	<target name="build_mapsources" depends="clean_build,build">
 		<property name="mappack.srcbasedir" value="src/main/java/mobac/mapsources/mappacks" />
+		<property file="keys/keystore.properties" />
 		<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
 			<classpath>
 				<pathelement location="lib/ant-contrib-for.jar" />
@@ -81,6 +82,9 @@
 					</fileset>
 					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />
 				</jar>
+				<!-- The required key stores are not available in SVN and releases! -->
+				<echo message="Signing map pack using password: ${keystore.password}" />
+				<signjar keystore="keys/keystore.jks" storepass="${keystore.password}" alias="MapPack" jar="mapsources/mp-@{mappack}.jar" />
 			</sequential>
 		</for>
 	</target>

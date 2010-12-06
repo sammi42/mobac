@@ -19,10 +19,19 @@ package mobac.program.mappack;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.CodeSigner;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
@@ -46,10 +55,16 @@ public class MapPackManager {
 
 	private ArrayList<MapSource> mapSources;
 
-	public MapPackManager(File mapPackDir) {
+	private final X509Certificate mapPackCert;
+
+	public MapPackManager(File mapPackDir) throws CertificateException, IOException {
 		this.mapPackDir = mapPackDir;
 		mapSources = new ArrayList<MapSource>();
 		requiredMapPackVersion = Integer.parseInt(System.getProperty("mobac.mappackversion"));
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		Collection<? extends Certificate> certs = cf.generateCertificates(Utilities
+				.loadResourceAsStream("cert/MapPack.cer"));
+		mapPackCert = (X509Certificate) certs.iterator().next();
 	}
 
 	public MapSource[] getMapSources() {
@@ -73,7 +88,7 @@ public class MapPackManager {
 		}
 	}
 
-	public void loadMapPacks() throws IOException {
+	public void loadMapPacks() throws IOException, CertificateException {
 		File[] mapPacks = mapPackDir.listFiles(new FileExtFilter(".jar"));
 		ArrayList<URL> urlList = new ArrayList<URL>();
 		for (File mapPackFile : mapPacks) {
@@ -82,7 +97,7 @@ public class MapPackManager {
 				URL url = mapPackFile.toURI().toURL();
 				urlList.add(url);
 			} catch (IOException e) {
-				log.error("Failed to load map pack: " + mapPackFile);
+				log.error("Failed to load map pack: " + mapPackFile, e);
 			}
 		}
 		URL[] urls = new URL[urlList.size()];
@@ -103,10 +118,34 @@ public class MapPackManager {
 
 	}
 
-	protected void testMapPack(File mapPackFile) throws IOException {
+	protected void testMapPack(File mapPackFile) throws IOException, CertificateException {
 		String fileName = mapPackFile.getName();
-		JarFile jf = new JarFile(mapPackFile);
+		// byte[] certBytes = Utilities.getInputBytes();
+		// X509EncodedKeySpec keySpec = new X509EncodedKeySpec(certBytes);
+		X509Certificate cert;
+
+		JarFile jf = new JarFile(mapPackFile, true);
 		try {
+			Enumeration<JarEntry> it = jf.entries();
+			while (it.hasMoreElements()) {
+				JarEntry entry = it.nextElement();
+				// We verify only class files
+				if (!entry.getName().endsWith(".class"))
+					continue; // directory or other entry
+				// Get the input stream (triggers) the signature verification for the specific class
+				Utilities.readFully(jf.getInputStream(entry));
+				if (entry.getCodeSigners() == null)
+					throw new CertificateException("Unsigned class file found: " + entry.getName());
+				CodeSigner signer = entry.getCodeSigners()[0];
+				List<? extends Certificate> cp = signer.getSignerCertPath().getCertificates();
+				if (cp.size() > 1)
+					throw new CertificateException("Signature certificate not accepted: "
+							+ "certificate path contains more than one certificate");
+				// Compare the used certificate with the mapPack certificate
+				if (!mapPackCert.equals(cp.get(0)))
+					throw new CertificateException("Signature certificate not accepted: "
+							+ "not the MapPack signer certificate");
+			}
 			Manifest mf = jf.getManifest();
 			Attributes a = mf.getMainAttributes();
 			String mpv = a.getValue("MapPackVersion");

@@ -28,10 +28,9 @@ import mobac.gui.actions.HelpAction;
 import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
 import mobac.mapsources.BeanShellMapSource;
-import mobac.mapsources.impl.Google;
-import mobac.mapsources.impl.OsmMapSources;
+import mobac.mapsources.mappacks.google.GoogleMaps;
+import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.ProgramInfo;
-import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
@@ -56,7 +55,7 @@ public class MapEvaluator extends JFrame {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		previewMap = new LogPreviewMap();
-		//previewMap.setMapMarkerVisible(true);
+		// previewMap.setMapMarkerVisible(true);
 
 		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
 
@@ -185,7 +184,7 @@ public class MapEvaluator extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				previewMap.setMapSource(new Google.GoogleMaps());
+				previewMap.setMapSource(new GoogleMaps());
 			}
 		});
 		toolBar.add(button);
@@ -196,7 +195,7 @@ public class MapEvaluator extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				previewMap.setMapSource(new OsmMapSources.Mapnik());
+				previewMap.setMapSource(new Mapnik());
 			}
 		});
 		toolBar.add(button);
@@ -254,9 +253,6 @@ public class MapEvaluator extends JFrame {
 			previewMap.setEnabled(true);
 		}
 
-		public void windowClosing(WindowEvent event) {
-			TileStore.getInstance().closeAll(true);
-		}
 	}
 
 }

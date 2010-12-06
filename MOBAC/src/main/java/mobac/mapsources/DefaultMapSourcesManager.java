@@ -16,18 +16,76 @@
  ******************************************************************************/
 package mobac.mapsources;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.cert.CertificateException;
 import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
+import mobac.mapsources.impl.Microsoft.MicrosoftHybrid;
+import mobac.mapsources.impl.Microsoft.MicrosoftMaps;
+import mobac.mapsources.impl.Microsoft.MicrosoftMapsChina;
+import mobac.mapsources.impl.Microsoft.MicrosoftMapsHillShade;
+import mobac.mapsources.impl.Microsoft.MicrosoftOrdnanceSurveyExplorer;
+import mobac.mapsources.impl.Microsoft.MicrosoftVirtualEarth;
+import mobac.mapsources.impl.MiscMapSources.MultimapCom;
+import mobac.mapsources.impl.MiscMapSources.MultimapOSUkCom;
+import mobac.mapsources.impl.MiscMapSources.Navitel;
+import mobac.mapsources.impl.MiscMapSources.OviMaps;
+import mobac.mapsources.impl.MiscMapSources.Topomapper;
+import mobac.mapsources.impl.MiscMapSources.YahooMaps;
+import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
+import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
+import mobac.mapsources.impl.MiscMapSources.YandexMap;
+import mobac.mapsources.impl.MiscMapSources.YandexSat;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
+import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
+import mobac.mapsources.impl.RegionalMapSources.Bergfex;
+import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
+import mobac.mapsources.impl.RegionalMapSources.CykloatlasWithRelief;
+import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
+import mobac.mapsources.impl.RegionalMapSources.EmapiPl;
+import mobac.mapsources.impl.RegionalMapSources.EniroComAerial;
+import mobac.mapsources.impl.RegionalMapSources.EniroComMap;
+import mobac.mapsources.impl.RegionalMapSources.EniroComNautical;
+import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
+import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaCycling;
+import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
+import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
+import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
+import mobac.mapsources.impl.RegionalMapSources.MyTopo;
+import mobac.mapsources.impl.RegionalMapSources.NearMap;
+import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
+import mobac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
+import mobac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
+import mobac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
+import mobac.mapsources.impl.RegionalMapSources.Sigpac;
+import mobac.mapsources.impl.RegionalMapSources.StatkartSjoHovedkart2;
+import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
+import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
+import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
+import mobac.mapsources.impl.WmsSources.TerraserverUSA;
+import mobac.mapsources.mappacks.google.GoogleEarth;
+import mobac.mapsources.mappacks.google.GoogleHybrid;
+import mobac.mapsources.mappacks.google.GoogleMapMaker;
+import mobac.mapsources.mappacks.google.GoogleMaps;
+import mobac.mapsources.mappacks.google.GoogleMapsChina;
+import mobac.mapsources.mappacks.google.GoogleMapsKorea;
+import mobac.mapsources.mappacks.google.GoogleTerrain;
+import mobac.mapsources.mappacks.openstreetmap.CycleMap;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
+import mobac.mapsources.mappacks.openstreetmap.TilesAtHome;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.Hikebikemap;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OpenPisteMap;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OpenSeaMap;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmHikingMap;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmHikingMapWithBase;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmHikingMapWithRelief;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmHikingMapWithReliefBase;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmPublicTransport;
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.Turaterkep;
 import mobac.program.interfaces.MapSource;
-import mobac.program.mappack.MapPackManager;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
@@ -44,81 +102,72 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	public DefaultMapSourcesManager() {
-		try {
-			MapPackManager mpm = new MapPackManager(new File("mapsources"));
-			mpm.loadMapPacks();
-			MAP_SOURCES = mpm.getMapSources();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (CertificateException e) {
-			throw new RuntimeException(e);
-		}
-		// MAP_SOURCES = new MapSource[] { //
-		// //
-		// new GoogleMaps(), //
-		// new GoogleMapMaker(), //
-		// new GoogleMapsChina(), //
-		// new GoogleMapsKorea(), //
-		// new GoogleEarth(), //
-		// new GoogleHybrid(), //
-		// new GoogleTerrain(), //
-		// new YahooMaps(), //
-		// new YahooMapsJapan(), //
-		// new YahooMapsTaiwan(), //
-		// DEFAULT, //
-		// new TilesAtHome(), //
-		// new CycleMap(), //
-		// new OsmHikingMap(), //
-		// new OsmHikingMapWithBase(), //
-		// new OsmHikingMapWithRelief(), //
-		// new OsmHikingMapWithReliefBase(), //
-		// new OpenSeaMap(), //
-		// new Hikebikemap(), //
-		// new OsmPublicTransport(), //
-		// new OpenPisteMap(), //
-		// new MicrosoftMaps(), //
-		// new MicrosoftMapsHillShade(),//
-		// new MicrosoftMapsChina(),//
-		// new MicrosoftVirtualEarth(),//
-		// new MicrosoftHybrid(), //
-		// new OviMaps(), //
-		// new OutdooractiveGermany(),//
-		// new OutdooractiveAustria(),//
-		// new OutdooractiveSouthTyrol(), //
-		// new MultimapCom(), //
-		// new MultimapOSUkCom(),//
-		// new Cykloatlas(), //
-		// new CykloatlasWithRelief(), //
-		// new TerraserverUSA(), //
-		// new MyTopo(), //
-		// new UmpWawPl(),//
-		// new DoCeluPL(), //
-		// new EmapiPl(), //
-		// new Bergfex(), //
-		// new FreemapSlovakia(), //
-		// new FreemapSlovakiaHiking(),//
-		// new FreemapSlovakiaCycling(), //
-		// new Turaterkep(), //
-		// new NearMap(), //
-		// new HubermediaBavaria(),//
-		// new StatkartTopo2(), //
-		// new StatkartToporaster2(), //
-		// new StatkartSjoHovedkart2(), //
-		// new EniroComMap(), //
-		// new EniroComAerial(), //
-		// new EniroComNautical(), //
-		// new MapplusCh(), //
-		// new YandexMap(), //
-		// new YandexSat(), //
-		// new Navitel(), //
-		// new MicrosoftOrdnanceSurveyExplorer(), //
-		// new AeroChartsVFR(), //
-		// new AeroChartsIFR(),//
-		// new AeroChartsIFRH(), //
-		// new Sigpac(), //
-		// new NzTopoMaps(), //
-		// new Topomapper() //
-		// };
+		MAP_SOURCES = new MapSource[] { //
+		//
+				new GoogleMaps(), // 
+				new GoogleMapMaker(), //
+				new GoogleMapsChina(), // 
+				new GoogleMapsKorea(), // 
+				new GoogleEarth(), //
+				new GoogleHybrid(), // 
+				new GoogleTerrain(), // 
+				new YahooMaps(), //
+				new YahooMapsJapan(), // 
+				new YahooMapsTaiwan(), //
+				DEFAULT, //
+				new TilesAtHome(), // 
+				new CycleMap(), // 
+				new OsmHikingMap(), // 
+				new OsmHikingMapWithBase(), //
+				new OsmHikingMapWithRelief(), // 
+				new OsmHikingMapWithReliefBase(), //
+				new OpenSeaMap(), //
+				new Hikebikemap(), //
+				new OsmPublicTransport(), // 
+				new OpenPisteMap(), //
+				new MicrosoftMaps(), // 
+				new MicrosoftMapsHillShade(),//  
+				new MicrosoftMapsChina(),// 
+				new MicrosoftVirtualEarth(),// 
+				new MicrosoftHybrid(), // 
+				new OviMaps(), // 
+				new OutdooractiveGermany(),// 
+				new OutdooractiveAustria(),//  
+				new OutdooractiveSouthTyrol(), // 
+				new MultimapCom(), // 
+				new MultimapOSUkCom(),// 
+				new Cykloatlas(), // 
+				new CykloatlasWithRelief(), // 
+				new TerraserverUSA(), // 
+				new MyTopo(), // 
+				new UmpWawPl(),// 
+				new DoCeluPL(), // 
+				new EmapiPl(), // 
+				new Bergfex(), // 
+				new FreemapSlovakia(), // 
+				new FreemapSlovakiaHiking(),// 
+				new FreemapSlovakiaCycling(), // 
+				new Turaterkep(), // 
+				new NearMap(), // 
+				new HubermediaBavaria(),// 
+				new StatkartTopo2(), // 
+				new StatkartToporaster2(), // 
+				new StatkartSjoHovedkart2(), // 
+				new EniroComMap(), // 
+				new EniroComAerial(), // 
+				new EniroComNautical(), // 
+				new MapplusCh(), // 
+				new YandexMap(), // 
+				new YandexSat(), // 
+				new Navitel(), // 
+				new MicrosoftOrdnanceSurveyExplorer(), // 
+				new AeroChartsVFR(), // 
+				new AeroChartsIFR(),// 
+				new AeroChartsIFRH(), // 
+				new Sigpac(), // 
+				new NzTopoMaps(), //
+				new Topomapper() //
+		};
 	}
 
 	public static void initialize() {

@@ -31,7 +31,7 @@ import java.util.Map;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.MapSourcesUpdater;
-import mobac.mapsources.impl.MiscMapSources.Topomapper;
+import mobac.mapsources.mappacks.misc_worldwide.Topomapper;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;

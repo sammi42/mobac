@@ -14,15 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.mappacks.google;
+/**
+ * 
+ */
+package mobac.mapsources.mappacks.region_europe_dach;
 
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class GoogleTerrain extends GoogleMapSource {
+public class OutdooractiveGermany extends AbstractHttpMapSource {
 
-	public GoogleTerrain() {
-		super("Google Terrain", 0, 15, TileImageType.JPG, HttpMapSource.TileUpdate.None);
+	private static int SERVER_NUM = 0;
+
+	protected String mapName = "portal";
+
+	public OutdooractiveGermany() {
+		super("Outdooractive.com", 8, 17, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
+	}
+
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		if (zoom < 8)
+			throw new RuntimeException("Zoom level not suported");
+		String s = "http://t" + SERVER_NUM + ".outdooractive.com/" + mapName + "/map/" + zoom + "/" + tilex + "/"
+				+ tiley + ".png";
+		SERVER_NUM = (SERVER_NUM + 1) % 4;
+		return s;
+	}
+
+	@Override
+	public String toString() {
+		return "Outdooractive.com (Germany only)";
 	}
 
 }

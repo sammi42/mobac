@@ -14,16 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+ package mobac.mapsources.mappacks.region_america_north;
 
-public class TileException extends Exception {
+import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+/**
+ * Aero charts from USA http://www.runwayfinder.com
+ * 
+ */
+public abstract class AeroCharts extends AbstractHttpMapSource {
+
+	private String baseUrl = "http://www.runwayfinder.com/media/";
+	protected String service;
+
+	public AeroCharts(String name, String service, int minZoom, int maxZoom) {
+		super(name, minZoom, maxZoom, TileImageType.JPG, HttpMapSource.TileUpdate.LastModified);
+		this.service = service;
 	}
 
-	public TileException(String message) {
-		super(message);
+	@Override
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return baseUrl + service + "x=" + tilex + "&y=" + tiley + "&z=" + (17 - zoom);
+	}
+
+	@Override
+	public String toString() {
+		return getName() + " (USA only)";
 	}
 
 }

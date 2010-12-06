@@ -14,16 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+/**
+ * 
+ */
+package mobac.mapsources.mappacks.region_europe_north;
 
-public class TileException extends Exception {
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
-	}
+public class StatkartSjoHovedkart2 extends StatkartTopo2 {
 
-	public TileException(String message) {
-		super(message);
+	public StatkartSjoHovedkart2() {
+		super("sjo_hovedkart2", "Statkart sea/nautical", 0, 17, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 	}
 
 }

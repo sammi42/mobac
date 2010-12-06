@@ -14,16 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+/**
+ * 
+ */
+package mobac.mapsources.mappacks.region_europe_dach;
 
-public class TileException extends Exception {
+public class OutdooractiveAustria extends OutdooractiveGermany {
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+	public OutdooractiveAustria() {
+		super();
+		name = "OutdooractiveAustria";
+		mapName = "austria";
+		minZoom = 9;
 	}
 
-	public TileException(String message) {
-		super(message);
+	@Override
+	public String toString() {
+		return "Outdooractive.com (Austria only)";
 	}
 
 }

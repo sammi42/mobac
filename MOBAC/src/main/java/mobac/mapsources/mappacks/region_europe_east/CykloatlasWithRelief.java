@@ -14,16 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+/**
+ * 
+ */
+package mobac.mapsources.mappacks.region_europe_east;
 
-public class TileException extends Exception {
+import mobac.mapsources.AbstractMultiLayerMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+public class CykloatlasWithRelief extends AbstractMultiLayerMapSource {
+
+	public CykloatlasWithRelief() {
+		super("CykloatlasWithRelief", TileImageType.PNG);
+		mapSources = new MapSource[] { new Cykloatlas(), new CykloatlasRelief() };
+		initializeValues();
 	}
 
-	public TileException(String message) {
-		super(message);
+	@Override
+	public String toString() {
+		return "Cykloatlas with relief (CZ, SK)";
 	}
-
 }

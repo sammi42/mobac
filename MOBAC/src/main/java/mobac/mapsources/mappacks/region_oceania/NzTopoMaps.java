@@ -14,16 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+package mobac.mapsources.mappacks.region_oceania;
 
-public class TileException extends Exception {
+import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+/**
+ * http://www.nztopomaps.com
+ * 
+ * @author Tobias Wulff (camel69)
+ */
+public class NzTopoMaps extends AbstractHttpMapSource {
+
+	public NzTopoMaps() {
+		super("New Zealand Topographic Maps", 7, 15, TileImageType.PNG, HttpMapSource.TileUpdate.IfNoneMatch);
 	}
 
-	public TileException(String message) {
-		super(message);
+	public String getTileUrl(int zoom, int x, int y) {
+		// nzy = 2^zoom - 1 - y
+		int nzy = (1 << zoom) - 1 - y;
+		return "http://cx.nztopomaps.com/" + zoom + "/" + x + "/" + nzy + ".png";
+	}
+
+	@Override
+	public String toString() {
+		return "New Zealand Topographic Maps";
 	}
 
 }

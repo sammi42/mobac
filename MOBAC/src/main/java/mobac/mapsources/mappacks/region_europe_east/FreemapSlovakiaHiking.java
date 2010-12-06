@@ -14,16 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+package mobac.mapsources.mappacks.region_europe_east;
 
-public class TileException extends Exception {
+import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+/**
+ * http://www.freemap.sk
+ * 
+ * @author SourceForge.net user didoa, nickn17
+ */
+public class FreemapSlovakiaHiking extends AbstractHttpMapSource {
+
+	public FreemapSlovakiaHiking() {
+		super("FreemapSlovakiaHiking", 6, 16, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 	}
 
-	public TileException(String message) {
-		super(message);
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return "http://tiles.freemap.sk/T/" + zoom + "/" + tilex + "/" + tiley;
 	}
 
+	@Override
+	public String toString() {
+		return "Freemap Slovakia Hiking";
+	}
 }

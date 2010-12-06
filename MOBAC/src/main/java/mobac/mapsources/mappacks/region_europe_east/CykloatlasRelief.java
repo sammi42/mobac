@@ -14,16 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+package mobac.mapsources.mappacks.region_europe_east;
 
-public class TileException extends Exception {
+import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+/**
+ * Relief only
+ */
+public class CykloatlasRelief extends AbstractHttpMapSource {
+
+	public CykloatlasRelief() {
+		super("CykloatlasRelief", 7, 15, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
 	}
 
-	public TileException(String message) {
-		super(message);
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return "http://services.tmapserver.cz/tiles/gm/sum/" + zoom + "/" + tilex + "/" + tiley + ".png";
 	}
 
 }

@@ -17,40 +17,29 @@
 package mobac.mapsources.impl;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.Deflater;
+
+import javax.imageio.ImageIO;
 
 import mobac.exceptions.UnrecoverableDownloadException;
-import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
-import mobac.utilities.imageio.Png4BitWriter;
 
-public class DebugMapSource implements MapSource {
-	
-	private int pngCompressionLevel = Deflater.BEST_SPEED;
-	
-	private static final byte[] COLORS = { 0,// 
-			(byte) 0xff, (byte) 0xff, (byte) 0xff, // white
-			(byte) 0xff, (byte) 0x00, (byte) 0x00 // red
-	};
+/**
+ * A simple {@link MapSource} implementation serving as fall-back if no other map source is available/can be loaded.
+ */
+public class SimpleMapSource implements MapSource {
 
-	private static final IndexColorModel COLORMODEL = new IndexColorModel(8, 2, COLORS, 1, false);
-
-	private static final Font FONT_LARGE = new Font("Sans Serif", Font.BOLD, 30);
-
-	public DebugMapSource() {
+	public SimpleMapSource() {
 	}
 
 	public Color getBackgroundColor() {
-		return Color.BLACK;
+		return Color.WHITE;
 	}
 
 	public MapSpace getMapSpace() {
@@ -58,7 +47,7 @@ public class DebugMapSource implements MapSource {
 	}
 
 	public int getMaxZoom() {
-		return PreviewMap.MAX_ZOOM;
+		return 2;
 	}
 
 	public int getMinZoom() {
@@ -66,33 +55,25 @@ public class DebugMapSource implements MapSource {
 	}
 
 	public String getName() {
-		return "Debug";
+		return "Simple";
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-		//ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
-		String pngMetaText = String.format("zoom=%d x=%d y=%d",zoom,x,y);
-		Png4BitWriter.writeImage(buf, getTileImage(zoom, x, y, loadMethod), pngCompressionLevel, pngMetaText);
+		ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
 		return buf.toByteArray();
 	}
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
-		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_INDEXED, COLORMODEL);
+		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D g2 = image.createGraphics();
 		try {
 			g2.setColor(Color.WHITE);
 			g2.fillRect(0, 0, 255, 255);
-			g2.setColor(Color.RED);
-			g2.drawRect(0, 0, 255, 255);
-			g2.drawLine(0, 0, 255, 255);
-			g2.drawLine(255, 0, 0, 255);
-			g2.setFont(FONT_LARGE);
-			g2.drawString("x: " + x, 8, 40);
-			g2.drawString("y: " + y, 8, 75);
-			g2.drawString("z: " + zoom, 8, 110);
+			g2.setColor(Color.BLACK);
+			g2.drawString("No map sources available", 8, 40);
 			return image;
 		} finally {
 			g2.dispose();
@@ -105,7 +86,7 @@ public class DebugMapSource implements MapSource {
 
 	@Override
 	public String toString() {
-		return getName();
+		return "";
 	}
 
 }

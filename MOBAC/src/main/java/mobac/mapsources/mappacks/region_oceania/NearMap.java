@@ -14,16 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+/**
+ * 
+ */
+package mobac.mapsources.mappacks.region_oceania;
 
-public class TileException extends Exception {
+import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+public class NearMap extends AbstractHttpMapSource {
+	public NearMap() {
+		super("NearMap Australia", 0, 24, TileImageType.JPG, HttpMapSource.TileUpdate.IfModifiedSince);
 	}
 
-	public TileException(String message) {
-		super(message);
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return "http://www.nearmap.com/maps/hl=en&nml=Vert&z=" + zoom + "&x=" + tilex + "&y=" + tiley;
 	}
 
 }

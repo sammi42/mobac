@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
+import mobac.mapsources.impl.SimpleMapSource;
 import mobac.mapsources.impl.Microsoft.MicrosoftHybrid;
 import mobac.mapsources.impl.Microsoft.MicrosoftMaps;
 import mobac.mapsources.impl.Microsoft.MicrosoftMapsChina;
@@ -38,33 +39,6 @@ import mobac.mapsources.impl.MiscMapSources.YahooMapsJapan;
 import mobac.mapsources.impl.MiscMapSources.YahooMapsTaiwan;
 import mobac.mapsources.impl.MiscMapSources.YandexMap;
 import mobac.mapsources.impl.MiscMapSources.YandexSat;
-import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFR;
-import mobac.mapsources.impl.RegionalMapSources.AeroChartsIFRH;
-import mobac.mapsources.impl.RegionalMapSources.AeroChartsVFR;
-import mobac.mapsources.impl.RegionalMapSources.Bergfex;
-import mobac.mapsources.impl.RegionalMapSources.Cykloatlas;
-import mobac.mapsources.impl.RegionalMapSources.CykloatlasWithRelief;
-import mobac.mapsources.impl.RegionalMapSources.DoCeluPL;
-import mobac.mapsources.impl.RegionalMapSources.EmapiPl;
-import mobac.mapsources.impl.RegionalMapSources.EniroComAerial;
-import mobac.mapsources.impl.RegionalMapSources.EniroComMap;
-import mobac.mapsources.impl.RegionalMapSources.EniroComNautical;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakia;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaCycling;
-import mobac.mapsources.impl.RegionalMapSources.FreemapSlovakiaHiking;
-import mobac.mapsources.impl.RegionalMapSources.HubermediaBavaria;
-import mobac.mapsources.impl.RegionalMapSources.MapplusCh;
-import mobac.mapsources.impl.RegionalMapSources.MyTopo;
-import mobac.mapsources.impl.RegionalMapSources.NearMap;
-import mobac.mapsources.impl.RegionalMapSources.NzTopoMaps;
-import mobac.mapsources.impl.RegionalMapSources.OutdooractiveAustria;
-import mobac.mapsources.impl.RegionalMapSources.OutdooractiveGermany;
-import mobac.mapsources.impl.RegionalMapSources.OutdooractiveSouthTyrol;
-import mobac.mapsources.impl.RegionalMapSources.Sigpac;
-import mobac.mapsources.impl.RegionalMapSources.StatkartSjoHovedkart2;
-import mobac.mapsources.impl.RegionalMapSources.StatkartTopo2;
-import mobac.mapsources.impl.RegionalMapSources.StatkartToporaster2;
-import mobac.mapsources.impl.RegionalMapSources.UmpWawPl;
 import mobac.mapsources.impl.WmsSources.TerraserverUSA;
 import mobac.mapsources.mappacks.google.GoogleEarth;
 import mobac.mapsources.mappacks.google.GoogleHybrid;
@@ -85,6 +59,33 @@ import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmHikingMapWithRel
 import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmHikingMapWithReliefBase;
 import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.OsmPublicTransport;
 import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.Turaterkep;
+import mobac.mapsources.mappacks.region_america_north.AeroChartsIFR;
+import mobac.mapsources.mappacks.region_america_north.AeroChartsIFRH;
+import mobac.mapsources.mappacks.region_america_north.AeroChartsVFR;
+import mobac.mapsources.mappacks.region_america_north.MyTopo;
+import mobac.mapsources.mappacks.region_europe_dach.Bergfex;
+import mobac.mapsources.mappacks.region_europe_dach.HubermediaBavaria;
+import mobac.mapsources.mappacks.region_europe_dach.MapplusCh;
+import mobac.mapsources.mappacks.region_europe_dach.OutdooractiveAustria;
+import mobac.mapsources.mappacks.region_europe_dach.OutdooractiveGermany;
+import mobac.mapsources.mappacks.region_europe_dach.OutdooractiveSouthTyrol;
+import mobac.mapsources.mappacks.region_europe_east.Cykloatlas;
+import mobac.mapsources.mappacks.region_europe_east.CykloatlasWithRelief;
+import mobac.mapsources.mappacks.region_europe_east.DoCeluPL;
+import mobac.mapsources.mappacks.region_europe_east.EmapiPl;
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakia;
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaCycling;
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaHiking;
+import mobac.mapsources.mappacks.region_europe_east.UmpWawPl;
+import mobac.mapsources.mappacks.region_europe_north.EniroComAerial;
+import mobac.mapsources.mappacks.region_europe_north.EniroComMap;
+import mobac.mapsources.mappacks.region_europe_north.EniroComNautical;
+import mobac.mapsources.mappacks.region_europe_north.StatkartSjoHovedkart2;
+import mobac.mapsources.mappacks.region_europe_north.StatkartTopo2;
+import mobac.mapsources.mappacks.region_europe_north.StatkartToporaster2;
+import mobac.mapsources.mappacks.region_europe_south.Sigpac;
+import mobac.mapsources.mappacks.region_oceania.NearMap;
+import mobac.mapsources.mappacks.region_oceania.NzTopoMaps;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
@@ -104,6 +105,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	public DefaultMapSourcesManager() {
 		MAP_SOURCES = new MapSource[] { //
 		//
+				new SimpleMapSource(),
 				new GoogleMaps(), // 
 				new GoogleMapMaker(), //
 				new GoogleMapsChina(), // 

@@ -14,15 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.mappacks.google;
+package mobac.mapsources.mappacks.region_europe_east;
 
-import mobac.program.interfaces.HttpMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class GoogleTerrain extends GoogleMapSource {
+/**
+ * 
+ * Requires known user agent, and something else otherwise we get only a HTTP 403
+ * <p>
+ * map provider does not work --> currently unused
+ * </p>
+ */
+public class TuristikaMapSk extends AbstractHttpMapSource {
 
-	public GoogleTerrain() {
-		super("Google Terrain", 0, 15, TileImageType.JPG, HttpMapSource.TileUpdate.None);
+	public TuristikaMapSk() {
+		super("TuristikaMapSk (Slovakia)", 12, 15, TileImageType.PNG);
+	}
+
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		String sx = String.format("%09d", tilex);
+		String sy = String.format("%09d", tiley);
+		sx = sx.substring(0, 3) + "/" + sx.substring(3, 6) + "/" + sx.substring(6, 9);
+		sy = sy.substring(0, 3) + "/" + sy.substring(3, 6) + "/" + sy.substring(6, 9);
+
+		String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy + ".png";
+		System.out.println(s);
+		return s;
 	}
 
 }

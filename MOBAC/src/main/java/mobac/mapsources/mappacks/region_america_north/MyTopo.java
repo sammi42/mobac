@@ -14,25 +14,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.mappacks.google;
+package mobac.mapsources.mappacks.region_america_north;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 /**
- * <a href="http://maps.google.com/?ie=UTF8&ll=36.279707,128.204956&spn=3.126164,4.932861&z=8" >Google Maps
- * Korea</a>
+ * 
+ * http://www.mytopo.com/maps/
+ * 
+ * Funny: The URL indicates PNG images but the server provides JPEG files...
  * 
  */
-public class GoogleMapsKorea extends GoogleMapSource {
+public class MyTopo extends AbstractHttpMapSource {
 
-	public GoogleMapsKorea() {
-		super("Google Maps Korea", 0, 18, TileImageType.PNG, HttpMapSource.TileUpdate.None);
+	public MyTopo() {
+		super("MyTopo", 6, 16, TileImageType.JPG, HttpMapSource.TileUpdate.None);
+	}
+
+	@Override
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return "http://maps.mytopo.com/mytopoK55Zc3L/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/" + tiley
+				+ ".jpg";
+	}
+
+	@Override
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
+		HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
+		conn.addRequestProperty("Referer", "http://www.mytopo.com/maps/");
+		return conn;
 	}
 
 	@Override
 	public String toString() {
-		return "Google Maps Korea";
+		return "MyTopo (USA only)";
 	}
 
 }

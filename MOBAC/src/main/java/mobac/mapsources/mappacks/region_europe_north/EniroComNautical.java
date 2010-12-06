@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.exceptions;
+/**
+ * 
+ */
+package mobac.mapsources.mappacks.region_europe_north;
 
-public class TileException extends Exception {
 
-	public TileException(String message, Throwable cause) {
-		super(message, cause);
+public class EniroComNautical extends EniroComMap {
+
+	public EniroComNautical() {
+		super("nautical");
 	}
 
-	public TileException(String message) {
-		super(message);
+	@Override
+	public String toString() {
+		return "Eniro Nautical (SE, NO, FI)";
 	}
 
 }

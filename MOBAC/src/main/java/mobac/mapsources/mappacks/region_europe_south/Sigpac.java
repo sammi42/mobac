@@ -14,29 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.mappacks.openstreetmap;
+package mobac.mapsources.mappacks.region_europe_south;
 
-import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.AbstractOsmTileSource;
-import mobac.program.interfaces.HttpMapSource;
+import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.model.TileImageType;
 
-public class Mapnik extends AbstractOsmTileSource {
+/**
+ * https://sourceforge.net/tracker/?func=detail&aid=3071972&group_id=238075&atid=1105496
+ */
+public class Sigpac extends AbstractHttpMapSource {
 
-	public Mapnik() {
-		super("Mapnik");
+	private static String sources[] = { "", "", "", "", "", "MTNSIGPAC", "MTNSIGPAC", "MTN2000", "MTN2000",
+			"MTN2000", "MTN2000", "MTN200", "MTN200", "MTN200", "MTN25", "MTN25", "ORTOFOTOS", "ORTOFOTOS" };
+
+	public Sigpac() {
+		// In some places ORTOFOTOS reaches zoom 18,
+		// but only level 17 covers the entire country
+		super("SIGPAC", 5, 17, TileImageType.JPG);
 	}
 
-	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return OsmMapSources.MAP_MAPNIK + super.getTileUrl(zoom, tilex, tiley);
-	}
+		int j = (1 << zoom) - tiley - 1;
 
-	public HttpMapSource.TileUpdate getTileUpdate() {
-		return HttpMapSource.TileUpdate.IfNoneMatch;
+		// The tiles are downloaded from kmlserver interface,
+		// as tilesserver.mapa.es serves only UTM projections
+		return "http://sigpac.mapa.es/kmlserver/raster/" + sources[zoom] + "@3785/" + zoom + "." + tilex + "." + j
+				+ ".img";
 	}
 
 	@Override
 	public String toString() {
-		return "OpenStreetMap Mapnik";
+		return "SIGPAC Mercator (Spain only)";
 	}
-
 }

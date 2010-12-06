@@ -120,10 +120,6 @@ public class MapPackManager {
 
 	protected void testMapPack(File mapPackFile) throws IOException, CertificateException {
 		String fileName = mapPackFile.getName();
-		// byte[] certBytes = Utilities.getInputBytes();
-		// X509EncodedKeySpec keySpec = new X509EncodedKeySpec(certBytes);
-		X509Certificate cert;
-
 		JarFile jf = new JarFile(mapPackFile, true);
 		try {
 			Enumeration<JarEntry> it = jf.entries();

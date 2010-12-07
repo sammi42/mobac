@@ -22,9 +22,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
-
-import org.apache.log4j.Logger;
-
+import mobac.utilities.Utilities;
 import bsh.EvalError;
 import bsh.Interpreter;
 
@@ -34,25 +32,24 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 			+ "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
 
 	private static int NUM = 0;
-	private String name;
-	private MapSpace mapSpace;
-	private int minZoom = 0;
-	private int maxZoom = 22;
-
-	private Logger log = Logger.getLogger(BeanShellHttpMapSource.class);
 
 	private final Interpreter i;
 
 	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
-		StringWriter sw = new StringWriter();
-		String line = br.readLine();
-		while (line != null) {
-			sw.write(line + "\n");
-			line = br.readLine();
+		FileInputStream in = new FileInputStream(f);
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
+			StringWriter sw = new StringWriter();
+			String line = br.readLine();
+			while (line != null) {
+				sw.write(line + "\n");
+				line = br.readLine();
+			}
+			br.close();
+			return new BeanShellHttpMapSource(sw.toString());
+		} finally {
+			Utilities.closeStream(in);
 		}
-		br.close();
-		return new BeanShellHttpMapSource(sw.toString());
 	}
 
 	public BeanShellHttpMapSource(String code) throws EvalError {
@@ -60,9 +57,12 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		name = "TestMapSource" + NUM++;
 		i = new Interpreter();
 		i.eval("import java.net.HttpURLConnection;");
-		i.eval("import mobac.program.beanshell.*;");
+		i.eval("import mobac.utilities.beanshell.*;");
 		i.eval(code);
-		Object o = i.get("tileSize");
+		Object o = i.get("name");
+		if (o != null)
+			name = (String) o;
+		o = i.get("tileSize");
 		if (o != null) {
 			int tileSize = ((Integer) o).intValue();
 			mapSpace = MapSpaceFactory.getInstance(tileSize, true);

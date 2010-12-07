@@ -51,6 +51,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 	protected int maxZoom;
 	protected TileImageType tileType;
 	protected HttpMapSource.TileUpdate tileUpdate;
+	protected MapSpace mapSpace = MercatorPower2MapSpace.INSTANCE_256;
 
 	public AbstractHttpMapSource(String name, int minZoom, int maxZoom, TileImageType tileType) {
 		this(name, minZoom, maxZoom, tileType, HttpMapSource.TileUpdate.None);
@@ -154,7 +155,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 	}
 
 	public MapSpace getMapSpace() {
-		return MercatorPower2MapSpace.INSTANCE_256;
+		return mapSpace;
 	}
 
 	public Color getBackgroundColor() {

@@ -14,6 +14,8 @@
 	<path id="maincp">
 		<fileset dir="lib" includes="log*.jar" />
 		<fileset dir="lib" includes="jai*.jar" />
+		<fileset dir="lib" includes="bsh-2.0b4.jar" />
+		<fileset dir="lib" includes="commons-codec-1.4.jar" />
 		<fileset dir="lib" includes="je-${je-version}.jar" />
 	</path>
 
@@ -52,7 +54,7 @@
 			<exclude name="mobac/mapsources/mappacks/**" />
 			<include name="mobac/**" />
 		</javac>
-		<copy todir="build" overwrite="true">
+		<copy todir="build/mobac" overwrite="true">
 			<fileset dir="src/main/resources" />
 		</copy>
 	</target>
@@ -106,10 +108,13 @@
 				<attribute name="Main-Class" value="${main.class}" />
 				<attribute name="Class-Path" value="./ sqlitejdbc-v056.jar jai_core.jar jai_codec.jar lib/jai_core.jar lib/jai_codec.jar sqlitejdbc-*.jar jai_*.jar lib/jai_*.jar" />
 			</manifest>
-			<zipfileset src="lib/log4j-1.2.15.jar" />
+			<zipfileset src="lib/log4j-1.2.15.jar" includes="**/*.class" />
 			<zipfileset src="lib/je-${je-version}.jar" />
-			<fileset dir="build">
+			<zipfileset src="lib/bsh-2.0b4.jar" includes="**/*.class" />
+			<zipfileset src="lib/commons-codec-1.4.jar" includes="**/*.class" />
+			<fileset dir="build/mobac">
 				<exclude name="**/unittest/**" />
+				<exclude name="mobac/mapsources/mapapcks/**" />
 				<exclude name="**/*.java" />
 			</fileset>
 		</jar>
@@ -138,11 +143,13 @@
 			-keep class mobac.program.model.* { public *; }
 			-keep class mobac.program.jaxb.* { public *; }
 			-keep class mobac.program.interfaces.* { public *; }
+			-keep class mobac.utilities.beanshell.* { public *; }
 			-keep class mobac.utilities.tar.TarIndex { public *; }
 			-keep class mobac.utilities.tar.TarIndexedArchive { public *; }
 			-keep class mobac.data.gpx.gpx11.* { public *; }
 			-keep class mobac.program.tilestore.berkeleydb.* { *; }
 			-keep class mobac.program.tilestore.TileStoreEntry { public *; }
+			-keep class mobac.mapsources.MapSourceTools { public *; }
 			-keep class mobac.mapsources.custom.* { *; }
 			-keepclassmembers enum * {
 			    public static **[] values();

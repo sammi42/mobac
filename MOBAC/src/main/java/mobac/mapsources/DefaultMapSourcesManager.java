@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
+import mobac.mapsources.loader.BeanShellMapSourceLoader;
 import mobac.mapsources.loader.CustomMapSourceLoader;
 import mobac.mapsources.loader.MapPackManager;
 import mobac.program.DirectoryManager;
@@ -59,6 +60,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(mapSourcesDir);
 		cmsl.loadCustomMapSources();
 		MAP_SOURCES.addAll(cmsl.getMapSources());
+		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(mapSourcesDir);
+		bsmsl.loadBeanShellMapSources();
+		MAP_SOURCES.addAll(bsmsl.getMapSources());
 	}
 
 	public static void initialize() {

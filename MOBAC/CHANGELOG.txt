@@ -16,6 +16,13 @@
  + New map source: Open Sea Map (sea layer joined with Mapnik) 
  + New atlas format: MGMaps/MyTrails (MGM)
  + New map source: Topomapper.com
+ ~ Map sources are now packed into "MapPacks" which can be updated 
+    without changing the main MOBAC program
+ ~ Custom map sources are moved from settings.xml into separate xml files
+    in the "mapsources" sub-directory
+ ~ XML structure of multi-layer custom maps sources has changed
+ + BeanShell map sources can be used if placed in the "mapsources" 
+    sub-directory
 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps

@@ -90,6 +90,10 @@ public abstract class TileStore {
 
 	public abstract void clearStore(MapSource mapSource);
 
+	public abstract void clearStore(String storeName);
+
+	public abstract String[] getAllStoreNames();
+
 	/**
 	 * Returns <code>true</code> if the tile store directory of the specified {@link MapSource} exists.
 	 * 

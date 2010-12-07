@@ -27,6 +27,8 @@ public class UserAgent {
 
 	public static final String FF3_XP = "Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.2) Gecko/20100115 Firefox/3.6";
 
+	public static final String FF3_WIN7 = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12";
+	
 	public static final String OPERA9_XP = "Opera/9.6 (Windows NT 5.1; U; en) Presto/2.1.1";
 
 	public static final String OPERA10_XP = "Opera/9.80 (Windows NT 5.1; U; en) Presto/2.2.15 Version/10.01";

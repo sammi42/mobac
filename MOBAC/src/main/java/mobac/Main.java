@@ -44,11 +44,11 @@ public class Main {
 			GUIExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
 			DirectoryManager.initialize();
-			DefaultMapSourcesManager.initialize();
 			ImageIO.setUseCache(false);
 			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
+			DefaultMapSourcesManager.initialize();
 			TileStore.initialize();
 			EnvironmentSetup.upgrade();
 			Logging.LOG.debug("Starting GUI");

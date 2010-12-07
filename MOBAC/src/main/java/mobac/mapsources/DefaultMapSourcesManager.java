@@ -19,13 +19,15 @@ package mobac.mapsources;
 import java.io.File;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
+import mobac.mapsources.impl.SimpleMapSource;
 import mobac.mapsources.loader.BeanShellMapSourceLoader;
 import mobac.mapsources.loader.CustomMapSourceLoader;
 import mobac.mapsources.loader.MapPackManager;
@@ -37,21 +39,23 @@ import mobac.program.model.TileImageType;
 public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	// public static final MapSource DEFAULT = new Mapnik();
-	private ArrayList<MapSource> MAP_SOURCES = new ArrayList<MapSource>(30);
-
-	private static MapSource LOCALHOST_TEST_MAPSOURCE = new LocalhostTestSource("Localhost", TileImageType.PNG);
-	private static MapSource DEBUG_TEST_MAPSOURCE = new DebugMapSource();
+	private LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<String, MapSource>(50);
 
 	static {
 		MapSourcesUpdater.loadMapSourceProperties();
 	}
 
 	public DefaultMapSourcesManager() {
+		if (Settings.getInstance().isDevModeEnabled()) {
+			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
+			addMapSource(new DebugMapSource());
+		}
+
 		File mapSourcesDir = new File(DirectoryManager.programDir, "mapsources");
 		try {
 			MapPackManager mpm = new MapPackManager(mapSourcesDir);
 			mpm.loadMapPacks();
-			MAP_SOURCES.addAll(mpm.getMapSources());
+			addAllMapSource(mpm.getMapSources());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (CertificateException e) {
@@ -59,10 +63,23 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		}
 		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(mapSourcesDir);
 		cmsl.loadCustomMapSources();
-		MAP_SOURCES.addAll(cmsl.getMapSources());
+		addAllMapSource(cmsl.getMapSources());
 		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(mapSourcesDir);
 		bsmsl.loadBeanShellMapSources();
-		MAP_SOURCES.addAll(bsmsl.getMapSources());
+		addAllMapSource(bsmsl.getMapSources());
+		if (allMapSources.size() == 0)
+			addMapSource(new SimpleMapSource());
+	}
+
+	protected void addAllMapSource(List<MapSource> mapSourceColl) {
+		for (MapSource mapSource : mapSourceColl)
+			addMapSource(mapSource);
+	}
+
+	protected void addMapSource(MapSource mapSource) {
+		MapSource old = allMapSources.put(mapSource.getName(), mapSource);
+		if (old != null)
+			throw new RuntimeException("Duplicate map source name: " + mapSource.getName());
 	}
 
 	public static void initialize() {
@@ -71,14 +88,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public Vector<MapSource> getAllMapSources() {
-		Vector<MapSource> mapSources = new Vector<MapSource>();
-		if (Settings.getInstance().isDevModeEnabled()) {
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE);
-			mapSources.add(DEBUG_TEST_MAPSOURCE);
-		}
-		for (MapSource ms : MAP_SOURCES)
-			mapSources.add(ms);
-		return mapSources;
+		return new Vector<MapSource>(allMapSources.values());
 	}
 
 	@Override
@@ -106,12 +116,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	@Override
 	public Vector<MapSource> getEnabledMapSources() {
 		Vector<MapSource> mapSources = new Vector<MapSource>();
-		if (Settings.getInstance().isDevModeEnabled()) {
-			mapSources.add(LOCALHOST_TEST_MAPSOURCE);
-			mapSources.add(DEBUG_TEST_MAPSOURCE);
-		}
 		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance().getDisabledMapSources());
-		for (MapSource ms : MAP_SOURCES) {
+		for (MapSource ms : allMapSources.values()) {
 			if (!disabledMapSources.contains(ms.getName()))
 				mapSources.add(ms);
 		}
@@ -120,22 +126,16 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public MapSource getDefaultMapSource() {
-		return getSourceByName("Mapnik");// DEFAULT;
+		MapSource ms = getSourceByName("Mapnik");// DEFAULT;
+		if (ms != null)
+			return ms;
+		// Fallback: return first
+		return allMapSources.values().iterator().next();
 	}
 
 	@Override
 	public MapSource getSourceByName(String name) {
-		for (MapSource ms : MAP_SOURCES) {
-			if (ms.getName().equals(name))
-				return ms;
-		}
-		if (Settings.getInstance().isDevModeEnabled()) {
-			if (LOCALHOST_TEST_MAPSOURCE.getName().equals(name))
-				return LOCALHOST_TEST_MAPSOURCE;
-			if (DEBUG_TEST_MAPSOURCE.getName().equals(name))
-				return DEBUG_TEST_MAPSOURCE;
-		}
-		return null;
+		return allMapSources.get(name);
 	}
 
 }

@@ -42,6 +42,7 @@ import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.DeleteFileFilter;
 import mobac.utilities.file.DirInfoFileFilter;
+import mobac.utilities.file.DirectoryFileFilter;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -258,20 +259,24 @@ public class BerkeleyDbTileStore extends TileStore {
 	}
 
 	public void clearStore(MapSource mapSource) {
-		File databaseDir = getStoreDir(mapSource);
+		clearStore(mapSource.getName());
+	}
+
+	public void clearStore(String storeName) {
+		File databaseDir = getStoreDir(storeName);
 
 		TileDatabase db;
 		synchronized (tileDbMap) {
-			db = tileDbMap.get(mapSource.getName());
+			db = tileDbMap.get(storeName);
 			if (db != null)
 				db.close(false);
 			if (databaseDir.exists()) {
 				DeleteFileFilter dff = new DeleteFileFilter();
 				databaseDir.listFiles(dff);
 				databaseDir.delete();
-				log.debug("Tilestore " + mapSource.getName() + " cleared: " + dff);
+				log.debug("Tilestore " + storeName + " cleared: " + dff);
 			}
-			tileDbMap.remove(mapSource.getName());
+			tileDbMap.remove(storeName);
 		}
 	}
 
@@ -364,12 +369,31 @@ public class BerkeleyDbTileStore extends TileStore {
 		return (tileStore.isDirectory()) && (tileStore.exists());
 	}
 
+	protected File getStoreDir(MapSource mapSource) {
+		return getStoreDir(mapSource.getName());
+	}
+
 	/**
-	 * @param mapSource
+	 * @param mapSourceName
 	 * @return directory used for storing the tile database belonging to <code>mapSource</code>
 	 */
-	protected File getStoreDir(MapSource mapSource) {
-		return new File(tileStoreDir, "db-" + mapSource.getName());
+	protected File getStoreDir(String mapSourceName) {
+		return new File(tileStoreDir, "db-" + mapSourceName);
+	}
+
+	public String[] getAllStoreNames() {
+		File[] dirs = tileStoreDir.listFiles(new DirectoryFileFilter());
+		ArrayList<String> storeNames = new ArrayList<String>(dirs.length);
+		for (File d : dirs) {
+			String name = d.getName();
+			if (name.startsWith("db-")) {
+				name = name.substring(3);
+				storeNames.add(name);
+			}
+		}
+		String[] result = new String[storeNames.size()];
+		storeNames.toArray(result);
+		return result;
 	}
 
 	private class ShutdownThread extends DelayedInterruptThread {

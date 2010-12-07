@@ -83,11 +83,11 @@ public class Settings {
 	public Point mapviewSelectionMin = null;
 
 	@XmlElement(nillable = false)
-	public String mapviewMapSource = MapSourcesManager.getInstance().getDefaultMapSource().getName();
+	public String mapviewMapSource = "Mapnik";
 
 	public String elementName = "Layer name";
 
-	private String userAgent = UserAgent.FF3_XP;
+	private String userAgent = UserAgent.FF3_WIN7;
 
 	public int downloadThreadCount = 4;
 

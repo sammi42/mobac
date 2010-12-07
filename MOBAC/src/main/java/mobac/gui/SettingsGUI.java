@@ -340,18 +340,18 @@ public class SettingsGUI extends JDialog {
 		backGround.add(scrollPane, BorderLayout.CENTER);
 	}
 
-	private synchronized void updateTileStoreInfoPanelAsync(final MapSource mapSource) {
+	private synchronized void updateTileStoreInfoPanelAsync(final String storeName) {
 		if (tileStoreAsyncThread != null)
 			return; // An update is currently running
 		tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
 
 			@Override
 			public void run() {
-				if (mapSource == null)
+				if (storeName == null)
 					log.debug("Updating tilestore information in background");
 				else
-					log.debug("Updating tilestore information for \"" + mapSource + "\" in background");
-				updateTileStoreInfoPanel(mapSource);
+					log.debug("Updating tilestore information for \"" + storeName + "\" in background");
+				updateTileStoreInfoPanel(storeName);
 				log.debug("Updating tilestore information finished");
 				tileStoreAsyncThread = null;
 			}
@@ -394,7 +394,7 @@ public class SettingsGUI extends JDialog {
 			tileStoreInfoList.add(info);
 			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 			deleteButton.setToolTipText("Delete all stored " + ts.getName() + " tiles.");
-			deleteButton.addActionListener(new ClearTileCacheAction(ts));
+			deleteButton.addActionListener(new ClearTileCacheAction(ts.getName()));
 
 			tileStoreInfoPanel.add(mapSourceNameLabel, gbc_mapSource);
 			tileStoreInfoPanel.add(mapTileCountLabel, gbc_mapTiles);
@@ -416,7 +416,7 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
 	}
 
-	private void updateTileStoreInfoPanel(MapSource mapSource) {
+	private void updateTileStoreInfoPanel(String storeName) {
 		try {
 			TileStore tileStore = TileStore.getInstance();
 
@@ -427,7 +427,7 @@ public class SettingsGUI extends JDialog {
 				Utilities.checkForInterruption();
 				int count;
 				long size;
-				if (mapSource == null || ms.equals(mapSource)) {
+				if (storeName == null || ms.getName().equals(storeName)) {
 					TileStoreInfo tsi = tileStore.getStoreInfo(ms);
 					count = tsi.getTileCount();
 					size = tsi.getStoreSize();
@@ -778,24 +778,24 @@ public class SettingsGUI extends JDialog {
 
 	private class ClearTileCacheAction implements ActionListener {
 
-		MapSource source;
+		String storeName;
 
-		public ClearTileCacheAction(MapSource source) {
-			this.source = source;
+		public ClearTileCacheAction(String storeName) {
+			this.storeName = storeName;
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			final JButton b = (JButton) e.getSource();
 			b.setEnabled(false);
 			b.setToolTipText("Deleting in progress - please wait");
-			Thread t = new DelayedInterruptThread("TileStore_" + source.getName() + "_DeleteThread") {
+			Thread t = new DelayedInterruptThread("TileStore_" + storeName + "_DeleteThread") {
 
 				@Override
 				public void run() {
 					try {
 						TileStore ts = TileStore.getInstance();
-						ts.clearStore(source);
-						SettingsGUI.this.updateTileStoreInfoPanelAsync(source);
+						ts.clearStore(storeName);
+						SettingsGUI.this.updateTileStoreInfoPanelAsync(storeName);
 						SettingsGUI.this.repaint();
 					} catch (Exception e) {
 						log.error("An error occured while cleaning tile cache: ", e);

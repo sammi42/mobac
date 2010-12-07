@@ -24,12 +24,12 @@ import mobac.program.model.TileImageType;
  * Aero charts from USA http://www.runwayfinder.com
  * 
  */
-public abstract class AeroCharts extends AbstractHttpMapSource {
+public abstract class AbstractAeroCharts extends AbstractHttpMapSource {
 
 	private String baseUrl = "http://www.runwayfinder.com/media/";
 	protected String service;
 
-	public AeroCharts(String name, String service, int minZoom, int maxZoom) {
+	public AbstractAeroCharts(String name, String service, int minZoom, int maxZoom) {
 		super(name, minZoom, maxZoom, TileImageType.JPG, HttpMapSource.TileUpdate.LastModified);
 		this.service = service;
 	}

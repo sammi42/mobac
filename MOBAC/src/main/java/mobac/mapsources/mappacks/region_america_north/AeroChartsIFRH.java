@@ -20,7 +20,7 @@
 package mobac.mapsources.mappacks.region_america_north;
 
 
-public class AeroChartsIFRH extends AeroCharts {
+public class AeroChartsIFRH extends AbstractAeroCharts {
 
 	public AeroChartsIFRH() {
 		super("Aero IFR-H Charts", "ifrhicharts/?", 4, 9);

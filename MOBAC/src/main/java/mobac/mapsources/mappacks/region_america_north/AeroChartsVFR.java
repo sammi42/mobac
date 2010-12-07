@@ -20,7 +20,7 @@
 package mobac.mapsources.mappacks.region_america_north;
 
 
-public class AeroChartsVFR extends AeroCharts {
+public class AeroChartsVFR extends AbstractAeroCharts {
 
 	public AeroChartsVFR() {
 		super("Aero VFR Charts", "charts/?", 4, 11);

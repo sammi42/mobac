@@ -38,14 +38,12 @@ import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobac.gui.actions.GpxLoad;
 import mobac.gui.mapview.ScaleBar;
 import mobac.gui.panels.JCoordinatesPanel;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.custom.CustomMapSource;
 import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
 import mobac.program.download.UserAgent;
@@ -169,11 +167,6 @@ public class Settings {
 	private String customProxyPassword = "";
 
 	private Vector<String> disabledMapSources = new Vector<String>();
-
-	@XmlElementWrapper(name = "customMapSources")
-	@XmlElements({ @XmlElement(name = "customMapSource", type = CustomMapSource.class)
-	/* @XmlElement(name = "customMultiLayerMapSource", type = CustomMultiLayerMapSource.class) */})
-	public Vector<CustomMapSource> customMapSources = new Vector<CustomMapSource>();
 
 	@XmlElement(name = "MapSourcesUpdate")
 	public final MapSourcesUpdate mapSourcesUpdate = new MapSourcesUpdate();

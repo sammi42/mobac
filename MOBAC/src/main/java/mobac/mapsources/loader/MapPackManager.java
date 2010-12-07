@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.mappack;
+package mobac.mapsources.loader;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,10 +67,8 @@ public class MapPackManager {
 		mapPackCert = (X509Certificate) certs.iterator().next();
 	}
 
-	public MapSource[] getMapSources() {
-		MapSource[] ms = new MapSource[mapSources.size()];
-		mapSources.toArray(ms);
-		return ms;
+	public List<MapSource> getMapSources() {
+		return mapSources;
 	}
 
 	public void installUpdates() throws IOException {
@@ -110,7 +108,7 @@ public class MapPackManager {
 			try {
 				MapSource ms = iterator.next();
 				mapSources.add(ms);
-				System.out.println(ms);
+				log.trace("Loaded map source: " + ms);
 			} catch (Error e) {
 				log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
 			}

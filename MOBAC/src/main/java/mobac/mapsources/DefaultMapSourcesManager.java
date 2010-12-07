@@ -19,21 +19,24 @@ package mobac.mapsources;
 import java.io.File;
 import java.io.IOException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
+import mobac.mapsources.loader.CustomMapSourceLoader;
+import mobac.mapsources.loader.MapPackManager;
+import mobac.program.DirectoryManager;
 import mobac.program.interfaces.MapSource;
-import mobac.program.mappack.MapPackManager;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
 public class DefaultMapSourcesManager extends MapSourcesManager {
 
-	//public static final MapSource DEFAULT = new Mapnik();
-	private MapSource[] MAP_SOURCES;
+	// public static final MapSource DEFAULT = new Mapnik();
+	private ArrayList<MapSource> MAP_SOURCES = new ArrayList<MapSource>(30);
 
 	private static MapSource LOCALHOST_TEST_MAPSOURCE = new LocalhostTestSource("Localhost", TileImageType.PNG);
 	private static MapSource DEBUG_TEST_MAPSOURCE = new DebugMapSource();
@@ -43,81 +46,19 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	public DefaultMapSourcesManager() {
+		File mapSourcesDir = new File(DirectoryManager.programDir, "mapsources");
 		try {
-			MapPackManager mpm = new MapPackManager(new File("mapsources"));
+			MapPackManager mpm = new MapPackManager(mapSourcesDir);
 			mpm.loadMapPacks();
-			MAP_SOURCES = mpm.getMapSources();
+			MAP_SOURCES.addAll(mpm.getMapSources());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (CertificateException e) {
 			throw new RuntimeException(e);
 		}
-		// MAP_SOURCES = new MapSource[] { //
-		// //
-		// new GoogleMaps(), //
-		// new GoogleMapMaker(), //
-		// new GoogleMapsChina(), //
-		// new GoogleMapsKorea(), //
-		// new GoogleEarth(), //
-		// new GoogleHybrid(), //
-		// new GoogleTerrain(), //
-		// new YahooMaps(), //
-		// new YahooMapsJapan(), //
-		// new YahooMapsTaiwan(), //
-		// DEFAULT, //
-		// new TilesAtHome(), //
-		// new CycleMap(), //
-		// new OsmHikingMap(), //
-		// new OsmHikingMapWithBase(), //
-		// new OsmHikingMapWithRelief(), //
-		// new OsmHikingMapWithReliefBase(), //
-		// new OpenSeaMap(), //
-		// new Hikebikemap(), //
-		// new OsmPublicTransport(), //
-		// new OpenPisteMap(), //
-		// new MicrosoftMaps(), //
-		// new MicrosoftMapsHillShade(),//
-		// new MicrosoftMapsChina(),//
-		// new MicrosoftVirtualEarth(),//
-		// new MicrosoftHybrid(), //
-		// new OviMaps(), //
-		// new OutdooractiveGermany(),//
-		// new OutdooractiveAustria(),//
-		// new OutdooractiveSouthTyrol(), //
-		// new MultimapCom(), //
-		// new MultimapOSUkCom(),//
-		// new Cykloatlas(), //
-		// new CykloatlasWithRelief(), //
-		// new TerraserverUSA(), //
-		// new MyTopo(), //
-		// new UmpWawPl(),//
-		// new DoCeluPL(), //
-		// new EmapiPl(), //
-		// new Bergfex(), //
-		// new FreemapSlovakia(), //
-		// new FreemapSlovakiaHiking(),//
-		// new FreemapSlovakiaCycling(), //
-		// new Turaterkep(), //
-		// new NearMap(), //
-		// new HubermediaBavaria(),//
-		// new StatkartTopo2(), //
-		// new StatkartToporaster2(), //
-		// new StatkartSjoHovedkart2(), //
-		// new EniroComMap(), //
-		// new EniroComAerial(), //
-		// new EniroComNautical(), //
-		// new MapplusCh(), //
-		// new YandexMap(), //
-		// new YandexSat(), //
-		// new Navitel(), //
-		// new MicrosoftOrdnanceSurveyExplorer(), //
-		// new AeroChartsVFR(), //
-		// new AeroChartsIFR(),//
-		// new AeroChartsIFRH(), //
-		// new Sigpac(), //
-		// new NzTopoMaps(), //
-		// new Topomapper() //
-		// };
+		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(mapSourcesDir);
+		cmsl.loadCustomMapSources();
+		MAP_SOURCES.addAll(cmsl.getMapSources());
 	}
 
 	public static void initialize() {
@@ -132,8 +73,6 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			mapSources.add(DEBUG_TEST_MAPSOURCE);
 		}
 		for (MapSource ms : MAP_SOURCES)
-			mapSources.add(ms);
-		for (MapSource ms : Settings.getInstance().customMapSources)
 			mapSources.add(ms);
 		return mapSources;
 	}
@@ -172,23 +111,17 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			if (!disabledMapSources.contains(ms.getName()))
 				mapSources.add(ms);
 		}
-		for (MapSource ms : Settings.getInstance().customMapSources)
-			mapSources.add(ms);
 		return mapSources;
 	}
 
 	@Override
 	public MapSource getDefaultMapSource() {
-		return getSourceByName("Mapnik");//DEFAULT;
+		return getSourceByName("Mapnik");// DEFAULT;
 	}
 
 	@Override
 	public MapSource getSourceByName(String name) {
 		for (MapSource ms : MAP_SOURCES) {
-			if (ms.getName().equals(name))
-				return ms;
-		}
-		for (MapSource ms : Settings.getInstance().customMapSources) {
 			if (ms.getName().equals(name))
 				return ms;
 		}

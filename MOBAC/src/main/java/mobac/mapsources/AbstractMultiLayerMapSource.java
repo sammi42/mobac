@@ -38,17 +38,22 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 
 	protected Logger log;
 
-	private final String name;
+	protected String name = "";
+	protected TileImageType tileType = TileImageType.PNG;
+	protected MapSource[] mapSources;
+
 	private int maxZoom;
 	private int minZoom;
-	protected MapSource[] mapSources;
 	private MapSpace mapSpace;
-	private TileImageType tileImageType;
 
 	public AbstractMultiLayerMapSource(String name, TileImageType tileImageType) {
-		log = Logger.getLogger(this.getClass());
+		this();
 		this.name = name;
-		this.tileImageType = tileImageType;
+		this.tileType = tileImageType;
+	}
+
+	protected AbstractMultiLayerMapSource() {
+		log = Logger.getLogger(this.getClass());
 	}
 
 	protected void initializeValues() {
@@ -98,7 +103,7 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 		BufferedImage image = getTileImage(zoom, x, y, loadMethod);
 		if (image == null)
 			return null;
-		ImageIO.write(image, tileImageType.getFileExt(), buf);
+		ImageIO.write(image, tileType.getFileExt(), buf);
 		return buf.toByteArray();
 	}
 
@@ -129,7 +134,7 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 	}
 
 	public TileImageType getTileImageType() {
-		return tileImageType;
+		return tileType;
 	}
 
 	@Override

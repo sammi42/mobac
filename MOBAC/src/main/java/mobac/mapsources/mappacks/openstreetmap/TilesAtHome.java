@@ -20,6 +20,8 @@ import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.AbstractOsmTileSour
 import mobac.program.interfaces.HttpMapSource;
 
 public class TilesAtHome extends AbstractOsmTileSource {
+	
+	private static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 
 	public TilesAtHome() {
 		super("TilesAtHome");
@@ -29,7 +31,7 @@ public class TilesAtHome extends AbstractOsmTileSource {
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return OsmMapSources.MAP_OSMA + super.getTileUrl(zoom, tilex, tiley);
+		return MAP_OSMA + super.getTileUrl(zoom, tilex, tiley);
 	}
 
 	@Override

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.mappack;
+package mobac.mapsources.loader;
 
 import java.net.URL;
 import java.net.URLClassLoader;

@@ -70,6 +70,11 @@ public class CustomMapSource implements HttpMapSource {
 	public CustomMapSource() {
 	}
 
+	public CustomMapSource(String name, String url) {
+		this.name = name;
+		this.url = url;
+	}
+
 	public HttpMapSource.TileUpdate getTileUpdate() {
 		return tileUpdate;
 	}

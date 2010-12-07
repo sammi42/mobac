@@ -21,13 +21,15 @@ import mobac.program.interfaces.HttpMapSource;
 
 public class Mapnik extends AbstractOsmTileSource {
 
+	private static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
+
 	public Mapnik() {
 		super("Mapnik");
 	}
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return OsmMapSources.MAP_MAPNIK + super.getTileUrl(zoom, tilex, tiley);
+		return MAP_MAPNIK + super.getTileUrl(zoom, tilex, tiley);
 	}
 
 	public HttpMapSource.TileUpdate getTileUpdate() {

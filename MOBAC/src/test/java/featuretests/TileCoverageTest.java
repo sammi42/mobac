@@ -25,7 +25,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import mobac.mapsources.mappacks.google.GoogleMaps;
+import mobac.mapsources.MapSourcesManager;
 import mobac.program.Logging;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore;
@@ -44,14 +44,15 @@ public class TileCoverageTest {
 			BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 			try {
 				int zoom = 8;
-				BufferedImage image = tileStore.getCacheCoverage(new GoogleMaps(), zoom,
-						new Point(80, 85), new Point(1 << zoom, 1 << zoom));
+				BufferedImage image = tileStore.getCacheCoverage(
+						MapSourcesManager.getInstance().getSourceByName("Google Maps"), zoom, new Point(80, 85),
+						new Point(1 << zoom, 1 << zoom));
 				ImageIO.write(image, "png", new File("test.png"));
 				JFrame f = new JFrame("Example");
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				f.getContentPane().add(
-						new JLabel(new ImageIcon(image.getScaledInstance(image.getWidth() * 4,
-								image.getHeight() * 4, 0))));
+						new JLabel(new ImageIcon(
+								image.getScaledInstance(image.getWidth() * 4, image.getHeight() * 4, 0))));
 				f.pack();
 				f.setLocationRelativeTo(null);
 				f.setVisible(true);

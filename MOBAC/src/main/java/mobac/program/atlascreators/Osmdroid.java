@@ -23,8 +23,6 @@ import java.util.Date;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.mappacks.openstreetmap.CycleMap;
-import mobac.mapsources.mappacks.openstreetmap.TilesAtHome;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
@@ -74,10 +72,9 @@ public class Osmdroid extends OSMTracker {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		currentMapStoreName = map.getMapSource().getName();
-		Class<?> mapSourceClass = map.getMapSource().getClass();
-		if (TilesAtHome.class.equals(mapSourceClass))
+		if (currentMapStoreName.equals("TilesAtHome"))
 			currentMapStoreName = "Osmarender";
-		else if (CycleMap.class.equals(mapSourceClass))
+		else if (currentMapStoreName.equals("OSM Cycle Map"))
 			currentMapStoreName = "CycleMap";
 	}
 

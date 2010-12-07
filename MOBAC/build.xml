@@ -38,17 +38,18 @@
 	</target>
 
 	<target name="build">
-		<mkdir dir="build" />
+		<mkdir dir="build/mobac" />
 		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
-		<javac srcdir="src/main/java" destdir="build" target="1.4" source="1.4" debug="true">
+		<javac srcdir="src/main/java" destdir="build/mobac" target="1.4" source="1.4" debug="true">
 			<classpath refid="maincp" />
 			<include name="mobac/StartMOBAC.java" />
 		</javac>
 		<!-- Compile the other classes for Java 1.6 -->
-		<javac srcdir="src/main/java" destdir="build" target="1.6" debug="true">
+		<javac srcdir="src/main/java" destdir="build/mobac" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<exclude name="mobac/StartMOBAC.java" />
+			<exclude name="mobac/mapsources/mappacks/**" />
 			<include name="mobac/**" />
 		</javac>
 		<copy todir="build" overwrite="true">
@@ -71,13 +72,21 @@
 		<for list="${mappacklist}" param="mappack" delimiter=";">
 			<sequential>
 				<echo message="@{mappack}" />
+				<mkdir dir="build/mp-@{mappack}" />
+				<javac srcdir="src/main/java" destdir="build/mp-@{mappack}" defaultexcludes="true" debug="true">
+					<include name="mobac/mapsources/mappacks/@{mappack}/**.java" />
+					<classpath>
+						<path refid="maincp" />
+						<path path="build/mobac" />
+					</classpath>
+				</javac>
 				<delete file="mapsources/mp-@{mappack}.jar" failonerror="false" />
 				<jar destfile="mapsources/mp-@{mappack}.jar">
 					<manifest>
 						<attribute name="MapPackVersion" value="${mobac.mappackversion}" />
 						<attribute name="MapPackName" value="@{mappack}" />
 					</manifest>
-					<fileset dir="build" defaultexcludes="true">
+					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
 						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
 					</fileset>
 					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />

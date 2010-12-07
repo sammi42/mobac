@@ -22,7 +22,8 @@ import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
-import mobac.mapsources.mappacks.google.GoogleMaps;
+import mobac.mapsources.MapSourcesManager;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.Atlas;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Layer;
@@ -33,10 +34,9 @@ import mobac.utilities.file.NamePatternFileFilter;
 
 import org.apache.log4j.Logger;
 
-
 /**
- * Creates the necessary files on first time Mobile Atlas Creator is started or
- * tries to update the environment if the version has changed.
+ * Creates the necessary files on first time Mobile Atlas Creator is started or tries to update the environment if the
+ * version has changed.
  */
 public class EnvironmentSetup {
 
@@ -50,16 +50,14 @@ public class EnvironmentSetup {
 		if (maxHeap < 200000000) {
 			String msg = "<html><b>WARNING:</b> Mobile Atlas Creator has been started "
 					+ "with a very small amount of memory assigned.<br>"
-					+ "The current maximum usable amount of memory to Mobile Atlas Creator is <b>"
-					+ heapMBFormatted
+					+ "The current maximum usable amount of memory to Mobile Atlas Creator is <b>" + heapMBFormatted
 					+ "</b>.<br><br>Please make sure to start Mobile Atlas Creator in "
 					+ "the future via the provided start scripts <i>Mobile Atlas Creator.exe</i><br>"
 					+ "on Windows or <i>start.sh</i> on Linux/Unix/OSX or add the "
 					+ "parameter <b>-Xmx 512M</b> to your startup command.<br><br>"
 					+ "Example: <i>java -Xmx512M -jar Mobile_Atlas_Creator.jar</i><br>"
 					+ "<br><center>Press OK to continue and start Mobile Atlas Creator</center></html>";
-			JOptionPane.showMessageDialog(null, msg, "Warning: low memory",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, msg, "Warning: low memory", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 
@@ -82,9 +80,8 @@ public class EnvironmentSetup {
 		} catch (Exception e) {
 			log.error("Error while creating settings.xml: " + e.getMessage(), e);
 			String[] options = { "Exit", "Show error report" };
-			int a = JOptionPane.showOptionDialog(null,
-					"Could not create file settings.xml program will exit.", "Error", 0,
-					JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+			int a = JOptionPane.showOptionDialog(null, "Could not create file settings.xml program will exit.",
+					"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 			if (a == 1)
 				GUIExceptionHandler.showExceptionDialog(e);
 			System.exit(1);
@@ -95,10 +92,9 @@ public class EnvironmentSetup {
 			EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
 			EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
 			Layer layer = new Layer(atlas, "GM New York");
-			layer.addMapsAutocut("GM New York 16", new GoogleMaps(), max, min, 16, null,
-					32000);
-			layer.addMapsAutocut("GM New York 14", new GoogleMaps(), max, min, 14, null,
-					32000);
+			MapSource ms = MapSourcesManager.getInstance().getSourceByName("Google Maps");
+			layer.addMapsAutocut("GM New York 16", ms, max, min, 16, null, 32000);
+			layer.addMapsAutocut("GM New York 14", ms, max, min, 14, null, 32000);
 			atlas.addLayer(layer);
 			p.save(atlas);
 		} catch (Exception e) {

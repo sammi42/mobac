@@ -21,16 +21,10 @@ import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.mappacks.google.GoogleEarth;
-import mobac.mapsources.mappacks.google.GoogleMaps;
-import mobac.mapsources.mappacks.google.GoogleTerrain;
-import mobac.mapsources.mappacks.openstreetmap.CycleMap;
-import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.tar.TarIndex;
-
 
 /**
  * Creates a tile cache structure as used by <a href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile,
@@ -49,15 +43,15 @@ public class PathAway extends OSMTracker {
 
 		MapSource mapSource = map.getMapSource();
 		String shortMapDir = null;
-		if (mapSource.getClass().equals(GoogleMaps.class))
+		if (mapSource.getName().equals("Google Maps"))
 			shortMapDir = "G1";
-		else if (mapSource.getClass().equals(GoogleEarth.class))
+		else if (mapSource.getName().equals("Google Earth"))
 			shortMapDir = "G2";
-		else if (mapSource.getClass().equals(GoogleTerrain.class))
+		else if (mapSource.getName().equals("Google Terrain"))
 			shortMapDir = "G3";
-		else if (mapSource.getClass().equals(Mapnik.class))
+		else if (mapSource.getName().equals("Mapnik"))
 			shortMapDir = "OSM1";
-		else if (mapSource.getClass().equals(CycleMap.class))
+		else if (mapSource.getName().equals("OSM Cycle Map"))
 			shortMapDir = "OCM1";
 		if (shortMapDir != null)
 			mapDir = new File(atlasDir, shortMapDir);

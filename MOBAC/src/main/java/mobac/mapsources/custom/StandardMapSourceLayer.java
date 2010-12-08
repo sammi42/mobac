@@ -81,4 +81,21 @@ public class StandardMapSourceLayer implements MapSource {
 		return mapSource.getBackgroundColor();
 	}
 
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof MapSource))
+			return false;
+		MapSource other = (MapSource) obj;
+		return other.getName().equals(getName());
+	}
+
 }

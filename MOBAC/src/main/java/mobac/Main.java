@@ -37,18 +37,19 @@ public class Main {
 
 	public Main() {
 		try {
+			DirectoryManager.initialize();
 			Logging.configureLogging();
 			// MySocketImplFactory.install();
 			ProgramInfo.initialize(); // Load revision info
 			Logging.logSystemInfo();
 			GUIExceptionHandler.installToolkitEventQueueProxy();
 			// Logging.logSystemProperties();
-			DirectoryManager.initialize();
 			ImageIO.setUseCache(false);
 			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
 			DefaultMapSourcesManager.initialize();
+			EnvironmentSetup.createDefaultAtlases();
 			TileStore.initialize();
 			EnvironmentSetup.upgrade();
 			Logging.LOG.debug("Starting GUI");

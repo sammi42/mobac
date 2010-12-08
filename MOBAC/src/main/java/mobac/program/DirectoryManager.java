@@ -17,6 +17,11 @@
 package mobac.program;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.swing.JOptionPane;
 
 import mobac.utilities.Utilities;
 
@@ -33,24 +38,88 @@ import mobac.utilities.Utilities;
  */
 public class DirectoryManager {
 
-	// private static Logger log = Logger.getLogger(DirectoryManager.class);
 	public static final File currentDir;
 	public static final File programDir;
 	public static final File userHomeDir;
-	public static final File userSettingsDir;
 	public static final File tempDir;
+	public static final File userAppDataDir;
+
+	public static final File userSettingsDir;
+	public static final File mapSourcesDir;
+	public static final File atlasProfilesDir;
+	public static final File tileStoreDir;
+
+	private static Properties dirConfig;
 
 	static {
 		currentDir = new File(System.getProperty("user.dir"));
 		userHomeDir = new File(System.getProperty("user.home"));
-		userSettingsDir = getUserSettingsDir();
 		tempDir = new File(System.getProperty("java.io.tmpdir"));
 		programDir = getProgramDir();
+		loadDirectoriesIni();
+
+		userAppDataDir = getUserAppDataDir();
+		mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
+		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
+		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
+		tileStoreDir = applyDirConfig("mobac.tilestoredir", new File(programDir, "tilestore"));
+		
+	}
+
+	private static File applyDirConfig(String propertyName, File defaultDir) {
+		try {
+			final String dirCfg = dirConfig.getProperty(propertyName);
+			if (dirCfg == null) {
+				return defaultDir;
+			} else {
+				return getFileFromString(dirCfg);
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "<html><p>Failed to load directory.ini - entry \"" + propertyName
+					+ "\":<p><p>" + e.getMessage() + "</p></html>", "Faile do load directory.ini",
+					JOptionPane.ERROR_MESSAGE);
+			return defaultDir;
+		}
+	}
+
+	private static File getFileFromString(String s) {
+		s = s.trim();
+		if (s.startsWith("${mobac-prog}")) {
+			s = s.substring(Math.min(14, s.length()));
+			if (s.length() > 0)
+				return new File(programDir, s);
+			else
+				return programDir;
+		} else if (s.startsWith("${home}")) {
+			s = s.substring(Math.min(8, s.length()));
+			if (s.length() > 0)
+				return new File(userHomeDir, s);
+			else
+				return userHomeDir;
+		} else
+			return new File(s);
 	}
 
 	public static void initialize() {
-		if (currentDir == null || userSettingsDir == null || tempDir == null || programDir == null)
+		if (currentDir == null || userAppDataDir == null || tempDir == null || programDir == null)
 			throw new RuntimeException("DirectoryManager failed");
+	}
+
+	private static void loadDirectoriesIni() {
+		File dirIniFile = new File(programDir, "directories.ini");
+		if (!dirIniFile.isFile())
+			return;
+		dirConfig = new Properties();
+		FileInputStream in = null;
+		try {
+			in = new FileInputStream(dirIniFile);
+			dirConfig.load(in);
+		} catch (IOException e) {
+			System.err.println("Failed to load " + dirIniFile.getName());
+			e.printStackTrace();
+		} finally {
+			Utilities.closeStream(in);
+		}
 	}
 
 	/**
@@ -88,7 +157,7 @@ public class DirectoryManager {
 	 * 
 	 * @return
 	 */
-	private static File getUserSettingsDir() {
+	private static File getUserAppDataDir() {
 		String appData = System.getenv("APPDATA");
 		if (appData != null) {
 			File appDataDir = new File(appData);

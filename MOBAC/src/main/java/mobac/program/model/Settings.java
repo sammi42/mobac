@@ -58,7 +58,7 @@ public class Settings {
 	private static Logger log = Logger.getLogger(Settings.class);
 	private static Settings instance = new Settings();
 
-	public static final File FILE = new File(DirectoryManager.currentDir, "settings.xml");
+	public static final File FILE = new File(DirectoryManager.userSettingsDir, "settings.xml");
 
 	private static long SETTINGS_LAST_MODIFIED = 0;
 
@@ -98,9 +98,13 @@ public class Settings {
 
 	public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEG_LOCAL;
 
-	@XmlElement
-	private String atlasOutputDirectory = null;
-	public String tileStoreDirectory;
+	public final Directories directories = new Directories();
+	public static class Directories {
+		@XmlElement
+		private String atlasOutputDirectory = null;
+		public String tileStoreDirectory;
+		public String mapSourcesDirectory;
+	}
 
 	/**
 	 * Connection timeout in seconds (default 10 seconds)
@@ -404,15 +408,15 @@ public class Settings {
 	}
 
 	public File getAtlasOutputDirectory() {
-		if (atlasOutputDirectory != null)
-			return new File(atlasOutputDirectory);
+		if (directories.atlasOutputDirectory != null)
+			return new File(directories.atlasOutputDirectory);
 		return new File(DirectoryManager.currentDir, "atlases");
 	}
 
 	public String getAtlasOutputDirectoryString() {
-		if (atlasOutputDirectory == null)
+		if (directories.atlasOutputDirectory == null)
 			return "";
-		return atlasOutputDirectory;
+		return directories.atlasOutputDirectory;
 	}
 
 	public String getVersion() {
@@ -428,6 +432,6 @@ public class Settings {
 	public void setAtlasOutputDirectory(String dir) {
 		if (dir != null && dir.trim().length() == 0)
 			dir = null;
-		atlasOutputDirectory = dir;
+		directories.atlasOutputDirectory = dir;
 	}
 }

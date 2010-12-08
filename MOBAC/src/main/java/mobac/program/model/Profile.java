@@ -63,6 +63,9 @@ public class Profile implements Comparable<Profile> {
 	private String name;
 	private static Vector<Profile> profiles = new Vector<Profile>();
 
+	/**
+	 * Profiles management method
+	 */
 	public static void updateProfiles() {
 		File profilesDir = DirectoryManager.currentDir;
 		final Set<Profile> deletedProfiles = new HashSet<Profile>();
@@ -85,14 +88,22 @@ public class Profile implements Comparable<Profile> {
 		Collections.sort(profiles);
 	}
 
+	/**
+	 * Profiles management method
+	 */
 	public static Vector<Profile> getProfiles() {
 		updateProfiles();
 		return profiles;
 	}
 
+	/**
+	 * Load a profile by it's name
+	 * 
+	 * @param name
+	 */
 	public Profile(String name) {
 		super();
-		this.file = new File(DirectoryManager.currentDir, getProfileFileName(name));
+		this.file = new File(DirectoryManager.atlasProfilesDir, getProfileFileName(name));
 		this.name = name;
 	}
 

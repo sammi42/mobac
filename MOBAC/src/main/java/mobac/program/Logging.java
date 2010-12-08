@@ -18,9 +18,9 @@ package mobac.program;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.logging.Handler;
 
 import mobac.utilities.GUIExceptionHandler;
@@ -35,7 +35,6 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 
-
 public class Logging {
 
 	protected static final String CONFIG_FILENAME = "log4j.xml";
@@ -46,8 +45,9 @@ public class Logging {
 
 	public static final Logger LOG = Logger.getLogger("MAC");
 
-	public static final Layout ADVANCED_LAYOUT = new PatternLayout(
-			"%d{ISO8601} %-5p [%t] %c{1}: %m%n");
+	public static final Layout ADVANCED_LAYOUT = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
+
+	protected static boolean CONFIGURED = false;
 
 	public static void configureLogging() {
 		// We test for the configuration file, if it exists we use it, otherwise
@@ -60,6 +60,8 @@ public class Logging {
 	}
 
 	public static boolean loadLog4JConfigXml() {
+		if (loadLog4JConfigXml(DirectoryManager.userAppDataDir))
+			return true;
 		if (loadLog4JConfigXml(DirectoryManager.userSettingsDir))
 			return true;
 		if (loadLog4JConfigXml(DirectoryManager.currentDir))
@@ -108,7 +110,7 @@ public class Logging {
 
 	public static void configureLogFileLogging(Level level) {
 		Logger logger = Logger.getRootLogger();
-		File logFileDir = DirectoryManager.userSettingsDir;
+		File logFileDir = DirectoryManager.userAppDataDir;
 		String logFilename = new File(logFileDir, LOG_FILENAME).getAbsolutePath();
 		Layout layout = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
 		FileAppender consoleAppender;
@@ -144,14 +146,18 @@ public class Logging {
 			return;
 		String n = System.getProperty("line.separator");
 		log.debug("Version: " + ProgramInfo.getCompleteTitle());
-		log.debug("Platform: " + GUIExceptionHandler.prop("os.name") + " ("
-				+ GUIExceptionHandler.prop("os.version") + ")");
+		log.debug("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
+				+ ")");
 		log.debug("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
 				+ GUIExceptionHandler.prop("java.runtime.version") + ")");
-		log.debug("Directories:" + n + "currentDir: \t" + DirectoryManager.currentDir + n
-				+ "programDir: \t" + DirectoryManager.programDir + n + "tempDir:     \t"
-				+ DirectoryManager.tempDir + n + "userHomeDir: \t" + DirectoryManager.userHomeDir
-				+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir);
+		log.debug("Directories:" /**/
+				+ n + "currentDir: \t" + DirectoryManager.currentDir /**/
+				+ n + "programDir: \t" + DirectoryManager.programDir /**/
+				+ n + "tempDir:     \t" + DirectoryManager.tempDir /**/
+				+ n + "userHomeDir: \t" + DirectoryManager.userHomeDir /**/
+				+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
+				+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
+		);
 	}
 
 	public static void logSystemProperties() {

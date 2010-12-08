@@ -28,7 +28,7 @@ top of the OSM Mapnik layer.
             <backgroundColor>#000000</backgroundColor>
         </customMapSource>
         <customMapSource>
-            <name>Custom trekking base</name>
+            <name>Custom transparent hillshade</name>
             <minZoom>0</minZoom>
             <maxZoom>18</maxZoom>
             <tileType>PNG</tileType>

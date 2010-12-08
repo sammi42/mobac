@@ -40,6 +40,8 @@ import org.apache.log4j.Logger;
  */
 public class EnvironmentSetup {
 
+	private static boolean FIRST_START = false;
+
 	public static Logger log = Logger.getLogger(EnvironmentSetup.class);
 
 	public static void checkMemory() {
@@ -76,6 +78,7 @@ public class EnvironmentSetup {
 			return;
 
 		try {
+			FIRST_START = true;
 			Settings.save();
 		} catch (Exception e) {
 			log.error("Error while creating settings.xml: " + e.getMessage(), e);
@@ -86,6 +89,11 @@ public class EnvironmentSetup {
 				GUIExceptionHandler.showExceptionDialog(e);
 			System.exit(1);
 		}
+	}
+
+	public static void createDefaultAtlases() {
+		if (!FIRST_START)
+			return;
 		Profile p = new Profile("Google Maps New York");
 		Atlas atlas = Atlas.newInstance();
 		try {

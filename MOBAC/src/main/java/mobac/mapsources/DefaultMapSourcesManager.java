@@ -38,7 +38,6 @@ import mobac.program.model.TileImageType;
 
 public class DefaultMapSourcesManager extends MapSourcesManager {
 
-	// public static final MapSource DEFAULT = new Mapnik();
 	private LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<String, MapSource>(50);
 
 	static {
@@ -51,9 +50,16 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			addMapSource(new DebugMapSource());
 		}
 
-		File mapSourcesDir = new File(DirectoryManager.programDir, "mapsources");
+		// Check for user specific configuration of mapsources directory
+		String mapSourcesDirCfg = Settings.getInstance().directories.mapSourcesDirectory;
+		File mapSourcesDir;
+		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0)
+			mapSourcesDir = DirectoryManager.mapSourcesDir;
+		else
+			mapSourcesDir = new File(mapSourcesDirCfg);
 		try {
 			MapPackManager mpm = new MapPackManager(mapSourcesDir);
+			mpm.installUpdates();
 			mpm.loadMapPacks();
 			addAllMapSource(mpm.getMapSources());
 		} catch (IOException e) {

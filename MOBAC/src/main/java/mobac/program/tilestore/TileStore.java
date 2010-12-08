@@ -61,11 +61,11 @@ public abstract class TileStore {
 
 	protected TileStore() {
 		log = Logger.getLogger(this.getClass());
-		String tileStorePath = Settings.getInstance().tileStoreDirectory;
+		String tileStorePath = Settings.getInstance().directories.tileStoreDirectory;
 		if (tileStorePath != null)
 			tileStoreDir = new File(tileStorePath);
 		else
-			tileStoreDir = new File(DirectoryManager.currentDir, "tilestore");
+			tileStoreDir = DirectoryManager.tileStoreDir;
 		log.debug("Tile store path: " + tileStoreDir);
 	}
 

@@ -99,6 +99,8 @@ SourceForge.net: <br>
 		<li><a href="#CustomMapSource">Custom map sources</a></li>
 		<li><a href="#CustomMultiLayerMapSource">Custom multi-layer
 		map sources</a></li>
+		<li><a href="#BeanShellMapSource">Custom BeanShell map
+		sources</a></li>
 	</ul>
 	</li>
 </ul>
@@ -618,9 +620,11 @@ this operation could take a while.</p>
 name]_[current date and time]</tt> folder to your TwoNav <tt>maps</tt>
 folder.</p>
 <p>As TwoNav does not support all available features provided my
-MOBAC, some features can not be used when creating atlases in this format:</p>
+MOBAC, some features can not be used when creating atlases in this
+format:</p>
 <ul>
-	<li>Custom tile height and width (is ignored for TwoNav RMP atlases)</li>
+	<li>Custom tile height and width (is ignored for TwoNav RMP
+	atlases)</li>
 	<li>Custom tile format: Only JPEG formats are allowed</li>
 </ul>
 <!-- *************************************************************************** -->
@@ -715,31 +719,32 @@ tile store directory. The previously used tile store will not be used
 anymore.<br>
 Deleting the <tt>&lt;tileStoreDirectory&gt;</tt> tag restores the old
 behavior (automatically tile store directory selection).</p>
+
 <h3><a name="CustomMapSource">Custom map sources</a></h3>
 <p>Custom map sources which uses a similar URL scheme as
-Google/OpenStreetMap can be added by editing the file <tt>settings.xml</tt>
-with an text editor.</p>
-<p><b>Warning</b>: You have to close Mobile Atlas Creator before
-editing <tt>settings.xml</tt> - otherwise you will lost all made changes
-when closing Mobile Atlas Creator!</p>
-<p>The following example shows what have to be added for defining a
-custom map source. It defines an additional map Source named "Custom OSM
+Google/OpenStreetMap can be added by saving for each custom map source
+the definition in form of an xml file in the <tt>mapsources</tt>
+directory.</p>
+<p>The following section shows is an example how the xml file has to
+be formatted. It defines an additional map source named "Custom OSM
 Mapnik" which shows map tiles identical to the predefined map source
 "OpenStreetMap Mapnik".</p>
+<p><a name="MapSourceNameUnique"></a><b>Note:</b></a>The name specified
+in there has to be unique among all available map sources within MOBAC.
+The list of all available map sources can be obtained via command <b>Show
+all map source names</b> in the menu <b>Debug</b>.</p>
 <pre>
-&lt;settings&gt;
-    &lt;customMapSources&gt;
-        &lt;customMapSource&gt;
-            &lt;name&gt;Custom OSM Mapnik&lt;/name&gt;
-            &lt;minZoom&gt;0&lt;/minZoom&gt;
-            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
-            &lt;tileType&gt;png&lt;/tileType&gt;
-            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
-            &lt;url&gt;http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png&lt;/url&gt;
-        &lt;/customMapSource&gt;
-    &lt;/customMapSources&gt;
-    ...
-&lt;/settings&gt;</pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;customMapSource&gt;
+	&lt;name&gt;Custom OSM Mapnik&lt;/name&gt;
+	&lt;minZoom&gt;0&lt;/minZoom&gt;
+	&lt;maxZoom&gt;18&lt;/maxZoom&gt;
+	&lt;tileType&gt;png&lt;/tileType&gt;
+	&lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
+	&lt;url&gt;http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png&lt;/url&gt;
+	&lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
+&lt;/customMapSource&gt;
+</pre>
 <p>The most important part of this definition is the url. It is a
 template containing specific placeholders which are encapsulated by
 curly brace:</p>
@@ -751,36 +756,57 @@ curly brace:</p>
 	<li><b>{$y}</b> for the y tile coordinate - number range: [0..2<sup><i>zoom
 	level</i></sup>]</li>
 </ul>
+<p>Example file for download: <a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20map%20source.xml">
+Example custom map source.xml</a></p>
 <h3><a name="CustomMultiLayerMapSource">Custom multi-layer map
 sources</a></h3>
-<p>The same way map sources which consists of two layers can be
-added as well. Note that the foreground map source images must have
-transparent parts - otherwise the background map source will not be
-visible.</p>
+<p>The same way as <a href="#CustomMapSource">custom map sources</a>
+map sources which consist of two or more layers can be defined as well.
+Note that all except the background map source layer (first in the list)
+must have transparent parts - otherwise layers in the list before will
+not be visible.</p>
 <pre>
-&lt;settings&gt;
-    &lt;customMapSources&gt;
-        &lt;customMultiLayerMapSource&gt;
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;customMultiLayerMapSource&gt;
+    &lt;name&gt;Custom OSM Mapnik with Hills (Ger)&lt;/name&gt;
+    &lt;tileType&gt;PNG&lt;/tileType&gt;
+    &lt;layers&gt;
+        &lt;customMapSource&gt;
             &lt;name&gt;Custom OSM Mapnik&lt;/name&gt;
             &lt;minZoom&gt;0&lt;/minZoom&gt;
             &lt;maxZoom&gt;18&lt;/maxZoom&gt;
-            &lt;tileType&gt;png&lt;/tileType&gt;
+            &lt;tileType&gt;PNG&lt;/tileType&gt;
             &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
-            &lt;url&gt;http://topo.openstreetmap.de/topo/{$z}/{$x}/{$y}.png&lt;/url&gt;
+            &lt;url&gt;http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png&lt;/url&gt;
             &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
-            &lt;backgroundMapSource&gt;
-	            &lt;name&gt;Custom background unique name&lt;/name&gt;
-	            &lt;minZoom&gt;0&lt;/minZoom&gt;
-	            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
-	            &lt;tileType&gt;png&lt;/tileType&gt;
-	            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
-	            &lt;url&gt;http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png&lt;/url&gt;
-	            &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
-            &lt;/backgroundMapSource&gt;
-        &lt;/customMultiLayerMapSource&gt;
-    &lt;/customMapSources&gt;
-    ...
-&lt;/settings&gt;</pre>
+        &lt;/customMapSource&gt;
+        &lt;customMapSource&gt;
+            &lt;name&gt;Custom transparent hillshade&lt;/name&gt;
+            &lt;minZoom&gt;0&lt;/minZoom&gt;
+            &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+            &lt;tileType&gt;PNG&lt;/tileType&gt;
+            &lt;tileUpdate&gt;None&lt;/tileUpdate&gt;
+            &lt;url&gt;http://www.wanderreitkarte.de/hills/{$z}/{$x}/{$y}.png&lt;/url&gt;
+        &lt;/customMapSource&gt;
+    &lt;/layers&gt;
+&lt;/customMultiLayerMapSource&gt;
+</pre>
+<p>Example file for download: <a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20multi-layer%20map%20source.xml">
+Example custom multi-layer map source.xml</a></p>
+<h3><a name="BeanShellMapSource">Custom BeanShell map sources</a></h3>
+<p>BeanShell map sources as the can be developed using MapEvaluator
+can be used by MOBAC. To du so place the saved BeanShell code file (file
+extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
+be loaded on next start-up of MOBAC.</p>
+<p>It is recommended to add a line defining the map source name <a
+	href="#MapSourceNameUnique">(must be unique).</a>.
+<pre>name = "Your map source name here";</pre>
+</p>
+<p>Example file for download: <a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
+Example beanshell map source.bsh</a></p>
 
 </body>
 </html>

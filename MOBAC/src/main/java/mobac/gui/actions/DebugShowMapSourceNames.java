@@ -46,16 +46,16 @@ public class DebugShowMapSourceNames implements ActionListener {
 		
 		JFrame dialog = new JFrame("Map source names");
 		dialog.setLocationRelativeTo(MainGUI.getMainGUI());
-		dialog.setLocation(100, 10);
+		dialog.setLocation(100, 50);
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		dScreen.height -= 10;
+		dScreen.height -= 100;
 		dScreen.width -= 100;
+		dialog.pack();
 		dialog.setMaximumSize(dScreen);
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JTextArea namesArea = new JTextArea(sw.toString());
 		JScrollPane scroller = new JScrollPane(namesArea);
 		dialog.add(scroller);
-		dialog.pack();
 		dialog.setVisible(true);
 	}
 

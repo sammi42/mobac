@@ -48,10 +48,9 @@ public class DebugShowMapSourceNames implements ActionListener {
 		dialog.setLocationRelativeTo(MainGUI.getMainGUI());
 		dialog.setLocation(100, 50);
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-		dScreen.height -= 100;
-		dScreen.width -= 100;
-		dialog.pack();
-		dialog.setMaximumSize(dScreen);
+		dScreen.height -= 200;
+		dScreen.width = Math.min(dScreen.width-100, 500);
+		dialog.setSize(dScreen);
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JTextArea namesArea = new JTextArea(sw.toString());
 		JScrollPane scroller = new JScrollPane(namesArea);

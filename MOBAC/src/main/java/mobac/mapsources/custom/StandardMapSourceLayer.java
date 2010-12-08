@@ -82,6 +82,11 @@ public class StandardMapSourceLayer implements MapSource {
 	}
 
 	@Override
+	public String toString() {
+		return mapSource.toString();
+	}
+
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}

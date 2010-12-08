@@ -101,6 +101,7 @@ SourceForge.net: <br>
 		map sources</a></li>
 		<li><a href="#BeanShellMapSource">Custom BeanShell map
 		sources</a></li>
+		<li><a href="CustomMapPack">Custom MapPack</a></li>
 	</ul>
 	</li>
 </ul>
@@ -639,6 +640,7 @@ please take a look into the <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/misc/Incompatible%20maps.txt">list
 of map sources known to incompatible with Mobile Atlas Creator</a>.</p>
 
+<!-- *************************************************************************** -->
 <h2><a name="Bugs">Problems, Bugs &amp; Errors</a></h2>
 <p>In case of unexpected errors while executing Mobile Atlas Creator
 you may get presented a exception dialog containing detailed information
@@ -668,6 +670,7 @@ found a bug please file it in the <a
 	href="http://sourceforge.net/tracker/?group_id=238075&amp;atid=1105494">bug
 tracker at SourceForge</a>.</p>
 
+<!-- *************************************************************************** -->
 <h2><a name="Limitations">Known problems and limitations</a></h2>
 <h3>New map sources</h3>
 <p>Mobile Atlas Creator is limited to map sources that provide their
@@ -690,9 +693,16 @@ and width of a map</a> and <a
 	</li>
 	<li>Do not use OpenJDK if you want to work with GPX tracks in
 	Mobile Atlas Creator</li>
+	<li>On Windows without a system proxy set (see connection settings
+	of IE) it is strongly recommended <b>not to use</b> the following proxy
+	setting:<i>Use standard Java proxy settings</i>
 </ul>
 
+<!-- *************************************************************************** -->
 <h2><a name="AdvancedUsers">Details for advanced users</a></h2>
+<h3>Specifying used directories</h3>
+<p>TODO</p>
+
 <h3>Moving the tile store path</h3>
 <p>Usually the tile store path where Mobile Atlas Creator saves all
 downloaded images in is automatically determined.<br>
@@ -796,17 +806,20 @@ not be visible.</p>
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20multi-layer%20map%20source.xml">
 Example custom multi-layer map source.xml</a></p>
 <h3><a name="BeanShellMapSource">Custom BeanShell map sources</a></h3>
-<p>BeanShell map sources as the can be developed using MapEvaluator
+<p>BeanShell map sources as the can be developed using <a
+	href="http://sourceforge.net/apps/mediawiki/trekbuddyatlasc/index.php?title=MapEvaluator">MapEvaluator</a>
 can be used by MOBAC. To du so place the saved BeanShell code file (file
 extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
 be loaded on next start-up of MOBAC.</p>
-<p>It is recommended to add a line defining the map source name <a
-	href="#MapSourceNameUnique">(must be unique).</a>.
+<p>It is recommended to add a line defining the map source name (<a
+	href="#MapSourceNameUnique">must be unique</a>).
 <pre>name = "Your map source name here";</pre>
 </p>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
 Example beanshell map source.bsh</a></p>
 
+<h3><a name="CustomMapPack">Custom MapPack</a></h3>
+<p>Only for Java developers - TODO</p>
 </body>
 </html>

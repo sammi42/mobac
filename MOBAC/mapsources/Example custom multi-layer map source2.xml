@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 
-This example shows a standard Mapnik map with hill shading 
+This example shows combines the integrated map source "Mapnik" (display title 
+"OpenStreetMap Mapnik") with a transparent hill shading layer. 
 (hill shading only available in the region around Germany and Swiss).
 
 The hill shade is a semi-transparent layer which will be painted on 
@@ -9,7 +10,7 @@ top of the OSM Mapnik layer.
 
 --> 
 <customMultiLayerMapSource>
-    <name>Custom OSM Mapnik with Hills (Ger)</name>
+    <name>Custom OSM Mapnik2 with Hills (Ger)</name>
     <tileType>PNG</tileType>
     <layers>
     	<!-- 
@@ -18,15 +19,9 @@ top of the OSM Mapnik layer.
     	    Therefore make sure all maps after the first use PNG and contain 
     	    transparent regions. Otherwise the map sources before will not be visible.   
     	-->
-        <customMapSource>
-            <name>Custom OSM Mapnik</name>
-            <minZoom>0</minZoom>
-            <maxZoom>18</maxZoom>
-            <tileType>PNG</tileType>
-            <tileUpdate>None</tileUpdate>
-            <url>http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png</url>
-            <backgroundColor>#000000</backgroundColor>
-        </customMapSource>
+        <mapSource>
+            <name>Mapnik</name>
+        </mapSource>
         <customMapSource>
             <name>Custom transparent hillshade</name>
             <minZoom>8</minZoom>

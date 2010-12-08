@@ -33,6 +33,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 
 /**
+ * 
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -40,7 +41,8 @@ import mobac.program.model.TileImageType;
 public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 
 	@XmlElementWrapper(name = "layers")
-	@XmlElements({ @XmlElement(name = "customMapSource", type = CustomMapSource.class) })
+	@XmlElements({ @XmlElement(name = "customMapSource", type = CustomMapSource.class),
+			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class) })
 	protected List<CustomMapSource> layers = new ArrayList<CustomMapSource>();
 
 	public CustomMultiLayerMapSource() {

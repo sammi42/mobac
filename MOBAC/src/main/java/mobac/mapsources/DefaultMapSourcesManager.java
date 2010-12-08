@@ -45,6 +45,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	public DefaultMapSourcesManager() {
+	}
+
+	protected void loadMapSources() {
 		if (Settings.getInstance().isDevModeEnabled()) {
 			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
 			addMapSource(new DebugMapSource());
@@ -90,6 +93,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	public static void initialize() {
 		INSTANCE = new DefaultMapSourcesManager();
+		((DefaultMapSourcesManager) INSTANCE).loadMapSources();
 	}
 
 	@Override

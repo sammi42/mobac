@@ -21,6 +21,8 @@
  ~ Custom map sources are moved from settings.xml into separate xml files
     in the "mapsources" sub-directory
  ~ XML structure of multi-layer custom maps sources has changed
+ + Multi-layer maps can now contain map sources that come with MOBAC
+    This allows to combine existing map sources with new overlays.
  + BeanShell map sources can be used if placed in the "mapsources" 
     sub-directory
  + All direcories used by MOBAC can be pre-configured via file 

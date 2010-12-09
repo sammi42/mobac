@@ -18,6 +18,7 @@ package mobac.program;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
@@ -30,8 +31,11 @@ import mobac.program.model.Layer;
 import mobac.program.model.Profile;
 import mobac.program.model.Settings;
 import mobac.utilities.GUIExceptionHandler;
+import mobac.utilities.Utilities;
+import mobac.utilities.file.FileExtFilter;
 import mobac.utilities.file.NamePatternFileFilter;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -70,6 +74,28 @@ public class EnvironmentSetup {
 		for (File f : files) {
 			File dest = new File(profilesDir, f.getName().replaceFirst("tac-", "mobac-"));
 			f.renameTo(dest);
+		}
+	}
+
+	/**
+	 * In case the <tt>mapsources</tt> directory has been moved by configuration (directories.ini or settings.xml) we
+	 * need to copy the existing map packs into the configured directory
+	 */
+	public static void copyMapPacks() {
+		File userMapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+		File progMapSourcesDir = new File(DirectoryManager.programDir, "mapsources");
+		if (userMapSourcesDir.equals(progMapSourcesDir))
+			return; // no user specific directory configured
+		if (userMapSourcesDir.isDirectory())
+			return; // directory already exists - map packs should have been already copied
+		try {
+			Utilities.mkDirs(userMapSourcesDir);
+			FileUtils.copyDirectory(progMapSourcesDir, userMapSourcesDir, new FileExtFilter(".jar"));
+		} catch (IOException e) {
+			log.error(e);
+			JOptionPane.showMessageDialog(null, "Error on initializing mapsources directory:\n" + e.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
 	}
 

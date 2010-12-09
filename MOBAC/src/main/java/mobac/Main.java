@@ -48,6 +48,7 @@ public class Main {
 			EnvironmentSetup.checkMemory();
 			EnvironmentSetup.checkFileSetup();
 			Settings.loadOrQuit();
+			EnvironmentSetup.copyMapPacks();
 			DefaultMapSourcesManager.initialize();
 			EnvironmentSetup.createDefaultAtlases();
 			TileStore.initialize();

@@ -17,6 +17,7 @@
 		<fileset dir="lib" includes="bsh-2.0b4.jar" />
 		<fileset dir="lib" includes="Tidy.jar" />
 		<fileset dir="lib" includes="commons-codec-1.4.jar" />
+		<fileset dir="lib" includes="commons-io-2.0.jar" />
 		<fileset dir="lib" includes="je-${je-version}.jar" />
 	</path>
 

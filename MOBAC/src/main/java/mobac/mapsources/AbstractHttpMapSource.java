@@ -93,7 +93,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 				initernalInitialize();
 				log.debug("Map source has been initialized");
 			}
-		} catch (MapSourceInitializationException e) {
+		} catch (Exception e) {
 			log.error("Map source initialization failed: "+e.getMessage(),e);
 			// TODO: inform user 
 		}

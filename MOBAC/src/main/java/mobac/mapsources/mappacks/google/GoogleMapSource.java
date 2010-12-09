@@ -16,13 +16,16 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
+import java.io.IOException;
+import java.util.List;
+
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.AbstractHttpMapSource;
-import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.UpdatableMapSource;
+import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class GoogleMapSource extends AbstractHttpMapSource implements UpdatableMapSource {
+public class GoogleMapSource extends AbstractHttpMapSource {
 
 	public static String LANG = "en";
 
@@ -35,11 +38,6 @@ public class GoogleMapSource extends AbstractHttpMapSource implements UpdatableM
 	public GoogleMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
 			HttpMapSource.TileUpdate tileUpdate) {
 		super(name, minZoom, maxZoom, tileType, tileUpdate);
-		update();
-	}
-
-	public void update() {
-		serverUrl = MapSourceTools.loadMapUrl(this, "url");
 	}
 
 	protected int getNextServerNum() {
@@ -56,6 +54,25 @@ public class GoogleMapSource extends AbstractHttpMapSource implements UpdatableM
 		tmp = tmp.replace("{$y}", Integer.toString(y));
 		tmp = tmp.replace("{$z}", Integer.toString(zoom));
 		return tmp;
+	}
+
+	protected void initializeServerUrl(String htmlUrl, String regex) throws MapSourceInitializationException {
+		List<String> imgUrls;
+		try {
+			imgUrls = MapSourceUrlUpdater.extractImgSrcList(htmlUrl, regex);
+		} catch (IOException e) {
+			throw new MapSourceInitializationException(e);
+		}
+		if (imgUrls.size() == 0)
+			throw new MapSourceInitializationException(
+					"No suitable sample urls found for generating a new template url");
+		String s = imgUrls.get(0);
+		s = s.replaceFirst("http://mt.\\.google\\.", "http://mt{\\$servernum}.google.");
+		s = s.replaceFirst("hl=(\\w)+", "hl={\\$hl}");
+		s = s.replaceFirst("x=\\d+", "x={\\$x}");
+		s = s.replaceFirst("y=\\d+", "y={\\$y}");
+		s = s.replaceFirst("z=\\d+", "z={\\$z}");
+		serverUrl = s;
 	}
 
 }

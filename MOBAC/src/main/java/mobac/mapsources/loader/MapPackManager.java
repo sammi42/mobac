@@ -101,7 +101,8 @@ public class MapPackManager {
 		URL[] urls = new URL[urlList.size()];
 		urlList.toArray(urls);
 
-		ClassLoader urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, urls, ClassLoader.getSystemClassLoader());
+		ClassLoader urlCl;
+		urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, urls, ClassLoader.getSystemClassLoader());
 
 		final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
 		while (iterator.hasNext()) {

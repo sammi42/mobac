@@ -55,10 +55,10 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 
 		try {
+			//addAllMapSource(new EclipseMapPackLoader().getMapSources());
 			MapPackManager mpm = new MapPackManager(mapSourcesDir);
 			mpm.installUpdates();
 			mpm.loadMapPacks();
-			addAllMapSource(mpm.getMapSources());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (CertificateException e) {

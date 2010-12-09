@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
@@ -101,7 +100,8 @@ public class MapSourceUrlUpdater {
 
 	public static void main(String[] args) {
 		try {
-			List<String> imgUrls = extractImgSrcList("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2","^http://mt\\d\\.google\\.com/.*");
+			List<String> imgUrls = extractImgSrcList("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2",
+					"^http://mt\\d\\.google\\.com/.*");
 			for (String s : imgUrls)
 				System.out.println(s);
 		} catch (Exception e) {

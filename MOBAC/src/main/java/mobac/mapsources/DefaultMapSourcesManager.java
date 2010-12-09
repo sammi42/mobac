@@ -31,7 +31,6 @@ import mobac.mapsources.impl.SimpleMapSource;
 import mobac.mapsources.loader.BeanShellMapSourceLoader;
 import mobac.mapsources.loader.CustomMapSourceLoader;
 import mobac.mapsources.loader.MapPackManager;
-import mobac.program.DirectoryManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
@@ -45,6 +44,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	public DefaultMapSourcesManager() {
+		// Check for user specific configuration of mapsources directory
 	}
 
 	protected void loadMapSources() {
@@ -52,14 +52,8 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
 			addMapSource(new DebugMapSource());
 		}
+		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 
-		// Check for user specific configuration of mapsources directory
-		String mapSourcesDirCfg = Settings.getInstance().directories.mapSourcesDirectory;
-		File mapSourcesDir;
-		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0)
-			mapSourcesDir = DirectoryManager.mapSourcesDir;
-		else
-			mapSourcesDir = new File(mapSourcesDirCfg);
 		try {
 			MapPackManager mpm = new MapPackManager(mapSourcesDir);
 			mpm.installUpdates();

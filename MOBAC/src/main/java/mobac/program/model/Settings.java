@@ -99,11 +99,16 @@ public class Settings {
 	public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEG_LOCAL;
 
 	public final Directories directories = new Directories();
+
 	public static class Directories {
 		@XmlElement
 		private String atlasOutputDirectory = null;
+
+		@XmlElement
 		public String tileStoreDirectory;
-		public String mapSourcesDirectory;
+
+		@XmlElement
+		private String mapSourcesDirectory;
 	}
 
 	/**
@@ -411,6 +416,16 @@ public class Settings {
 		if (directories.atlasOutputDirectory != null)
 			return new File(directories.atlasOutputDirectory);
 		return new File(DirectoryManager.currentDir, "atlases");
+	}
+
+	public File getMapSourcesDirectory() {
+		String mapSourcesDirCfg = directories.mapSourcesDirectory;
+		File mapSourcesDir;
+		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0)
+			mapSourcesDir = DirectoryManager.mapSourcesDir;
+		else
+			mapSourcesDir = new File(mapSourcesDirCfg);
+		return mapSourcesDir;
 	}
 
 	public String getAtlasOutputDirectoryString() {

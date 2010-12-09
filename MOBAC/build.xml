@@ -19,7 +19,7 @@
 		<fileset dir="lib" includes="je-${je-version}.jar" />
 	</path>
 
-	<target name="all" depends="clean_build,svnversion,build,create_jar,shrink,create_release,create_release_src" />
+	<target name="all" depends="clean_build,svnversion,build,build_mapsources,create_jar,shrink,create_release,create_release_src" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete includeemptydirs="true" failonerror="false">
@@ -212,6 +212,7 @@
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
 				<include name="Mobile Atlas Creator.exe" />
+				<include name="mapsources/*.jar" />
 			</fileset>
 		</zip>
 	</target>

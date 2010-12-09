@@ -25,6 +25,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.JMapViewer;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
@@ -83,17 +84,22 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 		if (initialized)
 			return;
 		// Prevent multiple initializations in case of multi-threaded access
-		synchronized (this.getClass()) {
-			if (initialized)
-				// Another thread has already completed initialization while this one was blocked
-				return;
-			initernalInitialize();
+		try {
+			synchronized (this.getClass()) {
+				if (initialized)
+					// Another thread has already completed initialization while this one was blocked
+					return;
+				initialized = true;
+				initernalInitialize();
+				log.debug("Map source has been initialized");
+			}
+		} catch (MapSourceInitializationException e) {
+			log.error("Map source initialization failed: "+e.getMessage(),e);
+			// TODO: inform user 
 		}
 	}
 
-	protected void initernalInitialize() {
-		log.debug("Map source has been initialized");
-		initialized = true;
+	protected void initernalInitialize() throws MapSourceInitializationException {
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,

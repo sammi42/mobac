@@ -18,7 +18,7 @@
   </appender>
   
   <logger name="mobac.mapsources">
-  	<level value="DEBUG" />
+  	<level value="TRACE" />
   </logger>
   
   <logger name="mobac.program">
@@ -26,15 +26,15 @@
   </logger>
 
   <logger name="mobac.program.download">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
       
   <logger name="mobac.program.tilestore">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
   
   <logger name="mobac.program.atlascreators">
-  	<level value="TRACE" />
+  	<level value="DEBUG" />
   </logger>
   
   <logger name="mobac.program.atlascreators.tileprovider.CacheTileProvider">

@@ -27,6 +27,8 @@ public class GoogleMapSource extends AbstractHttpMapSource implements UpdatableM
 	public static String LANG = "en";
 
 	private int serverNum = 0;
+	protected int minServerNum = 1;
+	protected int maxServerNum = 4;
 
 	public String serverUrl;
 
@@ -42,7 +44,7 @@ public class GoogleMapSource extends AbstractHttpMapSource implements UpdatableM
 
 	protected int getNextServerNum() {
 		int x = serverNum;
-		serverNum = (serverNum + 1) % 4;
+		serverNum = (serverNum + minServerNum) % maxServerNum;
 		return x;
 	}
 

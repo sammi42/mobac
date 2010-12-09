@@ -16,13 +16,43 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import mobac.exceptions.MapSourceInitializationException;
+import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 public class GoogleMaps extends GoogleMapSource {
 
+	private static final String INIT_URL = "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2";
+	private static final String INIT_REGEX = "^http://mt\\d\\.google\\.com/.*";
+
 	public GoogleMaps() {
 		super("Google Maps", 0, 19, TileImageType.PNG, HttpMapSource.TileUpdate.None);
+	}
+
+	@Override
+	public void update() {
+	}
+
+	@Override
+	protected void initernalInitialize() throws MapSourceInitializationException {
+		List<String> imgUrls;
+		try {
+			imgUrls = MapSourceUrlUpdater.extractImgSrcList(INIT_URL, INIT_REGEX);
+		} catch (IOException e) {
+			throw new MapSourceInitializationException(e);
+		}
+		if (imgUrls.size() == 0)
+			throw new MapSourceInitializationException(
+					"No suitable sample urls found for generating a new template url");
+		String s = imgUrls.get(0);
+		s = s.replaceAll("http://mt.\\.google", "http://mt{$servernum}.google");
+		JOptionPane.showMessageDialog(null,s);
 	}
 
 }

@@ -17,12 +17,9 @@
 package mobac.tools.urlupdater;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,6 +49,7 @@ import mobac.mapsources.mappacks.google.GoogleTerrain;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
+import mobac.utilities.writer.NullPrintWriter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -372,25 +370,6 @@ public class GoogleUrlUpdater implements Runnable {
 		}
 	}
 
-	public static class NullPrintWriter extends PrintWriter {
-
-		public NullPrintWriter() throws FileNotFoundException {
-			super(new Writer() {
-
-				@Override
-				public void close() throws IOException {
-				}
-
-				@Override
-				public void flush() throws IOException {
-				}
-
-				@Override
-				public void write(char[] cbuf, int off, int len) throws IOException {
-				}
-			});
-		}
-	}
 
 	public static class UrlString implements Comparable<UrlString> {
 		public final String url;

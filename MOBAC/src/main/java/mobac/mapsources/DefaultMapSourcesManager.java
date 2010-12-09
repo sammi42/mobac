@@ -70,12 +70,15 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		} catch (CertificateException e) {
 			throw new RuntimeException(e);
 		}
-		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(mapSourcesDir);
-		cmsl.loadCustomMapSources();
-		addAllMapSource(cmsl.getMapSources());
 		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(mapSourcesDir);
 		bsmsl.loadBeanShellMapSources();
 		addAllMapSource(bsmsl.getMapSources());
+
+		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(mapSourcesDir);
+		cmsl.loadCustomMapSources();
+		addAllMapSource(cmsl.getMapSources());
+
+		// If no map sources are available load the simple map source which shows the informative message
 		if (allMapSources.size() == 0)
 			addMapSource(new SimpleMapSource());
 	}

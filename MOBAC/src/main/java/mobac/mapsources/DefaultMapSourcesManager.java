@@ -38,10 +38,6 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	private LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<String, MapSource>(50);
 
-	static {
-		MapSourcesUpdater.loadMapSourceProperties();
-	}
-
 	public DefaultMapSourcesManager() {
 		// Check for user specific configuration of mapsources directory
 	}

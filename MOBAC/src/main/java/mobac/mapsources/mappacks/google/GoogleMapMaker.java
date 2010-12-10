@@ -16,10 +16,6 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.interfaces.HttpMapSource;
@@ -29,7 +25,7 @@ import mobac.utilities.Charsets;
 /**
  * "Google Map Maker" Source Class http://www.google.com/mapmaker
  */
-public class GoogleMapMaker extends GoogleMapSource {
+public class GoogleMapMaker extends AbstractGoogleMapSource {
 
 	private static final String INIT_URL = "http://www.google.com/mapmaker";
 	private static final String INIT_REGEX = "\\\"gwm.([\\d]+)\\\"";
@@ -40,18 +36,8 @@ public class GoogleMapMaker extends GoogleMapSource {
 
 	@Override
 	protected void initernalInitialize() throws MapSourceInitializationException {
-		String html;
-		try {
-			html = MapSourceUrlUpdater.loadHtmlDocument(INIT_URL, Charsets.UTF_8);
-			Pattern p = Pattern.compile(INIT_REGEX);
-			Matcher m = p.matcher(html);
-			if (!m.find())
-				throw new MapSourceInitializationException("gwm parameter pattern not found");
-			String number = m.group(1);
-			serverUrl = "http://gt{$servernum}.google.com/mt/n=404&v=gwm." + number + "&x={$x}&y={$y}&z={$z}";
-		} catch (IOException e) {
-			throw new MapSourceInitializationException(e);
-		}
+		String number = MapSourceUrlUpdater.loadDocumentAndExtractGroup(INIT_URL, Charsets.UTF_8, INIT_REGEX);
+		serverUrl = "http://gt{$servernum}.google.com/mt/n=404&v=gwm." + number + "&x={$x}&y={$y}&z={$z}";
 	}
 
 }

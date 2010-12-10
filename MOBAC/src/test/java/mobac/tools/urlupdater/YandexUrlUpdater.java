@@ -16,19 +16,17 @@
  ******************************************************************************/
 package mobac.tools.urlupdater;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.Logging;
-import mobac.utilities.Utilities;
+import mobac.utilities.Charsets;
 
 public class YandexUrlUpdater implements Runnable {
 
 	private static final String UPDATE_URL = "http://api-maps.yandex.ru/1.1.7/xml/data.xml";
-	private static final Pattern MAP_VER_PATTERN = Pattern
-			.compile("Internal.MapData.DataVersions=\\{([^\\}]*)\\}");
+	private static final Pattern MAP_VER_PATTERN = Pattern.compile("Internal.MapData.DataVersions=\\{([^\\}]*)\\}");
 
 	/**
 	 * @param args
@@ -42,12 +40,8 @@ public class YandexUrlUpdater implements Runnable {
 	public void run() {
 		Pattern pa = Pattern.compile("(.*):\\\"(.*)\\\"");
 		UrlUpdater urlUpdater = UrlUpdater.getInstance();
-		HttpURLConnection conn;
 		try {
-			conn = (HttpURLConnection) new URL(UPDATE_URL).openConnection();
-			conn.connect();
-			byte[] data = Utilities.getInputBytes(conn.getInputStream());
-			String dataStr = new String(data);
+			String dataStr = MapSourceUrlUpdater.loadDocument(UPDATE_URL, Charsets.UTF_8);
 			Matcher m1 = MAP_VER_PATTERN.matcher(dataStr);
 			if (!m1.find()) {
 				System.out.println("Not found!");

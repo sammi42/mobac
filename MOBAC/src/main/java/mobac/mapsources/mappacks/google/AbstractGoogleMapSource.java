@@ -23,11 +23,10 @@ import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
-public class GoogleMapSource extends AbstractHttpMapSource {
-
-	public static String LANG = "en";
+public class AbstractGoogleMapSource extends AbstractHttpMapSource {
 
 	private int serverNum = 0;
 	protected int minServerNum = 1;
@@ -35,7 +34,7 @@ public class GoogleMapSource extends AbstractHttpMapSource {
 
 	public String serverUrl;
 
-	public GoogleMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
+	public AbstractGoogleMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
 			HttpMapSource.TileUpdate tileUpdate) {
 		super(name, minZoom, maxZoom, tileType, tileUpdate);
 	}
@@ -49,7 +48,7 @@ public class GoogleMapSource extends AbstractHttpMapSource {
 	public String getTileUrl(int zoom, int x, int y) {
 		String tmp = serverUrl;
 		tmp = tmp.replace("{$servernum}", Integer.toString(getNextServerNum()));
-		tmp = tmp.replace("{$lang}", LANG);
+		tmp = tmp.replace("{$lang}", Settings.getInstance().googleLanguage);
 		tmp = tmp.replace("{$x}", Integer.toString(x));
 		tmp = tmp.replace("{$y}", Integer.toString(y));
 		tmp = tmp.replace("{$z}", Integer.toString(zoom));

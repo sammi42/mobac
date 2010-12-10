@@ -17,8 +17,6 @@
 package mobac.mapsources.mappacks.region_europe_east;
 
 import mobac.mapsources.AbstractHttpMapSource;
-import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.UpdatableMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
@@ -28,17 +26,12 @@ import mobac.program.model.TileImageType;
  * <a href="docelu.pl">docelu.pl</a>
  * </p>
  */
-public class DoCeluPL extends AbstractHttpMapSource implements UpdatableMapSource {
+public class DoCeluPL extends AbstractHttpMapSource {
 
-	private String baseUrl;
+	private static final String BASE_URL = "http://i.wp.pl/m/tiles008/";
 
 	public DoCeluPL() {
 		super("DoCeluPL", 2, 16, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
-		update();
-	}
-
-	public void update() {
-		baseUrl = MapSourceTools.loadMapUrl(this, "baseurl");
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -48,7 +41,7 @@ public class DoCeluPL extends AbstractHttpMapSource implements UpdatableMapSourc
 		char[] cy = sy.toCharArray();
 		String szoom = Integer.toHexString(zoom);
 
-		String s = baseUrl + szoom + "/" + cx[4] + cy[4] + "/" + cx[3] + cy[3] + "/" + cx[2] + cy[2] + "/" + cx[1]
+		String s = BASE_URL + szoom + "/" + cx[4] + cy[4] + "/" + cx[3] + cy[3] + "/" + cx[2] + cy[2] + "/" + cx[1]
 				+ cy[1] + "/" + cx[0] + cy[0] + "/z" + szoom + "x" + sx + "y" + sy + ".png";
 		return s;
 	}

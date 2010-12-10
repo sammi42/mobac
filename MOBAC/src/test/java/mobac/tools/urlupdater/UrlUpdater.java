@@ -28,7 +28,6 @@ import java.util.Properties;
 import java.util.Vector;
 
 import mobac.mapsources.DefaultMapSourcesManager;
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.utilities.Utilities;
@@ -55,8 +54,6 @@ public class UrlUpdater {
 	}
 
 	private UrlUpdater() {
-		MapSourcesUpdater.loadMapSourceProperties(mapSourcesProperties);
-		System.getProperties().putAll(mapSourcesProperties);
 	}
 
 	public void updateMapSopurceUrl(String mapKey, String newUrl) {

@@ -30,9 +30,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -71,13 +69,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import mobac.StartMOBAC;
-import mobac.exceptions.MapSourcesUpdateException;
 import mobac.gui.components.JDirectoryChooser;
 import mobac.gui.components.JMapSizeCombo;
 import mobac.gui.components.JObjectCheckBox;
 import mobac.gui.components.JTimeSlider;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.ProxyType;
@@ -127,7 +123,7 @@ public class SettingsGUI extends JDialog {
 
 	private JTextField proxyUserName;
 	private JTextField proxyPassword;
-	
+
 	private JButton okButton;
 	private JButton cancelButton;
 
@@ -215,10 +211,10 @@ public class SettingsGUI extends JDialog {
 		tab.setLayout(new GridBagLayout());
 
 		JPanel updatePanel = new JPanel(new GridBagLayout());
-		updatePanel.setBorder(createSectionBorder("Map sources online update"));
+		updatePanel.setBorder(createSectionBorder("Map packs online update"));
 
 		mapSourcesOnlineUpdate = new JButton("Perform online update");
-		mapSourcesOnlineUpdate.addActionListener(new MapSourcesOnlineUpdateAction());
+		mapSourcesOnlineUpdate.addActionListener(new MapPacksOnlineUpdateAction());
 		updatePanel.add(mapSourcesOnlineUpdate, GBC.std());
 
 		JPanel googlePanel = new JPanel(new GridBagLayout());
@@ -535,8 +531,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.std().fill(
-				GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
+				GBC.std().fill(GBC.HORIZONTAL));
 
 		backGround.add(panel, gbc_eolh);
 
@@ -549,19 +545,19 @@ public class SettingsGUI extends JDialog {
 		final JLabel proxyTypeLabel = new JLabel("Proxy settings: ");
 		proxyType = new JComboBox(ProxyType.values());
 		proxyType.setSelectedItem(Settings.getInstance().getProxyType());
-		
+
 		final JLabel proxyHostLabel = new JLabel("Proxy host name: ");
 		proxyHost = new JTextField(Settings.getInstance().getCustomProxyHost());
-		
+
 		final JLabel proxyPortLabel = new JLabel("Proxy port: ");
 		proxyPort = new JTextField(Settings.getInstance().getCustomProxyPort());
-		
+
 		final JLabel proxyUserNameLabel = new JLabel("Proxy user: ");
 		proxyUserName = new JTextField(Settings.getInstance().getCustomProxyUserName());
-		
+
 		final JLabel proxyPasswordLabel = new JLabel("Proxy password: ");
 		proxyPassword = new JTextField(Settings.getInstance().getCustomProxyPassword());
-		
+
 		ActionListener al = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -582,19 +578,19 @@ public class SettingsGUI extends JDialog {
 
 		panel.add(proxyTypeLabel, GBC.std());
 		panel.add(proxyType, gbc_eolh.insets(5, 2, 5, 2));
-		
+
 		panel.add(proxyHostLabel, GBC.std());
 		panel.add(proxyHost, gbc_eolh);
-		
+
 		panel.add(proxyPortLabel, GBC.std());
 		panel.add(proxyPort, gbc_eolh);
-		
+
 		panel.add(proxyUserNameLabel, GBC.std());
 		panel.add(proxyUserName, gbc_eolh);
-		
+
 		panel.add(proxyPasswordLabel, GBC.std());
 		panel.add(proxyPassword, gbc_eolh);
-		
+
 		backGround.add(panel, GBC.eol().fillH());
 
 		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
@@ -630,7 +626,7 @@ public class SettingsGUI extends JDialog {
 		maxExpirationTime.setTimeMilliValue(s.tileMaxExpirationTime);
 		minExpirationTime.setTimeMilliValue(s.tileMinExpirationTime);
 
-		String lang = s.getGoogleLanguage();
+		String lang = s.googleLanguage;
 		googleLang.setSelectedItem(lang);
 
 	}
@@ -658,7 +654,7 @@ public class SettingsGUI extends JDialog {
 		s.setCustomProxyPort(proxyPort.getText());
 		s.setCustomProxyUserName(proxyUserName.getText());
 		s.setCustomProxyPassword(proxyPassword.getText());
-		
+
 		s.applyProxySettings();
 
 		Vector<String> disabledMaps = new Vector<String>();
@@ -674,9 +670,9 @@ public class SettingsGUI extends JDialog {
 		MainGUI.getMainGUI().updateMapSourcesList();
 
 		if (googleLang.getSelectedIndex() < 0) {
-			s.setGoogleLanguage(googleLang.getEditor().getItem().toString());
+			s.googleLanguage = googleLang.getEditor().getItem().toString();
 		} else {
-			s.setGoogleLanguage(googleLang.getSelectedItem().toString());
+			s.googleLanguage = googleLang.getSelectedItem().toString();
 		}
 		try {
 			MainGUI.getMainGUI().checkAndSaveSettings();
@@ -757,22 +753,24 @@ public class SettingsGUI extends JDialog {
 
 	}
 
-	private class MapSourcesOnlineUpdateAction implements ActionListener {
+	private class MapPacksOnlineUpdateAction implements ActionListener {
 
 		public void actionPerformed(ActionEvent event) {
-			try {
-				boolean result = MapSourcesUpdater.mapsourcesOnlineUpdate();
-				String msg = (result) ? "Online update successfull" : "No new update avilable";
-				DateFormat df = DateFormat.getDateTimeInstance();
-				Date date = MapSourcesUpdater.getMapSourcesDate(System.getProperties());
-				msg += "\nCurrent map source date: " + df.format(date);
-				JOptionPane.showMessageDialog(SettingsGUI.this, msg);
-				if (result)
-					MainGUI.getMainGUI().refreshPreviewMap();
-			} catch (MapSourcesUpdateException e) {
-				JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(), "Mapsources online update failed",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			// try {
+			// boolean result = MapSourcesUpdater.mapsourcesOnlineUpdate();
+			// String msg = (result) ? "Online update successfull" : "No new update avilable";
+			// DateFormat df = DateFormat.getDateTimeInstance();
+			// Date date = MapSourcesUpdater.getMapSourcesDate(System.getProperties());
+			// msg += "\nCurrent map source date: " + df.format(date);
+			// JOptionPane.showMessageDialog(SettingsGUI.this, msg);
+			// if (result)
+			// MainGUI.getMainGUI().refreshPreviewMap();
+			// } catch (MapSourcesUpdateException e) {
+			// JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(), "Mapsources online update failed",
+			// JOptionPane.ERROR_MESSAGE);
+			// }
+			JOptionPane.showMessageDialog(SettingsGUI.this, "Not implemented", "Not implemented",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

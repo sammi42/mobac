@@ -38,7 +38,6 @@ import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 
@@ -153,7 +152,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				Runtime r = Runtime.getRuntime();
 				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
 			}
-			sb.append("\nMapsources rev: " + MapSourcesUpdater.getCurrentMapSourcesRev());
+			// sb.append("\nMapsources rev: " + MapSourcesUpdater.getCurrentMapSourcesRev());
 
 			if (additionalInfo != null)
 				sb.append("\n\n" + additionalInfo);

@@ -16,35 +16,43 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.region_europe_east;
 
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.UpdatableMapSource;
+import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.mapsources.mapspace.MercatorPower2MapSpaceEllipsoidal;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
+import mobac.utilities.Charsets;
 
 /**
  * Yandex Sat
  */
-public class YandexSat extends AbstractHttpMapSource implements UpdatableMapSource {
+public class YandexSat extends AbstractHttpMapSource {
+
+	private static final String INIT_REGEX = "Internal.MapData.DataVersions=.*\\{.*sat:\\\"([\\d\\.]+)\\\"";
+
+	private static final String TEMPLATE_URL = "http://sat0{$servernum}.maps.yandex.ru/tiles?l=sat&v={$version}&x={$x}&y={$y}&z={$z}";
 
 	private static int SERVER_NUM = 1;
 
-	private String urlPattern;
+	private String version = "";
 
 	public YandexSat() {
 		super("YandexSat", 1, 18, TileImageType.JPG, HttpMapSource.TileUpdate.IfModifiedSince);
-		update();
+	}
+
+	@Override
+	protected void initernalInitialize() throws MapSourceInitializationException {
+		version = MapSourceUrlUpdater.loadDocumentAndExtractGroup(YandexMap.INIT_URL, Charsets.UTF_8, INIT_REGEX);
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		SERVER_NUM = (SERVER_NUM % 3) + 3;
-		String tmp = urlPattern;
-		tmp = tmp.replace("{$servernum}", Integer.toString(SERVER_NUM));
-		tmp = tmp.replace("{$x}", Integer.toString(tilex));
-		tmp = tmp.replace("{$y}", Integer.toString(tiley));
-		tmp = tmp.replace("{$z}", Integer.toString(zoom));
+		String tmp;
+		tmp = MapSourceTools.formatMapUrl(TEMPLATE_URL, SERVER_NUM, zoom, tilex, tiley);
+		tmp = tmp.replace("{$version}", version);
 		return tmp;
 	}
 
@@ -56,10 +64,6 @@ public class YandexSat extends AbstractHttpMapSource implements UpdatableMapSour
 	@Override
 	public String toString() {
 		return "Yandex Sat (Russia)";
-	}
-
-	public void update() {
-		urlPattern = MapSourceTools.loadMapUrl(this, "url");
 	}
 
 }

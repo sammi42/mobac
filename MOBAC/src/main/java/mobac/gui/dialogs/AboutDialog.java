@@ -32,7 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import mobac.gui.MainGUI;
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.ProgramInfo;
 import mobac.utilities.GBC;
 
@@ -55,8 +54,8 @@ public class AboutDialog extends JDialog {
 		infoPanel.add(new JLabel(ProgramInfo.getVersion()), eol);
 		infoPanel.add(new JLabel("Program revision:"), std);
 		infoPanel.add(new JLabel(ProgramInfo.getRevision()), eol);
-		infoPanel.add(new JLabel("Map sources revision:"), std);
-		infoPanel.add(new JLabel(Integer.toString(MapSourcesUpdater.getCurrentMapSourcesRev())), eol);
+		// infoPanel.add(new JLabel("Map sources revision:"), std);
+		// infoPanel.add(new JLabel(Integer.toString(MapSourcesUpdater.getCurrentMapSourcesRev())), eol);
 		add(infoPanel, eol);
 		add(Box.createVerticalGlue(), eol);
 		add(ok, GBC.eol().anchor(GBC.CENTER).insets(5, 10, 10, 10));

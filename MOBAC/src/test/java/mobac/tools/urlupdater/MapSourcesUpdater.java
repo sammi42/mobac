@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources;
+package mobac.tools.urlupdater;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import mobac.Main;
 import mobac.exceptions.MapSourcesUpdateException;
 import mobac.program.DirectoryManager;
-import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
@@ -210,11 +209,6 @@ public class MapSourcesUpdater {
 						mapFs.write(data);
 					} finally {
 						Utilities.closeStream(mapFs);
-					}
-					for (MapSource ms : MapSourcesManager.getInstance().getAllLayerMapSources()) {
-						if (ms instanceof UpdatableMapSource) {
-							((UpdatableMapSource) ms).update();
-						}
 					}
 					mapSourcesExternalFileUsed = true;
 					return true;

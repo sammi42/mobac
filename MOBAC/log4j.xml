@@ -26,7 +26,7 @@
   </logger>
 
   <logger name="mobac.program.download">
-  	<level value="DEBUG" />
+  	<level value="TRACE" />
   </logger>
       
   <logger name="mobac.program.tilestore">

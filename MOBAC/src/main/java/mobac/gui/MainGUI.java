@@ -78,7 +78,6 @@ import mobac.gui.panels.JProfilesPanel;
 import mobac.gui.panels.JTileImageParametersPanel;
 import mobac.gui.panels.JTileStoreCoveragePanel;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.program.AtlasThread;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
@@ -198,7 +197,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomChanged(previewMap.getGridZoom());
 		previewMap.updateMapSelection();
 		previewMap.grabFocus();
-		MapSourcesUpdater.automaticMapsourcesOnlineUpdate(true);
 	}
 
 	private void createControls() {

@@ -20,7 +20,7 @@ import mobac.exceptions.MapSourceInitializationException;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class GoogleMaps extends GoogleMapSource {
+public class GoogleMaps extends AbstractGoogleMapSource {
 
 	private static final String INIT_URL = "http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2";
 	private static final String INIT_REGEX = "^http://mt\\d\\.google\\.com/.*";

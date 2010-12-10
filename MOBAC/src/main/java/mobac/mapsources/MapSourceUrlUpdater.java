@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
@@ -14,6 +15,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.utilities.Utilities;
 import mobac.utilities.writer.NullPrintWriter;
 
@@ -77,15 +79,15 @@ public class MapSourceUrlUpdater {
 	}
 
 	/**
-	 * Retrieves the HTML document on the specified <code>url</code>, interprets the retrieved data as {@link String} of
-	 * {@link Charset} <code>charset</code> and returns this {@link String}.
+	 * Retrieves the text or HTML document on the specified <code>url</code>, interprets the retrieved data as
+	 * {@link String} of {@link Charset} <code>charset</code> and returns this {@link String}.
 	 * 
 	 * @param url
 	 * @param charset
 	 * @return
 	 * @throws IOException
 	 */
-	public static String loadHtmlDocument(String url, Charset charset) throws IOException {
+	public static String loadDocument(String url, Charset charset) throws IOException {
 		URL u = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 		conn.addRequestProperty("Accept", ACCEPT);
@@ -96,6 +98,30 @@ public class MapSourceUrlUpdater {
 		}
 
 		return new String(data, charset);
+	}
+
+	/**
+	 * 
+	 * @param url
+	 * @param charset
+	 * @param regex
+	 *            regex defining one group with will be returned
+	 * @return
+	 * @throws MapSourceInitializationException
+	 */
+	public static String loadDocumentAndExtractGroup(String url, Charset charset, String regex)
+			throws MapSourceInitializationException {
+		String document;
+		try {
+			document = loadDocument(url, charset);
+		} catch (IOException e) {
+			throw new MapSourceInitializationException("Faile dto retrieve initialization document from url: " + url
+					+ "\nError: " + e.getMessage(), e);
+		}
+		Matcher m = Pattern.compile(regex).matcher(document);
+		if (!m.find())
+			throw new MapSourceInitializationException("pattern not found: " + regex);
+		return m.group(1);
 	}
 
 	public static void main(String[] args) {

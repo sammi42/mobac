@@ -24,7 +24,7 @@ import mobac.program.model.TileImageType;
  * <a href="http://maps.google.com/?ie=UTF8&ll=36.279707,128.204956&spn=3.126164,4.932861&z=8" >Google Maps Korea</a>
  * 
  */
-public class GoogleMapsKorea extends GoogleMapSource {
+public class GoogleMapsKorea extends AbstractGoogleMapSource {
 
 	private static final String INIT_URL = "http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8";
 	private static final String INIT_REGEX = "^http://mt\\d\\.gmaptiles\\.co\\.kr/.*";

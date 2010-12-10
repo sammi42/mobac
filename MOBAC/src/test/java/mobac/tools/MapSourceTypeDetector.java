@@ -30,7 +30,6 @@ import java.util.Map;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.MapSourcesUpdater;
 import mobac.mapsources.mappacks.misc_worldwide.Topomapper;
 import mobac.program.Logging;
 import mobac.program.download.TileDownLoader;
@@ -39,6 +38,7 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
+import mobac.tools.urlupdater.MapSourcesUpdater;
 import mobac.utilities.Utilities;
 
 public class MapSourceTypeDetector {

@@ -138,7 +138,7 @@ public class Settings {
 	 */
 	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(7);
 
-	private String googleLanguage = "en";
+	public String googleLanguage = "en";
 
 	/**
 	 * Development mode enabled/disabled
@@ -266,15 +266,6 @@ public class Settings {
 
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
-	}
-
-	public String getGoogleLanguage() {
-		return googleLanguage;
-	}
-
-	public void setGoogleLanguage(String googleLanguage) {
-		this.googleLanguage = googleLanguage;
-		// GoogleMapSource.LANG = googleLanguage;
 	}
 
 	public boolean isCustomTileSize() {

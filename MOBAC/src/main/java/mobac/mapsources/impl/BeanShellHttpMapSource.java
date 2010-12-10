@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +21,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
+import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -38,7 +38,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
 		FileInputStream in = new FileInputStream(f);
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
+			BufferedReader br = new BufferedReader(new InputStreamReader(in, Charsets.UTF_8));
 			StringWriter sw = new StringWriter();
 			String line = br.readLine();
 			while (line != null) {

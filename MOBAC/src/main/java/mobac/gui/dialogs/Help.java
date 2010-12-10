@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 
 import mobac.Main;
 import mobac.gui.MainGUI;
+import mobac.utilities.Charsets;
 import mobac.utilities.GBC;
 
 
@@ -68,7 +69,7 @@ public class Help extends JFrame implements WindowListener {
 			buf = new byte[in.available()];
 			in.readFully(buf);
 			in.close();
-			String helpMessage = new String(buf, "UTF-8");
+			String helpMessage = new String(buf, Charsets.UTF_8);
 			// Strip out all line breaks because JOptionPane shows
 			// the raw HTML code otherwise
 			//helpMessage = helpMessage.replaceAll("\n", "");

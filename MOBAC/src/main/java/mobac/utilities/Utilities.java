@@ -188,7 +188,7 @@ public class Utilities {
 		buf = new byte[in.available()];
 		in.readFully(buf);
 		in.close();
-		String text = new String(buf, "UTF-8");
+		String text = new String(buf, Charsets.UTF_8);
 		return text;
 	}
 

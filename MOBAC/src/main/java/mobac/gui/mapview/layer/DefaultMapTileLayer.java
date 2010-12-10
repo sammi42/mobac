@@ -73,6 +73,7 @@ public class DefaultMapTileLayer implements MapTileLayer {
 					mapViewer.getTileLoader().createTileLoaderJob(mapSource, tilex, tiley, zoom));
 		}
 		return tile;
+
 	}
 
 }

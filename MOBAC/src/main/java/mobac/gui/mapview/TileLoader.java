@@ -128,7 +128,7 @@ public class TileLoader {
 				fileTilePainted = true;
 				return true;
 			} catch (Exception e) {
-				log.error("", e);
+				log.error("Failed to load tile from tile store", e);
 			}
 			return false;
 		}

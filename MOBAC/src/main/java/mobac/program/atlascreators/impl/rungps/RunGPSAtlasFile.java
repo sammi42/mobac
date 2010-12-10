@@ -26,6 +26,8 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import mobac.utilities.Charsets;
+
 /**
  * 
  * @author Tom Henne, eSymetric
@@ -408,7 +410,7 @@ public class RunGPSAtlasFile {
 	}
 
 	public void setString(List<Integer> keyHierarchy, String value) throws IOException {
-		byte[] data = value.getBytes("UTF-8");
+		byte[] data = value.getBytes(Charsets.UTF_8);
 		addData(keyHierarchy, data);
 	}
 
@@ -419,7 +421,7 @@ public class RunGPSAtlasFile {
 	public String getString(List<Integer> keyHierarchy) throws IOException {
 		byte[] data = getData(keyHierarchy);
 		if (data != null) {
-			return new String(data, "UTF-8");
+			return new String(data, Charsets.UTF_8);
 		}
 		return null;
 	}

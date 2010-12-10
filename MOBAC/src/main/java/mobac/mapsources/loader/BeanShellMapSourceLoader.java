@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 
 public class BeanShellMapSourceLoader {
 
-	private final Logger log = Logger.getLogger(MapPackManager.class);
+	private final Logger log = Logger.getLogger(BeanShellMapSourceLoader.class);
 	private final File mapSourcesDir;
 	private ArrayList<MapSource> mapSources;
 

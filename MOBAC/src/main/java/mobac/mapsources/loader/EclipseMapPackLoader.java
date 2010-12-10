@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobac.program.interfaces.MapSource;
+import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.DirectoryFileFilter;
 
@@ -58,7 +59,7 @@ public class EclipseMapPackLoader {
 			File list = new File(d, "mapsources.list");
 			if (!list.isFile())
 				continue;
-			String listContent = new String(Utilities.getFileBytes(list), "UTF-8");
+			String listContent = new String(Utilities.getFileBytes(list), Charsets.UTF_8);
 			String[] classNames = listContent.split("\\s+");
 			for (String className : classNames) {
 				try {

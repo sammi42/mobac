@@ -17,8 +17,6 @@
 package mobac.mapsources;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.cert.CertificateException;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,13 +53,11 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 
 		try {
-			//addAllMapSource(new EclipseMapPackLoader().getMapSources());
+			// addAllMapSource(new mobac.mapsources.loader.EclipseMapPackLoader().getMapSources());
 			MapPackManager mpm = new MapPackManager(mapSourcesDir);
 			mpm.installUpdates();
 			mpm.loadMapPacks();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (CertificateException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(mapSourcesDir);

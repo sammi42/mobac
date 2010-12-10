@@ -35,6 +35,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
+import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
@@ -163,7 +164,7 @@ public class OruxMaps extends AtlasCreator {
 		FileOutputStream otrk2FileStream = null;
 		File otrk2 = new File(oruxMapsMainDir, name + ORUXMAPS_EXT);
 		try {
-			writer = new OutputStreamWriter(new FileOutputStream(otrk2), "UTF8");
+			writer = new OutputStreamWriter(new FileOutputStream(otrk2), Charsets.UTF_8);
 			writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			writer.append("<OruxTracker "
 					+ "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n"

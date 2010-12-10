@@ -28,6 +28,7 @@ import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.mapsources.impl.SimpleMapSource;
 import mobac.mapsources.loader.BeanShellMapSourceLoader;
 import mobac.mapsources.loader.CustomMapSourceLoader;
+import mobac.mapsources.loader.EclipseMapPackLoader;
 import mobac.mapsources.loader.MapPackManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
@@ -46,17 +47,22 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	protected void loadMapSources() {
-		if (Settings.getInstance().isDevModeEnabled()) {
+		boolean devMode = Settings.getInstance().isDevModeEnabled();
+		if (devMode) {
 			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
 			addMapSource(new DebugMapSource());
 		}
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 
 		try {
-			// addAllMapSource(new mobac.mapsources.loader.EclipseMapPackLoader().getMapSources());
-			MapPackManager mpm = new MapPackManager(mapSourcesDir);
-			mpm.installUpdates();
-			mpm.loadMapPacks();
+			if (devMode) {
+				addAllMapSource(new EclipseMapPackLoader().getMapSources());
+			} else {
+				MapPackManager mpm = new MapPackManager(mapSourcesDir);
+				mpm.installUpdates();
+				mpm.loadMapPacks();
+				addAllMapSource(mpm.getMapSources());
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

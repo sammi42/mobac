@@ -85,7 +85,6 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 			return;
 		// Prevent multiple initializations in case of multi-threaded access
 		try {
-			log.debug("Entering sync block");
 			synchronized (this) {
 				if (initialized)
 					// Another thread has already completed initialization while this one was blocked
@@ -117,11 +116,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 			return data;
 		} else {
 			initialize();
-			log.trace("Start loading tile image: zoom/x/y: " + zoom + "/" + x + "/" + y + " " + loadMethod);
-			byte[] data = TileDownLoader.getImage(x, y, zoom, this);
-			log.trace("Finished loading tile image: zoom/x/y: " + zoom + "/" + x + "/" + y + " " + loadMethod + " "
-					+ data);
-			return data;
+			return TileDownLoader.getImage(x, y, zoom, this);
 		}
 	}
 

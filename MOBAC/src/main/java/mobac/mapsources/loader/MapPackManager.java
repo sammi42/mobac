@@ -109,7 +109,7 @@ public class MapPackManager {
 			try {
 				MapSource ms = iterator.next();
 				mapSources.add(ms);
-				log.trace("Loaded map source: " + ms);
+				log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
 			} catch (Error e) {
 				log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
 			}

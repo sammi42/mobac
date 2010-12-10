@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.impl;
+package mobac.mapsources.mappacks.region_europe_west;
 
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;

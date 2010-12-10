@@ -14,30 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.impl;
+package mobac.mapsources.mappacks.region_america_north;
 
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
-import mobac.program.interfaces.HttpMapSource;
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
 
-public class NotUsed {
+public class TerraserverUSA extends AbstractHttpMapSource {
 
-	/**
-	 * hubermedia http://maps.hubermedia.de/
-	 */
-	public static class Hubermedia extends AbstractHttpMapSource {
+	public TerraserverUSA() {
+		super("Terraserver-USA", 3, 17, TileImageType.JPG);
+	}
 
-		String mapUrl;
+	@Override
+	public String toString() {
+		return "Terraserver-USA Map (USA only)";
+	}
 
-		public Hubermedia() {
-			super("Hubermedia", 12, 15, TileImageType.PNG, HttpMapSource.TileUpdate.IfNoneMatch);
-			mapUrl = "http://t1.hubermedia.de/TK50/AT/Kompass_Neu//Z{$z}/{$y}/{$x}.png";
-		}
+	public MapSpace getMapSpace() {
+		return MercatorPower2MapSpace.INSTANCE_256;
+	}
 
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return MapSourceTools.formatMapUrl(mapUrl, zoom, tilex, tiley);
-		}
-
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		double[] coords = MapSourceTools.calculateLatLon(this, zoom, tilex, tiley);
+		String url = "http://terraserver-usa.com/ogcmap6.ashx?"
+				+ "version=1.1.1&request=GetMap&Layers=DRG&Styles=&SRS=EPSG:4326&" + "BBOX=" + coords[0] + ","
+				+ coords[1] + "," + coords[2] + "," + coords[3]
+				+ "&width=256&height=256&format=image/jpeg&EXCEPTIONS=BLANK";
+		return url;
 	}
 }

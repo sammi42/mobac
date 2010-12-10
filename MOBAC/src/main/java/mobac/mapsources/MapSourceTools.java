@@ -19,14 +19,10 @@ package mobac.mapsources;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 
-import org.apache.log4j.Logger;
-
 /**
  * Utility methods used by several map sources.
  */
 public class MapSourceTools {
-
-	private static final Logger log = Logger.getLogger(MapSourceTools.class);
 
 	protected static final char[] NUM_CHAR = { '0', '1', '2', '3' };
 
@@ -50,14 +46,6 @@ public class MapSourceTools {
 			tiley >>= 1;
 		}
 		return new String(tileNum);
-	}
-
-	public static String loadMapUrl(MapSource mapSource, String type) {
-		String name = mapSource.getName().replaceAll(" ", "");
-		String url = System.getProperty(name + "." + type);
-		if (url == null)
-			log.error("Unable to load url for map source " + mapSource.getClass().getSimpleName());
-		return url;
 	}
 
 	/**

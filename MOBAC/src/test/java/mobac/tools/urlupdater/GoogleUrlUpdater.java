@@ -37,8 +37,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import mapsources.MapSourceTestCase;
-import mapsources.MapSourceTestFailedException;
-import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mappacks.google.GoogleEarth;
 import mobac.mapsources.mappacks.google.GoogleEarthMapsOverlay;
 import mobac.mapsources.mappacks.google.GoogleMapMaker;
@@ -144,10 +142,10 @@ public class GoogleUrlUpdater implements Runnable {
 					MapSourceTestCase testCase = new MapSourceTestCase(ums.mapSourceClass);
 					System.out.println(ums.mapSourceClass.getSimpleName());
 					UrlUpdater.getInstance().updateMapSopurceUrl(key, newUrlTemplate);
-					testCase.runMapSourceTest();
-				} catch (MapSourceTestFailedException e) {
-					System.err.print("Test of new url failed: ");
-					System.err.println(key + "=" + newUrlTemplate);
+					// testCase.runMapSourceTest();
+					// } catch (MapSourceTestFailedException e) {
+					// System.err.print("Test of new url failed: ");
+					// System.err.println(key + "=" + newUrlTemplate);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -270,7 +268,7 @@ public class GoogleUrlUpdater implements Runnable {
 
 			Levenshtein similarityAlgo = new Levenshtein();
 			MapSource mapSource = ums.mapSourceClass.newInstance();
-			String currentUrl = MapSourceTools.loadMapUrl(mapSource, "url");
+			String currentUrl = UrlUpdater.getInstance().getMapSourceUrl(ums.key);
 
 			if (currentUrl == null)
 				throw new RuntimeException("mapsources url not loaded: " + mapSource);
@@ -369,7 +367,6 @@ public class GoogleUrlUpdater implements Runnable {
 			return url;
 		}
 	}
-
 
 	public static class UrlString implements Comparable<UrlString> {
 		public final String url;

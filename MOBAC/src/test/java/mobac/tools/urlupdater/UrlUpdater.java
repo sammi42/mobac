@@ -17,6 +17,8 @@
 package mobac.tools.urlupdater;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -54,6 +56,18 @@ public class UrlUpdater {
 	}
 
 	private UrlUpdater() {
+		FileInputStream in = null;
+		try {
+			in = new FileInputStream("src/main/resources/mobac/mapsources.properties");
+			mapSourcesProperties.load(in);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			Utilities.closeStream(in);
+		}
 	}
 
 	public void updateMapSopurceUrl(String mapKey, String newUrl) {

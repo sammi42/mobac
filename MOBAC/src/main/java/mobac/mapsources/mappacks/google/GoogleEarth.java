@@ -16,13 +16,20 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 public class GoogleEarth extends GoogleMapSource {
+	private static final String INIT_URL = "http://maps.google.com/?ie=UTF8&t=k&ll=0,0&spn=0,0&z=2";
+	private static final String INIT_REGEX = "^http://khm\\d\\.google\\.com/.*";
 
 	public GoogleEarth() {
 		super("Google Earth", 0, 20, TileImageType.JPG, HttpMapSource.TileUpdate.None);
 	}
 
+	@Override
+	protected void initernalInitialize() throws MapSourceInitializationException {
+		initializeServerUrl(INIT_URL, INIT_REGEX);
+	}
 }

@@ -16,15 +16,18 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 /**
- * <a href="http://maps.google.com/?ie=UTF8&ll=36.279707,128.204956&spn=3.126164,4.932861&z=8" >Google Maps
- * Korea</a>
+ * <a href="http://maps.google.com/?ie=UTF8&ll=36.279707,128.204956&spn=3.126164,4.932861&z=8" >Google Maps Korea</a>
  * 
  */
 public class GoogleMapsKorea extends GoogleMapSource {
+
+	private static final String INIT_URL = "http://maps.google.com/?ie=UTF8&ll=36.27,128.20&spn=3.126164,4.932861&z=8";
+	private static final String INIT_REGEX = "^http://mt\\d\\.gmaptiles\\.co\\.kr/.*";
 
 	public GoogleMapsKorea() {
 		super("Google Maps Korea", 0, 18, TileImageType.PNG, HttpMapSource.TileUpdate.None);
@@ -35,4 +38,8 @@ public class GoogleMapsKorea extends GoogleMapSource {
 		return "Google Maps Korea";
 	}
 
+	@Override
+	protected void initernalInitialize() throws MapSourceInitializationException {
+		initializeServerUrl(INIT_URL, INIT_REGEX);
+	}
 }

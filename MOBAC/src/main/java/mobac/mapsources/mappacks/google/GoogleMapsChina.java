@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
@@ -23,6 +24,9 @@ import mobac.program.model.TileImageType;
  * Google Maps China (Ditu) http://ditu.google.com/
  */
 public class GoogleMapsChina extends GoogleMapSource {
+
+	private static final String INIT_URL = "http://ditu.google.com/";
+	private static final String INIT_REGEX = "^http://mt\\d\\.google\\.cn/.*";
 
 	public GoogleMapsChina() {
 		super("Google Maps China", 0, 19, TileImageType.PNG, HttpMapSource.TileUpdate.None);
@@ -33,4 +37,8 @@ public class GoogleMapsChina extends GoogleMapSource {
 		return "Google Maps China (Ditu)";
 	}
 
+	@Override
+	protected void initernalInitialize() throws MapSourceInitializationException {
+		initializeServerUrl(INIT_URL, INIT_REGEX);
+	}
 }

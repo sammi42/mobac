@@ -39,9 +39,11 @@ public abstract class MapSourcesManager {
 	 */
 	public abstract Vector<MapSource> getAllLayerMapSources();
 
-	public abstract Vector<MapSource> getEnabledMapSources();
+	public abstract Vector<MapSource> getEnabledOrderedMapSources();
 
 	public abstract MapSource getDefaultMapSource();
 
 	public abstract MapSource getSourceByName(String name);
+
+	public abstract Vector<MapSource> getDisabledMapSources();
 }

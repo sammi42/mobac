@@ -119,12 +119,41 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	@Override
-	public Vector<MapSource> getEnabledMapSources() {
-		Vector<MapSource> mapSources = new Vector<MapSource>();
-		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance().getDisabledMapSources());
-		for (MapSource ms : allMapSources.values()) {
-			if (!disabledMapSources.contains(ms.getName()))
+	public Vector<MapSource> getEnabledOrderedMapSources() {
+		Vector<MapSource> mapSources = new Vector<MapSource>(allMapSources.size());
+
+		Vector<String> enabledMapSources = Settings.getInstance().mapSourcesEnabled;
+		TreeSet<String> notEnabledMapSources = new TreeSet<String>(allMapSources.keySet());
+		notEnabledMapSources.removeAll(enabledMapSources);
+		for (String mapSourceName : enabledMapSources) {
+			MapSource ms = getSourceByName(mapSourceName);
+			if (ms != null) {
 				mapSources.add(ms);
+			}
+		}
+		// remove all disabled map sources so we get those that are neither enabled nor disabled
+		notEnabledMapSources.removeAll(Settings.getInstance().mapSourcesDisabled);
+		for (String mapSourceName : notEnabledMapSources) {
+			MapSource ms = getSourceByName(mapSourceName);
+			if (ms != null) {
+				mapSources.add(ms);
+			}
+		}
+		if (mapSources.size() == 0)
+			mapSources.add(new SimpleMapSource());
+		return mapSources;
+
+	}
+
+	@Override
+	public Vector<MapSource> getDisabledMapSources() {
+		Vector<String> disabledMapSources = Settings.getInstance().mapSourcesDisabled;
+		Vector<MapSource> mapSources = new Vector<MapSource>(disabledMapSources.size());
+		for (String mapSourceName : disabledMapSources) {
+			MapSource ms = getSourceByName(mapSourceName);
+			if (ms != null) {
+				mapSources.add(ms);
+			}
 		}
 		return mapSources;
 	}

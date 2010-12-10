@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -33,14 +34,12 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,6 +49,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -67,15 +67,18 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.bind.JAXBException;
 
 import mobac.StartMOBAC;
 import mobac.gui.components.JDirectoryChooser;
 import mobac.gui.components.JMapSizeCombo;
-import mobac.gui.components.JObjectCheckBox;
 import mobac.gui.components.JTimeSlider;
+import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.Logging;
+import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.MapSourcesListModel;
 import mobac.program.model.ProxyType;
 import mobac.program.model.Settings;
 import mobac.program.model.UnitSystem;
@@ -95,6 +98,8 @@ public class SettingsGUI extends JDialog {
 	private static Logger log = Logger.getLogger(SettingsGUI.class);
 
 	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
+
+	private final Settings settings = Settings.getInstance();
 
 	private JComboBox unitSystem;
 
@@ -132,7 +137,14 @@ public class SettingsGUI extends JDialog {
 	private DelayedInterruptThread tileStoreAsyncThread = null;
 
 	private List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<TileSourceInfoComponents>();
-	private Vector<JMapSourceCB> mapSourceCbList = new Vector<JMapSourceCB>();
+
+	private JList enabledMapSources;
+
+	private MapSourcesListModel enabledMapSourcesModel;
+
+	private JList disabledMapSources;
+
+	private MapSourcesListModel disabledMapSourcesModel;
 
 	static void showSettingsDialog(final JFrame owner) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -173,6 +185,7 @@ public class SettingsGUI extends JDialog {
 		tabbedPane.setBounds(0, 0, 492, 275);
 		addDisplaySettingsPanel();
 		addMapSourceSettingsPanel();
+		addMapSourceManagerPanel();
 		addTileUpdatePanel();
 		addTileStorePanel();
 		addMapSizePanel();
@@ -207,7 +220,7 @@ public class SettingsGUI extends JDialog {
 
 	private void addMapSourceSettingsPanel() {
 
-		JPanel tab = createNewTab("Map sources");
+		JPanel tab = createNewTab("Map sources config");
 		tab.setLayout(new GridBagLayout());
 
 		JPanel updatePanel = new JPanel(new GridBagLayout());
@@ -227,34 +240,112 @@ public class SettingsGUI extends JDialog {
 		googlePanel.add(new JLabel("Language (hl parameter): "), GBC.std());
 		googlePanel.add(googleLang, GBC.eol());
 
+		tab.add(updatePanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(googlePanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
+	}
+
+	private void addMapSourceManagerPanel() {
+		JPanel tab = createNewTab("Map sources");
+		tab.setLayout(new GridBagLayout());
+
+		JPanel leftPanel = new JPanel(new BorderLayout());
+		leftPanel.setBorder(createSectionBorder("Enabled Map Sources"));
+
+		JPanel centerPanel = new JPanel(new GridLayout(5, 1));
+		JPanel rightPanel = new JPanel(new BorderLayout());
+		rightPanel.setBorder(createSectionBorder("Disabled Map Sources"));
+
+		JButton up = new JButton("^");
+		JButton down = new JButton("_");
+		JButton toLeft = new JButton("<-");
+		JButton toRight = new JButton("->");
+		toLeft.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				int[] idx = disabledMapSources.getSelectedIndices();
+				for (int i = 0; i < idx.length; i++) {
+					MapSource ms = disabledMapSourcesModel.removeElement(idx[i] - i);
+					enabledMapSourcesModel.addElement(ms);
+				}
+			}
+		});
+		toRight.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				int[] idx = enabledMapSources.getSelectedIndices();
+				for (int i = 0; i < idx.length; i++) {
+					MapSource ms = enabledMapSourcesModel.removeElement(idx[i] - i);
+					disabledMapSourcesModel.addElement(ms);
+				}
+				disabledMapSourcesModel.sort();
+			}
+		});
+		up.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				int[] idx = enabledMapSources.getSelectedIndices();
+				if (idx.length == 0)
+					return;
+				for (int i = 0; i < idx.length; i++) {
+					int index = idx[i];
+					if (index == 0)
+						return;
+					if (enabledMapSourcesModel.moveUp(index))
+						idx[i]--;
+				}
+				enabledMapSources.setSelectedIndices(idx);
+				enabledMapSources.ensureIndexIsVisible(idx[0]);
+			}
+		});
+		down.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				int[] idx = enabledMapSources.getSelectedIndices();
+				if (idx.length == 0)
+					return;
+				for (int i = idx.length - 1; i >= 0; i--) {
+					int index = idx[i];
+					if (index == enabledMapSourcesModel.getSize() - 1)
+						return;
+					if (enabledMapSourcesModel.moveDown(index))
+						idx[i]++;
+				}
+				enabledMapSources.setSelectedIndices(idx);
+				enabledMapSources.ensureIndexIsVisible(idx[idx.length - 1]);
+			}
+		});
+		centerPanel.add(toLeft);
+		centerPanel.add(toRight);
+		centerPanel.add(up);
+		centerPanel.add(down);
+
+		MapSourcesManager msManager = MapSourcesManager.getInstance();
+
+		enabledMapSourcesModel = new MapSourcesListModel(msManager.getEnabledOrderedMapSources());
+		enabledMapSources = new JList(enabledMapSourcesModel);
+		JScrollPane leftScrollPane = new JScrollPane(enabledMapSources, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		leftPanel.add(leftScrollPane, BorderLayout.CENTER);
+
+		disabledMapSourcesModel = new MapSourcesListModel(msManager.getDisabledMapSources());
+		disabledMapSourcesModel.sort();
+		disabledMapSources = new JList(disabledMapSourcesModel);
+		JScrollPane rightScrollPane = new JScrollPane(disabledMapSources, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		rightPanel.add(rightScrollPane, BorderLayout.CENTER);
+
 		JPanel mapSourcesInnerPanel = new JPanel();
 
 		Color c = UIManager.getColor("List.background");
 		mapSourcesInnerPanel.setBackground(c);
 
-		TreeSet<String> disabledMapSources = new TreeSet<String>(Settings.getInstance().getDisabledMapSources());
+		GBC lr = GBC.std().fill();
+		lr.weightx = 0.5;
 
-		mapSourceCbList.clear();
-		for (MapSource ms : MapSourcesManager.getInstance().getAllMapSources()) {
-			JMapSourceCB checkBox = new JMapSourceCB(ms.toString());
-			checkBox.setObject(ms);
-			checkBox.setSelected(!disabledMapSources.contains(ms.getName()));
-			checkBox.setBackground(c);
-			mapSourcesInnerPanel.add(checkBox);
-			mapSourceCbList.add(checkBox);
-		}
-		mapSourcesInnerPanel.setLayout(new BoxLayout(mapSourcesInnerPanel, BoxLayout.Y_AXIS));
-		JScrollPane mapSourcesScrollPane = new JScrollPane(mapSourcesInnerPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		mapSourcesScrollPane.setMinimumSize(new Dimension(300, 200));
-		JPanel mapSourcesOuterPanel = new JPanel(new BorderLayout());
-		mapSourcesOuterPanel.add(mapSourcesScrollPane, BorderLayout.CENTER);
-		mapSourcesOuterPanel.setBorder(createSectionBorder("Enabled Map Sources"));
-		mapSourcesOuterPanel.setPreferredSize(new Dimension(200, 200));
-
-		tab.add(updatePanel, GBC.eol().fill(GBC.HORIZONTAL));
-		tab.add(googlePanel, GBC.eol().fill(GBC.HORIZONTAL));
-		tab.add(mapSourcesOuterPanel, GBC.eol().fill());
+		tab.add(leftPanel, lr);
+		tab.add(centerPanel, GBC.std().fill(GBC.VERTICAL));
+		tab.add(rightPanel, lr);
 	}
 
 	private void addTileUpdatePanel() {
@@ -502,13 +593,13 @@ public class SettingsGUI extends JDialog {
 
 		atlasOutputDirectory = new JTextField();
 		atlasOutputDirectory.setToolTipText("<html>If empty the default directory " + "is used: <br><tt>"
-				+ Settings.getInstance().getAtlasOutputDirectory() + "</tt></html>");
+				+ settings.getAtlasOutputDirectory() + "</tt></html>");
 		JButton selectAtlasOutputDirectory = new JButton("Select");
 		selectAtlasOutputDirectory.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				JDirectoryChooser dc = new JDirectoryChooser();
-				dc.setCurrentDirectory(Settings.getInstance().getAtlasOutputDirectory());
+				dc.setCurrentDirectory(settings.getAtlasOutputDirectory());
 				if (dc.showDialog(SettingsGUI.this, "Select Directory") != JFileChooser.APPROVE_OPTION)
 					return;
 				atlasOutputDirectory.setText(dc.getSelectedFile().getAbsolutePath());
@@ -531,8 +622,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
-				GBC.std().fill(GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.std().fill(
+				GBC.HORIZONTAL));
 
 		backGround.add(panel, gbc_eolh);
 
@@ -544,19 +635,19 @@ public class SettingsGUI extends JDialog {
 		panel.setBorder(createSectionBorder("HTTP Proxy"));
 		final JLabel proxyTypeLabel = new JLabel("Proxy settings: ");
 		proxyType = new JComboBox(ProxyType.values());
-		proxyType.setSelectedItem(Settings.getInstance().getProxyType());
+		proxyType.setSelectedItem(settings.getProxyType());
 
 		final JLabel proxyHostLabel = new JLabel("Proxy host name: ");
-		proxyHost = new JTextField(Settings.getInstance().getCustomProxyHost());
+		proxyHost = new JTextField(settings.getCustomProxyHost());
 
 		final JLabel proxyPortLabel = new JLabel("Proxy port: ");
-		proxyPort = new JTextField(Settings.getInstance().getCustomProxyPort());
+		proxyPort = new JTextField(settings.getCustomProxyPort());
 
 		final JLabel proxyUserNameLabel = new JLabel("Proxy user: ");
-		proxyUserName = new JTextField(Settings.getInstance().getCustomProxyUserName());
+		proxyUserName = new JTextField(settings.getCustomProxyUserName());
 
 		final JLabel proxyPasswordLabel = new JLabel("Proxy password: ");
-		proxyPassword = new JTextField(Settings.getInstance().getCustomProxyPassword());
+		proxyPassword = new JTextField(settings.getCustomProxyPassword());
 
 		ActionListener al = new ActionListener() {
 
@@ -608,7 +699,7 @@ public class SettingsGUI extends JDialog {
 	}
 
 	private void loadSettings() {
-		Settings s = Settings.getInstance();
+		Settings s = settings;
 
 		unitSystem.setSelectedItem(s.getUnitSystem());
 		tileStoreEnabled.setSelected(s.tileStoreEnabled);
@@ -636,7 +727,7 @@ public class SettingsGUI extends JDialog {
 	 * settings.
 	 */
 	private void applySettings() {
-		Settings s = Settings.getInstance();
+		Settings s = settings;
 
 		s.setUnitSystem((UnitSystem) unitSystem.getSelectedItem());
 		s.tileStoreEnabled = tileStoreEnabled.isSelected();
@@ -658,11 +749,16 @@ public class SettingsGUI extends JDialog {
 		s.applyProxySettings();
 
 		Vector<String> disabledMaps = new Vector<String>();
-		for (JMapSourceCB cb : mapSourceCbList) {
-			if (!cb.isSelected())
-				disabledMaps.add(cb.getObject().getName());
+		for (MapSource ms : disabledMapSourcesModel.getVector()) {
+			disabledMaps.add(ms.getName());
 		}
-		s.setDisabledMapSources(disabledMaps);
+		s.mapSourcesDisabled = disabledMaps;
+
+		Vector<String> enabledMaps = new Vector<String>();
+		for (MapSource ms : enabledMapSourcesModel.getVector()) {
+			enabledMaps.add(ms.getName());
+		}
+		s.mapSourcesEnabled = enabledMaps;
 
 		if (MainGUI.getMainGUI() == null)
 			return;
@@ -804,15 +900,6 @@ public class SettingsGUI extends JDialog {
 		}
 	}
 
-	private static class JMapSourceCB extends JObjectCheckBox<MapSource> {
-
-		private static final long serialVersionUID = 1L;
-
-		public JMapSourceCB(String text) {
-			super(text);
-		}
-	}
-
 	private static class TileSourceInfoComponents {
 		JLabel sizeLabel;
 		JLabel countLabel;
@@ -824,9 +911,29 @@ public class SettingsGUI extends JDialog {
 
 	public static void main(String[] args) {
 		Logging.configureConsoleLogging(Level.TRACE);
+		ProgramInfo.initialize();
+		DefaultMapSourcesManager.initialize();
 		TileStore.initialize();
 		StartMOBAC.setLookAndFeel();
 
+		try {
+			Settings.load();
+		} catch (JAXBException e1) {
+			e1.printStackTrace();
+		}
 		new SettingsGUI(null);
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+
+			@Override
+			public void run() {
+				try {
+					Settings.save();
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		});
 	}
 }

@@ -121,7 +121,7 @@ public class MapSourcesUpdater {
 	 *            <code>true</code>: run the update in a new background. Otherwise wait for the update to finish
 	 */
 	public static void automaticMapsourcesOnlineUpdate(boolean async) {
-		Date lastUpdate = Settings.getInstance().mapSourcesUpdate.lastUpdate;
+		Date lastUpdate = null;// Settings.getInstance().mapSourcesUpdate.lastUpdate;
 		if (lastUpdate == null)
 			lastUpdate = getMapSourcesDate(System.getProperties());
 		Date end = new Date();
@@ -167,8 +167,11 @@ public class MapSourcesUpdater {
 			url = new URL(mapUpdateUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			Settings settings = Settings.getInstance();
-			if (mapFile.isFile() && settings.mapSourcesUpdate.etag != null && settings.mapSourcesUpdate.etag != "")
-				conn.addRequestProperty("If-None-Match", settings.mapSourcesUpdate.etag);
+			if (mapFile.isFile() /*
+								 * && settings.mapSourcesUpdate.etag != null && settings.mapSourcesUpdate.etag != "")
+								 * conn.addRequestProperty("If-None-Match", settings.mapSourcesUpdate.etag
+								 */)
+				;
 			try { // TODO temporarily introduced try/catch due to uncaught exception
 				int code = conn.getResponseCode();
 				MapSourcesUpdater.log.trace("Mapsources online update: \n\tUpdate url: " + mapUpdateUrl
@@ -198,8 +201,8 @@ public class MapSourcesUpdater {
 				onlineProps.load(new ByteArrayInputStream(data));
 				int onlineRev = getMapSourcesRev(onlineProps);
 				int currentRev = parseMapSourcesRev(System.getProperty(MapSourcesUpdater.MAPSOURCES_REV_KEY));
-				settings.mapSourcesUpdate.lastUpdate = new Date();
-				settings.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
+				// settings.mapSourcesUpdate.lastUpdate = new Date();
+				// settings.mapSourcesUpdate.etag = conn.getHeaderField("ETag");
 				// Check if local file is newer that the remote file
 				if (onlineRev > currentRev || !mapSourcesExternalFileUsed) {
 					System.getProperties().putAll(onlineProps);

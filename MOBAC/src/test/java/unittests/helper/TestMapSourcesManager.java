@@ -61,8 +61,13 @@ public class TestMapSourcesManager extends MapSourcesManager {
 	}
 
 	@Override
-	public Vector<MapSource> getEnabledMapSources() {
+	public Vector<MapSource> getEnabledOrderedMapSources() {
 		return getAllMapSources();
+	}
+
+	@Override
+	public Vector<MapSource> getDisabledMapSources() {
+		return new Vector<MapSource>();
 	}
 
 	@Override

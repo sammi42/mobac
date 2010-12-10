@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.util.Date;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +42,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import mobac.gui.actions.GpxLoad;
 import mobac.gui.mapview.ScaleBar;
 import mobac.gui.panels.JCoordinatesPanel;
-import mobac.mapsources.MapSourcesManager;
 import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
 import mobac.program.download.UserAgent;
@@ -175,22 +173,27 @@ public class Settings {
 	private String customProxyUserName = "";
 	private String customProxyPassword = "";
 
-	private Vector<String> disabledMapSources = new Vector<String>();
+	@XmlElementWrapper(name = "mapSourcesDisabled")
+	@XmlElement(name = "mapSource")
+	public Vector<String> mapSourcesDisabled = new Vector<String>();
 
-	@XmlElement(name = "MapSourcesUpdate")
-	public final MapSourcesUpdate mapSourcesUpdate = new MapSourcesUpdate();
+	@XmlElementWrapper(name = "mapSourcesEnabled")
+	@XmlElement(name = "mapSource")
+	public Vector<String> mapSourcesEnabled = new Vector<String>();
 
-	public static class MapSourcesUpdate {
-		/**
-		 * Last ETag value retrieved while online map source update.
-		 * 
-		 * @see MapSourcesManager#mapsourcesOnlineUpdate()
-		 * @see http://en.wikipedia.org/wiki/HTTP_ETag
-		 */
-		public String etag;
-
-		public Date lastUpdate;
-	}
+	// @XmlElement(name = "MapSourcesUpdate")
+	// public final MapSourcesUpdate mapSourcesUpdate = new MapSourcesUpdate();
+	// public static class MapSourcesUpdate {
+	// /**
+	// * Last ETag value retrieved while online map source update.
+	// *
+	// * @see MapSourcesManager#mapsourcesOnlineUpdate()
+	// * @see http://en.wikipedia.org/wiki/HTTP_ETag
+	// */
+	// public String etag;
+	//
+	// public Date lastUpdate;
+	// }
 
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -342,16 +345,6 @@ public class Settings {
 
 	public void setCustomProxyPassword(String customProxyPassword) {
 		this.customProxyPassword = customProxyPassword;
-	}
-
-	public Vector<String> getDisabledMapSources() {
-		return disabledMapSources;
-	}
-
-	@XmlElementWrapper(name = "disabledMapSources")
-	@XmlElement(name = "mapSource")
-	public void setDisabledMapSources(Vector<String> disabledMapSources) {
-		this.disabledMapSources = disabledMapSources;
 	}
 
 	public void applyProxySettings() {

@@ -223,7 +223,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setToolTipText("Projects a grid of the specified zoom level over the map");
 
 		// map source combo
-		mapSourceCombo = new JComboBox(MapSourcesManager.getInstance().getEnabledMapSources());
+		mapSourceCombo = new JComboBox(MapSourcesManager.getInstance().getEnabledOrderedMapSources());
 		mapSourceCombo.setMaximumRowCount(20);
 		mapSourceCombo.addActionListener(new MapSourceComboListener());
 		mapSourceCombo.setToolTipText("Select map source");
@@ -420,7 +420,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	public void updateMapSourcesList() {
 		MapSource ms = (MapSource) mapSourceCombo.getSelectedItem();
-		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSourcesManager.getInstance().getEnabledMapSources()));
+		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSourcesManager.getInstance().getEnabledOrderedMapSources()));
 		mapSourceCombo.setSelectedItem(ms);
 		MapSource ms2 = (MapSource) mapSourceCombo.getSelectedItem();
 		if (!ms.equals(ms2))

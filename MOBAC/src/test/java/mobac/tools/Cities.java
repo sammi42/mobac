@@ -18,7 +18,6 @@ package mobac.tools;
 
 import java.util.HashMap;
 
-import mobac.mapsources.impl.MultimapCom;
 import mobac.mapsources.mappacks.bing.MicrosoftMapsChina;
 import mobac.mapsources.mappacks.bing.MicrosoftVirtualEarth;
 import mobac.mapsources.mappacks.google.GoogleMapMaker;
@@ -44,6 +43,7 @@ import mobac.mapsources.mappacks.region_europe_east.YandexMap;
 import mobac.mapsources.mappacks.region_europe_east.YandexSat;
 import mobac.mapsources.mappacks.region_europe_north.StatkartTopo2;
 import mobac.mapsources.mappacks.region_europe_west.MicrosoftOrdnanceSurveyExplorer;
+import mobac.mapsources.mappacks.region_europe_west.MultimapCom;
 import mobac.mapsources.mappacks.region_europe_west.MultimapOSUkCom;
 import mobac.mapsources.mappacks.region_oceania.NearMap;
 import mobac.mapsources.mappacks.region_oceania.NzTopoMaps;

@@ -49,7 +49,7 @@ public class DirectoryManager {
 	public static final File atlasProfilesDir;
 	public static final File tileStoreDir;
 
-	private static Properties dirConfig;
+	private static Properties dirConfig = null;
 
 	static {
 		currentDir = new File(System.getProperty("user.dir"));
@@ -63,10 +63,12 @@ public class DirectoryManager {
 		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
 		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
 		tileStoreDir = applyDirConfig("mobac.tilestoredir", new File(programDir, "tilestore"));
-		
+
 	}
 
 	private static File applyDirConfig(String propertyName, File defaultDir) {
+		if (dirConfig == null)
+			return defaultDir;
 		try {
 			final String dirCfg = dirConfig.getProperty(propertyName);
 			if (dirCfg == null) {
@@ -75,6 +77,7 @@ public class DirectoryManager {
 				return getFileFromString(dirCfg);
 			}
 		} catch (Exception e) {
+			Logging.LOG.error("Error reading directory configuration: " + e.getMessage(), e);
 			JOptionPane.showMessageDialog(null, "<html><p>Failed to load directory.ini - entry \"" + propertyName
 					+ "\":<p><p>" + e.getMessage() + "</p></html>", "Faile do load directory.ini",
 					JOptionPane.ERROR_MESSAGE);

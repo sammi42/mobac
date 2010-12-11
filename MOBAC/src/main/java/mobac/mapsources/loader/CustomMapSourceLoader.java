@@ -46,6 +46,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		for (File f : customMapSourceFiles) {
 			try {
 				MapSource customMapSource = (MapSource) unmarshaller.unmarshal(f);
+				log.trace("Custom map source loaded: " + customMapSource + " from file \"" + f.getName() + "\"");
 				mapSources.add(customMapSource);
 			} catch (Exception e) {
 				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
@@ -68,10 +69,9 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null,
-				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
-						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
-						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage()
+				+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/"
+				+ loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}

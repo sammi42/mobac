@@ -90,7 +90,7 @@ public class Logging {
 
 	public static void configureDefaultErrorLogging() {
 		configureConsoleLogging(Level.INFO, new SimpleLayout());
-		configureLogFileLogging(Level.WARN);
+		configureLogFileLogging(Level.INFO);
 	}
 
 	public static void configureConsoleLogging() {
@@ -146,12 +146,12 @@ public class Logging {
 		if (!log.isInfoEnabled())
 			return;
 		String n = System.getProperty("line.separator");
-		log.debug("Version: " + ProgramInfo.getCompleteTitle());
-		log.debug("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
+		log.info("Version: " + ProgramInfo.getCompleteTitle());
+		log.info("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
 				+ ")");
-		log.debug("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
+		log.info("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
 				+ GUIExceptionHandler.prop("java.runtime.version") + ")");
-		log.debug("Directories:" /**/
+		log.info("Directories:" /**/
 				+ n + "currentDir: \t" + DirectoryManager.currentDir /**/
 				+ n + "programDir: \t" + DirectoryManager.programDir /**/
 				+ n + "tempDir:     \t" + DirectoryManager.tempDir /**/

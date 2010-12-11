@@ -59,6 +59,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.InvalidNameException;
+import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.ShowAboutDialog;
 import mobac.gui.actions.ShowHelpAction;
@@ -291,6 +292,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
 		mapSourceNames.addActionListener(new DebugShowMapSourceNames());
 		debug.add(mapSourceNames);
+		debug.addSeparator();
+		JMenuItem showLog = new JMenuItem("Show log file");
+		showLog.addActionListener(new DebugShowLogFile());
+		debug.add(showLog);
 
 		menuBar.add(new JMenu("File"));
 		menuBar.add(Box.createHorizontalGlue());

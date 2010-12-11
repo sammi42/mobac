@@ -18,9 +18,10 @@ package mobac.program;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.util.Map.Entry;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.logging.Handler;
 
 import mobac.utilities.GUIExceptionHandler;
@@ -170,6 +171,23 @@ public class Logging {
 			sw.write(entry.getKey() + " = " + entry.getValue() + "\n");
 		}
 		log.info(sw.toString());
+	}
+
+	/**
+	 * returns the first configured {@link FileAppender} or <code>null</code>.
+	 * 
+	 * @return
+	 */
+	public static String getLogFile() {
+		Enumeration<?> enu = Logger.getRootLogger().getAllAppenders();
+		while (enu.hasMoreElements()) {
+			Object o = enu.nextElement();
+			if (o instanceof FileAppender) {
+				FileAppender fa = (FileAppender) o;
+				return fa.getFile();
+			}
+		}
+		return null;
 	}
 
 }

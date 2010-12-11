@@ -33,6 +33,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlElement;
@@ -211,6 +213,14 @@ public class Settings {
 		try {
 			JAXBContext context = JAXBContext.newInstance(Settings.class);
 			Unmarshaller um = context.createUnmarshaller();
+			um.setEventHandler(new ValidationEventHandler() {
+
+				public boolean handleEvent(ValidationEvent event) {
+
+					log.warn("Problem on loading settings.xml: " + event.getMessage());
+					return true;
+				}
+			});
 			instance = (Settings) um.unmarshal(FILE);
 			SETTINGS_LAST_MODIFIED = FILE.lastModified();
 		} finally {

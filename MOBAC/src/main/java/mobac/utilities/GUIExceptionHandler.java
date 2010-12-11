@@ -29,6 +29,7 @@ import java.awt.datatransfer.Transferable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -133,7 +134,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		showExceptionDialog(t, additionalInfo);
 	}
 
-	public static void showExceptionDialog(Throwable t, String additionalInfo) {
+	public static synchronized void showExceptionDialog(Throwable t, String additionalInfo) {
 		String exceptionName = t.getClass().getSimpleName();
 		try {
 			StringBuilder sb = new StringBuilder(1024);
@@ -207,15 +208,21 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			}
 			text.setText("<html>" + guiText + "</html>");
 
+			JCheckBox quickMOBACcb = new JCheckBox("Do not continue and quit program by pressing OK");
 			JTextArea info = new JTextArea(sb.toString(), 20, 60);
 			info.setCaretPosition(0);
 			info.setEditable(false);
 			info.setMinimumSize(new Dimension(200, 150));
 			panel.add(new JScrollPane(info), BorderLayout.CENTER);
+			panel.add(quickMOBACcb, BorderLayout.SOUTH);
 			panel.setMinimumSize(new Dimension(700, 300));
 			panel.validate();
 			JOptionPane.showMessageDialog(null, panel, "Unexpected Exception: " + exceptionName,
 					JOptionPane.ERROR_MESSAGE);
+			if (quickMOBACcb.isSelected()) {
+				log.warn("User selected to quit MOBAC after an exception");
+				System.exit(1);
+			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

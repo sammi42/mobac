@@ -114,6 +114,8 @@
 			<zipfileset src="lib/je-${je-version}.jar" />
 			<zipfileset src="lib/bsh-2.0b4.jar" includes="**/*.class" />
 			<zipfileset src="lib/commons-codec-1.4.jar" includes="**/*.class" />
+			<zipfileset src="lib/commons-io-2.0.jar" includes="**/*.class" />
+			<zipfileset src="lib/Tidy.jar" includes="org/w3c/tidy/**" />
 			<fileset dir="build/mobac">
 				<exclude name="**/unittest/**" />
 				<exclude name="mobac/mapsources/mapapcks/**" />
@@ -152,6 +154,7 @@
 			-keep class mobac.program.tilestore.berkeleydb.* { *; }
 			-keep class mobac.program.tilestore.TileStoreEntry { public *; }
 			-keep class mobac.mapsources.MapSourceTools { public *; }
+			-keep class mobac.mapsources.MapSourceUrlUpdater { public *; }
 			-keep class mobac.mapsources.custom.* { *; }
 			-keepclassmembers enum * {
 			    public static **[] values();

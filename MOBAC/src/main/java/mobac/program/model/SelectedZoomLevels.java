@@ -16,7 +16,7 @@
  ******************************************************************************/
 package mobac.program.model;
 
-import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.TreeSet;
 
 import mobac.gui.components.JZoomCheckBox;
@@ -51,14 +51,7 @@ public class SelectedZoomLevels {
 
 	@Override
 	public String toString() {
-		StringWriter sw = new StringWriter();
-		for (int z : zoomLevels) {
-			sw.append(" " + z + ",");
-		}
-		String r = sw.toString().trim();
-		if (r.length() > 0)
-			r = r.substring(0, r.length() - 1);
-		return r;
+		return "ZoomLevels: " + Arrays.toString(getZoomLevels());
 	}
 
 }

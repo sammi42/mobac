@@ -21,13 +21,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -197,6 +194,7 @@ public class SettingsGUI extends JDialog {
 
 	private JPanel createNewTab(String tabTitle) {
 		JPanel tabPanel = new JPanel();
+		tabPanel.setName(tabTitle);
 		tabPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		tabbedPane.add(tabPanel, tabTitle);
 		return tabPanel;
@@ -252,14 +250,29 @@ public class SettingsGUI extends JDialog {
 		JPanel leftPanel = new JPanel(new BorderLayout());
 		leftPanel.setBorder(createSectionBorder("Enabled Map Sources"));
 
-		JPanel centerPanel = new JPanel(new GridLayout(5, 1));
+		JPanel centerPanel = new JPanel(new GridBagLayout());
 		JPanel rightPanel = new JPanel(new BorderLayout());
 		rightPanel.setBorder(createSectionBorder("Disabled Map Sources"));
 
-		JButton up = new JButton("^");
-		JButton down = new JButton("_");
-		JButton toLeft = new JButton("<-");
-		JButton toRight = new JButton("->");
+		JButton up = new JButton(Utilities.loadResourceImageIcon("arrow_blue_up.png"));
+		up.setToolTipText("<html>Move selected enabled map<br>source(s) one positon up</html>");
+		JButton down = new JButton(Utilities.loadResourceImageIcon("arrow_blue_down.png"));
+		down.setToolTipText("<html>Move selected enabled map<br>source(s) one positon down</html>");
+		JButton toLeft = new JButton(Utilities.loadResourceImageIcon("arrow_blue_left.png"));
+		toLeft.setToolTipText("<html>Enable the selected disabled map source(s)</html>");
+		JButton toRight = new JButton(Utilities.loadResourceImageIcon("arrow_blue_right.png"));
+		toRight.setToolTipText("<html>Disable the selected enabled map source(s)</html>");
+		Insets buttonInsets = new Insets(4, 4, 4, 4);
+		Dimension buttonDimension = new Dimension(40, 40);
+		up.setPreferredSize(buttonDimension);
+		down.setPreferredSize(buttonDimension);
+		toLeft.setPreferredSize(buttonDimension);
+		toRight.setPreferredSize(buttonDimension);
+		up.setMargin(buttonInsets);
+		down.setMargin(buttonInsets);
+		toLeft.setMargin(buttonInsets);
+		toRight.setMargin(buttonInsets);
+
 		toLeft.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -315,10 +328,13 @@ public class SettingsGUI extends JDialog {
 				enabledMapSources.ensureIndexIsVisible(idx[idx.length - 1]);
 			}
 		});
-		centerPanel.add(toLeft);
-		centerPanel.add(toRight);
-		centerPanel.add(up);
-		centerPanel.add(down);
+		GBC buttonGbc = GBC.eol();
+		centerPanel.add(Box.createVerticalStrut(25), GBC.eol());
+		centerPanel.add(toLeft, buttonGbc);
+		centerPanel.add(toRight, buttonGbc);
+		centerPanel.add(up, buttonGbc);
+		centerPanel.add(down, buttonGbc);
+		centerPanel.add(Box.createVerticalGlue(), GBC.std().fill());
 
 		MapSourcesManager msManager = MapSourcesManager.getInstance();
 
@@ -341,7 +357,7 @@ public class SettingsGUI extends JDialog {
 		mapSourcesInnerPanel.setBackground(c);
 
 		GBC lr = GBC.std().fill();
-		lr.weightx = 0.5;
+		lr.weightx = 1.0;
 
 		tab.add(leftPanel, lr);
 		tab.add(centerPanel, GBC.std().fill(GBC.VERTICAL));
@@ -783,7 +799,6 @@ public class SettingsGUI extends JDialog {
 
 	private void addListeners() {
 
-		addComponentListener(new WindowShowListener());
 		addWindowListener(new WindowCloseListener());
 
 		okButton.addActionListener(new ActionListener() {
@@ -796,6 +811,19 @@ public class SettingsGUI extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SettingsGUI.this.dispose();
+			}
+		});
+
+		tabbedPane.addChangeListener(new ChangeListener() {
+
+			public void stateChanged(ChangeEvent e) {
+				if (tabbedPane.getSelectedComponent() == null)
+					return;
+				// First time the tile store tab is selected start updating the tile store information
+				if ("Tile store".equals(tabbedPane.getSelectedComponent().getName())) {
+					tabbedPane.removeChangeListener(this);
+					updateTileStoreInfoPanelAsync(null);
+				}
 			}
 		});
 
@@ -815,25 +843,6 @@ public class SettingsGUI extends JDialog {
 		Border margin = new EmptyBorder(3, 3, 3, 3);
 		tb.setBorder(new CompoundBorder(border, margin));
 		return tb;
-	}
-
-	private class WindowShowListener extends ComponentAdapter {
-
-		private boolean firstShown = true;
-
-		@Override
-		public void componentShown(ComponentEvent event) {
-			// After showing the settings dialog we start the tile store
-			// information retrieval thread. This thread can take a long time to
-			// finish depending on the number of tiles in the tile cache and the
-			// hard disk performance
-			synchronized (this) {
-				if (firstShown)
-					SettingsGUI.this.updateTileStoreInfoPanelAsync(null);
-				firstShown = false;
-			}
-		}
-
 	}
 
 	private class WindowCloseListener extends WindowAdapter {

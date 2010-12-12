@@ -17,6 +17,7 @@
 package mobac.mapsources.custom;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,9 +33,12 @@ import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.TileStoreEntry;
 
 /**
  * Custom tile store provider, configurable via settings.xml.
@@ -63,6 +67,9 @@ public class CustomMapSource implements HttpMapSource {
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
+
+	@XmlElement(required = false, defaultValue = "false")
+	private boolean ignoreErrors = false;
 
 	/**
 	 * Constructor without parameters - required by JAXB
@@ -116,12 +123,45 @@ public class CustomMapSource implements HttpMapSource {
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
-		return TileDownLoader.downloadTileAndUpdateStore(x, y, zoom, this);
+		if (loadMethod == LoadMethod.CACHE) {
+			TileStoreEntry entry = TileStore.getInstance().getTile(x, y, zoom, this);
+			if (entry == null)
+				return null;
+			byte[] data = entry.getData();
+			if (Thread.currentThread() instanceof MapSourceListener) {
+				((MapSourceListener) Thread.currentThread()).tileDownloaded(data.length);
+			}
+			return data;
+		}
+		if (!ignoreErrors)
+			return TileDownLoader.getImage(x, y, zoom, this);
+		else
+			try {
+				return TileDownLoader.getImage(x, y, zoom, this);
+			} catch (Exception e) {
+				return null;
+			}
 	}
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
-		return ImageIO.read(new ByteArrayInputStream(getTileData(zoom, x, y, LoadMethod.DEFAULT)));
+		byte[] data = getTileData(zoom, x, y, LoadMethod.DEFAULT);
+		if (data == null) {
+			if (!ignoreErrors)
+				return null;
+			else {
+				BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_4BYTE_ABGR);
+				Graphics g = (Graphics) image.getGraphics();
+				try {
+					g.setColor(backgroundColor);
+					g.fillRect(0, 0, 256, 256);
+				} finally {
+					g.dispose();
+				}
+				return image;
+			}
+		}
+		return ImageIO.read(new ByteArrayInputStream(data));
 	}
 
 	@Override

@@ -42,10 +42,9 @@ public class EclipseMapPackLoader {
 
 	public EclipseMapPackLoader() throws IOException {
 		mapSources = new ArrayList<MapSource>();
-		loadMapPacks();
 	}
 
-	public void loadMapPacks() throws IOException {
+	public boolean loadMapPacks() throws IOException {
 		ClassLoader cl = EclipseMapPackLoader.class.getClassLoader();
 		File binDir;
 		try {
@@ -54,6 +53,8 @@ public class EclipseMapPackLoader {
 			throw new IOException(e);
 		}
 		File mapPackDir = new File(binDir, "mobac/mapsources/mappacks");
+		if (!mapPackDir.isDirectory())
+			return false;
 		File[] mapPacks = mapPackDir.listFiles(new DirectoryFileFilter());
 		for (File d : mapPacks) {
 			File list = new File(d, "mapsources.list");
@@ -71,6 +72,7 @@ public class EclipseMapPackLoader {
 				}
 			}
 		}
+		return (mapSources.size() > 0);
 	}
 
 	public List<MapSource> getMapSources() {

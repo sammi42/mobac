@@ -17,6 +17,7 @@
 package mobac.mapsources;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +35,11 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
+import org.apache.log4j.Logger;
+
 public class DefaultMapSourcesManager extends MapSourcesManager {
+
+	private Logger log = Logger.getLogger(DefaultMapSourcesManager.class);
 
 	private LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<String, MapSource>(50);
 
@@ -51,15 +56,14 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 
 		try {
-			if (devMode) {
-				addAllMapSource(new EclipseMapPackLoader().getMapSources());
-			} else {
+			if (!devMode || !loadMapPacksEclipseMode()) {
 				MapPackManager mpm = new MapPackManager(mapSourcesDir);
 				mpm.installUpdates();
 				mpm.loadMapPacks();
 				addAllMapSource(mpm.getMapSources());
 			}
 		} catch (Exception e) {
+			log.error("Failed to load map packs", e);
 			throw new RuntimeException(e);
 		}
 		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(mapSourcesDir);
@@ -73,6 +77,20 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		// If no map sources are available load the simple map source which shows the informative message
 		if (allMapSources.size() == 0)
 			addMapSource(new SimpleMapSource());
+	}
+
+	private boolean loadMapPacksEclipseMode() {
+		EclipseMapPackLoader empl;
+		try {
+			empl = new EclipseMapPackLoader();
+			if (!empl.loadMapPacks())
+				return false;
+			addAllMapSource(empl.getMapSources());
+			return true;
+		} catch (IOException e) {
+			log.error("Failed to load map packs directly from classpath");
+		}
+		return false;
 	}
 
 	protected void addAllMapSource(List<MapSource> mapSourceColl) {

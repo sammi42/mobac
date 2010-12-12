@@ -19,6 +19,7 @@ package mobac.gui.mapview;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.image.BufferedImage;
+import java.net.ConnectException;
 
 import mobac.exceptions.DownloadFailedException;
 import mobac.gui.mapview.Tile.TileState;
@@ -105,15 +106,16 @@ public class TileLoader {
 				} else {
 					tile.setErrorImage();
 				}
+				return;
+			} catch (ConnectException e) {
+				log.warn("Downloading of " + tile + " failed " + e.getMessage());
 			} catch (DownloadFailedException e) {
-				log.debug("Downloading of tile " + tile + " failed " + e.getMessage());
-				tile.setErrorImage();
-				listener.tileLoadingFinished(tile, false);
+				log.warn("Downloading of " + tile + " failed " + e.getMessage());
 			} catch (Exception e) {
-				log.trace("Downloading of tile " + tile + " failed", e);
-				tile.setErrorImage();
-				listener.tileLoadingFinished(tile, false);
+				log.trace("Downloading of " + tile + " failed", e);
 			}
+			tile.setErrorImage();
+			listener.tileLoadingFinished(tile, false);
 		}
 
 		protected boolean loadTileFromStore() {

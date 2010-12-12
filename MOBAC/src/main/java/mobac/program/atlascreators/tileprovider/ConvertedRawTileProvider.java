@@ -25,11 +25,9 @@ import javax.imageio.ImageIO;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageFormat;
 
-
 /**
- * Loads a tile from the underlying {@link TileProvider}, loads the tile to
- * memory, converts it to the desired {@link TileImageFormat} and returns the
- * binary representation of the image in the specified format.
+ * Loads a tile from the underlying {@link TileProvider}, loads the tile to memory, converts it to the desired
+ * {@link TileImageFormat} and returns the binary representation of the image in the specified format.
  */
 public class ConvertedRawTileProvider extends FilterTileProvider {
 
@@ -42,8 +40,8 @@ public class ConvertedRawTileProvider extends FilterTileProvider {
 		ImageIO.setUseCache(false);
 	}
 
-	public byte[] getTileData(int x, int y, int layer) throws IOException {
-		BufferedImage image = getTileImage(x, y, layer);
+	public byte[] getTileData(int x, int y) throws IOException {
+		BufferedImage image = getTileImage(x, y);
 		if (image == null)
 			return null;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);

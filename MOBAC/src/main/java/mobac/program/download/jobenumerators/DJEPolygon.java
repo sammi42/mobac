@@ -25,24 +25,17 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapPolygon;
 import mobac.utilities.tar.TarIndexedArchive;
 
-
-
 /**
- * Enumerates / creates the download jobs for a single layer map with a
- * polygonal selection.
+ * Enumerates / creates the download jobs for a single layer map with a polygonal selection.
  */
 public class DJEPolygon extends DJERectangle {
 
 	protected final int tileSize;
 	protected Polygon polygon;
 
-	public DJEPolygon(MapPolygon map, TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		this(map, map.getMapSource(), 0, tileArchive, listener);
-	}
-
-	protected DJEPolygon(MapPolygon map, MapSource mapSource, int layer,
-			TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		super(map, mapSource, layer, tileArchive, listener);
+	public DJEPolygon(MapPolygon map, MapSource mapSource, TarIndexedArchive tileArchive,
+			DownloadJobListener listener) {
+		super(map, mapSource, tileArchive, listener);
 		this.polygon = map.getPolygon();
 		tileSize = mapSource.getMapSpace().getTileSize();
 		x--;
@@ -74,7 +67,7 @@ public class DJEPolygon extends DJERectangle {
 			// tileCoordinateX, tileCoordinateY,
 			// Boolean.toString(intersects)));
 		} while (!intersects);
-		nextJob = new DownloadJob(mapSource, layer, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
 		return job;
 	}
 }

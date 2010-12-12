@@ -32,7 +32,7 @@ public class DownloadedTileProvider implements TileProvider {
 
 	private static final Logger log = Logger.getLogger(DownloadedTileProvider.class);
 
-	public static final String TILE_FILENAME_PATTERN = "l%dx%dy%d";
+	public static final String TILE_FILENAME_PATTERN = "x%dy%d";
 
 	protected final TarIndex tarIndex;
 	protected final TileImageType mapTileType;
@@ -43,22 +43,15 @@ public class DownloadedTileProvider implements TileProvider {
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
-		return getTileData(x, y, 0);
-	}
-
-	public byte[] getTileData(int x, int y, int layer) throws IOException {
-		log.trace("Reading tile x=" + x + " y=" + y + " layer=" + layer);
-		return tarIndex.getEntryContent(String.format(TILE_FILENAME_PATTERN, layer, x, y));
+		log.trace("Reading tile x=" + x + " y=" + y);
+		return tarIndex.getEntryContent(String.format(TILE_FILENAME_PATTERN, x, y));
 	}
 
 	public BufferedImage getTileImage(int x, int y) throws IOException {
-		return getTileImage(x, y, 0);
-	}
-
-	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
-		byte[] unconvertedTileData = getTileData(x, y, layer);
+		byte[] unconvertedTileData = getTileData(x, y);
 		if (unconvertedTileData == null)
 			return null;
 		return ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
 	}
+
 }

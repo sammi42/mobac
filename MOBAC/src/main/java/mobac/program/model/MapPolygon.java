@@ -102,7 +102,7 @@ public class MapPolygon extends Map {
 
 	@Override
 	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		return new DJEPolygon(this, tileArchive, listener);
+		return new DJEPolygon(this, mapSource, tileArchive, listener);
 	}
 
 	public Polygon getPolygon() {

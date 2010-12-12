@@ -37,18 +37,11 @@ public class FilterTileProvider implements TileProvider {
 	}
 
 	public BufferedImage getTileImage(int x, int y) throws IOException {
-		return getTileImage(x, y, 0);
-	}
-
-	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
-		return tileProvider.getTileImage(x, y, layer);
+		return tileProvider.getTileImage(x, y);
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
-		return getTileData(x, y, 0);
+		return tileProvider.getTileData(x, y);
 	}
 
-	public byte[] getTileData(int x, int y, int layer) throws IOException {
-		return tileProvider.getTileData(x, y, layer);
-	}
 }

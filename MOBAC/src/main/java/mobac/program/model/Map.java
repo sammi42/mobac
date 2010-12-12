@@ -281,7 +281,7 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		return new DJERectangle(this, tileArchive, listener);
+		return new DJERectangle(this, mapSource, tileArchive, listener);
 	}
 
 }

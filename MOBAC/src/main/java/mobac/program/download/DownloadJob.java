@@ -40,17 +40,15 @@ public class DownloadJob implements Job {
 	int errorCounter = 0;
 
 	final MapSource mapSource;
-	final int layer;
 	final int xValue;
 	final int yValue;
 	final int zoomValue;
 	final TarIndexedArchive tileArchive;
 	final DownloadJobListener listener;
 
-	public DownloadJob(MapSource mapSource, int layer, int xValue, int yValue, int zoomValue,
-			TarIndexedArchive tileArchive, DownloadJobListener listener) {
+	public DownloadJob(MapSource mapSource, int xValue, int yValue, int zoomValue, TarIndexedArchive tileArchive,
+			DownloadJobListener listener) {
 		this.mapSource = mapSource;
-		this.layer = layer;
 		this.xValue = xValue;
 		this.yValue = yValue;
 		this.zoomValue = zoomValue;
@@ -63,7 +61,7 @@ public class DownloadJob implements Job {
 			// Thread.sleep(1500);
 			listener.jobStarted();
 			byte[] tileData = mapSource.getTileData(zoomValue, xValue, yValue, LoadMethod.DEFAULT);
-			String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, layer, xValue, yValue);
+			String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, xValue, yValue);
 			synchronized (tileArchive) {
 				tileArchive.writeFileFromData(tileFileName, tileData);
 			}
@@ -103,7 +101,7 @@ public class DownloadJob implements Job {
 
 	@Override
 	public String toString() {
-		return "DownloadJob l=" + layer + " x=" + xValue + " y=" + yValue + " z=" + zoomValue;
+		return "DownloadJob x=" + xValue + " y=" + yValue + " z=" + zoomValue;
 	}
 
 }

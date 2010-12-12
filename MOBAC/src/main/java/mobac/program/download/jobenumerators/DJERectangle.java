@@ -26,11 +26,8 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.Map;
 import mobac.utilities.tar.TarIndexedArchive;
 
-
-
 /**
- * Enumerates / creates the download jobs for a regular rectangle single layer
- * map.
+ * Enumerates / creates the download jobs for a regular rectangle single layer map.
  */
 public class DJERectangle implements DownloadJobEnumerator {
 
@@ -39,7 +36,6 @@ public class DJERectangle implements DownloadJobEnumerator {
 	final protected int xMax;
 	final protected int yMax;
 	final protected int zoom;
-	final protected int layer;
 	final protected MapSource mapSource;
 	final protected TarIndexedArchive tileArchive;
 
@@ -52,8 +48,7 @@ public class DJERectangle implements DownloadJobEnumerator {
 	 * <pre>
 	 * for (int y = yMin; y &lt;= yMax; y++) {
 	 * 	for (int x = xMin; x &lt;= xMax; x++) {
-	 * 		DownloadJob job = new DownloadJob(downloadDestinationDir, tileSource, x, y, zoom,
-	 * 				AtlasThread.this);
+	 * 		DownloadJob job = new DownloadJob(downloadDestinationDir, tileSource, x, y, zoom, AtlasThread.this);
 	 * 	}
 	 * }
 	 * </pre>
@@ -62,12 +57,7 @@ public class DJERectangle implements DownloadJobEnumerator {
 	 * @param tileArchive
 	 * @param listener
 	 */
-	public DJERectangle(Map map, TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		this(map, map.getMapSource(), 0, tileArchive, listener);
-	}
-
-	protected DJERectangle(Map map, MapSource mapSource, int layer, TarIndexedArchive tileArchive,
-			DownloadJobListener listener) {
+	public DJERectangle(Map map, MapSource mapSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
 		Point maxCoord = map.getMaxTileCoordinate();
@@ -79,11 +69,10 @@ public class DJERectangle implements DownloadJobEnumerator {
 		this.zoom = map.getZoom();
 		this.tileArchive = tileArchive;
 		this.mapSource = mapSource;
-		this.layer = layer;
 		y = yMin;
 		x = xMin;
 
-		nextJob = new DownloadJob(mapSource, layer, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
 	}
 
 	public boolean hasMoreElements() {
@@ -101,7 +90,7 @@ public class DJERectangle implements DownloadJobEnumerator {
 				return job;
 			}
 		}
-		nextJob = new DownloadJob(mapSource, layer, x, y, zoom, tileArchive, listener);
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
 		return job;
 	}
 }

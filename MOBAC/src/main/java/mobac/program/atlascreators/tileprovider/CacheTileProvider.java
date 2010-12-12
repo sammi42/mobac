@@ -50,39 +50,35 @@ public class CacheTileProvider implements TileProvider {
 	}
 
 	public BufferedImage getTileImage(int x, int y) throws IOException {
-		return getTileImage(x, y, 0);
-	}
-
-	public BufferedImage getTileImage(int x, int y, int layer) throws IOException {
-		SRCachedTile cachedTile = cache.get(new CacheKey(x, y, layer));
+		SRCachedTile cachedTile = cache.get(new CacheKey(x, y));
 		BufferedImage image = null;
 		if (cachedTile != null) {
 			CachedTile tile = cachedTile.get();
 			if (tile != null) {
 				if (tile.loaded)
-					log.trace(String.format("Cache hit: x=%d y=%d l=%d", x, y, layer));
+					log.trace(String.format("Cache hit: x=%d y=%d", x, y));
 				image = tile.getImage();
 				if (!tile.nextLoadJobCreated) {
 					// log.debug(String.format("Preload job added : x=%d y=%d l=%d",
 					// x + 1, y, layer));
-					preloadTile(new CachedTile(new CacheKey(x + 1, y, layer)));
+					preloadTile(new CachedTile(new CacheKey(x + 1, y)));
 					tile.nextLoadJobCreated = true;
 				}
 			}
 		}
 		if (image == null) {
-			log.trace(String.format("Cache miss: x=%d y=%d l=%d", x, y, layer));
+			log.trace(String.format("Cache miss: x=%d y=%d", x, y));
 			// log.debug(String.format("Preload job added : x=%d y=%d l=%d", x +
 			// 1, y, layer));
-			preloadTile(new CachedTile(new CacheKey(x + 1, y, layer)));
-			image = internalGetTileImage(x, y, layer);
+			preloadTile(new CachedTile(new CacheKey(x + 1, y)));
+			image = internalGetTileImage(x, y);
 		}
 		return image;
 	}
 
-	protected BufferedImage internalGetTileImage(int x, int y, int layer) throws IOException {
+	protected BufferedImage internalGetTileImage(int x, int y) throws IOException {
 		synchronized (tileProvider) {
-			return tileProvider.getTileImage(x, y, layer);
+			return tileProvider.getTileImage(x, y);
 		}
 	}
 
@@ -169,20 +165,17 @@ public class CacheTileProvider implements TileProvider {
 	private static class CacheKey {
 		int x;
 		int y;
-		int layer;
 
-		public CacheKey(int x, int y, int layer) {
+		public CacheKey(int x, int y) {
 			super();
 			this.x = x;
 			this.y = y;
-			this.layer = layer;
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + layer;
 			result = prime * result + x;
 			result = prime * result + y;
 			return result;
@@ -197,8 +190,6 @@ public class CacheTileProvider implements TileProvider {
 			if (getClass() != obj.getClass())
 				return false;
 			CacheKey other = (CacheKey) obj;
-			if (layer != other.layer)
-				return false;
 			if (x != other.x)
 				return false;
 			if (y != other.y)
@@ -208,7 +199,7 @@ public class CacheTileProvider implements TileProvider {
 
 		@Override
 		public String toString() {
-			return "CacheKey [x=" + x + ", y=" + y + ", layer=" + layer + "]";
+			return "CacheKey [x=" + x + ", y=" + y + "]";
 		}
 
 	}
@@ -229,7 +220,7 @@ public class CacheTileProvider implements TileProvider {
 
 		public synchronized void loadImage() {
 			try {
-				image = internalGetTileImage(key.x, key.y, key.layer);
+				image = internalGetTileImage(key.x, key.y);
 			} catch (IOException e) {
 				loadException = e;
 			} catch (Exception e) {

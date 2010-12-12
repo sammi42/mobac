@@ -16,18 +16,16 @@
  ******************************************************************************/
 package mobac.program.model;
 
+import java.io.StringWriter;
+import java.util.TreeSet;
+
 import mobac.gui.components.JZoomCheckBox;
 
 public class SelectedZoomLevels {
-	private boolean[] zoomLevels;
-	private int nrOfLayers;
+
+	private TreeSet<Integer> zoomLevels = new TreeSet<Integer>();
 
 	public SelectedZoomLevels(JZoomCheckBox[] zoomCheckboxes) {
-		int maxZoomLevel = zoomCheckboxes[zoomCheckboxes.length - 1].getZoomLevel();
-		zoomLevels = new boolean[maxZoomLevel];
-		for (int i = 0; i < zoomLevels.length; i++)
-			zoomLevels[i] = false;
-		nrOfLayers = 0;
 		for (JZoomCheckBox cb : zoomCheckboxes) {
 			if (cb.isSelected())
 				setZoomLevelSelected(cb.getZoomLevel());
@@ -35,32 +33,29 @@ public class SelectedZoomLevels {
 	}
 
 	public void setZoomLevelSelected(int zoomLevel) {
-		zoomLevels[zoomLevel] = true;
-		nrOfLayers++;
+		zoomLevels.add(new Integer(zoomLevel));
 	}
 
 	public int[] getZoomLevels() {
-		int result[] = new int[nrOfLayers];
-		int j = 0;
-		for (int i = 0; i < zoomLevels.length; i++) {
-			if (zoomLevels[i])
-				result[j++] = i;
+		int result[] = new int[zoomLevels.size()];
+		int i = 0;
+		for (Integer z : zoomLevels) {
+			result[i++] = z.intValue();
 		}
 		return result;
 	}
 
 	public int getNrOfLayers() {
-		return nrOfLayers;
+		return zoomLevels.size();
 	}
 
 	@Override
 	public String toString() {
-		String r = "";
-		for (int i = 0; i < zoomLevels.length; i++) {
-			if (zoomLevels[i])
-				r += " " + i + ",";
+		StringWriter sw = new StringWriter();
+		for (int z : zoomLevels) {
+			sw.append(" " + z + ",");
 		}
-		r = r.trim();
+		String r = sw.toString().trim();
 		if (r.length() > 0)
 			r = r.substring(0, r.length() - 1);
 		return r;

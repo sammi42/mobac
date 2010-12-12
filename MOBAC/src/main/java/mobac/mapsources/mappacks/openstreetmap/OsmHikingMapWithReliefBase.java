@@ -14,34 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/**
+ * 
+ */
 package mobac.mapsources.mappacks.openstreetmap;
 
+import java.awt.Color;
 
-
-import mobac.mapsources.AbstractHttpMapSource;
+import mobac.mapsources.AbstractMultiLayerMapSource;
+import mobac.mapsources.mappacks.openstreetmap.OsmHikingLayers.OsmHikingLayerBase;
+import mobac.mapsources.mappacks.openstreetmap.OsmHikingLayers.OsmHikingLayerMap;
+import mobac.mapsources.mappacks.openstreetmap.OsmHikingLayers.OsmHikingLayerRelief;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 
-public class OsmMapSources {
+public class OsmHikingMapWithReliefBase extends AbstractMultiLayerMapSource {
 
-	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
+	public OsmHikingMapWithReliefBase() {
+		super("OSM Hiking ReliefBase", TileImageType.PNG);
+		mapSources = new MapSource[] { new OsmHikingLayerBase(), new OsmHikingLayerRelief(), new OsmHikingLayerMap() };
+		initializeValues();
+	}
 
-	protected static abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
+	@Override
+	public Color getBackgroundColor() {
+		return Color.WHITE;
+	}
 
-		public AbstractOsmTileSource(String name) {
-			super(name, 0, 18, TileImageType.PNG);
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-		public TileImageType getTileImageType() {
-			return TileImageType.PNG;
-		}
-
-		public boolean allowFileStore() {
-			return true;
-		}
+	@Override
+	public String toString() {
+		return "OpenStreetMap Hiking +Relief+Base (Ger)";
 	}
 
 }

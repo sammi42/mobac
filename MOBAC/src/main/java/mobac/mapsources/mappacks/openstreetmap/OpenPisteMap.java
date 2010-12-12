@@ -14,34 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/**
+ * 
+ */
 package mobac.mapsources.mappacks.openstreetmap;
 
-
-
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class OsmMapSources {
+public class OpenPisteMap extends AbstractHttpMapSource {
 
-	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
+	private static final String MAP_PISTE = "http://tiles.openpistemap.org/contours/";
 
-	protected static abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
+	public OpenPisteMap() {
+		super("OpenPisteMap", 0, 17, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
+	}
 
-		public AbstractOsmTileSource(String name) {
-			super(name, 0, 18, TileImageType.PNG);
-		}
+	@Override
+	public String toString() {
+		return "Open Piste Map";
+	}
 
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-		public TileImageType getTileImageType() {
-			return TileImageType.PNG;
-		}
-
-		public boolean allowFileStore() {
-			return true;
-		}
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return MAP_PISTE + zoom + "/" + tilex + "/" + tiley + ".png";
 	}
 
 }

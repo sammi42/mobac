@@ -1,3 +1,11 @@
 mobac.mapsources.mappacks.openstreetmap.Mapnik
 mobac.mapsources.mappacks.openstreetmap.TilesAtHome
 mobac.mapsources.mappacks.openstreetmap.CycleMap
+mobac.mapsources.mappacks.openstreetmap.Hikebikemap
+mobac.mapsources.mappacks.openstreetmap.OpenPisteMap
+mobac.mapsources.mappacks.openstreetmap.OpenSeaMap
+mobac.mapsources.mappacks.openstreetmap.OsmHikingMapWithBase
+mobac.mapsources.mappacks.openstreetmap.OsmHikingMapWithRelief
+mobac.mapsources.mappacks.openstreetmap.OsmHikingMapWithReliefBase
+mobac.mapsources.mappacks.openstreetmap.OsmPublicTransport
+mobac.mapsources.mappacks.openstreetmap.Turaterkep

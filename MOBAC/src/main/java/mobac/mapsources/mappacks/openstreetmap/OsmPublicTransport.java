@@ -14,34 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/**
+ * 
+ */
 package mobac.mapsources.mappacks.openstreetmap;
 
+import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.AbstractOsmTileSource;
+import mobac.program.interfaces.HttpMapSource;
 
+public class OsmPublicTransport extends AbstractOsmTileSource {
 
-import mobac.mapsources.AbstractHttpMapSource;
-import mobac.program.model.TileImageType;
+	private static final String PATTERN = "http://tile.xn--pnvkarte-m4a.de/tilegen/%d/%d/%d.png";
 
-public class OsmMapSources {
+	public OsmPublicTransport() {
+		super("OSMPublicTransport");
+		this.maxZoom = 16;
+		this.minZoom = 2;
+		this.tileUpdate = HttpMapSource.TileUpdate.ETag;
+	}
 
-	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
+	@Override
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		String url = String.format(PATTERN, new Object[] { zoom, tilex, tiley });
+		return url;
+	}
 
-	protected static abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
-
-		public AbstractOsmTileSource(String name) {
-			super(name, 0, 18, TileImageType.PNG);
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-		public TileImageType getTileImageType() {
-			return TileImageType.PNG;
-		}
-
-		public boolean allowFileStore() {
-			return true;
-		}
+	@Override
+	public String toString() {
+		return "OpenStreetMap Public Transport";
 	}
 
 }

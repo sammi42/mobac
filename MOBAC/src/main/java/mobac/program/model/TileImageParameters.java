@@ -18,22 +18,21 @@ package mobac.program.model;
 
 import java.awt.Dimension;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import mobac.program.interfaces.AtlasCreatorParameters;
-import mobac.program.interfaces.MapInterface;
+import javax.xml.namespace.QName;
 
 @XmlRootElement
-public class TileImageParameters implements AtlasCreatorParameters<MapInterface> {
+public class TileImageParameters {
 
-	@XmlAttribute
+	@XmlAnyAttribute
+	protected AnyAttributeMap attr = new AnyAttributeMap();
+
 	private int width;
 
-	@XmlAttribute
 	private int height;
 
-	@XmlAttribute
 	private TileImageFormat format;
 
 	/**
@@ -42,6 +41,19 @@ public class TileImageParameters implements AtlasCreatorParameters<MapInterface>
 	@SuppressWarnings("unused")
 	private TileImageParameters() {
 		super();
+	}
+
+	protected void afterUnmarshal(Unmarshaller u, Object parent) {
+		String s;
+		s = attr.getAttr("height");
+		if (s != null)
+			height = Integer.parseInt(s);
+		s = attr.getAttr("width");
+		if (s != null)
+			width = Integer.parseInt(s);
+		s = attr.getAttr("format");
+		if (s != null)
+			format = TileImageFormat.valueOf((String) s);
 	}
 
 	public TileImageParameters(int width, int height, TileImageFormat format) {
@@ -69,8 +81,7 @@ public class TileImageParameters implements AtlasCreatorParameters<MapInterface>
 
 	@Override
 	public String toString() {
-		return "Tile size: (" + width + "/" + height + ") " + format.toString() + "("
-				+ format.name() + ")";
+		return "Tile size: (" + width + "/" + height + ") " + format.toString() + "(" + format.name() + ")";
 	}
 
 	@Override

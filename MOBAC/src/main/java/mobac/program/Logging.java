@@ -152,10 +152,10 @@ public class Logging {
 		log.info("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
 				+ GUIExceptionHandler.prop("java.runtime.version") + ")");
 		log.info("Directories:" /**/
-				+ n + "currentDir: \t" + DirectoryManager.currentDir /**/
-				+ n + "programDir: \t" + DirectoryManager.programDir /**/
-				+ n + "tempDir:     \t" + DirectoryManager.tempDir /**/
-				+ n + "userHomeDir: \t" + DirectoryManager.userHomeDir /**/
+				+ n + "currentDir: \t\t" + DirectoryManager.currentDir /**/
+				+ n + "programDir: \t\t" + DirectoryManager.programDir /**/
+				+ n + "tempDir:     \t\t" + DirectoryManager.tempDir /**/
+				+ n + "userHomeDir: \t\t" + DirectoryManager.userHomeDir /**/
 				+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
 				+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
 		);

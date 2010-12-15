@@ -29,6 +29,7 @@
     directories.ini in the MOBAC program directory
  + CustomMap: new parameter: ignoreErrors and backGroundColor can have
     alpha transparency parameter
+ + New map source: Cloudmade Map default style (1) 
 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps

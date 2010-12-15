@@ -41,4 +41,16 @@ public class AnyAttributeMap extends TreeMap<QName, Object> {
 	public String getAttr(String key) {
 		return (String) get(new QName(key));
 	}
+
+	public void setAttr(String key, String value) {
+		put(new QName(key), value);
+	}
+
+	public int getInt(String key) {
+		return Integer.parseInt(getAttr(key));
+	}
+
+	public void setInt(String key, int value) {
+		put(new QName(key), Integer.toString(value));
+	}
 }

@@ -22,11 +22,11 @@ import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.AbstractOsmTileSour
 import mobac.program.interfaces.HttpMapSource;
 import mobac.utilities.Charsets;
 
-public class Cloudmate extends AbstractOsmTileSource {
+public class CloudMade extends AbstractOsmTileSource {
 
 	private static final String INIT_REGEX = "\"api_key\"\\:\"([A-F0-9]+)\"";
 
-	private String style = "1";
+	private final String styleID;
 
 	private String apiKey = "";
 
@@ -36,10 +36,15 @@ public class Cloudmate extends AbstractOsmTileSource {
 
 	private int SERVER_NUM = 0;
 
-	public Cloudmate() {
-		super("OSM Couldmate");
+	public CloudMade(String styleID) {
+		super("OSM Cloutmade " + styleID);
+		this.styleID = styleID;
 		this.maxZoom = 18;
 		this.tileUpdate = HttpMapSource.TileUpdate.ETag;
+	}
+
+	public CloudMade() {
+		this("1");
 	}
 
 	@Override
@@ -50,14 +55,14 @@ public class Cloudmate extends AbstractOsmTileSource {
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		String url = String.format(PATTERN, new Object[] { SERVER[SERVER_NUM], apiKey, style, zoom, tilex, tiley });
+		String url = String.format(PATTERN, new Object[] { SERVER[SERVER_NUM], apiKey, styleID, zoom, tilex, tiley });
 		SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
 		return url;
 	}
 
 	@Override
 	public String toString() {
-		return "OpenStreetMap Couldmate Default Style";
+		return "OpenStreetMap Couldmate Style " + styleID;
 	}
 
 }

@@ -62,6 +62,7 @@ public enum AtlasOutputFormat {
 	BigPlanet("Big Planet Tracks SQLite", RMapsSQLite.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
+	Galileo("Galileo Offline Maps", RMapsSQLite.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
 	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //

@@ -86,8 +86,7 @@ public class OSUtilities {
 			DesktopType dt = detectDesktopType();
 			switch (dt) {
 			case Windows:
-				strCmd = new String[] { "rundll32.exe", "url.dll,FileProtocolHandler",
-						"\"" + dirPath + "\"" };
+				strCmd = new String[] { "rundll32.exe", "url.dll,FileProtocolHandler", "\"" + dirPath + "\"" };
 				break;
 			case Gnome:
 				strCmd = new String[] { "nautilus", dirPath };
@@ -96,10 +95,16 @@ public class OSUtilities {
 				strCmd = new String[] { "konqueror", dirPath };
 				break;
 			default:
-				JOptionPane.showMessageDialog(null, "Your desktop environment " + dt
-						+ " is not supported.", "Unsupported desktop environment",
-						JOptionPane.ERROR_MESSAGE);
-				return;
+				OperatingSystem os = detectOs();
+				switch (os) {
+				case MacOsX:
+					strCmd = new String[] { "/usr/bin/open", dirPath };
+					break;
+				default:
+					JOptionPane.showMessageDialog(null, "Your desktop environment " + dt + " is not supported.",
+							"Unsupported desktop environment", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 			}
 			Runtime.getRuntime().exec(strCmd);
 		} catch (IOException e) {
@@ -113,8 +118,7 @@ public class OSUtilities {
 	}
 
 	/**
-	 * Reads the Linux distribution name (last line) from the first file that
-	 * matches the pattern
+	 * Reads the Linux distribution name (last line) from the first file that matches the pattern
 	 * 
 	 * <pre>
 	 * /etc/*-release
@@ -160,13 +164,13 @@ public class OSUtilities {
 		}
 	}
 
-    /**
-     * Replies true if we are currently running on OSX
-     *
-     * @return true if we are currently running on OSX
-     */
-    public static boolean isPlatformOsx() {
-        String os = System.getProperty("os.name");
-        return os != null && os.toLowerCase().startsWith("mac os x");
-    }
+	/**
+	 * Replies true if we are currently running on OSX
+	 * 
+	 * @return true if we are currently running on OSX
+	 */
+	public static boolean isPlatformOsx() {
+		String os = System.getProperty("os.name");
+		return os != null && os.toLowerCase().startsWith("mac os x");
+	}
 }

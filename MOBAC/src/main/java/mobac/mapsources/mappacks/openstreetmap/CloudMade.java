@@ -16,17 +16,23 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapSourceUrlUpdater;
-import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.AbstractOsmTileSource;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.WrappedMapSource;
 import mobac.utilities.Charsets;
 
 public class CloudMade extends AbstractOsmTileSource {
 
 	private static final String INIT_REGEX = "\"api_key\"\\:\"([A-F0-9]+)\"";
 
-	private final String styleID;
+	private String styleID;
+
+	private String displayName;
 
 	private String apiKey = "";
 
@@ -36,15 +42,16 @@ public class CloudMade extends AbstractOsmTileSource {
 
 	private int SERVER_NUM = 0;
 
-	public CloudMade(String styleID) {
-		super("OSM Cloutmade " + styleID);
+	public CloudMade(String styleID, String displayName) {
+		super("OSM CloudMade " + styleID);
+		this.displayName = displayName;
 		this.styleID = styleID;
 		this.maxZoom = 18;
 		this.tileUpdate = HttpMapSource.TileUpdate.ETag;
 	}
 
 	public CloudMade() {
-		this("1");
+		this("1", "OpenStreetMap CloudMade Default Style");
 	}
 
 	@Override
@@ -62,7 +69,21 @@ public class CloudMade extends AbstractOsmTileSource {
 
 	@Override
 	public String toString() {
-		return "OpenStreetMap Couldmate Style " + styleID;
+		return displayName;
 	}
 
+	@XmlRootElement(name = "cloudMade")
+	public static class Wrapped implements WrappedMapSource {
+
+		@XmlElement
+		public String styleID;
+
+		@XmlElement
+		public String displayName;
+
+		public MapSource getMapSource() {
+			return new CloudMade(styleID, displayName);
+		}
+
+	}
 }

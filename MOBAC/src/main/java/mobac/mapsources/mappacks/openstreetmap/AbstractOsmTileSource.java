@@ -16,31 +16,24 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
-
-
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class OsmMapSources {
+public abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
 
-
-	protected static abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
-
-		public AbstractOsmTileSource(String name) {
-			super(name, 0, 18, TileImageType.PNG);
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
-
-		public TileImageType getTileImageType() {
-			return TileImageType.PNG;
-		}
-
-		public boolean allowFileStore() {
-			return true;
-		}
+	public AbstractOsmTileSource(String name) {
+		super(name, 0, 18, TileImageType.PNG);
+	}
+	
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return "/" + zoom + "/" + tilex + "/" + tiley + ".png";
 	}
 
+	public TileImageType getTileImageType() {
+		return TileImageType.PNG;
+	}
+
+	public boolean allowFileStore() {
+		return true;
+	}
 }

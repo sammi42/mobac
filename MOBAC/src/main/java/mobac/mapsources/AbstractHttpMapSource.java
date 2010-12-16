@@ -58,6 +58,12 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 		this(name, minZoom, maxZoom, tileType, HttpMapSource.TileUpdate.None);
 	}
 
+	/**
+	 * Do not use - for JAXB only
+	 */
+	protected AbstractHttpMapSource() {
+	}
+
 	public AbstractHttpMapSource(String name, int minZoom, int maxZoom, TileImageType tileType,
 			HttpMapSource.TileUpdate tileUpdate) {
 		log = Logger.getLogger(this.getClass());

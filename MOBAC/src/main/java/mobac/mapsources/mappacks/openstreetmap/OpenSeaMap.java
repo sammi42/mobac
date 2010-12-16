@@ -32,6 +32,8 @@ import mobac.utilities.imageio.PngConstants;
  */
 public class OpenSeaMap extends AbstractMultiLayerMapSource {
 
+	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
+
 	public OpenSeaMap() {
 		super("OpenSeaMap", TileImageType.PNG);
 		mapSources = new MapSource[] { new Mapnik(), new OpenSeaMapLayer() };
@@ -51,7 +53,7 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return OsmMapSources.LAYER_OPENSEA + zoom + "/" + tilex + "/" + tiley + ".png";
+			return LAYER_OPENSEA + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 		@Override

@@ -19,7 +19,6 @@
  */
 package mobac.mapsources.mappacks.openstreetmap;
 
-import mobac.mapsources.mappacks.openstreetmap.OsmMapSources.AbstractOsmTileSource;
 import mobac.program.interfaces.HttpMapSource;
 
 public class OsmPublicTransport extends AbstractOsmTileSource {

@@ -17,6 +17,7 @@ import javax.xml.bind.ValidationEventLocator;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.WrappedMapSource;
 import mobac.utilities.file.FileExtFilter;
 
 import org.apache.log4j.Logger;
@@ -35,8 +36,25 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 	public void loadCustomMapSources() {
 		JAXBContext context;
 		Unmarshaller unmarshaller;
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(CustomMapSource.class);
+		classes.add(CustomMultiLayerMapSource.class);
+		Class<?> cloudmadeClass =null;
 		try {
-			context = JAXBContext.newInstance(new Class[] { CustomMapSource.class, CustomMultiLayerMapSource.class });
+			cloudmadeClass = Class.forName("mobac.mapsources.mappacks.openstreetmap.CloudMade$Wrapped");
+			if (cloudmadeClass != null)
+				classes.add(cloudmadeClass);
+		} catch (ClassNotFoundException e) {
+			// MapPack OSM not loaded
+			log.error("", e);
+		} catch (Exception e) {
+			log.error("", e);
+		}
+		try {
+
+			Class<?>[] customMapClasses = new Class[classes.size()];
+			classes.toArray(customMapClasses);
+			context = JAXBContext.newInstance(customMapClasses);
 			unmarshaller = context.createUnmarshaller();
 			unmarshaller.setEventHandler(this);
 		} catch (JAXBException e) {
@@ -45,7 +63,12 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		File[] customMapSourceFiles = mapSourcesDir.listFiles(new FileExtFilter(".xml"));
 		for (File f : customMapSourceFiles) {
 			try {
-				MapSource customMapSource = (MapSource) unmarshaller.unmarshal(f);
+				MapSource customMapSource;
+				Object o = unmarshaller.unmarshal(f);;
+				if (o instanceof WrappedMapSource)
+					customMapSource = ((WrappedMapSource)o).getMapSource();
+				else 
+					customMapSource = (MapSource) o;
 				log.trace("Custom map source loaded: " + customMapSource + " from file \"" + f.getName() + "\"");
 				mapSources.add(customMapSource);
 			} catch (Exception e) {
@@ -69,11 +92,15 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage()
-				+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/"
-				+ loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null,
+				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
+						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
+						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}
 
+	public static class WrappedMap {
+		
+	}
 }

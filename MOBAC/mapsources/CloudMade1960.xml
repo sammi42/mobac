@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  This is a simple example how to use a CloudMade map. You only have to  
+  set the styleID and a name that will be displayed in the map sources list 
+--> 
+<cloudMade>
+    <displayName>CloudMade blackout</displayName>
+    <styleID>1960</styleID>
+</cloudMade>

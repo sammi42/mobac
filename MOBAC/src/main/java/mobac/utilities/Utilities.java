@@ -65,6 +65,7 @@ import org.apache.log4j.Logger;
 
 public class Utilities {
 
+	public static final Color COLOR_TRANSPARENT = new Color(0, 0, 0, 0);
 	public static final DecimalFormatSymbols DFS_ENG = new DecimalFormatSymbols(Locale.ENGLISH);
 	public static final DecimalFormatSymbols DFS_LOCAL = new DecimalFormatSymbols();
 	public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.######");
@@ -95,7 +96,13 @@ public class Utilities {
 	public static BufferedImage createEmptyTileImage(MapSource mapSource) {
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		Color color = mapSource.getBackgroundColor();
-		BufferedImage emptyImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
+
+		int imageType;
+		if (color.getAlpha() == 255)
+			imageType = BufferedImage.TYPE_INT_RGB;
+		else
+			imageType = BufferedImage.TYPE_INT_ARGB;
+		BufferedImage emptyImage = new BufferedImage(tileSize, tileSize, imageType);
 		Graphics2D g = emptyImage.createGraphics();
 		try {
 			g.setColor(color);

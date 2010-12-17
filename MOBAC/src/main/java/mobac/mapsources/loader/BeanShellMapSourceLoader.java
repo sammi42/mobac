@@ -1,13 +1,11 @@
 package mobac.mapsources.loader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.impl.BeanShellHttpMapSource;
-import mobac.program.interfaces.MapSource;
 import mobac.utilities.file.FileExtFilter;
 
 import org.apache.log4j.Logger;
@@ -15,12 +13,12 @@ import org.apache.log4j.Logger;
 public class BeanShellMapSourceLoader {
 
 	private final Logger log = Logger.getLogger(BeanShellMapSourceLoader.class);
+	private final MapSourcesManager mapSourcesManager;
 	private final File mapSourcesDir;
-	private ArrayList<MapSource> mapSources;
 
-	public BeanShellMapSourceLoader(File mapSourcesDir) {
+	public BeanShellMapSourceLoader(MapSourcesManager mapSourceManager, File mapSourcesDir) {
+		this.mapSourcesManager = mapSourceManager;
 		this.mapSourcesDir = mapSourcesDir;
-		mapSources = new ArrayList<MapSource>();
 	}
 
 	public void loadBeanShellMapSources() {
@@ -29,7 +27,7 @@ public class BeanShellMapSourceLoader {
 			try {
 				BeanShellHttpMapSource mapSource = BeanShellHttpMapSource.load(f);
 				log.trace("BeanShell map source loaded: " + mapSource + " from file \"" + f.getName() + "\"");
-				mapSources.add(mapSource);
+				mapSourcesManager.addMapSource(mapSource);
 			} catch (Exception e) {
 				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
 				JOptionPane.showMessageDialog(null, "msg", "title", JOptionPane.ERROR_MESSAGE);
@@ -37,7 +35,4 @@ public class BeanShellMapSourceLoader {
 		}
 	}
 
-	public List<MapSource> getMapSources() {
-		return mapSources;
-	}
 }

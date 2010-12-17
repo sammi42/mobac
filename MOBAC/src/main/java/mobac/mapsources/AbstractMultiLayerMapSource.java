@@ -119,7 +119,7 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 			for (MapSource layerMapSource : mapSources) {
 				BufferedImage layerImage = layerMapSource.getTileImage(zoom, x, y, loadMethod);
 				if (layerImage != null) {
-					// log.trace("Multi layer loading: " + layerMapSource + " " + x + " " + y + " " + zoom);
+					log.debug("Multi layer loading: " + layerMapSource + " " + x + " " + y + " " + zoom);
 					g2.drawImage(layerImage, 0, 0, null);
 					used = true;
 				}

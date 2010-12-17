@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
@@ -14,6 +13,7 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
+import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.program.interfaces.MapSource;
@@ -25,12 +25,12 @@ import org.apache.log4j.Logger;
 public class CustomMapSourceLoader implements ValidationEventHandler {
 
 	private final Logger log = Logger.getLogger(MapPackManager.class);
+	private final MapSourcesManager mapSourcesManager;
 	private final File mapSourcesDir;
-	private ArrayList<MapSource> mapSources;
 
-	public CustomMapSourceLoader(File mapSourcesDir) {
+	public CustomMapSourceLoader(MapSourcesManager mapSourceManager, File mapSourcesDir) {
+		this.mapSourcesManager = mapSourceManager;
 		this.mapSourcesDir = mapSourcesDir;
-		mapSources = new ArrayList<MapSource>();
 	}
 
 	public void loadCustomMapSources() {
@@ -39,7 +39,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		classes.add(CustomMapSource.class);
 		classes.add(CustomMultiLayerMapSource.class);
-		Class<?> cloudmadeClass =null;
+		Class<?> cloudmadeClass = null;
 		try {
 			cloudmadeClass = Class.forName("mobac.mapsources.mappacks.openstreetmap.CloudMade$Wrapped");
 			if (cloudmadeClass != null)
@@ -64,21 +64,18 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		for (File f : customMapSourceFiles) {
 			try {
 				MapSource customMapSource;
-				Object o = unmarshaller.unmarshal(f);;
+				Object o = unmarshaller.unmarshal(f);
+				;
 				if (o instanceof WrappedMapSource)
-					customMapSource = ((WrappedMapSource)o).getMapSource();
-				else 
+					customMapSource = ((WrappedMapSource) o).getMapSource();
+				else
 					customMapSource = (MapSource) o;
 				log.trace("Custom map source loaded: " + customMapSource + " from file \"" + f.getName() + "\"");
-				mapSources.add(customMapSource);
+				mapSourcesManager.addMapSource(customMapSource);
 			} catch (Exception e) {
 				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
 			}
 		}
-	}
-
-	public List<MapSource> getMapSources() {
-		return mapSources;
 	}
 
 	public boolean handleEvent(ValidationEvent event) {
@@ -92,15 +89,14 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null,
-				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
-						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
-						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage()
+				+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/"
+				+ loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}
 
 	public static class WrappedMap {
-		
+
 	}
 }

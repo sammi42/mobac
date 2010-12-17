@@ -49,7 +49,7 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 	public static class OpenSeaMapLayer extends AbstractHttpMapSource {
 
 		public OpenSeaMapLayer() {
-			super("OpenSeaMap", 11, 17, TileImageType.PNG, TileUpdate.LastModified);
+			super("OpenSeaMapLayer", 11, 17, TileImageType.PNG, TileUpdate.LastModified);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -60,9 +60,10 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 		public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 				InterruptedException, TileException {
 			byte[] data = super.getTileData(zoom, x, y, loadMethod);
-			if (data != null && data.length == 0)
-				// Non-existent tile loaded from tile store
+			if (data != null && data.length == 0) {
+				log.info("loaded non-existing tile");
 				return null;
+			}
 			return data;
 		}
 
@@ -71,9 +72,11 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 				UnrecoverableDownloadException, InterruptedException {
 			try {
 				ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
-				byte[] data = getTileData(zoom, x, y, LoadMethod.DEFAULT);
-				if (data == null)
+				byte[] data = getTileData(zoom, x, y, loadMethod);
+				if (data == null) {
 					return null;
+				}
+				// if (1==1) return ImageIO.read(new ByteArrayInputStream(data));
 				reader.setInput(new MemoryCacheImageInputStream(new ByteArrayInputStream(data)), false, false);
 				BufferedImage image = reader.read(0);
 				if (image.getTransparency() == Transparency.OPAQUE
@@ -115,6 +118,7 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 			} catch (FileNotFoundException e) {
 				TileStore ts = TileStore.getInstance();
 				long time = System.currentTimeMillis();
+				// We set the tile data to an empty array because we can not store null
 				TileStoreEntry entry = ts.createNewEntry(x, y, zoom, new byte[] {}, time, time + (1000 * 60 * 60 * 60),
 						"");
 				ts.putTile(entry, this);
@@ -123,5 +127,11 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 			}
 			return null;
 		}
+
+		@Override
+		public Color getBackgroundColor() {
+			return Utilities.COLOR_TRANSPARENT;
+		}
+
 	}
 }

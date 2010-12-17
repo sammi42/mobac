@@ -77,7 +77,7 @@ public class TileDownLoader {
 				if (expired) {
 					log.trace("Expired: " + mapSource.getName() + " " + tile);
 				} else {
-					log.trace("Tile used from tilestore");
+					log.trace("Tile of map source " + mapSource.getName() + " used from tilestore");
 					byte[] data = tile.getData();
 					notifyCachedTileUsed(data.length);
 					return data;

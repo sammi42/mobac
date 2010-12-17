@@ -19,10 +19,12 @@ package mobac.mapsources;
 import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
@@ -41,7 +43,15 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	private Logger log = Logger.getLogger(DefaultMapSourcesManager.class);
 
+	/**
+	 * All map sources visible to the user independent of it is enabled or disabled
+	 */
 	private LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<String, MapSource>(50);
+
+	/**
+	 * All means all visible map sources to the user plus all layers of multi-layer map sources
+	 */
+	private HashMap<String, MapSource> allAvailableMapSources = new HashMap<String, MapSource>(50);
 
 	public DefaultMapSourcesManager() {
 		// Check for user specific configuration of mapsources directory
@@ -57,22 +67,19 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 		try {
 			if (!devMode || !loadMapPacksEclipseMode()) {
-				MapPackManager mpm = new MapPackManager(mapSourcesDir);
+				MapPackManager mpm = new MapPackManager(this, mapSourcesDir);
 				mpm.installUpdates();
 				mpm.loadMapPacks();
-				addAllMapSource(mpm.getMapSources());
 			}
 		} catch (Exception e) {
 			log.error("Failed to load map packs", e);
 			throw new RuntimeException(e);
 		}
-		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(mapSourcesDir);
+		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(this, mapSourcesDir);
 		bsmsl.loadBeanShellMapSources();
-		addAllMapSource(bsmsl.getMapSources());
 
-		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(mapSourcesDir);
+		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(this, mapSourcesDir);
 		cmsl.loadCustomMapSources();
-		addAllMapSource(cmsl.getMapSources());
 
 		// If no map sources are available load the simple map source which shows the informative message
 		if (allMapSources.size() == 0)
@@ -82,10 +89,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	private boolean loadMapPacksEclipseMode() {
 		EclipseMapPackLoader empl;
 		try {
-			empl = new EclipseMapPackLoader();
+			empl = new EclipseMapPackLoader(this);
 			if (!empl.loadMapPacks())
 				return false;
-			addAllMapSource(empl.getMapSources());
 			return true;
 		} catch (IOException e) {
 			log.error("Failed to load map packs directly from classpath");
@@ -93,20 +99,27 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		return false;
 	}
 
-	protected void addAllMapSource(List<MapSource> mapSourceColl) {
-		for (MapSource mapSource : mapSourceColl)
-			addMapSource(mapSource);
-	}
-
-	protected void addMapSource(MapSource mapSource) {
-		MapSource old = allMapSources.put(mapSource.getName(), mapSource);
-		if (old != null)
-			throw new RuntimeException("Duplicate map source name: " + mapSource.getName());
+	public void addMapSource(MapSource mapSource) {
+		allAvailableMapSources.put(mapSource.getName(), mapSource);
+		if (mapSource instanceof AbstractMultiLayerMapSource) {
+			for (MapSource lms : ((AbstractMultiLayerMapSource) mapSource)) {
+				MapSource old = allAvailableMapSources.put(lms.getName(), lms);
+				if (mapSource.equals(old))
+					JOptionPane.showMessageDialog(null, "Error: Duplicate map source name found: "
+							+ mapSource.getName(), "Duplicate name", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		allMapSources.put(mapSource.getName(), mapSource);
 	}
 
 	public static void initialize() {
 		INSTANCE = new DefaultMapSourcesManager();
 		((DefaultMapSourcesManager) INSTANCE).loadMapSources();
+	}
+
+	@Override
+	public Vector<MapSource> getAllAvailableMapSources() {
+		return new Vector<MapSource>(allMapSources.values());
 	}
 
 	@Override
@@ -187,7 +200,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public MapSource getSourceByName(String name) {
-		return allMapSources.get(name);
+		return allAvailableMapSources.get(name);
 	}
 
 }

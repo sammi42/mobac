@@ -36,7 +36,7 @@ public class DebugShowMapSourceNames implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		LinkedList<String> names = new LinkedList<String>();
-		for (MapSource ms : MapSourcesManager.getInstance().getAllLayerMapSources()) {
+		for (MapSource ms : MapSourcesManager.getInstance().getAllAvailableMapSources()) {
 			names.add(ms.getName());
 		}
 		Collections.sort(names);

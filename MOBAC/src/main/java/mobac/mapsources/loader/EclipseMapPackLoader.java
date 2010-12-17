@@ -19,9 +19,8 @@ package mobac.mapsources.loader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
+import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
@@ -38,14 +37,15 @@ public class EclipseMapPackLoader {
 
 	private final Logger log = Logger.getLogger(EclipseMapPackLoader.class);
 
-	private ArrayList<MapSource> mapSources;
+	private final MapSourcesManager mapSourcesManager;
 
-	public EclipseMapPackLoader() throws IOException {
-		mapSources = new ArrayList<MapSource>();
+	public EclipseMapPackLoader(MapSourcesManager mapSourcesManager) throws IOException {
+		this.mapSourcesManager = mapSourcesManager;
 	}
 
 	public boolean loadMapPacks() throws IOException {
 		ClassLoader cl = EclipseMapPackLoader.class.getClassLoader();
+		boolean success = false;
 		File binDir;
 		try {
 			binDir = new File(cl.getResource(".").toURI());
@@ -66,17 +66,14 @@ public class EclipseMapPackLoader {
 				try {
 					Class<?> clazz = Class.forName(className);
 					MapSource ms = (MapSource) clazz.newInstance();
-					mapSources.add(ms);
+					mapSourcesManager.addMapSource(ms);
+					success = true;
 				} catch (Exception e) {
 					log.error("className: \"" + className + "\"", e);
 				}
 			}
 		}
-		return (mapSources.size() > 0);
-	}
-
-	public List<MapSource> getMapSources() {
-		return mapSources;
+		return success;
 	}
 
 }

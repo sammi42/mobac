@@ -28,6 +28,8 @@ public abstract class MapSourcesManager {
 		return INSTANCE;
 	}
 
+	public abstract void addMapSource(MapSource mapSource);
+
 	public abstract Vector<MapSource> getAllMapSources();
 
 	/**
@@ -46,4 +48,12 @@ public abstract class MapSourcesManager {
 	public abstract MapSource getSourceByName(String name);
 
 	public abstract Vector<MapSource> getDisabledMapSources();
+
+	/**
+	 * All means all visible map sources to the user plus all layers of multi-layer map sources
+	 * 
+	 * @return
+	 */
+	public abstract Vector<MapSource> getAllAvailableMapSources();
+
 }

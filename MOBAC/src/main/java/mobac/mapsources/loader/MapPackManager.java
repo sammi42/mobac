@@ -36,7 +36,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import mobac.program.Logging;
+import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.FileExtFilter;
@@ -51,24 +51,20 @@ public class MapPackManager {
 
 	private final int requiredMapPackVersion;
 
-	private final File mapPackDir;
+	private final MapSourcesManager mapSourcesManager;
 
-	private ArrayList<MapSource> mapSources;
+	private final File mapPackDir;
 
 	private final X509Certificate mapPackCert;
 
-	public MapPackManager(File mapPackDir) throws CertificateException, IOException {
+	public MapPackManager(MapSourcesManager mapSourceManager, File mapPackDir) throws CertificateException, IOException {
+		this.mapSourcesManager = mapSourceManager;
 		this.mapPackDir = mapPackDir;
-		mapSources = new ArrayList<MapSource>();
 		requiredMapPackVersion = Integer.parseInt(System.getProperty("mobac.mappackversion"));
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		Collection<? extends Certificate> certs = cf.generateCertificates(Utilities
 				.loadResourceAsStream("cert/MapPack.cer"));
 		mapPackCert = (X509Certificate) certs.iterator().next();
-	}
-
-	public List<MapSource> getMapSources() {
-		return mapSources;
 	}
 
 	public void installUpdates() throws IOException {
@@ -108,7 +104,7 @@ public class MapPackManager {
 		while (iterator.hasNext()) {
 			try {
 				MapSource ms = iterator.next();
-				mapSources.add(ms);
+				mapSourcesManager.addMapSource(ms);
 				log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
 			} catch (Error e) {
 				log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
@@ -158,14 +154,4 @@ public class MapPackManager {
 
 	}
 
-	public static void main(String[] args) {
-		Logging.configureConsoleLogging();
-		System.setProperty("mobac.mappackversion", "1");
-		try {
-			MapPackManager mpm = new MapPackManager(new File("mapsources"));
-			mpm.loadMapPacks();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

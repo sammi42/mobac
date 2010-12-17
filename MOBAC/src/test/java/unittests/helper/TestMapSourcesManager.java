@@ -75,4 +75,16 @@ public class TestMapSourcesManager extends MapSourcesManager {
 		return theMapSource;
 	}
 
+	@Override
+	public void addMapSource(MapSource mapSource) {
+		throw new RuntimeException("not implemented");
+	}
+
+	@Override
+	public Vector<MapSource> getAllAvailableMapSources() {
+		return getAllMapSources();
+	}
+	
+	
+
 }

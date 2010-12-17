@@ -31,6 +31,7 @@ import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
+import mobac.program.interfaces.RequiresSQLite;
 import mobac.utilities.jdbc.SQLiteLoader;
 
 /**

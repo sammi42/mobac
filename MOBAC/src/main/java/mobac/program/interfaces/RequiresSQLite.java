@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.atlascreators;
+package mobac.program.interfaces;
 
 /**
  * Marker-Interface which has to implemented by all atlas creator classes which require the SQLite libraries.

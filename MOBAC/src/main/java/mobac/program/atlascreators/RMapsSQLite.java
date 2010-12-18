@@ -28,10 +28,14 @@ import java.util.Locale;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.LayerInterface;
+import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.model.Settings;
+import mobac.program.model.TileImageParameters;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
@@ -78,6 +82,17 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				TileImageParameters param = map.getParameters();
+				if (param == null)
+					continue;
+				if (param.getHeight() != 256 || param.getWidth() != 256)
+					throw new AtlasTestException(
+							"Invalid tile width/height: Tile image height and width has to be 256", map);
+
+			}
+		}
 	}
 
 	@Override
@@ -149,6 +164,9 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
 		atlasProgress.initMapCreation(maxMapProgress);
+		TileImageParameters param = map.getParameters();
+		if (param != null)
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());
 		try {
 			conn.setAutoCommit(false);
 			int batchTileCount = 0;

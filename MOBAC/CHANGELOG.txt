@@ -30,6 +30,7 @@
  + CustomMap: new parameter: ignoreErrors and backGroundColor can have
     alpha transparency parameter
  + New map source: Cloudmade Map default style (1) 
+ + Tile image format conversion for RMaps/BigPlanet/Galileo
 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps

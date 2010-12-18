@@ -220,14 +220,14 @@ are not shipped with Mobile Atlas Creator. Read section <a
 	href="#SQLite">SQLite library</a> for details what libraries are
 required and how to obtain them.<br>
 The atlas format BigPlanet SQLite does not support all features provided
-by Mobile Atlas Creator the following settings are ignored when creating
-atlases using this output format:</p>
+by Mobile Atlas Creator the following settings can not be used or are ignored when
+creating atlases using this output format:</p>
 <ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Recreate/adjust map tiles with custom tile size (height and
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 	<li>Atlases created after another are merged into one Database
-	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
+	named <tt>[Atlasname] atlas.sqlitedb</tt> which is located in the atlas
 	output directory.</li>
 </ul>
 <!-- *************************************************************************** -->
@@ -518,15 +518,16 @@ Please not that this atlas format requires additional libraries which
 are not shipped with Mobile Atlas Creator. Read section <a
 	href="#SQLite">SQLite library</a> for details what libraries are
 required and how to obtain them.<br>
-The atlas format BigPlanet SQLite does not support all features provided
-by Mobile Atlas Creator the following settings are ignored when creating
-atlases using this output format:</p>
+The atlas format RMaps does not support all features provided by Mobile
+Atlas Creator the following settings can not be used or are ignored when
+creating atlases using this output format:</p>
 <ul>
-	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
+	<li>Recreate/adjust map tiles with custom tile size (height and
+	width have to be 256)</li>
 	<li>Name of all layers and maps</li>
 	<li>Structure of the atlas (which maps belongs to which layer)</li>
 	<li>Atlases created after another are merged into one Database
-	named <tt>BigPlanet_maps.sqlitedb</tt> which is located in the atlas
+	named <tt>[AtlasName] atlas.sqlitedb</tt> which is located in the atlas
 	output directory.</li>
 </ul>
 <!-- *************************************************************************** -->

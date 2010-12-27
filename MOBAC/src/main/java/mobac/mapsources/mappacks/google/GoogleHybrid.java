@@ -23,7 +23,7 @@ import mobac.program.model.TileImageType;
 public class GoogleHybrid extends AbstractMultiLayerMapSource {
 
 	public GoogleHybrid() {
-		super("Google Hybrid", TileImageType.PNG);
+		super("Google Hybrid", TileImageType.JPG);
 		mapSources = new MapSource[] { new GoogleEarth(), new GoogleEarthMapsOverlay() };
 		initializeValues();
 	}

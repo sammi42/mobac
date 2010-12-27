@@ -83,7 +83,7 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		performTest_MaxMapZoom(17);
+		performTest_MaxMapZoom(18);
 	}
 
 	@Override

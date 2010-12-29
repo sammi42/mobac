@@ -77,7 +77,7 @@ public class PNGWorldfile extends Glopus {
 
 			mapWriter.flush();
 			mapWriter.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new MapCreationException(e);
 		} finally {
 			Utilities.closeStream(fout);

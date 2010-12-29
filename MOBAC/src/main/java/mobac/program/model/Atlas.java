@@ -34,7 +34,6 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.ToolTipProvider;
 
-
 @XmlRootElement
 public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
@@ -91,6 +90,8 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 	}
 
 	public void setOutputFormat(AtlasOutputFormat atlasOutputFormat) {
+		if (atlasOutputFormat == null)
+			throw new NullPointerException();
 		this.outputFormat = atlasOutputFormat;
 	}
 

@@ -50,6 +50,7 @@ import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.program.model.Atlas;
+import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.AtlasTreeModel;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
@@ -167,7 +168,16 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		return treeModel;
 	}
 
-	public void clearAtlas() {
+	public void newAtlas(String name, AtlasOutputFormat format) {
+		log.debug("Creating new atlas");
+		Atlas newAtlas = Atlas.newInstance();
+		newAtlas.setOutputFormat(format);
+		newAtlas.setName(name);
+		treeModel.setAtlas(newAtlas);
+		mapView.repaint();
+	}
+	
+	public void newAtlas() {
 		log.debug("Resetting atlas tree model");
 		Atlas newAtlas = Atlas.newInstance();
 		newAtlas.setName(MainGUI.getMainGUI().getUserText());
@@ -356,7 +366,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		mi.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				clearAtlas();
+				newAtlas();
 			}
 		});
 		pm.add(mi);

@@ -59,6 +59,8 @@ public class Profile implements Comparable<Profile> {
 	public static final Pattern PROFILE_FILENAME_PATTERN = Pattern.compile(PROFILE_FILENAME_PREFIX + "("
 			+ PROFILE_NAME_REGEX + ").xml");
 
+	public static final Profile DEFAULT = new Profile();
+
 	private File file;
 	private String name;
 	private static Vector<Profile> profiles = new Vector<Profile>();
@@ -102,9 +104,14 @@ public class Profile implements Comparable<Profile> {
 	 * @param name
 	 */
 	public Profile(String name) {
-		super();
-		this.file = new File(DirectoryManager.atlasProfilesDir, getProfileFileName(name));
-		this.name = name;
+		this(new File(DirectoryManager.atlasProfilesDir, getProfileFileName(name)), name);
+	}
+
+	/**
+	 * Default profile
+	 */
+	protected Profile() {
+		this(new File(DirectoryManager.atlasProfilesDir, "mobac-profile.xml"), "");
 	}
 
 	protected Profile(File file, String name) {

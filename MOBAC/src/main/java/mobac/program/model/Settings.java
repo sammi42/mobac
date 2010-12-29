@@ -94,7 +94,6 @@ public class Settings {
 	private boolean customTileProcessing = false;
 	private Dimension tileSize = new Dimension(256, 256);
 	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
-	private AtlasOutputFormat atlasOutputFormat = AtlasOutputFormat.TaredAtlas;
 
 	public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEG_LOCAL;
 
@@ -307,14 +306,6 @@ public class Settings {
 
 	public void setTileImageFormat(TileImageFormat tileImageFormat) {
 		this.tileImageFormat = tileImageFormat;
-	}
-
-	public AtlasOutputFormat getAtlasOutputFormat() {
-		return atlasOutputFormat;
-	}
-
-	public void setAtlasOutputFormat(AtlasOutputFormat atlasOutputFormat) {
-		this.atlasOutputFormat = atlasOutputFormat;
 	}
 
 	public ProxyType getProxyType() {

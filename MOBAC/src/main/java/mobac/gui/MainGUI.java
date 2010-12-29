@@ -53,12 +53,11 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 import javax.xml.bind.JAXBException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.InvalidNameException;
+import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.ShowAboutDialog;
@@ -69,6 +68,7 @@ import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JAtlasNameField;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.components.JZoomCheckBox;
+import mobac.gui.listeners.AtlasModelListener;
 import mobac.gui.mapview.GridZoom;
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
@@ -83,7 +83,6 @@ import mobac.program.AtlasThread;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
-import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Layer;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
@@ -117,8 +116,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	protected JMenuBar menuBar;
 
-	protected JAtlasTree jAtlasTree;
-	public PreviewMap previewMap;
+	public final PreviewMap previewMap = new PreviewMap();
+	public final JAtlasTree jAtlasTree = new JAtlasTree(previewMap);
 
 	private JLabel zoomLevelText;
 	private JComboBox gridZoomCombo;
@@ -126,7 +125,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JComboBox mapSourceCombo;
 	private JButton settingsButton;
 	private JAtlasNameField atlasNameTextField;
-	private JComboBox atlasOutputFormatCombo;
 	private JButton createAtlasButton;
 	private JPanel zoomLevelPanel;
 	private JZoomCheckBox[] cbZoom = new JZoomCheckBox[0];
@@ -171,7 +169,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		addWindowListener(new WindowDestroyer());
 		addComponentListener(new MainWindowListener());
 
-		previewMap = new PreviewMap();
 		previewMap.addMapEventListener(this);
 
 		createControls();
@@ -234,15 +231,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		settingsButton.addActionListener(new SettingsButtonListener());
 		settingsButton.setToolTipText("Open the preferences dialogue panel.");
 
-		// atlas output format
-		atlasOutputFormatCombo = new JComboBox(AtlasOutputFormat.values());
-		atlasOutputFormatCombo.setMaximumRowCount(15);
-		atlasOutputFormatCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				applyAtlasOutputFormat();
-			}
-		});
-
 		// atlas name text field
 		atlasNameTextField = new JAtlasNameField();
 		atlasNameTextField.setColumns(12);
@@ -265,8 +253,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		amountOfTilesLabel.setOpaque(true);
 		amountOfTilesLabel.setBackground(labelBackgroundColor);
 		amountOfTilesLabel.setForeground(labelForegroundColor);
-
-		jAtlasTree = new JAtlasTree(previewMap);
 
 		coordinatesPanel = new JCoordinatesPanel();
 		tileImageParametersPanel = new JTileImageParametersPanel();
@@ -297,7 +283,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 		showLog.addActionListener(new DebugShowLogFile());
 		debug.add(showLog);
 
-		menuBar.add(new JMenu("File"));
+		JMenu atlasMenu = new JMenu("Atlas");
+		atlasMenu.setMnemonic('a');
+		JMenuItem newAtlas = new JMenuItem("New");
+		newAtlas.addActionListener(new AtlasNew());
+		atlasMenu.add(newAtlas);
+		menuBar.add(atlasMenu);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(debug);
 		menuBar.add(help);
@@ -321,22 +312,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JCollapsiblePanel atlasContentPanel = new JCollapsiblePanel("Atlas Content", new GridBagLayout());
 		JScrollPane treeScrollPane = new JScrollPane(jAtlasTree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jAtlasTree.getTreeModel().addTreeModelListener(new AtlasListener());
+		jAtlasTree.getTreeModel().addTreeModelListener(new AtlasModelListener(jAtlasTree, profilesPanel));
 
 		treeScrollPane.setMinimumSize(new Dimension(100, 150));
 		treeScrollPane.setPreferredSize(new Dimension(100, 200));
 		treeScrollPane.setAutoscrolls(true);
 		atlasContentPanel.addContent(treeScrollPane, GBC.eol().fill().insets(0, 1, 0, 0));
-		JButton clearAtlas = new JButton("Clear");
+		JButton clearAtlas = new JButton("New");
 		atlasContentPanel.addContent(clearAtlas, GBC.std());
-		clearAtlas.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				jAtlasTree.clearAtlas();
-				previewMap.repaint();
-				applyAtlasOutputFormat();
-			}
-		});
+		clearAtlas.addActionListener(new AtlasNew());
 		JButton addLayers = new JButton("Add selection");
 		atlasContentPanel.addContent(addLayers, GBC.eol());
 		addLayers.addActionListener(new ActionListener() {
@@ -347,10 +331,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		});
 		atlasContentPanel.addContent(new JLabel("Name: "), gbc_std);
 		atlasContentPanel.addContent(atlasNameTextField, gbc_eol.fill(GBC.HORIZONTAL));
-
-		JCollapsiblePanel atlasNamePanel = new JCollapsiblePanel("Atlas settings", new GridBagLayout());
-		atlasNamePanel.addContent(new JLabel("Format: "), gbc_std);
-		atlasNamePanel.addContent(atlasOutputFormatCombo, gbc_eol);
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
@@ -363,7 +343,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		leftPanelContent.add(tileImageParametersPanel, gbc_eol);
 		leftPanelContent.add(atlasContentPanel, gbc_eol);
 
-		leftPanelContent.add(atlasNamePanel, gbc_eol);
 		leftPanelContent.add(profilesPanel, gbc_eol);
 		leftPanelContent.add(createAtlasButton, gbc_eol);
 		leftPanelContent.add(settingsButton, gbc_eol);
@@ -382,6 +361,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		scrollPane.setMinimumSize(d);
 		leftPanel.add(scrollPane, GBC.std().fill());
 		// leftPanel.add(leftPanelContent, GBC.std().fill());
+
 	}
 
 	private JPanel updateMapControlsPanel() {
@@ -425,7 +405,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	public void updateMapSourcesList() {
 		MapSource ms = (MapSource) mapSourceCombo.getSelectedItem();
-		mapSourceCombo.setModel(new DefaultComboBoxModel(MapSourcesManager.getInstance().getEnabledOrderedMapSources()));
+		mapSourceCombo
+				.setModel(new DefaultComboBoxModel(MapSourcesManager.getInstance().getEnabledOrderedMapSources()));
 		mapSourceCombo.setSelectedItem(ms);
 		MapSource ms2 = (MapSource) mapSourceCombo.getSelectedItem();
 		if (!ms.equals(ms2))
@@ -433,9 +414,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private void loadSettings() {
+		if (Profile.DEFAULT.exists())
+			jAtlasTree.load(Profile.DEFAULT);
+		else
+			new AtlasNew().actionPerformed(null);
+
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.elementName);
-		atlasOutputFormatCombo.setSelectedItem(settings.getAtlasOutputFormat());
 		previewMap.settingsLoad();
 		coordinatesPanel.setNumberFormat(settings.coordinateNumberFormat);
 
@@ -468,12 +453,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void saveSettings() {
 		try {
+			jAtlasTree.save(Profile.DEFAULT);
+
 			Settings s = Settings.getInstance();
 			previewMap.settingsSave();
 			s.mapviewMapSource = previewMap.getMapSource().getName();
 
 			s.elementName = atlasNameTextField.getText();
-			s.setAtlasOutputFormat((AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem());
 			s.coordinateNumberFormat = coordinatesPanel.getNumberFormat();
 
 			tileImageParametersPanel.saveSettings();
@@ -597,7 +583,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			jAtlasTree.load(profile);
 			previewMap.repaint();
-			atlasOutputFormatCombo.setSelectedItem(jAtlasTree.getAtlas().getOutputFormat());
 		}
 	}
 
@@ -692,11 +677,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	public void gridZoomChanged(int newGridZoomLevel) {
 		gridZoomCombo.setSelectedItem(new GridZoom(newGridZoomLevel));
-	}
-
-	public void applyAtlasOutputFormat() {
-		AtlasOutputFormat atlasOutputFormat = (AtlasOutputFormat) atlasOutputFormatCombo.getSelectedItem();
-		jAtlasTree.getAtlas().setOutputFormat(atlasOutputFormat);
 	}
 
 	public void selectNextMapSource() {
@@ -837,27 +817,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private class AtlasListener implements TreeModelListener {
-
-		protected void changed() {
-			profilesPanel.getSaveAsButton().setEnabled(jAtlasTree.getAtlas().getLayerCount() > 0);
-		}
-
-		public void treeNodesChanged(TreeModelEvent e) {
-			changed();
-		}
-
-		public void treeNodesInserted(TreeModelEvent e) {
-			changed();
-		}
-
-		public void treeNodesRemoved(TreeModelEvent e) {
-			changed();
-		}
-
-		public void treeStructureChanged(TreeModelEvent e) {
-			changed();
-		}
+	public AtlasInterface getAtlas() {
+		return jAtlasTree.getAtlas();
 	}
 
 	private class WindowDestroyer extends WindowAdapter {

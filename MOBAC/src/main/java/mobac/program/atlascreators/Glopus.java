@@ -27,8 +27,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-
-
 public class Glopus extends Ozi {
 
 	@Override
@@ -43,14 +41,14 @@ public class Glopus extends Ozi {
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			Utilities.mkDir(mapDir);
-		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+		} catch (IOException e) {
+			throw new MapCreationException(e);
 		}
 		createTiles();
 		writeKalFile();
 	}
 
-	private void writeKalFile() {
+	private void writeKalFile() throws MapCreationException {
 		FileOutputStream fout = null;
 		try {
 			fout = new FileOutputStream(new File(mapDir, mapName + ".kal"));
@@ -93,7 +91,7 @@ public class Glopus extends Ozi {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			log.error("", e);
+			throw new MapCreationException(e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

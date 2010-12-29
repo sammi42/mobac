@@ -43,6 +43,7 @@ import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.OruxMapsSqlite;
 import mobac.program.atlascreators.Osmdroid;
 import mobac.program.atlascreators.Ozi;
+import mobac.program.atlascreators.PNGWorldfile;
 import mobac.program.atlascreators.PathAway;
 import mobac.program.atlascreators.RMapsSQLite;
 import mobac.program.atlascreators.RunGPSAtlas;
@@ -82,6 +83,7 @@ public enum AtlasOutputFormat {
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	PathAway("PathAway tile cache", PathAway.class), //
+	PNGWorldfile("PNG + Worldfile (PNG & PGW)", PNGWorldfile.class), //
 	RMaps("RMaps SQLite", RMapsSQLite.class), //
 	RunGPS("Run.GPS Atlas", RunGPSAtlas.class), //
 	NST("Sports Tracker", SportsTracker.class), //

@@ -18,6 +18,7 @@ package mobac.program.atlascreators;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
@@ -37,6 +38,7 @@ import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
+import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
@@ -55,7 +57,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AtlasCreator {
 
-	public static final String TEXT_FILE_CHARSET = "ISO-8859-1";
+	public static final Charset TEXT_FILE_CHARSET = Charsets.ISO_8859_1;
 
 	protected final Logger log;
 

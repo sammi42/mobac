@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.interfaces.MapSpace;
@@ -42,14 +43,16 @@ public class PNGWorldfile extends Glopus {
 	}
 
 	/**
+	 * http://en.wikipedia.org/wiki/World_file
+	 * 
 	 * <pre>
 	 * Format of Worldfile: 
-	 * 			   0,000085830078125  (size of pixel in x direction)                              =(east-west)/image width
-	 * 			   0,000000000000     (rotation term for row)
-	 * 			   0,000000000000     (rotation term for column)
-	 * 			   -0,00006612890625  (size of pixel in y direction)                              =-(north-south)/image height
-	 * 			   -106,54541         (x coordinate of centre of upper left pixel in map units)   =west
-	 * 			   39,622615          (y coordinate of centre of upper left pixel in map units)   =north
+	 * 			   0.000085830078125  (size of pixel in x direction)                              =(east-west)/image width
+	 * 			   0.000000000000     (rotation term for row)
+	 * 			   0.000000000000     (rotation term for column)
+	 * 			   -0.00006612890625  (size of pixel in y direction)                              =-(north-south)/image height
+	 * 			   -106.54541         (x coordinate of centre of upper left pixel in map units)   =west
+	 * 			   39.622615          (y coordinate of centre of upper left pixel in map units)   =north
 	 * </pre>
 	 */
 	private void writeWorldFile() throws MapCreationException {
@@ -68,12 +71,12 @@ public class PNGWorldfile extends Glopus {
 			double latMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
 			double latMax = mapSpace.cYToLat(yMin * tileSize, zoom);
 
-			mapWriter.write(String.format("%,.15f\n", (lonMax - lonMin) / width));
-			mapWriter.write("0,000000000000\n");
-			mapWriter.write("0,000000000000\n");
-			mapWriter.write(String.format("%,.15f\n", -(latMax - latMin) / height));
-			mapWriter.write(String.format("%,.7f\n", lonMin));
-			mapWriter.write(String.format("%,.7f\n", latMax));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", (lonMax - lonMin) / width));
+			mapWriter.write("0.0\n");
+			mapWriter.write("0.0\n");
+			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", -(latMax - latMin) / height));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", lonMin));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", latMax));
 
 			mapWriter.flush();
 			mapWriter.close();

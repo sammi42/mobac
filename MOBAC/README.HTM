@@ -313,7 +313,7 @@ when creating atlases:</p>
 <ul>
 	<li>Recreate/adjust map tiles (custom tile size and image format)</li>
 </ul>
-<h4>WARNING</h4>
+<h4>Warning</h4>
 <p>The Google Earth Overlay atlas format uses JPG images. The image
 size depends on the selected maximum map size (see settings dialog). The
 theoretical maximum map size for this atlas format is 25000. However it
@@ -394,7 +394,9 @@ will use it to view the maps in MGMaps.</p>
 	<li>Create a folder named <tt>MGMapsCache</tt> in the root of you
 	device or memorycard</li>
 	<li>Copy the created folders into this MGMapsCache folder so the
-	directory structure looks like: <pre>
+	directory structure looks like:</li>
+</ol>
+<pre>
 MGMapsCache
 MGMapsCache\cache.conf
 MGMapsCache\macos_10
@@ -409,8 +411,7 @@ MGMapsCache\macos_12\365_213.mgm
 MGMapsCache\macos_12\365_214.mgm
 MGMapsCache\macos_12\366_213.mgm
 MGMapsCache\macos_12\366_214.mgm
-	</pre></li>
-</ol>
+	</pre>
 <h4>How to set up MGMaps to use the maps</h4>
 <ol>
 	<li>Select Settings/Map/Stored Maps, Click on the two boxes
@@ -424,9 +425,10 @@ MGMapsCache\macos_12\366_214.mgm
 	my case macos, map type url you can leave blank, select ok/options/save
 	MGMaps will then apply the settings and display your created map.</li>
 </ol>
-<p>Warning: avoid using names native to MGMaps such as google, each
-name used must be defined as a custom map so the directory structure
-below must have macos,macroad and macsat defined as custom map types.</p>
+<h4>Warning</h4>
+<p>Avoid using names native to MGMaps such as google, each name used
+must be defined as a custom map so the directory structure below must
+have macos,macroad and macsat defined as custom map types.</p>
 <pre>
 MGMapsCache MGMapsCache\cache.conf MGMapsCache\macos_10
 MGMapsCache\macos_11 MGMapsCache\macroad_11 MGMapsCache\macsat_11

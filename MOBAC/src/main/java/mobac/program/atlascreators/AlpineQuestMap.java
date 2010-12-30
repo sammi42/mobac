@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.ProgramInfo;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.aqm.FlatPackCreator;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
@@ -43,6 +44,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.stream.ArrayOutputStream;
 import mobac.utilities.tar.TarIndex;
 
@@ -53,6 +55,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author Camille
  */
+@SupportedParameters(names = { Name.format })
 public class AlpineQuestMap extends AtlasCreator {
 
 	public static final String AQM_VERSION = "2";

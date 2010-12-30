@@ -42,6 +42,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
@@ -51,6 +52,7 @@ import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageType;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 
@@ -64,6 +66,7 @@ import org.apache.log4j.Level;
  * @author r_x
  * 
  */
+@SupportedParameters(names = { Name.format })
 public class TwoNavRmap extends AtlasCreator {
 
 	private RmapFile rmapFile = null;

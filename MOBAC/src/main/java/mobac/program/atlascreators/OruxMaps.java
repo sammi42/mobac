@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
@@ -35,6 +36,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
@@ -45,6 +47,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author orux
  */
+@SupportedParameters(names = { Name.format })
 public class OruxMaps extends AtlasCreator {
 
 	// Calibration file extension

@@ -25,23 +25,24 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
-
 
 /**
  * Creates maps identical to the atlas format used by OSMTracker.
  * 
- * Please note that this atlas format ignores the defined atlas structure. It
- * uses a separate directory for each used map source and inside one directory
- * for each zoom level.
+ * Please note that this atlas format ignores the defined atlas structure. It uses a separate directory for each used
+ * map source and inside one directory for each zoom level.
  */
+@SupportedParameters(names = { Name.format })
 public class OSMTracker extends AtlasCreator {
 
 	protected String tileFileNamePattern = "%d/%d/%d.%s";
@@ -76,8 +77,7 @@ public class OSMTracker extends AtlasCreator {
 		mapDir = new File(atlasDir, map.getMapSource().getName());
 		tileType = mapSource.getTileImageType().getFileExt();
 		if (parameters != null) {
-			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters
-					.getFormat());
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
 			tileType = parameters.getFormat().getFileExt();
 		}
 	}
@@ -110,10 +110,8 @@ public class OSMTracker extends AtlasCreator {
 
 	protected class OSMTileWriter implements MapTileWriter {
 
-		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
-				throws IOException {
-			File file = new File(mapDir, String.format(tileFileNamePattern, zoom, tilex, tiley,
-					tileType));
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			File file = new File(mapDir, String.format(tileFileNamePattern, zoom, tilex, tiley, tileType));
 			writeTile(file, tileData);
 		}
 

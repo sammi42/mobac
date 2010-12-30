@@ -35,6 +35,7 @@ import mobac.program.model.AtlasOutputFormat;
 public class AtlasNew implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
+		MainGUI mg = MainGUI.getMainGUI();
 		JPanel panel = new JPanel();
 		BorderLayout layout = new BorderLayout();
 		layout.setVgap(4);
@@ -58,7 +59,7 @@ public class AtlasNew implements ActionListener {
 		panel.add(formatPanel, BorderLayout.CENTER);
 		AtlasOutputFormat currentAOF = null;
 		try {
-			currentAOF = MainGUI.getMainGUI().getAtlas().getOutputFormat();
+			currentAOF = mg.getAtlas().getOutputFormat();
 		} catch (Exception e) {
 		}
 		if (currentAOF != null)
@@ -69,7 +70,9 @@ public class AtlasNew implements ActionListener {
 				JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.CANCEL_OPTION)
 			return;
-		MainGUI.getMainGUI().jAtlasTree.newAtlas(atlasName.getText(), (AtlasOutputFormat) atlasFormatList
-				.getSelectedValue());
+
+		AtlasOutputFormat format = (AtlasOutputFormat) atlasFormatList.getSelectedValue();
+		mg.jAtlasTree.newAtlas(atlasName.getText(), format);
+		mg.getParametersPanel().atlasFormatChanged(format);
 	}
 }

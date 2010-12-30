@@ -89,8 +89,8 @@ public enum AtlasOutputFormat {
 	NST("Sports Tracker", SportsTracker.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), //
-	TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
 	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), // 
+	TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
 	Ublox("Ublox", Ublox.class), // 
 	// XGPS("xGPS", SQLitexGPS.class), //
 	;

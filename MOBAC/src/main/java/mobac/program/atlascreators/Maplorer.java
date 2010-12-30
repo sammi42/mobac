@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
@@ -37,6 +38,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageFormat;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
@@ -47,6 +49,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author Werner Keilholz
  */
+@SupportedParameters(names = { Name.format })
 public class Maplorer extends AtlasCreator {
 
 	private static final String FILENAME_PATTERN = "map_%s%d.%s";

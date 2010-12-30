@@ -8,7 +8,13 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
- 1.9 preview 3 (2010-12-??)
+1.9 preview 3 (2011-01-??)
+ + New atlas format: PNG + Worldfile (PNG & PGW)
+ ~ Atlas output format has to be chosen before adding maps
+ ~ Disabling of unsupported tile processing options (regarding the current
+    atlas format)
+
+1.9 preview 2 (2010-12-18)
  + New atlas format: BackCountry Navigator
  + New atlas format: TwoNav (RMAP)
  + Multi-layer maps with more than two layers are now possible
@@ -31,8 +37,7 @@
     alpha transparency parameter
  + New map source: Cloudmade Map default style (1) 
  + Tile image format conversion for RMaps/BigPlanet/Galileo
- + New atlas format: PNG + Worldfile (PNG & PGW)
-
+ 
  1.8 final: (2010-10-31)
  + New map source: New Zealand Topographic Maps
 

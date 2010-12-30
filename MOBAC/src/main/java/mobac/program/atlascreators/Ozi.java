@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
@@ -38,7 +39,7 @@ import mobac.utilities.Utilities;
 import mobac.utilities.imageio.PngXxlWriter;
 import mobac.utilities.tar.TarIndex;
 
-
+@SupportedParameters(names = {})
 public class Ozi extends TrekBuddy {
 
 	protected File mapDir = null;

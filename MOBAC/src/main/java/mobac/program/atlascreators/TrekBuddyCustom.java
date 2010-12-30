@@ -18,12 +18,14 @@ package mobac.program.atlascreators;
 
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.AtlasOutputFormat;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 
 
@@ -34,6 +36,7 @@ import mobac.utilities.Utilities;
  * 
  * @author r_x
  */
+@SupportedParameters(names = { Name.format })
 public class TrekBuddyCustom extends TrekBuddy {
 
 	@Override

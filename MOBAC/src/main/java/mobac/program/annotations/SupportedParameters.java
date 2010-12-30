@@ -16,14 +16,23 @@
  ******************************************************************************/
 package mobac.program.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+import mobac.program.atlascreators.AtlasCreator;
+import mobac.program.model.TileImageParameters;
+import mobac.program.model.TileImageParameters.Name;
+
+/**
+ * Annotation for {@link AtlasCreator} implementations. The {@link #names()} field holds the parameter names supported
+ * by the specific atlas format. The full list of available parameters is defined in {@link Name}.
+ */
+@Inherited
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MapParametersType {
-
-	Class<?> type() default DEFAULT.class;
-
-	static final class DEFAULT {
-	}
+public @interface SupportedParameters {
+	public TileImageParameters.Name[] names();
 }

@@ -25,6 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class TileImageParameters implements Cloneable {
 
+	public static enum Name {
+		width, height, format
+	}
+
 	@XmlAnyAttribute
 	protected AnyAttributeMap attr = new AnyAttributeMap();
 
@@ -41,8 +45,8 @@ public class TileImageParameters implements Cloneable {
 
 	protected void afterUnmarshal(Unmarshaller u, Object parent) {
 		// read all values once for detecting problems
-		attr.getInt("height");
-		attr.getInt("width");
+		attr.getInt(Name.height.name());
+		attr.getInt(Name.width.name());
 		TileImageFormat.valueOf(attr.getAttr("format"));
 	}
 

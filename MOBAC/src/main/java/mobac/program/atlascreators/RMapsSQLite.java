@@ -28,6 +28,7 @@ import java.util.Locale;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
@@ -36,6 +37,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
@@ -56,6 +58,7 @@ import mobac.utilities.jdbc.SQLiteLoader;
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
  * <p>
  */
+@SupportedParameters(names = { Name.format })
 public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";

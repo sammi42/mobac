@@ -132,7 +132,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private JCoordinatesPanel coordinatesPanel;
 	private JProfilesPanel profilesPanel;
-	private JTileImageParametersPanel tileImageParametersPanel;
+	public JTileImageParametersPanel tileImageParametersPanel;
 	private JTileStoreCoveragePanel tileStoreCoveragePanel;
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
@@ -156,6 +156,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private MainGUI() {
 		super();
+		mainGUI = this;
 		setIconImages(MOBAC_ICONS);
 		GUIExceptionHandler.registerForCurrentThread();
 		setTitle(ProgramInfo.getCompleteTitle());
@@ -425,6 +426,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		coordinatesPanel.setNumberFormat(settings.coordinateNumberFormat);
 
 		tileImageParametersPanel.loadSettings();
+		tileImageParametersPanel.atlasFormatChanged(jAtlasTree.getAtlas().getOutputFormat());
 		// mapSourceCombo
 		// .setSelectedItem(MapSourcesManager.getSourceByName(settings.
 		// mapviewMapSource));
@@ -499,6 +501,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 		Settings.save();
 
+	}
+
+	public JTileImageParametersPanel getParametersPanel() {
+		return tileImageParametersPanel;
 	}
 
 	public String getUserText() {

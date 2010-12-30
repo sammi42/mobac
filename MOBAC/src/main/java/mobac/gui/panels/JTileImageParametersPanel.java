@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -29,12 +31,15 @@ import javax.swing.JPanel;
 
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.components.JTileSizeCombo;
+import mobac.program.annotations.SupportedParameters;
+import mobac.program.atlascreators.AtlasCreator;
+import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.GBC;
 import mobac.utilities.Utilities;
-
 
 public class JTileImageParametersPanel extends JCollapsiblePanel {
 
@@ -47,21 +52,21 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 	private JTileSizeCombo tileSizeWidth;
 	private JTileSizeCombo tileSizeHeight;
 	private JComboBox tileImageFormat;
+	
+	private boolean widthEnabled = true; 
+	private boolean heightEnabled = true; 
+	private boolean formatEnabled = true; 
 
 	public JTileImageParametersPanel() {
 		super("Layer settings: custom tile processing", new GridBagLayout());
 		setName("TileImageParameters");
 
-		enableCustomTileProcessingCheckButton = new JCheckBox(
-				"Recreate/adjust map tiles (CPU intensive)");
-		enableCustomTileProcessingCheckButton
-				.addActionListener(new EnableCustomTileSizeCheckButtonListener());
-		enableCustomTileProcessingCheckButton
-				.setToolTipText("<html>If this option is disabled each "
-						+ "map tile (size: 256x256) is used axactly as downloaded "
-						+ "from the server (faster).<br>"
-						+ "Otherwise each tile is newly created which allows to "
-						+ "use custom tile size (slower / CPU intensive).</html>");
+		enableCustomTileProcessingCheckButton = new JCheckBox("Recreate/adjust map tiles (CPU intensive)");
+		enableCustomTileProcessingCheckButton.addActionListener(new EnableCustomTileSizeCheckButtonListener());
+		enableCustomTileProcessingCheckButton.setToolTipText("<html>If this option is disabled each "
+				+ "map tile (size: 256x256) is used axactly as downloaded " + "from the server (faster).<br>"
+				+ "Otherwise each tile is newly created which allows to "
+				+ "use custom tile size (slower / CPU intensive).</html>");
 
 		tileSizeWidthLabel = new JLabel("Width:");
 		tileSizeWidth = new JTileSizeCombo();
@@ -114,21 +119,40 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		if (customTileSize) {
 			int width = tileSizeWidth.getValue();
 			int height = tileSizeHeight.getValue();
-			TileImageFormat format = (mobac.program.model.TileImageFormat) tileImageFormat
-					.getSelectedItem();
+			TileImageFormat format = (mobac.program.model.TileImageFormat) tileImageFormat.getSelectedItem();
 			customTileParameters = new TileImageParameters(width, height, format);
 		}
 		return customTileParameters;
 	}
 
+	public void atlasFormatChanged(AtlasOutputFormat newAtlasOutputFormat) {
+		Class<? extends AtlasCreator> atlasCreatorClass = newAtlasOutputFormat.getMapCreatorClass();
+		SupportedParameters params = atlasCreatorClass.getAnnotation(SupportedParameters.class);
+		if (params != null) {
+			TreeSet<TileImageParameters.Name> paramNames = new TreeSet<TileImageParameters.Name>(Arrays.asList(params.names()));
+			formatEnabled = paramNames.contains(Name.format);
+			widthEnabled = paramNames.contains(Name.width);
+			heightEnabled = paramNames.contains(Name.height);
+			enableCustomTileProcessingCheckButton.setEnabled(true);
+		} else {
+			formatEnabled = false;
+			widthEnabled = false;
+			heightEnabled = false;
+			enableCustomTileProcessingCheckButton.setEnabled(false);
+		}
+		updateControlsState();
+	}
+
 	public void updateControlsState() {
-		boolean b = enableCustomTileProcessingCheckButton.isSelected();
-		tileSizeWidthLabel.setEnabled(b);
-		tileSizeHeightLabel.setEnabled(b);
-		tileImageFormatLabel.setEnabled(b);
-		tileSizeHeight.setEnabled(b);
-		tileSizeWidth.setEnabled(b);
-		tileImageFormat.setEnabled(b);
+		boolean b = false;
+		if (enableCustomTileProcessingCheckButton.isEnabled())
+			b = enableCustomTileProcessingCheckButton.isSelected();
+		tileSizeWidth.setEnabled(b && widthEnabled);
+		tileSizeWidthLabel.setEnabled(b && widthEnabled);
+		tileSizeHeightLabel.setEnabled(b && heightEnabled);
+		tileSizeHeight.setEnabled(b && heightEnabled);
+		tileImageFormatLabel.setEnabled(b && formatEnabled);
+		tileImageFormat.setEnabled(b && formatEnabled);
 	}
 
 	public String getValidationErrorMessages() {
@@ -136,12 +160,12 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		if (!enableCustomTileProcessingCheckButton.isSelected())
 			return errorText;
 		if (!tileSizeHeight.isValueValid())
-			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeCombo.MIN
-					+ " and " + JTileSizeCombo.MAX + ". \n";
+			errorText += "Value of \"Tile Size Height\" must be between " + JTileSizeCombo.MIN + " and "
+					+ JTileSizeCombo.MAX + ". \n";
 
 		if (!tileSizeWidth.isValueValid())
-			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeCombo.MIN
-					+ " and " + JTileSizeCombo.MAX + ". \n";
+			errorText += "Value of \"Tile Size Width\" must be between " + JTileSizeCombo.MIN + " and "
+					+ JTileSizeCombo.MAX + ". \n";
 		return errorText;
 	}
 
@@ -158,15 +182,12 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 			if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
 				if (Utilities.testJaiColorQuantizerAvailable())
 					return;
-				JOptionPane
-						.showMessageDialog(null,
-								"<html>This image format is requires additional libraries to be installed:<br>"
-										+ "<b>Java Advanced Image library</b>"
-										+ "(jai_core.jar & jai_codec.jar)<br>"
-										+ "For more details please see the file <b>README.HTM</b> "
-										+ "in section <b>Requirements</b>.</html>",
-								"Image format not available - libraries missing",
-								JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,
+						"<html>This image format is requires additional libraries to be installed:<br>"
+								+ "<b>Java Advanced Image library</b>" + "(jai_core.jar & jai_codec.jar)<br>"
+								+ "For more details please see the file <b>README.HTM</b> "
+								+ "in section <b>Requirements</b>.</html>",
+						"Image format not available - libraries missing", JOptionPane.ERROR_MESSAGE);
 				tileImageFormat.setSelectedIndex(0);
 			}
 		}

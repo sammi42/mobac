@@ -46,6 +46,10 @@ public class AnyAttributeMap extends TreeMap<QName, Object> {
 		put(new QName(key), value);
 	}
 
+	public int getInt(TileImageParameters.Name key) {
+		return Integer.parseInt(getAttr(key.name()));
+	}
+
 	public int getInt(String key) {
 		return Integer.parseInt(getAttr(key));
 	}

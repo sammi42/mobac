@@ -25,12 +25,14 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
@@ -39,6 +41,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * 
  */
+@SupportedParameters(names = { Name.format })
 public class SportsTracker extends AtlasCreator {
 
 	protected File mapDir = null;
@@ -54,13 +57,6 @@ public class SportsTracker extends AtlasCreator {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		// for (LayerInterface layer : atlas) {
-		// for (MapInterface map : layer) {
-		// TileImageParameters param = map.getParameters();
-		// if (param != null)
-		// throw new AtlasTestException("Custom tile settings are not supported by this atlas format");
-		// }
-		// }
 	}
 
 	@Override

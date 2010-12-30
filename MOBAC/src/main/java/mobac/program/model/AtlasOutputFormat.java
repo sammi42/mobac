@@ -30,7 +30,7 @@ import mobac.program.atlascreators.Glopus;
 import mobac.program.atlascreators.GlopusMapFile;
 import mobac.program.atlascreators.GoogleEarthOverlay;
 import mobac.program.atlascreators.GpsSportsTracker;
-import mobac.program.atlascreators.MGM;
+import mobac.program.atlascreators.MGMaps;
 import mobac.program.atlascreators.MagellanRmp;
 import mobac.program.atlascreators.Maplorer;
 import mobac.program.atlascreators.Maverick;
@@ -72,7 +72,7 @@ public enum AtlasOutputFormat {
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Maplorer("Maplorer atlas format", Maplorer.class), //
 	Maverick("Maverick atlas format", Maverick.class), //
-	MGM("MGMaps/MyTrails (MGM)", MGM.class), //
+	MGM("MGMaps/MyTrails (MGM)", MGMaps.class), //
 	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
 	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
 	NaviComputer("NaviComputer (NMAP)", NaviComputer.class), //

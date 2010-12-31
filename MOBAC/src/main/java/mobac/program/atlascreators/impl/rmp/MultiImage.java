@@ -29,7 +29,6 @@ import mobac.utilities.collections.SoftHashMap;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * CalibratedImage that gets its data from a set of other CalibratedImage2
  * 
@@ -38,6 +37,7 @@ public class MultiImage {
 
 	private static final Logger log = Logger.getLogger(MultiImage.class);
 
+	private final MapInterface map;
 	private final MapSource mapSource;
 	private final int zoom;
 	private final TileProvider tileProvider;
@@ -47,11 +47,11 @@ public class MultiImage {
 		this.mapSource = mapSource;
 		this.tileProvider = tileProvider;
 		this.zoom = map.getZoom();
+		this.map = map;
 		cache = new SoftHashMap<TileKey, MobacTile>(400);
 	}
 
-	public BufferedImage getSubImage(BoundingRect area, int width, int height)
-			throws MapCreationException {
+	public BufferedImage getSubImage(BoundingRect area, int width, int height) throws MapCreationException {
 		if (log.isTraceEnabled())
 			log.trace(String.format("getSubImage %d %d %s", width, height, area));
 
@@ -82,7 +82,7 @@ public class MultiImage {
 				}
 			}
 		} catch (Throwable t) {
-			throw new MapCreationException(t);
+			throw new MapCreationException(map, t);
 		} finally {
 			graph.dispose();
 		}

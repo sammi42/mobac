@@ -69,16 +69,13 @@ public class MapTileBuilder {
 	 * @param atlasCreator
 	 * @param mapTileWriter
 	 * @param useRealTileSize
-	 *            affects the tile size at the left and bottom border of the
-	 *            map. If <code>true</code> those tile will have the size of the
-	 *            remaining image data available size (they can be smaller than
-	 *            the size specified). If <code>false</code> the tile size will
-	 *            be as specified by the map's {@link TileImageParameters}.
+	 *            affects the tile size at the left and bottom border of the map. If <code>true</code> those tile will
+	 *            have the size of the remaining image data available size (they can be smaller than the size
+	 *            specified). If <code>false</code> the tile size will be as specified by the map's
+	 *            {@link TileImageParameters}.
 	 */
-	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter,
-			boolean useRealTileSize) {
-		this(atlasCreator, atlasCreator.getParameters().getFormat().getDataWriter(), mapTileWriter,
-				useRealTileSize);
+	public MapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter, boolean useRealTileSize) {
+		this(atlasCreator, atlasCreator.getParameters().getFormat().getDataWriter(), mapTileWriter, useRealTileSize);
 	}
 
 	/**
@@ -87,11 +84,10 @@ public class MapTileBuilder {
 	 * @param tileImageDataWriter
 	 * @param mapTileWriter
 	 * @param useRealTileSize
-	 *            affects the tile size at the left and bottom border of the
-	 *            map. If <code>true</code> those tile will have the size of the
-	 *            remaining image data available size (they can be smaller than
-	 *            the size specified). If <code>false</code> the tile size will
-	 *            be as specified by the map's {@link TileImageParameters}.
+	 *            affects the tile size at the left and bottom border of the map. If <code>true</code> those tile will
+	 *            have the size of the remaining image data available size (they can be smaller than the size
+	 *            specified). If <code>false</code> the tile size will be as specified by the map's
+	 *            {@link TileImageParameters}.
 	 */
 	public MapTileBuilder(AtlasCreator atlasCreator, TileImageDataWriter tileImageDataWriter,
 			MapTileWriter mapTileWriter, boolean useRealTileSize) {
@@ -131,8 +127,7 @@ public class MapTileBuilder {
 			if (realHeight > mergedHeight)
 				realHeight = mergedHeight;
 		}
-		customTileCount = MyMath.divCeil(mergedWidth, realWidth)
-				* MyMath.divCeil(mergedHeight, realHeight);
+		customTileCount = MyMath.divCeil(mergedWidth, realWidth) * MyMath.divCeil(mergedHeight, realHeight);
 	}
 
 	public void createTiles() throws MapCreationException, InterruptedException {
@@ -165,8 +160,8 @@ public class MapTileBuilder {
 						currentTileWidth = Math.min(realWidth, xEnd - xAbsPos + 1);
 					atlasCreator.checkUserAbort();
 					atlasCreator.getAtlasProgress().incMapCreationProgress();
-					BufferedImage tileImage = new BufferedImage(currentTileWidth,
-							currentTileHeight, BufferedImage.TYPE_3BYTE_BGR);
+					BufferedImage tileImage = new BufferedImage(currentTileWidth, currentTileHeight,
+							BufferedImage.TYPE_3BYTE_BGR);
 					buf.reset();
 					try {
 						Graphics2D graphics = tileImage.createGraphics();
@@ -176,8 +171,7 @@ public class MapTileBuilder {
 						tileImageDataWriter.processImage(tileImage, buf);
 						mapTileWriter.writeTile(tilex, tiley, tileType, buf.toByteArray());
 					} catch (IOException e) {
-						throw new MapCreationException("Error writing tile image: "
-								+ e.getMessage(), e);
+						throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 					}
 
 					tilex++;
@@ -197,9 +191,8 @@ public class MapTileBuilder {
 	}
 
 	/**
-	 * Paints the graphics of the custom tile specified by the pixel coordinates
-	 * <code>xAbsPos</code> and <code>yAbsPos</code> on the currently selected
-	 * map & layer.
+	 * Paints the graphics of the custom tile specified by the pixel coordinates <code>xAbsPos</code> and
+	 * <code>yAbsPos</code> on the currently selected map & layer.
 	 * 
 	 * @param graphics
 	 * @param xAbsPos
@@ -236,9 +229,8 @@ public class MapTileBuilder {
 	}
 
 	/**
-	 * A simple local cache holding the last 10 loaded original tiles. If the
-	 * custom tile size is smaller than 256x256 the efficiency of this cache is
-	 * very high (~ 75% hit rate).
+	 * A simple local cache holding the last 10 loaded original tiles. If the custom tile size is smaller than 256x256
+	 * the efficiency of this cache is very high (~ 75% hit rate).
 	 */
 	private CachedTile[] cache = new CachedTile[10];
 	private int cachePos = 0;

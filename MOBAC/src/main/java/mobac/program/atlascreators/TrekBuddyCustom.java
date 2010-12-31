@@ -73,7 +73,7 @@ public class TrekBuddyCustom extends TrekBuddy {
 		} catch (InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

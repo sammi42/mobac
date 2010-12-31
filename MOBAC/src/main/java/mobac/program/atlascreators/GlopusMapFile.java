@@ -31,7 +31,6 @@ import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.LittleEndianOutputStream;
 
-
 /**
  * General structure of an GMF file (Little Endian)
  * 
@@ -86,7 +85,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 		} catch (InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 
@@ -125,8 +124,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 			yCoordStart = GlopusMapFile.this.yMin * mapSpace.getTileSize();
 		}
 
-		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
-				throws IOException {
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
 			this.tileType = tileType;
 			int xCooord = xCoordStart + tilex * tileWidth;
 			int yCooord = yCoordStart + tiley * tileHeight;
@@ -152,8 +150,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 						+ (4 * 24) // four calibration points
 						);
 				fout = new FileOutputStream(gmfFile);
-				LittleEndianOutputStream out = new LittleEndianOutputStream(
-						new BufferedOutputStream(fout, 16384));
+				LittleEndianOutputStream out = new LittleEndianOutputStream(new BufferedOutputStream(fout, 16384));
 				out.writeInt((int) 0xff000002);
 				out.writeInt(count);
 				int mapNumber = 0;
@@ -184,8 +181,8 @@ public class GlopusMapFile extends TrekBuddyCustom {
 					out.writeDouble(gt.calWLon);
 					out.writeDouble(gt.calSLat);
 					if (log.isTraceEnabled())
-						log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calWLon,
-								gt.calNLat, gt.calELon, gt.calELon, mapName, offset));
+						log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calWLon, gt.calNLat, gt.calELon,
+								gt.calELon, mapName, offset));
 					offset += gt.data.length;
 				}
 				out.flush();
@@ -210,8 +207,7 @@ public class GlopusMapFile extends TrekBuddyCustom {
 		double calSLat;
 		double calELon;
 
-		public GlopusTile(byte[] data, double calNLat, double calWLon, double calSLat,
-				double calELon) {
+		public GlopusTile(byte[] data, double calNLat, double calWLon, double calSLat, double calELon) {
 			super();
 			this.data = data;
 			this.calNLat = calNLat;

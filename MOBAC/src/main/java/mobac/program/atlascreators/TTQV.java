@@ -31,8 +31,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-
-
 public class TTQV extends Ozi {
 
 	@Override
@@ -45,7 +43,7 @@ public class TTQV extends Ozi {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+			throw new MapCreationException(map, e1);
 		}
 		createTiles();
 		writeCalFile();
@@ -66,8 +64,7 @@ public class TTQV extends Ozi {
 
 			int width = (xMax - xMin + 1) * tileSize;
 			int height = (yMax - yMin + 1) * tileSize;
-			double scale = ((latitudeMax - latitudeMin) * (longitudeMax - longitudeMin))
-					/ (width * height);
+			double scale = ((latitudeMax - latitudeMin) * (longitudeMax - longitudeMin)) / (width * height);
 
 			String nsowLine = "%s = 6 = %2.6f\r\n";
 			String cLine = "c%d_%s = 7 =  %2.6f\r\n";
@@ -115,7 +112,7 @@ public class TTQV extends Ozi {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			throw new MapCreationException("Error writing cal file: " + e.getMessage(), e);
+			throw new MapCreationException("Error writing cal file: " + e.getMessage(), map, e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

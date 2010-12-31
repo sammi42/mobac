@@ -95,7 +95,7 @@ public class SportsTracker extends AtlasCreator {
 					if (sourceTileData != null)
 						writeTile(x, y, sourceTileData);
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 			}
 		}

@@ -313,7 +313,7 @@ public class AlpineQuestMap extends AtlasCreator {
 			// add tiles
 			this.addLevelTiles();
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 
@@ -377,14 +377,14 @@ public class AlpineQuestMap extends AtlasCreator {
 							sourceTileData = buffer.toByteArray();
 
 							if (sourceTileData == null)
-								throw new MapCreationException("Image resizing failed.");
+								throw new MapCreationException("Image resizing failed.", map);
 						}
 
 						packCreator.add(sourceTileData, "" + x + "_" + (nbTotalTiles - y)); // y tiles count began by
 						// bottom in AQM
 					}
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 			}
 		}

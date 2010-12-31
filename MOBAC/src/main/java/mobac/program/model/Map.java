@@ -131,6 +131,11 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		this.parameters = parameters;
 	}
 
+	public String getInfoText() {
+		return "Map [name=" + name + ", mapSource=" + mapSource + ",\nzoom=" + zoom + ",\nmaxTileCoordinate="
+				+ maxTileCoordinate + ",\nminTileCoordinate=" + minTileCoordinate + ",\nparameters=" + parameters + "]";
+	}
+
 	public String getToolTip() {
 		MapSpace mapSpace = mapSource.getMapSpace();
 		EastNorthCoordinate tl = new EastNorthCoordinate(mapSpace, zoom, minTileCoordinate.x, minTileCoordinate.y);

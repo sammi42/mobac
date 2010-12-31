@@ -42,7 +42,7 @@ public class Glopus extends Ozi {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 		createTiles();
 		writeKalFile();
@@ -91,7 +91,7 @@ public class Glopus extends Ozi {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

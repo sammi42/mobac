@@ -113,19 +113,20 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		try {
 			Utilities.mkDir(atlasDir);
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 		try {
 			SQLiteLoader.loadSQLite();
 		} catch (SQLException e) {
-			throw new MapCreationException(SQLiteLoader.MSG_SQLITE_MISSING, e);
+			throw new MapCreationException(SQLiteLoader.MSG_SQLITE_MISSING, map, e);
 		}
 		try {
 			openConnection();
 			initializeDB();
 			createTiles();
 		} catch (SQLException e) {
-			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage(), e);
+			throw new MapCreationException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage(),
+					map, e);
 		}
 	}
 
@@ -198,7 +199,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 							}
 						}
 					} catch (IOException e) {
-						throw new MapCreationException(e);
+						throw new MapCreationException(map, e);
 					}
 				}
 			}
@@ -210,7 +211,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 			conn.commit();
 			atlasProgress.setMapCreationProgress(maxMapProgress);
 		} catch (SQLException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

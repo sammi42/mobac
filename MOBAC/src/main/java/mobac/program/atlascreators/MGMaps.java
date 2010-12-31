@@ -185,7 +185,7 @@ public class MGMaps extends AtlasCreator {
 			}
 
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		} finally {
 			if (mgmTileWriter != null)
 				mgmTileWriter.dispose();
@@ -226,7 +226,7 @@ public class MGMaps extends AtlasCreator {
 				raf.writeInt(pos);
 				return pos;
 			} catch (IOException e) {
-				throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+				throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 			}
 		}
 

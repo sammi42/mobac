@@ -37,7 +37,6 @@ import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
-
 public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
 	private static final String NAVI_TABLES = "CREATE TABLE  MapInfo (MapType TEXT, Zoom INTEGER NOT NULL, MinX INTEGER, MaxX INTEGER, MinY INTEGER, MaxY INTEGER);\n"
@@ -195,13 +194,13 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 							}
 						}
 					} catch (IOException e) {
-						throw new MapCreationException(e);
+						throw new MapCreationException(map, e);
 					}
 				}
 			}
 			conn.commit();
 		} catch (SQLException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

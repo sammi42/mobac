@@ -101,7 +101,7 @@ public class MagellanRmp extends AtlasCreator {
 			rmpWriter.writePreparedFileEntry(tlmEntry);
 			atlasProgress.setMapCreationProgress(1000);
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 		layerNum++;
 	}

@@ -133,7 +133,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
 					}
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 				tiley++;
 			}

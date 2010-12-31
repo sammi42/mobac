@@ -154,7 +154,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		} catch (MapCreationException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 
@@ -184,11 +184,12 @@ public class GoogleEarthOverlay extends AtlasCreator {
 			}
 		}
 		if (imageHeight < 0 || imageWidth < 0)
-			throw new MapCreationException("Invalid map size: (width/height: " + imageWidth + "/" + imageHeight + ")");
+			throw new MapCreationException("Invalid map size: (width/height: " + imageWidth + "/" + imageHeight + ")",
+					map);
 		long imageSize = 3l * ((long) imageWidth) * ((long) imageHeight);
 		if (imageSize > Integer.MAX_VALUE)
 			throw new MapCreationException("Map image too large: (width/height: " + imageWidth + "/" + imageHeight
-					+ ") - reduce the map size and try again");
+					+ ") - reduce the map size and try again", map);
 		BufferedImage tileImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics = tileImage.createGraphics();
 		try {
@@ -237,7 +238,7 @@ public class GoogleEarthOverlay extends AtlasCreator {
 			kmzOutputStream.writeStoredEntry(imageFileName, buf.toByteArray());
 			addMapToKmz(imageFileName);
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

@@ -32,15 +32,12 @@ import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-
-
 /**
- * Creates maps using the Mobile Trail Explorer (MTE) / JTileDownloader atlas
- * format (converted to PNG, size 256x256 pixel).
+ * Creates maps using the Mobile Trail Explorer (MTE) / JTileDownloader atlas format (converted to PNG, size 256x256
+ * pixel).
  * 
- * Please note that this atlas format ignores the defined atlas structure. It
- * uses a separate directory for each used map source and inside one directory
- * for each zoom level.
+ * Please note that this atlas format ignores the defined atlas structure. It uses a separate directory for each used
+ * map source and inside one directory for each zoom level.
  */
 public class MobileTrailExplorer extends AtlasCreator {
 
@@ -67,7 +64,7 @@ public class MobileTrailExplorer extends AtlasCreator {
 			Utilities.mkDir(mapDir);
 			Utilities.mkDir(mapZoomDir);
 		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+			throw new MapCreationException(map, e1);
 		}
 		if (mapSource.getTileImageType() != TileImageType.PNG)
 			// If the tile image format is not png we have to convert it
@@ -84,7 +81,7 @@ public class MobileTrailExplorer extends AtlasCreator {
 			try {
 				Utilities.mkDir(xDir);
 			} catch (IOException e1) {
-				throw new MapCreationException(e1);
+				throw new MapCreationException(map, e1);
 			}
 			for (int y = yMin; y <= yMax; y++) {
 				checkUserAbort();
@@ -102,7 +99,7 @@ public class MobileTrailExplorer extends AtlasCreator {
 						}
 					}
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 			}
 		}

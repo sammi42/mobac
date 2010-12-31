@@ -166,7 +166,7 @@ public class CacheBox extends AtlasCreator {
 				writeLong(tileoffset);
 			packRaFile.seek(pos);
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

@@ -57,7 +57,7 @@ public class GpsSportsTracker extends AtlasCreator {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+			throw new MapCreationException(map, e1);
 		}
 		if (mapSource.getTileImageType() != TileImageType.PNG)
 			// If the tile image format is not png we have to convert it
@@ -86,7 +86,7 @@ public class GpsSportsTracker extends AtlasCreator {
 						}
 					}
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 			}
 		}

@@ -129,7 +129,7 @@ public class RunGPSAtlas extends AtlasCreator {
 						writeTile(mapName, sourceTileData, x, y, zoom);
 					}
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 			}
 		}

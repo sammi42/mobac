@@ -452,12 +452,13 @@ public class TwoNavRmap extends AtlasCreator {
 				}
 			}
 			if (index == rmapFile.zoomLevels.length) {
-				throw new MapCreationException("Map not found in the zoomLevels list");
+				throw new MapCreationException("Map not found in the zoomLevels list", map);
 			}
 			try {
 				rmapFile.zoomLevels[index].writeHeader();
 			} catch (IOException e) {
-				throw new MapCreationException("rmapFile.zoomLevels[Index].writeHeader() failed: " + e.getMessage(), e);
+				throw new MapCreationException("rmapFile.zoomLevels[Index].writeHeader() failed: " + e.getMessage(),
+						map, e);
 			}
 
 			int tilex = 0;
@@ -496,7 +497,7 @@ public class TwoNavRmap extends AtlasCreator {
 							rmapFile.write(emptyTileData);
 						}
 					} catch (IOException e) {
-						throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+						throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 					}
 					tiley++;
 				}
@@ -506,7 +507,7 @@ public class TwoNavRmap extends AtlasCreator {
 		} catch (MapCreationException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

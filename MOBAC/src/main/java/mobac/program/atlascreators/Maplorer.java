@@ -43,7 +43,6 @@ import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-
 /**
  * AtlasCreator for MAPLORER ( http://maplorer.com )
  * 
@@ -114,7 +113,7 @@ public class Maplorer extends AtlasCreator {
 		} catch (InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 
@@ -150,7 +149,7 @@ public class Maplorer extends AtlasCreator {
 						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
 					}
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 				tiley++;
 			}

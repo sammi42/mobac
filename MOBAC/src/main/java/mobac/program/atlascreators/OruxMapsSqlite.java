@@ -133,7 +133,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 		} catch (MapCreationException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 	}
 

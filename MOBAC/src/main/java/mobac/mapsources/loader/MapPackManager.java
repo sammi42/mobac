@@ -116,6 +116,7 @@ public class MapPackManager {
 	protected void testMapPack(File mapPackFile) throws IOException, CertificateException {
 		String fileName = mapPackFile.getName();
 		JarFile jf = new JarFile(mapPackFile, true);
+		log.info("Build date: " + jf.getManifest().getAttributes("Build-Date"));
 		try {
 			Enumeration<JarEntry> it = jf.entries();
 			while (it.hasMoreElements()) {

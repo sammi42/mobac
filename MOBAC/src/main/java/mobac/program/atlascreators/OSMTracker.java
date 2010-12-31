@@ -102,7 +102,7 @@ public class OSMTracker extends AtlasCreator {
 					if (sourceTileData != null)
 						mapTileWriter.writeTile(x, y, tileType, sourceTileData);
 				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), e);
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
 			}
 		}

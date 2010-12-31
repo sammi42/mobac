@@ -31,7 +31,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
-
 public class CacheWolf extends Ozi {
 
 	@Override
@@ -48,7 +47,7 @@ public class CacheWolf extends Ozi {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+			throw new MapCreationException(map, e1);
 		}
 		if (parameters == null) {
 			// One image per map
@@ -73,7 +72,7 @@ public class CacheWolf extends Ozi {
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		} finally {
 			ctp.cleanup();
 		}
@@ -85,12 +84,11 @@ public class CacheWolf extends Ozi {
 		try {
 			writeWflFile(mapName, 0, 0, width, height);
 		} catch (IOException e) {
-			throw new MapCreationException("Error writing wfl file: " + e.getMessage(), e);
+			throw new MapCreationException("Error writing wfl file: " + e.getMessage(), map, e);
 		}
 	}
 
-	private void writeWflFile(String filename, int tilex, int tiley, int width, int height)
-			throws IOException {
+	private void writeWflFile(String filename, int tilex, int tiley, int width, int height) throws IOException {
 		FileOutputStream fout = null;
 		try {
 			fout = new FileOutputStream(new File(mapDir, filename + ".wfl"));
@@ -142,8 +140,7 @@ public class CacheWolf extends Ozi {
 			log.debug("Writing tiles to set folder: " + mapDir);
 		}
 
-		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData)
-				throws IOException {
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
 			String tileFileName = String.format("%s_%dx%d", mapName, tilex, tiley);
 			File f = new File(mapDir, tileFileName + '.' + imageFormat);
 			FileOutputStream out = new FileOutputStream(f);

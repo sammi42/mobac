@@ -69,7 +69,7 @@ public class Ozi extends TrekBuddy {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 		createTiles();
 		writeMapFile();
@@ -129,7 +129,7 @@ public class Ozi extends TrekBuddy {
 			}
 			pngWriter.finish();
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		} finally {
 			Utilities.closeStream(fileOs);
 		}

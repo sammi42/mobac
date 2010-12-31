@@ -16,24 +16,36 @@
  ******************************************************************************/
 package mobac.exceptions;
 
+import mobac.program.interfaces.MapInterface;
+
 public class MapCreationException extends Exception {
 
 	private static final long serialVersionUID = 1L;
+	private MapInterface map;
 
-	public MapCreationException() {
-		super();
-	}
-
-	public MapCreationException(String message, Throwable cause) {
+	public MapCreationException(String message, MapInterface map, Throwable cause) {
 		super(message, cause);
+		this.map = map;
 	}
 
-	public MapCreationException(String message) {
+	public MapCreationException(String message, MapInterface map) {
 		super(message);
+		this.map = map;
 	}
 
-	public MapCreationException(Throwable cause) {
+	public MapCreationException(MapInterface map, Throwable cause) {
 		super(cause);
+		this.map = map;
+	}
+
+	@Override
+	public String getMessage() {
+		String s = super.getMessage();
+		if (map != null) {
+			s += "\n" + map.getInfoText();
+		}
+		return s;
+
 	}
 
 }

@@ -36,7 +36,7 @@ public class PNGWorldfile extends Glopus {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		}
 		createTiles();
 		writeWorldFile();
@@ -81,7 +81,7 @@ public class PNGWorldfile extends Glopus {
 			mapWriter.flush();
 			mapWriter.close();
 		} catch (IOException e) {
-			throw new MapCreationException(e);
+			throw new MapCreationException(map, e);
 		} finally {
 			Utilities.closeStream(fout);
 		}

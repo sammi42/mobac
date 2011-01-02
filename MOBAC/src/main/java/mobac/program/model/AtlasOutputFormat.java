@@ -23,6 +23,7 @@ import mobac.program.atlascreators.AlpineQuestMap;
 import mobac.program.atlascreators.AndNav;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.atlascreators.BackCountryNavigator;
+import mobac.program.atlascreators.BigPlanetTracks;
 import mobac.program.atlascreators.CacheBox;
 import mobac.program.atlascreators.CacheWolf;
 import mobac.program.atlascreators.GarminCustom;
@@ -60,10 +61,10 @@ public enum AtlasOutputFormat {
 	AlpineQuestMap("AlpineQuestMap (AQM)", AlpineQuestMap.class), //
 	AndNav("AndNav atlas format", AndNav.class), //
 	BackCountryNavigator("BackCountry Navigator", BackCountryNavigator.class), //
-	BigPlanet("Big Planet Tracks SQLite", RMapsSQLite.class), //
+	BigPlanet("Big Planet Tracks SQLite", BigPlanetTracks.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
-	Galileo("Galileo Offline Maps", RMapsSQLite.class), //
+	Galileo("Galileo Offline Maps", BigPlanetTracks.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
 	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //

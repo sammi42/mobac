@@ -27,14 +27,15 @@ import java.util.Locale;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
-import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.RequiresSQLite;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
@@ -44,9 +45,6 @@ import mobac.utilities.jdbc.SQLiteLoader;
 /**
  * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline SQLite maps)
  * http://code.google.com/p/bigplanet/
- * <p>
- * Requires "SQLite Java Wrapper/JDBC Driver" (BSD-style license) http://www.ch-werner.de/javasqlite/
- * </p>
  * <p>
  * Some source parts are taken from the "android-map.blogspot.com Version of Mobile Atlas Creator":
  * http://code.google.com/p/android-map/
@@ -80,7 +78,11 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+		MapSpace mapSpace = mapSource.getMapSpace();
+		boolean correctTileSize = (256 == mapSpace.getTileSize());
+		ProjectionCategory pc = mapSpace.getProjectionCategory();
+		boolean correctProjection = (ProjectionCategory.SPHERE.equals(pc) || ProjectionCategory.ELLIPSOID.equals(pc));
+		return correctTileSize && correctProjection;
 	}
 
 	@Override

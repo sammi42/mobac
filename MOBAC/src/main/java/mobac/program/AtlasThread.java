@@ -240,7 +240,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		try {
 			tileArchive = null;
 			String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
-			File tileArchiveFile = File.createTempFile(tempSuffix, ".tar");
+			File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
 			// If something goes wrong the temp file only
 			// persists until the VM exits
 			tileArchiveFile.deleteOnExit();

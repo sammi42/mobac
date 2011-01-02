@@ -9,6 +9,10 @@
 	<property name="zip_src.name" value="Mobile Atlas Creator ${mobac.version} src.zip" />
 	<property name="main.class" value="mobac.StartMOBAC" />
 
+	<tstamp>
+		<format property="build.date" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
+
 	<property name="je-version" value="3.3.93" />
 
 	<path id="maincp">
@@ -73,10 +77,16 @@
 		<pathconvert pathsep=";" property="mappacklist" refid="mappacks">
 			<mapper type="flatten" />
 		</pathconvert>
+		<!-- The required key stores are not available in SVN and releases! -->
+		<echo message="Signing map packs using password: ${keystore.password}" />
 		<for list="${mappacklist}" param="mappack" delimiter=";">
 			<sequential>
 				<echo message="@{mappack}" />
 				<mkdir dir="build/mp-@{mappack}" />
+				<uptodate property="@{mappack}.newer" targetfile="mapsources/mp-@{mappack}.jar">
+					<srcfiles dir="src/main/java/mobac/mapsources/mappacks/@{mappack}" />
+				</uptodate>
+				<echo message="No changes in map pack detected: ${@{mappack}.newer}" />
 				<javac srcdir="src/main/java" destdir="build/mp-@{mappack}" defaultexcludes="true" debug="true">
 					<include name="mobac/mapsources/mappacks/@{mappack}/**.java" />
 					<classpath>
@@ -89,15 +99,14 @@
 					<manifest>
 						<attribute name="MapPackVersion" value="${mobac.mappackversion}" />
 						<attribute name="MapPackName" value="@{mappack}" />
+						<attribute name="Build-Date" value="${build.date}" />
 					</manifest>
 					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
 						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
 					</fileset>
 					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />
 				</jar>
-				<!-- The required key stores are not available in SVN and releases! -->
-				<echo message="Signing map pack using password: ${keystore.password}" />
-				<signjar keystore="keys/keystore.jks" storepass="${keystore.password}" alias="MapPack" jar="mapsources/mp-@{mappack}.jar" />
+				<signjar keystore="keys/keystore.jks" storepass="${keystore.password}" alias="MapPack" jar="mapsources/mp-@{mappack}.jar" verbose="false" />
 			</sequential>
 		</for>
 	</target>

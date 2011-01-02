@@ -54,16 +54,15 @@ public class DirectoryManager {
 	static {
 		currentDir = new File(System.getProperty("user.dir"));
 		userHomeDir = new File(System.getProperty("user.home"));
-		tempDir = new File(System.getProperty("java.io.tmpdir"));
 		programDir = getProgramDir();
 		loadDirectoriesIni();
 
 		userAppDataDir = getUserAppDataDir();
+		tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
 		mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
 		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
 		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
 		tileStoreDir = applyDirConfig("mobac.tilestoredir", new File(programDir, "tilestore"));
-
 	}
 
 	private static File applyDirConfig(String propertyName, File defaultDir) {

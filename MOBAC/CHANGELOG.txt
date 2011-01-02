@@ -13,6 +13,7 @@
  ~ Atlas output format has to be chosen before adding maps
  ~ Disabling of unsupported tile processing options (regarding the current
     atlas format)
+ ~ Enabled maps with ellipsoid projection for RMaps 
 
 1.9 preview 2 (2010-12-18)
  + New atlas format: BackCountry Navigator

@@ -20,6 +20,7 @@
 		<fileset dir="lib" includes="jai*.jar" />
 		<fileset dir="lib" includes="bsh-2.0b4.jar" />
 		<fileset dir="lib" includes="Tidy.jar" />
+		<fileset dir="lib" includes="javapng-2.0.jar" />
 		<fileset dir="lib" includes="commons-codec-1.4.jar" />
 		<fileset dir="lib" includes="commons-io-2.0.jar" />
 		<fileset dir="lib" includes="je-${je-version}.jar" />
@@ -124,6 +125,7 @@
 			<zipfileset src="lib/bsh-2.0b4.jar" includes="**/*.class" />
 			<zipfileset src="lib/commons-codec-1.4.jar" includes="**/*.class" />
 			<zipfileset src="lib/commons-io-2.0.jar" includes="**/*.class" />
+			<zipfileset src="lib/javapng-2.0.jar" includes="**/*.class" />
 			<zipfileset src="lib/Tidy.jar" includes="org/w3c/tidy/**" />
 			<fileset dir="build/mobac">
 				<exclude name="**/unittest/**" />
@@ -141,17 +143,7 @@
 			-outjars    build/temp.jar
 			-keepattributes *Annotation*
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
-			-keep class mobac.program.interfaces.MapSource { public *; }
-			-keep class mobac.program.interfaces.MapSpace { public *; }
-			-keep class org.apache.log4j.Layout { public *; }
-			-keep class org.apache.log4j.Level { public *; }
-			-keep class org.apache.log4j.Category { public *; }
-			-keep class org.apache.log4j.Priority { public *; }
-			-keep class org.apache.log4j.spi.LoggingEvent { public *; }
-			-keep class org.apache.log4j.spi.ThrowableInformation { public *; }
-			-keep class org.apache.log4j.spi.LocationInfo { public *; }
-			-keep class org.apache.log4j.PatternLayout { public *; }
-			-keep class org.apache.log4j.FileAppender { public *; }
+			-keep class mobac.program.interfaces.* { public *; }
 			-keep class mobac.program.model.package-info
 			-keep class mobac.program.model.* { public *; }
 			-keep class mobac.program.jaxb.* { public *; }
@@ -165,6 +157,16 @@
 			-keep class mobac.mapsources.MapSourceTools { public *; }
 			-keep class mobac.mapsources.MapSourceUrlUpdater { public *; }
 			-keep class mobac.mapsources.custom.* { *; }
+			-keep class org.apache.log4j.Layout { public *; }
+			-keep class org.apache.log4j.Level { public *; }
+			-keep class org.apache.log4j.Category { public *; }
+			-keep class org.apache.log4j.Priority { public *; }
+			-keep class org.apache.log4j.spi.LoggingEvent { public *; }
+			-keep class org.apache.log4j.spi.ThrowableInformation { public *; }
+			-keep class org.apache.log4j.spi.LocationInfo { public *; }
+			-keep class org.apache.log4j.PatternLayout { public *; }
+			-keep class org.apache.log4j.FileAppender { public *; }
+			-keep class com.sixlegs.png.PngImage {public *; }
 			-keepclassmembers enum * {
 			    public static **[] values();
 			    public static ** valueOf(java.lang.String);

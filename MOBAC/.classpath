@@ -26,5 +26,10 @@
 	<classpathentry kind="lib" path="lib/bsh-2.0b4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/javapng-2.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://javapng.googlecode.com/svn/trunk/javapng2/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

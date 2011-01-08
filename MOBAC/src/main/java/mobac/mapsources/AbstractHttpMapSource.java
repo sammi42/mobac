@@ -120,6 +120,9 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 				((MapSourceListener) Thread.currentThread()).tileDownloaded(data.length);
 			}
 			return data;
+		} else if (loadMethod == LoadMethod.SOURCE) {
+			initialize();
+			return TileDownLoader.downloadTileAndUpdateStore(x, y, zoom, this);
 		} else {
 			initialize();
 			return TileDownLoader.getImage(x, y, zoom, this);

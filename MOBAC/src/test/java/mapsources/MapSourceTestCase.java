@@ -16,13 +16,14 @@
  ******************************************************************************/
 package mapsources;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 
 import junit.framework.TestCase;
+import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
@@ -48,17 +49,23 @@ public class MapSourceTestCase extends TestCase {
 		this.testCoordinate = testCoordinate;
 	}
 
-	public void runMapSourceTest() throws IOException, MapSourceTestFailedException {
+	public void runMapSourceTest() throws Exception {
 		runTest();
 	}
 
 	@Override
-	protected void runTest() throws IOException, MapSourceTestFailedException {
+	protected void runTest() throws Exception {
 		int zoom = mapSource.getMaxZoom();
 
 		MapSpace mapSpace = mapSource.getMapSpace();
 		int tilex = mapSpace.cLonToX(testCoordinate.lon, zoom) / mapSpace.getTileSize();
 		int tiley = mapSpace.cLatToY(testCoordinate.lat, zoom) / mapSpace.getTileSize();
+
+		if (mapSource instanceof AbstractHttpMapSource)
+			try {
+				mapSource.getTileData(-1, 0, 0, LoadMethod.SOURCE);
+			} catch (Exception e) {
+			}
 
 		HttpURLConnection c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
 		c.setReadTimeout(10000);

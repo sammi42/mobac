@@ -30,8 +30,9 @@ import java.util.Map;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.misc_worldwide.Topomapper;
+import mobac.mapsources.mappacks.bing.MicrosoftVirtualEarth;
 import mobac.program.Logging;
+import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
@@ -52,11 +53,12 @@ public class MapSourceTypeDetector {
 	 */
 	public static void main(String[] args) {
 		Logging.configureLogging();
+		ProgramInfo.initialize();
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 
-		testMapSource(Topomapper.class);
+		testMapSource(MicrosoftVirtualEarth.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

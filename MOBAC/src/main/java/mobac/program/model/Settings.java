@@ -146,7 +146,7 @@ public class Settings {
 	 * </p>
 	 */
 	@XmlElement
-	private boolean devMode = false;
+	public boolean devMode = false;
 
 	/**
 	 * Saves the last used directory of the GPX file chooser dialog. Used in {@link GpxLoad}.
@@ -294,10 +294,6 @@ public class Settings {
 
 	public void setTileSize(Dimension tileSize) {
 		this.tileSize = tileSize;
-	}
-
-	public boolean isDevModeEnabled() {
-		return devMode;
 	}
 
 	public TileImageFormat getTileImageFormat() {

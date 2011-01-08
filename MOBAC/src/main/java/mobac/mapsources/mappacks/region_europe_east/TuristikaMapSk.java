@@ -39,7 +39,6 @@ public class TuristikaMapSk extends AbstractHttpMapSource {
 		sy = sy.substring(0, 3) + "/" + sy.substring(3, 6) + "/" + sy.substring(6, 9);
 
 		String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy + ".png";
-		System.out.println(s);
 		return s;
 	}
 

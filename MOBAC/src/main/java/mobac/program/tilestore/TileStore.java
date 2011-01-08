@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 public abstract class TileStore {
 
-	private static TileStore INSTANCE = null;
+	protected static TileStore INSTANCE = null;
 
 	protected Logger log;
 

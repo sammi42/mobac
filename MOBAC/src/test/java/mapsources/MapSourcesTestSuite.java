@@ -25,7 +25,10 @@ import junit.framework.TestSuite;
 import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
+import mobac.mapsources.impl.DebugMapSource;
+import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.program.Logging;
+import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
@@ -35,6 +38,8 @@ import mobac.tools.urlupdater.MapSourcesUpdater;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import unittests.helper.DummyTileStore;
 
 /**
  * {@link TestSuite} that tests every available map source for operability. The operability test consists of the
@@ -62,9 +67,11 @@ public class MapSourcesTestSuite extends TestSuite {
 		DefaultMapSourcesManager.initialize();
 		Settings.load();
 		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {
+			if (mapSource instanceof DebugMapSource || mapSource instanceof LocalhostTestSource)
+				continue;
 			if (mapSource instanceof AbstractMultiLayerMapSource) {
 				for (MapSource ms : (AbstractMultiLayerMapSource) mapSource)
-					addMapSourcesTestCase((HttpMapSource) ms);
+					addMapSourcesTestCase(ms);
 			} else
 				addMapSourcesTestCase(mapSource);
 		}
@@ -81,6 +88,10 @@ public class MapSourcesTestSuite extends TestSuite {
 	}
 
 	public static TestSuite suite() throws JAXBException {
+		Logging.configureConsoleLogging();
+		ProgramInfo.initialize(); // Load revision info
+		DummyTileStore.initialize();
+		DefaultMapSourcesManager.initializeEclipseMapPacksOnly();
 		MapSourcesTestSuite testSuite = new MapSourcesTestSuite();
 		return testSuite;
 	}

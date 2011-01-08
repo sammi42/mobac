@@ -58,7 +58,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	protected void loadMapSources() {
-		boolean devMode = Settings.getInstance().isDevModeEnabled();
+		boolean devMode = Settings.getInstance().devMode;
 		if (devMode) {
 			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
 			addMapSource(new DebugMapSource());
@@ -115,6 +115,11 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	public static void initialize() {
 		INSTANCE = new DefaultMapSourcesManager();
 		((DefaultMapSourcesManager) INSTANCE).loadMapSources();
+	}
+
+	public static void initializeEclipseMapPacksOnly() {
+		INSTANCE = new DefaultMapSourcesManager();
+		((DefaultMapSourcesManager) INSTANCE).loadMapPacksEclipseMode();
 	}
 
 	@Override

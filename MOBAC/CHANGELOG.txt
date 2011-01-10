@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 4 (2011-01-??)
+ + New: Support for CustomWmsMapSource (experimental)
+
 1.9 preview 3 (2011-01-09)
  + New atlas format: PNG + Worldfile (PNG & PGW)
  ~ Atlas output format has to be chosen before adding maps

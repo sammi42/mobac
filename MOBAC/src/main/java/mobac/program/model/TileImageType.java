@@ -20,9 +20,19 @@ package mobac.program.model;
  * Supported file extensions of all {@link TileImageFormat} enums.
  */
 public enum TileImageType {
-	PNG, JPG, GIF;
+	PNG("png"), JPG("jpeg"), GIF("gif");
+
+	private final String mime;
+
+	private TileImageType(String mime) {
+		this.mime = mime;
+	}
 
 	public String getFileExt() {
 		return name().toLowerCase();
+	}
+
+	public String getMimeType() {
+		return mime;
 	}
 }

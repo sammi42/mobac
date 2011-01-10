@@ -16,6 +16,7 @@ import javax.xml.bind.ValidationEventLocator;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
+import mobac.mapsources.custom.CustomWmsMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.WrappedMapSource;
 import mobac.utilities.file.FileExtFilter;
@@ -38,6 +39,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		Unmarshaller unmarshaller;
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		classes.add(CustomMapSource.class);
+		classes.add(CustomWmsMapSource.class);
 		classes.add(CustomMultiLayerMapSource.class);
 		Class<?> cloudmadeClass = null;
 		try {

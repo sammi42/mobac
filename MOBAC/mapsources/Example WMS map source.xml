@@ -1,0 +1,28 @@
+<customWmsMapSource>
+  <!-- Map source name as it appears in the map sources list.  Additionally used for the tile store name --> 
+  <name>WMS geo.admin.ch (Swiss only)</name>
+
+  <minZoom>12</minZoom>
+  <maxZoom>18</maxZoom>
+  
+  <!-- Tile format (PNG, JPG or GIF) -->
+  <tileType>JPG</tileType>
+
+  <!-- WMS layer parameter -->
+  <version>1.0.0</version>
+  
+  <!-- WMS layer parameter -->
+  <layers>ch.bafu.ren-wald_ueber_1000_meter</layers>
+
+  <!-- WMS base URL -->
+  <url>http://wms.geo.admin.ch/?</url>
+
+  <!-- Corrently only EPSG:4326 is supported --> 
+  <coordinatesystem>EPSG:4326</coordinatesystem>
+
+  <!-- Optional: Additional parameters appended to the WMS url.  Don't forget to encode amphersand characters to &amp; --> 
+  <aditionalparameters></aditionalparameters>
+
+  <backgroundColor>#000000</backgroundColor>
+
+</customWmsMapSource>

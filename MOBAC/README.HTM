@@ -98,6 +98,7 @@ SourceForge.net: <br>
 	<li><a href="#AdvancedUsers">Details for advanced users</a>
 	<ul style="margin-left: 10px;">
 		<li><a href="#CustomMapSource">Custom map sources</a></li>
+		<li><a href="#CustomWMSMapSource">Custom WMS map sources</a></li>
 		<li><a href="#CustomMultiLayerMapSource">Custom multi-layer
 		map sources</a></li>
 		<li><a href="#BeanShellMapSource">Custom BeanShell map
@@ -822,6 +823,25 @@ curly brace:</p>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20map%20source.xml">
 Example custom map source.xml</a></p>
+<h3><a name="CustomWMSMapSource">Custom WMS map sources</a></h3>
+<p>Similar a WMS map source can be defined. Currently only <tt>EPSG:4326</tt>
+as coordinatesystem is supported.</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;customWmsMapSource&gt;
+    &lt;name&gt;TerraServer WMS&lt;/name&gt;
+    &lt;minZoom&gt;12&lt;/minZoom&gt;
+    &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+    &lt;tileType&gt;JPG&lt;/tileType&gt;
+    &lt;version&gt;1.1.1&lt;/version&gt;
+    &lt;layers&gt;DRG&lt;/layers&gt;
+    &lt;url&gt;http://terraserver-usa.com/ogcmap6.ashx?&lt;/url&gt;
+    &lt;coordinatesystem&gt;EPSG:4326&lt;/coordinatesystem&gt;
+    &lt;aditionalparameters&gt;&amp;amp;EXCEPTIONS=BLANK&amp;amp;Styles=&lt;/aditionalparameters&gt;
+    &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
+&lt;/customWmsMapSource&gt;</pre>
+<p>Example file (with comments) for download: <a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20WMS%20map%20source.xml">
+Example custom WMS map source.xml</a></p>
 <h3><a name="CustomMultiLayerMapSource">Custom multi-layer map
 sources</a></h3>
 <p>The same way as <a href="#CustomMapSource">custom map sources</a>
@@ -858,6 +878,20 @@ not be visible.</p>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20multi-layer%20map%20source.xml">
 Example custom multi-layer map source.xml</a></p>
+<h3><a name="CloudMadeMapSource">Custom CloudMade map sources</a></h3>
+<p>The <a href="http://maps.cloudmade.com/">CloudMade map
+service</a> offers a large number of OpenStreetMap based maps with different
+styles. Each style is accessible through it's <tt>styleID</tt>. Custom
+CloudMade maps can be added to MOBAC via a simple XML file containing a
+map name used by MOBAC and a styleID:</p>
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;cloudMade&gt;
+    &lt;displayName&gt;CloudMade blackout&lt;/displayName&gt;
+    &lt;styleID&gt;1960&lt;/styleID&gt;
+&lt;/cloudMade&gt;</pre>
+<p>Example file for download: <a
+	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20CloudMade1960.xml">
+Example CloudMade1960.xml</a></p>
 <h3><a name="BeanShellMapSource">Custom BeanShell map sources</a></h3>
 <p>BeanShell map sources as the can be developed using <a
 	href="http://sourceforge.net/apps/mediawiki/trekbuddyatlasc/index.php?title=MapEvaluator">MapEvaluator</a>

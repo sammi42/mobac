@@ -43,6 +43,7 @@ import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.OruxMapsSqlite;
 import mobac.program.atlascreators.Osmdroid;
+import mobac.program.atlascreators.OsmdroidSQLite;
 import mobac.program.atlascreators.Ozi;
 import mobac.program.atlascreators.PNGWorldfile;
 import mobac.program.atlascreators.PathAway;
@@ -68,7 +69,7 @@ public enum AtlasOutputFormat {
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
 	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
-	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), // 
+	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), //
 	GpsSportsTracker("GPS Sports Tracker", GpsSportsTracker.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Maplorer("Maplorer atlas format", Maplorer.class), //
@@ -81,6 +82,7 @@ public enum AtlasOutputFormat {
 	OruxMapsSqlite("OruxMaps Sqlite", OruxMapsSqlite.class), //
 	OSMAND("OSMAND tile storage", OSMAND.class), //
 	Osmdroid("Osmdroid ZIP", Osmdroid.class), //
+	OsmdroidSQLite("Osmdroid SQLite", OsmdroidSQLite.class), //
 	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
 	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
 	PathAway("PathAway tile cache", PathAway.class), //
@@ -90,10 +92,9 @@ public enum AtlasOutputFormat {
 	NST("Sports Tracker", SportsTracker.class), //
 	Ttqv("Touratech QV", TTQV.class), //
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), //
-	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), // 
+	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
 	TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
-	Ublox("Ublox", Ublox.class), // 
-	// XGPS("xGPS", SQLitexGPS.class), //
+	Ublox("Ublox", Ublox.class) //
 	;
 
 	private final String displayName;

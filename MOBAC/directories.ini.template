@@ -1,6 +1,11 @@
 ################################################
 # MOBAC system wide directory configuration
 ################################################
+# 
+# For activating this configuration file rename it to "directories.ini"
+# (remove the .template extension) and place it in the same directory as
+# the file Mobile_Atlas_Creator.jar
+#
 # Available variables:
 #
 # ${home}  

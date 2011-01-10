@@ -56,13 +56,13 @@ public class CustomMapSource implements HttpMapSource {
 	private int maxZoom = 0;
 
 	@XmlElement(defaultValue = "PNG")
-	private TileImageType tileType = TileImageType.PNG;
+	protected TileImageType tileType = TileImageType.PNG;
 
 	@XmlElement(defaultValue = "NONE")
 	private HttpMapSource.TileUpdate tileUpdate;
 
 	@XmlElement(required = true, nillable = false)
-	private String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
+	protected String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
 
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
@@ -145,7 +145,7 @@ public class CustomMapSource implements HttpMapSource {
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
-		byte[] data = getTileData(zoom, x, y, LoadMethod.DEFAULT);
+		byte[] data = getTileData(zoom, x, y, loadMethod);
 		if (data == null) {
 			if (!ignoreErrors)
 				return null;

@@ -24,7 +24,7 @@ public class CompeGPSImp extends Ozi {
 		try {
 			Utilities.mkDir(mapDir);
 		} catch (IOException e1) {
-			throw new MapCreationException(e1);
+			throw new MapCreationException(map, e1);
 		}
 		createTiles();
 		writeImpFile();

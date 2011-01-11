@@ -44,7 +44,7 @@ public class TileStore {
 		envConfig.setTransactional(true);
 		envConfig.setAllowCreate(true);
 
-		String tileStorePath = Settings.getInstance().tileStoreDirectory;
+		String tileStorePath = Settings.getInstance().directories.tileStoreDirectory;
 		if (tileStorePath != null)
 			tileStoreDir = new File(tileStorePath);
 		else

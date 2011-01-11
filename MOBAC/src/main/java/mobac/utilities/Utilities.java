@@ -126,6 +126,8 @@ public class Utilities {
 	private static final byte[] GIF_2 = "GIF89a".getBytes();
 
 	public static TileImageType getImageType(byte[] imageData) {
+		if (imageData == null)
+			return null;
 		if (startsWith(imageData, PNG))
 			return TileImageType.PNG;
 		if (startsWith(imageData, JPG))
@@ -410,9 +412,9 @@ public class Utilities {
 		if (initialBufferSize <= 0)
 			initialBufferSize = 32768;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(initialBufferSize);
-		byte[] b = new byte[4096];
+		byte[] b = new byte[1024];
 		int ret = 0;
-		while ((ret = in.read(b)) > 0) {
+		while ((ret = in.read(b)) >= 0) {
 			buffer.write(b, 0, ret);
 		}
 		return buffer.toByteArray();
@@ -426,7 +428,7 @@ public class Utilities {
 	 */
 	public static void readFully(InputStream in) throws IOException {
 		byte[] b = new byte[4096];
-		while ((in.read(b)) > 0) {
+		while ((in.read(b)) >= 0) {
 		}
 	}
 

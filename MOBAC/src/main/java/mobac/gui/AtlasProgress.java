@@ -154,9 +154,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		guiUpdater = new GUIUpdater();
 
 		createComponents();
-		guiUpdater.run();
 		// Initialize the layout in respect to the layout (font size ...)
 		pack();
+
+		guiUpdater.run();
 
 		// The layout is now initialized - we disable it because we don't want
 		// want to the labels to jump around if the content changes.

@@ -59,6 +59,7 @@ public class DirectoryManager {
 
 		userAppDataDir = getUserAppDataDir();
 		tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
+		
 		mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
 		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
 		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);

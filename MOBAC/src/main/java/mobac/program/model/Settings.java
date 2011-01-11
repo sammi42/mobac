@@ -48,6 +48,7 @@ import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
 import mobac.program.download.UserAgent;
 import mobac.utilities.Utilities;
+import mobac.utilities.stream.ThrottledInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -173,6 +174,7 @@ public class Settings {
 	private String customProxyPort = "";
 	private String customProxyUserName = "";
 	private String customProxyPassword = "";
+	private long bandwidthLimit = 0; 
 
 	@XmlElementWrapper(name = "mapSourcesDisabled")
 	@XmlElement(name = "mapSource")
@@ -380,6 +382,15 @@ public class Settings {
 		Utilities.setHttpProxyPort(newProxyPort);
 		Authenticator.setDefault(newAuthenticator);
 		System.setProperty("java.net.useSystemProxies", Boolean.toString(useSystemProxies));
+	}
+
+	public long getBandwidthLimit() {
+		return bandwidthLimit;
+	}
+
+	public void setBandwidthLimit(long bandwidthLimit) {
+		this.bandwidthLimit = bandwidthLimit;
+		ThrottledInputStream.setBandwidth(bandwidthLimit);
 	}
 
 	@XmlElement

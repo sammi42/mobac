@@ -30,6 +30,7 @@ import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 import mobac.utilities.Utilities;
+import mobac.utilities.stream.ThrottledInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -295,6 +296,13 @@ public class TileDownLoader {
 	 */
 	protected static byte[] loadBodyDataInBuffer(HttpURLConnection conn) throws IOException {
 		InputStream input = conn.getInputStream();
+		if (Thread.currentThread() instanceof MapSourceListener) {
+			// We only throttle atlas downloads, not downloads for the preview map
+			long bandwidthLimit = Settings.getInstance().getBandwidthLimit();
+			if (bandwidthLimit > 0) {
+				input = new ThrottledInputStream(input);
+			}
+		}
 		byte[] data = null;
 		try {
 			data = Utilities.getInputBytes(input);
@@ -324,9 +332,7 @@ public class TileDownLoader {
 	protected static boolean isTileNewer(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		long oldLastModified = tile.getTimeLastModified();
 		if (oldLastModified <= 0) {
-			log
-					.warn("Tile age comparison not possible: "
-							+ "tile in tilestore does not contain lastModified attribute");
+			log.warn("Tile age comparison not possible: " + "tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());

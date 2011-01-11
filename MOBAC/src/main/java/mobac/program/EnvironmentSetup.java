@@ -100,21 +100,33 @@ public class EnvironmentSetup {
 	}
 
 	public static void checkFileSetup() {
-		if (Settings.FILE.exists())
-			return;
-
+		if (!Settings.FILE.exists()) {
+			try {
+				FIRST_START = true;
+				Settings.save();
+			} catch (Exception e) {
+				log.error("Error while creating settings.xml: " + e.getMessage(), e);
+				String[] options = { "Exit", "Show error report" };
+				int a = JOptionPane.showOptionDialog(null, "Could not create file settings.xml - program will exit.",
+						"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+				if (a == 1)
+					GUIExceptionHandler.showExceptionDialog(e);
+				System.exit(1);
+			}
+		}
 		try {
-			FIRST_START = true;
-			Settings.save();
-		} catch (Exception e) {
-			log.error("Error while creating settings.xml: " + e.getMessage(), e);
+			Utilities.mkDirs(DirectoryManager.tempDir);
+		} catch (IOException e) {
+			log.error("Error while creating temporary atlas download directory: " + e.getMessage(), e);
 			String[] options = { "Exit", "Show error report" };
-			int a = JOptionPane.showOptionDialog(null, "Could not create file settings.xml program will exit.",
-					"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+			int a = JOptionPane.showOptionDialog(null,
+					"Error while creating temporary atlas download directory - program will exit.", "Error", 0,
+					JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 			if (a == 1)
 				GUIExceptionHandler.showExceptionDialog(e);
 			System.exit(1);
 		}
+
 	}
 
 	public static void createDefaultAtlases() {

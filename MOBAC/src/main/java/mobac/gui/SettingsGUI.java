@@ -96,6 +96,26 @@ public class SettingsGUI extends JDialog {
 
 	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
 
+	private static final long MBIT1 = 1000000 / 8;
+
+	private enum Bandwidth {
+		UNLIMUTED("Unlimited", 0), MBit1("1 MBit", MBIT1), MBit5("5 MBit", MBIT1 * 5), MBit10("10 MBit", MBIT1 * 10), MBit15(
+				"15 MBit", MBIT1 * 15), MBit20("20 MBit", MBIT1 * 20);
+
+		public final long limit;
+		public final String description;
+
+		private Bandwidth(String description, long limit) {
+			this.description = description;
+			this.limit = limit;
+		}
+
+		@Override
+		public String toString() {
+			return description;
+		}
+	};
+
 	private final Settings settings = Settings.getInstance();
 
 	private JComboBox unitSystem;
@@ -118,6 +138,7 @@ public class SettingsGUI extends JDialog {
 	private JTextField atlasOutputDirectory;
 
 	private JComboBox threadCount;
+	private JComboBox bandwidth;
 
 	private JComboBox proxyType;
 	private JTextField proxyHost;
@@ -637,9 +658,14 @@ public class SettingsGUI extends JDialog {
 		panel.setBorder(createSectionBorder("Network connections"));
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
-		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.std().fill(
-				GBC.HORIZONTAL));
+		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5).anchor(GBC.EAST));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
+				GBC.eol().fill(GBC.HORIZONTAL));
+
+		bandwidth = new JComboBox(Bandwidth.values());
+		bandwidth.setMaximumRowCount(bandwidth.getItemCount());
+		panel.add(bandwidth, GBC.std().insets(5, 5, 5, 5));
+		panel.add(new JLabel("Bandwidth limitation for tile downloading"), GBC.eol().fill(GBC.HORIZONTAL));
 
 		backGround.add(panel, gbc_eolh);
 
@@ -724,6 +750,14 @@ public class SettingsGUI extends JDialog {
 
 		atlasOutputDirectory.setText(s.getAtlasOutputDirectoryString());
 
+		long limit = s.getBandwidthLimit();
+		for (Bandwidth b : Bandwidth.values()) {
+			if (limit <= b.limit) {
+				bandwidth.setSelectedItem(b);
+				break;
+			}
+		}
+
 		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.downloadThreadCount);
 		if (index < 0)
 			index = 0;
@@ -755,6 +789,8 @@ public class SettingsGUI extends JDialog {
 		s.setAtlasOutputDirectory(atlasOutputDirectory.getText());
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
 		s.downloadThreadCount = threads;
+
+		s.setBandwidthLimit(((Bandwidth) bandwidth.getSelectedItem()).limit);
 
 		s.setProxyType((ProxyType) proxyType.getSelectedItem());
 		s.setCustomProxyHost(proxyHost.getText());

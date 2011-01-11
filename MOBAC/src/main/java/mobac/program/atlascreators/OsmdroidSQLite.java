@@ -76,10 +76,15 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			String provider = map.getMapSource().getName();
-			atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+			int maxMapProgress = (xMax - xMin + 1) * (yMax - yMin + 1);
+			atlasProgress.initMapCreation(maxMapProgress);
 			conn.setAutoCommit(false);
+			int batchTileCount = 0;
+
 			ImageIO.setUseCache(false);
 			PreparedStatement prep = conn.prepareStatement("insert into tiles values (?, ?, ?);");
+			Runtime r = Runtime.getRuntime();
+			long heapMaxSize = r.maxMemory();
 
 			for (long x = xMin; x <= xMax; x++)
 				for (long y = yMin; y <= yMax; y++) {
@@ -93,10 +98,24 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 						prep.setString(2, provider);
 						prep.setBytes(3, sourceTileData);
 						prep.addBatch();
+
+						long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
+
+						if (heapAvailable < HEAP_MIN) {
+							log.trace("Executing batch containing " + batchTileCount + " tiles");
+							prep.executeBatch();
+							prep.clearBatch();
+							System.gc();
+							batchTileCount = 0;
+							conn.commit();
+							atlasProgress.incMapCreationProgress(batchTileCount);
+						}
+
 					}
 				}
 			prep.executeBatch();
 			conn.setAutoCommit(true);
+			atlasProgress.setMapCreationProgress(maxMapProgress);
 		} catch (SQLException e) {
 			throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 		} catch (IOException e) {

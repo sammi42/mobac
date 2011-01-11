@@ -25,11 +25,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.annotation.XmlTransient;
 
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
@@ -45,6 +47,7 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 	private int maxZoom;
 	private int minZoom;
 	private MapSpace mapSpace;
+	protected MapSourceLoaderInfo loaderInfo = null;
 
 	public AbstractMultiLayerMapSource(String name, TileImageType tileImageType) {
 		this();
@@ -144,6 +147,17 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 
 	public Iterator<MapSource> iterator() {
 		return Arrays.asList(mapSources).iterator();
+	}
+
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
+
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		if (this.loaderInfo != null)
+			throw new RuntimeException("LoaderInfo already set");
+		this.loaderInfo = loaderInfo;
 	}
 
 }

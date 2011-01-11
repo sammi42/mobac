@@ -38,6 +38,8 @@ import java.util.zip.ZipEntry;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.MapSourceLoaderInfo;
+import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.FileExtFilter;
 
@@ -100,10 +102,12 @@ public class MapPackManager {
 		ClassLoader urlCl;
 		urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, urls, ClassLoader.getSystemClassLoader());
 
+		MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, null);
 		final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
 		while (iterator.hasNext()) {
 			try {
 				MapSource ms = iterator.next();
+				ms.setLoaderInfo(loaderInfo);
 				mapSourcesManager.addMapSource(ms);
 				log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
 			} catch (Error e) {

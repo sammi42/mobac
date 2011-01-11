@@ -34,6 +34,7 @@ import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSourceListener;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
@@ -53,6 +54,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 	protected TileImageType tileType;
 	protected HttpMapSource.TileUpdate tileUpdate;
 	protected MapSpace mapSpace = MercatorPower2MapSpace.INSTANCE_256;
+	protected MapSourceLoaderInfo loaderInfo = null;
 
 	public AbstractHttpMapSource(String name, int minZoom, int maxZoom, TileImageType tileType) {
 		this(name, minZoom, maxZoom, tileType, HttpMapSource.TileUpdate.None);
@@ -176,6 +178,16 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 
 	public Color getBackgroundColor() {
 		return Color.BLACK;
+	}
+
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
+
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		if (this.loaderInfo != null)
+			throw new RuntimeException("LoaderInfo already set");
+		this.loaderInfo = loaderInfo;
 	}
 
 	@Override

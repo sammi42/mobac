@@ -19,6 +19,8 @@ import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.mapsources.custom.CustomWmsMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.WrappedMapSource;
+import mobac.program.model.MapSourceLoaderInfo;
+import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.file.FileExtFilter;
 
 import org.apache.log4j.Logger;
@@ -72,6 +74,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 					customMapSource = ((WrappedMapSource) o).getMapSource();
 				else
 					customMapSource = (MapSource) o;
+				customMapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, f));
 				log.trace("Custom map source loaded: " + customMapSource + " from file \"" + f.getName() + "\"");
 				mapSourcesManager.addMapSource(customMapSource);
 			} catch (Exception e) {
@@ -91,9 +94,10 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage()
-				+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/"
-				+ loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null,
+				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
+						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
+						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}

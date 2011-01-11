@@ -23,11 +23,13 @@ import java.io.IOException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import mobac.exceptions.TileException;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 
 @XmlRootElement
@@ -88,19 +90,21 @@ public class StandardMapSourceLayer implements MapSource {
 
 	@Override
 	public int hashCode() {
-		return getName().hashCode();
+		return mapSource.hashCode();
+	}
+
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return mapSource.getLoaderInfo();
+	}
+
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		mapSource.setLoaderInfo(loaderInfo);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof MapSource))
-			return false;
-		MapSource other = (MapSource) obj;
-		return other.getName().equals(getName());
+		return mapSource.equals(obj);
 	}
 
 }

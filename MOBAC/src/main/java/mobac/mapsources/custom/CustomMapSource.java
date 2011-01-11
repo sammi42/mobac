@@ -27,6 +27,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.exceptions.UnrecoverableDownloadException;
@@ -36,6 +37,7 @@ import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSourceListener;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
@@ -70,6 +72,8 @@ public class CustomMapSource implements HttpMapSource {
 
 	@XmlElement(required = false, defaultValue = "false")
 	private boolean ignoreErrors = false;
+
+	private MapSourceLoaderInfo loaderInfo = null;
 
 	/**
 	 * Constructor without parameters - required by JAXB
@@ -175,6 +179,17 @@ public class CustomMapSource implements HttpMapSource {
 
 	public Color getBackgroundColor() {
 		return backgroundColor;
+	}
+
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
+
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		if (this.loaderInfo != null)
+			throw new RuntimeException("LoaderInfo already set");
+		this.loaderInfo = loaderInfo;
 	}
 
 }

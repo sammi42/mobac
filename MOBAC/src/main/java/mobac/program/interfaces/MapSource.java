@@ -20,12 +20,14 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.exceptions.TileException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.gui.mapview.JMapViewer;
 import mobac.program.jaxb.MapSourceAdapter;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
@@ -68,13 +70,15 @@ public interface MapSource {
 	 * @param zoom
 	 * @param x
 	 * @param y
-	 * @param loadMethod TODO
+	 * @param loadMethod
+	 *            TODO
 	 * @return
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws UnrecoverableDownloadException
 	 */
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException, InterruptedException;
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+			InterruptedException;
 
 	/**
 	 * 
@@ -101,5 +105,10 @@ public interface MapSource {
 	public MapSpace getMapSpace();
 
 	public Color getBackgroundColor();
+
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo();
+
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo);
 
 }

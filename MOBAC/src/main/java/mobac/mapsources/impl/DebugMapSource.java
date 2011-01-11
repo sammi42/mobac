@@ -30,6 +30,7 @@ import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.imageio.Png4BitWriter;
 
@@ -101,6 +102,14 @@ public class DebugMapSource implements MapSource {
 
 	public TileImageType getTileImageType() {
 		return TileImageType.PNG;
+	}
+
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return null;
+	}
+	
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		throw new RuntimeException("LoaderInfo can not be set");
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import javax.swing.JOptionPane;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.impl.BeanShellHttpMapSource;
+import mobac.program.model.MapSourceLoaderInfo;
+import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.file.FileExtFilter;
 
 import org.apache.log4j.Logger;
@@ -27,6 +29,7 @@ public class BeanShellMapSourceLoader {
 			try {
 				BeanShellHttpMapSource mapSource = BeanShellHttpMapSource.load(f);
 				log.trace("BeanShell map source loaded: " + mapSource + " from file \"" + f.getName() + "\"");
+				mapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, f));
 				mapSourcesManager.addMapSource(mapSource);
 			} catch (Exception e) {
 				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);

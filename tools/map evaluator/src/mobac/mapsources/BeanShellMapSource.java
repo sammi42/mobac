@@ -16,6 +16,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
@@ -145,4 +146,15 @@ public class BeanShellMapSource implements HttpMapSource {
 	public Color getBackgroundColor() {
 		return Color.BLACK;
 	}
+
+	@Override
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return null;
+	}
+
+	@Override
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		throw new RuntimeException("Not supported");
+	}
+
 }

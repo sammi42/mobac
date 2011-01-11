@@ -168,7 +168,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
+		int maxMapProgress = (xMax - xMin + 1) * (yMax - yMin + 1);
 		atlasProgress.initMapCreation(maxMapProgress);
 		TileImageParameters param = map.getParameters();
 		if (param != null)

@@ -10,6 +10,8 @@
 
 1.9 preview 4 (2011-01-??)
  + New: Support for CustomWmsMapSource (experimental)
+ + Download bandwidth limitation selectable for very fast network connections
+ ! Highest zoom level missing in tile store coverage zoom selector  
 
 1.9 preview 3 (2011-01-09)
  + New atlas format: PNG + Worldfile (PNG & PGW)

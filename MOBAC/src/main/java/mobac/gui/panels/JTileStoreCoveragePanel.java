@@ -86,7 +86,7 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		Integer selZoom = (Integer) zoomCombo.getSelectedItem();
 		if (selZoom == null)
 			selZoom = new Integer(8);
-		Integer[] items = new Integer[newMapSource.getMaxZoom() - newMapSource.getMinZoom()];
+		Integer[] items = new Integer[newMapSource.getMaxZoom() - newMapSource.getMinZoom() + 1];
 		int zoom = newMapSource.getMinZoom();
 		for (int i = 0; i < items.length; i++) {
 			items[i] = new Integer(zoom++);

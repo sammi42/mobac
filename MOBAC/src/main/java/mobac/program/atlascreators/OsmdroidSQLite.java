@@ -31,6 +31,7 @@ import mobac.exceptions.MapCreationException;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.RequiresSQLite;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.utilities.jdbc.SQLiteLoader;
 
 /**
@@ -47,7 +48,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		return true;
+		return mapSource.getMapSpace().getProjectionCategory().equals(ProjectionCategory.SPHERE);
 	}
 
 	@Override
@@ -80,14 +81,15 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 			ImageIO.setUseCache(false);
 			PreparedStatement prep = conn.prepareStatement("insert into tiles values (?, ?, ?);");
 
-			for (int x = xMin; x <= xMax; x++)
-				for (int y = yMin; y <= yMax; y++) {
+			for (long x = xMin; x <= xMax; x++)
+				for (long y = yMin; y <= yMax; y++) {
 					checkUserAbort();
 					atlasProgress.incMapCreationProgress();
-					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+					byte[] sourceTileData = mapDlTileProvider.getTileData((int) x, (int) y);
 					if (sourceTileData != null) {
-						int index = (((zoom << zoom) + x) << zoom) + y;
-						prep.setInt(1, index);
+						long z = zoom;
+						long index = (((z << z) + x) << z) + y;
+						prep.setLong(1, index);
 						prep.setString(2, provider);
 						prep.setBytes(3, sourceTileData);
 						prep.addBatch();

@@ -8,8 +8,8 @@ import java.lang.reflect.Method;
 
 import javax.swing.JOptionPane;
 
-import mobac.program.beanshell.Tools;
-import mobac.program.beanshell.Tools.MethodDescription;
+import mobac.utilities.beanshell.Tools;
+import mobac.utilities.beanshell.Tools.MethodDescription;
 
 import org.apache.axis2.description.java2wsdl.bytecode.ParamReader;
 

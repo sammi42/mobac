@@ -1,3 +1,5 @@
-mobac.mapsources.mappacks.misc_worldwide.OviMaps
-mobac.mapsources.mappacks.misc_worldwide.Topomapper
-mobac.mapsources.mappacks.misc_worldwide.YahooMaps
+mobac.mapsources.mappacks.bing.MicrosoftMaps
+mobac.mapsources.mappacks.bing.MicrosoftMapsHillShade
+mobac.mapsources.mappacks.bing.MicrosoftVirtualEarth
+mobac.mapsources.mappacks.bing.MicrosoftHybrid
+mobac.mapsources.mappacks.bing.MicrosoftMapsChina

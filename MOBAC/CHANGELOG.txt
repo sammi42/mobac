@@ -12,6 +12,7 @@
  + New: Support for CustomWmsMapSource (experimental)
  + Download bandwidth limitation selectable for very fast network connections
  ! Highest zoom level missing in tile store coverage zoom selector
+ + New atlas format: OsmdroidSQlite  
  + New map sources: ArcGIS topo map/satellite/street map   
 
 1.9 preview 3 (2011-01-09)

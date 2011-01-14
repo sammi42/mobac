@@ -169,7 +169,8 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+		int maxMapProgress = (xMax - xMin + 1) * (yMax - yMin + 1);
+		atlasProgress.initMapCreation(maxMapProgress);
 		try {
 			tileCommitCounter = 0;
 			conn.setAutoCommit(false);
@@ -199,6 +200,7 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 				}
 			}
 			conn.commit();
+			atlasProgress.setMapCreationProgress(maxMapProgress);
 		} catch (SQLException e) {
 			throw new MapCreationException(map, e);
 		}

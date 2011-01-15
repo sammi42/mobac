@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 5 (2011-01-??)
+ + New map source: ICAO Maps (Germany)   
+
 1.9 preview 4 (2011-01-14)
  + New: Support for CustomWmsMapSource (experimental)
  + Download bandwidth limitation selectable for very fast network connections

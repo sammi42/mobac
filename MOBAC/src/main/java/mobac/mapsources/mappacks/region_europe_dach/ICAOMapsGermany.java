@@ -23,7 +23,7 @@ import mobac.program.model.TileImageType;
  * http://vfr-bulletin.de/web20/index.htm
  * http://sourceforge.net/tracker/?func=detail&atid=1105497&aid=3139029&group_id=238075
  * 
- * @author xtra-nice (Chris)
+ * @author telemaxx
  */
 public class ICAOMapsGermany extends AbstractHttpMapSource {
 

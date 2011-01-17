@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import mobac.gui.MainGUI;
+import mobac.gui.SplashFrame;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.program.DirectoryManager;
 import mobac.program.EnvironmentSetup;
@@ -37,6 +38,7 @@ public class Main {
 
 	public Main() {
 		try {
+			SplashFrame.showFrame();
 			DirectoryManager.initialize();
 			Logging.configureLogging();
 			// MySocketImplFactory.install();
@@ -57,6 +59,7 @@ public class Main {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					MainGUI.createMainGui();
+					SplashFrame.getStartupFrame().setVisible(false);
 				}
 			});
 		} catch (Throwable t) {

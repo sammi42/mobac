@@ -16,7 +16,6 @@
  ******************************************************************************/
 package mobac.gui;
 
-import java.awt.Frame;
 import java.awt.HeadlessException;
 
 import javax.swing.JFrame;
@@ -31,15 +30,17 @@ public class SplashFrame extends JFrame {
 
 	public SplashFrame() throws HeadlessException {
 		super("Mobile Atlas Creator is starting up...");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setIconImages(MainGUI.MOBAC_ICONS);
 		setFocusable(false);
 		setResizable(false);
-		setState(Frame.ICONIFIED);
+		setState(JFrame.ICONIFIED);
 		setVisible(true);
 	}
 
-	public static SplashFrame getStartupFrame() {
-		return startupFrame;
+	public static void hideFrame() {
+		startupFrame.setVisible(false);
+		startupFrame = null;
 	}
 
 }

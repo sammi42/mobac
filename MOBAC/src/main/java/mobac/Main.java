@@ -59,7 +59,7 @@ public class Main {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					MainGUI.createMainGui();
-					SplashFrame.getStartupFrame().setVisible(false);
+					SplashFrame.hideFrame();
 				}
 			});
 		} catch (Throwable t) {

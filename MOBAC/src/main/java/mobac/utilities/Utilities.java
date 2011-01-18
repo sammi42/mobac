@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
@@ -573,5 +574,14 @@ public class Utilities {
 			return -1;
 		}
 	}
+
+	public static byte[] downloadHttpFile(String url) throws IOException {
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		int responseCode = conn.getResponseCode();
+		if (responseCode != HttpURLConnection.HTTP_OK)
+			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
+		return Utilities.getInputBytes(conn.getInputStream());
+	}
+
 
 }

@@ -17,9 +17,14 @@
 package mobac.mapsources.loader;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.CodeSigner;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -35,14 +40,21 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.MapSourcesManager;
+import mobac.program.Logging;
+import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
+import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.FileExtFilter;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class MapPackManager {
@@ -53,14 +65,11 @@ public class MapPackManager {
 
 	private final int requiredMapPackVersion;
 
-	private final MapSourcesManager mapSourcesManager;
-
 	private final File mapPackDir;
 
 	private final X509Certificate mapPackCert;
 
-	public MapPackManager(MapSourcesManager mapSourceManager, File mapPackDir) throws CertificateException, IOException {
-		this.mapSourcesManager = mapSourceManager;
+	public MapPackManager(File mapPackDir) throws CertificateException, IOException {
 		this.mapPackDir = mapPackDir;
 		requiredMapPackVersion = Integer.parseInt(System.getProperty("mobac.mappackversion"));
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -84,8 +93,12 @@ public class MapPackManager {
 		}
 	}
 
-	public void loadMapPacks() throws IOException, CertificateException {
-		File[] mapPacks = mapPackDir.listFiles(new FileExtFilter(".jar"));
+	public File[] getAllMapPackFiles() {
+		return mapPackDir.listFiles(new FileExtFilter(".jar"));
+	}
+
+	public void loadMapPacks(MapSourcesManager mapSourcesManager) throws IOException, CertificateException {
+		File[] mapPacks = getAllMapPackFiles();
 		ArrayList<URL> urlList = new ArrayList<URL>();
 		for (File mapPackFile : mapPacks) {
 			try {
@@ -114,13 +127,168 @@ public class MapPackManager {
 				log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
 			}
 		}
-
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public int updateMapPacks() throws UnrecoverableDownloadException, IOException {
+		String md5eTag = Settings.getInstance().mapSourcesUpdate.etag;
+		String updateUrl = System.getProperty("mobac.updateurl");
+		String updateBaseUrl = System.getProperty("mobac.updatebaseurl");
+		if (updateUrl == null)
+			throw new RuntimeException("Update url not present");
+		if (updateBaseUrl == null)
+			throw new RuntimeException("Update base url not present");
+
+		// Clean up old files
+		File[] newMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.new"));
+		for (File newMapPack : newMapPacks)
+			Utilities.deleteFile(newMapPack);
+		File[] unverifiedMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.unverified"));
+		for (File unverifiedMapPack : unverifiedMapPacks)
+			Utilities.deleteFile(unverifiedMapPack);
+
+		byte[] data = null;
+
+		HttpURLConnection conn = (HttpURLConnection) new URL(updateUrl).openConnection();
+		conn.setRequestProperty("If-None-Match", md5eTag);
+		int responseCode = conn.getResponseCode();
+		if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED)
+			return -1;
+		if (responseCode != HttpURLConnection.HTTP_OK)
+			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
+		// Case HTTP_OK
+		data = Utilities.getInputBytes(conn.getInputStream());
+		Settings.getInstance().mapSourcesUpdate.etag = conn.getHeaderField("ETag");
+		String md5sumList = new String(data);
+		int updateCount = 0;
+		String[] outdatedMapPacks = searchForOutdatedMapPacks(md5sumList);
+		for (String mapPack : outdatedMapPacks) {
+			try {
+				File newMapPackFile = downloadMapPack(updateBaseUrl, mapPack);
+				try {
+					testMapPack(newMapPackFile);
+				} catch (CertificateException e) {
+					// Certificate validation failed
+					log.error(e.getMessage(), e);
+					Utilities.deleteFile(newMapPackFile);
+					continue;
+				}
+				log.debug("Verification of map pack \"" + mapPack + "\" passed successfully");
+				String name = newMapPackFile.getName();
+				name = name.replace(".unverified", ".new");
+				File f = new File(newMapPackFile.getParentFile(), name);
+				// Change file extension
+				newMapPackFile.renameTo(f);
+				updateCount++;
+			} catch (IOException e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+		return updateCount;
+	}
+
+	public File downloadMapPack(String baseURL, String mapPackFilename) throws IOException {
+		if (!mapPackFilename.endsWith(".jar"))
+			throw new IOException("Invalid map pack filename");
+		byte[] mapPackData = Utilities.downloadHttpFile(baseURL + mapPackFilename);
+		File newMapPackFile = new File(mapPackDir, mapPackFilename + ".unverified");
+		FileOutputStream out = new FileOutputStream(newMapPackFile);
+		try {
+			out.write(mapPackData);
+			out.flush();
+		} finally {
+			Utilities.closeStream(out);
+		}
+		log.debug("New map pack \"" + mapPackFilename + "\" successfully downloaded");
+		return newMapPackFile;
+	}
+
+	/**
+	 * 
+	 * @param md5sumList
+	 * @return Array of filenames of map packs which are outdated
+	 */
+	public String[] searchForOutdatedMapPacks(String md5sumList) {
+		ArrayList<String> outdatedMappacks = new ArrayList<String>();
+		String[] md5s = md5sumList.split("[\\n\\r]+");
+		for (String line : md5s) {
+			int index = line.indexOf(' ');
+			String md5 = line.substring(0, index).toLowerCase();
+			String filename = line.substring(index + 1);
+			File mapPackFile = new File(mapPackDir, filename);
+			if (!mapPackFile.isFile()) {
+				outdatedMappacks.add(filename);
+				log.debug("local map pack file missing: " + filename);
+				continue;
+			}
+			try {
+				String localmd5 = generateMappackMD5(mapPackFile);
+				if (localmd5.equals(md5))
+					continue; // No change in map pack
+				log.debug("Found outdated map pack: \"" + filename + "\" local md5: " + localmd5 + " remote md5: "
+						+ md5);
+				outdatedMappacks.add(filename);
+			} catch (Exception e) {
+				log.error("Failed to generate md5sum of " + mapPackFile, e);
+			}
+		}
+		String[] result = new String[outdatedMappacks.size()];
+		outdatedMappacks.toArray(result);
+		return result;
+	}
+
+	/**
+	 * Calculate the md5sum on all files in the map pack file (except those in META-INF) and their filenames inclusive
+	 * path in the map pack file).
+	 * 
+	 * @param mapPackFile
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 */
+	public String generateMappackMD5(File mapPackFile) throws IOException, NoSuchAlgorithmException {
+		ZipFile zip = new ZipFile(mapPackFile);
+		try {
+			Enumeration<? extends ZipEntry> entries = zip.entries();
+			MessageDigest md5Total = MessageDigest.getInstance("MD5");
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = entries.nextElement();
+
+				if (entry.isDirectory())
+					continue;
+				// Do not hash files from META-INF
+				String name = entry.getName();
+				if (name.toUpperCase().startsWith("META-INF"))
+					continue;
+				md5.reset();
+				InputStream in = zip.getInputStream(entry);
+				byte[] data = Utilities.getInputBytes(in);
+				in.close();
+				byte[] digest = md5.digest(data);
+				md5Total.update(digest);
+				md5Total.update(name.getBytes());
+			}
+			return Hex.encodeHexString(md5Total.digest());
+		} finally {
+			zip.close();
+		}
+	}
+
+	/**
+	 * Verifies the class file signatures of the specified map pack
+	 * 
+	 * @param mapPackFile
+	 * @throws IOException
+	 * @throws CertificateException
+	 */
 	protected void testMapPack(File mapPackFile) throws IOException, CertificateException {
 		String fileName = mapPackFile.getName();
 		JarFile jf = new JarFile(mapPackFile, true);
-		log.info("Build date: " + jf.getManifest().getAttributes("Build-Date"));
 		try {
 			Enumeration<JarEntry> it = jf.entries();
 			while (it.hasMoreElements()) {
@@ -157,6 +325,18 @@ public class MapPackManager {
 			jf.close();
 		}
 
+	}
+
+	public static void main(String[] args) {
+		try {
+			Logging.configureConsoleLogging(Level.DEBUG);
+			ProgramInfo.initialize();
+			MapPackManager mpm = new MapPackManager(new File("mapsources"));
+			// System.out.println(mpm.generateMappackMD5(new File("mapsources/mp-bing.jar")));
+			mpm.updateMapPacks();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -78,6 +78,7 @@
 		<pathconvert pathsep=";" property="mappacklist" refid="mappacks">
 			<mapper type="flatten" />
 		</pathconvert>
+		<echo file="mapsources/mappacks-md5.txt" append="false" message="" />
 		<!-- The required key stores are not available in SVN and releases! -->
 		<echo message="Signing map packs using password: ${keystore.password}" />
 		<for list="${mappacklist}" param="mappack" delimiter=";">
@@ -108,6 +109,12 @@
 					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />
 				</jar>
 				<signjar keystore="keys/keystore.jks" storepass="${keystore.password}" alias="MapPack" jar="mapsources/mp-@{mappack}.jar" verbose="false" />
+				<checksum algorithm="MD5" totalproperty="MD5-@{mappack}" >
+					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
+						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
+					</fileset>
+				</checksum>
+				<echo file="mapsources/mappacks-md5.txt" append="true" message="${MD5-@{mappack}} mp-@{mappack}.jar&#13;&#10;" />
 			</sequential>
 		</for>
 	</target>

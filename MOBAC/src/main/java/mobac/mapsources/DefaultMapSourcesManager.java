@@ -67,9 +67,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 		try {
 			if (!devMode || !loadMapPacksEclipseMode()) {
-				MapPackManager mpm = new MapPackManager(this, mapSourcesDir);
+				MapPackManager mpm = new MapPackManager(mapSourcesDir);
 				mpm.installUpdates();
-				mpm.loadMapPacks();
+				mpm.loadMapPacks(this);
 			}
 		} catch (Exception e) {
 			log.error("Failed to load map packs", e);

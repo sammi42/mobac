@@ -219,7 +219,10 @@ public class MapPackManager {
 			int index = line.indexOf(' ');
 			String md5 = line.substring(0, index).toLowerCase();
 			String filename = line.substring(index + 1);
-			File mapPackFile = new File(mapPackDir, filename);
+			// Check if there is already an update map pack 
+			File mapPackFile = new File(mapPackDir, filename + ".new");
+			if (!mapPackFile.isFile())
+				mapPackFile = new File(mapPackDir, filename);
 			if (!mapPackFile.isFile()) {
 				outdatedMappacks.add(filename);
 				log.debug("local map pack file missing: " + filename);

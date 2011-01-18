@@ -72,6 +72,7 @@ import mobac.gui.components.JMapSizeCombo;
 import mobac.gui.components.JTimeSlider;
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
+import mobac.mapsources.loader.MapPackManager;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSource;
@@ -659,8 +660,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5).anchor(GBC.EAST));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
-				GBC.eol().fill(GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.eol().fill(
+				GBC.HORIZONTAL));
 
 		bandwidth = new JComboBox(Bandwidth.values());
 		bandwidth.setMaximumRowCount(bandwidth.getItemCount());
@@ -910,8 +911,31 @@ public class SettingsGUI extends JDialog {
 			// JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(), "Mapsources online update failed",
 			// JOptionPane.ERROR_MESSAGE);
 			// }
-			JOptionPane.showMessageDialog(SettingsGUI.this, "Not implemented", "Not implemented",
-					JOptionPane.ERROR_MESSAGE);
+			MapPackManager mpm;
+			try {
+				mpm = new MapPackManager(Settings.getInstance().getMapSourcesDirectory());
+				int result = mpm.updateMapPacks();
+				switch (result) {
+				case -1:
+					JOptionPane.showMessageDialog(SettingsGUI.this,
+							"This version of MOBAC is no longer supported for online updates. "
+									+ "Please upgrade to the most recent version.", "No updates available",
+							JOptionPane.ERROR_MESSAGE);
+					break;
+				case 0:
+					JOptionPane.showMessageDialog(SettingsGUI.this, "You have already the latest map packs installed.",
+							"No updates available", JOptionPane.INFORMATION_MESSAGE);
+					break;
+				default:
+					JOptionPane.showMessageDialog(SettingsGUI.this, result
+							+ " map packs has been updated.\nPlease restart MOBAC for installing the updates.",
+							"Updates has been downloaded", JOptionPane.INFORMATION_MESSAGE);
+				}
+			} catch (Exception e) {
+				GUIExceptionHandler.processException(e);
+			}
+			// JOptionPane.showMessageDialog(SettingsGUI.this, "Not implemented", "Not implemented",
+			// JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

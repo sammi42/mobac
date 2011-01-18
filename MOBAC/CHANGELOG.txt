@@ -9,7 +9,8 @@
  ~ = Changes   since previous version
 
 1.9 preview 5 (2011-01-??)
- + New map source: ICAO Maps (Germany)   
+ + New map source: ICAO Maps (Germany)
+ + Manual map pack online update via settings dialog    
 
 1.9 preview 4 (2011-01-14)
  + New: Support for CustomWmsMapSource (experimental)

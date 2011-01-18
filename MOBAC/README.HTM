@@ -741,8 +741,9 @@ Mercator projection and the number of tiles forming the world on each
 zoom level has to be one of the following values: 2<sup>0</sup>, 2<sup>1</sup>,
 2<sup>2</sup> ... 2<sup>21</sup>, 2<sup>22</sup>.<br>
 For more details see OpenStreetMap Wiki: <a
-	href="http://wiki.openstreetmap.org/wiki/Mercator">Mercator</a>, <a
-	href="http://wiki.openstreetmap.org/wiki/Height_and_width_of_a_map">Height
+	href="http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">Slippy
+map tilenames</a>, <a href="http://wiki.openstreetmap.org/wiki/Mercator">Mercator</a>,
+<a href="http://wiki.openstreetmap.org/wiki/Height_and_width_of_a_map">Height
 and width of a map</a> and <a
 	href="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom levels</a></p>
 <h3>Java Bugs</h3>
@@ -773,8 +774,8 @@ been installed into and change it's name to <tt>directories.ini</tt>.
 For more details read the comments in this configuration file.</p>
 
 <h3><a name="TileStoreDir">Moving the tile store directory</a></h3>
-<p>Usually the tile store directory where Mobile Atlas Creator saves all
-downloaded images in is automatically determined.<br>
+<p>Usually the tile store directory where Mobile Atlas Creator saves
+all downloaded images in is automatically determined.<br>
 In case you want to select a different directory perform the following
 steps:</p>
 <ol>
@@ -916,7 +917,8 @@ can be used by MOBAC. To du so place the saved BeanShell code file (file
 extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
 be loaded on next start-up of MOBAC.</p>
 <p>It is recommended to add a line defining the map source name (<a
-	href="#MapSourceNameUnique">must be unique</a>). <pre>name = "Your map source name here";</pre>
+	href="#MapSourceNameUnique">must be unique</a>).
+<pre>name = "Your map source name here";</pre>
 </p>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">

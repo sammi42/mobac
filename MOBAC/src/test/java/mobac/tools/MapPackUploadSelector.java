@@ -56,7 +56,7 @@ public class MapPackUploadSelector {
 						"mappacks-md5.txt"));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
 		}
 	}
 

@@ -16,7 +16,9 @@
  ******************************************************************************/
 package mobac.program.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
 import mobac.gui.components.JZoomCheckBox;
@@ -32,6 +34,13 @@ public class SelectedZoomLevels {
 		}
 	}
 
+	public SelectedZoomLevels(List<Integer> zoomLevelList) {
+		zoomLevels.addAll(zoomLevelList);
+	}
+
+	protected SelectedZoomLevels() {
+	}
+
 	public void setZoomLevelSelected(int zoomLevel) {
 		zoomLevels.add(new Integer(zoomLevel));
 	}
@@ -43,6 +52,10 @@ public class SelectedZoomLevels {
 			result[i++] = z.intValue();
 		}
 		return result;
+	}
+
+	public List<Integer> getZoomLevelList() {
+		return new ArrayList<Integer>(zoomLevels);
 	}
 
 	public int getNrOfLayers() {

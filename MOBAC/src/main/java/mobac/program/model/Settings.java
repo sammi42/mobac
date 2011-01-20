@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -84,6 +85,9 @@ public class Settings {
 
 	public Point mapviewSelectionMax = null;
 	public Point mapviewSelectionMin = null;
+	@XmlElementWrapper(name="selectedZoomLevels")
+	@XmlElement(name="zoomLevel")
+	public List<Integer> selectedZoomLevels = null;
 
 	@XmlElement(nillable = false)
 	public String mapviewMapSource = "Mapnik";

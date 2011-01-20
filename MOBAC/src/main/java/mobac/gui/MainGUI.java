@@ -33,6 +33,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -423,6 +424,18 @@ public class MainGUI extends JFrame implements MapEventListener {
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.elementName);
 		previewMap.settingsLoad();
+		int nextZoom = 0;
+		List<Integer> zoomList = settings.selectedZoomLevels;
+		for (JZoomCheckBox currentZoomCb : cbZoom) {
+			for (int i = nextZoom; i < zoomList.size(); i++) {
+				int currentListZoom = zoomList.get(i);
+				if (currentZoomCb.getZoomLevel() == currentListZoom) {
+					currentZoomCb.setSelected(true);
+					nextZoom = 1;
+					break;
+				}
+			}
+		}
 		coordinatesPanel.setNumberFormat(settings.coordinateNumberFormat);
 
 		tileImageParametersPanel.loadSettings();
@@ -460,6 +473,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			Settings s = Settings.getInstance();
 			previewMap.settingsSave();
 			s.mapviewMapSource = previewMap.getMapSource().getName();
+			s.selectedZoomLevels = new SelectedZoomLevels(cbZoom).getZoomLevelList();
 
 			s.elementName = atlasNameTextField.getText();
 			s.coordinateNumberFormat = coordinatesPanel.getNumberFormat();

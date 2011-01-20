@@ -17,6 +17,7 @@
 package mobac.tools;
 
 import java.io.File;
+import java.security.cert.CertificateException;
 
 import mobac.mapsources.loader.MapPackManager;
 import mobac.program.Logging;
@@ -48,12 +49,19 @@ public class MapPackUploadSelector {
 			for (String mapPackName : changedMapPacks) {
 				log.info("Changed local map pack found: " + mapPackName);
 				File mapPack = new File(mapPackDir, mapPackName);
-				File mapPackCopy = new File(mapPackUpdateDir, mapPackName);
-				Utilities.copyFile(mapPack, mapPackCopy);
+				try {
+					mpm.testMapPack(mapPack);
+					File mapPackCopy = new File(mapPackUpdateDir, mapPackName);
+					Utilities.copyFile(mapPack, mapPackCopy);
+				} catch (CertificateException e) {
+					log.error("Map pack not copied because of invalid signature", e);
+				}
 			}
 			if (changedMapPacks.length > 0) {
 				Utilities.copyFile(new File(mapPackDir, "mappacks-md5.txt"), new File(mapPackUpdateDir,
 						"mappacks-md5.txt"));
+			} else {
+				log.info("No updated map packs found");
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);

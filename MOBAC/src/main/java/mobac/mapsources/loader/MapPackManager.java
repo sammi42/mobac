@@ -300,7 +300,7 @@ public class MapPackManager {
 	 * @throws IOException
 	 * @throws CertificateException
 	 */
-	protected void testMapPack(File mapPackFile) throws IOException, CertificateException {
+	public void testMapPack(File mapPackFile) throws IOException, CertificateException {
 		String fileName = mapPackFile.getName();
 		JarFile jf = new JarFile(mapPackFile, true);
 		try {

@@ -26,7 +26,7 @@
 		<fileset dir="lib" includes="je-${je-version}.jar" />
 	</path>
 
-	<target name="all" depends="clean_build,svnversion,build,build_mapsources,create_jar,shrink,create_release,create_release_src" />
+	<target name="all" depends="clean_build,svnversion,build,build_mapsources,sign_mapsources,create_jar,shrink,create_release,create_release_src" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete includeemptydirs="true" failonerror="false">
@@ -66,7 +66,7 @@
 		</copy>
 	</target>
 
-	<target name="build_mapsources" depends="clean_build,build">
+	<target name="build_mapsources" depends="clean_build,build" description="Build all map packs and generate the new mappacks-md5.txt">
 		<property name="mappack.srcbasedir" value="src/main/java/mobac/mapsources/mappacks" />
 		<property file="keys/keystore.properties" />
 		<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
@@ -79,8 +79,6 @@
 			<mapper type="flatten" />
 		</pathconvert>
 		<echo file="mapsources/mappacks-md5.txt" append="false" message="" />
-		<!-- The required key stores are not available in SVN and releases! -->
-		<echo message="Signing map packs using password: ${keystore.password}" />
 		<for list="${mappacklist}" param="mappack" delimiter=";">
 			<sequential>
 				<echo message="@{mappack}" />
@@ -108,8 +106,7 @@
 					</fileset>
 					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />
 				</jar>
-				<signjar keystore="keys/keystore.jks" storepass="${keystore.password}" alias="MapPack" jar="mapsources/mp-@{mappack}.jar" verbose="false" />
-				<checksum algorithm="MD5" totalproperty="MD5-@{mappack}" >
+				<checksum algorithm="MD5" totalproperty="MD5-@{mappack}">
 					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
 						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
 					</fileset>
@@ -119,6 +116,20 @@
 		</for>
 	</target>
 
+	<target name="check_keystore" description="Checks if the key store for signing the map packs is present">
+		<available file="keys/keystore.jks" property="keystore.present" />
+	</target>
+
+	<!-- This task is only executed if a java key store is present in the keys directory -->
+	<target name="sign_mapsources" depends="build_mapsources,check_keystore" if="keystore.present">
+		<!-- The required key stores are not available in SVN and releases! -->
+		<echo message="Signing map packs using password: ${keystore.password}" />
+		<for list="${mappacklist}" param="mappack" delimiter=";">
+			<sequential>
+				<signjar keystore="keys/keystore.jks" storepass="${keystore.password}" alias="MapPack" jar="mapsources/mp-@{mappack}.jar" verbose="false" />
+			</sequential>
+		</for>
+	</target>
 
 	<target name="create_jar">
 		<delete file="${jar.name}" />

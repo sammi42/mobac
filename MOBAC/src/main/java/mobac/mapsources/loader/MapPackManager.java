@@ -78,18 +78,30 @@ public class MapPackManager {
 		mapPackCert = (X509Certificate) certs.iterator().next();
 	}
 
+	/**
+	 * Searches for updated map packs, verifies the signature
+	 * 
+	 * @throws IOException
+	 */
 	public void installUpdates() throws IOException {
 		File[] newMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.new"));
 		for (File newMapPack : newMapPacks) {
-			String name = newMapPack.getName();
-			name = name.substring(0, name.length() - 4); // remove ".new"
-			File oldMapPack = new File(mapPackDir, name);
-			if (oldMapPack.isFile()) {
-				// TODO: Check if new map pack file is still compatible
+			try {
+				testMapPack(newMapPack);
+				String name = newMapPack.getName();
+				name = name.substring(0, name.length() - 4); // remove ".new"
+				File oldMapPack = new File(mapPackDir, name);
+				if (oldMapPack.isFile()) {
+					// TODO: Check if new map pack file is still compatible
 
-				Utilities.deleteFile(oldMapPack);
+					Utilities.deleteFile(oldMapPack);
+				}
+				newMapPack.renameTo(oldMapPack);
+			} catch (CertificateException e) {
+				newMapPack.delete();
+				log.error("Map pack certificate cerificateion failed (" + newMapPack.getName()
+						+ ") installation aborted and file was deleted");
 			}
-			newMapPack.renameTo(oldMapPack);
 		}
 	}
 
@@ -102,7 +114,7 @@ public class MapPackManager {
 		ArrayList<URL> urlList = new ArrayList<URL>();
 		for (File mapPackFile : mapPacks) {
 			try {
-				testMapPack(mapPackFile);
+				// testMapPack(mapPackFile);
 				URL url = mapPackFile.toURI().toURL();
 				urlList.add(url);
 			} catch (IOException e) {

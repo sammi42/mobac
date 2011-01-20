@@ -67,3 +67,5 @@ Mapa Polski Targeo
 	http://mapa.targeo.pl/
 	Reson: Tile size 200x200
 	
+ NASA World Wind
+ 	Reason: Incompatible projection, incompatible tile size (512x512)

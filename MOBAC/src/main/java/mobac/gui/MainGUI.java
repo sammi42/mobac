@@ -426,13 +426,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		previewMap.settingsLoad();
 		int nextZoom = 0;
 		List<Integer> zoomList = settings.selectedZoomLevels;
-		for (JZoomCheckBox currentZoomCb : cbZoom) {
-			for (int i = nextZoom; i < zoomList.size(); i++) {
-				int currentListZoom = zoomList.get(i);
-				if (currentZoomCb.getZoomLevel() == currentListZoom) {
-					currentZoomCb.setSelected(true);
-					nextZoom = 1;
-					break;
+		if (zoomList != null) {
+			for (JZoomCheckBox currentZoomCb : cbZoom) {
+				for (int i = nextZoom; i < zoomList.size(); i++) {
+					int currentListZoom = zoomList.get(i);
+					if (currentZoomCb.getZoomLevel() == currentListZoom) {
+						currentZoomCb.setSelected(true);
+						nextZoom = 1;
+						break;
+					}
 				}
 			}
 		}

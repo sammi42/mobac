@@ -8,6 +8,8 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 6 (2011-02-??)
+
 1.9 preview 5 (2011-01-21)
  + New map source: ICAO Maps (Germany)
  + Manual map pack online update via settings dialog

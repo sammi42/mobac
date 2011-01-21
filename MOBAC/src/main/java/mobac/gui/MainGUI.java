@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -49,15 +50,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
 import mobac.exceptions.AtlasTestException;
-import mobac.exceptions.InvalidNameException;
+import mobac.gui.actions.AddRectangleMapAutocut;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
@@ -85,7 +88,6 @@ import mobac.program.AtlasThread;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
-import mobac.program.model.Layer;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.program.model.Profile;
@@ -266,10 +268,34 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void prepareMenuBar() {
 		JMenu atlasMenu = new JMenu("Atlas");
-		atlasMenu.setMnemonic('a');
+		atlasMenu.setMnemonic(KeyEvent.VK_A);
 		JMenuItem newAtlas = new JMenuItem("New");
 		newAtlas.addActionListener(new AtlasNew());
 		atlasMenu.add(newAtlas);
+
+		JMenu selectionMenu = new JMenu("Selection");
+		selectionMenu.setMnemonic(KeyEvent.VK_S);
+		JMenu selectionModeMenu = new JMenu("Mode");
+		selectionModeMenu.setMnemonic(KeyEvent.VK_M);
+		selectionMenu.add(selectionModeMenu);
+
+		JMenuItem smRectangular = new JRadioButtonMenuItem("Rectangular");
+		smRectangular.setSelected(true);
+		selectionModeMenu.add(smRectangular);
+
+		JMenuItem sAddSelection = new JMenuItem("Add selection");
+		sAddSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		sAddSelection.addActionListener(AddRectangleMapAutocut.INSTANCE);
+		selectionMenu.add(sAddSelection);
+
+		JMenu debug = new JMenu("Debug");
+		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
+		mapSourceNames.addActionListener(new DebugShowMapSourceNames());
+		debug.add(mapSourceNames);
+		debug.addSeparator();
+		JMenuItem showLog = new JMenuItem("Show log file");
+		showLog.addActionListener(new DebugShowLogFile());
+		debug.add(showLog);
 
 		JMenu help = new JMenu("Help");
 		JMenuItem readme = new JMenuItem("Show Readme");
@@ -287,16 +313,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		help.addSeparator();
 		help.add(about);
 
-		JMenu debug = new JMenu("Debug");
-		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
-		mapSourceNames.addActionListener(new DebugShowMapSourceNames());
-		debug.add(mapSourceNames);
-		debug.addSeparator();
-		JMenuItem showLog = new JMenuItem("Show log file");
-		showLog.addActionListener(new DebugShowLogFile());
-		debug.add(showLog);
-
 		menuBar.add(atlasMenu);
+		menuBar.add(selectionMenu);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(debug);
 		menuBar.add(help);
@@ -331,12 +349,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		clearAtlas.addActionListener(new AtlasNew());
 		JButton addLayers = new JButton("Add selection");
 		atlasContentPanel.addContent(addLayers, GBC.eol());
-		addLayers.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				addSelectedAutoCutMultiMapLayers();
-			}
-		});
+		addLayers.addActionListener(AddRectangleMapAutocut.INSTANCE);
 		atlasContentPanel.addContent(new JLabel("Name: "), gbc_std);
 		atlasContentPanel.addContent(atlasNameTextField, gbc_eol.fill(GBC.HORIZONTAL));
 
@@ -707,6 +720,14 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setSelectedItem(new GridZoom(newGridZoomLevel));
 	}
 
+	public MapSource getSelectedMapSource() {
+		return (MapSource) mapSourceCombo.getSelectedItem();
+	}
+
+	public SelectedZoomLevels getSelectedZoomLevels() {
+		return new SelectedZoomLevels(cbZoom);
+	}
+
 	public void selectNextMapSource() {
 		if (mapSourceCombo.getSelectedIndex() == mapSourceCombo.getItemCount() - 1) {
 			Toolkit.getDefaultToolkit().beep();
@@ -721,57 +742,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		} else {
 			mapSourceCombo.setSelectedIndex(mapSourceCombo.getSelectedIndex() - 1);
 		}
-	}
-
-	private void addSelectedAutoCutMultiMapLayers() {
-		final String mapNameFmt = "%s %02d";
-		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
-		String name = atlasNameTextField.getText();
-		MapSource tileSource = (MapSource) mapSourceCombo.getSelectedItem();
-		SelectedZoomLevels sZL = new SelectedZoomLevels(cbZoom);
-		MapSelection ms = getMapSelectionCoordinates();
-		if (ms == null) {
-			JOptionPane.showMessageDialog(this, "Please select an area");
-			return;
-		}
-		Settings settings = Settings.getInstance();
-		String errorText = validateInput();
-		if (errorText.length() > 0) {
-			JOptionPane.showMessageDialog(null, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		int[] zoomLevels = sZL.getZoomLevels();
-		if (zoomLevels.length == 0) {
-			JOptionPane.showMessageDialog(this, "Please select at least one zoom level");
-			return;
-		}
-
-		String layerName = name;
-		Layer layer = null;
-		int c = 1;
-		boolean success = false;
-		do {
-			try {
-				layer = new Layer(atlasInterface, layerName);
-				success = true;
-			} catch (InvalidNameException e) {
-				layerName = name + "_" + Integer.toString(c++);
-			}
-		} while (!success);
-		for (int zoom : zoomLevels) {
-			Point tl = ms.getTopLeftPixelCoordinate(zoom);
-			Point br = ms.getBottomRightPixelCoordinate(zoom);
-			TileImageParameters customTileParameters = getSelectedTileImageParameters();
-			try {
-				String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
-				layer.addMapsAutocut(mapName, tileSource, tl, br, zoom, customTileParameters, settings.maxMapSize);
-			} catch (InvalidNameException e) {
-				log.error("", e);
-			}
-		}
-		atlasInterface.addLayer(layer);
-		jAtlasTree.getTreeModel().notifyNodeInsert(layer);
 	}
 
 	public void mapSourceChanged(MapSource newMapSource) {
@@ -794,17 +764,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 	}
 
-	private MapSelection getMapSelectionCoordinates() {
+	public MapSelection getMapSelectionCoordinates() {
 		if (mapSelectionMax == null || mapSelectionMin == null)
 			return null;
 		return new MapSelection(previewMap.getMapSource(), mapSelectionMax, mapSelectionMin);
 	}
 
 	private String validateInput() {
-
 		String errorText = "";
 		errorText += tileImageParametersPanel.getValidationErrorMessages();
-
 		return errorText;
 	}
 

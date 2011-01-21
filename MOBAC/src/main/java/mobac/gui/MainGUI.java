@@ -273,11 +273,11 @@ public class MainGUI extends JFrame implements MapEventListener {
 		newAtlas.addActionListener(new AtlasNew());
 		atlasMenu.add(newAtlas);
 
-		JMenu selectionMenu = new JMenu("Selection");
-		selectionMenu.setMnemonic(KeyEvent.VK_S);
-		JMenu selectionModeMenu = new JMenu("Mode");
+		JMenu mapsMenu = new JMenu("Maps");
+		mapsMenu.setMnemonic(KeyEvent.VK_M);
+		JMenu selectionModeMenu = new JMenu("Selection Mode");
 		selectionModeMenu.setMnemonic(KeyEvent.VK_M);
-		selectionMenu.add(selectionModeMenu);
+		mapsMenu.add(selectionModeMenu);
 
 		JMenuItem smRectangular = new JRadioButtonMenuItem("Rectangular");
 		smRectangular.setSelected(true);
@@ -285,8 +285,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		JMenuItem sAddSelection = new JMenuItem("Add selection");
 		sAddSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		sAddSelection.setMnemonic(KeyEvent.VK_A);
 		sAddSelection.addActionListener(AddRectangleMapAutocut.INSTANCE);
-		selectionMenu.add(sAddSelection);
+		mapsMenu.add(sAddSelection);
 
 		JMenu debug = new JMenu("Debug");
 		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
@@ -314,7 +315,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		help.add(about);
 
 		menuBar.add(atlasMenu);
-		menuBar.add(selectionMenu);
+		menuBar.add(mapsMenu);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(debug);
 		menuBar.add(help);

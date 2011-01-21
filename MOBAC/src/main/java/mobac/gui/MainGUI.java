@@ -61,6 +61,7 @@ import mobac.exceptions.InvalidNameException;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
+import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.ShowAboutDialog;
 import mobac.gui.actions.ShowHelpAction;
 import mobac.gui.actions.ShowReadme;
@@ -264,15 +265,25 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private void prepareMenuBar() {
+		JMenu atlasMenu = new JMenu("Atlas");
+		atlasMenu.setMnemonic('a');
+		JMenuItem newAtlas = new JMenuItem("New");
+		newAtlas.addActionListener(new AtlasNew());
+		atlasMenu.add(newAtlas);
+
 		JMenu help = new JMenu("Help");
 		JMenuItem readme = new JMenuItem("Show Readme");
 		JMenuItem howToMap = new JMenuItem("How to use preview map");
+		JMenuItem licenses = new JMenuItem("Licenses");
 		JMenuItem about = new JMenuItem("About");
 		readme.addActionListener(new ShowReadme());
 		about.addActionListener(new ShowAboutDialog());
 		howToMap.addActionListener(new ShowHelpAction());
+		licenses.addActionListener(new HelpLicenses());
 		help.add(readme);
 		help.add(howToMap);
+		help.addSeparator();
+		help.add(licenses);
 		help.addSeparator();
 		help.add(about);
 
@@ -285,11 +296,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		showLog.addActionListener(new DebugShowLogFile());
 		debug.add(showLog);
 
-		JMenu atlasMenu = new JMenu("Atlas");
-		atlasMenu.setMnemonic('a');
-		JMenuItem newAtlas = new JMenuItem("New");
-		newAtlas.addActionListener(new AtlasNew());
-		atlasMenu.add(newAtlas);
 		menuBar.add(atlasMenu);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(debug);

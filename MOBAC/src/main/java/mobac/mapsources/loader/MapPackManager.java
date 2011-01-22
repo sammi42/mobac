@@ -157,7 +157,9 @@ public class MapPackManager {
 		if (responseCode != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
 		// Case HTTP_OK
-		data = Utilities.getInputBytes(conn.getInputStream());
+		InputStream in = conn.getInputStream();
+		data = Utilities.getInputBytes(in);
+		in.close();
 		Settings.getInstance().mapSourcesUpdate.etag = conn.getHeaderField("ETag");
 		String md5sumList = new String(data);
 		return md5sumList;

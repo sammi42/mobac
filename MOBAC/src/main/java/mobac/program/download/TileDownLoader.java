@@ -296,15 +296,15 @@ public class TileDownLoader {
 	 */
 	protected static byte[] loadBodyDataInBuffer(HttpURLConnection conn) throws IOException {
 		InputStream input = conn.getInputStream();
-		if (Thread.currentThread() instanceof MapSourceListener) {
-			// We only throttle atlas downloads, not downloads for the preview map
-			long bandwidthLimit = Settings.getInstance().getBandwidthLimit();
-			if (bandwidthLimit > 0) {
-				input = new ThrottledInputStream(input);
-			}
-		}
 		byte[] data = null;
 		try {
+			if (Thread.currentThread() instanceof MapSourceListener) {
+				// We only throttle atlas downloads, not downloads for the preview map
+				long bandwidthLimit = Settings.getInstance().getBandwidthLimit();
+				if (bandwidthLimit > 0) {
+					input = new ThrottledInputStream(input);
+				}
+			}
 			data = Utilities.getInputBytes(input);
 		} catch (IOException e) {
 			InputStream errorIn = conn.getErrorStream();

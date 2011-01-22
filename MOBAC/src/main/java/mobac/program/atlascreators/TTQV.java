@@ -31,6 +31,9 @@ import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
+/**
+ *  Touratech QV
+ */
 public class TTQV extends Ozi {
 
 	@Override

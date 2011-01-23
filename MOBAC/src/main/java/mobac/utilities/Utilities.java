@@ -580,7 +580,12 @@ public class Utilities {
 		int responseCode = conn.getResponseCode();
 		if (responseCode != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
-		return Utilities.getInputBytes(conn.getInputStream());
+		InputStream in = conn.getInputStream();
+		try {
+			return Utilities.getInputBytes(in);
+		} finally {
+			in.close();
+		}
 	}
 
 	public static void copyFile(File source, File target) throws IOException {

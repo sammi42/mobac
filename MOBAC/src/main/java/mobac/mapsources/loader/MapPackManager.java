@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,8 +49,8 @@ import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
-import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.program.model.Settings;
+import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.FileExtFilter;
 
@@ -111,32 +112,35 @@ public class MapPackManager {
 
 	public void loadMapPacks(MapSourcesManager mapSourcesManager) throws IOException, CertificateException {
 		File[] mapPacks = getAllMapPackFiles();
-		ArrayList<URL> urlList = new ArrayList<URL>();
+		ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
 		for (File mapPackFile : mapPacks) {
 			try {
 				// testMapPack(mapPackFile);
 				URL url = mapPackFile.toURI().toURL();
-				urlList.add(url);
+				URLClassLoader urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, url, sysClassLoader);
+				InputStream manifestIn = urlCl.getResourceAsStream("META-INF/MANIFEST.MF");
+				String rev = null;
+				if (manifestIn != null) {
+					Manifest mf = new Manifest(manifestIn);
+					rev = mf.getMainAttributes().getValue("MapPackRevision");
+					log.debug(rev);
+					manifestIn.close();
+				}
+				MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev);
+				final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
+				while (iterator.hasNext()) {
+					try {
+						MapSource ms = iterator.next();
+						ms.setLoaderInfo(loaderInfo);
+						mapSourcesManager.addMapSource(ms);
+						log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
+					} catch (Error e) {
+						log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
+					}
+				}
+
 			} catch (IOException e) {
 				log.error("Failed to load map pack: " + mapPackFile, e);
-			}
-		}
-		URL[] urls = new URL[urlList.size()];
-		urlList.toArray(urls);
-
-		ClassLoader urlCl;
-		urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, urls, ClassLoader.getSystemClassLoader());
-
-		MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, null);
-		final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
-		while (iterator.hasNext()) {
-			try {
-				MapSource ms = iterator.next();
-				ms.setLoaderInfo(loaderInfo);
-				mapSourcesManager.addMapSource(ms);
-				log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
-			} catch (Error e) {
-				log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
 			}
 		}
 	}

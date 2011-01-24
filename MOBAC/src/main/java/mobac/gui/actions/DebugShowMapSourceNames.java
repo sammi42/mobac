@@ -52,20 +52,24 @@ public class DebugShowMapSourceNames implements ActionListener {
 			MapSourceLoaderInfo loaderInfo = ms.getLoaderInfo();
 			sw.append(ms.getName());
 			if (loaderInfo != null) {
-				sw.append(" (map type: " + loaderInfo.loaderType + ")");
+				sw.append("\t (map type: " + loaderInfo.getLoaderType());
+				if (loaderInfo.getRevision() != null)
+					sw.append(", rev: " + loaderInfo.getRevision());
+				sw.append(")");
 			}
 			sw.append("\n");
 		}
 
 		JFrame dialog = new JFrame("Map source names");
 		dialog.setLocationRelativeTo(MainGUI.getMainGUI());
-		dialog.setLocation(100, 50);
+		dialog.setLocation(100, 40);
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		dScreen.height -= 200;
-		dScreen.width = Math.min(dScreen.width - 100, 500);
+		dScreen.width = Math.min(dScreen.width - 100, 700);
 		dialog.setSize(dScreen);
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JTextArea namesArea = new JTextArea(sw.toString());
+		namesArea.setTabSize(50);
 		JScrollPane scroller = new JScrollPane(namesArea);
 		dialog.add(scroller);
 		dialog.setVisible(true);

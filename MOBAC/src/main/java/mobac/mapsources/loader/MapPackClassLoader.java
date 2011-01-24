@@ -31,6 +31,10 @@ public class MapPackClassLoader extends URLClassLoader {
 
 	private final ClassLoader fallback;
 
+	public MapPackClassLoader(String packageName, URL url, ClassLoader fallback) {
+		this(packageName, new URL[] { url }, fallback);
+	}
+
 	public MapPackClassLoader(String packageName, URL[] urls, ClassLoader fallback) {
 		super(urls, null);
 		this.packageName = packageName;

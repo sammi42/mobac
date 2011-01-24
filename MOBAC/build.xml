@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Compile and build java classes plus jar archives">
 
 	<property file="src/main/resources/mobac/mobac.properties" />
@@ -66,7 +65,7 @@
 		</copy>
 	</target>
 
-	<target name="build_mapsources" depends="clean_build,build" description="Build all map packs and generate the new mappacks-md5.txt">
+	<target name="build_mapsources" depends="clean_build,build,svnversion" description="Build all map packs and generate the new mappacks-md5.txt">
 		<property name="mappack.srcbasedir" value="src/main/java/mobac/mapsources/mappacks" />
 		<property file="keys/keystore.properties" />
 		<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
@@ -99,7 +98,8 @@
 					<manifest>
 						<attribute name="MapPackVersion" value="${mobac.mappackversion}" />
 						<attribute name="MapPackName" value="@{mappack}" />
-						<attribute name="Build-Date" value="${build.date}" />
+						<attribute name="MapPackBuild-Date" value="${build.date}" />
+						<attribute name="MapPackRevision" value="${mobac.revision.new}" />
 					</manifest>
 					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
 						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />

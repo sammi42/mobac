@@ -132,8 +132,9 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public String getInfoText() {
-		return "Map [name=" + name + ", mapSource=" + mapSource + ",\nzoom=" + zoom + ",\nmaxTileCoordinate="
-				+ maxTileCoordinate + ",\nminTileCoordinate=" + minTileCoordinate + ",\nparameters=" + parameters + "]";
+		return "Map\n name=" + name + "\n mapSource=" + mapSource + "\n zoom=" + zoom + "\n maxTileCoordinate="
+				+ maxTileCoordinate.x + "/" + maxTileCoordinate.y + "\n minTileCoordinate=" + minTileCoordinate.x + "/"
+				+ minTileCoordinate.y + "\n parameters=" + parameters;
 	}
 
 	public String getToolTip() {

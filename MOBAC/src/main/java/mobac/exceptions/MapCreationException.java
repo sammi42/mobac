@@ -16,9 +16,14 @@
  ******************************************************************************/
 package mobac.exceptions;
 
-import mobac.program.interfaces.MapInterface;
+import java.io.StringWriter;
 
-public class MapCreationException extends Exception {
+import mobac.program.interfaces.ExceptionExtendedInfo;
+import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
+import mobac.program.model.MapSourceLoaderInfo;
+
+public class MapCreationException extends Exception implements ExceptionExtendedInfo {
 
 	private static final long serialVersionUID = 1L;
 	private MapInterface map;
@@ -38,14 +43,26 @@ public class MapCreationException extends Exception {
 		this.map = map;
 	}
 
-	@Override
-	public String getMessage() {
-		String s = super.getMessage();
+	public String getExtendedInfo() {
+		StringWriter sw = new StringWriter();
 		if (map != null) {
-			s += "\n" + map.getInfoText();
+			sw.append(map.getInfoText());
+			MapSource mapSource = map.getMapSource();
+			if (mapSource != null) {
+				MapSourceLoaderInfo loaderInfo = map.getMapSource().getLoaderInfo();
+				if (loaderInfo != null) {
+					sw.append("\nMap type: " + loaderInfo.getLoaderType());
+					if (loaderInfo.getSourceFile() != null)
+						sw.append("\nMap implementation: " + loaderInfo.getSourceFile().getName());
+					sw.append("\nMap revision: " + loaderInfo.getRevision());
+				}
+			}
 		}
-		return s;
+		return sw.toString();
+	}
 
+	public MapInterface getMap() {
+		return map;
 	}
 
 }

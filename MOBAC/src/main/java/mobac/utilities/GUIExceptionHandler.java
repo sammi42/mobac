@@ -41,6 +41,7 @@ import javax.swing.event.HyperlinkListener;
 
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
+import mobac.program.interfaces.ExceptionExtendedInfo;
 
 import org.apache.log4j.Logger;
 
@@ -137,7 +138,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	public static synchronized void showExceptionDialog(Throwable t, String additionalInfo) {
 		String exceptionName = t.getClass().getSimpleName();
 		try {
-			StringBuilder sb = new StringBuilder(1024);
+			StringBuilder sb = new StringBuilder(2048);
 			sb.append("Version: " + ProgramInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
 			String windowManager = System.getProperty("sun.desktop");
@@ -157,6 +158,12 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 			if (additionalInfo != null)
 				sb.append("\n\n" + additionalInfo);
+
+			if (t instanceof ExceptionExtendedInfo) {
+				ExceptionExtendedInfo ei = (ExceptionExtendedInfo) t;
+				sb.append("\n");
+				sb.append(ei.getExtendedInfo());
+			}
 
 			sb.append("\n\nError hierarchy:");
 			Throwable tmp = t;

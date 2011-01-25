@@ -29,7 +29,7 @@ import mobac.gui.mapview.PreviewMap;
  * selection and actions triggered by key strokes.
  * 
  */
-public class PreviewMapController extends JMapController implements MouseMotionListener,
+public class RectangleSelectionMapController extends JMapController implements MouseMotionListener,
 		MouseListener {
 
 	/** start point of selection rectangle */
@@ -38,7 +38,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	/** end point of selection rectangle */
 	private Point iEndSelectionPoint;
 
-	public PreviewMapController(PreviewMap map, boolean enabled) {
+	public RectangleSelectionMapController(PreviewMap map, boolean enabled) {
 		super(map, enabled);
 	}
 
@@ -58,7 +58,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
 			if (iStartSelectionPoint != null) {
 				iEndSelectionPoint = e.getPoint();
-				((PreviewMap) map).setSelectionByScreenPoint(iStartSelectionPoint,
+				map.setSelectionByScreenPoint(iStartSelectionPoint,
 						iEndSelectionPoint, true);
 			}
 		}
@@ -71,7 +71,7 @@ public class PreviewMapController extends JMapController implements MouseMotionL
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (e.getClickCount() == 1) {
-				((PreviewMap) map).setSelectionByScreenPoint(iStartSelectionPoint, e.getPoint(),
+				map.setSelectionByScreenPoint(iStartSelectionPoint, e.getPoint(),
 						true);
 
 				// reset the selections start and end

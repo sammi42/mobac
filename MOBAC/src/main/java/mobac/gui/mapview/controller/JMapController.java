@@ -22,7 +22,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 
-import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.PreviewMap;
 
 /**
  * Abstract base class for all mouse controller implementations. For
@@ -36,14 +36,14 @@ import mobac.gui.mapview.JMapViewer;
  */
 public abstract class JMapController {
 
-	protected final JMapViewer map;
+	protected final PreviewMap map;
 	protected boolean enabled = false;
 
-	public JMapController(JMapViewer map) {
+	public JMapController(PreviewMap map) {
 		this.map = map;
 	}
 
-	public JMapController(JMapViewer map, boolean enabled) {
+	public JMapController(PreviewMap map, boolean enabled) {
 		this(map);
 		if (enabled)
 			enable();

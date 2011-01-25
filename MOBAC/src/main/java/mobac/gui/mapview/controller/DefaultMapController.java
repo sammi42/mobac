@@ -25,26 +25,25 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.PreviewMap;
 import mobac.utilities.OSUtilities;
 
 /**
- * Default map controller which implements map moving by pressing the right
- * mouse button and zooming by double click or by mouse wheel.
+ * Default map controller which implements map moving by pressing the right mouse button and zooming by double click or
+ * by mouse wheel.
  * 
  * @author Jan Peter Stotz
  * 
  */
-public class DefaultMapController extends JMapController implements MouseListener,
-		MouseMotionListener, MouseWheelListener {
+public class DefaultMapController extends JMapController implements MouseListener, MouseMotionListener,
+		MouseWheelListener {
 
-	private static final int MOUSE_BUTTONS_MASK = MouseEvent.BUTTON3_DOWN_MASK
-			| MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
+	private static final int MOUSE_BUTTONS_MASK = MouseEvent.BUTTON3_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK
+			| MouseEvent.BUTTON2_DOWN_MASK;
 
-	private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK
-			| MouseEvent.BUTTON1_DOWN_MASK;
+	private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
 
-	public DefaultMapController(JMapViewer map) {
+	public DefaultMapController(PreviewMap map) {
 		super(map, true);
 	}
 
@@ -89,8 +88,7 @@ public class DefaultMapController extends JMapController implements MouseListene
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (e.getButton() == movementMouseButton || OSUtilities.isPlatformOsx()
-				&& e.getButton() == MouseEvent.BUTTON1) {
+		if (e.getButton() == movementMouseButton || OSUtilities.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
 			lastDragPoint = null;
 			isMoving = false;
 		}
@@ -119,8 +117,7 @@ public class DefaultMapController extends JMapController implements MouseListene
 	}
 
 	/**
-	 * Sets the mouse button that is used for moving the map. Possible values
-	 * are:
+	 * Sets the mouse button that is used for moving the map. Possible values are:
 	 * <ul>
 	 * <li>{@link MouseEvent#BUTTON1} (left mouse button)</li>
 	 * <li>{@link MouseEvent#BUTTON2} (middle mouse button)</li>

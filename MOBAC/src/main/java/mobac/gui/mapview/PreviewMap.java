@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import mobac.gui.mapview.controller.DefaultMapController;
 import mobac.gui.mapview.controller.JMapController;
 import mobac.gui.mapview.controller.MapKeyboardController;
-import mobac.gui.mapview.controller.PreviewMapController;
+import mobac.gui.mapview.controller.RectangleSelectionMapController;
 import mobac.gui.mapview.interfaces.MapEventListener;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
@@ -90,7 +90,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		setZoomContolsVisible(false);
 
 		mapKeyboardController = new MapKeyboardController(this, true);
-		mapSelectionController = new PreviewMapController(this, true);
+		mapSelectionController = new RectangleSelectionMapController(this, true);
 
 		addComponentListener(this);
 	}
@@ -450,6 +450,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public JMapController getMapSelectionController() {
 		return mapSelectionController;
+	}
+
+	public void setMapSelectionController(JMapController mapSelectionController) {
+		this.mapSelectionController = mapSelectionController;
 	}
 
 }

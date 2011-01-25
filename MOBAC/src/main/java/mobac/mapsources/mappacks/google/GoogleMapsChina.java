@@ -25,7 +25,7 @@ import mobac.program.model.TileImageType;
  */
 public class GoogleMapsChina extends AbstractGoogleMapSource {
 
-	private static final String INIT_URL = "http://ditu.google.com/";
+	private static final String INIT_URL = "http://ditu.google.cn/";
 	private static final String INIT_REGEX = "^http://mt\\d\\.google\\.cn/.*";
 
 	public GoogleMapsChina() {

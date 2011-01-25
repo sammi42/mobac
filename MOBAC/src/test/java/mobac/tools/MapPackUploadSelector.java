@@ -39,6 +39,7 @@ public class MapPackUploadSelector {
 		try {
 			File mapPackDir = new File("mapsources");
 			File mapPackUpdateDir = new File(mapPackDir, "updates");
+			Utilities.mkDirs(mapPackUpdateDir);
 			for (File newMapPack : mapPackUpdateDir.listFiles())
 				Utilities.deleteFile(newMapPack);
 

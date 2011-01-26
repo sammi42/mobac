@@ -56,6 +56,8 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 	private static final double MB_DIV = 1024d * 1024d;
 
+	private static final String URL_BUGTRACKER = "http://sourceforge.net/tracker/?group_id=238075&atid=1105494";
+
 	static {
 		Thread.setDefaultUncaughtExceptionHandler(instance);
 	}
@@ -87,9 +89,9 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		showExceptionDialog(thread, t, null);
 	}
 
-	public static void processException(Thread t, Throwable e, AWTEvent newEvent) {
+	public static void processException(Thread thread, Throwable t, AWTEvent newEvent) {
 		String eventText = newEvent.toString();
-		log.error("Uncaught exception on processing event " + eventText, e);
+		log.error("Uncaught exception on processing event " + eventText, t);
 		if (eventText.length() > 100) {
 			String[] parts = eventText.split(",");
 			StringWriter sw = new StringWriter(eventText.length() + 20);
@@ -105,7 +107,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			}
 			eventText = "Event: " + sw.toString();
 		}
-		showExceptionDialog(e, eventText);
+		showExceptionDialog(thread, t, eventText);
 	}
 
 	public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
@@ -123,20 +125,10 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	}
 
 	public static void showExceptionDialog(Throwable t) {
-		showExceptionDialog(t, null);
+		showExceptionDialog(Thread.currentThread(), t, null);
 	}
 
-	public static void showExceptionDialog(Thread thread, Throwable t, String additionalInfo) {
-		String threadInfo = "Thread: " + thread.getName() + "\n";
-		if (additionalInfo != null)
-			additionalInfo = threadInfo + additionalInfo;
-		else
-			additionalInfo = threadInfo;
-		showExceptionDialog(t, additionalInfo);
-	}
-
-	public static synchronized void showExceptionDialog(Throwable t, String additionalInfo) {
-		String exceptionName = t.getClass().getSimpleName();
+	public static synchronized void showExceptionDialog(Thread thread, Throwable t, String additionalInfo) {
 		try {
 			StringBuilder sb = new StringBuilder(2048);
 			sb.append("Version: " + ProgramInfo.getCompleteTitle());
@@ -150,11 +142,14 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				sb.append("\nDistribution name: " + dist);
 
 			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version") + ")");
-			if (t.getClass().equals(java.lang.OutOfMemoryError.class)) {
+			if (t != null && t.getClass().equals(java.lang.OutOfMemoryError.class)) {
 				Runtime r = Runtime.getRuntime();
 				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
 			}
 			// sb.append("\nMapsources rev: " + MapSourcesUpdater.getCurrentMapSourcesRev());
+
+			if (thread != null)
+				sb.append("\n\nThread: " + thread.getName());
 
 			if (additionalInfo != null)
 				sb.append("\n\n" + additionalInfo);
@@ -165,26 +160,39 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				sb.append(ei.getExtendedInfo());
 			}
 
-			sb.append("\n\nError hierarchy:");
-			Throwable tmp = t;
-			while (tmp != null) {
-				sb.append("\n  " + tmp.getClass().getSimpleName() + ": " + tmp.getMessage());
-				tmp = tmp.getCause();
-			}
-
-			StringWriter stack = new StringWriter();
-			t.printStackTrace(new PrintWriter(stack));
-			sb.append("\n\n#############################################################\n\n");
-			sb.append(stack.getBuffer().toString());
-			sb.append("\n#############################################################");
-
+			String guiText;
+			String dialogTitle;
 			JPanel panel = new JPanel(new BorderLayout());
-			String url = "http://sourceforge.net/tracker/?group_id=238075&atid=1105494";
-			String guiText = "" + "An unexpected exception occurred (" + exceptionName + ")<br>"
-					+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + url
-					+ "\">SourceForge.net</a><br>"
-					+ "<b>Please include a detailed description of your performed actions <br>"
-					+ "before the error occurred.</b></p>" + "Be sure to include the following information:";
+			if (t != null) {
+				sb.append("\n\nError hierarchy:");
+				Throwable tmp = t;
+				while (tmp != null) {
+					sb.append("\n  " + tmp.getClass().getSimpleName() + ": " + tmp.getMessage());
+					tmp = tmp.getCause();
+				}
+
+				String exceptionName = t.getClass().getSimpleName();
+				dialogTitle = "Unexpected Exception: " + exceptionName;
+				StringWriter stack = new StringWriter();
+				t.printStackTrace(new PrintWriter(stack));
+				sb.append("\n\n#############################################################\n\n");
+				sb.append(stack.getBuffer().toString());
+				sb.append("\n#############################################################");
+
+				guiText = "An unexpected exception occurred (" + exceptionName + ")<br>"
+						+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + URL_BUGTRACKER
+						+ "\">SourceForge.net</a><br>"
+						+ "<b>Please include a detailed description of your performed actions <br>"
+						+ "before the error occurred.</b></p>Be sure to include the following information:";
+			} else {
+				dialogTitle = "System report";
+				guiText = "This is a user generated system report.<br>"
+						+ "<p>It can be used for providing detailed version information <br>"
+						+ "in case a new ticket in the bug tracker is created " + "on <a href=\"" + URL_BUGTRACKER
+						+ "\">SourceForge.net</a><br>"
+						+ "<b>Please include a detailed description of your problem <br>"
+						+ "and what steps are necessary to reproduce the problem.</b>" + "</p>";
+			}
 			JEditorPane text = new JEditorPane("text/html", "");
 			text.setOpaque(true);
 			text.setBackground(UIManager.getColor("JFrame.background"));
@@ -224,8 +232,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			panel.add(quickMOBACcb, BorderLayout.SOUTH);
 			panel.setMinimumSize(new Dimension(700, 300));
 			panel.validate();
-			JOptionPane.showMessageDialog(null, panel, "Unexpected Exception: " + exceptionName,
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, panel, dialogTitle, JOptionPane.ERROR_MESSAGE);
 			if (quickMOBACcb.isSelected()) {
 				log.warn("User selected to quit MOBAC after an exception");
 				System.exit(1);

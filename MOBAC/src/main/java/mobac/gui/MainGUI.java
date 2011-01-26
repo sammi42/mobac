@@ -64,6 +64,7 @@ import mobac.gui.actions.AddRectangleMapAutocut;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
+import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.ShowAboutDialog;
 import mobac.gui.actions.ShowHelpAction;
@@ -290,13 +291,20 @@ public class MainGUI extends JFrame implements MapEventListener {
 		mapsMenu.add(sAddSelection);
 
 		JMenu debug = new JMenu("Debug");
+		debug.setMnemonic(KeyEvent.VK_D);
 		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
+		mapSourceNames.setMnemonic(KeyEvent.VK_N);
 		mapSourceNames.addActionListener(new DebugShowMapSourceNames());
 		debug.add(mapSourceNames);
 		debug.addSeparator();
 		JMenuItem showLog = new JMenuItem("Show log file");
+		showLog.setMnemonic(KeyEvent.VK_L);
 		showLog.addActionListener(new DebugShowLogFile());
 		debug.add(showLog);
+		JMenuItem report = new JMenuItem("Generate system report");
+		report.setMnemonic(KeyEvent.VK_R);
+		report.addActionListener(new DebugShowReport());
+		debug.add(report);
 
 		JMenu help = new JMenu("Help");
 		JMenuItem readme = new JMenuItem("Show Readme");

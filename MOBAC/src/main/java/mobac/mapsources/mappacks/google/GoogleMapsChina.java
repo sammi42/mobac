@@ -16,6 +16,9 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.google;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
@@ -41,4 +44,13 @@ public class GoogleMapsChina extends AbstractGoogleMapSource {
 	protected void initernalInitialize() throws MapSourceInitializationException {
 		initializeServerUrl(INIT_URL, INIT_REGEX);
 	}
+
+	@Override
+	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
+		HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
+		conn.addRequestProperty("Accept-Language", "zh-CN");
+		return conn;
+	}
+	
+	
 }

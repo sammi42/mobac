@@ -80,7 +80,13 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 		String url = getTileUrl(zoom, tilex, tiley);
 		if (url == null)
 			return null;
-		return (HttpURLConnection) new URL(url).openConnection();
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		prepareTileUrlConnection(conn);
+		return conn;
+	}
+
+	protected void prepareTileUrlConnection(HttpURLConnection conn) {
+		// Derived classes may override this method
 	}
 
 	public abstract String getTileUrl(int zoom, int tilex, int tiley);

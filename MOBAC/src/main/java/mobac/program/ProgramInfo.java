@@ -25,8 +25,11 @@ import mobac.utilities.Utilities;
 public class ProgramInfo {
 
 	public static String PROG_NAME = "Mobile Atlas Creator";
+	public static String PROG_NAME_SHORT = "MOBAC";
+
 	private static String version = null;
 	private static String revision = "";
+	private static String userAgent = "";
 
 	/**
 	 * Show or hide the detailed revision info in the main windows title
@@ -62,6 +65,7 @@ public class ProgramInfo {
 		} finally {
 			Utilities.closeStream(propIn);
 		}
+		userAgent = PROG_NAME_SHORT + "/" + (getVersion().replaceAll(" ", "_"));
 	}
 
 	public static String getVersion() {
@@ -78,7 +82,7 @@ public class ProgramInfo {
 	public static String getVersionTitle() {
 		String title;
 		if (version != null) {
-			title = PROG_NAME + " " + version;
+			title = PROG_NAME + " " + getVersion();
 		} else
 			title = PROG_NAME + " unknown version";
 		return title;
@@ -89,6 +93,10 @@ public class ProgramInfo {
 		if (!titleHideRevision)
 			title += " (" + revision + ")";
 		return title;
+	}
+
+	public static String getUserAgent() {
+		return userAgent;
 	}
 
 }

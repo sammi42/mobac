@@ -16,6 +16,9 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
+import java.net.HttpURLConnection;
+
+import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
 
 public class Mapnik extends AbstractOsmTileSource {
@@ -33,6 +36,12 @@ public class Mapnik extends AbstractOsmTileSource {
 
 	public HttpMapSource.TileUpdate getTileUpdate() {
 		return HttpMapSource.TileUpdate.IfNoneMatch;
+	}
+
+	@Override
+	protected void prepareTileUrlConnection(HttpURLConnection conn) {
+		super.prepareTileUrlConnection(conn);
+		conn.setRequestProperty("User-agent", ProgramInfo.getUserAgent());
 	}
 
 	@Override

@@ -143,7 +143,8 @@ public class TileDownLoader {
 		Settings s = Settings.getInstance();
 		conn.setConnectTimeout(1000 * s.httpConnectionTimeout);
 		conn.setReadTimeout(1000 * s.httpReadTimeout);
-		conn.addRequestProperty("User-agent", s.getUserAgent());
+		if (conn.getRequestProperty("User-agent") == null)
+			conn.addRequestProperty("User-agent", s.getUserAgent());
 		conn.setRequestProperty("Accept", ACCEPT);
 		conn.connect();
 

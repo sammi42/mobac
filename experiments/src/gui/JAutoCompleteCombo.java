@@ -299,7 +299,7 @@ public class JAutoCompleteCombo extends JComboBox implements FocusListener {
 		frame.setLayout(new GridLayout(3, 1));
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
-		final JAutoCompleteCombo combo = new JAutoCompleteCombo(MapSourcesManager.getInstance().getEnabledMapSources());
+		final JAutoCompleteCombo combo = new JAutoCompleteCombo(MapSourcesManager.getInstance().getEnabledOrderedMapSources());
 		combo.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

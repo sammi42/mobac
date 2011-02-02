@@ -16,8 +16,11 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.concurrent.Semaphore;
 
+import mobac.exceptions.TileException;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
 
@@ -25,8 +28,26 @@ public class Mapnik extends AbstractOsmTileSource {
 
 	private static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 
+	/**
+	 * Maximum of 2 download threads
+	 * 
+	 * @see http://wiki.openstreetmap.org/wiki/Tile_usage_policy
+	 */
+	private static final Semaphore SEM = new Semaphore(2);
+
 	public Mapnik() {
 		super("Mapnik");
+	}
+
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+			InterruptedException {
+		SEM.acquire();
+		try {
+			return super.getTileData(zoom, x, y, loadMethod);
+		} finally {
+			SEM.release();
+		}
 	}
 
 	@Override

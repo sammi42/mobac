@@ -36,7 +36,7 @@ import mobac.utilities.Utilities;
  * 
  * @author r_x
  */
-@SupportedParameters(names = { Name.format })
+@SupportedParameters(names = { Name.format, Name.height, Name.width })
 public class TrekBuddyCustom extends TrekBuddy {
 
 	@Override

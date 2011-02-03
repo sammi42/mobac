@@ -68,8 +68,8 @@ public enum AtlasOutputFormat {
 	Galileo("Galileo Offline Maps", BigPlanetTracks.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
-	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), //
+	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
 	GpsSportsTracker("GPS Sports Tracker", GpsSportsTracker.class), //
 	Rmp("Magellan (RMP)", MagellanRmp.class), //
 	Maplorer("Maplorer atlas format", Maplorer.class), //

@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,7 @@ import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
 import mobac.StartMOBAC;
+import mobac.gui.actions.OpenInWebbrowser;
 import mobac.gui.components.JDirectoryChooser;
 import mobac.gui.components.JMapSizeCombo;
 import mobac.gui.components.JTimeSlider;
@@ -123,6 +125,8 @@ public class SettingsGUI extends JDialog {
 
 	private JButton mapSourcesOnlineUpdate;
 	private JComboBox googleLang;
+	private JComboBox bingLang;
+	private JTextField osmHikingTicket;
 
 	private JPanel tileStoreInfoPanel;
 
@@ -203,7 +207,11 @@ public class SettingsGUI extends JDialog {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
 		addDisplaySettingsPanel();
-		addMapSourceSettingsPanel();
+		try {
+			addMapSourceSettingsPanel();
+		} catch (URISyntaxException e) {
+			log.error("", e);
+		}
 		addMapSourceManagerPanel();
 		addTileUpdatePanel();
 		addTileStorePanel();
@@ -238,7 +246,7 @@ public class SettingsGUI extends JDialog {
 		tab.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 	}
 
-	private void addMapSourceSettingsPanel() {
+	private void addMapSourceSettingsPanel() throws URISyntaxException {
 
 		JPanel tab = createNewTab("Map sources config");
 		tab.setLayout(new GridBagLayout());
@@ -253,15 +261,38 @@ public class SettingsGUI extends JDialog {
 		JPanel googlePanel = new JPanel(new GridBagLayout());
 		googlePanel.setBorder(createSectionBorder("Google Maps"));
 
-		String[] languages = new String[] { "en", "de", "ru", "uk", "zh-CN" };
-		googleLang = new JComboBox(languages);
+		String[] googleLanguages = new String[] { "en", "de", "ru", "uk", "zh-CN" };
+		googleLang = new JComboBox(googleLanguages);
 		googleLang.setEditable(true);
 
 		googlePanel.add(new JLabel("Language (hl parameter): "), GBC.std());
 		googlePanel.add(googleLang, GBC.eol());
 
+		JPanel bingPanel = new JPanel(new GridBagLayout());
+		bingPanel.setBorder(createSectionBorder("Bing/Microsoft Maps"));
+
+		String[] bingLanguages = new String[] { "en", "de-de" };
+		bingLang = new JComboBox(bingLanguages);
+		bingLang.setEditable(true);
+
+		bingPanel.add(new JLabel("Language (mkt parameter): "), GBC.std());
+		bingPanel.add(bingLang, GBC.eol());
+
+		JPanel osmHikingPanel = new JPanel(new GridBagLayout());
+		osmHikingPanel.setBorder(createSectionBorder("Bing/Microsoft Maps"));
+
+		osmHikingTicket = new JTextField(20);
+
+		osmHikingPanel.add(new JLabel("Purchased ticket ID:"), GBC.std());
+		osmHikingPanel.add(osmHikingTicket, GBC.std().insets(2, 0, 10, 0));
+		JLabel osmHikingTicketUrl = new JLabel("<html><u>How to get a ticket (German)</u></html>");
+		osmHikingTicketUrl.addMouseListener(new OpenInWebbrowser("http://www.wanderreitkarte.de/shop_abo_de.php"));
+		osmHikingPanel.add(osmHikingTicketUrl, GBC.eol());
+
 		tab.add(updatePanel, GBC.eol().fill(GBC.HORIZONTAL));
 		tab.add(googlePanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(bingPanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(osmHikingPanel, GBC.eol().fill(GBC.HORIZONTAL));
 		tab.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
 
@@ -768,9 +799,9 @@ public class SettingsGUI extends JDialog {
 		maxExpirationTime.setTimeMilliValue(s.tileMaxExpirationTime);
 		minExpirationTime.setTimeMilliValue(s.tileMinExpirationTime);
 
-		String lang = s.googleLanguage;
-		googleLang.setSelectedItem(lang);
-
+		googleLang.setSelectedItem(s.googleLanguage);
+		bingLang.setSelectedItem(s.bingLanguage);
+		osmHikingTicket.setText(s.osmHikingTicket);
 	}
 
 	/**
@@ -823,6 +854,12 @@ public class SettingsGUI extends JDialog {
 		} else {
 			s.googleLanguage = googleLang.getSelectedItem().toString();
 		}
+		if (bingLang.getSelectedIndex() < 0) {
+			s.bingLanguage = bingLang.getEditor().getItem().toString();
+		} else {
+			s.bingLanguage = bingLang.getSelectedItem().toString();
+		}
+		s.osmHikingTicket = osmHikingTicket.getText().trim();
 		try {
 			MainGUI.getMainGUI().checkAndSaveSettings();
 		} catch (Exception e) {

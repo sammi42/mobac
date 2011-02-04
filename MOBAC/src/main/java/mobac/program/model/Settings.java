@@ -145,6 +145,8 @@ public class Settings {
 	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(7);
 
 	public String googleLanguage = "en";
+	public String bingLanguage = "en";
+	public String osmHikingTicket = "";
 
 	/**
 	 * Development mode enabled/disabled

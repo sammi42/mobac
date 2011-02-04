@@ -35,7 +35,7 @@ public class OsmHikingMapWithBase extends AbstractMultiLayerMapSource {
 
 	@Override
 	public String toString() {
-		return "OpenStreetMap Hiking +Base (Ger)";
+		return "OpenStreetMap Hiking +Base (EU)";
 	}
 
 }

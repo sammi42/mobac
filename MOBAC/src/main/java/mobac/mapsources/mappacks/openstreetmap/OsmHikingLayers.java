@@ -50,7 +50,7 @@ public class OsmHikingLayers {
 
 		@Override
 		public String toString() {
-			return "OpenStreetMap Hiking Base only (Germany only)";
+			return "OpenStreetMap Hiking Base only (Europe only)";
 		}
 
 		@Override

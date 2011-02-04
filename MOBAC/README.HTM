@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -100,9 +101,9 @@ SourceForge.net: <br>
 		configuration</a></li>
 		<li><a href="#TileStoreDir">Moving the tile store directory</a></li>
 	</ul>
-	<li><a href="CustomMapSource">Custom map sources</a>
+	<li><a href="#CustomMapSource">Custom map sources</a>
 	<ul style="margin-left: 10px;">
-		<li><a href="SimpleCustomMapSource">Simple custom map sources</a></li>
+		<li><a href="#SimpleCustomMapSource">Simple custom map sources</a></li>
 		<li><a href="#CustomWMSMapSource">Custom WMS map sources</a></li>
 		<li><a href="#CustomMultiLayerMapSource">Custom multi-layer
 		map sources</a></li>
@@ -110,7 +111,7 @@ SourceForge.net: <br>
 		sources</a></li>
 		<li><a href="#BeanShellMapSource">Custom BeanShell map
 		sources</a></li>
-		<li><a href="CustomMapPack">Custom MapPack</a></li>
+		<li><a href="#CustomMapPack">Custom MapPack</a></li>
 	</ul>
 	</li>
 </ul>
@@ -118,11 +119,11 @@ SourceForge.net: <br>
 
 <h2><a name="License">License</a></h2>
 <p>Mobile Atlas Creator is under GNU General Public License Version
-2 (GPL). For details on the GPL see the license file <a href="gpl.txt">gpl.txt</a>.<br />
+2 (GPL). For details on the GPL see the license file <a href="gpl.txt">gpl.txt</a>.<br>
 The source code is available on the <a
 	href="https://sourceforge.net/projects/trekbuddyatlasc/files/">SourceForge.net</a>
 for download and in the <a
-	href="http://sourceforge.net/scm/?type=svn&group_id=238075">project's
+	href="http://sourceforge.net/scm/?type=svn&amp;group_id=238075">project's
 source code Subversion repository</a>.</p>
 
 <h2><a name="Description">Description</a></h2>
@@ -811,7 +812,7 @@ directory.</p>
 be formatted. It defines an additional map source named "Custom OSM
 Mapnik" which shows map tiles identical to the predefined map source
 "OpenStreetMap Mapnik".</p>
-<p><a name="MapSourceNameUnique"></a><b>Note:</b></a>The name specified
+<p><a name="MapSourceNameUnique"></a><b>Note:</b>The name specified
 in there has to be unique among all available map sources within MOBAC.
 The list of all available map sources can be obtained via command <b>Show
 all map source names</b> in the menu <b>Debug</b>.</p>
@@ -917,9 +918,8 @@ can be used by MOBAC. To du so place the saved BeanShell code file (file
 extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
 be loaded on next start-up of MOBAC.</p>
 <p>It is recommended to add a line defining the map source name (<a
-	href="#MapSourceNameUnique">must be unique</a>).
+	href="#MapSourceNameUnique">must be unique</a>).</p>
 <pre>name = "Your map source name here";</pre>
-</p>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
 Example beanshell map source.bsh</a></p>

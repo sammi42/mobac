@@ -161,6 +161,7 @@
 			-outjars    build/temp.jar
 			-keepattributes *Annotation*
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
+			-keep class mobac.program.* { public *; }
 			-keep class mobac.program.interfaces.* { public *; }
 			-keep class mobac.program.model.package-info
 			-keep class mobac.program.model.* { public *; }

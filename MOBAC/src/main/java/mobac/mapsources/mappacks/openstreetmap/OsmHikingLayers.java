@@ -72,7 +72,7 @@ public class OsmHikingLayers {
 
 		@Override
 		public String toString() {
-			return "OpenStreetMap Hiking (Germany only)";
+			return "OpenStreetMap Hiking (Europe only)";
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
@@ -95,7 +95,7 @@ public class OsmHikingLayers {
 
 		@Override
 		public String toString() {
-			return "OpenStreetMap Hiking Relief only (Germany only)";
+			return "OpenStreetMap Hiking Relief only (Europe only)";
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {

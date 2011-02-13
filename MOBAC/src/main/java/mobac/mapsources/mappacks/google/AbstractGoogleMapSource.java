@@ -67,7 +67,7 @@ public class AbstractGoogleMapSource extends AbstractHttpMapSource {
 					"No suitable sample urls found for generating a new template url");
 		String s = imgUrls.get(0);
 		s = s.replaceFirst("http://mt.\\.google\\.", "http://mt{\\$servernum}.google.");
-		s = s.replaceFirst("hl=(\\w)+", "hl={\\$lang}");
+		s = s.replaceFirst("hl=(\\w-)+", "hl={\\$lang}");
 		s = s.replaceFirst("x=\\d+", "x={\\$x}");
 		s = s.replaceFirst("y=\\d+", "y={\\$y}");
 		s = s.replaceFirst("z=\\d+", "z={\\$z}");

@@ -30,13 +30,17 @@ import java.util.Date;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.SupportedParameters;
+import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.model.Settings;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
+@SupportedParameters(names = { Name.format })
 public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
 	private static final String NAVI_TABLES = "CREATE TABLE  MapInfo (MapType TEXT, Zoom INTEGER NOT NULL, MinX INTEGER, MaxX INTEGER, MinY INTEGER, MaxY INTEGER);\n"
@@ -116,6 +120,9 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
+		if (parameters != null)
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+
 		createTiles();
 
 	}

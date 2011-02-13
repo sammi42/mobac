@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 8 (2011-02-??)
+ + NaviComputer: Possible to change tile image format (PNG, 4Bit-PNG, JPEG, ...) 
+
 1.9 preview 7 (2011-02-04)
  + OSM Hiking ticket system implemented (Wanderreitkarte.de)
  ! NoSuchMethodError: mobac.program.ProgramInfo.getUserAgent()Ljava/lang/String;  

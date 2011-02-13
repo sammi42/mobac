@@ -83,7 +83,7 @@ public class ArrayOutputStream extends OutputStream {
 
 	@Override
 	public void write(int b) throws IOException {
-		throw new RuntimeException("Unsupported");
+		write(new byte[] { (byte) b }, 0, 1);
 	}
 
 }

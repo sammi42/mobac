@@ -94,6 +94,7 @@ public class MapPackManager {
 				File oldMapPack = new File(mapPackDir, name);
 				if (oldMapPack.isFile()) {
 					// TODO: Check if new map pack file is still compatible
+					// TODO: Check if the downloaded version is newer
 
 					Utilities.deleteFile(oldMapPack);
 				}
@@ -147,14 +148,17 @@ public class MapPackManager {
 
 	public String downloadMD5SumList() throws IOException {
 		String md5eTag = Settings.getInstance().mapSourcesUpdate.etag;
+		log.debug("Last md5 eTag: " + md5eTag);
 		String updateUrl = System.getProperty("mobac.updateurl");
 		if (updateUrl == null)
 			throw new RuntimeException("Update url not present");
 
 		byte[] data = null;
 
+		// Proxy p = new Proxy(Type.HTTP, InetSocketAddress.createUnresolved("localhost", 8888));
 		HttpURLConnection conn = (HttpURLConnection) new URL(updateUrl).openConnection();
-		conn.setRequestProperty("If-None-Match", md5eTag);
+		if (md5eTag != null)
+			conn.addRequestProperty("If-None-Match", md5eTag);
 		int responseCode = conn.getResponseCode();
 		if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED)
 			return null;
@@ -207,6 +211,9 @@ public class MapPackManager {
 					continue;
 				}
 				log.debug("Verification of map pack \"" + mapPack + "\" passed successfully");
+
+				// TODO: Check if the downloaded version is newer
+
 				String name = newMapPackFile.getName();
 				name = name.replace(".unverified", ".new");
 				File f = new File(newMapPackFile.getParentFile(), name);

@@ -32,14 +32,15 @@ import mobac.program.model.TileImageType;
  */
 public class MyTopo extends AbstractHttpMapSource {
 
+	private static String BASE_URL = "http://maps.mytopo.com/mytopob04g82H/tilecache.py/1.0.0/topoG/";
+
 	public MyTopo() {
 		super("MyTopo", 6, 16, TileImageType.JPG, HttpMapSource.TileUpdate.None);
 	}
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return "http://maps.mytopo.com/mytopoK55Zc3L/tilecache.py/1.0.0/topoG/" + zoom + "/" + tilex + "/" + tiley
-				+ ".jpg";
+		return BASE_URL + zoom + "/" + tilex + "/" + tiley + ".jpg";
 	}
 
 	@Override

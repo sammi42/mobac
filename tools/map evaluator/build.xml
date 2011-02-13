@@ -30,7 +30,7 @@
 			<fileset dir="lib" includes="commons-codec*.jar" />
 			<fileset dir="${MOBAC.dir}/lib" includes="*.jar" />
 		</path>
-		<javac srcdir="src:${MOBAC.dir}/src" destdir="build" target="1.6" debug="true">
+		<javac srcdir="src:${MOBAC.dir}/src/main/java" destdir="build" target="1.6" debug="true">
 			<classpath refid="maincp" />
 			<include name="mobac/**" />
 			<exclude name="mobac/tools/**" />
@@ -67,7 +67,6 @@
 			<zipfileset src="${MOBAC.dir}/lib/je-3.3.93.jar">
 				<exclude name="com/sleepycat/persist/model/ClassEnhancerTask.*" />
 			</zipfileset>
-			<zipfileset src="${MOBAC.dir}/lib/sqlite.jar" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />
@@ -107,8 +106,8 @@
 			<fileset dir="./">
 				<include name="${jar.name}" />
 				<include name="gpl.txt" />
-				<include name="README.HTM" />
-				<include name="CHANGELOG.txt" />
+				<include name="README-MapEvaluator.htm" />
+				<include name="CHANGELOG-MapEvaluator.txt" />
 				<include name="start.*" />
 			</fileset>
 		</zip>

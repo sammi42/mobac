@@ -279,7 +279,7 @@ public class SettingsGUI extends JDialog {
 		bingPanel.add(bingLang, GBC.eol());
 
 		JPanel osmHikingPanel = new JPanel(new GridBagLayout());
-		osmHikingPanel.setBorder(createSectionBorder("Bing/Microsoft Maps"));
+		osmHikingPanel.setBorder(createSectionBorder("OSM Hiking / Reit und Wanderkarte"));
 
 		osmHikingTicket = new JTextField(20);
 

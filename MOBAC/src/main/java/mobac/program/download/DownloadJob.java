@@ -20,6 +20,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import mobac.exceptions.DownloadFailedException;
+import mobac.exceptions.StopAllDownloadsException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.JobDispatcher;
 import mobac.program.JobDispatcher.Job;
@@ -71,6 +72,8 @@ public class DownloadJob implements Job {
 			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
 					+ " failed with an unrecoverable error: " + e.getCause());
 		} catch (InterruptedException e) {
+			throw e;
+		} catch (StopAllDownloadsException e) {
 			throw e;
 		} catch (SocketTimeoutException e) {
 			processError(dispatcher, e);

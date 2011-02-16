@@ -19,6 +19,7 @@ package mobac.program;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import mobac.exceptions.StopAllDownloadsException;
 import mobac.program.interfaces.MapSourceListener;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 
@@ -172,6 +173,11 @@ public class JobDispatcher {
 					job.run(JobDispatcher.this);
 					job = null;
 				} catch (InterruptedException e) {
+				} catch (StopAllDownloadsException e) {
+					JobDispatcher.this.terminateAllWorkerThreads();
+					JobDispatcher.this.cancelOutstandingJobs();
+					log.warn("All downloads has been stoppened: " + e.getMessage());
+					return;
 				} catch (Exception e) {
 					log.error("Unknown error occured while executing the job: ", e);
 				} catch (OutOfMemoryError e) {
@@ -190,7 +196,6 @@ public class JobDispatcher {
 			mapSourceListener.tileLoadedFromCache(size);
 		}
 
-		
 	}
 
 }

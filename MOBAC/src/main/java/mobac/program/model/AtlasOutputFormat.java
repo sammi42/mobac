@@ -52,7 +52,6 @@ import mobac.program.atlascreators.RunGPSAtlas;
 import mobac.program.atlascreators.SportsTracker;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TrekBuddyCustom;
-import mobac.program.atlascreators.TwoNavRmap;
 import mobac.program.atlascreators.Ublox;
 
 @XmlRootElement
@@ -93,7 +92,7 @@ public enum AtlasOutputFormat {
 	Ttqv("Touratech QV", TTQV.class), //
 	TaredAtlas("TrekBuddy tared atlas", TrekBuddyCustom.class), //
 	UntaredAtlas("TrekBuddy untared atlas", TrekBuddyCustom.class), //
-	TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
+	//TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
 	Ublox("Ublox", Ublox.class) //
 	;
 

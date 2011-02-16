@@ -10,7 +10,8 @@
 
 1.9 preview 8 (2011-02-??)
  + NaviComputer: Possible to change tile image format (PNG, 4Bit-PNG, JPEG, ...)
- + OpenPisteMap: All three layers (base, contours and landshed are now supported)  
+ + OpenPisteMap: All three layers (base, contours and landshed are now supported)
+ ~ Disabled TwoNav RMAP output format because of legal/license problems  
 
 1.9 preview 7 (2011-02-04)
  + OSM Hiking ticket system implemented (Wanderreitkarte.de)

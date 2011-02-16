@@ -22,25 +22,13 @@ import java.net.HttpURLConnection;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
-import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
 public class OsmHikingLayers {
 
-	public static final String MAP_HIKING_RELIEF = "wanderreitkarte.de/hills/";
-	public static final String MAP_HIKING_BASE = "wanderreitkarte.de/base/";
-	public static final String MAP_HIKING_TRAILS = "wanderreitkarte.de/topo/";
-
-	public static String addTicket(String url) {
-		try {
-			String ticket = Settings.getInstance().osmHikingTicket;
-			if (ticket != null && ticket.length() > 0) {
-				return "http://abo." + url + "/ticket/" + ticket;
-			}
-		} catch (Exception e) {
-		}
-		return "http://www." + url;
-	}
+	public static final String MAP_HIKING_RELIEF = "http://www.wanderreitkarte.de/hills/";
+	public static final String MAP_HIKING_BASE = "http://www.wanderreitkarte.de/base/";
+	public static final String MAP_HIKING_TRAILS = "http://www.wanderreitkarte.de/topo/";
 
 	public static class OsmHikingLayerBase extends AbstractHttpMapSource {
 
@@ -60,7 +48,7 @@ public class OsmHikingLayers {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return addTicket(MAP_HIKING_BASE + zoom + "/" + tilex + "/" + tiley + ".png");
+			return MAP_HIKING_BASE + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 	}
 
@@ -76,7 +64,7 @@ public class OsmHikingLayers {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return addTicket(MAP_HIKING_TRAILS + zoom + "/" + tilex + "/" + tiley + ".png");
+			return MAP_HIKING_TRAILS + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 		@Override
@@ -99,7 +87,7 @@ public class OsmHikingLayers {
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return addTicket(MAP_HIKING_RELIEF + zoom + "/" + tilex + "/" + tiley + ".png");
+			return MAP_HIKING_RELIEF + zoom + "/" + tilex + "/" + tiley + ".png";
 		}
 
 		@Override

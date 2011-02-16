@@ -8,7 +8,10 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
-1.9 preview 8 (2011-02-??)
+1.9 preview 9 (2011-02-16)
+ + New map source: Reit- und Wanderkarte (Abo) - (requires purchased ticket)
+
+1.9 preview 8 (2011-02-16)
  + NaviComputer: Possible to change tile image format (PNG, 4Bit-PNG, JPEG, ...)
  + OpenPisteMap: All three layers (base, contours and landshed are now supported)
  ~ Disabled TwoNav RMAP output format because of legal/license problems  

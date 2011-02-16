@@ -28,9 +28,11 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.bing.MicrosoftVirtualEarth;
+import mobac.mapsources.mappacks.openstreetmap.WanderreitkarteAbo;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -54,11 +56,16 @@ public class MapSourceTypeDetector {
 	public static void main(String[] args) {
 		Logging.configureLogging();
 		ProgramInfo.initialize();
+		try {
+			Settings.load();
+		} catch (JAXBException e) {
+			System.err.println(e.getMessage());
+		}
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 
-		testMapSource(MicrosoftVirtualEarth.class);
+		testMapSource(WanderreitkarteAbo.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

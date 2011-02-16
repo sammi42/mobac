@@ -27,6 +27,8 @@ public class WanderreitkarteAbo extends AbstractOsmTileSource {
 
 	public WanderreitkarteAbo() {
 		super("WanderreitkarteAbo");
+		minZoom = 2;
+		maxZoom = 17;
 	}
 
 	@Override

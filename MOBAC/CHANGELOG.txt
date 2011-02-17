@@ -10,6 +10,7 @@
 
 1.9 preview 9 (2011-02-16)
  + New map source: Reit- und Wanderkarte (Abo) - (requires purchased ticket)
+ ~ Updated New Zealand Topographic Maps url
 
 1.9 preview 8 (2011-02-16)
  + NaviComputer: Possible to change tile image format (PNG, 4Bit-PNG, JPEG, ...)

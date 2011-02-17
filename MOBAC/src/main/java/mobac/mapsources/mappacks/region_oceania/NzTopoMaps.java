@@ -34,7 +34,7 @@ public class NzTopoMaps extends AbstractHttpMapSource {
 	public String getTileUrl(int zoom, int x, int y) {
 		// nzy = 2^zoom - 1 - y
 		int nzy = (1 << zoom) - 1 - y;
-		return "http://cx.nztopomaps.com/" + zoom + "/" + x + "/" + nzy + ".png";
+		return "http://x.nztopomaps.com/" + zoom + "/" + x + "/" + nzy + ".png";
 	}
 
 	@Override

@@ -97,7 +97,7 @@ public class SettingsGUI extends JDialog {
 
 	private static Logger log = Logger.getLogger(SettingsGUI.class);
 
-	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8, 10, 15 };
+	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6, 8 };
 
 	private static final long MBIT1 = 1000000 / 8;
 
@@ -691,8 +691,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5).anchor(GBC.EAST));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.eol().fill(
-				GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
+				GBC.eol().fill(GBC.HORIZONTAL));
 
 		bandwidth = new JComboBox(Bandwidth.values());
 		bandwidth.setMaximumRowCount(bandwidth.getItemCount());
@@ -791,8 +791,12 @@ public class SettingsGUI extends JDialog {
 		}
 
 		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.downloadThreadCount);
-		if (index < 0)
-			index = 0;
+		if (index < 0) {
+			if (s.downloadThreadCount > THREADCOUNT_LIST[THREADCOUNT_LIST.length - 1])
+				index = THREADCOUNT_LIST.length - 1;
+			else
+				index = 0;
+		}
 		threadCount.setSelectedIndex(index);
 
 		defaultExpirationTime.setTimeMilliValue(s.tileDefaultExpirationTime);

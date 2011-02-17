@@ -18,7 +18,7 @@ package mobac.program.atlascreators;
 
 import mobac.program.annotations.AtlasCreatorName;
 
-@AtlasCreatorName("Galileo")
+@AtlasCreatorName("Galileo Offline Maps")
 public class Galileo extends BigPlanetTracks {
 
 }

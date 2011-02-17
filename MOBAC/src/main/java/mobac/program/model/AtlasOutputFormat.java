@@ -18,6 +18,7 @@ package mobac.program.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.AFTrack;
 import mobac.program.atlascreators.AlpineQuestMap;
 import mobac.program.atlascreators.AndNav;
@@ -59,55 +60,56 @@ import mobac.program.atlascreators.Ublox;
 @XmlRootElement
 public enum AtlasOutputFormat {
 
-	AFTrack("AFTrack (OSZ)", AFTrack.class), //
-	AlpineQuestMap("AlpineQuestMap (AQM)", AlpineQuestMap.class), //
-	AndNav("AndNav atlas format", AndNav.class), //
-	BackCountryNavigator("BackCountry Navigator", BackCountryNavigator.class), //
-	BigPlanet("Big Planet Tracks SQLite", BigPlanetTracks.class), //
-	CacheBox("CacheBox (PACK)", CacheBox.class), //
-	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
-	Galileo("Galileo Offline Maps", Galileo.class), //
-	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
-	Glopus("Glopus (PNG & KAL)", Glopus.class), //
-	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), //
-	GoogleEarthRasterOverlay("Google Earth Overlay (KMZ)", GoogleEarthOverlay.class), //
-	GpsSportsTracker("GPS Sports Tracker", GpsSportsTracker.class), //
-	Rmp("Magellan (RMP)", MagellanRmp.class), //
-	Maplorer("Maplorer atlas format", Maplorer.class), //
-	Maverick("Maverick atlas format", Maverick.class), //
-	MGM("MGMaps/MyTrails (MGM)", MGMaps.class), //
-	MTE("Mobile Trail Explorer", MobileTrailExplorer.class), //
-	MTECache("Mobile Trail Explorer Cache", MobileTrailExplorerCache.class), //
-	NaviComputer("NaviComputer (NMAP)", NaviComputer.class), //
-	OruxMaps("OruxMaps", OruxMaps.class), //
-	OruxMapsSqlite("OruxMaps Sqlite", OruxMapsSqlite.class), //
-	OSMAND("OSMAND tile storage", OSMAND.class), //
-	Osmdroid("Osmdroid ZIP", Osmdroid.class), //
-	OsmdroidSQLite("Osmdroid SQLite", OsmdroidSQLite.class), //
-	OSMTracker("OSMTracker tile storage", OSMTracker.class), //
-	OziPng("OziExplorer (PNG & MAP)", Ozi.class), //
-	PathAway("PathAway tile cache", PathAway.class), //
-	PNGWorldfile("PNG + Worldfile (PNG & PGW)", PNGWorldfile.class), //
-	RMaps("RMaps SQLite", RMapsSQLite.class), //
-	RunGPS("Run.GPS Atlas", RunGPSAtlas.class), //
-	NST("Sports Tracker", SportsTracker.class), //
-	Ttqv("Touratech QV", TTQV.class), //
-	TaredAtlas("TrekBuddy tared atlas", TrekBuddyTared.class), //
-	UntaredAtlas("TrekBuddy untared atlas", TrekBuddy.class), //
-	// TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
-	Ublox("Ublox", Ublox.class) //
+	AFTrack(AFTrack.class), //
+	AlpineQuestMap(AlpineQuestMap.class), //
+	AndNav(AndNav.class), //
+	BackCountryNavigator(BackCountryNavigator.class), //
+	BigPlanet(BigPlanetTracks.class), //
+	CacheBox(CacheBox.class), //
+	CacheWolf(CacheWolf.class), //
+	Galileo(Galileo.class), //
+	GarminCustom(GarminCustom.class), //
+	Glopus(Glopus.class), //
+	Gmf(GlopusMapFile.class), //
+	GoogleEarthRasterOverlay(GoogleEarthOverlay.class), //
+	GpsSportsTracker(GpsSportsTracker.class), //
+	Rmp(MagellanRmp.class), //
+	Maplorer(Maplorer.class), //
+	Maverick(Maverick.class), //
+	MGM(MGMaps.class), //
+	MTE(MobileTrailExplorer.class), //
+	MTECache(MobileTrailExplorerCache.class), //
+	NaviComputer(NaviComputer.class), //
+	OruxMaps(OruxMaps.class), //
+	OruxMapsSqlite(OruxMapsSqlite.class), //
+	OSMAND(OSMAND.class), //
+	Osmdroid(Osmdroid.class), //
+	OsmdroidSQLite(OsmdroidSQLite.class), //
+	OSMTracker(OSMTracker.class), //
+	OziPng(Ozi.class), //
+	PathAway(PathAway.class), //
+	PNGWorldfile(PNGWorldfile.class), //
+	RMaps(RMapsSQLite.class), //
+	RunGPS(RunGPSAtlas.class), //
+	NST(SportsTracker.class), //
+	Ttqv(TTQV.class), //
+	TaredAtlas(TrekBuddyTared.class), //
+	UntaredAtlas(TrekBuddy.class), //
+	// TwoNavRMAP( TwoNavRmap.class), //
+	Ublox(Ublox.class) //
 	;
 
-	private final String displayName;
 	private Class<? extends AtlasCreator> atlasCreatorClass;
 
-	private AtlasOutputFormat(String displayName, Class<? extends AtlasCreator> mapCreatorClass) {
-		this.displayName = displayName;
+	private AtlasOutputFormat(Class<? extends AtlasCreator> mapCreatorClass) {
 		this.atlasCreatorClass = mapCreatorClass;
 	}
 
 	public String toString() {
-		return displayName;
+		AtlasCreatorName acName = atlasCreatorClass.getAnnotation(AtlasCreatorName.class);
+		if (acName == null)
+			throw new RuntimeException("AtlasCreator " + atlasCreatorClass.getName() + " has no name");
+		return acName.value();
 	}
 
 	public Class<? extends AtlasCreator> getMapCreatorClass() {

@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.utilities.Utilities;
@@ -35,6 +36,7 @@ import mobac.utilities.tar.TarIndex;
 /**
  * AFTrack OSZ Atlas format
  */
+@AtlasCreatorName("AFTrack (OSZ)")
 public class AFTrack extends OSMTracker {
 
 	private ArrayList<Integer> zoomLevel = new ArrayList<Integer>();

@@ -23,18 +23,20 @@ import java.io.OutputStreamWriter;
 import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 
 /**
  * http://sourceforge.net/tracker/?func=detail&atid=1105497&aid=3147526&group_id=238075
  */
+@AtlasCreatorName("PNG + Worldfile (PNG & PGW)")
 public class PNGWorldfile extends Glopus {
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
-			Utilities.mkDir(mapDir);
+			Utilities.mkDir(layerDir);
 		} catch (IOException e) {
 			throw new MapCreationException(map, e);
 		}
@@ -58,7 +60,7 @@ public class PNGWorldfile extends Glopus {
 	private void writeWorldFile() throws MapCreationException {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, mapName + ".pgw"));
+			fout = new FileOutputStream(new File(layerDir, mapName + ".pgw"));
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
 			MapSpace mapSpace = mapSource.getMapSpace();

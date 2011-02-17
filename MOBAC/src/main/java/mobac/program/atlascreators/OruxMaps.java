@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
@@ -46,6 +47,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author orux
  */
+@AtlasCreatorName("OruxMaps")
 @SupportedParameters(names = { Name.format })
 public class OruxMaps extends AtlasCreator {
 

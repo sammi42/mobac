@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.LayerInterface;
@@ -35,6 +36,7 @@ import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
+@AtlasCreatorName("CacheBox (PACK)")
 @SupportedParameters(names = { Name.format })
 public class CacheBox extends AtlasCreator {
 

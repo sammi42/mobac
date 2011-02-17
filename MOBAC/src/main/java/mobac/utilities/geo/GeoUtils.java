@@ -14,24 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.atlascreators;
+package mobac.utilities.geo;
 
-import mobac.program.annotations.AtlasCreatorName;
+import java.util.Locale;
 
+public class GeoUtils {
 
-/**
- * Creates maps using the AndNav atlas format.
- * 
- * Please note that this atlas format ignores the defined atlas structure. It
- * uses a separate directory for each used map source and inside one directory
- * for each zoom level.
- */
-@AtlasCreatorName("AndNav atlas format")
-public class AndNav extends OSMTracker {
-
-	public AndNav() {
-		super();
-		tileFileNamePattern += ".andnav";
+	public static String getDegMinFormat(double coord, boolean isLatitude) {
+	
+		boolean neg = (coord < 0.0);
+		coord = Math.abs(coord);
+		int deg = (int) coord;
+		double min = (coord - deg) * 60.0;
+	
+		String degMinFormat = "%d, %3.6f, %c";
+	
+		char dirC;
+		if (isLatitude)
+			dirC = (neg ? 'S' : 'N');
+		else
+			dirC = (neg ? 'W' : 'E');
+	
+		return String.format(Locale.ENGLISH, degMinFormat, deg, min, dirC);
 	}
 
 }

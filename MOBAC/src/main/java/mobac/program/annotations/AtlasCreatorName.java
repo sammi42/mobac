@@ -14,24 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.atlascreators;
+package mobac.program.annotations;
 
-import mobac.program.annotations.AtlasCreatorName;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+import mobac.program.atlascreators.AtlasCreator;
+import mobac.program.model.TileImageParameters.Name;
 
 /**
- * Creates maps using the AndNav atlas format.
- * 
- * Please note that this atlas format ignores the defined atlas structure. It
- * uses a separate directory for each used map source and inside one directory
- * for each zoom level.
+ * Annotation for {@link AtlasCreator} implementations. The {@link #names()} field holds the parameter names supported
+ * by the specific atlas format. The full list of available parameters is defined in {@link Name}.
  */
-@AtlasCreatorName("AndNav atlas format")
-public class AndNav extends OSMTracker {
-
-	public AndNav() {
-		super();
-		tileFileNamePattern += ".andnav";
-	}
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AtlasCreatorName {
+	String value();
 }

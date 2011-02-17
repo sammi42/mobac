@@ -31,6 +31,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
@@ -61,6 +62,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author paour
  */
+@AtlasCreatorName("MGMaps/MyTrails (MGM)")
 @SupportedParameters(names = { Name.format })
 public class MGMaps extends AtlasCreator {
 

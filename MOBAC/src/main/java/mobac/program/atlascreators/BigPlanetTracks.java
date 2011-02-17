@@ -17,6 +17,7 @@
 package mobac.program.atlascreators;
 
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapSource;
 
 /**
@@ -30,6 +31,7 @@ import mobac.program.interfaces.MapSource;
  * http://code.google.com/p/android-map/
  * </p>
  */
+@AtlasCreatorName("Big Planet Tracks SQLite")
 public class BigPlanetTracks extends RMapsSQLite {
 	
 	@Override

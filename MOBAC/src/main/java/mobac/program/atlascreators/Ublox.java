@@ -23,17 +23,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Locale;
 
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 
 
+@AtlasCreatorName("Ublox")
 public class Ublox extends Ozi {
 
 	@Override
 	protected void writeMapFile() {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, mapName + ".mcf"));
+			fout = new FileOutputStream(new File(layerDir, mapName + ".mcf"));
 			writeMapFile(map.getName(), fout);
 		} catch (Exception e) {
 			log.error("", e);

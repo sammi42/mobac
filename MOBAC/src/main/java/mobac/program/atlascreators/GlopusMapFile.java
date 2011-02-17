@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.util.LinkedList;
 
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapSpace;
@@ -56,7 +57,8 @@ import mobac.utilities.stream.LittleEndianOutputStream;
  * </pre>
  * 
  */
-public class GlopusMapFile extends TrekBuddyCustom {
+@AtlasCreatorName("Glopus Map File (GMF)")
+public class GlopusMapFile extends TrekBuddy {
 
 	@Override
 	public void initLayerCreation(LayerInterface layer) throws IOException {

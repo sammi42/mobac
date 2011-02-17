@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
@@ -31,6 +32,7 @@ import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
+@AtlasCreatorName("CacheWolf (WFL)")
 public class CacheWolf extends Ozi {
 
 	@Override
@@ -45,7 +47,7 @@ public class CacheWolf extends Ozi {
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
-			Utilities.mkDir(mapDir);
+			Utilities.mkDirs(layerDir);
 		} catch (IOException e1) {
 			throw new MapCreationException(map, e1);
 		}
@@ -65,8 +67,6 @@ public class CacheWolf extends Ozi {
 		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
 		try {
 			mapDlTileProvider = ctp;
-			mapDir = mapFolder;
-			Utilities.mkDirs(mapDir);
 			mapTileWriter = new CWFileTileWriter();
 			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
@@ -91,7 +91,7 @@ public class CacheWolf extends Ozi {
 	private void writeWflFile(String filename, int tilex, int tiley, int width, int height) throws IOException {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, filename + ".wfl"));
+			fout = new FileOutputStream(new File(layerDir, filename + ".wfl"));
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
 			MapSpace mapSpace = mapSource.getMapSpace();
@@ -137,12 +137,12 @@ public class CacheWolf extends Ozi {
 
 		public CWFileTileWriter() throws IOException {
 			super();
-			log.debug("Writing tiles to set folder: " + mapDir);
+			log.debug("Writing tiles to set folder: " + layerDir);
 		}
 
 		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
 			String tileFileName = String.format("%s_%dx%d", mapName, tilex, tiley);
-			File f = new File(mapDir, tileFileName + '.' + imageFormat);
+			File f = new File(layerDir, tileFileName + '.' + imageFormat);
 			FileOutputStream out = new FileOutputStream(f);
 			try {
 				out.write(tileData);

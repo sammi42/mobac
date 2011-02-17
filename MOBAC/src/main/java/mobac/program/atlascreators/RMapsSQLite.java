@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
@@ -56,6 +57,7 @@ import mobac.utilities.jdbc.SQLiteLoader;
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
  * <p>
  */
+@AtlasCreatorName("RMaps SQLite")
 @SupportedParameters(names = { Name.format })
 public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 

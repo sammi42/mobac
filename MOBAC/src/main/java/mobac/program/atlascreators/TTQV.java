@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.ProgramInfo;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
@@ -34,6 +35,7 @@ import mobac.utilities.tar.TarIndex;
 /**
  *  Touratech QV
  */
+@AtlasCreatorName("Touratech QV")
 public class TTQV extends Ozi {
 
 	@Override
@@ -44,7 +46,7 @@ public class TTQV extends Ozi {
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
-			Utilities.mkDir(mapDir);
+			Utilities.mkDir(layerDir);
 		} catch (IOException e1) {
 			throw new MapCreationException(map, e1);
 		}
@@ -55,7 +57,7 @@ public class TTQV extends Ozi {
 	private void writeCalFile() throws MapCreationException {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, mapName + "_png.cal"));
+			fout = new FileOutputStream(new File(layerDir, mapName + "_png.cal"));
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
 			MapSpace mapSpace = mapSource.getMapSpace();

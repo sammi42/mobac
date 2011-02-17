@@ -33,23 +33,48 @@ import javax.imageio.ImageIO;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.annotations.SupportedParameters;
+import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
+import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.model.AtlasOutputFormat;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
+import mobac.utilities.geo.GeoUtils;
 import mobac.utilities.tar.TarArchive;
 import mobac.utilities.tar.TarIndex;
 import mobac.utilities.tar.TarTmiArchive;
 
-public abstract class TrekBuddy extends AtlasCreator {
+/**
+ * 
+ * 
+ *
+ */
+@AtlasCreatorName("TrekBuddy")
+@SupportedParameters(names = { Name.format, Name.height, Name.width })
+public class TrekBuddy extends AtlasCreator {
 
-	public static final String FILENAME_PATTERN = "t_%d_%d.%s";
+	protected static final String FILENAME_PATTERN = "t_%d_%d.%s";
 
-	protected File layerFolder = null;
-	protected File mapFolder = null;
+	protected File layerDir = null;
+	protected File mapDir = null;
 	protected MapTileWriter mapTileWriter;
+
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		MapSpace mapSpace = mapSource.getMapSpace();
+		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE
+				.equals(mapSpace.getProjectionCategory()));
+		// TODO supports Mercator ellipsoid?
+	}
 
 	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException, InterruptedException,
 			AtlasTestException {
@@ -71,12 +96,12 @@ public abstract class TrekBuddy extends AtlasCreator {
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
 		LayerInterface layer = map.getLayer();
-		layerFolder = new File(atlasDir, layer.getName());
-		mapFolder = new File(layerFolder, map.getName());
+		layerDir = new File(atlasDir, layer.getName());
+		mapDir = new File(layerDir, map.getName());
 	}
 
 	protected void writeMapFile() throws IOException {
-		File mapFile = new File(mapFolder, map.getName() + ".map");
+		File mapFile = new File(mapDir, map.getName() + ".map");
 		FileOutputStream mapFileStream = null;
 		try {
 			mapFileStream = new FileOutputStream(mapFile);
@@ -107,6 +132,61 @@ public abstract class TrekBuddy extends AtlasCreator {
 		mapWriter.write(prepareMapString(imageFileName, longitudeMin, longitudeMax, latitudeMin, latitudeMax, width,
 				height));
 		mapWriter.flush();
+	}
+	
+	public void createMap() throws MapCreationException, InterruptedException {
+		try {
+			Utilities.mkDirs(mapDir);
+
+			// write the .map file containing the calibration points
+			writeMapFile();
+
+			// This means there should not be any resizing of the tiles.
+			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
+				mapTileWriter = new TarTileWriter();
+			else
+				mapTileWriter = new FileTileWriter();
+
+			// Select the tile creator instance based on whether tile image
+			// parameters has been set or not
+			if (parameters != null)
+				createCustomTiles();
+			else
+				createTiles();
+
+			mapTileWriter.finalizeMap();
+		} catch (MapCreationException e) {
+			throw e;
+		} catch (InterruptedException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new MapCreationException(map, e);
+		}
+	}
+
+	/**
+	 * New experimental custom tile size algorithm implementation.
+	 * 
+	 * It creates each custom sized tile separately. Therefore each original
+	 * tile (256x256) will be loaded and painted multiple times. Therefore this
+	 * implementation needs much more CPU power as each original tile is loaded
+	 * at least once and each generated tile has to be saved.
+	 * 
+	 * @throws MapCreationException
+	 */
+	protected void createCustomTiles() throws InterruptedException, MapCreationException {
+		log.debug("Starting map creation using custom parameters: " + parameters);
+
+		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+		try {
+			mapDlTileProvider = ctp;
+
+			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
+			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+			mapTileBuilder.createTiles();
+		} finally {
+			ctp.cleanup();
+		}
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
@@ -153,7 +233,7 @@ public abstract class TrekBuddy extends AtlasCreator {
 				tileHeight = parameters.getHeight();
 				tileWidth = parameters.getWidth();
 			}
-			File mapTarFile = new File(mapFolder, map.getName() + ".tar");
+			File mapTarFile = new File(mapDir, map.getName() + ".tar");
 			log.debug("Writing tiles to tared map: " + mapTarFile);
 			try {
 				ta = new TarTmiArchive(mapTarFile, null);
@@ -193,10 +273,10 @@ public abstract class TrekBuddy extends AtlasCreator {
 
 		public FileTileWriter() throws IOException {
 			super();
-			setFolder = new File(mapFolder, "set");
+			setFolder = new File(mapDir, "set");
 			Utilities.mkDir(setFolder);
 			log.debug("Writing tiles to set folder: " + setFolder);
-			File setFile = new File(mapFolder, map.getName() + ".set");
+			File setFile = new File(mapDir, map.getName() + ".set");
 			if (parameters != null) {
 				tileHeight = parameters.getHeight();
 				tileWidth = parameters.getWidth();
@@ -248,10 +328,10 @@ public abstract class TrekBuddy extends AtlasCreator {
 		sbMap.append("Magnetic Variation,,,E\r\n");
 		sbMap.append("Map Projection,Mercator,PolyCal,No," + "AutoCalOnly,No,BSBUseWPX,No\r\n");
 
-		String latMax = getDegMinFormat(latitudeMax, true);
-		String latMin = getDegMinFormat(latitudeMin, true);
-		String lonMax = getDegMinFormat(longitudeMax, false);
-		String lonMin = getDegMinFormat(longitudeMin, false);
+		String latMax = GeoUtils.getDegMinFormat(latitudeMax, true);
+		String latMin = GeoUtils.getDegMinFormat(latitudeMin, true);
+		String lonMax = GeoUtils.getDegMinFormat(longitudeMax, false);
+		String lonMin = GeoUtils.getDegMinFormat(longitudeMin, false);
 
 		String pointLine = "Point%02d,xy, %4s, %4s,in, deg, %1s, %1s, grid, , , ,N\r\n";
 
@@ -346,24 +426,6 @@ public abstract class TrekBuddy extends AtlasCreator {
 		} catch (IOException e) {
 			log.error("", e);
 		}
-	}
-
-	private static String getDegMinFormat(double coord, boolean isLatitude) {
-
-		boolean neg = (coord < 0.0);
-		coord = Math.abs(coord);
-		int deg = (int) coord;
-		double min = (coord - deg) * 60.0;
-
-		String degMinFormat = "%d, %3.6f, %c";
-
-		char dirC;
-		if (isLatitude)
-			dirC = (neg ? 'S' : 'N');
-		else
-			dirC = (neg ? 'W' : 'E');
-
-		return String.format(Locale.ENGLISH, degMinFormat, deg, min, dirC);
 	}
 
 }

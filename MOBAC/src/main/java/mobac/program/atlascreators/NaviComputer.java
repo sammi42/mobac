@@ -30,6 +30,7 @@ import java.util.Date;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
@@ -40,6 +41,7 @@ import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
+@AtlasCreatorName("NaviComputer (NMAP)")
 @SupportedParameters(names = { Name.format })
 public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 

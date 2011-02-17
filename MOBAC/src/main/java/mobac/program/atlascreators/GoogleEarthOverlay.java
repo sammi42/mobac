@@ -43,6 +43,7 @@ import javax.xml.transform.stream.StreamResult;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -57,6 +58,7 @@ import mobac.utilities.tar.TarIndex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+@AtlasCreatorName("Google Earth Overlay (KMZ)")
 public class GoogleEarthOverlay extends AtlasCreator {
 
 	protected File mapDir;

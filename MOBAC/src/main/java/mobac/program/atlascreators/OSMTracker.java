@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
@@ -42,6 +43,7 @@ import mobac.utilities.tar.TarIndex;
  * Please note that this atlas format ignores the defined atlas structure. It uses a separate directory for each used
  * map source and inside one directory for each zoom level.
  */
+@AtlasCreatorName("OSMTracker tile storage")
 @SupportedParameters(names = { Name.format })
 public class OSMTracker extends AtlasCreator {
 

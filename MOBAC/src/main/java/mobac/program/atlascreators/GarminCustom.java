@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
@@ -29,6 +30,7 @@ import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.stream.ArrayOutputStream;
 
+@AtlasCreatorName("Garmin Custom Map (KMZ)")
 @SupportedParameters(names = { Name.format })
 public class GarminCustom extends GoogleEarthOverlay {
 

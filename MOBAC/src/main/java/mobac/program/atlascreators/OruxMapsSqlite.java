@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.interfaces.AtlasInterface;
@@ -39,6 +40,7 @@ import mobac.utilities.jdbc.SQLiteLoader;
  * 
  * @author orux Some code based on BigPlanetSql atlascreator
  */
+@AtlasCreatorName("OruxMaps Sqlite")
 public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 	private static final String TABLE_TILES_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, image blob, PRIMARY KEY (x,y,z))";

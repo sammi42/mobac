@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
+@AtlasCreatorName("Glopus (PNG & KAL)")
 public class Glopus extends Ozi {
 
 	@Override
@@ -34,13 +36,13 @@ public class Glopus extends Ozi {
 		super.initializeMap(map, tarTileIndex);
 		String layerName = map.getLayer().getName().replaceAll(" ", "_");
 		mapName = map.getName().replaceAll(" ", "_");
-		mapDir = new File(atlasDir, layerName);
+		layerDir = new File(atlasDir, layerName);
 	}
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
-			Utilities.mkDir(mapDir);
+			Utilities.mkDir(layerDir);
 		} catch (IOException e) {
 			throw new MapCreationException(map, e);
 		}
@@ -51,7 +53,7 @@ public class Glopus extends Ozi {
 	private void writeKalFile() throws MapCreationException {
 		FileOutputStream fout = null;
 		try {
-			fout = new FileOutputStream(new File(mapDir, mapName + ".kal"));
+			fout = new FileOutputStream(new File(layerDir, mapName + ".kal"));
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
 			MapSpace mapSpace = mapSource.getMapSpace();

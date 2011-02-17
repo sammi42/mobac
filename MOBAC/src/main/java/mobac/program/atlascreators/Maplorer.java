@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
@@ -48,6 +49,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author Werner Keilholz
  */
+@AtlasCreatorName("Maplorer atlas format")
 @SupportedParameters(names = { Name.format })
 public class Maplorer extends AtlasCreator {
 

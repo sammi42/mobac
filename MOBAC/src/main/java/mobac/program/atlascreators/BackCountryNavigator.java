@@ -16,6 +16,8 @@
  ******************************************************************************/
 package mobac.program.atlascreators;
 
+import mobac.program.annotations.AtlasCreatorName;
+
 /**
  * Creates maps using the BCNav atlas format.
  * 
@@ -24,6 +26,7 @@ package mobac.program.atlascreators;
  * 
  * @see http://www.backcountrynavigator.com
  */
+@AtlasCreatorName("BackCountry Navigator")
 public class BackCountryNavigator extends OSMTracker {
 
 	public BackCountryNavigator() {

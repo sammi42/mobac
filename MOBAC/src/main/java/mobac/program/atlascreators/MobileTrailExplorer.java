@@ -24,6 +24,7 @@ import javax.imageio.ImageIO;
 
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -39,6 +40,7 @@ import mobac.utilities.tar.TarIndex;
  * Please note that this atlas format ignores the defined atlas structure. It uses a separate directory for each used
  * map source and inside one directory for each zoom level.
  */
+@AtlasCreatorName("Mobile Trail Explorer")
 public class MobileTrailExplorer extends AtlasCreator {
 
 	private File mapDir = null;

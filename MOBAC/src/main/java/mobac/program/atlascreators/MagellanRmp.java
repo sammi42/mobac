@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.rmp.BoundingRect;
 import mobac.program.atlascreators.impl.rmp.MultiImage;
 import mobac.program.atlascreators.impl.rmp.RmpLayer;
@@ -42,6 +43,7 @@ import mobac.program.interfaces.MapSpace;
 import mobac.utilities.tar.TarIndex;
 
 
+@AtlasCreatorName("Magellan (RMP)")
 public class MagellanRmp extends AtlasCreator {
 
 	RmpWriter rmpWriter = null;

@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.RequiresSQLite;
@@ -37,6 +38,7 @@ import mobac.utilities.jdbc.SQLiteLoader;
 /**
  * http://sourceforge.net/tracker/?func=detail&aid=3154177&group_id=238075&atid=1105496
  */
+@AtlasCreatorName("Osmdroid SQLite")
 public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
 	protected Connection conn = null;

@@ -23,6 +23,7 @@ import java.util.Date;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
@@ -35,6 +36,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @see http://sourceforge.net/tracker/?func=detail&atid=1105497&aid=3078443&group_id=238075
  */
+@AtlasCreatorName("Osmdroid ZIP")
 public class Osmdroid extends OSMTracker {
 
 	protected ZipStoreOutputStream zipStream = null;

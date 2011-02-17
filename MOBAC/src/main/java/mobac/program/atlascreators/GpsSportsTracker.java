@@ -24,6 +24,7 @@ import javax.imageio.ImageIO;
 
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -35,6 +36,7 @@ import mobac.utilities.tar.TarIndex;
 /**
  * Derived from {@link MobileTrailExplorer}
  */
+@AtlasCreatorName("GPS Sports Tracker")
 public class GpsSportsTracker extends AtlasCreator {
 
 	private File mapDir = null;

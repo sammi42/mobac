@@ -16,6 +16,9 @@
  ******************************************************************************/
 package mobac.program.atlascreators;
 
+import mobac.program.annotations.AtlasCreatorName;
+
+@AtlasCreatorName("OSMAND tile storage")
 public class OSMAND extends OSMTracker {
 	public OSMAND() {
 		super();

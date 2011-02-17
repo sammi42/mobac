@@ -30,6 +30,7 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
@@ -45,6 +46,7 @@ import mobac.utilities.tar.TarIndex;
  * Please note that this atlas format ignores the defined atlas structure.
  * 
  */
+@AtlasCreatorName("Mobile Trail Explorer Cache")
 public class MobileTrailExplorerCache extends AtlasCreator {
 
 	protected DataOutputStream cacheOutStream = null;

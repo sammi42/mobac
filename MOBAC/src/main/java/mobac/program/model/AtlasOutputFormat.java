@@ -26,6 +26,7 @@ import mobac.program.atlascreators.BackCountryNavigator;
 import mobac.program.atlascreators.BigPlanetTracks;
 import mobac.program.atlascreators.CacheBox;
 import mobac.program.atlascreators.CacheWolf;
+import mobac.program.atlascreators.Galileo;
 import mobac.program.atlascreators.GarminCustom;
 import mobac.program.atlascreators.Glopus;
 import mobac.program.atlascreators.GlopusMapFile;
@@ -52,6 +53,7 @@ import mobac.program.atlascreators.RunGPSAtlas;
 import mobac.program.atlascreators.SportsTracker;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TrekBuddy;
+import mobac.program.atlascreators.TrekBuddyTared;
 import mobac.program.atlascreators.Ublox;
 
 @XmlRootElement
@@ -64,7 +66,7 @@ public enum AtlasOutputFormat {
 	BigPlanet("Big Planet Tracks SQLite", BigPlanetTracks.class), //
 	CacheBox("CacheBox (PACK)", CacheBox.class), //
 	CacheWolf("CacheWolf (WFL)", CacheWolf.class), //
-	Galileo("Galileo Offline Maps", BigPlanetTracks.class), //
+	Galileo("Galileo Offline Maps", Galileo.class), //
 	GarminCustom("Garmin Custom Map (KMZ)", GarminCustom.class), //
 	Glopus("Glopus (PNG & KAL)", Glopus.class), //
 	Gmf("Glopus Map File (GMF)", GlopusMapFile.class), //
@@ -90,7 +92,7 @@ public enum AtlasOutputFormat {
 	RunGPS("Run.GPS Atlas", RunGPSAtlas.class), //
 	NST("Sports Tracker", SportsTracker.class), //
 	Ttqv("Touratech QV", TTQV.class), //
-	TaredAtlas("TrekBuddy tared atlas", TrekBuddy.class), //
+	TaredAtlas("TrekBuddy tared atlas", TrekBuddyTared.class), //
 	UntaredAtlas("TrekBuddy untared atlas", TrekBuddy.class), //
 	// TwoNavRMAP("TwoNav (RMAP)", TwoNavRmap.class), //
 	Ublox("Ublox", Ublox.class) //

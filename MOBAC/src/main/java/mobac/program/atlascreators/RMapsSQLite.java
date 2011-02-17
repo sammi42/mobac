@@ -57,7 +57,7 @@ import mobac.utilities.jdbc.SQLiteLoader;
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
  * <p>
  */
-@AtlasCreatorName("RMaps SQLite")
+@AtlasCreatorName(value = "RMaps SQLite", type = "RMaps")
 @SupportedParameters(names = { Name.format })
 public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 

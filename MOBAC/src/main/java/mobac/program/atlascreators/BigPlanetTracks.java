@@ -31,9 +31,9 @@ import mobac.program.interfaces.MapSource;
  * http://code.google.com/p/android-map/
  * </p>
  */
-@AtlasCreatorName("Big Planet Tracks SQLite")
+@AtlasCreatorName(value = "Big Planet Tracks SQLite", type = "BigPlanet")
 public class BigPlanetTracks extends RMapsSQLite {
-	
+
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());

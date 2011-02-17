@@ -14,24 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.annotations;
+package mobac.program.atlascreators;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import mobac.program.annotations.AtlasCreatorName;
 
-import mobac.program.atlascreators.AtlasCreator;
-import mobac.program.model.TileImageParameters.Name;
+@AtlasCreatorName("Galileo")
+public class Galileo extends BigPlanetTracks {
 
-/**
- * Annotation for {@link AtlasCreator} implementations. The {@link #names()} field holds the parameter names supported
- * by the specific atlas format. The full list of available parameters is defined in {@link Name}.
- */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface AtlasCreatorName {
-	String value();
-
-	String type() default "";
 }

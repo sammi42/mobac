@@ -44,7 +44,7 @@ import mobac.utilities.geo.GeoUtils;
 import mobac.utilities.imageio.PngXxlWriter;
 import mobac.utilities.tar.TarIndex;
 
-@AtlasCreatorName("OziExplorer (PNG & MAP)")
+@AtlasCreatorName(value = "OziExplorer (PNG & MAP)", type = "OziPng")
 @SupportedParameters(names = {})
 public class Ozi extends AtlasCreator {
 

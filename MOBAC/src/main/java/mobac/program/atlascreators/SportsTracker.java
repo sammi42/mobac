@@ -42,7 +42,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * 
  */
-@AtlasCreatorName("Sports Tracker")
+@AtlasCreatorName(value = "Sports Tracker", type = "NST")
 @SupportedParameters(names = { Name.format })
 public class SportsTracker extends AtlasCreator {
 

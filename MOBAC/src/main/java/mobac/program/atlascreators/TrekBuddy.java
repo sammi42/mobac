@@ -17,7 +17,6 @@
 package mobac.program.atlascreators;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -25,8 +24,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
@@ -45,20 +42,12 @@ import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
-import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.geo.GeoUtils;
-import mobac.utilities.tar.TarArchive;
 import mobac.utilities.tar.TarIndex;
-import mobac.utilities.tar.TarTmiArchive;
 
-/**
- * 
- * 
- *
- */
-@AtlasCreatorName("TrekBuddy")
+@AtlasCreatorName(value = "TrekBuddy untared atlas", type = "UntaredAtlas")
 @SupportedParameters(names = { Name.format, Name.height, Name.width })
 public class TrekBuddy extends AtlasCreator {
 
@@ -71,8 +60,8 @@ public class TrekBuddy extends AtlasCreator {
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		MapSpace mapSpace = mapSource.getMapSpace();
-		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE
-				.equals(mapSpace.getProjectionCategory()));
+		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
+				.getProjectionCategory()));
 		// TODO supports Mercator ellipsoid?
 	}
 
@@ -82,14 +71,7 @@ public class TrekBuddy extends AtlasCreator {
 	}
 
 	public void finishAtlasCreation() {
-		switch (atlas.getOutputFormat()) {
-		case TaredAtlas:
-			createAtlasTarArchive("cr");
-			break;
-		case UntaredAtlas:
-			createAtlasTbaFile("cr");
-			break;
-		}
+		createAtlasTbaFile("cr");
 	}
 
 	@Override
@@ -133,7 +115,7 @@ public class TrekBuddy extends AtlasCreator {
 				height));
 		mapWriter.flush();
 	}
-	
+
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			Utilities.mkDirs(mapDir);
@@ -142,10 +124,7 @@ public class TrekBuddy extends AtlasCreator {
 			writeMapFile();
 
 			// This means there should not be any resizing of the tiles.
-			if (atlasOutputFormat == AtlasOutputFormat.TaredAtlas)
-				mapTileWriter = new TarTileWriter();
-			else
-				mapTileWriter = new FileTileWriter();
+			mapTileWriter = createMapTileWriter();
 
 			// Select the tile creator instance based on whether tile image
 			// parameters has been set or not
@@ -164,13 +143,16 @@ public class TrekBuddy extends AtlasCreator {
 		}
 	}
 
+	protected MapTileWriter createMapTileWriter() throws IOException {
+		return new FileTileWriter();
+	}
+
 	/**
 	 * New experimental custom tile size algorithm implementation.
 	 * 
-	 * It creates each custom sized tile separately. Therefore each original
-	 * tile (256x256) will be loaded and painted multiple times. Therefore this
-	 * implementation needs much more CPU power as each original tile is loaded
-	 * at least once and each generated tile has to be saved.
+	 * It creates each custom sized tile separately. Therefore each original tile (256x256) will be loaded and painted
+	 * multiple times. Therefore this implementation needs much more CPU power as each original tile is loaded at least
+	 * once and each generated tile has to be saved.
 	 * 
 	 * @throws MapCreationException
 	 */
@@ -221,49 +203,7 @@ public class TrekBuddy extends AtlasCreator {
 		}
 	}
 
-	public class TarTileWriter implements MapTileWriter {
-
-		TarArchive ta = null;
-		int tileHeight = 256;
-		int tileWidth = 256;
-
-		public TarTileWriter() {
-			super();
-			if (parameters != null) {
-				tileHeight = parameters.getHeight();
-				tileWidth = parameters.getWidth();
-			}
-			File mapTarFile = new File(mapDir, map.getName() + ".tar");
-			log.debug("Writing tiles to tared map: " + mapTarFile);
-			try {
-				ta = new TarTmiArchive(mapTarFile, null);
-				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
-				writeMapFile(buf);
-				ta.writeFileFromData(map.getName() + ".map", buf.toByteArray());
-			} catch (IOException e) {
-				log.error("", e);
-			}
-		}
-
-		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
-			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth), (tiley * tileHeight),
-					imageFormat);
-
-			ta.writeFileFromData("set/" + tileFileName, tileData);
-		}
-
-		public void finalizeMap() {
-			try {
-				ta.writeEndofArchive();
-			} catch (IOException e) {
-				log.error("", e);
-			}
-			ta.close();
-		}
-
-	}
-
-	public class FileTileWriter implements MapTileWriter {
+	private class FileTileWriter implements MapTileWriter {
 
 		File setFolder;
 		Writer setFileWriter;
@@ -378,43 +318,6 @@ public class TrekBuddy extends AtlasCreator {
 		sbMap.append("IWH,Map Image Width/Height, " + width + ", " + height + "\r\n");
 
 		return sbMap.toString();
-	}
-
-	/**
-	 * 
-	 * @param name
-	 */
-	public void createAtlasTarArchive(String name) {
-		log.trace("Creating cr.tar for atlas in dir \"" + atlasDir.getPath() + "\"");
-
-		File[] atlasLayerDirs = Utilities.listSubDirectories(atlasDir);
-		List<File> atlasMapDirs = new LinkedList<File>();
-		for (File dir : atlasLayerDirs)
-			Utilities.addSubDirectories(atlasMapDirs, dir, 0);
-
-		TarArchive ta = null;
-		File crFile = new File(atlasDir, name + ".tar");
-		try {
-			ta = new TarArchive(crFile, atlasDir);
-
-			ta.writeFileFromData(name + ".tba", "Atlas 1.0\r\n".getBytes());
-
-			for (File mapDir : atlasMapDirs) {
-				ta.writeFile(mapDir);
-				File mapFile = new File(mapDir, mapDir.getName() + ".map");
-				ta.writeFile(mapFile);
-				try {
-					mapFile.delete();
-				} catch (Exception e) {
-				}
-			}
-			ta.writeEndofArchive();
-		} catch (IOException e) {
-			log.error("Failed writing tar file \"" + crFile.getPath() + "\"", e);
-		} finally {
-			if (ta != null)
-				ta.close();
-		}
 	}
 
 	public void createAtlasTbaFile(String name) {

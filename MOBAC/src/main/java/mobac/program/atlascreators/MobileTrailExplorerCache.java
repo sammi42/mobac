@@ -46,7 +46,7 @@ import mobac.utilities.tar.TarIndex;
  * Please note that this atlas format ignores the defined atlas structure.
  * 
  */
-@AtlasCreatorName("Mobile Trail Explorer Cache")
+@AtlasCreatorName(value = "Mobile Trail Explorer Cache", type = "MTECache")
 public class MobileTrailExplorerCache extends AtlasCreator {
 
 	protected DataOutputStream cacheOutStream = null;

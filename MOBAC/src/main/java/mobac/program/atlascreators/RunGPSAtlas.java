@@ -49,7 +49,7 @@ import mobac.utilities.tar.TarIndex;
  * source code is available).
  * </p>
  */
-@AtlasCreatorName("Run.GPS Atlas")
+@AtlasCreatorName(value = "Run.GPS Atlas", type = "RunGPS")
 public class RunGPSAtlas extends AtlasCreator {
 
 	protected RunGPSAtlasFile atlasIndex = null;

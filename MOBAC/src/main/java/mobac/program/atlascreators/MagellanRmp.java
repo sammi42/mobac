@@ -42,8 +42,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.tar.TarIndex;
 
-
-@AtlasCreatorName("Magellan (RMP)")
+@AtlasCreatorName(value = "Magellan (RMP)", type = "Rmp")
 public class MagellanRmp extends AtlasCreator {
 
 	RmpWriter rmpWriter = null;
@@ -130,8 +129,7 @@ public class MagellanRmp extends AtlasCreator {
 	}
 
 	/**
-	 * Create a new instance of a TLM file and fill it with the data of a
-	 * calibrated image
+	 * Create a new instance of a TLM file and fill it with the data of a calibrated image
 	 * 
 	 * @param si
 	 *            image to get data from
@@ -142,8 +140,8 @@ public class MagellanRmp extends AtlasCreator {
 	 * @throws MapCreationException
 	 * @throws IOException
 	 */
-	public RmpLayer createLayer(MultiImage si, int layer) throws InterruptedException,
-			MapCreationException, IOException {
+	public RmpLayer createLayer(MultiImage si, int layer) throws InterruptedException, MapCreationException,
+			IOException {
 
 		int count = 0;
 
@@ -178,16 +176,15 @@ public class MagellanRmp extends AtlasCreator {
 		double y_end = (rect.getSouth() + 90.0) / tile_height;
 
 		/*
-		 * Create the tiles - process works column wise, starting on the top
-		 * left corner of the destination area.
+		 * Create the tiles - process works column wise, starting on the top left corner of the destination area.
 		 */
 		for (int x = x_start; x < x_end; x++) {
 			for (int y = y_start; y < y_end; y++) {
 				count++;
 
 				/* --- Create tile --- */
-				BoundingRect subrect = new BoundingRect(y * tile_height - 90, (y + 1) * tile_height
-						- 90, x * tile_width - 180, (x + 1) * tile_width - 180);
+				BoundingRect subrect = new BoundingRect(y * tile_height - 90, (y + 1) * tile_height - 90, x
+						* tile_width - 180, (x + 1) * tile_width - 180);
 				Tiledata td = new Tiledata();
 				td.posx = x;
 				td.posy = y;
@@ -198,8 +195,8 @@ public class MagellanRmp extends AtlasCreator {
 		}
 
 		/* --- Build the TLM file --- */
-		rmpLayer.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect
-				.getNorth(), rect.getSouth());
+		rmpLayer
+				.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect.getNorth(), rect.getSouth());
 
 		return rmpLayer;
 	}

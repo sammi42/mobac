@@ -58,7 +58,7 @@ import mobac.utilities.tar.TarIndex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-@AtlasCreatorName("Google Earth Overlay (KMZ)")
+@AtlasCreatorName(value = "Google Earth Overlay (KMZ)", type = "GoogleEarthRasterOverlay")
 public class GoogleEarthOverlay extends AtlasCreator {
 
 	protected File mapDir;

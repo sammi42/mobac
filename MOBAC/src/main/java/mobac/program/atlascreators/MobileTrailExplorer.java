@@ -40,7 +40,7 @@ import mobac.utilities.tar.TarIndex;
  * Please note that this atlas format ignores the defined atlas structure. It uses a separate directory for each used
  * map source and inside one directory for each zoom level.
  */
-@AtlasCreatorName("Mobile Trail Explorer")
+@AtlasCreatorName(value = "Mobile Trail Explorer", type = "MTE")
 public class MobileTrailExplorer extends AtlasCreator {
 
 	private File mapDir = null;

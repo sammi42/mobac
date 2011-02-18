@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
@@ -33,6 +34,7 @@ import mobac.gui.mapview.controller.RectangleSelectionMapController;
 import mobac.gui.mapview.interfaces.MapEventListener;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
@@ -250,6 +252,17 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			g.drawRect(x_min, y_min, w, h);
 		}
 		ScaleBar.paintScaleBar(this, g, mapSource.getMapSpace(), tlc, zoom);
+		if (mapSource instanceof MapSourceTextAttribution) {
+			MapSourceTextAttribution ta = (MapSourceTextAttribution) mapSource;
+			String attributionText = ta.getAttributionText();
+			Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
+			int text_x = getWidth() - 10 - (int) stringBounds.getWidth();
+			int text_y = getHeight() - 1 - (int) stringBounds.getHeight();
+			g.setColor(Color.black);
+			g.drawString(attributionText, text_x + 1, text_y + 1);
+			g.setColor(Color.white);
+			g.drawString(attributionText, text_x, text_y);
+		}
 	}
 
 	public EastNorthCoordinate getPositionCoordinate() {

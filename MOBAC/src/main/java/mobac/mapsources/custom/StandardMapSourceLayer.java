@@ -43,6 +43,10 @@ public class StandardMapSourceLayer implements MapSource {
 	@XmlElement(name = "name")
 	protected String mapSourceName;
 
+	public MapSource getMapSource() {
+		return mapSource;
+	}
+
 	protected void afterUnmarshal(Unmarshaller u, Object parent) {
 		mapSource = MapSourcesManager.getInstance().getSourceByName(mapSourceName);
 		if (mapSource == null)

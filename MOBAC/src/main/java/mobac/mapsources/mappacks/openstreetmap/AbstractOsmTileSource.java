@@ -20,9 +20,10 @@ import java.net.HttpURLConnection;
 
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.ProgramInfo;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
-public abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
+public abstract class AbstractOsmTileSource extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
 	public AbstractOsmTileSource(String name) {
 		super(name, 0, 18, TileImageType.PNG);
@@ -40,5 +41,13 @@ public abstract class AbstractOsmTileSource extends AbstractHttpMapSource {
 	protected void prepareTileUrlConnection(HttpURLConnection conn) {
 		super.prepareTileUrlConnection(conn);
 		conn.setRequestProperty("User-agent", ProgramInfo.getUserAgent());
+	}
+
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
 	}
 }

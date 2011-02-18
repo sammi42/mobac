@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import mobac.mapsources.custom.StandardMapSourceLayer;
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.mapsources.impl.SimpleMapSource;
@@ -100,13 +101,21 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	public void addMapSource(MapSource mapSource) {
+		if (mapSource instanceof StandardMapSourceLayer)
+			mapSource = ((StandardMapSourceLayer) mapSource).getMapSource();
 		allAvailableMapSources.put(mapSource.getName(), mapSource);
 		if (mapSource instanceof AbstractMultiLayerMapSource) {
 			for (MapSource lms : ((AbstractMultiLayerMapSource) mapSource)) {
+				if (lms instanceof StandardMapSourceLayer)
+					lms = ((StandardMapSourceLayer) lms).getMapSource();
 				MapSource old = allAvailableMapSources.put(lms.getName(), lms);
-				if (mapSource.equals(old))
-					JOptionPane.showMessageDialog(null, "Error: Duplicate map source name found: "
-							+ mapSource.getName(), "Duplicate name", JOptionPane.ERROR_MESSAGE);
+				if (old != null) {
+					allAvailableMapSources.put(old.getName(), old);
+					if (mapSource.equals(old))
+						JOptionPane.showMessageDialog(null,
+								"Error: Duplicate map source name found: " + mapSource.getName(), "Duplicate name",
+								JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 		allMapSources.put(mapSource.getName(), mapSource);

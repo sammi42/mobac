@@ -96,7 +96,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 			initializeDB();
 			conn.close();
 		} catch (SQLException e) {
-			throw new IOException(e.getCause());
+			throw new IOException(e);
 		}
 
 	}

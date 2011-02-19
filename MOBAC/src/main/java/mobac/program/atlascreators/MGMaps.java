@@ -62,7 +62,7 @@ import mobac.utilities.tar.TarIndex;
  * 
  * @author paour
  */
-@AtlasCreatorName("MGMaps/MyTrails (MGM)")
+@AtlasCreatorName(value = "MGMaps/MyTrails (MGM)", type = "MGM")
 @SupportedParameters(names = { Name.format })
 public class MGMaps extends AtlasCreator {
 

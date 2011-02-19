@@ -44,7 +44,7 @@ public class AtlasNew implements ActionListener {
 		JPanel formatPanel = new JPanel(new BorderLayout());
 
 		formatPanel.add(new JLabel("<html><b>Please select the desired atlas format</b></html>"), BorderLayout.NORTH);
-		JList atlasFormatList = new JList(AtlasOutputFormat.values());
+		JList atlasFormatList = new JList(AtlasOutputFormat.getFormatsAsVector());
 		atlasFormatList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroller = new JScrollPane(atlasFormatList);
 		scroller.setPreferredSize(new Dimension(100, 200));

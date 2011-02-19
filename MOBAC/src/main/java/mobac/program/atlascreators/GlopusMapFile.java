@@ -57,7 +57,7 @@ import mobac.utilities.stream.LittleEndianOutputStream;
  * </pre>
  * 
  */
-@AtlasCreatorName("Glopus Map File (GMF)")
+@AtlasCreatorName(value = "Glopus Map File (GMF)", type = "Gmf")
 public class GlopusMapFile extends TrekBuddy {
 
 	@Override

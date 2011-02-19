@@ -33,9 +33,9 @@ import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 
 /**
- *  Touratech QV
+ * Touratech QV
  */
-@AtlasCreatorName("Touratech QV")
+@AtlasCreatorName(value = "Touratech QV", type = "Ttqv")
 public class TTQV extends Ozi {
 
 	@Override

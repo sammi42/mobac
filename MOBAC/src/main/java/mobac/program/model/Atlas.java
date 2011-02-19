@@ -47,7 +47,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 	@XmlElements( { @XmlElement(name = "Layer", type = Layer.class) })
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
 
-	private AtlasOutputFormat outputFormat = AtlasOutputFormat.TaredAtlas;
+	private AtlasOutputFormat outputFormat = AtlasOutputFormat.FORMATS.get(0);
 
 	public static Atlas newInstance() {
 		Atlas atlas = new Atlas();

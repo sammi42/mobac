@@ -18,6 +18,7 @@ package mobac.mapsources.mappacks.bing;
 
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
+import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
 public class BingHillshade extends AbstractHttpMapSource {
@@ -27,15 +28,16 @@ public class BingHillshade extends AbstractHttpMapSource {
 	protected int serverNumMax = 4;
 
 	public BingHillshade() {
-		super("Bing Maps", 1, 19, TileImageType.JPG, TileUpdate.None);
+		super("Bing Maps", 1, 19, TileImageType.JPG, TileUpdate.IfModifiedSince);
 	}
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 		serverNum = (serverNum + 1) % serverNumMax;
-		return "http://ecn.t" + serverNum + ".tiles.virtualearth.net/tiles/r" + tileNum
-				+ "?g=637&mkt=en&lbl=l1&stl=h&shading=hill&n=z";
+		String lang = Settings.getInstance().bingLanguage;
+		return "http://ecn.t" + serverNum + ".tiles.virtualearth.net/tiles/r" + tileNum + "?g=637&mkt=" + lang
+				+ "&lbl=l1&stl=h&shading=hill&n=z";
 	}
 
 }

@@ -19,6 +19,7 @@ package mobac.mapsources.mappacks.bing;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.MapSourceTools;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 
 /**
@@ -41,7 +42,9 @@ public abstract class AbstractMicrosoft extends AbstractHttpMapSource {
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		String tileNum = MapSourceTools.encodeQuadTree(zoom, tilex, tiley);
 		serverNum = (serverNum + 1) % serverNumMax;
-		return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar + tileNum + "." + tileType + urlAppend;
+		String lang = "&mkt=" + Settings.getInstance().bingLanguage;
+		return "http://" + mapTypeChar + serverNum + urlBase + mapTypeChar + tileNum + "." + tileType + urlAppend
+				+ lang;
 	}
 
 	@Override

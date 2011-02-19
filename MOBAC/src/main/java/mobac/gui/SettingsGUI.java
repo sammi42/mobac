@@ -101,6 +101,10 @@ public class SettingsGUI extends JDialog {
 
 	private static final long MBIT1 = 1000000 / 8;
 
+	private static final String[] GOOGLE_LANGUAGES = new String[] { "en", "de", "ru", "uk", "zh-CN", "zh-TW" };
+
+	private static final String[] BING_LANGUAGES = new String[] { "en", "de-de" };
+
 	private enum Bandwidth {
 		UNLIMUTED("Unlimited", 0), MBit1("1 MBit", MBIT1), MBit5("5 MBit", MBIT1 * 5), MBit10("10 MBit", MBIT1 * 10), MBit15(
 				"15 MBit", MBIT1 * 15), MBit20("20 MBit", MBIT1 * 20);
@@ -261,8 +265,7 @@ public class SettingsGUI extends JDialog {
 		JPanel googlePanel = new JPanel(new GridBagLayout());
 		googlePanel.setBorder(createSectionBorder("Google Maps"));
 
-		String[] googleLanguages = new String[] { "en", "de", "ru", "uk", "zh-CN" };
-		googleLang = new JComboBox(googleLanguages);
+		googleLang = new JComboBox(GOOGLE_LANGUAGES);
 		googleLang.setEditable(true);
 
 		googlePanel.add(new JLabel("Language (hl parameter): "), GBC.std());
@@ -271,8 +274,7 @@ public class SettingsGUI extends JDialog {
 		JPanel bingPanel = new JPanel(new GridBagLayout());
 		bingPanel.setBorder(createSectionBorder("Bing/Microsoft Maps"));
 
-		String[] bingLanguages = new String[] { "en", "de-de" };
-		bingLang = new JComboBox(bingLanguages);
+		bingLang = new JComboBox(BING_LANGUAGES);
 		bingLang.setEditable(true);
 
 		bingPanel.add(new JLabel("Language (mkt parameter): "), GBC.std());
@@ -691,8 +693,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5).anchor(GBC.EAST));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
-				GBC.eol().fill(GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.eol().fill(
+				GBC.HORIZONTAL));
 
 		bandwidth = new JComboBox(Bandwidth.values());
 		bandwidth.setMaximumRowCount(bandwidth.getItemCount());

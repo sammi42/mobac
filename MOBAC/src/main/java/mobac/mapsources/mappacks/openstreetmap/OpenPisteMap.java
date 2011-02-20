@@ -28,9 +28,10 @@ import mobac.exceptions.TileException;
 import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
-public class OpenPisteMap extends AbstractMultiLayerMapSource {
+public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSourceTextAttribution {
 
 	private static final String BASE = "http://tiles.openpistemap.org/nocontours";
 	private static final String CONTOURS = "http://tiles.openpistemap.org/contours-only";
@@ -45,6 +46,14 @@ public class OpenPisteMap extends AbstractMultiLayerMapSource {
 	@Override
 	public String toString() {
 		return "Open Piste Map";
+	}
+
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
 	}
 
 	public static abstract class AbstractOpenPisteMap extends AbstractOsmTileSource {

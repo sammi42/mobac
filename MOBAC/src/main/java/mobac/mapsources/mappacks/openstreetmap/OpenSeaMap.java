@@ -18,6 +18,7 @@ import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
@@ -26,7 +27,7 @@ import mobac.utilities.Utilities;
 /**
  *@see OpenSeaMapLayer
  */
-public class OpenSeaMap extends AbstractMultiLayerMapSource {
+public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSourceTextAttribution {
 
 	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
 
@@ -34,6 +35,14 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource {
 		super("OpenSeaMap", TileImageType.PNG);
 		mapSources = new MapSource[] { new Mapnik(), new OpenSeaMapLayer() };
 		initializeValues();
+	}
+
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
 	}
 
 	/**

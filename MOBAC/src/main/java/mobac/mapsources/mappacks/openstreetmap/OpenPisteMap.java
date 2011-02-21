@@ -39,7 +39,7 @@ public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSour
 
 	public OpenPisteMap() {
 		super("OpenPisteMapBCL", TileImageType.PNG);
-		mapSources = new MapSource[] { new OpenPisteMapBase(), new OpenPisteMapContours(), new OpenPisteMapLandshed() };
+		mapSources = new MapSource[] { new OpenPisteMapBase(), new OpenPisteMapLandshed(), new OpenPisteMapContours() };
 		initializeValues();
 	}
 
@@ -93,6 +93,7 @@ public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSour
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return BASE + super.getTileUrl(zoom, tilex, tiley);
 		}
+
 	}
 
 	public static class OpenPisteMapContours extends AbstractOpenPisteMap {
@@ -111,6 +112,7 @@ public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSour
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return CONTOURS + super.getTileUrl(zoom, tilex, tiley);
 		}
+
 	}
 
 	public static class OpenPisteMapLandshed extends AbstractOpenPisteMap {

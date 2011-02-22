@@ -8,7 +8,7 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
-1.9 preview 9 (2011-02-16)
+1.9 preview 9 (2011-02-22)
  + New map source: Reit- und Wanderkarte (Abo) - (requires purchased ticket)
  ~ Updated New Zealand Topographic Maps url
  ! OpenStreetMap attribution + MOBAC user aget

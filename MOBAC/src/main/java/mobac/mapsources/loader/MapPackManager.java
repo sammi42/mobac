@@ -196,6 +196,8 @@ public class MapPackManager {
 		cleanMapPackDir();
 		String md5sumList = downloadMD5SumList();
 		if (md5sumList == null)
+			return 0;
+		if (md5sumList.length() == 0)
 			return -1;
 		int updateCount = 0;
 		String[] outdatedMapPacks = searchForOutdatedMapPacks(md5sumList);

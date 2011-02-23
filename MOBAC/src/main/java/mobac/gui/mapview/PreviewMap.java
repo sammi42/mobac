@@ -36,6 +36,7 @@ import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.Bookmark;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
@@ -263,6 +264,16 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			g.setColor(Color.white);
 			g.drawString(attributionText, text_x, text_y);
 		}
+	}
+
+	public Bookmark getPositionBookmark() {
+		return new Bookmark(mapSource, zoom, center.x, center.y);
+	}
+
+	public void gotoPositionBookmark(Bookmark bookmark) {
+		setMapSource(bookmark.mapSource);
+		setDisplayPositionByLatLon(bookmark, bookmark.zoom);
+		setZoom(bookmark.zoom);
 	}
 
 	public EastNorthCoordinate getPositionCoordinate() {

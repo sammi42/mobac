@@ -62,6 +62,7 @@ import javax.xml.bind.JAXBException;
 import mobac.exceptions.AtlasTestException;
 import mobac.gui.actions.AddRectangleMapAutocut;
 import mobac.gui.actions.AtlasNew;
+import mobac.gui.actions.BookmarkAdd;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
@@ -290,6 +291,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 		sAddSelection.addActionListener(AddRectangleMapAutocut.INSTANCE);
 		mapsMenu.add(sAddSelection);
 
+		JMenu bookmarks = new JMenu("Bookmarks");
+		bookmarks.setMnemonic(KeyEvent.VK_B);
+		JMenuItem addBookmark = new JMenuItem("Save current view");
+		addBookmark.addActionListener(new BookmarkAdd(previewMap, bookmarks));
+		bookmarks.add(addBookmark);
+
 		JMenu debug = new JMenu("Debug");
 		debug.setMnemonic(KeyEvent.VK_D);
 		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
@@ -324,6 +331,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		menuBar.add(atlasMenu);
 		menuBar.add(mapsMenu);
+		menuBar.add(bookmarks);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(debug);
 		menuBar.add(help);

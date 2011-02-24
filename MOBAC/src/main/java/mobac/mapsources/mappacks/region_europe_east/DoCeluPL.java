@@ -28,7 +28,7 @@ import mobac.program.model.TileImageType;
  */
 public class DoCeluPL extends AbstractHttpMapSource {
 
-	private static final String BASE_URL = "http://i.wp.pl/m/tiles008/";
+	private static final String BASE_URL = "http://i.wp.pl/m/tiles011/";
 
 	public DoCeluPL() {
 		super("DoCeluPL", 2, 16, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);

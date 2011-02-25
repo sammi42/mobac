@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -85,8 +86,8 @@ public class Settings {
 
 	public Point mapviewSelectionMax = null;
 	public Point mapviewSelectionMin = null;
-	@XmlElementWrapper(name="selectedZoomLevels")
-	@XmlElement(name="zoomLevel")
+	@XmlElementWrapper(name = "selectedZoomLevels")
+	@XmlElement(name = "zoomLevel")
 	public List<Integer> selectedZoomLevels = null;
 
 	@XmlElement(nillable = false)
@@ -116,6 +117,10 @@ public class Settings {
 		@XmlElement
 		private String mapSourcesDirectory;
 	}
+
+	@XmlElementWrapper(name = "placeBookmarks")
+	@XmlElement(name = "bookmark")
+	public List<Bookmark> placeBookmarks = new ArrayList<Bookmark>();
 
 	/**
 	 * Connection timeout in seconds (default 10 seconds)
@@ -182,7 +187,7 @@ public class Settings {
 	private String customProxyPort = "";
 	private String customProxyUserName = "";
 	private String customProxyPassword = "";
-	private long bandwidthLimit = 0; 
+	private long bandwidthLimit = 0;
 
 	@XmlElementWrapper(name = "mapSourcesDisabled")
 	@XmlElement(name = "mapSource")

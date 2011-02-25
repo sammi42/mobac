@@ -19,27 +19,23 @@ package mobac.gui.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
-import mobac.gui.components.JBookmarkMenuItem;
+import mobac.gui.MainGUI;
 import mobac.gui.mapview.PreviewMap;
 import mobac.program.model.Bookmark;
+import mobac.program.model.Settings;
 
 public class BookmarkAdd implements ActionListener {
 
 	private final PreviewMap previewMap;
-	private final JMenu bookmarks;
 
-	public BookmarkAdd(PreviewMap previewMap, JMenu bookmarks) {
+	public BookmarkAdd(PreviewMap previewMap) {
 		this.previewMap = previewMap;
-		this.bookmarks = bookmarks;
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		Bookmark bm = previewMap.getPositionBookmark();
-		JMenuItem newItem = new JBookmarkMenuItem(bm);
-		bookmarks.add(newItem);
+		Settings.getInstance().placeBookmarks.add(bm);
+		MainGUI.getMainGUI().updateBookmarksMenu();
 	}
 
 }

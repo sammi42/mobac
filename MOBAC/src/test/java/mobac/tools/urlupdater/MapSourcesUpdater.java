@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import mobac.Main;
 import mobac.exceptions.MapSourcesUpdateException;
 import mobac.program.DirectoryManager;
-import mobac.program.model.Settings;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
@@ -166,12 +165,6 @@ public class MapSourcesUpdater {
 				throw new MapSourcesUpdateException("No update url configured!");
 			url = new URL(mapUpdateUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			Settings settings = Settings.getInstance();
-			if (mapFile.isFile() /*
-								 * && settings.mapSourcesUpdate.etag != null && settings.mapSourcesUpdate.etag != "")
-								 * conn.addRequestProperty("If-None-Match", settings.mapSourcesUpdate.etag
-								 */)
-				;
 			try { // TODO temporarily introduced try/catch due to uncaught exception
 				int code = conn.getResponseCode();
 				MapSourcesUpdater.log.trace("Mapsources online update: \n\tUpdate url: " + mapUpdateUrl

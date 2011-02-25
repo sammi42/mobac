@@ -34,6 +34,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -73,6 +74,7 @@ import mobac.gui.actions.ShowReadme;
 import mobac.gui.atlastree.JAtlasTree;
 import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JAtlasNameField;
+import mobac.gui.components.JBookmarkMenuItem;
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.components.JZoomCheckBox;
 import mobac.gui.listeners.AtlasModelListener;
@@ -90,6 +92,7 @@ import mobac.program.AtlasThread;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.Bookmark;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.program.model.Profile;
@@ -121,6 +124,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	protected JMenuBar menuBar;
+
+	private JMenu bookmarkMenu = new JMenu("Bookmarks");
 
 	public final PreviewMap previewMap = new PreviewMap();
 	public final JAtlasTree jAtlasTree = new JAtlasTree(previewMap);
@@ -291,11 +296,11 @@ public class MainGUI extends JFrame implements MapEventListener {
 		sAddSelection.addActionListener(AddRectangleMapAutocut.INSTANCE);
 		mapsMenu.add(sAddSelection);
 
-		JMenu bookmarks = new JMenu("Bookmarks");
-		bookmarks.setMnemonic(KeyEvent.VK_B);
+		bookmarkMenu.setMnemonic(KeyEvent.VK_B);
 		JMenuItem addBookmark = new JMenuItem("Save current view");
-		addBookmark.addActionListener(new BookmarkAdd(previewMap, bookmarks));
-		bookmarks.add(addBookmark);
+		addBookmark.addActionListener(new BookmarkAdd(previewMap));
+		bookmarkMenu.add(addBookmark);
+		bookmarkMenu.addSeparator();
 
 		JMenu debug = new JMenu("Debug");
 		debug.setMnemonic(KeyEvent.VK_D);
@@ -331,7 +336,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		menuBar.add(atlasMenu);
 		menuBar.add(mapsMenu);
-		menuBar.add(bookmarks);
+		menuBar.add(bookmarkMenu);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(debug);
 		menuBar.add(help);
@@ -451,6 +456,25 @@ public class MainGUI extends JFrame implements MapEventListener {
 			previewMap.setMapSource(ms2);
 	}
 
+	public void updateBookmarksMenu() {
+		LinkedList<JMenuItem> items = new LinkedList<JMenuItem>();
+		for (int i = 0; i < bookmarkMenu.getMenuComponentCount(); i++) {
+			JMenuItem item = bookmarkMenu.getItem(i);
+			if (!(item instanceof JBookmarkMenuItem))
+				items.add(item);
+		}
+		bookmarkMenu.removeAll();
+		for (JMenuItem item : items) {
+			if (item != null)
+				bookmarkMenu.add(item);
+			else
+				bookmarkMenu.addSeparator();
+		}
+		for (Bookmark b : Settings.getInstance().placeBookmarks) {
+			bookmarkMenu.add(new JBookmarkMenuItem(b));
+		}
+	}
+
 	private void loadSettings() {
 		if (Profile.DEFAULT.exists())
 			jAtlasTree.load(Profile.DEFAULT);
@@ -502,6 +526,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 				}
 			}
 		}
+
+		updateBookmarksMenu();
 	}
 
 	private void saveSettings() {
@@ -785,12 +811,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		if (mapSelectionMax == null || mapSelectionMin == null)
 			return null;
 		return new MapSelection(previewMap.getMapSource(), mapSelectionMax, mapSelectionMin);
-	}
-
-	private String validateInput() {
-		String errorText = "";
-		errorText += tileImageParametersPanel.getValidationErrorMessages();
-		return errorText;
 	}
 
 	public TileImageParameters getSelectedTileImageParameters() {

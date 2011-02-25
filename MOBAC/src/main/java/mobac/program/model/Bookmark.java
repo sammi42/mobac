@@ -16,22 +16,40 @@
  ******************************************************************************/
 package mobac.program.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
+import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 
 public class Bookmark extends EastNorthCoordinate {
 
+	@XmlAttribute
 	public int zoom;
-	public MapSource mapSource;
+
+	@XmlAttribute
+	public String mapSource;
+
+	/**
+	 * Needed for JAXB
+	 */
+	@SuppressWarnings("unused")
+	private Bookmark() {
+
+	}
 
 	public Bookmark(MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
 		super(mapSource.getMapSpace(), zoom, pixelCoordinateX, pixelCoordinateY);
-		this.mapSource = mapSource;
+		this.mapSource = mapSource.getName();
 		this.zoom = zoom;
+	}
+
+	public MapSource getMapSource() {
+		return MapSourcesManager.getInstance().getSourceByName(mapSource);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s at lat=%.3f lon=%.3f (zoom = %d)", mapSource.toString(), lat, lon, zoom);
+		return String.format("%s at lat=%.3f lon=%.3f (zoom = %d)", mapSource, lat, lon, zoom);
 	}
 
 }

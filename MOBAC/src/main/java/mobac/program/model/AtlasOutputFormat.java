@@ -45,6 +45,7 @@ import mobac.program.atlascreators.Maplorer;
 import mobac.program.atlascreators.Maverick;
 import mobac.program.atlascreators.MobileTrailExplorer;
 import mobac.program.atlascreators.MobileTrailExplorerCache;
+import mobac.program.atlascreators.NFComPass;
 import mobac.program.atlascreators.NaviComputer;
 import mobac.program.atlascreators.OSMAND;
 import mobac.program.atlascreators.OSMTracker;
@@ -92,6 +93,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(new AtlasOutputFormat(MobileTrailExplorer.class));
 		FORMATS.add(new AtlasOutputFormat(MobileTrailExplorerCache.class));
 		FORMATS.add(new AtlasOutputFormat(NaviComputer.class));
+		FORMATS.add(new AtlasOutputFormat(NFComPass.class));
 		FORMATS.add(new AtlasOutputFormat(OruxMaps.class));
 		FORMATS.add(new AtlasOutputFormat(OruxMapsSqlite.class));
 		FORMATS.add(new AtlasOutputFormat(OSMAND.class));

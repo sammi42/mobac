@@ -596,4 +596,21 @@ public class Utilities {
 		out.close();
 	}
 
+	/**
+	 * 
+	 * @param value
+	 *            positive value
+	 * @return 0 if no bit is set else the highest bit that is one in <code>value</code>
+	 */
+	public static int getHighestBitSet(int value) {
+		int bit = 0x40000000;
+		for (int i = 31; i > 0; i--) {
+			int test = bit & value;
+			if (test != 0)
+				return i;
+			bit >>= 1;
+		}
+		return 0;
+	}
+
 }

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.region_europe_east;
 
+import java.net.HttpURLConnection;
+
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
@@ -33,4 +35,9 @@ public class CykloatlasRelief extends AbstractHttpMapSource {
 		return "http://services.tmapserver.cz/tiles/gm/sum/" + zoom + "/" + tilex + "/" + tiley + ".png";
 	}
 
+	@Override
+	protected void prepareTileUrlConnection(HttpURLConnection conn) {
+		super.prepareTileUrlConnection(conn);
+		conn.addRequestProperty("Referer", "http://www.cykloserver.cz/cykloatlas/");
+	}
 }

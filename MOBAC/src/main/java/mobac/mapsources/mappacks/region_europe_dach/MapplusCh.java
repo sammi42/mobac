@@ -16,7 +16,6 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.region_europe_dach;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Random;
 
@@ -31,8 +30,11 @@ public class MapplusCh extends AbstractHttpMapSource {
 
 	String referer;
 
-	private static final char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
-			'f' };
+	private static final char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+	private static final int[] SERVER_NUMS = { 1, 2, 3 };
+
+	private int serverNum = 0;
 
 	public MapplusCh() {
 		super("MapplusCh", 7, 16, TileImageType.JPG, HttpMapSource.TileUpdate.ETag);
@@ -51,18 +53,16 @@ public class MapplusCh extends AbstractHttpMapSource {
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		int z = 17 - zoom;
-		return "http://mp2.mapplus.ch/kacache/" + z + "/def/def/t" + tiley + "/l" + tilex + "/t" + tiley + "l"
-				+ tilex + ".jpg";
+		serverNum = (serverNum++) % SERVER_NUMS.length;
+		int server = SERVER_NUMS[serverNum];
+		return "http://mp" + server + ".mapplus.ch/tydcache/tydswisstopo/" + zoom + "/" + tilex + "/" + tiley + ".jpg";
 	}
 
 	@Override
-	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
-		HttpURLConnection conn = super.getTileUrlConnection(zoom, tilex, tiley);
-		// http request property "Referer" is required -
-		// otherwise we only get "tranparentpixel.gif"
+	protected void prepareTileUrlConnection(HttpURLConnection conn) {
+		super.prepareTileUrlConnection(conn);
+		// http request property "Referer" is required - otherwise we only get "tranparentpixel.gif"
 		conn.setRequestProperty("Referer", referer);
-		return conn;
 	}
 
 }

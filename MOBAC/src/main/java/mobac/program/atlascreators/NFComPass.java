@@ -79,7 +79,7 @@ public class NFComPass extends AtlasCreator {
 		w.append("MAPPATH =\r\n");
 		w.append("VMAX = 160\r\n");
 		w.append("WIDTH = 5\r\n");
-		w.append("LASTZOOM = " + lastZoom + " ]\r\n\r\n");
+		w.append("LASTZOOM = " + lastZoom + "\r\n\r\n");
 		w.flush();
 		w.close();
 	}
@@ -118,7 +118,8 @@ public class NFComPass extends AtlasCreator {
 		int height = (yMax - yMin + 1) * tileSize;
 
 		try {
-			w = new BufferedWriter(new FileWriter(new File(layerDir, map.getName() + ".kal"), true));
+			w = new BufferedWriter(new FileWriter(new File(mapDir, map.getName() + ".kal"), true));
+			w.append("[" + map.getName() + "]\r\n");
 			w.append(String.format("TILEXY = %dx%d\r\n", parameters.getWidth(), parameters.getHeight()));
 			w.append("X0LON = " + longitudeMin + "\r\n");
 			w.append("Y0LAT = " + latitudeMin + "\r\n");

@@ -13,6 +13,7 @@
  + Bookmarks can be added (saves map position and selected map source) 
  ! Fixed map source: Cykloatlas and relief
  ! Fixed map source: Map+ (Switzerland)
+ + New map source: Map+ Gelände (Switzerland)
 
 1.9 preview 9 (2011-02-22)
  + New map source: Reit- und Wanderkarte (Abo) - (requires purchased ticket)

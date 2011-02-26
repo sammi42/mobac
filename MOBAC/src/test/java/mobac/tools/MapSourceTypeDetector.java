@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.openstreetmap.WanderreitkarteAbo;
+import mobac.mapsources.mappacks.region_europe_dach.MapplusChGelaende;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -65,7 +65,7 @@ public class MapSourceTypeDetector {
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 
-		testMapSource(WanderreitkarteAbo.class);
+		testMapSource(MapplusChGelaende.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

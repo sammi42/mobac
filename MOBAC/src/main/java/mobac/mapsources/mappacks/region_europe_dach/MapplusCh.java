@@ -20,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.util.Random;
 
 import mobac.mapsources.AbstractHttpMapSource;
-import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 /**
@@ -36,8 +35,10 @@ public class MapplusCh extends AbstractHttpMapSource {
 
 	private int serverNum = 0;
 
+	protected String URL = "http://mp%d.mapplus.ch/tydcache/tydswisstopo/%d/%d/%d.jpg";
+
 	public MapplusCh() {
-		super("MapplusCh", 7, 16, TileImageType.JPG, HttpMapSource.TileUpdate.ETag);
+		super("MapplusCh", 7, 16, TileImageType.JPG, TileUpdate.ETag);
 		char[] sessID = new char[32];
 		Random rnd = new Random();
 		for (int i = 0; i < sessID.length; i++)
@@ -55,7 +56,7 @@ public class MapplusCh extends AbstractHttpMapSource {
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		serverNum = (serverNum++) % SERVER_NUMS.length;
 		int server = SERVER_NUMS[serverNum];
-		return "http://mp" + server + ".mapplus.ch/tydcache/tydswisstopo/" + zoom + "/" + tilex + "/" + tiley + ".jpg";
+		return String.format(URL, server, zoom, tilex, tiley);
 	}
 
 	@Override

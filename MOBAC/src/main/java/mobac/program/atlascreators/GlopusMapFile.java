@@ -93,6 +93,10 @@ public class GlopusMapFile extends TrekBuddy {
 	}
 
 	@Override
+	public void createAtlasTbaFile(String name) {
+	}
+
+	@Override
 	public void abortAtlasCreation() throws IOException {
 		mapTileWriter = null;
 		super.abortAtlasCreation();

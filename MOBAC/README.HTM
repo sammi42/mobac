@@ -103,7 +103,8 @@ SourceForge.net: <br>
 	</ul>
 	<li><a href="#CustomMapSource">Custom map sources</a>
 	<ul style="margin-left: 10px;">
-		<li><a href="#SimpleCustomMapSource">Simple custom map sources</a></li>
+		<li><a href="#SimpleCustomMapSource">Simple custom map
+		sources</a></li>
 		<li><a href="#CustomWMSMapSource">Custom WMS map sources</a></li>
 		<li><a href="#CustomMultiLayerMapSource">Custom multi-layer
 		map sources</a></li>
@@ -782,8 +783,8 @@ steps:</p>
 <ol>
 	<li>Make sure you have closed MOBAC</li>
 	<li>Open <tt>settings.xml</tt> in an text editor</li>
-	<li>Inside of the tag <tt>&lt;settings&gt;</tt> create a new tag
-	named <tt>&lt;tileStoreDirectory&gt;</tt></li>
+	<li>Inside of the tag <tt>&lt;settings&gt;</tt> search for the tag
+	<tt>&lt;directories&gt;</tt>. Inside this tag create a new tag named <tt>&lt;tileStoreDirectory&gt;</tt></li>
 	<li>Set the path name to the value of this tag (Windows users
 	should replace backslashes with a slashes)</li>
 	<li>(optional) Copy or move the content of the old tile store
@@ -792,7 +793,9 @@ steps:</p>
 <h4>Example</h4>
 <pre>
 &lt;settings&gt;
-    &lt;tileStoreDirectory&gt;E:/tiles&lt;/tileStoreDirectory&gt;
+    &lt;directories&gt;
+        &lt;tileStoreDirectory&gt;E:/tiles&lt;/tileStoreDirectory&gt;
+    &lt;/directories&gt;
     ...
 &lt;/settings&gt;</pre>
 <p>This specified the windows directory <tt>E:\tiles</tt> as new

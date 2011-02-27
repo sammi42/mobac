@@ -69,6 +69,7 @@ public class GlopusMapFile extends TrekBuddy {
 	@Override
 	public void finishLayerCreation() throws IOException {
 		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
 		super.finishLayerCreation();
 	}
 

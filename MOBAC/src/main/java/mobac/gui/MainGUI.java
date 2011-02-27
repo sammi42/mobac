@@ -667,6 +667,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 			jAtlasTree.load(profile);
 			previewMap.repaint();
+			tileImageParametersPanel.atlasFormatChanged(jAtlasTree.getAtlas().getOutputFormat());
 		}
 	}
 

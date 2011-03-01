@@ -193,7 +193,7 @@ public class CacheBox extends AtlasCreator {
 		Utilities.closeFile(packRaFile);
 		packRaFile = null;
 		if (packFile != null)
-			packFile.delete();
+			Utilities.deleteFile(packFile);
 		packFile = null;
 	}
 

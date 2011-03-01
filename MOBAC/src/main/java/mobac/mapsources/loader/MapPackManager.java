@@ -98,9 +98,10 @@ public class MapPackManager {
 
 					Utilities.deleteFile(oldMapPack);
 				}
-				newMapPack.renameTo(oldMapPack);
+				if (!newMapPack.renameTo(oldMapPack))
+					throw new IOException("Failed to rename file: " + newMapPack);
 			} catch (CertificateException e) {
-				newMapPack.delete();
+				Utilities.deleteFile(newMapPack);
 				log.error("Map pack certificate cerificateion failed (" + newMapPack.getName()
 						+ ") installation aborted and file was deleted");
 			}
@@ -220,7 +221,8 @@ public class MapPackManager {
 				name = name.replace(".unverified", ".new");
 				File f = new File(newMapPackFile.getParentFile(), name);
 				// Change file extension
-				newMapPackFile.renameTo(f);
+				if (!newMapPackFile.renameTo(f))
+					throw new IOException("Failed to rename file: " + newMapPackFile);
 				updateCount++;
 			} catch (IOException e) {
 				log.error(e.getMessage(), e);

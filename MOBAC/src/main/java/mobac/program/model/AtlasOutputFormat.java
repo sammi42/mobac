@@ -167,7 +167,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 	}
 
 	public int compareTo(AtlasOutputFormat o) {
-		return this.toString().compareTo(o.toString());
+		return getTypeName().compareTo(o.toString());
 	}
 
 }

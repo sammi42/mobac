@@ -37,7 +37,6 @@ import mobac.utilities.stream.RandomAccessFileOutputStream;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * Class that writes files in RMP archive format
  * 
@@ -61,14 +60,12 @@ public class RmpWriter {
 	/**
 	 * @param imageName
 	 * @param layerCount
-	 *            projected number of layers that will be written to this rmp
-	 *            file
+	 *            projected number of layers that will be written to this rmp file
 	 * @param rmpFile
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public RmpWriter(String imageName, int layerCount, File rmpFile) throws IOException,
-			InterruptedException {
+	public RmpWriter(String imageName, int layerCount, File rmpFile) throws IOException, InterruptedException {
 		this.rmpFile = rmpFile;
 		// We only use one A00 entry per map/layer - therefore we can
 		// pre-calculate the number of entries:
@@ -150,8 +147,7 @@ public class RmpWriter {
 	}
 
 	private void throwRmpTooLarge() throws IOException {
-		throw new IOException(
-				"RMP file size exeeds 2GiB! The RMP file format does not support that.");
+		throw new IOException("RMP file size exeeds 2GiB! The RMP file format does not support that.");
 	}
 
 	/**
@@ -163,8 +159,8 @@ public class RmpWriter {
 	public void writeDirectory() throws IOException {
 		if (projectedEntryCount != entries.size())
 			throw new RuntimeException("Entry count does not correspond "
-					+ "to the projected layer count: \nProjected: " + projectedEntryCount
-					+ "\nPresent:" + entries.size());
+					+ "to the projected layer count: \nProjected: " + projectedEntryCount + "\nPresent:"
+					+ entries.size());
 
 		// Finalize the list of written entries
 		RmpTools.writeFixedString(entryOut, "MAGELLAN", 8);
@@ -206,9 +202,9 @@ public class RmpWriter {
 		}
 	}
 
-	public void delete() {
+	public void delete() throws IOException {
 		close();
-		rmpFile.delete();
+		Utilities.deleteFile(rmpFile);
 	}
 
 	private static class EntryInfo {

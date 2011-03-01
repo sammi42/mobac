@@ -52,9 +52,9 @@ public class GpxEditor {
 	 * @param entry
 	 * @param wpt
 	 */
-	public void findRteAndAdd(GpxEntry entry, WptType wpt) {
+	public void findRteAndAdd(RteEntry entry, WptType wpt) {
 		List<RteType> rtes = entry.getLayer().getGpx().getRte();
-		RteType rteParent = ((RteEntry) entry).getRte();
+		RteType rteParent = (entry).getRte();
 		for (RteType rte : rtes) {
 			if (rte.equals(rteParent)) {
 				rte.getRtept().add(wpt);
@@ -68,13 +68,13 @@ public class GpxEditor {
 	 * @param entry
 	 * @param wpt
 	 */
-	public void findTrksegAndAdd(GpxEntry entry, WptType wpt) {
+	public void findTrksegAndAdd(TrksegEntry entry, WptType wpt) {
 		// get the track the selected track segment belongs to
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) entry.getNode().getParent();
 		TrkEntry trkParent = (TrkEntry) parentNode.getUserObject();
 
 		// get the selected track segment
-		TrksegType trksegParent = ((TrksegEntry) entry).getTrkSeg();
+		TrksegType trksegParent = entry.getTrkSeg();
 		List<TrksegType> trksegs = trkParent.getTrk().getTrkseg();
 
 		for (TrksegType trkseg : trksegs) {

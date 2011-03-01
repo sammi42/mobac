@@ -31,7 +31,6 @@ import javax.swing.event.DocumentListener;
 import mobac.utilities.Utilities;
 import mobac.utilities.geo.CoordinateDms2Format;
 
-
 public class JCoordinateField extends JTextField {
 
 	private static final long serialVersionUID = 1L;
@@ -144,7 +143,7 @@ public class JCoordinateField extends JTextField {
 					return;
 				}
 				double d = num.doubleValue();
-				valid = (d != Double.NaN) && (d >= min) && (d <= max);
+				valid = (!Double.isNaN(d)) && (d >= min) && (d <= max);
 			} catch (Exception e) {
 				valid = false;
 			}

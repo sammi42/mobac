@@ -118,7 +118,7 @@ public class TwoNavRMAP extends AtlasCreator {
 			}
 			int TagLen = rmapFile.readIntI();
 			byte[] jpegImageBuf = new byte[TagLen];
-			rmapFile.read(jpegImageBuf);
+			rmapFile.readFully(jpegImageBuf);
 			ByteArrayInputStream input = new ByteArrayInputStream(jpegImageBuf);
 			return ImageIO.read(input);
 		}

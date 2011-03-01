@@ -90,7 +90,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		}
 		try {
 			i.set("conn", conn);
-			i.eval(String.format("addHeaders(conn);", zoom, tilex, tiley));
+			i.eval("addHeaders(conn);");
 		} catch (EvalError e) {
 			String msg = e.getMessage();
 			if (!AH_ERROR.equals(msg)) {

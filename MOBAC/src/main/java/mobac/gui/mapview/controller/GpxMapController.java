@@ -74,10 +74,10 @@ public class GpxMapController extends JMapController implements MouseListener {
 			GpxEditor editor = GpxEditor.getInstance();
 			if (entry.getClass() == GpxRootEntry.class) {
 				gpx11.getWpt().add(wpt);
-			} else if (entry.getClass() == RteEntry.class) {
-				editor.findRteAndAdd(entry, wpt);
-			} else if (entry.getClass() == TrksegEntry.class) {
-				editor.findTrksegAndAdd(entry, wpt);
+			} else if (entry instanceof RteEntry) {
+				editor.findRteAndAdd((RteEntry) entry, wpt);
+			} else if (entry instanceof TrksegEntry) {
+				editor.findTrksegAndAdd((TrksegEntry) entry, wpt);
 			}
 			panel.addWpt(wpt, entry);
 		}

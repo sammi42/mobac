@@ -107,6 +107,7 @@ public class FlatPackCreator {
 		dataStream.close();
 		dataStream = null;
 
+		File tmpFile = new File(packPath + ".tmp");
 		// open pack file
 		FileOutputStream packStream = new FileOutputStream(packPath);
 		try {
@@ -130,7 +131,7 @@ public class FlatPackCreator {
 			pw.flush();
 
 			// write data
-			FileInputStream in = new FileInputStream(packPath + ".tmp");
+			FileInputStream in = new FileInputStream(tmpFile);
 			try {
 				byte[] buffer = new byte[FILE_COPY_BUFFER_LEN];
 
@@ -149,7 +150,8 @@ public class FlatPackCreator {
 		}
 
 		// delete temp file
-		(new File(packPath + ".tmp")).delete();
+		if (tmpFile.isFile())
+			Utilities.deleteFile(tmpFile);
 
 		// reset state
 		packPath = null;

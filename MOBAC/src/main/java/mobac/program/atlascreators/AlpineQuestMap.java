@@ -46,6 +46,7 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageParameters.Name;
+import mobac.utilities.Utilities;
 import mobac.utilities.stream.ArrayOutputStream;
 import mobac.utilities.tar.TarIndex;
 
@@ -157,7 +158,7 @@ public class AlpineQuestMap extends AtlasCreator {
 		packCreator = null;
 
 		if (filePack != null)
-			filePack.delete();
+			Utilities.deleteFile(filePack);
 		filePack = null;
 
 		super.abortAtlasCreation();

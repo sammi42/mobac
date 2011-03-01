@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobac.utilities.Charsets;
+import mobac.utilities.Utilities;
 
 /**
  * 
@@ -295,7 +296,7 @@ public class RunGPSAtlasFile {
 
 		fis.close();
 
-		cacheFile.delete();
+		Utilities.deleteFile(cacheFile);
 		close();
 	}
 
@@ -376,7 +377,7 @@ public class RunGPSAtlasFile {
 
 		byte[] buf = new byte[size];
 		raf.seek(RunGPSAtlasHeader.HEADER_SIZE + rah.indexSize + indexPosition);
-		raf.read(buf);
+		raf.readFully(buf);
 		return buf;
 	}
 

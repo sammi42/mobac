@@ -122,9 +122,9 @@ public class NFComPass extends AtlasCreator {
 			w.append("[" + map.getName() + "]\r\n");
 			w.append(String.format("TILEXY = %dx%d\r\n", parameters.getWidth(), parameters.getHeight()));
 			w.append("X0LON = " + longitudeMin + "\r\n");
-			w.append("Y0LAT = " + latitudeMin + "\r\n");
+			w.append("Y0LAT = " + latitudeMax + "\r\n");
 			w.append("X1LON = " + longitudeMax + "\r\n");
-			w.append("Y1LAT = " + latitudeMax + "\r\n");
+			w.append("Y1LAT = " + latitudeMin + "\r\n");
 			w.append(String.format("SIZEXY = %dx%d\r\n", width, height));
 			w.flush();
 		} catch (IOException e) {

@@ -32,8 +32,6 @@ import mobac.mapsources.mappacks.region_asia.YahooMapsJapan;
 import mobac.mapsources.mappacks.region_asia.YahooMapsTaiwan;
 import mobac.mapsources.mappacks.region_europe_dach.Bergfex;
 import mobac.mapsources.mappacks.region_europe_dach.HubermediaBavaria;
-import mobac.mapsources.mappacks.region_europe_dach.MapplusCh;
-import mobac.mapsources.mappacks.region_europe_dach.MapplusChGelaende;
 import mobac.mapsources.mappacks.region_europe_east.Cykloatlas;
 import mobac.mapsources.mappacks.region_europe_east.CykloatlasRelief;
 import mobac.mapsources.mappacks.region_europe_east.DoCeluPL;
@@ -100,8 +98,6 @@ public class Cities {
 		TEST_COORDINATES.put(HubermediaBavaria.class, Cities.MUNICH);
 		TEST_COORDINATES.put(OpenPisteMap.class, Cities.MUNICH);
 		TEST_COORDINATES.put(StatkartTopo2.class, Cities.OSLO);
-		TEST_COORDINATES.put(MapplusCh.class, Cities.BERN);
-		TEST_COORDINATES.put(MapplusChGelaende.class, Cities.BERN);
 		TEST_COORDINATES.put(Turaterkep.class, Cities.BUDAPEST);
 		TEST_COORDINATES.put(Bergfex.class, Cities.INNSBRUCK);
 		TEST_COORDINATES.put(AeroChartsIFR.class, Cities.NEY_YORK);

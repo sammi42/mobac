@@ -10,6 +10,7 @@
 
 1.9 preview 11 (2011-03-??)
  ! Error when using a BeanShell map source with certain atlas formats
+ ~ Removed Map+ mapsources because of license problem with swisstopo
      
 
 1.9 preview 10 (2011-02-28)

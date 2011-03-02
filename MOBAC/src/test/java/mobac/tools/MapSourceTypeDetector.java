@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.region_europe_dach.MapplusChGelaende;
+import mobac.mapsources.mappacks.google.GoogleEarth;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -65,7 +65,7 @@ public class MapSourceTypeDetector {
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 
-		testMapSource(MapplusChGelaende.class);
+		testMapSource(GoogleEarth.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

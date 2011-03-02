@@ -35,4 +35,16 @@ public enum TileImageType {
 	public String getMimeType() {
 		return mime;
 	}
+
+	public static TileImageType getTileImageType(String type) {
+		try {
+			return TileImageType.valueOf(type.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			for (TileImageType t : TileImageType.values()) {
+				if (t.getFileExt().equalsIgnoreCase(type))
+					return t;
+			}
+			throw e;
+		}
+	}
 }

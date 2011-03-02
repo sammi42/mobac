@@ -74,6 +74,11 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		o = i.get("maxZoom");
 		if (o != null)
 			maxZoom = ((Integer) o).intValue();
+		o = i.get("tileType");
+		if (o != null)
+			tileType = TileImageType.getTileImageType((String) o);
+		else
+			throw new EvalError("tileType definition missing", null, null);
 	}
 
 	@Override
@@ -145,11 +150,6 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	public TileImageType getTileImageType() {
-		return null;
 	}
 
 	@Override

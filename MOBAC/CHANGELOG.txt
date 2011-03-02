@@ -8,6 +8,10 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 11 (2011-03-??)
+ ! Error when using a BeanShell map source with certain atlas formats
+     
+
 1.9 preview 10 (2011-02-28)
  ! Fixed map source: Docelu.pl
  + Bookmarks can be added (saves map position and selected map source) 

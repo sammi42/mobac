@@ -920,9 +920,11 @@ Example CloudMade1960.xml</a></p>
 can be used by MOBAC. To du so place the saved BeanShell code file (file
 extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
 be loaded on next start-up of MOBAC.</p>
-<p>It is recommended to add a line defining the map source name (<a
-	href="#MapSourceNameUnique">must be unique</a>).</p>
-<pre>name = "Your map source name here";</pre>
+<p>It is required to add a line defining the map source <tt>name</tt>
+(<a href="#MapSourceNameUnique">must be unique</a>) and the <tt>tileType</tt>
+(image type provided by the map source - png, jpg or gif).</p>
+<pre>name = "Your map source name here";
+tileType = "png";</pre>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
 Example beanshell map source.bsh</a></p>

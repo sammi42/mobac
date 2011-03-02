@@ -4,6 +4,8 @@
 
 name = "BS OSM TilesAtHome";
 
+tileType = "png"; // required; valid values: "jpg" "png" or "gif" 
+
 // Default size of each tile is 256x256 pixel
 tileSize = 256; // optional
 minZoom = 0;    // optional

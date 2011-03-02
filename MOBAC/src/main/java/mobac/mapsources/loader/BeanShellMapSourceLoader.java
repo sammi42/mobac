@@ -32,8 +32,11 @@ public class BeanShellMapSourceLoader {
 				mapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, f));
 				mapSourcesManager.addMapSource(mapSource);
 			} catch (Exception e) {
-				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
-				JOptionPane.showMessageDialog(null, "msg", "title", JOptionPane.ERROR_MESSAGE);
+				String errorMsg = "Failed to load custom BeanShell map source \"" + f.getName() + "\": "
+						+ e.getMessage();
+				log.error(errorMsg, e);
+				JOptionPane.showMessageDialog(null, errorMsg, "Failed to load custom BeanShell map source",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

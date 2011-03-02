@@ -8,10 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
-1.9 preview 11 (2011-03-??)
+1.9 preview 11 (2011-03-02)
  ! Error when using a BeanShell map source with certain atlas formats
- ~ Removed Map+ mapsources because of license problem with swisstopo
-     
+ ~ Removed Map+ map sources because of license problem with swisstopo
 
 1.9 preview 10 (2011-02-28)
  ! Fixed map source: Docelu.pl

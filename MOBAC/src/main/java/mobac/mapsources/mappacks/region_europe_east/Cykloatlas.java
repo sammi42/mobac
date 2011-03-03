@@ -28,7 +28,7 @@ import mobac.program.model.TileImageType;
 public class Cykloatlas extends AbstractHttpMapSource {
 
 	public Cykloatlas() {
-		super("Cykloatlas", 7, 15, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
+		super("Cykloatlas", 7, 16, TileImageType.PNG, HttpMapSource.TileUpdate.LastModified);
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {

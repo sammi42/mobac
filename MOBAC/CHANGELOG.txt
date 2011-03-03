@@ -8,6 +8,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 12 (2011-03-??)
+ ~ Cykloatlas: max zoom level extended to 16  
+
 1.9 preview 11 (2011-03-02)
  ! Error when using a BeanShell map source with certain atlas formats
  ~ Removed Map+ map sources because of license problem with swisstopo

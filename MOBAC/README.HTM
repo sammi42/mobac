@@ -78,6 +78,7 @@ SourceForge.net: <br>
 		<li><a href="#MGMaps">MGMaps</a></li>
 		<li><a href="#MTE">Mobile Trail Explorer (MTE)</a></li>
 		<li><a href="#NaviComputer">NaviComputer</a></li>
+		<li><a href="#nfComPass">nfComPass</a></li>
 		<li><a href="#OruxMaps">OruxMaps</a></li>
 		<!-- OSMAND -->
 		<li><a href="#Osmdroid">Osmdroid</a></li>
@@ -481,6 +482,23 @@ atlas download and creation via the button <b>Create Atlas</b>. Once
 download and creation has completed, the generated file with the
 extension nmap can be found in the MOBAC output directory. This
 *.nmap-file is the required input file for NaviComputer.</p>
+<!-- *************************************************************************** -->
+<h3><a name="nfComPass">Creating atlases for nfComPass</a></h3>
+<p>For creating atlases, compatible with <a
+	href="http://www.navifriends.com/phpbbForum/viewtopic.php?f=3&t=17004">nfComPass</a>,
+you have to click <b>Atlas -> New</b>, select <b>nfComPass</b> and give
+your Atlas a name.<br>
+By default atlases with a tilesize of 64x64 are created (recommended).
+For different tile sizes check <b>Recreate/adjust map tiles (CPU
+intensive)</b> under Layer settings. Set Tileformat can not be changed - it
+is always png. Maybe you must tryout, what is the best tilesize for your
+device. Choose your layer and zoomlevels and click <b>Add selection</b>.
+Then click <b>Create atlas</b>. Once download and creation has
+completed, the generated folders can be found in the MOBAC output
+directory. You must copy the data from the <tt>nfComPass.dat</tt> to
+your nfComPass.dat and fill in the path to your mapdirectory. After
+that, copy the folder(s) to your device. If it is possible, you should
+not copy the files with Active Sync to your device.</p>
 <!-- *************************************************************************** -->
 <h3><a name="OruxMaps">Creating OruxMaps atlases</a></h3>
 <p>For creating atlases compatible with <a
@@ -920,11 +938,9 @@ Example CloudMade1960.xml</a></p>
 can be used by MOBAC. To du so place the saved BeanShell code file (file
 extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
 be loaded on next start-up of MOBAC.</p>
-<p>It is required to add a line defining the map source <tt>name</tt>
-(<a href="#MapSourceNameUnique">must be unique</a>) and the <tt>tileType</tt>
-(image type provided by the map source - png, jpg or gif).</p>
-<pre>name = "Your map source name here";
-tileType = "png";</pre>
+<p>It is recommended to add a line defining the map source name (<a
+	href="#MapSourceNameUnique">must be unique</a>).</p>
+<pre>name = "Your map source name here";</pre>
 <p>Example file for download: <a
 	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
 Example beanshell map source.bsh</a></p>

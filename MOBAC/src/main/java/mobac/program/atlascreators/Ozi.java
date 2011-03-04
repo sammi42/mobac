@@ -24,12 +24,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.EnumSet;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
-import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
@@ -38,7 +36,6 @@ import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
-import mobac.program.model.TileImageFormat;
 import mobac.utilities.Utilities;
 import mobac.utilities.geo.GeoUtils;
 import mobac.utilities.imageio.PngXxlWriter;
@@ -57,11 +54,6 @@ public class Ozi extends AtlasCreator {
 		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
 				.getProjectionCategory()));
 		// TODO supports Mercator ellipsoid?
-	}
-
-	@Override
-	protected void testAtlas() throws AtlasTestException {
-		performTest_AtlasTileFormat(EnumSet.of(TileImageFormat.PNG));
 	}
 
 	@Override

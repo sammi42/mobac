@@ -24,8 +24,6 @@ import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.interfaces.LayerInterface;
-import mobac.program.interfaces.MapInterface;
-import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.stream.ArrayOutputStream;
@@ -44,14 +42,6 @@ public class GarminCustom extends GoogleEarthOverlay {
 		for (LayerInterface layer : atlas) {
 			if (layer.getMapCount() > 100)
 				throw new AtlasTestException("Layer exceeeds the maximum map count of 100", layer);
-
-			for (MapInterface map : layer) {
-				if (map.getParameters() == null)
-					continue;
-				TileImageFormat format = map.getParameters().getFormat();
-				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
-					throw new AtlasTestException("Only JPEG tile format is supported by this atlas format!", map);
-			}
 		}
 	}
 

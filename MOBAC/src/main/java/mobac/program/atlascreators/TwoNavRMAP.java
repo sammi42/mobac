@@ -67,7 +67,7 @@ import org.apache.log4j.Level;
  * @author r_x
  * 
  */
-@AtlasCreatorName(value="TwoNav (RMAP)")
+@AtlasCreatorName(value = "TwoNav (RMAP)")
 @SupportedParameters(names = { Name.format })
 public class TwoNavRMAP extends AtlasCreator {
 
@@ -308,13 +308,6 @@ public class TwoNavRMAP extends AtlasCreator {
 	@Override
 	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
-			for (MapInterface map : layer) {
-				if (map.getParameters() == null)
-					continue;
-				TileImageFormat format = map.getParameters().getFormat();
-				if (!(format.getDataWriter() instanceof TileImageJpegDataWriter))
-					throw new AtlasTestException("Only JPEG tile format is supported by this atlas format!", map);
-			}
 			MapInterface map0 = layer.getMap(0);
 			MapSpace mapSpace0 = map0.getMapSource().getMapSpace();
 			double longitudeMin = mapSpace0.cXToLon(map0.getMinTileCoordinate().x, map0.getZoom());

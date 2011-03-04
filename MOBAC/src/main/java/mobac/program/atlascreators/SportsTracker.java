@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
@@ -55,10 +54,6 @@ public class SportsTracker extends AtlasCreator {
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-	}
-
-	@Override
-	protected void testAtlas() throws AtlasTestException {
 	}
 
 	@Override

@@ -31,8 +31,6 @@ import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
-import mobac.program.interfaces.LayerInterface;
-import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.RequiresSQLite;
@@ -85,21 +83,6 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		ProjectionCategory pc = mapSpace.getProjectionCategory();
 		boolean correctProjection = (ProjectionCategory.SPHERE.equals(pc) || ProjectionCategory.ELLIPSOID.equals(pc));
 		return correctTileSize && correctProjection;
-	}
-
-	@Override
-	protected void testAtlas() throws AtlasTestException {
-		for (LayerInterface layer : atlas) {
-			for (MapInterface map : layer) {
-				TileImageParameters param = map.getParameters();
-				if (param == null)
-					continue;
-				if (param.getHeight() != 256 || param.getWidth() != 256)
-					throw new AtlasTestException(
-							"Invalid tile width/height: Tile image height and width has to be 256", map);
-
-			}
-		}
 	}
 
 	@Override

@@ -22,17 +22,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
-import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
-import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
@@ -58,19 +55,6 @@ public class OSMTracker extends AtlasCreator {
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
 		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-	}
-
-	@Override
-	protected void testAtlas() throws AtlasTestException {
-		for (LayerInterface layer : atlas) {
-			for (MapInterface map : layer) {
-				TileImageParameters param = map.getParameters();
-				if (param == null)
-					continue;
-				if (param.getHeight() != 256 || param.getWidth() != 256)
-					throw new AtlasTestException("Custom tile size is not supported by this atlas");
-			}
-		}
 	}
 
 	@Override

@@ -16,9 +16,15 @@
  ******************************************************************************/
 package mobac.gui;
 
+import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import mobac.utilities.Utilities;
 
 public class SplashFrame extends JFrame {
 
@@ -31,10 +37,16 @@ public class SplashFrame extends JFrame {
 	public SplashFrame() throws HeadlessException {
 		super("Mobile Atlas Creator is starting up...");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setUndecorated(true);
 		setIconImages(MainGUI.MOBAC_ICONS);
+		JLabel image = new JLabel(Utilities.loadResourceImageIcon("Splash.jpg"));
+		image.setBorder(BorderFactory.createEtchedBorder());
+		add(image);
+		pack();
 		setFocusable(false);
-		setResizable(false);
-		setState(JFrame.ICONIFIED);
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
+		setSize(getMinimumSize());
 		setVisible(true);
 	}
 
@@ -43,4 +55,7 @@ public class SplashFrame extends JFrame {
 		startupFrame = null;
 	}
 
+	public static void main(String[] arg) {
+		new SplashFrame();
+	}
 }

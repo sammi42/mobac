@@ -62,6 +62,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.gui.actions.AddRectangleMapAutocut;
+import mobac.gui.actions.AtlasConvert;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.BookmarkAdd;
 import mobac.gui.actions.DebugShowLogFile;
@@ -276,9 +277,16 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private void prepareMenuBar() {
 		JMenu atlasMenu = new JMenu("Atlas");
 		atlasMenu.setMnemonic(KeyEvent.VK_A);
+
 		JMenuItem newAtlas = new JMenuItem("New");
+		newAtlas.setMnemonic(KeyEvent.VK_N);
 		newAtlas.addActionListener(new AtlasNew());
 		atlasMenu.add(newAtlas);
+
+		JMenuItem convertAtlas = new JMenuItem("Convert");
+		convertAtlas.setMnemonic(KeyEvent.VK_N);
+		convertAtlas.addActionListener(new AtlasConvert());
+		atlasMenu.add(convertAtlas);
 
 		JMenu mapsMenu = new JMenu("Maps");
 		mapsMenu.setMnemonic(KeyEvent.VK_M);

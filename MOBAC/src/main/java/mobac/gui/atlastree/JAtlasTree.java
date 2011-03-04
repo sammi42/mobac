@@ -176,13 +176,21 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		treeModel.setAtlas(newAtlas);
 		mapView.repaint();
 	}
-	
+
 	public void newAtlas() {
 		log.debug("Resetting atlas tree model");
 		Atlas newAtlas = Atlas.newInstance();
 		newAtlas.setName(MainGUI.getMainGUI().getUserText());
 		treeModel.setAtlas(newAtlas);
 		mapView.repaint();
+	}
+
+	/**
+	 * Changes the atlas format
+	 */
+	public void convertAtlas(AtlasOutputFormat format) {
+		log.debug("Converting the atlas format to " + format);
+		treeModel.getAtlas().setOutputFormat(format);
 	}
 
 	public void deleteSelectedNode() {

@@ -82,9 +82,9 @@ public class ProgramInfo {
 	public static String getVersionTitle() {
 		String title;
 		if (version != null) {
-			title = PROG_NAME + " " + getVersion();
+			title = PROG_NAME + " (" + PROG_NAME_SHORT + ") " + getVersion();
 		} else
-			title = PROG_NAME + " unknown version";
+			title = PROG_NAME + " (" + PROG_NAME_SHORT + ") unknown version";
 		return title;
 	}
 

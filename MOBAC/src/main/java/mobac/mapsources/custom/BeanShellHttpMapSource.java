@@ -1,4 +1,4 @@
-package mobac.mapsources.impl;
+package mobac.mapsources.custom;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

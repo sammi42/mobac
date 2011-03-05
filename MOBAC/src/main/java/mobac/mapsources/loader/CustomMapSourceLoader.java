@@ -3,7 +3,6 @@ package mobac.mapsources.loader;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
@@ -14,6 +13,7 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
 import mobac.mapsources.MapSourcesManager;
+import mobac.mapsources.custom.CustomCloudMade;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.mapsources.custom.CustomWmsMapSource;
@@ -39,25 +39,10 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 	public void loadCustomMapSources() {
 		JAXBContext context;
 		Unmarshaller unmarshaller;
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		classes.add(CustomMapSource.class);
-		classes.add(CustomWmsMapSource.class);
-		classes.add(CustomMultiLayerMapSource.class);
-		Class<?> cloudmadeClass = null;
-		try {
-			cloudmadeClass = Class.forName("mobac.mapsources.mappacks.openstreetmap.CloudMade$Wrapped");
-			if (cloudmadeClass != null)
-				classes.add(cloudmadeClass);
-		} catch (ClassNotFoundException e) {
-			// MapPack OSM not loaded
-			log.error("", e);
-		} catch (Exception e) {
-			log.error("", e);
-		}
 		try {
 
-			Class<?>[] customMapClasses = new Class[classes.size()];
-			classes.toArray(customMapClasses);
+			Class<?>[] customMapClasses = new Class[] { CustomMapSource.class, CustomWmsMapSource.class,
+					CustomMultiLayerMapSource.class, CustomCloudMade.class };
 			context = JAXBContext.newInstance(customMapClasses);
 			unmarshaller = context.createUnmarshaller();
 			unmarshaller.setEventHandler(this);
@@ -94,10 +79,9 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null,
-				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
-						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
-						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage()
+				+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/"
+				+ loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}

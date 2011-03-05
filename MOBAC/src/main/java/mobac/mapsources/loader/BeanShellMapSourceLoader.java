@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.JOptionPane;
 
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.impl.BeanShellHttpMapSource;
+import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.file.FileExtFilter;

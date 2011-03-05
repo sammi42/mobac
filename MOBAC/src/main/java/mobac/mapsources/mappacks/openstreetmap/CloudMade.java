@@ -16,17 +16,21 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.interfaces.HttpMapSource;
-import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.WrappedMapSource;
 import mobac.utilities.Charsets;
 
 public class CloudMade extends AbstractOsmTileSource {
+
+	static {
+		// Initialize the custom CludMade loader
+		try {
+			Class<?> c = Class.forName("mobac.mapsources.custom.CustomCloudMade");
+			c.getField("CLOUD_MADE_CLASS").set(c, CloudMade.class);
+		} catch (Exception e) {
+		}
+	}
 
 	private static final String INIT_REGEX = "\"api_key\"\\:\"([A-F0-9]+)\"";
 
@@ -72,18 +76,4 @@ public class CloudMade extends AbstractOsmTileSource {
 		return displayName;
 	}
 
-	@XmlRootElement(name = "cloudMade")
-	public static class Wrapped implements WrappedMapSource {
-
-		@XmlElement
-		public String styleID;
-
-		@XmlElement
-		public String displayName;
-
-		public MapSource getMapSource() {
-			return new CloudMade(styleID, displayName);
-		}
-
-	}
 }

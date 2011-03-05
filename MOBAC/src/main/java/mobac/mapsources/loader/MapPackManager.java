@@ -41,6 +41,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import mobac.exceptions.UnrecoverableDownloadException;
@@ -161,8 +162,10 @@ public class MapPackManager {
 		if (md5eTag != null)
 			conn.addRequestProperty("If-None-Match", md5eTag);
 		int responseCode = conn.getResponseCode();
-		if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED)
+		if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
+			log.debug("No newer md5 file available");
 			return null;
+		}
 		if (responseCode != HttpURLConnection.HTTP_OK)
 			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
 		// Case HTTP_OK
@@ -170,6 +173,7 @@ public class MapPackManager {
 		data = Utilities.getInputBytes(in);
 		in.close();
 		Settings.getInstance().mapSourcesUpdate.etag = conn.getHeaderField("ETag");
+		log.debug("New md5 file retrieved");
 		String md5sumList = new String(data);
 		return md5sumList;
 	}
@@ -197,12 +201,13 @@ public class MapPackManager {
 		cleanMapPackDir();
 		String md5sumList = downloadMD5SumList();
 		if (md5sumList == null)
-			return 0;
+			return 0; // no new md5 file available
 		if (md5sumList.length() == 0)
-			return -1;
+			return -1; // empty file means - outdated version
 		int updateCount = 0;
 		String[] outdatedMapPacks = searchForOutdatedMapPacks(md5sumList);
 		for (String mapPack : outdatedMapPacks) {
+			log.debug("Updaing map pack: " + mapPack);
 			try {
 				File newMapPackFile = downloadMapPack(updateBaseUrl, mapPack);
 				try {
@@ -215,20 +220,46 @@ public class MapPackManager {
 				}
 				log.debug("Verification of map pack \"" + mapPack + "\" passed successfully");
 
-				// TODO: Check if the downloaded version is newer
-
-				String name = newMapPackFile.getName();
-				name = name.replace(".unverified", ".new");
-				File f = new File(newMapPackFile.getParentFile(), name);
-				// Change file extension
-				if (!newMapPackFile.renameTo(f))
-					throw new IOException("Failed to rename file: " + newMapPackFile);
-				updateCount++;
+				// Check if the downloaded version is newer
+				int newRev = getMapPackRevision(newMapPackFile);
+				File oldMapPack = new File(mapPackDir, mapPack);
+				int oldRev = -1;
+				if (oldMapPack.isFile())
+					oldRev = getMapPackRevision(oldMapPack);
+				if (newRev < oldRev) {
+					log.warn("Downloaded map pack was older than existing map pack - ignoring update");
+					Utilities.deleteFile(newMapPackFile);
+				} else {
+					String name = newMapPackFile.getName();
+					name = name.replace(".unverified", ".new");
+					File f = new File(newMapPackFile.getParentFile(), name);
+					// Change file extension
+					if (!newMapPackFile.renameTo(f))
+						throw new IOException("Failed to rename file: " + newMapPackFile);
+					updateCount++;
+				}
 			} catch (IOException e) {
 				log.error(e.getMessage(), e);
 			}
 		}
 		return updateCount;
+	}
+
+	public int getMapPackRevision(File mapPackFile) throws ZipException, IOException {
+		ZipFile zip = new ZipFile(mapPackFile);
+		try {
+			ZipEntry entry = zip.getEntry("META-INF/MANIFEST.MF");
+			if (entry == null)
+				throw new ZipException("Unable to find MANIFEST.MF");
+			Manifest mf = new Manifest(zip.getInputStream(entry));
+			Attributes a = mf.getMainAttributes();
+			String mpv = a.getValue("MapPackRevision").trim();
+			return Utilities.parseSVNRevision(mpv);
+		} catch (NumberFormatException e) {
+			return -1;
+		} finally {
+			zip.close();
+		}
 	}
 
 	public File downloadMapPack(String baseURL, String mapPackFilename) throws IOException {

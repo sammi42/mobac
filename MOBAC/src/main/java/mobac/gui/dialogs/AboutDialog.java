@@ -53,7 +53,7 @@ public class AboutDialog extends JDialog {
 		infoPanel.add(new JLabel("Version:"), std);
 		infoPanel.add(new JLabel(ProgramInfo.getVersion()), eol);
 		infoPanel.add(new JLabel("Program revision:"), std);
-		infoPanel.add(new JLabel(ProgramInfo.getRevision()), eol);
+		infoPanel.add(new JLabel(ProgramInfo.getRevisionStr()), eol);
 		// infoPanel.add(new JLabel("Map sources revision:"), std);
 		// infoPanel.add(new JLabel(Integer.toString(MapSourcesUpdater.getCurrentMapSourcesRev())), eol);
 		add(infoPanel, eol);

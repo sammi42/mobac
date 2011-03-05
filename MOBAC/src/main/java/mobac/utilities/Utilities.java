@@ -613,4 +613,18 @@ public class Utilities {
 		return 0;
 	}
 
+	/**
+	 * 
+	 * @param revsision
+	 *            SVN revision string like <code>"1223"</code>, <code>"1224M"</code> or <code>"1616:1622M"</code>
+	 * @return parsed svn revision
+	 */
+	public static int parseSVNRevision(String revision) {
+		if (revision.endsWith("M"))
+			revision = revision.substring(0, revision.length() - 1);
+		int index = revision.indexOf(':');
+		if (index > 0)
+			revision = revision.substring(index + 1, revision.length());
+		return Integer.parseInt(revision);
+	}
 }

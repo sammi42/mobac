@@ -975,6 +975,7 @@ public class SettingsGUI extends JDialog {
 							"Updates has been downloaded", JOptionPane.INFORMATION_MESSAGE);
 				}
 			} catch (Exception e) {
+				Settings.getInstance().mapSourcesUpdate.etag = null;
 				GUIExceptionHandler.processException(e);
 			}
 			// JOptionPane.showMessageDialog(SettingsGUI.this, "Not implemented", "Not implemented",

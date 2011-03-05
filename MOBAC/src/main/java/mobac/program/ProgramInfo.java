@@ -24,11 +24,11 @@ import mobac.utilities.Utilities;
 
 public class ProgramInfo {
 
-	public static String PROG_NAME = "Mobile Atlas Creator";
-	public static String PROG_NAME_SHORT = "MOBAC";
+	public static final String PROG_NAME = "Mobile Atlas Creator";
+	public static final String PROG_NAME_SHORT = "MOBAC";
 
-	private static String version = null;
-	private static String revision = "";
+	private static String VERSION = null;
+	private static int SVN_REVISION = -1;
 	private static String userAgent = "";
 
 	/**
@@ -41,7 +41,7 @@ public class ProgramInfo {
 		try {
 			Properties props = new Properties();
 			props.load(propIn);
-			version = props.getProperty("mobac.version");
+			VERSION = props.getProperty("mobac.version");
 			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
 			System.getProperties().putAll(props);
 		} catch (Exception e) {
@@ -54,12 +54,7 @@ public class ProgramInfo {
 			Properties props = new Properties();
 			props.load(propIn);
 			String rev = props.getProperty("mobac.revision");
-			revision = rev;
-			if (revision.endsWith("M"))
-				revision = revision.substring(0, revision.length() - 1);
-			int index = revision.indexOf(':');
-			if (index > 0)
-				revision = revision.substring(index + 1, revision.length());
+			SVN_REVISION = Utilities.parseSVNRevision(rev);
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac-rev.properties", e);
 		} finally {
@@ -69,19 +64,23 @@ public class ProgramInfo {
 	}
 
 	public static String getVersion() {
-		if (version != null)
-			return version;
+		if (VERSION != null)
+			return VERSION;
 		else
 			return "UNKNOWN";
 	}
 
-	public static String getRevision() {
-		return revision;
+	public static String getRevisionStr() {
+		return Integer.toString(SVN_REVISION);
+	}
+
+	public static int getRevision() {
+		return SVN_REVISION;
 	}
 
 	public static String getVersionTitle() {
 		String title;
-		if (version != null) {
+		if (VERSION != null) {
 			title = PROG_NAME + " (" + PROG_NAME_SHORT + ") " + getVersion();
 		} else
 			title = PROG_NAME + " (" + PROG_NAME_SHORT + ") unknown version";
@@ -91,7 +90,7 @@ public class ProgramInfo {
 	public static String getCompleteTitle() {
 		String title = getVersionTitle();
 		if (!titleHideRevision)
-			title += " (" + revision + ")";
+			title += " (" + SVN_REVISION + ")";
 		return title;
 	}
 

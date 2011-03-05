@@ -67,9 +67,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 
 		try {
+			MapPackManager mpm = new MapPackManager(mapSourcesDir);
+			mpm.installUpdates();
 			if (!devMode || !loadMapPacksEclipseMode()) {
-				MapPackManager mpm = new MapPackManager(mapSourcesDir);
-				mpm.installUpdates();
 				mpm.loadMapPacks(this);
 			}
 		} catch (Exception e) {

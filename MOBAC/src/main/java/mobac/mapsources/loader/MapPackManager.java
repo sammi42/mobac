@@ -44,6 +44,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.swing.JOptionPane;
+
+import mobac.exceptions.MapSourceCreateException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.Logging;
@@ -52,6 +55,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.Settings;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
+import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.FileExtFilter;
 
@@ -96,8 +100,8 @@ public class MapPackManager {
 				if (oldMapPack.isFile()) {
 					// TODO: Check if new map pack file is still compatible
 					// TODO: Check if the downloaded version is newer
-
-					Utilities.deleteFile(oldMapPack);
+					File oldMapPack2 = new File(mapPackDir, name + ".old");
+					Utilities.renameFile(oldMapPack, oldMapPack2);
 				}
 				if (!newMapPack.renameTo(oldMapPack))
 					throw new IOException("Failed to rename file: " + newMapPack);
@@ -115,35 +119,60 @@ public class MapPackManager {
 
 	public void loadMapPacks(MapSourcesManager mapSourcesManager) throws IOException, CertificateException {
 		File[] mapPacks = getAllMapPackFiles();
-		ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
 		for (File mapPackFile : mapPacks) {
+			File oldMapPackFile = new File(mapPackFile.getAbsolutePath() + ".old");
 			try {
-				// testMapPack(mapPackFile);
-				URL url = mapPackFile.toURI().toURL();
-				URLClassLoader urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, url, sysClassLoader);
-				InputStream manifestIn = urlCl.getResourceAsStream("META-INF/MANIFEST.MF");
-				String rev = null;
-				if (manifestIn != null) {
-					Manifest mf = new Manifest(manifestIn);
-					rev = mf.getMainAttributes().getValue("MapPackRevision");
-					log.debug(rev);
-					manifestIn.close();
-				}
-				MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev);
-				final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
-				while (iterator.hasNext()) {
-					try {
-						MapSource ms = iterator.next();
-						ms.setLoaderInfo(loaderInfo);
-						mapSourcesManager.addMapSource(ms);
-						log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
-					} catch (Error e) {
-						log.error("Faild to load a map source from map pack: " + e.getMessage(), e);
-					}
-				}
-
+				loadMapPack(mapPackFile, mapSourcesManager);
+				if (oldMapPackFile.isFile())
+					Utilities.deleteFile(oldMapPackFile);
 			} catch (IOException e) {
 				log.error("Failed to load map pack: " + mapPackFile, e);
+			} catch (MapSourceCreateException e) {
+				if (oldMapPackFile.isFile()) {
+					mapPackFile.deleteOnExit();
+					File newMapPackFile = new File(mapPackFile.getAbsolutePath() + ".new");
+					Utilities.renameFile(oldMapPackFile, newMapPackFile);
+					try {
+						JOptionPane.showMessageDialog(null,
+								"An error occured while installing the updated map package.\n"
+										+ "Please restart MOBAC for restoring the previous version.",
+								"Error loading updated map package", JOptionPane.INFORMATION_MESSAGE);
+						System.exit(1);
+					} catch (Exception e1) {
+						log.error(e1.getMessage(), e1);
+					}
+				}
+				GUIExceptionHandler.processException(e);
+			}
+		}
+	}
+
+	public void loadMapPack(File mapPackFile, MapSourcesManager mapSourcesManager) throws CertificateException,
+			IOException, MapSourceCreateException {
+		// testMapPack(mapPackFile);
+		URL url = mapPackFile.toURI().toURL();
+		URLClassLoader urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, url, ClassLoader.getSystemClassLoader());
+		InputStream manifestIn = urlCl.getResourceAsStream("META-INF/MANIFEST.MF");
+		String rev = null;
+		if (manifestIn != null) {
+			Manifest mf = new Manifest(manifestIn);
+			rev = mf.getMainAttributes().getValue("MapPackRevision");
+			log.debug(rev);
+			manifestIn.close();
+			mf = null;
+		}
+		MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev);
+		final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
+		while (iterator.hasNext()) {
+			try {
+				MapSource ms = iterator.next();
+				ms.setLoaderInfo(loaderInfo);
+				mapSourcesManager.addMapSource(ms);
+				log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
+			} catch (Error e) {
+				urlCl = null;
+				throw new MapSourceCreateException("Failed to load a map sources from map pack: "
+						+ mapPackFile.getName() + " " + e.getMessage(), e);
 			}
 		}
 	}
@@ -178,19 +207,28 @@ public class MapPackManager {
 		return md5sumList;
 	}
 
-	public void cleanMapPackDir() throws IOException { // Clean up old files
+	/**
+	 * Clean up old files (<code>.jar.new</code> and <code>jar.unverified</code>)in mapsources directory
+	 * 
+	 * @throws IOException
+	 */
+	public void cleanMapPackDir() throws IOException {
 		File[] newMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.new"));
 		for (File newMapPack : newMapPacks)
 			Utilities.deleteFile(newMapPack);
 		File[] unverifiedMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.unverified"));
 		for (File unverifiedMapPack : unverifiedMapPacks)
 			Utilities.deleteFile(unverifiedMapPack);
-
 	}
 
 	/**
+	 * Performs on map sources online update
 	 * 
-	 * @return
+	 * @return <ul>
+	 *         <li>0: no change in online md5 sum file (based on ETag)</li>
+	 *         <li>-1: Online md5 file is empty indicationg that this MOBAc versiosn is no longer supported</li>
+	 *         <li>x>0: Number of updated map packs</li>
+	 *         </ul>
 	 * @throws IOException
 	 */
 	public int updateMapPacks() throws UnrecoverableDownloadException, IOException {
@@ -234,8 +272,7 @@ public class MapPackManager {
 					name = name.replace(".unverified", ".new");
 					File f = new File(newMapPackFile.getParentFile(), name);
 					// Change file extension
-					if (!newMapPackFile.renameTo(f))
-						throw new IOException("Failed to rename file: " + newMapPackFile);
+					Utilities.renameFile(newMapPackFile, f);
 					updateCount++;
 				}
 			} catch (IOException e) {

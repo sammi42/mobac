@@ -567,6 +567,11 @@ public class Utilities {
 			throw new IOException("Deleting of \"" + fileToDelete + "\" failed.");
 	}
 
+	public static void renameFile(File oldFile, File newFile) throws IOException {
+		if (!oldFile.renameTo(newFile))
+			throw new IOException("Failed to rename file: " + oldFile + " to " + newFile);
+	}
+
 	public static int getJavaMaxHeapMB() {
 		try {
 			return (int) (Runtime.getRuntime().maxMemory() / 1048576l);

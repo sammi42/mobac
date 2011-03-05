@@ -64,6 +64,7 @@ public class Main {
 			});
 		} catch (Throwable t) {
 			GUIExceptionHandler.processException(t);
+			System.exit(1);
 		}
 	}
 

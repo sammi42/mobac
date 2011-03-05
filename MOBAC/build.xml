@@ -61,7 +61,7 @@
 			<include name="mobac/**" />
 		</javac>
 		<copy todir="build/mobac" overwrite="true">
-			<fileset dir="src/main/resources" />
+			<fileset dir="src/main/resources" excludes="**/mapsources.properties" />
 		</copy>
 	</target>
 

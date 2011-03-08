@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 
 import mobac.gui.MainGUI;
 import mobac.program.Logging;
+import mobac.utilities.GUIExceptionHandler;
 
 import org.apache.log4j.Logger;
 
@@ -51,7 +52,7 @@ public class DebugShowLogFile implements ActionListener {
 		try {
 			Desktop.getDesktop().open(f);
 		} catch (IOException e) {
-			log.error("Error while opening log file", e);
+			GUIExceptionHandler.processException(e);
 		}
 	}
 

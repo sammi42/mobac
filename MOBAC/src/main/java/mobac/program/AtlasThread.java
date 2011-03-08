@@ -34,6 +34,7 @@ import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.DownloadableElement;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
@@ -239,13 +240,17 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		ap.setZoomLevel(zoom);
 		try {
 			tileArchive = null;
-			String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
-			File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
-			// If something goes wrong the temp file only
-			// persists until the VM exits
-			tileArchiveFile.deleteOnExit();
-			log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
-			tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
+			if (!AtlasOutputFormat.TILESTORE.equals(atlas.getOutputFormat())) {
+				String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
+				File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
+				// If something goes wrong the temp file only
+				// persists until the VM exits
+				tileArchiveFile.deleteOnExit();
+				log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
+				tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
+			} else
+				log.debug("Downloading to tile store only");
+
 			djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive, (DownloadableElement) map);
 
 			boolean failedMessageAnswered = false;
@@ -289,21 +294,24 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			}
 			djp = null;
 			log.debug("All download jobs has been completed!");
-			tileArchive.writeEndofArchive();
-			tileArchive.close();
-			tileIndex = tileArchive.getTarIndex();
-			if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
-				int missing = tileCount - tileIndex.size();
-				log.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
-						+ " missing: " + missing);
-				int answer = JOptionPane.showConfirmDialog(ap, "Something is wrong with download of atlas tiles.\n"
-						+ "The amount of downladed tiles is not as " + "high as it was calculated.\nTherfore tiles "
-						+ "will be missing in the created atlas.\n" + missing + " tiles are missing.\n\n"
-						+ "Are you sure you want to continue " + "and create the atlas anyway?",
-						"Error - tiles are missing - do you want to continue anyway?",
-						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-				if (answer != JOptionPane.YES_OPTION)
-					throw new InterruptedException();
+			if (tileArchive != null) {
+				tileArchive.writeEndofArchive();
+				tileArchive.close();
+				tileIndex = tileArchive.getTarIndex();
+				if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
+					int missing = tileCount - tileIndex.size();
+					log.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
+							+ " missing: " + missing);
+					int answer = JOptionPane.showConfirmDialog(ap, "Something is wrong with download of atlas tiles.\n"
+							+ "The amount of downladed tiles is not as "
+							+ "high as it was calculated.\nTherfore tiles " + "will be missing in the created atlas.\n"
+							+ missing + " tiles are missing.\n\n" + "Are you sure you want to continue "
+							+ "and create the atlas anyway?",
+							"Error - tiles are missing - do you want to continue anyway?",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+					if (answer != JOptionPane.YES_OPTION)
+						throw new InterruptedException();
+				}
 			}
 			downloadJobDispatcher.cancelOutstandingJobs();
 			log.debug("Starting to create atlas from downloaded tiles");

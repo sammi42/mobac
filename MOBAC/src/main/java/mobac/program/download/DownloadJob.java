@@ -63,8 +63,10 @@ public class DownloadJob implements Job {
 			listener.jobStarted();
 			byte[] tileData = mapSource.getTileData(zoomValue, xValue, yValue, LoadMethod.DEFAULT);
 			String tileFileName = String.format(DownloadedTileProvider.TILE_FILENAME_PATTERN, xValue, yValue);
-			synchronized (tileArchive) {
-				tileArchive.writeFileFromData(tileFileName, tileData);
+			if (tileArchive != null) {
+				synchronized (tileArchive) {
+					tileArchive.writeFileFromData(tileFileName, tileData);
+				}
 			}
 			listener.jobFinishedSuccessfully(tileData.length);
 		} catch (UnrecoverableDownloadException e) {

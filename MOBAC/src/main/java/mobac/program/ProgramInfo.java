@@ -24,8 +24,8 @@ import mobac.utilities.Utilities;
 
 public class ProgramInfo {
 
-	public static final String PROG_NAME = "Mobile Atlas Creator";
-	public static final String PROG_NAME_SHORT = "MOBAC";
+	public static String PROG_NAME = "Mobile Atlas Creator";
+	public static String PROG_NAME_SHORT = "MOBAC";
 
 	private static String VERSION = null;
 	private static int SVN_REVISION = -1;
@@ -79,11 +79,15 @@ public class ProgramInfo {
 	}
 
 	public static String getVersionTitle() {
-		String title;
+		String title = PROG_NAME;
+		if (PROG_NAME_SHORT != null)
+			title += " (" + PROG_NAME_SHORT + ") ";
+		else
+			title += " ";
 		if (VERSION != null) {
-			title = PROG_NAME + " (" + PROG_NAME_SHORT + ") " + getVersion();
+			title += getVersion();
 		} else
-			title = PROG_NAME + " (" + PROG_NAME_SHORT + ") unknown version";
+			title += "unknown version";
 		return title;
 	}
 

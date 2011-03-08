@@ -16,6 +16,7 @@ public class StartMapEvaluator {
 	public static void main(String[] args) {
 		StartMOBAC.setLookAndFeel();
 		ProgramInfo.PROG_NAME = "MOBAC Map Evaluator";
+		ProgramInfo.PROG_NAME_SHORT = null;
 		GUIExceptionHandler.registerForCurrentThread();
 		GUIExceptionHandler.installToolkitEventQueueProxy();
 		ProgramInfo.initialize();

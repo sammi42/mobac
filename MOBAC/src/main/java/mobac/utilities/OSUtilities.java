@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.regex.Pattern;
 
 import javax.naming.NameNotFoundException;
@@ -82,7 +81,6 @@ public class OSUtilities {
 		String[] strCmd = null;
 		try {
 			String dirPath = directory.getCanonicalPath();
-			log.trace(dirPath);
 			DesktopType dt = detectDesktopType();
 			switch (dt) {
 			case Windows:
@@ -100,19 +98,32 @@ public class OSUtilities {
 				case MacOsX:
 					strCmd = new String[] { "/usr/bin/open", dirPath };
 					break;
+				case Linux:
+					strCmd = new String[] { "/usr/bin/xdg-open", dirPath };
+					break;
 				default:
-					JOptionPane.showMessageDialog(null, "Your desktop environment " + dt + " is not supported.",
-							"Unsupported desktop environment", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "<html>Your environment is not supported.<br>Desktop: " + dt
+							+ "<br>Operating system: " + os + "</html>", "Unsupported environment",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 			}
+			for (String s : strCmd)
+				log.trace("exec/params: " + s);
 			Runtime.getRuntime().exec(strCmd);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			StringBuilder sb = new StringBuilder(512);
-			for (String s : strCmd) {
-				sb.append("[" + s + "]");
+			sb.append("<html><b>Failed to open atlas output directory.</b><br>");
+			sb.append(e.getMessage());
+			sb.append("<br>Used command: <tt>" + strCmd[0] + "</tt><br>");
+			for (int i = 1; i < strCmd.length; i++) {
+				sb.append("Parameter " + i + ": " + strCmd[i]);
 			}
-			log.error("Error while executing \"" + sb.toString() + "\"", e);
+			sb.append("</html>");
+			String msg = sb.toString();
+			JOptionPane
+					.showMessageDialog(null, msg, "Failed to open atlas output directory", JOptionPane.ERROR_MESSAGE);
+			log.error(msg, e);
 		}
 
 	}

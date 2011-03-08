@@ -16,6 +16,8 @@
  ******************************************************************************/
 package mobac.program;
 
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Enumeration;
@@ -26,6 +28,7 @@ import java.util.logging.Handler;
 
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Juli2Log4jHandler;
+import mobac.utilities.OSUtilities;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
@@ -143,34 +146,44 @@ public class Logging {
 
 	public static void logSystemInfo() {
 		Logger log = Logger.getLogger("SysInfo");
-		if (!log.isInfoEnabled())
-			return;
-		String n = System.getProperty("line.separator");
-		log.info("Version: " + ProgramInfo.getCompleteTitle());
-		log.info("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
-				+ ")");
-		log.info("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
-				+ GUIExceptionHandler.prop("java.runtime.version") + ")");
-		log.info("Directories:" /**/
-				+ n + "currentDir: \t\t" + DirectoryManager.currentDir /**/
-				+ n + "programDir: \t\t" + DirectoryManager.programDir /**/
-				+ n + "tempDir:     \t\t" + DirectoryManager.tempDir /**/
-				+ n + "userHomeDir: \t\t" + DirectoryManager.userHomeDir /**/
-				+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
-				+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
-		);
-	}
-
-	public static void logSystemProperties() {
-		Logger log = Logger.getLogger("System.properties");
-		Properties props = System.getProperties();
-		StringWriter sw = new StringWriter(2 << 13);
-		sw.write("System properties:\n");
-		TreeMap<Object, Object> sortedProps = new TreeMap<Object, Object>(props);
-		for (Entry<Object, Object> entry : sortedProps.entrySet()) {
-			sw.write(entry.getKey() + " = " + entry.getValue() + "\n");
+		if (log.isInfoEnabled()) {
+			String n = System.getProperty("line.separator");
+			log.info("Version: " + ProgramInfo.getCompleteTitle());
+			log.info("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
+					+ ")");
+			log.info("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
+					+ GUIExceptionHandler.prop("java.runtime.version") + ")");
+			log.info("Directories:" /**/
+					+ n + "currentDir: \t\t" + DirectoryManager.currentDir /**/
+					+ n + "programDir: \t\t" + DirectoryManager.programDir /**/
+					+ n + "tempDir:     \t\t" + DirectoryManager.tempDir /**/
+					+ n + "userHomeDir: \t\t" + DirectoryManager.userHomeDir /**/
+					+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
+					+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
+			);
 		}
-		log.info(sw.toString());
+		if (log.isDebugEnabled()) {
+			log.debug("Detected operating system: " + OSUtilities.detectOs() + " (" + System.getProperty("os.name")
+					+ ")");
+			boolean desktopSupport = Desktop.isDesktopSupported();
+			log.debug("Desktop support: " + desktopSupport);
+			if (desktopSupport) {
+				Desktop d = Desktop.getDesktop();
+				for (Action a : Action.values()) {
+					log.debug("Desktop action " + a + " supported: " + d.isSupported(a));
+				}
+			}
+		}
+		if (log.isTraceEnabled()) {
+			Properties props = System.getProperties();
+			StringWriter sw = new StringWriter(2 << 13);
+			sw.write("System properties:\n");
+			TreeMap<Object, Object> sortedProps = new TreeMap<Object, Object>(props);
+			for (Entry<Object, Object> entry : sortedProps.entrySet()) {
+				sw.write(entry.getKey() + " = " + entry.getValue() + "\n");
+			}
+			log.trace(sw.toString());
+		}
 	}
 
 	/**

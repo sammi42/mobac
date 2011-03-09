@@ -8,6 +8,10 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 12 (2011-03-??)
+ + Download to tile store without creating an atlas:  
+    new atlas format "Tile store download only"
+
 1.9 preview 12 (2011-03-05)
  ~ Cykloatlas: max zoom level extended to 16
  + New map source: Canada Toporama  

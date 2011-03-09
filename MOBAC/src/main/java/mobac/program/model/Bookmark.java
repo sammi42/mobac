@@ -16,18 +16,24 @@
  ******************************************************************************/
 package mobac.program.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Bookmark extends EastNorthCoordinate {
 
 	@XmlAttribute
-	public int zoom;
+	protected int zoom;
 
 	@XmlAttribute
-	public String mapSource;
+	protected String name;
+
+	@XmlAttribute
+	protected String mapSource;
 
 	/**
 	 * Needed for JAXB
@@ -38,17 +44,38 @@ public class Bookmark extends EastNorthCoordinate {
 	}
 
 	public Bookmark(MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
+		this(null, mapSource, zoom, pixelCoordinateX, pixelCoordinateY);
+	}
+
+	public Bookmark(String name, MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
 		super(mapSource.getMapSpace(), zoom, pixelCoordinateX, pixelCoordinateY);
 		this.mapSource = mapSource.getName();
 		this.zoom = zoom;
+		this.name = name;
 	}
 
 	public MapSource getMapSource() {
 		return MapSourcesManager.getInstance().getSourceByName(mapSource);
 	}
 
+	public int getZoom() {
+		return zoom;
+	}
+
+	public void setName(String name) {
+		if (name != null && name.trim().length() == 0)
+			name = null;
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
 	@Override
 	public String toString() {
+		if (name != null)
+			return name;
 		return String.format("%s at lat=%.3f lon=%.3f (zoom = %d)", mapSource, lat, lon, zoom);
 	}
 

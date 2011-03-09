@@ -60,9 +60,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
-import mobac.exceptions.AtlasTestException;
 import mobac.gui.actions.AddRectangleMapAutocut;
 import mobac.gui.actions.AtlasConvert;
+import mobac.gui.actions.AtlasCreate;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.BookmarkAdd;
 import mobac.gui.actions.DebugShowLogFile;
@@ -89,7 +89,6 @@ import mobac.gui.panels.JProfilesPanel;
 import mobac.gui.panels.JTileImageParametersPanel;
 import mobac.gui.panels.JTileStoreCoveragePanel;
 import mobac.mapsources.MapSourcesManager;
-import mobac.program.AtlasThread;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
@@ -141,6 +140,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JPanel zoomLevelPanel;
 	private JZoomCheckBox[] cbZoom = new JZoomCheckBox[0];
 	private JLabel amountOfTilesLabel;
+
+	private AtlasCreate atlasCreateAction = new AtlasCreate(jAtlasTree);
 
 	private JCoordinatesPanel coordinatesPanel;
 	private JProfilesPanel profilesPanel;
@@ -252,7 +253,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// create atlas button
 		createAtlasButton = new JButton("Create atlas");
-		createAtlasButton.addActionListener(new CreateAtlasButtonListener());
+		createAtlasButton.addActionListener(atlasCreateAction);
 		createAtlasButton.setToolTipText("Create the atlas");
 
 		// zoom level check boxes
@@ -278,16 +279,23 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JMenu atlasMenu = new JMenu("Atlas");
 		atlasMenu.setMnemonic(KeyEvent.VK_A);
 
-		JMenuItem newAtlas = new JMenuItem("New");
+		JMenuItem newAtlas = new JMenuItem("New Atlas");
 		newAtlas.setMnemonic(KeyEvent.VK_N);
 		newAtlas.addActionListener(new AtlasNew());
 		atlasMenu.add(newAtlas);
 
-		JMenuItem convertAtlas = new JMenuItem("Convert");
-		convertAtlas.setMnemonic(KeyEvent.VK_N);
+		JMenuItem convertAtlas = new JMenuItem("Convert Atlas Format");
+		convertAtlas.setMnemonic(KeyEvent.VK_V);
 		convertAtlas.addActionListener(new AtlasConvert());
 		atlasMenu.add(convertAtlas);
+		atlasMenu.addSeparator();
 
+		JMenuItem createAtlas = new JMenuItem("Create Atlas");
+		createAtlas.setMnemonic(KeyEvent.VK_C);
+		createAtlas.addActionListener(atlasCreateAction);
+		atlasMenu.add(createAtlas);
+
+		
 		JMenu mapsMenu = new JMenu("Maps");
 		mapsMenu.setMnemonic(KeyEvent.VK_M);
 		JMenu selectionModeMenu = new JMenu("Selection Mode");
@@ -682,35 +690,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private class SettingsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			SettingsGUI.showSettingsDialog(MainGUI.this);
-		}
-	}
-
-	private class CreateAtlasButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			if (!jAtlasTree.testAtlasContentValid())
-				return;
-			if (jAtlasTree.getAtlas().calculateTilesToDownload() > 3000000) {
-				JOptionPane.showMessageDialog(null, "Mobile Atlas Creator has detected that you are trying to\n"
-						+ "download an extra ordinary large atlas " + "with a very high number of tiles.\n"
-						+ "Please reduce the selected areas " + "on high zoom levels and try again.",
-						"Atlas download prohibited", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			try {
-				// We have to work on a deep clone otherwise the user would be
-				// able to modify settings of maps, layers and the atlas itself
-				// while the AtlasThread works on that atlas reference
-				AtlasInterface atlasToCreate = jAtlasTree.getAtlas().deepClone();
-				Thread atlasThread = new AtlasThread(atlasToCreate);
-				atlasThread.start();
-			} catch (AtlasTestException e) {
-				JOptionPane.showMessageDialog(null, "<html>" + e.getMessage() + "</html>",
-						"Map incompatible with atlas format", JOptionPane.ERROR_MESSAGE);
-
-			} catch (Exception e) {
-				log.error("", e);
-				GUIExceptionHandler.processException(e);
-			}
 		}
 	}
 

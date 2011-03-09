@@ -19,6 +19,8 @@ package mobac.gui.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JOptionPane;
+
 import mobac.gui.MainGUI;
 import mobac.gui.mapview.PreviewMap;
 import mobac.program.model.Bookmark;
@@ -34,6 +36,9 @@ public class BookmarkAdd implements ActionListener {
 
 	public void actionPerformed(ActionEvent arg0) {
 		Bookmark bm = previewMap.getPositionBookmark();
+		String name = JOptionPane.showInputDialog("please select a name for the new bookmark", bm.toString());
+		if (name != null)
+			bm.setName(name);
 		Settings.getInstance().placeBookmarks.add(bm);
 		MainGUI.getMainGUI().updateBookmarksMenu();
 	}

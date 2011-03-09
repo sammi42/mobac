@@ -272,8 +272,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 	public void gotoPositionBookmark(Bookmark bookmark) {
 		setMapSource(bookmark.getMapSource());
-		setDisplayPositionByLatLon(bookmark, bookmark.zoom);
-		setZoom(bookmark.zoom);
+		setDisplayPositionByLatLon(bookmark, bookmark.getZoom());
+		setZoom(bookmark.getZoom());
 	}
 
 	public EastNorthCoordinate getPositionCoordinate() {

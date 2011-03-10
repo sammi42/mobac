@@ -37,8 +37,9 @@ public class BookmarkAdd implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		Bookmark bm = previewMap.getPositionBookmark();
 		String name = JOptionPane.showInputDialog("please select a name for the new bookmark", bm.toString());
-		if (name != null)
-			bm.setName(name);
+		if (name == null)
+			return;
+		bm.setName(name);
 		Settings.getInstance().placeBookmarks.add(bm);
 		MainGUI.getMainGUI().updateBookmarksMenu();
 	}

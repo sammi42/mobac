@@ -16,11 +16,19 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.region_europe_east;
 
+import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import mobac.exceptions.TileException;
+import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.Logging;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.TileStoreEntry;
 
 /**
  * Relief only
@@ -33,6 +41,33 @@ public class CykloatlasRelief extends AbstractHttpMapSource {
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		return "http://services.tmapserver.cz/tiles/gm/sum/" + zoom + "/" + tilex + "/" + tiley + ".png";
+	}
+
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException,
+			TileException {
+		byte[] data = super.getTileData(zoom, x, y, loadMethod);
+		if (data != null && data.length == 0) {
+			return null;
+		}
+		return data;
+	}
+
+	@Override
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+			UnrecoverableDownloadException, InterruptedException {
+		try {
+			return super.getTileImage(zoom, x, y, loadMethod);
+		} catch (FileNotFoundException e) {
+			TileStore ts = TileStore.getInstance();
+			long time = System.currentTimeMillis();
+			// We set the tile data to an empty array because we can not store null
+			TileStoreEntry entry = ts.createNewEntry(x, y, zoom, new byte[] {}, time, time + (1000 * 60 * 60 * 60), "");
+			ts.putTile(entry, this);
+		} catch (Exception e) {
+			Logging.LOG.error("Unknown error in " + this.getClass().getName(), e);
+		}
+		return null;
 	}
 
 	@Override

@@ -65,6 +65,7 @@ import mobac.gui.actions.AtlasConvert;
 import mobac.gui.actions.AtlasCreate;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.BookmarkAdd;
+import mobac.gui.actions.BookmarkManage;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
@@ -314,8 +315,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		bookmarkMenu.setMnemonic(KeyEvent.VK_B);
 		JMenuItem addBookmark = new JMenuItem("Save current view");
+		addBookmark.setMnemonic(KeyEvent.VK_S);
 		addBookmark.addActionListener(new BookmarkAdd(previewMap));
 		bookmarkMenu.add(addBookmark);
+		JMenuItem manageBookmarks = new JMenuItem("Manage Bookmarks");
+		manageBookmarks.setMnemonic(KeyEvent.VK_S);
+		manageBookmarks.addActionListener(new BookmarkManage());
+		bookmarkMenu.add(addBookmark);
+		bookmarkMenu.add(manageBookmarks);
+
 		bookmarkMenu.addSeparator();
 
 		JMenu debug = new JMenu("Debug");

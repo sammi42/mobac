@@ -8,7 +8,7 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
-1.9 preview 12 (2011-03-??)
+1.9 preview 13 (2011-03-11)
  + Download to tile store without creating an atlas:  
     new atlas format "Tile store download only"
  ! BeanShell map sources could not be used with certain atlas formats

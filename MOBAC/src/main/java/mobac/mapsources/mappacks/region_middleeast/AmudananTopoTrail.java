@@ -37,7 +37,7 @@ public class AmudananTopoTrail extends AbstractMultiLayerMapSource {
 
 	@Override
 	public String toString() {
-		return "Isreal Topo & Trails (Amudanan)";
+		return "Israel Topo & Trails (Amudanan)";
 	}
 
 }

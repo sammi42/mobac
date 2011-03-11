@@ -48,7 +48,7 @@ public class AmudananTopo extends AbstractHttpMapSource {
 
 	@Override
 	public String toString() {
-		return "Isreal Topo (Amudanan)";
+		return "Israel Topo (Amudanan)";
 	}
 
 }

@@ -48,7 +48,7 @@ public class AmudananTrails extends AbstractHttpMapSource {
 
 	@Override
 	public String toString() {
-		return "Isreal Trails (Amudanan)";
+		return "Israel Trails (Amudanan)";
 	}
 
 }

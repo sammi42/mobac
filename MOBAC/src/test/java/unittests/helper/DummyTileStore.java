@@ -67,6 +67,12 @@ public class DummyTileStore extends TileStore {
 	}
 
 	@Override
+	public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public String[] getAllStoreNames() {
 		// TODO Auto-generated method stub
 		return null;

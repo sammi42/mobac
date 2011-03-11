@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.region_america_north.CanadaToporama;
+import mobac.mapsources.mappacks.region_middleeast.AmudananTopo;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -65,7 +65,7 @@ public class MapSourceTypeDetector {
 		MapSourcesManager.getInstance().getAllMapSources();
 		MapSourcesUpdater.loadMapSourceProperties();
 
-		testMapSource(CanadaToporama.class);
+		testMapSource(AmudananTopo.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

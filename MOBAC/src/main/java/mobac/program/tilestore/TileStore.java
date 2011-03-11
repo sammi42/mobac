@@ -129,4 +129,13 @@ public abstract class TileStore {
 	public abstract TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified,
 			long timeExpires, String eTag);
 
+	/**
+	 * Creates a new {@link TileStoreEntry} that represents a missing tile in a sparse map source
+	 * 
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @return
+	 */
+	public abstract TileStoreEntry createNewEmptyEntry(int x, int y, int zoom);
 }

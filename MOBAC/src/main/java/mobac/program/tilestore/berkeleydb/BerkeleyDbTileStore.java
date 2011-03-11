@@ -129,7 +129,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 			// // Release the lock
 			// lock.release();
-			//	    
+			//
 			// // Close the file
 			// channel.close();
 		} catch (Exception e) {
@@ -142,6 +142,14 @@ public class BerkeleyDbTileStore extends TileStore {
 	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires,
 			String eTag) {
 		return new TileDbEntry(x, y, zoom, data, timeLastModified, timeExpires, eTag);
+	}
+
+	@Override
+	public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
+		long time = System.currentTimeMillis();
+		long timeExpires = time + (1000 * 60 * 60 * 60);
+		// We set the tile data to an empty array because we can not store null
+		return new TileDbEntry(x, y, zoom, new byte[] {}, time, timeExpires, "");
 	}
 
 	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {

@@ -11,6 +11,8 @@
 1.9 preview 12 (2011-03-??)
  + Download to tile store without creating an atlas:  
     new atlas format "Tile store download only"
+ ! BeanShell map sources could not be used with certain atlas formats
+ + New map source: Isreal Topo (Amudanan) with and without trails 
 
 1.9 preview 12 (2011-03-05)
  ~ Cykloatlas: max zoom level extended to 16

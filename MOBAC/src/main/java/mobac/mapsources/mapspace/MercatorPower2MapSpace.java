@@ -201,4 +201,26 @@ public class MercatorPower2MapSpace implements MapSpace {
 		return new Point(x, y);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + tileSize;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MercatorPower2MapSpace other = (MercatorPower2MapSpace) obj;
+		if (tileSize != other.tileSize)
+			return false;
+		return true;
+	}
+	
 }

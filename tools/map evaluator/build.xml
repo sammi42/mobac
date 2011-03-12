@@ -40,9 +40,9 @@
 				<include name="**/*.properties" />
 				<include name="mobac/resources/**" />
 			</fileset>
-			<fileset dir="${MOBAC.dir}/src">
-				<include name="**/*.properties" />
-				<include name="mobac/resources/**" />
+			<fileset dir="${MOBAC.dir}/src/main/resources">
+				<include name="mobac/resources/images/error.png" />
+				<include name="mobac/resources/images/hourglass.png" />
 			</fileset>
 		</copy>
 	</target>
@@ -82,7 +82,7 @@
 			<libraryjar file="${java.home}/lib/rt.jar" />
 			<outjar file="build/${jar.name}" />
 			-keep class ${main.class} { public static void main(java.lang.String[]); }
-			-keep class mobac.program.beanshell.* { *; }
+			-keep class mobac.utilities.beanshell.* { *; }
 			-keep class org.apache.axis2.description.java2wsdl.bytecode.ParamReader { public * ; }
 			-keepclassmembers enum * {
 			    public static **[] values();

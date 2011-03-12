@@ -27,6 +27,7 @@ import javax.swing.JToolBar;
 import mobac.gui.actions.HelpAction;
 import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
+import mobac.mapsources.MapEvaluatorBeanShellHttpMapSource;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.mapsources.mappacks.google.GoogleMaps;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
@@ -217,8 +218,8 @@ public class MapEvaluator extends JFrame {
 
 	private void executeCode() {
 		try {
-			BeanShellHttpMapSource testMapSource = new BeanShellHttpMapSource(mapSourceEditor
-					.getText(), false);
+			BeanShellHttpMapSource testMapSource = new MapEvaluatorBeanShellHttpMapSource(
+					mapSourceEditor.getText());
 			if (testMapSource.testCode()) {
 				previewMap.setMapSource(testMapSource);
 				return;

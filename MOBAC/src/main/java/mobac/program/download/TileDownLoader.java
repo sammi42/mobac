@@ -129,6 +129,17 @@ public class TileDownLoader {
 	 */
 	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, HttpMapSource mapSource)
 			throws UnrecoverableDownloadException, IOException, InterruptedException {
+		return downloadTileAndUpdateStore(x, y, zoom, mapSource, Settings.getInstance().tileStoreEnabled);
+	}
+
+	public static byte[] downloadTile(int x, int y, int zoom, HttpMapSource mapSource)
+			throws UnrecoverableDownloadException, IOException, InterruptedException {
+		return downloadTileAndUpdateStore(x, y, zoom, mapSource, false);
+	}
+
+	public static byte[] downloadTileAndUpdateStore(int x, int y, int zoom, HttpMapSource mapSource,
+			boolean useTileStore) throws UnrecoverableDownloadException, IOException, InterruptedException {
+
 		if (zoom < 0)
 			throw new UnrecoverableDownloadException("Negative zoom!");
 		HttpURLConnection conn = mapSource.getTileUrlConnection(zoom, x, y);
@@ -166,7 +177,7 @@ public class TileDownLoader {
 		TileImageType imageType = Utilities.getImageType(data);
 		if (imageType == null)
 			throw new UnrecoverableDownloadException("The returned image is of unknown format");
-		if (s.tileStoreEnabled) {
+		if (useTileStore) {
 			TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
 		}
 		Utilities.checkForInterruption();
@@ -333,7 +344,9 @@ public class TileDownLoader {
 	protected static boolean isTileNewer(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		long oldLastModified = tile.getTimeLastModified();
 		if (oldLastModified <= 0) {
-			log.warn("Tile age comparison not possible: " + "tile in tilestore does not contain lastModified attribute");
+			log
+					.warn("Tile age comparison not possible: "
+							+ "tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());

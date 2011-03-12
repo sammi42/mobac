@@ -10,12 +10,10 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Charsets;
@@ -32,9 +30,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 
 	private final Interpreter i;
 
-	private final boolean enableTileStore;
-
-	public static BeanShellHttpMapSource load(File f, boolean enableTileStore) throws EvalError, IOException {
+	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
 		FileInputStream in = new FileInputStream(f);
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in, Charsets.UTF_8));
@@ -45,15 +41,14 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 				line = br.readLine();
 			}
 			br.close();
-			return new BeanShellHttpMapSource(sw.toString(), enableTileStore);
+			return new BeanShellHttpMapSource(sw.toString());
 		} finally {
 			Utilities.closeStream(in);
 		}
 	}
 
-	public BeanShellHttpMapSource(String code, boolean enableTileStore) throws EvalError {
+	public BeanShellHttpMapSource(String code) throws EvalError {
 		super("", 0, 0, TileImageType.PNG);
-		this.enableTileStore = enableTileStore;
 		name = "BeanShell map source " + NUM++;
 		i = new Interpreter();
 		i.eval("import java.net.HttpURLConnection;");
@@ -124,16 +119,6 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	}
 
 	@Override
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException,
-			TileException {
-		if (enableTileStore) {
-			return super.getTileData(zoom, x, y, loadMethod);
-		} else {
-			return TileDownLoader.getImage(x, y, zoom, this);
-		}
-	}
-
-	@Override
 	public MapSpace getMapSpace() {
 		return mapSpace;
 	}
@@ -160,10 +145,6 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 
 	public Color getBackgroundColor() {
 		return Color.BLACK;
-	}
-
-	public boolean isEnableTileStore() {
-		return enableTileStore;
 	}
 
 }

@@ -67,6 +67,7 @@
 			<zipfileset src="${MOBAC.dir}/lib/je-3.3.93.jar">
 				<exclude name="com/sleepycat/persist/model/ClassEnhancerTask.*" />
 			</zipfileset>
+			<zipfileset src="${MOBAC.dir}/lib/Tidy.jar" includes="org/w3c/tidy/**" />
 			<fileset dir="build">
 				<exclude name="**/unittest/**" />
 				<exclude name="**/*.java" />

@@ -8,4 +8,5 @@ String getTileUrl( int zoom, int x, int y ) {
   // Uncomment the following line to change the base url to Mapnik map source
   //baseUrl = "http://tile.openstreetmap.org/";
   return baseUrl + zoom + "/" + x + "/" + y + ".png";    
-} 
+}
+tileType = "png";

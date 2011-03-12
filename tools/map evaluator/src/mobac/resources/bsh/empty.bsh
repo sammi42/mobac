@@ -4,3 +4,4 @@ String getTileUrl( int zoom, int x, int y ) {
 void addHeaders( java.net.HttpURLConnection conn ) {
   // conn.addRequestProperty("header-name","vale");
 } 
+tileType = "";

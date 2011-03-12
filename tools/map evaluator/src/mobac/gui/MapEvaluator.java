@@ -27,7 +27,7 @@ import javax.swing.JToolBar;
 import mobac.gui.actions.HelpAction;
 import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
-import mobac.mapsources.BeanShellMapSource;
+import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.mapsources.mappacks.google.GoogleMaps;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.ProgramInfo;
@@ -84,7 +84,7 @@ public class MapEvaluator extends JFrame {
 	private void addButtons(JToolBar toolBar) {
 		JButton button = null;
 
-		button = new JButton("Reset", Utilities.loadResourceImageIcon("new-icon.png"));
+		button = new JButton("Load Template", Utilities.loadResourceImageIcon("new-icon.png"));
 		button.setToolTipText("Reset custom code editor to one of several templates");
 		button.addActionListener(new ActionListener() {
 
@@ -199,7 +199,7 @@ public class MapEvaluator extends JFrame {
 			}
 		});
 		toolBar.add(button);
-		button = new JButton("Tile info", Utilities.loadResourceImageIcon("info-icon.png"));
+		button = new JButton("Toggle tile info", Utilities.loadResourceImageIcon("info-icon.png"));
 		button.setToolTipText("Show/hide tile info");
 		button.addActionListener(new ActionListener() {
 
@@ -217,7 +217,7 @@ public class MapEvaluator extends JFrame {
 
 	private void executeCode() {
 		try {
-			BeanShellMapSource testMapSource = new BeanShellMapSource(mapSourceEditor.getText());
+			BeanShellHttpMapSource testMapSource = new BeanShellHttpMapSource(mapSourceEditor.getText());
 			if (testMapSource.testCode()) {
 				previewMap.setMapSource(testMapSource);
 				return;

@@ -11,8 +11,6 @@ import java.util.TimerTask;
 
 import mobac.gui.mapview.layer.MapGridLayer;
 import mobac.mapsources.AbstractHttpMapSource;
-import mobac.mapsources.BeanShellMapSource;
-
 
 public class LogPreviewMap extends PreviewMap {
 
@@ -116,8 +114,6 @@ public class LogPreviewMap extends PreviewMap {
 			drawStringBG(g, "y=" + tiley, gx + 4, gy += 16);
 			String tileUrl = null;
 			try {
-				if (mapSource instanceof BeanShellMapSource)
-					tileUrl = ((BeanShellMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				if (mapSource instanceof AbstractHttpMapSource)
 					tileUrl = ((AbstractHttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				if (tileUrl != null) {

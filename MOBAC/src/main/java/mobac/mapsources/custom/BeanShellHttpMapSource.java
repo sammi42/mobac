@@ -1,9 +1,7 @@
 package mobac.mapsources.custom;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,9 +10,8 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
-
-import mobac.exceptions.UnrecoverableDownloadException;
+import mobac.exceptions.TileException;
+import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
@@ -35,7 +32,9 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 
 	private final Interpreter i;
 
-	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
+	private final boolean enableTileStore;
+
+	public static BeanShellHttpMapSource load(File f, boolean enableTileStore) throws EvalError, IOException {
 		FileInputStream in = new FileInputStream(f);
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in, Charsets.UTF_8));
@@ -46,15 +45,16 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 				line = br.readLine();
 			}
 			br.close();
-			return new BeanShellHttpMapSource(sw.toString());
+			return new BeanShellHttpMapSource(sw.toString(), enableTileStore);
 		} finally {
 			Utilities.closeStream(in);
 		}
 	}
 
-	public BeanShellHttpMapSource(String code) throws EvalError {
+	public BeanShellHttpMapSource(String code, boolean enableTileStore) throws EvalError {
 		super("", 0, 0, TileImageType.PNG);
-		name = "TestMapSource" + NUM++;
+		this.enableTileStore = enableTileStore;
+		name = "BeanShell map source " + NUM++;
 		i = new Interpreter();
 		i.eval("import java.net.HttpURLConnection;");
 		i.eval("import mobac.utilities.beanshell.*;");
@@ -71,9 +71,13 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		o = i.get("minZoom");
 		if (o != null)
 			minZoom = ((Integer) o).intValue();
+		else
+			minZoom = 0;
 		o = i.get("maxZoom");
 		if (o != null)
 			maxZoom = ((Integer) o).intValue();
+		else
+			maxZoom = PreviewMap.MAX_ZOOM;
 		o = i.get("tileType");
 		if (o != null)
 			tileType = TileImageType.getTileImageType((String) o);
@@ -120,16 +124,13 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	}
 
 	@Override
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-			UnrecoverableDownloadException, InterruptedException {
-		return TileDownLoader.getImage(x, y, zoom, this);
-	}
-
-	@Override
-	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-			UnrecoverableDownloadException, InterruptedException {
-		byte[] data = getTileData(zoom, x, y, LoadMethod.DEFAULT);
-		return ImageIO.read(new ByteArrayInputStream(data));
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException,
+			TileException {
+		if (enableTileStore) {
+			return super.getTileData(zoom, x, y, loadMethod);
+		} else {
+			return TileDownLoader.getImage(x, y, zoom, this);
+		}
 	}
 
 	@Override
@@ -160,4 +161,9 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	public Color getBackgroundColor() {
 		return Color.BLACK;
 	}
+
+	public boolean isEnableTileStore() {
+		return enableTileStore;
+	}
+
 }

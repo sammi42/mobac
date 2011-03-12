@@ -27,7 +27,7 @@ public class BeanShellMapSourceLoader {
 		File[] customMapSourceFiles = mapSourcesDir.listFiles(new FileExtFilter(".bsh"));
 		for (File f : customMapSourceFiles) {
 			try {
-				BeanShellHttpMapSource mapSource = BeanShellHttpMapSource.load(f);
+				BeanShellHttpMapSource mapSource = BeanShellHttpMapSource.load(f, true);
 				log.trace("BeanShell map source loaded: " + mapSource + " from file \"" + f.getName() + "\"");
 				mapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, f));
 				mapSourcesManager.addMapSource(mapSource);

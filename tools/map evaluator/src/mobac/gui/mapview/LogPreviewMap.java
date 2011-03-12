@@ -118,10 +118,13 @@ public class LogPreviewMap extends PreviewMap {
 					tileUrl = ((AbstractHttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				if (tileUrl != null) {
 					URL url = new URL(tileUrl);
-					String strUrl = url.getHost() + url.getPath();
-					if (url.getQuery() != null && url.getQuery().length() > 0)
-						strUrl += "?" + url.getQuery();
-					drawUrl(g, strUrl, gx + 4, gy += 16, tileSize);
+					drawUrl(g, "host=" + url.getHost(), gx + 4, gy += 16, tileSize);
+					drawUrl(g, url.getPath(), gx + 4, gy += 16, tileSize);
+
+					String strQuery = url.getQuery();
+					if (strQuery != null && strQuery.length() > 0) {
+						drawUrl(g, "?" + strQuery, gx + 4, gy += 16, tileSize);
+					}
 				}
 			} catch (Exception e) {
 			}

@@ -217,7 +217,8 @@ public class MapEvaluator extends JFrame {
 
 	private void executeCode() {
 		try {
-			BeanShellHttpMapSource testMapSource = new BeanShellHttpMapSource(mapSourceEditor.getText());
+			BeanShellHttpMapSource testMapSource = new BeanShellHttpMapSource(mapSourceEditor
+					.getText(), false);
 			if (testMapSource.testCode()) {
 				previewMap.setMapSource(testMapSource);
 				return;

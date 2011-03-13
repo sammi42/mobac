@@ -32,9 +32,8 @@ import org.apache.log4j.Logger;
 
 public class DebugShowLogFile implements ActionListener {
 
-	private static final Logger log = Logger.getLogger(DebugShowLogFile.class);
-
 	public void actionPerformed(ActionEvent event) {
+		Logger log = Logger.getLogger(DebugShowLogFile.class);
 		String logFile = Logging.getLogFile();
 		if (logFile == null) {
 			log.error("No file logger configured");

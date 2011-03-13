@@ -16,7 +16,6 @@
  ******************************************************************************/
 package mobac.gui.panels;
 
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +90,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 		JScrollPane treeView = new JScrollPane(tree);
-		treeView.setPreferredSize(new Dimension(100, 100));
+		// treeView.setPreferredSize(new Dimension(100, 300));
 		model = (DefaultTreeModel) tree.getModel();
 
 		tree.addMouseListener(new GpxTreeListener());
@@ -100,7 +99,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 
 		GBC eol = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC std = GBC.std().fill(GBC.HORIZONTAL);
-		addContent(treeView, eol);
+		addContent(treeView, GBC.eol().fill());
 		addContent(clearGpx, std);
 		addContent(addPointGpx, eol);
 		addContent(newGpx, std);
@@ -263,5 +262,5 @@ public class JGpxPanel extends JCollapsiblePanel {
 	public DefaultTreeModel getTreeModel() {
 		return model;
 	}
-	
+
 }

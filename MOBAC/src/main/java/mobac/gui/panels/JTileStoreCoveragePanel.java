@@ -58,11 +58,14 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 				+ "which are therefore offline available in the tile store (tile cache)</html>");
 		layerSelector = new JComboBox();
 
-		contentContainer.add(new JLabel("zoom level"), GBC.std());
-		contentContainer.add(zoomCombo, GBC.std());
-		contentContainer.add(showCoverage, GBC.eol());
-		contentContainer.add(new JLabel("Layer:"), GBC.std());
-		contentContainer.add(layerSelector, GBC.std().gridwidth(2));
+		GBC gbc_eol = GBC.eol().insets(2, 2, 2, 2);
+		GBC gbc_std = GBC.std().insets(2, 2, 2, 2);
+		
+		contentContainer.add(new JLabel("zoom level: "), gbc_std);
+		contentContainer.add(zoomCombo, gbc_eol);
+		contentContainer.add(new JLabel("Layer: "), gbc_std);
+		contentContainer.add(layerSelector, gbc_eol);
+		contentContainer.add(showCoverage, gbc_eol.fillH());
 		mapSourceChanged(mapViewer.getMapSource());
 		mapViewer.addMapEventListener(this);
 	}

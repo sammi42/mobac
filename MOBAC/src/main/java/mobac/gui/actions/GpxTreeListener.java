@@ -63,8 +63,7 @@ public class GpxTreeListener implements MouseListener {
 	}
 
 	/**
-	 * Popup for all elements in the gpx tree. TODO separate for waypoints,
-	 * files, tracks and routes
+	 * Popup for all elements in the gpx tree. TODO separate for waypoints, files, tracks and routes
 	 * 
 	 * @param e
 	 */
@@ -72,6 +71,8 @@ public class GpxTreeListener implements MouseListener {
 		JTree tree = (JTree) e.getSource();
 		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 		tree.setSelectionPath(selPath);
+		if (selPath == null)
+			return;
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
 

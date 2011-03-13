@@ -172,8 +172,11 @@ public class Settings {
 	public static class MainWindowSettings {
 		public Dimension size = new Dimension();
 		public Point position = new Point(-1, -1);
-		public Boolean maximized = true;
+		public boolean maximized = true;
 
+		public boolean leftPanelVisible = true;
+		public boolean rightPanelVisible = true;
+		
 		@XmlElementWrapper(name = "collapsedPanels")
 		@XmlElement(name = "collapsedPanel")
 		public Vector<String> collapsedPanels = new Vector<String>();

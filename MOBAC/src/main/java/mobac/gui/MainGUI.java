@@ -70,6 +70,7 @@ import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
+import mobac.gui.actions.PanelShowHide;
 import mobac.gui.actions.ShowAboutDialog;
 import mobac.gui.actions.ShowHelpAction;
 import mobac.gui.actions.ShowReadme;
@@ -78,6 +79,7 @@ import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JAtlasNameField;
 import mobac.gui.components.JBookmarkMenuItem;
 import mobac.gui.components.JCollapsiblePanel;
+import mobac.gui.components.JMenuItem2;
 import mobac.gui.components.JZoomCheckBox;
 import mobac.gui.listeners.AtlasModelListener;
 import mobac.gui.mapview.GridZoom;
@@ -152,6 +154,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
 	private JPanel leftPanelContent = null;
+	private JPanel rightPanel = new JPanel(new GridBagLayout());
 
 	private MercatorPixelCoordinate mapSelectionMax = null;
 	private MercatorPixelCoordinate mapSelectionMin = null;
@@ -190,12 +193,18 @@ public class MainGUI extends JFrame implements MapEventListener {
 		calculateNrOfTilesToDownload();
 		setLayout(new BorderLayout());
 		add(leftPanel, BorderLayout.WEST);
+		add(rightPanel, BorderLayout.EAST);
 		JLayeredPane layeredPane = new FilledLayeredPane();
 		layeredPane.add(previewMap, Integer.valueOf(0));
 		layeredPane.add(mapControlPanel, Integer.valueOf(1));
 		add(layeredPane, BorderLayout.CENTER);
 
-		updatePanels();
+		updateMapControlsPanel();
+		updateLeftPanel();
+		updateRightPanel();
+		updateZoomLevelCheckBoxes();
+		calculateNrOfTilesToDownload();
+
 		menuBar = new JMenuBar();
 		prepareMenuBar();
 		setJMenuBar(menuBar);
@@ -277,6 +286,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	private void prepareMenuBar() {
+		// Atlas menu
 		JMenu atlasMenu = new JMenu("Atlas");
 		atlasMenu.setMnemonic(KeyEvent.VK_A);
 
@@ -296,7 +306,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		createAtlas.addActionListener(atlasCreateAction);
 		atlasMenu.add(createAtlas);
 
-		
+		// Maps menu
 		JMenu mapsMenu = new JMenu("Maps");
 		mapsMenu.setMnemonic(KeyEvent.VK_M);
 		JMenu selectionModeMenu = new JMenu("Selection Mode");
@@ -313,35 +323,43 @@ public class MainGUI extends JFrame implements MapEventListener {
 		sAddSelection.addActionListener(AddRectangleMapAutocut.INSTANCE);
 		mapsMenu.add(sAddSelection);
 
+		// Bookmarks menu
 		bookmarkMenu.setMnemonic(KeyEvent.VK_B);
 		JMenuItem addBookmark = new JMenuItem("Save current view");
 		addBookmark.setMnemonic(KeyEvent.VK_S);
 		addBookmark.addActionListener(new BookmarkAdd(previewMap));
 		bookmarkMenu.add(addBookmark);
-		JMenuItem manageBookmarks = new JMenuItem("Manage Bookmarks");
+		JMenuItem manageBookmarks = new JMenuItem2("Manage Bookmarks", BookmarkManage.class);
 		manageBookmarks.setMnemonic(KeyEvent.VK_S);
-		manageBookmarks.addActionListener(new BookmarkManage());
 		bookmarkMenu.add(addBookmark);
 		bookmarkMenu.add(manageBookmarks);
-
 		bookmarkMenu.addSeparator();
 
-		JMenu debug = new JMenu("Debug");
-		debug.setMnemonic(KeyEvent.VK_D);
-		JMenuItem mapSourceNames = new JMenuItem("Show all map source names");
-		mapSourceNames.setMnemonic(KeyEvent.VK_N);
-		mapSourceNames.addActionListener(new DebugShowMapSourceNames());
-		debug.add(mapSourceNames);
-		debug.addSeparator();
-		JMenuItem showLog = new JMenuItem("Show log file");
-		showLog.setMnemonic(KeyEvent.VK_L);
-		showLog.addActionListener(new DebugShowLogFile());
-		debug.add(showLog);
-		JMenuItem report = new JMenuItem("Generate system report");
-		report.setMnemonic(KeyEvent.VK_R);
-		report.addActionListener(new DebugShowReport());
-		debug.add(report);
+		// Panels menu
+		JMenu panelsMenu = new JMenu("Panels");
+		panelsMenu.setMnemonic(KeyEvent.VK_P);
+		JMenuItem showLeftPanel = new JMenuItem("Show/hide left panel");
+		showLeftPanel.addActionListener(new PanelShowHide(leftPanel));
+		JMenuItem showRightPanel = new JMenuItem("Show/hide GPX editor panel");
+		showRightPanel.addActionListener(new PanelShowHide(rightPanel));
+		panelsMenu.add(showLeftPanel);
+		panelsMenu.add(showRightPanel);
 
+		// Debug menu
+		JMenu debugMenu = new JMenu("Debug");
+		debugMenu.setMnemonic(KeyEvent.VK_D);
+		JMenuItem mapSourceNames = new JMenuItem2("Show all map source names", DebugShowMapSourceNames.class);
+		mapSourceNames.setMnemonic(KeyEvent.VK_N);
+		debugMenu.add(mapSourceNames);
+		debugMenu.addSeparator();
+		JMenuItem showLog = new JMenuItem2("Show log file", DebugShowLogFile.class);
+		showLog.setMnemonic(KeyEvent.VK_L);
+		debugMenu.add(showLog);
+		JMenuItem report = new JMenuItem2("Generate system report", DebugShowReport.class);
+		report.setMnemonic(KeyEvent.VK_R);
+		debugMenu.add(report);
+
+		// Help menu
 		JMenu help = new JMenu("Help");
 		JMenuItem readme = new JMenuItem("Show Readme");
 		JMenuItem howToMap = new JMenuItem("How to use preview map");
@@ -361,8 +379,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		menuBar.add(atlasMenu);
 		menuBar.add(mapsMenu);
 		menuBar.add(bookmarkMenu);
+		menuBar.add(panelsMenu);
 		menuBar.add(Box.createHorizontalGlue());
-		menuBar.add(debug);
+		menuBar.add(debugMenu);
 		menuBar.add(help);
 	}
 
@@ -401,8 +420,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill(GBC.HORIZONTAL);
 
-		JCollapsiblePanel gpxPanel = new JGpxPanel(previewMap);
-
 		leftPanelContent = new JPanel(new GridBagLayout());
 		leftPanelContent.add(coordinatesPanel, gbc_eol);
 		leftPanelContent.add(mapSourcePanel, gbc_eol);
@@ -414,7 +431,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		leftPanelContent.add(createAtlasButton, gbc_eol);
 		leftPanelContent.add(settingsButton, gbc_eol);
 		leftPanelContent.add(tileStoreCoveragePanel, gbc_eol);
-		leftPanelContent.add(gpxPanel, gbc_eol);
 		leftPanelContent.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 
 		JScrollPane scrollPane = new JScrollPane(leftPanelContent);
@@ -429,6 +445,12 @@ public class MainGUI extends JFrame implements MapEventListener {
 		leftPanel.add(scrollPane, GBC.std().fill());
 		// leftPanel.add(leftPanelContent, GBC.std().fill());
 
+	}
+
+	private void updateRightPanel() {
+		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill();
+		JPanel gpxPanel = new JGpxPanel(previewMap);
+		rightPanel.add(gpxPanel, gbc_eol);
 	}
 
 	private JPanel updateMapControlsPanel() {
@@ -459,15 +481,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		// mapControlPanel.add(bottomControls, BorderLayout.SOUTH);
 
 		return mapControlPanel;
-	}
-
-	private void updatePanels() {
-		updateMapControlsPanel();
-		updateLeftPanel();
-		leftPanel.setVisible(true);
-		updateZoomLevelCheckBoxes();
-		calculateNrOfTilesToDownload();
-		previewMap.grabFocus();
 	}
 
 	public void updateMapSourcesList() {
@@ -540,6 +553,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		if (settings.mainWindow.maximized)
 			setExtendedState(Frame.MAXIMIZED_BOTH);
 
+		leftPanel.setVisible(settings.mainWindow.leftPanelVisible);
+		rightPanel.setVisible(settings.mainWindow.rightPanelVisible);
+
 		if (leftPanelContent != null) {
 			for (Component c : leftPanelContent.getComponents()) {
 				if (c instanceof JCollapsiblePanel) {
@@ -583,6 +599,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 					}
 				}
 			}
+			s.mainWindow.leftPanelVisible = leftPanel.isVisible();
+			s.mainWindow.rightPanelVisible = rightPanel.isVisible();
 			checkAndSaveSettings();
 		} catch (Exception e) {
 			GUIExceptionHandler.showExceptionDialog(e);

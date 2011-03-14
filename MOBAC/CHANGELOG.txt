@@ -8,6 +8,8 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+1.9 preview 14 (2011-03-??)
+
 1.9 preview 13 (2011-03-12)
  + Download to tile store without creating an atlas:  
     new atlas format "Tile store download only"

@@ -47,7 +47,7 @@ p,ul,ol {
 Creator".</p>
 <p>Mobile Atlas Creator is an open source project hosted on
 SourceForge.net: <br>
-<a href="http://mobac.dnsalias.org">http://mobac.dnsalias.org</a></p>
+<a href="http://mobac.sf.net">http://mobac.sf.net</a></p>
 <h2>Table of contents</h2>
 <ul style="margin-left: 50px;">
 	<li><a href="#License">License</a></li>
@@ -123,7 +123,7 @@ SourceForge.net: <br>
 <p>Mobile Atlas Creator is under GNU General Public License Version
 2 (GPL). For details on the GPL see the license file <a href="gpl.txt">gpl.txt</a>.<br>
 The source code is available on the <a
-	href="https://sourceforge.net/projects/trekbuddyatlasc/files/">SourceForge.net</a>
+	href="https://sourceforge.net/projects/mobac/files/">SourceForge.net</a>
 for download and in the <a
 	href="http://sourceforge.net/scm/?type=svn&amp;group_id=238075">project's
 source code Subversion repository</a>.</p>
@@ -163,17 +163,18 @@ is located. Alternatively you can place it in any path covered by the
 JAVA search path. The next time MOBAC is started the SQLite library is
 loaded and can be used.</p>
 <h3><a name="JAI">Java Advanced Imaging (optional)</a></h3>
-<p>For reducing the color depth of downloaded tiles the library
-files of the "Java Advanced Imaging" (JAI) have to be present on the
-system respectively in the same directory as Mobile_Atlas_Creator.jar.
-Ready to use binary builds of the Java Advanced Imaging library can be
-obtained at <a href="https://jai.dev.java.net/binary-builds.html">https://jai.dev.java.net/binary-builds.html</a>
+<p>For reducing the color depth of downloaded tiles the library files (<tt>jai_core.jar</tt>
+and <tt>jai_codec.jar</tt>) of the "Java Advanced Imaging" (JAI)
+have to be present on the system respectively in the same directory as
+Mobile_Atlas_Creator.jar. Ready to use binary builds of the Java
+Advanced Imaging library can be obtained at <a
+	href="http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib.zip">http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib.zip</a>
 </p>
 
 <h2><a name="Installation">Installation</a></h2>
 <p>Copy or move the unzipped files to a folder where you would like
 to have Mobile Atlas Creator installed. On computers running Windows
-please make sure <b>not to install MOBAC into Program Files
+please make sure <b>not to install MOBAC into <tt>Program Files</tt>
 sub-directory!</b></p>
 
 <h2><a name="Start">Application start</a></h2>
@@ -718,7 +719,7 @@ Request Ticket</a> at SourceForge.</p>
 <p>If have a new online map which is not available in Mobile Atlas
 Creator there my be change to add it. Before opening a Feature Request
 please take a look into the <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/misc/Incompatible%20maps.txt">list
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/misc/Incompatible%20maps.txt">list
 of map sources known to incompatible with Mobile Atlas Creator</a>.</p>
 
 <!-- *************************************************************************** -->
@@ -740,7 +741,7 @@ Atlas Creator\</tt> and on Linux/Unix/OSX system in the directory <tt>~/.mobac/<
 <p>If the recorded errors in the error log do not indicate a problem
 you can activate the overall message logging mechanism of Mobile Atlas
 Creator:<br>
-Download the file <a href="http://mobac.dnsalias.org/log4j.xml">log4j.xml</a>
+Download the file <a href="http://mobac.sourceforge.net/log4j.xml">log4j.xml</a>
 and save it in the directory where the jar file of Mobile Atlas Creator
 is installed to.</p>
 <p>The next start Mobile Atlas Creator will create a log file in the
@@ -788,7 +789,7 @@ configuration</a></h3>
 directory that is not writable for reguar users:</p>
 <p>For changing the directory configuration pattern for all users of
 a MOBAC installation save <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/directories.ini.template">this
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/directories.ini.template">this
 file</a> into the same directory where <tt>Mobile_Atlas_Creator.jar</tt> has
 been installed into and change it's name to <tt>directories.ini</tt>.
 For more details read the comments in this configuration file.</p>
@@ -861,7 +862,7 @@ curly brace:</p>
 	level</i></sup>]</li>
 </ul>
 <p>Example file for download: <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20map%20source.xml">
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20custom%20map%20source.xml">
 Example custom map source.xml</a></p>
 <h3><a name="CustomWMSMapSource">Custom WMS map sources</a></h3>
 <p>Similar a WMS map source can be defined. Currently only <tt>EPSG:4326</tt>
@@ -880,7 +881,7 @@ as coordinatesystem is supported.</p>
     &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
 &lt;/customWmsMapSource&gt;</pre>
 <p>Example file (with comments) for download: <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20WMS%20map%20source.xml">
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20custom%20WMS%20map%20source.xml">
 Example custom WMS map source.xml</a></p>
 <h3><a name="CustomMultiLayerMapSource">Custom multi-layer map
 sources</a></h3>
@@ -916,7 +917,7 @@ not be visible.</p>
 &lt;/customMultiLayerMapSource&gt;
 </pre>
 <p>Example file for download: <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20custom%20multi-layer%20map%20source.xml">
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20custom%20multi-layer%20map%20source.xml">
 Example custom multi-layer map source.xml</a></p>
 <h3><a name="CloudMadeMapSource">Custom CloudMade map sources</a></h3>
 <p>The <a href="http://maps.cloudmade.com/">CloudMade map
@@ -930,11 +931,11 @@ map name used by MOBAC and a styleID:</p>
     &lt;styleID&gt;1960&lt;/styleID&gt;
 &lt;/cloudMade&gt;</pre>
 <p>Example file for download: <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20CloudMade1960.xml">
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20CloudMade1960.xml">
 Example CloudMade1960.xml</a></p>
 <h3><a name="BeanShellMapSource">Custom BeanShell map sources</a></h3>
 <p>BeanShell map sources as the can be developed using <a
-	href="http://sourceforge.net/apps/mediawiki/trekbuddyatlasc/index.php?title=MapEvaluator">MapEvaluator</a>
+	href="http://sourceforge.net/apps/mediawiki/mobac/index.php?title=MapEvaluator">MapEvaluator</a>
 can be used by MOBAC. To du so place the saved BeanShell code file (file
 extension <tt>.bsh</tt>) in the <tt>mapsources</tt> directory. It will
 be loaded on next start-up of MOBAC.</p>
@@ -942,7 +943,7 @@ be loaded on next start-up of MOBAC.</p>
 	href="#MapSourceNameUnique">must be unique</a>).</p>
 <pre>name = "Your map source name here";</pre>
 <p>Example file for download: <a
-	href="https://trekbuddyatlasc.svn.sourceforge.net/svnroot/trekbuddyatlasc/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
 Example beanshell map source.bsh</a></p>
 
 <h3><a name="CustomMapPack">Custom MapPack</a></h3>

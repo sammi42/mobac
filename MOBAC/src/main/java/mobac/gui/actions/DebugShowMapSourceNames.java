@@ -21,7 +21,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,19 +49,6 @@ public class DebugShowMapSourceNames implements ActionListener {
 			}
 
 		});
-		StringWriter sw = new StringWriter();
-		for (MapSource ms : mapSources) {
-			MapSourceLoaderInfo loaderInfo = ms.getLoaderInfo();
-			sw.append(ms.getName());
-			if (loaderInfo != null) {
-				sw.append("\t (map type: " + loaderInfo.getLoaderType());
-				if (loaderInfo.getRevision() != null)
-					sw.append(", rev: " + loaderInfo.getRevision());
-				sw.append(")");
-			}
-			sw.append("\n");
-		}
-
 		JFrame dialog = new JFrame("Map source names");
 		dialog.setLocationRelativeTo(MainGUI.getMainGUI());
 		dialog.setLocation(100, 40);
@@ -71,10 +57,10 @@ public class DebugShowMapSourceNames implements ActionListener {
 		dScreen.width = Math.min(dScreen.width - 100, 700);
 		dialog.setSize(dScreen);
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// JTextArea namesArea = new JTextArea(sw.toString());
-		// namesArea.setTabSize(50);
-		JTable namesArea = new JTable(new MapSourcesTableModel(mapSources));
-		JScrollPane scroller = new JScrollPane(namesArea);
+		JTable mapSourcesTable = new JTable(new MapSourcesTableModel(mapSources));
+		JScrollPane scroller = new JScrollPane(mapSourcesTable);
+
+		mapSourcesTable.getColumnModel().getColumn(2).setMaxWidth(100);
 		dialog.add(scroller);
 		dialog.setVisible(true);
 	}
@@ -93,18 +79,40 @@ public class DebugShowMapSourceNames implements ActionListener {
 		}
 
 		public int getColumnCount() {
-			return 3;
+			return 4;
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			switch (column) {
+			case 0:
+				return "Name";
+			case 1:
+				return "Display text";
+			case 2:
+				return "Revision";
+			case 3:
+				return "Type";
+			default:
+				return null;
+			}
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			MapSource ms = mapSources.get(rowIndex);
+			MapSourceLoaderInfo li;
 			switch (columnIndex) {
 			case 0:
 				return ms.getName();
 			case 1:
 				return ms.toString();
 			case 2:
-				MapSourceLoaderInfo li = ms.getLoaderInfo();
+				li = ms.getLoaderInfo();
+				if (li == null)
+					return null;
+				return li.getRevision();
+			case 3:
+				li = ms.getLoaderInfo();
 				if (li == null)
 					return null;
 				String s = "";

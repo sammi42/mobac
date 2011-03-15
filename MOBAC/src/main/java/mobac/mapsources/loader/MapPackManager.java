@@ -157,6 +157,7 @@ public class MapPackManager {
 		if (manifestIn != null) {
 			Manifest mf = new Manifest(manifestIn);
 			rev = mf.getMainAttributes().getValue("MapPackRevision");
+			rev = Integer.toString(Utilities.parseSVNRevision(rev));
 			log.debug(rev);
 			manifestIn.close();
 			mf = null;

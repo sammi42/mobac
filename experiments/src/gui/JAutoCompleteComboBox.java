@@ -210,7 +210,7 @@ public class JAutoCompleteComboBox<E> extends JComboBox {
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
 		final JAutoCompleteComboBox<MapSource> combo;
-		combo = new JAutoCompleteComboBox<MapSource>(MapSourcesManager.getInstance().getEnabledMapSources(),
+		combo = new JAutoCompleteComboBox<MapSource>(MapSourcesManager.getInstance().getEnabledOrderedMapSources(),
 				MapSource.class);
 		combo.addActionListener(new ActionListener() {
 

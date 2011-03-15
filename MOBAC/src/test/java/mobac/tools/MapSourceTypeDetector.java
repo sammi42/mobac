@@ -41,7 +41,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
-import mobac.tools.urlupdater.MapSourcesUpdater;
 import mobac.utilities.Utilities;
 
 public class MapSourceTypeDetector {
@@ -63,8 +62,6 @@ public class MapSourceTypeDetector {
 		}
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
-		MapSourcesUpdater.loadMapSourceProperties();
-
 		testMapSource(AmudananTopo.class);
 	}
 

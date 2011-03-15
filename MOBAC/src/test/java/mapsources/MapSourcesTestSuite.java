@@ -63,7 +63,6 @@ public class MapSourcesTestSuite extends TestSuite {
 		Logger.getRootLogger().setLevel(Level.ERROR);
 		log = Logger.getLogger(MapSourcesTestSuite.class);
 		testedMapSources = new HashSet<String>();
-		MapSourcesUpdater.loadMapSourceProperties();
 		DefaultMapSourcesManager.initialize();
 		Settings.load();
 		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {

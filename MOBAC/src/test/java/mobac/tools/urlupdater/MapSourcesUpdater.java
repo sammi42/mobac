@@ -29,10 +29,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mobac.Main;
 import mobac.exceptions.MapSourcesUpdateException;
 import mobac.program.DirectoryManager;
-import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
@@ -60,14 +58,6 @@ public class MapSourcesUpdater {
 	 * Date format for parsing the Subversion date keyword content
 	 */
 	private static final SimpleDateFormat SVN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-
-	/**
-	 * Merges the mapsources property into the system property bundle
-	 */
-	public static void loadMapSourceProperties() {
-		Properties systemProps = System.getProperties();
-		MapSourcesUpdater.loadMapSourceProperties(systemProps);
-	}
 
 	public static int getCurrentMapSourcesRev() {
 		return getMapSourcesRev(System.getProperties());
@@ -211,52 +201,11 @@ public class MapSourcesUpdater {
 				}
 				return false;
 			} catch (java.net.UnknownHostException e) {
-				// TODO catch host unreachable:
-				// 19:14:20,021 ERROR [MapSourcesUpdate] MapSourcesUpdater: mobac.dnsalias.org
-				// java.net.UnknownHostException: mobac.dnsalias.org
-				// at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:177)
-				// at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:366)
-				// at java.net.Socket.connect(Socket.java:525)
 				return false;
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new MapSourcesUpdateException(e);
-		}
-	}
-
-	/**
-	 * Merges the mapsources property into the Properties <code>targetprop</code>
-	 * 
-	 * @param targetProp
-	 */
-	public static void loadMapSourceProperties(Properties targetProp) {
-		try {
-			URL mapResUrl = Main.class.getResource(MapSourcesUpdater.MAPSOURCES_PROPERTIES);
-			File mapFile = new File(DirectoryManager.currentDir, MapSourcesUpdater.MAPSOURCES_PROPERTIES);
-			Properties resProps = new Properties();
-			Properties fileProps = new Properties();
-			Utilities.loadProperties(resProps, mapResUrl);
-			Properties selectedProps;
-			if (mapFile.isFile()) {
-				Utilities.loadProperties(fileProps, mapFile);
-				int fileRev = getMapSourcesRev(fileProps);
-				int resRev = getMapSourcesRev(resProps);
-				MapSourcesUpdater.log.trace("mapsources.properties revisons (resource/file): " + resRev + " / "
-						+ fileRev);
-				selectedProps = (fileRev < resRev) ? resProps : fileProps;
-			} else {
-				selectedProps = resProps;
-			}
-			mapSourcesExternalFileUsed = (selectedProps != resProps);
-			if (mapSourcesExternalFileUsed)
-				log.debug("Used mapsources.properties: file");
-			else
-				log.debug("Used mapsources.properties: resource");
-			targetProp.putAll(selectedProps);
-		} catch (Exception e) {
-			MapSourcesUpdater.log.error("Error while reading mapsources.properties: ", e);
-			GUIExceptionHandler.showExceptionDialog(e);
 		}
 	}
 

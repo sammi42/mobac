@@ -20,14 +20,17 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import mobac.gui.MainGUI;
 import mobac.mapsources.MapSourcesManager;
@@ -37,7 +40,7 @@ import mobac.program.model.MapSourceLoaderInfo;
 public class DebugShowMapSourceNames implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
-		LinkedList<MapSource> mapSources = new LinkedList<MapSource>(MapSourcesManager.getInstance()
+		ArrayList<MapSource> mapSources = new ArrayList<MapSource>(MapSourcesManager.getInstance()
 				.getAllAvailableMapSources());
 
 		Collections.sort(mapSources, new Comparator<MapSource>() {
@@ -68,11 +71,51 @@ public class DebugShowMapSourceNames implements ActionListener {
 		dScreen.width = Math.min(dScreen.width - 100, 700);
 		dialog.setSize(dScreen);
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		JTextArea namesArea = new JTextArea(sw.toString());
-		namesArea.setTabSize(50);
+		// JTextArea namesArea = new JTextArea(sw.toString());
+		// namesArea.setTabSize(50);
+		JTable namesArea = new JTable(new MapSourcesTableModel(mapSources));
 		JScrollPane scroller = new JScrollPane(namesArea);
 		dialog.add(scroller);
 		dialog.setVisible(true);
+	}
+
+	static class MapSourcesTableModel extends AbstractTableModel {
+
+		List<MapSource> mapSources;
+
+		public MapSourcesTableModel(List<MapSource> mapSources) {
+			super();
+			this.mapSources = mapSources;
+		}
+
+		public int getRowCount() {
+			return mapSources.size();
+		}
+
+		public int getColumnCount() {
+			return 3;
+		}
+
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			MapSource ms = mapSources.get(rowIndex);
+			switch (columnIndex) {
+			case 0:
+				return ms.getName();
+			case 1:
+				return ms.toString();
+			case 2:
+				MapSourceLoaderInfo li = ms.getLoaderInfo();
+				if (li == null)
+					return null;
+				String s = "";
+				File f = li.getSourceFile();
+				if (f != null)
+					s += f.getName() + " / ";
+				return s + li.getLoaderType();
+			default:
+				return null;
+			}
+		}
 	}
 
 }

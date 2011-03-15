@@ -29,7 +29,7 @@ public class BeanShellMapSourceLoader {
 			try {
 				BeanShellHttpMapSource mapSource = BeanShellHttpMapSource.load(f);
 				log.trace("BeanShell map source loaded: " + mapSource + " from file \"" + f.getName() + "\"");
-				mapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, f));
+				mapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.BSH, f));
 				mapSourcesManager.addMapSource(mapSource);
 			} catch (Exception e) {
 				String errorMsg = "Failed to load custom BeanShell map source \"" + f.getName() + "\": "

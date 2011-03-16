@@ -29,16 +29,22 @@ import javax.imageio.ImageIO;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.annotations.SupportedParameters;
+import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.interfaces.RequiresSQLite;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.jdbc.SQLiteLoader;
+import mobac.utilities.tar.TarIndex;
 
 /**
  * http://sourceforge.net/tracker/?func=detail&aid=3154177&group_id=238075&atid=1105496
  */
 @AtlasCreatorName("Osmdroid SQLite")
+@SupportedParameters(names = { Name.format })
 public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
 	protected Connection conn = null;
@@ -69,9 +75,16 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS tiles (key INTEGER PRIMARY KEY, provider TEXT, tile BLOB)");
 			stat.close();
 		} catch (SQLException e) {
-			throw new AtlasTestException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage());
+			throw new IOException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage(), e);
 		}
 		log.debug("SQLite Database file: " + databaseFile);
+	}
+
+	@Override
+	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+		super.initializeMap(map, tarTileIndex);
+		if (parameters != null)
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
 	}
 
 	@Override

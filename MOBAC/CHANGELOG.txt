@@ -7,6 +7,7 @@
  + = Additions since previous version
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
+ - = Features that has been removed
 
 1.9 preview 14 (2011-03-??)
  + Osmdroid SQLite: Tile image format conversion implemented
@@ -26,7 +27,7 @@
 
 1.9 preview 11 (2011-03-02)
  ! Error when using a BeanShell map source with certain atlas formats
- ~ Removed Map+ map sources because of license problem with swisstopo
+ - Removed Map+ map sources because of license problem with swisstopo
 
 1.9 preview 10 (2011-02-28)
  ! Fixed map source: Docelu.pl
@@ -44,7 +45,7 @@
 1.9 preview 8 (2011-02-16)
  + NaviComputer: Possible to change tile image format (PNG, 4Bit-PNG, JPEG, ...)
  + OpenPisteMap: All three layers (base, contours and landshed are now supported)
- ~ Disabled TwoNav RMAP output format because of legal/license problems  
+ - Disabled TwoNav RMAP output format because of legal/license problems  
 
 1.9 preview 7 (2011-02-04)
  + OSM Hiking ticket system implemented (Wanderreitkarte.de)

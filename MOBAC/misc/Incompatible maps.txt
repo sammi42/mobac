@@ -69,3 +69,6 @@ Mapa Polski Targeo
 	
  NASA World Wind
  	Reason: Incompatible projection, incompatible tile size (512x512)
+ 	
+ Mapplus.ch / Map+
+ 	Reason: License problem with swisstopo

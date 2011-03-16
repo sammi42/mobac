@@ -87,7 +87,7 @@ yourself please consider the following guidelines:</p>
 <ol>
 	<li>Chose a version/release name that makes it clear that it is
 	not an official release: Change the version string to reflect that.<br>
-	Example: <tt>1.6 beta 3 XYZ edition</tt><br>
+	Example: <tt>1.9 beta 3 XYZ edition</tt><br>
 	The version string is located in the properties file <tt>src/main/java/mobac/mobac.properties</tt>.
 	Change the entry <b>mobac.version</b> to your custom release name.</li>
 	<li>Do not forget that Mobile Atlas Creator is a GPL project -
@@ -99,7 +99,17 @@ yourself please consider the following guidelines:</p>
 	are always welcome. Useful modifications have a great chance to be
 	integrated into the main branch.</li>
 </ol>
-
+<h2>Map sources</h2>
+<p>Since version v1.9 map sources are no longer part of <tt>Mobile_Atlas_Creator.jar</tt>.
+All map sources implementation are located in jar files in the <tt>mapsources</tt>
+sub-directory. Those map sources implementation packages are called
+"map-packs".</p>
+<p>For implementing new map sources in a development environment
+like Eclipse it is sometimes faster to load the map sources directly
+from class-path rather from the map-packs. You can enable it by setting
+<tt>devmode</tt> in <tt>settings.xml</tt> to <tt>true</tt>. Afterwards
+map sources will be loaded directly from the <tt>bin</tt> directory of
+Eclipse (if available).</p>
 <h2>Source code overview - important packages</h2>
 <h3><a href="src/main/java/mobac/gui">mobac.gui</a></h3>
 <p>This package contains the implementation of all dialogs/windows.

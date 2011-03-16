@@ -34,7 +34,6 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
-import mobac.tools.urlupdater.MapSourcesUpdater;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

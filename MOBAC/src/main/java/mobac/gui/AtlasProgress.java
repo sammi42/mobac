@@ -46,6 +46,7 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSourceListener;
+import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.utilities.GBC;
 import mobac.utilities.GUIExceptionHandler;
@@ -299,7 +300,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 	public void initAtlas(AtlasInterface atlasInterface) {
 		data.atlasInterface = atlasInterface;
-		data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload() * 2;
+		if (atlasInterface.getOutputFormat().equals(AtlasOutputFormat.TILESTORE))
+			data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload();
+		else
+			data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload() * 2;
 		int mapCount = 0;
 		int tileCount = 0;
 		mapInfos = new ArrayList<MapInfo>(100);

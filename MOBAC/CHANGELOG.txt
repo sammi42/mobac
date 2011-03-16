@@ -11,7 +11,8 @@
 
 1.9 preview 14 (2011-03-??)
  + Osmdroid SQLite: Tile image format conversion implemented
- - Osm Hiking maps removed (excluding the "Wanderreitkarte Abo" version) 
+ - Osm Hiking maps removed (excluding the "Wanderreitkarte Abo" version)
+ - Outdooractive.com maps removed as requested by map provider
 
 1.9 preview 13 (2011-03-12)
  + Download to tile store without creating an atlas:  

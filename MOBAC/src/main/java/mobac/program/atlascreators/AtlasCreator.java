@@ -77,18 +77,25 @@ public abstract class AtlasCreator {
 	/** map specific fields **/
 	/************************************************************/
 
-	protected MapInterface map;
+	protected MapInterface map; 
 	protected int xMin;
 	protected int xMax;
 	protected int yMin;
 	protected int yMax;
-
-	protected TarIndex tarTileIndex;
 	protected int zoom;
-	protected AtlasOutputFormat atlasOutputFormat;
 	protected MapSource mapSource;
 	protected int tileSize;
+	
+	/**
+	 * Custom tile processing parameters. <code>null</code> if disabled in GUI 
+	 */
 	protected TileImageParameters parameters;
+
+	/**
+	 * Temporary file in which the tiles has been downloaded into
+	 */
+	protected TarIndex tarTileIndex;
+	protected AtlasOutputFormat atlasOutputFormat;
 
 	protected TileProvider mapDlTileProvider;
 
@@ -113,6 +120,7 @@ public abstract class AtlasCreator {
 		testAtlas();
 
 		if (customAtlasDir == null) {
+			// No explicit atlas output directory has been set - generate a new directory name
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 			String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
 			File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();

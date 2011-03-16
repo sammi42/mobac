@@ -43,11 +43,11 @@ public enum TileImageFormat {
 	PNG("PNG", new TileImagePngDataWriter()), //
 	PNG8Bit("PNG 256 colors (8 bit)", new TileImagePng8DataWriter()), //
 	PNG4Bit("PNG  16 colors (4 bit)", new TileImagePng4DataWriter()), //
-	JPEG100("JPEG - quality 100", new TileImageJpegDataWriter(1.00)), // 
-	JPEG99("JPEG - quality 99", new TileImageJpegDataWriter(0.99)), // 
-	JPEG95("JPEG - quality 95", new TileImageJpegDataWriter(0.95)), // 
-	JPEG90("JPEG - quality 90", new TileImageJpegDataWriter(0.90)), // 
-	JPEG85("JPEG - quality 85", new TileImageJpegDataWriter(0.85)), // 
+	JPEG100("JPEG - quality 100", new TileImageJpegDataWriter(1.00)), //
+	JPEG99("JPEG - quality 99", new TileImageJpegDataWriter(0.99)), //
+	JPEG95("JPEG - quality 95", new TileImageJpegDataWriter(0.95)), //
+	JPEG90("JPEG - quality 90", new TileImageJpegDataWriter(0.90)), //
+	JPEG85("JPEG - quality 85", new TileImageJpegDataWriter(0.85)), //
 	JPEG80("JPEG - quality 80", new TileImageJpegDataWriter(0.80)), //
 	JPEG70("JPEG - quality 70", new TileImageJpegDataWriter(0.70)), //
 	JPEG60("JPEG - quality 60", new TileImageJpegDataWriter(0.60)), //
@@ -75,6 +75,11 @@ public enum TileImageFormat {
 		return dataWriter.getType();
 	}
 
+	/**
+	 * File extension
+	 * 
+	 * @return
+	 */
 	public String getFileExt() {
 		return dataWriter.getType().getFileExt();
 	}

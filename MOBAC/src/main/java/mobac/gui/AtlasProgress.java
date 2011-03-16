@@ -341,6 +341,11 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		updateGUI();
 	}
 
+	/**
+	 * Initialize the GUI progress bars
+	 * 
+	 * @param maxTilesToProcess
+	 */
 	public void initMapCreation(int maxTilesToProcess) {
 		data.mapCreationProgress = 0;
 		data.mapCreationMax = maxTilesToProcess;

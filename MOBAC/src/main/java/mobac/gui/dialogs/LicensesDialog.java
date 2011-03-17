@@ -78,7 +78,7 @@ public class LicensesDialog extends JFrame implements ChangeListener, ActionList
 		}
 		tab.addChangeListener(this);
 		stateChanged(null);
-		add(tab, GBC.eol().anchor(GBC.NORTH).fill(GBC.VERTICAL));
+		add(tab, GBC.eol().anchor(GBC.NORTH).fill());
 
 		// add(textScroller, GBC.eol());
 		add(ok, GBC.eol().anchor(GBC.CENTER).insets(5, 10, 10, 10));

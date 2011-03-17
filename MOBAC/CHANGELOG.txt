@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 preview 14 (2011-03-??)
+1.9 preview 14 (2011-03-17)
  + Osmdroid SQLite: Tile image format conversion implemented
  - Osm Hiking maps removed (excluding the "Wanderreitkarte Abo" version)
  - Outdooractive.com maps removed as requested by map provider

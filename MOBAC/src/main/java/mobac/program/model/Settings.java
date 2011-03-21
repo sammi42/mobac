@@ -50,7 +50,6 @@ import mobac.gui.panels.JCoordinatesPanel;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
-import mobac.program.download.UserAgent;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ThrottledInputStream;
 
@@ -95,7 +94,7 @@ public class Settings {
 
 	public String elementName = "Layer name";
 
-	private String userAgent = UserAgent.FF3_WIN7;
+	private String userAgent = null;
 
 	public int downloadThreadCount = 4;
 
@@ -176,7 +175,7 @@ public class Settings {
 
 		public boolean leftPanelVisible = true;
 		public boolean rightPanelVisible = true;
-		
+
 		@XmlElementWrapper(name = "collapsedPanels")
 		@XmlElement(name = "collapsedPanel")
 		public Vector<String> collapsedPanels = new Vector<String>();
@@ -292,10 +291,18 @@ public class Settings {
 	}
 
 	public String getUserAgent() {
-		return userAgent;
+		if (userAgent != null)
+			return userAgent;
+		else
+			return ProgramInfo.getUserAgent();
 	}
 
 	public void setUserAgent(String userAgent) {
+		if (userAgent != null) {
+			userAgent = userAgent.trim();
+			if (userAgent.length() == 0)
+				userAgent = null;
+		}
 		this.userAgent = userAgent;
 	}
 

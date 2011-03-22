@@ -33,8 +33,8 @@ import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
@@ -142,7 +142,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate(TABLE_DDL);
 		stat.executeUpdate(INDEX_DDL);
-		stat.executeUpdate(RMAPS_TABLE_INFO_DDL);
+		createInfoTable(stat);
 
 		stat.executeUpdate("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)");
 		if (!(stat.executeQuery("SELECT * FROM android_metadata").next())) {
@@ -150,6 +150,10 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 			stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + locale + "')");
 		}
 		stat.close();
+	}
+
+	protected void createInfoTable(Statement stat) throws SQLException {
+		stat.executeUpdate(RMAPS_TABLE_INFO_DDL);
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {

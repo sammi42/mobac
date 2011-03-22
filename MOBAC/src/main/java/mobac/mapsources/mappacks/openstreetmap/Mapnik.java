@@ -35,6 +35,7 @@ public class Mapnik extends AbstractOsmTileSource {
 
 	public Mapnik() {
 		super("Mapnik");
+		maxZoom = 16;
 	}
 
 	@Override

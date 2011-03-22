@@ -56,7 +56,7 @@ public class MapPolygon extends Map {
 	}
 
 	@Override
-	public int calculateTilesToDownload() {
+	public long calculateTilesToDownload() {
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		double tileSizeD = tileSize;
 		int xMin = minTileCoordinate.x;

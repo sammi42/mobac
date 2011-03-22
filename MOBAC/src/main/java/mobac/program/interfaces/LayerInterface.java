@@ -26,7 +26,7 @@ public interface LayerInterface extends AtlasObject, Iterable<MapInterface>, Cap
 
 	public AtlasInterface getAtlas();
 
-	public int calculateTilesToDownload();
+	public long calculateTilesToDownload();
 
 	public LayerInterface deepClone(AtlasInterface atlas);
 }

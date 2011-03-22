@@ -208,7 +208,7 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		return true;
 	}
 
-	public int calculateTilesToDownload() {
+	public long calculateTilesToDownload() {
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		// This algorithm has to be identically to those used in
 		// @DownloadJobEnumerator

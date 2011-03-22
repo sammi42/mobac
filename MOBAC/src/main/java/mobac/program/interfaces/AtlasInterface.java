@@ -41,7 +41,7 @@ public interface AtlasInterface extends AtlasObject, Iterable<LayerInterface> {
 
 	public AtlasOutputFormat getOutputFormat();
 
-	public int calculateTilesToDownload();
+	public long calculateTilesToDownload();
 
 	public int getVersion();
 	

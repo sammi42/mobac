@@ -180,8 +180,8 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		return name;
 	}
 
-	public int calculateTilesToDownload() {
-		int result = 0;
+	public long calculateTilesToDownload() {
+		long result = 0;
 		for (MapInterface map : maps)
 			result += map.calculateTilesToDownload();
 		return result;

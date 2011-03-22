@@ -142,12 +142,14 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		 **/
 		long totalNrOfTiles = atlas.calculateTilesToDownload();
 
-		if (totalNrOfTiles > Integer.MAX_VALUE) {
-			JOptionPane.showMessageDialog(null, "The number of tiles to download is too high!", "Error",
+		if (totalNrOfTiles > 500000) {
+			JOptionPane.showMessageDialog(null, "Mobile Atlas Creator has detected that you are trying to\n"
+					+ "download an extra ordinary large atlas " + "with a very high number of tiles.\n"
+					+ "Please reduce the selected areas on high zoom levels and try again.\n"
+					+ "The maximum allowed amount of tiles per atlas is 500000", "Atlas download prohibited",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-
 		try {
 			atlasCreator.startAtlasCreation(atlas, customAtlasDir);
 		} catch (AtlasTestException e) {
@@ -235,7 +237,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		 **/
 		int zoom = map.getZoom();
 
-		final int tileCount = map.calculateTilesToDownload();
+		final int tileCount = (int) map.calculateTilesToDownload();
 
 		ap.setZoomLevel(zoom);
 		try {

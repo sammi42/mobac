@@ -43,7 +43,7 @@ public interface MapInterface extends AtlasObject, CapabilityDeletable {
 
 	public void setParameters(TileImageParameters p);
 
-	public int calculateTilesToDownload();
+	public long calculateTilesToDownload();
 
 	public String getInfoText();
 	

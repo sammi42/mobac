@@ -301,9 +301,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 	public void initAtlas(AtlasInterface atlasInterface) {
 		data.atlasInterface = atlasInterface;
 		if (atlasInterface.getOutputFormat().equals(AtlasOutputFormat.TILESTORE))
-			data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload();
+			data.totalNumberOfTiles = (int) atlasInterface.calculateTilesToDownload();
 		else
-			data.totalNumberOfTiles = atlasInterface.calculateTilesToDownload() * 2;
+			data.totalNumberOfTiles = (int) atlasInterface.calculateTilesToDownload() * 2;
 		int mapCount = 0;
 		int tileCount = 0;
 		mapInfos = new ArrayList<MapInfo>(100);
@@ -311,7 +311,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			mapCount += layer.getMapCount();
 			for (MapInterface map : layer) {
 				int before = tileCount;
-				int mapTiles = map.calculateTilesToDownload();
+				int mapTiles = (int) map.calculateTilesToDownload();
 				tileCount += mapTiles + mapTiles;
 				mapInfos.add(new MapInfo(map, before, tileCount));
 			}
@@ -331,7 +331,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		data.mapInfo = mapInfos.get(index);
 		data.totalProgress = data.mapInfo.tileCountOnStart;
 		data.map = map;
-		data.mapDownloadNumberOfTiles = map.calculateTilesToDownload();
+		data.mapDownloadNumberOfTiles = (int) map.calculateTilesToDownload();
 		initialMapDownloadTime = System.currentTimeMillis();
 		data.prevMapsPermanentErrors += data.mapPermanentErrors;
 		data.prevMapsRetryErrors += data.mapRetryErrors;
@@ -676,7 +676,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			this.map = map;
 			this.tileCountOnStart = tileCountOnStart;
 			this.tileCountOnEnd = tileCountOnEnd;
-			this.mapTiles = map.calculateTilesToDownload();
+			this.mapTiles = (int) map.calculateTilesToDownload();
 		}
 
 		@Override

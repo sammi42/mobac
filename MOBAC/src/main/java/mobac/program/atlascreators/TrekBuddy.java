@@ -94,7 +94,7 @@ public class TrekBuddy extends AtlasCreator {
 	}
 
 	protected void writeMapFile(OutputStream stream) throws IOException {
-		writeMapFile("t_." + mapSource.getTileImageType(), stream);
+		writeMapFile("t_." + mapSource.getTileImageType().getFileExt(), stream);
 	}
 
 	protected void writeMapFile(String imageFileName, OutputStream stream) throws IOException {

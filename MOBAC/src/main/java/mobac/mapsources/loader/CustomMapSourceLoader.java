@@ -14,6 +14,7 @@ import javax.xml.bind.ValidationEventLocator;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.CustomCloudMade;
+import mobac.mapsources.custom.CustomLocalTrackerFileMapSource;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.mapsources.custom.CustomWmsMapSource;
@@ -42,7 +43,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		try {
 
 			Class<?>[] customMapClasses = new Class[] { CustomMapSource.class, CustomWmsMapSource.class,
-					CustomMultiLayerMapSource.class, CustomCloudMade.class };
+					CustomMultiLayerMapSource.class, CustomCloudMade.class, CustomLocalTrackerFileMapSource.class };
 			context = JAXBContext.newInstance(customMapClasses);
 			unmarshaller = context.createUnmarshaller();
 			unmarshaller.setEventHandler(this);
@@ -79,9 +80,10 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage()
-				+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/"
-				+ loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null,
+				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
+						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
+						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}

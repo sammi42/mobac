@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+Example custom map definition that uses an existing OSMTracker atlas. 
+Atlases that very similar to OSMTracker like AndNav, BackCountry Navigator,
+Maverick and OSMAND are also supported.
+
+Supported file formats are PNG, JPG and GIF files.  
+
+-->
+<localTrackerFiles>
+	
+	<!-- Map source name as it appears in the map sources list. --> 
+	<name>Custom OSMTracker files</name>
+	
+	<!-- 
+	  Directory in which the existing atlas is located.
+	  Inside the specified folder the different zoom level directories have to present.
+	  
+	  Structure example: 0/0/0.png for the "world tile" on zoom level 0   
+	-->
+	<sourceFolder>D:\MOBAC\LocalTiles\TilesAtHome</sourceFolder>
+	
+		
+	<backgroundColor>#000000</backgroundColor>
+</localTrackerFiles>

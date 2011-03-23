@@ -14,29 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.mapsources.mappacks.region_europe_east;
+package mobac.mapsources.mappacks.openstreetmap;
 
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
-/**
- * 
- * Requires known user agent, and something else otherwise we get only a HTTP 403
- */
-public class TuristikaMapSk extends AbstractHttpMapSource {
+public class BingMapsOSM extends AbstractHttpMapSource {
 
-	public TuristikaMapSk() {
-		super("TuristikaMapSk (Slovakia)", 12, 15, TileImageType.PNG);
+	private static char[] SERVERS = { 'a', 'b', 'c' };
+	private static int SERVER_NUM = 0;
+
+	public BingMapsOSM() {
+		super("BingMapsOSM", 0, 18, TileImageType.PNG, TileUpdate.IfModifiedSince);
 	}
 
-	public String getTileUrl(int zoom, int tilex, int tiley) {
-		String sx = String.format("%09d", tilex);
-		String sy = String.format("%09d", tiley);
-		sx = sx.substring(0, 3) + "/" + sx.substring(3, 6) + "/" + sx.substring(6, 9);
-		sy = sy.substring(0, 3) + "/" + sy.substring(3, 6) + "/" + sy.substring(6, 9);
+	public String getTileUrl(int zoom, int x, int y) {
+		char server = SERVERS[SERVER_NUM];
+		SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
+		return "http://" + server + ".osm.virtualearth.net/" + zoom + "/" + x + "/" + y + ".png";
+	}
 
-		String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy + ".png";
-		return s;
+	@Override
+	public String toString() {
+		return "OpenStreetMap Bing layer";
 	}
 
 }

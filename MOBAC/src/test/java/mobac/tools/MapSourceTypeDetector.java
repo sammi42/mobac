@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.openstreetmap.MapQuest;
+import mobac.mapsources.mappacks.openstreetmap.BingMapsOSM;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -62,7 +62,7 @@ public class MapSourceTypeDetector {
 		}
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
-		testMapSource(MapQuest.class);
+		testMapSource(BingMapsOSM.class);
 	}
 
 	public static void testMapSource(Class<? extends HttpMapSource> mapSourceClass) {

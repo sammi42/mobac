@@ -205,7 +205,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public MapSource getDefaultMapSource() {
-		MapSource ms = getSourceByName("MapQuest");// DEFAULT;
+		MapSource ms = getSourceByName("BingMapsOSM");// DEFAULT;
 		if (ms != null)
 			return ms;
 		// Fallback: return first

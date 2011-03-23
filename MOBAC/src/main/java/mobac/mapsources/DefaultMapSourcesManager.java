@@ -205,7 +205,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public MapSource getDefaultMapSource() {
-		MapSource ms = getSourceByName("Mapnik");// DEFAULT;
+		MapSource ms = getSourceByName("MapQuest");// DEFAULT;
 		if (ms != null)
 			return ms;
 		// Fallback: return first

@@ -5,6 +5,7 @@ mobac.mapsources.mappacks.openstreetmap.CycleMap
 mobac.mapsources.mappacks.openstreetmap.Hikebikemap
 mobac.mapsources.mappacks.openstreetmap.OpenPisteMap
 mobac.mapsources.mappacks.openstreetmap.OpenSeaMap
+mobac.mapsources.mappacks.openstreetmap.MapQuest
 mobac.mapsources.mappacks.openstreetmap.OsmPublicTransport
 mobac.mapsources.mappacks.openstreetmap.Turaterkep
 mobac.mapsources.mappacks.openstreetmap.WanderreitkarteAbo

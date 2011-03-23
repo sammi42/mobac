@@ -13,6 +13,9 @@
  + Osmdroid SQLite: Tile image format conversion implemented
  - Osm Hiking maps removed (excluding the "Wanderreitkarte Abo" version)
  - Outdooractive.com maps removed as requested by map provider
+ + New map source: OpenStreetMap MapQuest
+ + New custom map source type: reading tiles offline from an OSMTracker/AndNav/
+    BackCountry Navigator/Maverick/OSMAND atlas (from file system)  
 
 1.9 preview 13 (2011-03-12)
  + Download to tile store without creating an atlas:  

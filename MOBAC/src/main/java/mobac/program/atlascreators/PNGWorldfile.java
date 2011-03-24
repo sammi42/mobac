@@ -42,6 +42,7 @@ public class PNGWorldfile extends Glopus {
 		}
 		createTiles();
 		writeWorldFile();
+		writeProjectionFile();
 	}
 
 	/**
@@ -73,12 +74,19 @@ public class PNGWorldfile extends Glopus {
 			double latMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
 			double latMax = mapSpace.cYToLat(yMin * tileSize, zoom);
 
-			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", (lonMax - lonMin) / width));
+			double originShift = 2 * Math.PI * 6378137 / 2.0;
+
+			double xMin1 = lonMin * originShift / 180.0;
+			double yMin1 = mercY(latMin);
+			double xMax1 = lonMax * originShift / 180.0;
+			double yMax1 = mercY(latMax);
+
+			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", (xMax1 - xMin1) / width));
 			mapWriter.write("0.0\n");
 			mapWriter.write("0.0\n");
-			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", -(latMax - latMin) / height));
-			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", lonMin));
-			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", latMax));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", -(yMax1 - yMin1) / height));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", xMin1));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", yMax1));
 
 			mapWriter.flush();
 			mapWriter.close();
@@ -87,5 +95,51 @@ public class PNGWorldfile extends Glopus {
 		} finally {
 			Utilities.closeStream(fout);
 		}
+	}
+
+	private void writeProjectionFile() throws MapCreationException {
+		FileOutputStream fout = null;
+		try {
+			fout = new FileOutputStream(new File(layerDir, mapName + ".png.aux.xml"));
+			OutputStreamWriter writer = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
+
+			writer.write("<PAMDataset><SRS>" + "PROJCS[&quot;World_Mercator&quot;,GEOGCS[&quot;GCS_WGS_1984&quot;,"
+					+ "DATUM[&quot;WGS_1984&quot;,SPHEROID[&quot;WGS_1984&quot;,6378137.0,298.257223563]],"
+					+ "PRIMEM[&quot;Greenwich&quot;,0.0],UNIT[&quot;Degree&quot;,0.0174532925199433]],"
+					+ "PROJECTION[&quot;Mercator_1SP&quot;],PARAMETER[&quot;False_Easting&quot;,0.0],"
+					+ "PARAMETER[&quot;False_Northing&quot;,0.0]," + "PARAMETER[&quot;Central_Meridian&quot;,0.0],"
+					+ "PARAMETER[&quot;latitude_of_origin&quot;,0.0],"
+					+ "UNIT[&quot;Meter&quot;,1.0]]</SRS></PAMDataset>");
+
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		} finally {
+			Utilities.closeStream(fout);
+		}
+	}
+
+	final private static double R_MAJOR = 6378137.0;
+	final private static double R_MINOR = 6356752.3142;
+
+	private double mercY(double lat) {
+		if (lat > 89.5) {
+			lat = 89.5;
+		}
+		if (lat < -89.5) {
+			lat = -89.5;
+		}
+		double temp = R_MINOR / R_MAJOR;
+		double es = 1.0 - (temp * temp);
+		double eccent = Math.sqrt(es);
+		double phi = Math.toRadians(lat);
+		double sinphi = Math.sin(phi);
+		double con = eccent * sinphi;
+		double com = 0.5 * eccent;
+		con = Math.pow(((1.0 - con) / (1.0 + con)), com);
+		double ts = Math.tan(0.5 * ((Math.PI * 0.5) - phi)) / con;
+		double y = 0 - R_MAJOR * Math.log(ts);
+		return y;
 	}
 }

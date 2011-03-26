@@ -9,6 +9,9 @@
  ! = Bug fixes since previous version
  ~ = Changes   since previous version
 
+ 0.1 beta 4: (2011-04-??)
+ + Tile-update capability tester added
+
  0.1 beta 3: (2011-03-12)
  + Updated BeanShell map source engine 
 

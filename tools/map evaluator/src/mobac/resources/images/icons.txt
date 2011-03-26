@@ -1,5 +1,9 @@
 Toolbar Icons by Ruby Software
-http://www.iconarchive.com/category/application/toolbar-icons-by-ruby-software.html
+	http://www.iconshut.com/application-icons/1186-toolbar-icons.html
 
 help-icon:
-http://commons.wikimedia.org/wiki/File:Torchlight_help_icon.svg
+	http://commons.wikimedia.org/wiki/File:Torchlight_help_icon.svg
+
+capabilities-icon.png:
+	Scrap Icons By Deleket Application Icons
+	http://www.iconshut.com/application-icons/1166-scrap-icons.html

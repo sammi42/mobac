@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,6 +34,11 @@ import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.mapsources.mappacks.google.GoogleMaps;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.ProgramInfo;
+import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.model.EastNorthCoordinate;
+import mobac.tools.MapSourceCapabilityDetector;
+import mobac.tools.MapSourceCapabilityGUI;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
@@ -210,10 +217,59 @@ public class MapEvaluator extends JFrame {
 			}
 		});
 		toolBar.add(button);
+
+		button = new JButton("Test Capabilities",
+				Utilities.loadResourceImageIcon("capabilities-icon.png"));
+		button.setToolTipText("<html>Test the tile-update capabilities for the current map<br>"
+				+ "using the current center of the map as test point</html>");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				testCapabilities();
+			}
+		});
+		toolBar.add(button);
+
 		button = new JButton("Help", Utilities.loadResourceImageIcon("help-icon.png"));
 		button.setToolTipText("Show help dialog");
 		button.addActionListener(new HelpAction());
 		toolBar.add(button);
+	}
+
+	private void testCapabilities() {
+		final MapSource mapSource = previewMap.getMapSource();
+		final EastNorthCoordinate coordinate = previewMap.getCenterCoordinate();
+
+		final List<MapSourceCapabilityDetector> result = new ArrayList<MapSourceCapabilityDetector>();
+		Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				MapSourceCapabilityGUI gui = null;
+				try {
+					gui = new MapSourceCapabilityGUI(result);
+					gui.setWorkerThread(Thread.currentThread());
+					gui.setVisible(true);
+					for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
+						MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector(
+								(HttpMapSource) mapSource, coordinate, zoom);
+						if (!gui.isVisible())
+							return;
+						mstd.testMapSource();
+						result.add(mstd);
+						gui.refresh();
+						Utilities.checkForInterruption();
+					}
+					gui.toFront();
+				} catch (InterruptedException e) {
+				} finally {
+					gui.workerFinished();
+				}
+			}
+
+		};
+		new Thread(r).start();
 	}
 
 	private void executeCode() {

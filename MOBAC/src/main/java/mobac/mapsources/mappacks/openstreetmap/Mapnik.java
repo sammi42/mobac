@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import mobac.exceptions.TileException;
-import mobac.program.interfaces.HttpMapSource;
 
 public class Mapnik extends AbstractOsmTileSource {
 
@@ -54,8 +53,8 @@ public class Mapnik extends AbstractOsmTileSource {
 		return MAP_MAPNIK + super.getTileUrl(zoom, tilex, tiley);
 	}
 
-	public HttpMapSource.TileUpdate getTileUpdate() {
-		return HttpMapSource.TileUpdate.IfNoneMatch;
+	public TileUpdate getTileUpdate() {
+		return TileUpdate.IfNoneMatch;
 	}
 
 	@Override

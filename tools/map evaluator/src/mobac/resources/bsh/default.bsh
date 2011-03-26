@@ -17,3 +17,6 @@ tileType = "png"; // required - image format "png" "jpg" or "gif"
 tileSize = 256; // optional
 minZoom = 0;    // optional
 maxZoom = 22;   // optional
+
+tileUpdate = TileUpdate.None; // optional - possibilities: 
+// TileUpdate.IfNoneMatch, TileUpdate.ETag, TileUpdate.IfModifiedSince, TileUpdate.LastModified, TileUpdate.None 

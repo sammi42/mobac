@@ -16,4 +16,6 @@ String getTileUrl( int zoom, int x, int y ) {
   }
   return "http://r0.ortho.tiles.virtualearth.net/tiles/r" + tileNum + ".png?g=45";
 }
+minZoom=1;
 tileType="png";
+tileUpdate=TileUpdate.IfNoneMatch;

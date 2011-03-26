@@ -9,3 +9,4 @@ String getTileUrl( int zoom, int x, int y ) {
   return "http://maps.yimg.com/hw/tile?locale=en&imgtype=png&yimgv=1.2&v=4.1&x=" + x + "&y=" + yahooY + "+6163&z=" + yahooZoom;
 }
 tileType = "jpg";
+tileUpdate = TileUpdate.IfModifiedSince;

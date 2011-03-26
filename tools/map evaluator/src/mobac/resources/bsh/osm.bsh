@@ -10,3 +10,4 @@ String getTileUrl( int zoom, int x, int y ) {
   return baseUrl + zoom + "/" + x + "/" + y + ".png";    
 }
 tileType = "png";
+tileUpdate = TileUpdate.IfModifiedSince;

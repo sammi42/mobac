@@ -10,6 +10,7 @@ tileType = "png"; // required; valid values: "jpg" "png" or "gif"
 tileSize = 256; // optional
 minZoom = 0;    // optional
 maxZoom = 22;   // optional
+tileUpdate = TileUpdate.IfModifiedSince; // optional
 
 /**
  This method is called for each tile: input parameters for this script: "zoom", "x" and "y"

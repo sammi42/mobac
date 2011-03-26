@@ -108,7 +108,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	public void settingsSave() {
 		Settings settings = Settings.getInstance();
 		settings.mapviewZoom = getZoom();
-		settings.mapviewCenterCoordinate = getPositionCoordinate();
+		settings.mapviewCenterCoordinate = getCenterCoordinate();
 		settings.mapviewGridZoom = gridZoom;
 		settings.mapviewMapSource = mapSource.getName();
 		settings.mapviewSelectionMin = iSelectionMin;
@@ -276,13 +276,19 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		setZoom(bookmark.getZoom());
 	}
 
-	public EastNorthCoordinate getPositionCoordinate() {
+	/**
+	 * @return Coordinate of the point in the center of the currently displayed map region
+	 */
+	public EastNorthCoordinate getCenterCoordinate() {
 		MapSpace mapSpace = mapSource.getMapSpace();
 		double lon = mapSpace.cXToLon(center.x, zoom);
 		double lat = mapSpace.cYToLat(center.y, zoom);
 		return new EastNorthCoordinate(lat, lon);
 	}
 
+	/**
+	 * @return Coordinate of the top left corner visible regarding the current map source (pixel)
+	 */
 	public Point getTopLeftCoordinate() {
 		return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
 	}

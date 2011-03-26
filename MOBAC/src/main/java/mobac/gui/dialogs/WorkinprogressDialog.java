@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import javax.swing.ImageIcon;
@@ -42,6 +43,10 @@ public class WorkinprogressDialog extends JDialog implements WindowListener {
 
 	private final ThreadFactory threadFactory;
 	private Thread workerThread;
+
+	public WorkinprogressDialog(Frame owner, String title) {
+		this(owner, title, Executors.defaultThreadFactory());
+	}
 
 	public WorkinprogressDialog(Frame owner, String title, ThreadFactory threadFactory) {
 		super(owner, title, true);
@@ -138,8 +143,8 @@ public class WorkinprogressDialog extends JDialog implements WindowListener {
 
 		parentFrame.setVisible(true);
 
-		final WorkinprogressDialog dlg = new WorkinprogressDialog(parentFrame, "Progress", DelayedInterruptThread
-				.createThreadFactory());
+		final WorkinprogressDialog dlg = new WorkinprogressDialog(parentFrame, "Progress",
+				DelayedInterruptThread.createThreadFactory());
 
 		final Thread t = new Thread() {
 

@@ -48,9 +48,11 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	}
 
 	public BeanShellHttpMapSource(String code) throws EvalError {
-		super("", 0, 0, TileImageType.PNG);
+		super("", 0, 0, TileImageType.PNG, TileUpdate.None);
 		name = "BeanShell map source " + NUM++;
 		i = new Interpreter();
+
+		i.eval("import mobac.program.interfaces.HttpMapSource.TileUpdate;");
 		i.eval("import java.net.HttpURLConnection;");
 		i.eval("import mobac.utilities.beanshell.*;");
 		i.eval(code);
@@ -78,6 +80,9 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 			tileType = TileImageType.getTileImageType((String) o);
 		else
 			throw new EvalError("tileType definition missing", null, null);
+		o = i.get("tileUpdate");
+		if (o != null)
+			tileUpdate = (TileUpdate) o;
 	}
 
 	@Override
@@ -140,7 +145,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 
 	@Override
 	public TileUpdate getTileUpdate() {
-		return TileUpdate.None;
+		return tileUpdate;
 	}
 
 	public Color getBackgroundColor() {

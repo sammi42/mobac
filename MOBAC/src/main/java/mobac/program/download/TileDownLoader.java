@@ -166,8 +166,12 @@ public class TileDownLoader {
 			throw new DownloadFailedException(conn, code);
 
 		String contentType = conn.getContentType();
-		if (contentType != null && !contentType.startsWith("image/"))
+		if (contentType != null && !contentType.startsWith("image/")) {
+			if (log.isTraceEnabled() && contentType.startsWith("text/")) {
+				log.trace("Content (" + contentType + "): " + new String(data));
+			}
 			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
+		}
 
 		String eTag = conn.getHeaderField("ETag");
 		long timeLastModified = conn.getLastModified();
@@ -344,9 +348,7 @@ public class TileDownLoader {
 	protected static boolean isTileNewer(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		long oldLastModified = tile.getTimeLastModified();
 		if (oldLastModified <= 0) {
-			log
-					.warn("Tile age comparison not possible: "
-							+ "tile in tilestore does not contain lastModified attribute");
+			log.warn("Tile age comparison not possible: " + "tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());

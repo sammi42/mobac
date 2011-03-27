@@ -16,16 +16,14 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
-import mobac.mapsources.AbstractHttpMapSource;
-import mobac.program.model.TileImageType;
-
-public class BingMapsOSM extends AbstractHttpMapSource {
+public class BingMapsOSM extends AbstractOsmMapSource {
 
 	private static char[] SERVERS = { 'a', 'b', 'c' };
 	private static int SERVER_NUM = 0;
 
 	public BingMapsOSM() {
-		super("BingMapsOSM", 0, 18, TileImageType.PNG, TileUpdate.IfModifiedSince);
+		super("BingMapsOSM");
+		tileUpdate = TileUpdate.IfModifiedSince;
 	}
 
 	public String getTileUrl(int zoom, int x, int y) {

@@ -18,7 +18,7 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 import mobac.program.interfaces.HttpMapSource;
 
-public class MapQuest extends AbstractOsmTileSource {
+public class MapQuest extends AbstractOsmMapSource {
 	
 	private static final String BASE_URL = "http://otile1.mqcdn.com/tiles/1.0.0/osm/";
 

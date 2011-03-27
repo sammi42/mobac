@@ -21,7 +21,7 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 import mobac.program.interfaces.HttpMapSource;
 
-public class OsmPublicTransport extends AbstractOsmTileSource {
+public class OsmPublicTransport extends AbstractOsmMapSource {
 
 	private static final String PATTERN = "http://tile.xn--pnvkarte-m4a.de/tilegen/%d/%d/%d.png";
 

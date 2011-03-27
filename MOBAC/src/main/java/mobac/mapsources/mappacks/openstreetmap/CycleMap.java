@@ -18,7 +18,7 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 import mobac.program.interfaces.HttpMapSource;
 
-public class CycleMap extends AbstractOsmTileSource {
+public class CycleMap extends AbstractOsmMapSource {
 
 	private static final String PATTERN = "http://%s.andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png";
 

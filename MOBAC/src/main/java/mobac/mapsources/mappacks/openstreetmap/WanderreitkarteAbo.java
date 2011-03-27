@@ -21,7 +21,7 @@ import java.io.IOException;
 import mobac.exceptions.TileException;
 import mobac.program.model.Settings;
 
-public class WanderreitkarteAbo extends AbstractOsmTileSource {
+public class WanderreitkarteAbo extends AbstractOsmMapSource {
 
 	public static final String ABO = "http://abo.wanderreitkarte.de";
 

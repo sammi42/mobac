@@ -23,9 +23,9 @@ import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
-public abstract class AbstractOsmTileSource extends AbstractHttpMapSource implements MapSourceTextAttribution {
+public abstract class AbstractOsmMapSource extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
-	public AbstractOsmTileSource(String name) {
+	public AbstractOsmMapSource(String name) {
 		super(name, 0, 18, TileImageType.PNG);
 	}
 

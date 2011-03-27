@@ -21,7 +21,7 @@ import java.util.concurrent.Semaphore;
 
 import mobac.exceptions.TileException;
 
-public class Mapnik extends AbstractOsmTileSource {
+public class Mapnik extends AbstractOsmMapSource {
 
 	private static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 

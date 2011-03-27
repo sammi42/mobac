@@ -56,7 +56,7 @@ public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSour
 		return "http://openstreetmap.org";
 	}
 
-	public static abstract class AbstractOpenPisteMap extends AbstractOsmTileSource {
+	public static abstract class AbstractOpenPisteMap extends AbstractOsmMapSource {
 
 		public AbstractOpenPisteMap(String name) {
 			super(name);

@@ -18,7 +18,7 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 import mobac.program.interfaces.HttpMapSource;
 
-public class TilesAtHome extends AbstractOsmTileSource {
+public class TilesAtHome extends AbstractOsmMapSource {
 	
 	private static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles/tile";
 

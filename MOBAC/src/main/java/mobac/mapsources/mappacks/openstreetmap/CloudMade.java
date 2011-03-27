@@ -21,7 +21,7 @@ import mobac.mapsources.MapSourceUrlUpdater;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.utilities.Charsets;
 
-public class CloudMade extends AbstractOsmTileSource {
+public class CloudMade extends AbstractOsmMapSource {
 
 	static {
 		// Initialize the custom CludMade loader

@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.exceptions.TileException;
 import mobac.mapsources.mapspace.MapSpaceFactory;
-import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.MapSourceLoaderInfo;
@@ -45,7 +45,7 @@ import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
 @XmlRootElement(name = "localTrackerFiles")
-public class CustomLocalTrackerFileMapSource implements MapSource {
+public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
 
 	private MapSourceLoaderInfo loaderInfo = null;
 

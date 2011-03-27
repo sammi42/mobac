@@ -19,6 +19,8 @@ package mobac.program;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -32,6 +34,7 @@ import mobac.program.download.DownloadJobProducerThread;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.DownloadableElement;
+import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.AtlasOutputFormat;
@@ -135,19 +138,29 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		System.gc();
 	}
 
+	/**
+	 * Create atlas: For each map download the tiles and perform atlas/map creation
+	 */
 	protected void createAtlas() throws InterruptedException, IOException {
 
-		/***
-		 * In this section of code below, atlas is created.
-		 **/
-		long totalNrOfTiles = atlas.calculateTilesToDownload();
+		long totalNrOfOnlineTiles = atlas.calculateTilesToDownload();
 
-		if (totalNrOfTiles > 500000) {
+		for (LayerInterface l : atlas) {
+			for (MapInterface m : l) {
+				// Offline map sources are not relevant for the maximum tile limit.
+				if (m.getMapSource() instanceof FileBasedMapSource)
+					totalNrOfOnlineTiles -= m.calculateTilesToDownload();
+			}
+		}
+
+		if (totalNrOfOnlineTiles > 500000) {
+			NumberFormat f = DecimalFormat.getInstance();
 			JOptionPane.showMessageDialog(null, "Mobile Atlas Creator has detected that you are trying to\n"
 					+ "download an extra ordinary large atlas " + "with a very high number of tiles.\n"
 					+ "Please reduce the selected areas on high zoom levels and try again.\n"
-					+ "The maximum allowed amount of tiles per atlas is 500000", "Atlas download prohibited",
-					JOptionPane.ERROR_MESSAGE);
+					+ "The maximum allowed amount of tiles per atlas is " + f.format(500000)
+					+ "\nThe number of tile in the currently selected atlas is: " + f.format(totalNrOfOnlineTiles),
+					"Atlas download prohibited", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {

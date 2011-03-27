@@ -27,6 +27,7 @@ import java.util.Map;
 
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.HttpMapSource.TileUpdate;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
@@ -250,6 +251,18 @@ public class MapSourceCapabilityDetector {
 
 	public String getContentType() {
 		return contentType;
+	}
+
+	public TileUpdate getRecommendedTileUpdate() {
+		if (ifNoneMatchSupported)
+			return TileUpdate.IfNoneMatch;
+		if (ifModifiedSinceSupported)
+			return TileUpdate.IfModifiedSince;
+		if (eTagPresent)
+			return TileUpdate.ETag;
+		if (lastModifiedTimePresent)
+			return TileUpdate.LastModified;
+		return TileUpdate.None;
 	}
 
 	private static String b2s(boolean b) {

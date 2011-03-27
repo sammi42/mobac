@@ -53,12 +53,13 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 		this.result = result;
 		table = new JTable(new Model());
 		table.setDefaultRenderer(Object.class, new Renderer());
+		table.getColumnModel().getColumn(1).setMaxWidth(100);
 		button = new JButton("Detection running - abort detection");
 		button.addActionListener(this);
 		add(table.getTableHeader(), BorderLayout.NORTH);
 		add(table, BorderLayout.CENTER);
 		add(button, BorderLayout.SOUTH);
-		setSize(500, 500);
+		setSize(800, 500);
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
 	}
@@ -109,21 +110,23 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 			case 1:
 				return mscd.getZoom();
 			case 2:
-				return mscd.iseTagPresent();
+				return mscd.getRecommendedTileUpdate();
 			case 3:
-				return mscd.isLastModifiedTimePresent();
+				return mscd.iseTagPresent();
 			case 4:
-				return mscd.isIfNoneMatchSupported();
+				return mscd.isLastModifiedTimePresent();
 			case 5:
-				return mscd.isIfModifiedSinceSupported();
+				return mscd.isIfNoneMatchSupported();
 			case 6:
+				return mscd.isIfModifiedSinceSupported();
+			case 7:
 				return mscd.getContentType();
 			}
 			return null;
 		}
 
 		public int getColumnCount() {
-			return 7;
+			return 8;
 		}
 
 		public String getColumnName(int column) {
@@ -133,14 +136,16 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 			case 1:
 				return "Zoom";
 			case 2:
-				return "eTag";
+				return "tileUpdate recommendation";
 			case 3:
-				return "LastModified";
+				return "eTag";
 			case 4:
-				return "IfNoneMatch";
+				return "LastModified";
 			case 5:
-				return "IfModifiedSince";
+				return "IfNoneMatch";
 			case 6:
+				return "IfModifiedSince";
+			case 7:
 				return "Content type";
 			}
 			return null;
@@ -156,7 +161,7 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 			this.setHorizontalAlignment(JLabel.CENTER);
 			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
 					row, column);
-			if ((column > 1) && (value != null) && (value instanceof Boolean) && ((Boolean) value))
+			if ((column > 2) && (value != null) && (value instanceof Boolean) && ((Boolean) value))
 				c.setBackground(Color.GREEN);
 			else
 				c.setBackground(Color.WHITE);

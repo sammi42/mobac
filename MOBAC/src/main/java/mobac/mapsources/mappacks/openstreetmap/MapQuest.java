@@ -16,21 +16,43 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.openstreetmap;
 
+import java.io.IOException;
+import java.util.concurrent.Semaphore;
+
+import mobac.exceptions.TileException;
 import mobac.program.interfaces.HttpMapSource;
 
 public class MapQuest extends AbstractOsmMapSource {
-	
-	private static final String BASE_URL = "http://otile1.mqcdn.com/tiles/1.0.0/osm/";
+
+	private static String[] SERVERS = { "otile1", "otile2", "otile3", "otile4" };
+	private static int SERVER_NUM = 0;
+
+	private static final Semaphore SEM = new Semaphore(2);
 
 	public MapQuest() {
 		super("MapQuest");
-		this.maxZoom = 18;
-		this.tileUpdate = HttpMapSource.TileUpdate.IfModifiedSince;
+		minZoom = 2;
+		maxZoom = 18;
+		tileUpdate = HttpMapSource.TileUpdate.IfModifiedSince;
+	}
+
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+			InterruptedException {
+		SEM.acquire();
+		try {
+			return super.getTileData(zoom, x, y, loadMethod);
+		} finally {
+			SEM.release();
+		}
 	}
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return BASE_URL + super.getTileUrl(zoom, tilex, tiley);
+		String server = SERVERS[SERVER_NUM];
+		SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
+		String baseUrl = "http://" + server + ".mqcdn.com/tiles/1.0.0/osm";
+		return baseUrl + super.getTileUrl(zoom, tilex, tiley);
 	}
 
 	@Override

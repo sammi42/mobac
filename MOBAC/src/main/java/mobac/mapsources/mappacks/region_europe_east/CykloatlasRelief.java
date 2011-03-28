@@ -28,7 +28,6 @@ import mobac.program.Logging;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
-import mobac.program.tilestore.TileStoreEntry;
 
 /**
  * Relief only
@@ -60,10 +59,7 @@ public class CykloatlasRelief extends AbstractHttpMapSource {
 			return super.getTileImage(zoom, x, y, loadMethod);
 		} catch (FileNotFoundException e) {
 			TileStore ts = TileStore.getInstance();
-			long time = System.currentTimeMillis();
-			// We set the tile data to an empty array because we can not store null
-			TileStoreEntry entry = ts.createNewEntry(x, y, zoom, new byte[] {}, time, time + (1000 * 60 * 60 * 60), "");
-			ts.putTile(entry, this);
+			ts.putTile(ts.createNewEmptyEntry(x, y, zoom), this);
 		} catch (Exception e) {
 			Logging.LOG.error("Unknown error in " + this.getClass().getName(), e);
 		}

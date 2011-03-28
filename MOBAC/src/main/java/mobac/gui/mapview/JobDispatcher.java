@@ -34,7 +34,7 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 	private static final Logger log = Logger.getLogger(JobDispatcher.class);
 	private static final JobDispatcher INSTANCE = new JobDispatcher();
 
-	private static final int WORKER_THREAD_MAX_COUNT = 6;
+	private static final int WORKER_THREAD_MAX_COUNT = 5;
 
 	/**
 	 * Specifies the time span in seconds that a worker thread waits for new jobs to perform. If the time span has

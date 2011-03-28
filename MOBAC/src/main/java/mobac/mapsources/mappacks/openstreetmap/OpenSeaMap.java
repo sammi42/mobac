@@ -21,11 +21,10 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
-import mobac.program.tilestore.TileStoreEntry;
 import mobac.utilities.Utilities;
 
 /**
- *@see OpenSeaMapLayer
+ * @see OpenSeaMapLayer
  */
 public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSourceTextAttribution {
 
@@ -85,11 +84,7 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 				return image;
 			} catch (FileNotFoundException e) {
 				TileStore ts = TileStore.getInstance();
-				long time = System.currentTimeMillis();
-				// We set the tile data to an empty array because we can not store null
-				TileStoreEntry entry = ts.createNewEntry(x, y, zoom, new byte[] {}, time, time + (1000 * 60 * 60 * 60),
-						"");
-				ts.putTile(entry, this);
+				ts.putTile(ts.createNewEmptyEntry(x, y, zoom), this);
 			} catch (Exception e) {
 				Logging.LOG.error("Unknown error in OpenSeaMap", e);
 			}

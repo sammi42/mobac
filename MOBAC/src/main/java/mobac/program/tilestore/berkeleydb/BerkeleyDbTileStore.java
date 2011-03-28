@@ -34,6 +34,7 @@ import java.util.TreeMap;
 
 import mobac.exceptions.TileStoreException;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 import mobac.program.tilestore.TileStoreInfo;
@@ -147,7 +148,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	@Override
 	public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
 		long time = System.currentTimeMillis();
-		long timeExpires = time + (1000 * 60 * 60 * 60);
+		long timeExpires = time + Settings.getInstance().tileDefaultExpirationTime;
 		// We set the tile data to an empty array because we can not store null
 		return new TileDbEntry(x, y, zoom, new byte[] {}, time, timeExpires, "");
 	}

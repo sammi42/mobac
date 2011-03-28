@@ -113,6 +113,7 @@ SourceForge.net: <br>
 		sources</a></li>
 		<li><a href="#BeanShellMapSource">Custom BeanShell map
 		sources</a></li>
+		<li><a href="#FileBased">Custom atlas as map source</a></li>
 		<li><a href="#CustomMapPack">Custom MapPack</a></li>
 	</ul>
 	</li>
@@ -966,6 +967,17 @@ be loaded on next start-up of MOBAC.</p>
 <p>Example file for download: <a
 	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20beanshell%20map%20source.bsh">
 Example beanshell map source.bsh</a></p>
+
+<h3><a name="FileBased">Custom atlas as map source</a></h3>
+<p>Existing atlases or locally rendered tiles can be directly
+integrated into MOBAC as custom map source without having to set-up a
+local web-server. <br>
+At the moment the formats used by OSMTracker, AndNav, BackCountry
+Navigator, Maverick and OSMAND are supported. For adding such an atlas
+as map source download the <a
+	href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/mapsources/Example%20custom%20tracker%20file%20source.xml">Example
+custom tracker file source.xml</a> file, adapt the <tt>&lt;sourceFolder&gt;</tt>
+entry and place it in the <tt>mapsources</tt> directory.</p>
 
 <h3><a name="CustomMapPack">Custom MapPack</a></h3>
 <p>Only for Java developers - TODO</p>

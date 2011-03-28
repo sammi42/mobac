@@ -9,6 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,7 +32,10 @@ import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
 import mobac.mapsources.MapEvaluatorBeanShellHttpMapSource;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
+import mobac.mapsources.custom.CustomCloudMade;
+import mobac.mapsources.loader.CustomMapSourceLoader;
 import mobac.mapsources.mappacks.google.GoogleMaps;
+import mobac.mapsources.mappacks.openstreetmap.CloudMade;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
@@ -39,6 +43,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
 import mobac.tools.MapSourceCapabilityDetector;
 import mobac.tools.MapSourceCapabilityGUI;
+import mobac.utilities.Charsets;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
@@ -55,6 +60,8 @@ public class MapEvaluator extends JFrame {
 	private JSplitPane splitPane;
 	private final LineNumberedPaper mapSourceEditor;
 
+	private final CustomMapSourceLoader xmlLoader;
+
 	public MapEvaluator() throws HeadlessException {
 		super(ProgramInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
@@ -67,6 +74,7 @@ public class MapEvaluator extends JFrame {
 
 		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
 
+		xmlLoader = new CustomMapSourceLoader(null, null);
 		mapSourceEditor = new LineNumberedPaper(3, 60);
 		try {
 			String code = Utilities.loadTextResource("bsh/default.bsh");
@@ -273,9 +281,28 @@ public class MapEvaluator extends JFrame {
 	}
 
 	private void executeCode() {
+		String code = mapSourceEditor.getText().trim();
+		if (code.startsWith("<?xml"))
+			executeXMLCode(code);
+		else
+			executeBeanShellCode(code);
+	}
+
+	private void executeXMLCode(String code) {
+		CustomCloudMade.CLOUD_MADE_CLASS = CloudMade.class;
 		try {
-			BeanShellHttpMapSource testMapSource = new MapEvaluatorBeanShellHttpMapSource(
-					mapSourceEditor.getText());
+			MapSource mapSource = xmlLoader.loadCustomMapSource(new ByteArrayInputStream(code
+					.getBytes(Charsets.UTF_8)));
+			previewMap.setMapSource(mapSource);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
+					"Error in custom code", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void executeBeanShellCode(String code) {
+		try {
+			BeanShellHttpMapSource testMapSource = new MapEvaluatorBeanShellHttpMapSource(code);
 			if (testMapSource.testCode()) {
 				previewMap.setMapSource(testMapSource);
 				return;

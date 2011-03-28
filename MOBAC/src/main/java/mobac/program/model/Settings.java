@@ -141,12 +141,12 @@ public class Settings {
 	 * Minimum expiration (in milliseconds) acceptable. If a server sets an expiration time smaller than this value it
 	 * is truncated to this value on next download.
 	 */
-	public long tileMinExpirationTime = TimeUnit.DAYS.toMillis(1);
+	public long tileMinExpirationTime = TimeUnit.DAYS.toMillis(5);
 
 	/**
 	 * Expiration time (in milliseconds) of a tile if the server does not provide an expiration time
 	 */
-	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(7);
+	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(28);
 
 	public String googleLanguage = "en";
 	public String bingLanguage = "en";

@@ -15,8 +15,14 @@
  - Outdooractive.com maps removed as requested by map provider
  + New map source: OpenStreetMap MapQuest
  + New map source: OpenStreetMap Bing layer (Mapnik powered by Microsoft)
+ ~ Maximum zoom level of OpenStreetMap Mapnik decreased to 16 (zoom levels 
+    17+ are blocked on server side because of high server stress for 
+    generating such tiles) 
  + New custom map source type: reading tiles offline from an OSMTracker/AndNav/
-    BackCountry Navigator/Maverick/OSMAND atlas (from file system)  
+    BackCountry Navigator/Maverick/OSMAND atlas (from file system)
+ ~ Atlas format PNG+Worldfile: projection file for Arcgis added and calculation 
+    improved (patch by user mmartin2)
+ 
 
 1.9 preview 13 (2011-03-12)
  + Download to tile store without creating an atlas:  

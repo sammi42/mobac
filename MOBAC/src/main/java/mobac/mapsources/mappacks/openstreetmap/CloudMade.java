@@ -18,7 +18,6 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapSourceUrlUpdater;
-import mobac.program.interfaces.HttpMapSource;
 import mobac.utilities.Charsets;
 
 public class CloudMade extends AbstractOsmMapSource {
@@ -51,7 +50,7 @@ public class CloudMade extends AbstractOsmMapSource {
 		this.displayName = displayName;
 		this.styleID = styleID;
 		this.maxZoom = 18;
-		this.tileUpdate = HttpMapSource.TileUpdate.ETag;
+		this.tileUpdate = TileUpdate.IfModifiedSince;
 	}
 
 	public CloudMade() {

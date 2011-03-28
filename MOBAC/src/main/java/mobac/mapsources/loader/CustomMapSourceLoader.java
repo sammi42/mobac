@@ -1,6 +1,7 @@
 package mobac.mapsources.loader;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -12,6 +13,7 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
+import mobac.exceptions.MapSourceCreateException;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.CustomCloudMade;
 import mobac.mapsources.custom.CustomLocalTrackerFileMapSource;
@@ -32,30 +34,28 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 	private final MapSourcesManager mapSourcesManager;
 	private final File mapSourcesDir;
 
+	private final Unmarshaller unmarshaller;
+
 	public CustomMapSourceLoader(MapSourcesManager mapSourceManager, File mapSourcesDir) {
 		this.mapSourcesManager = mapSourceManager;
 		this.mapSourcesDir = mapSourcesDir;
-	}
-
-	public void loadCustomMapSources() {
-		JAXBContext context;
-		Unmarshaller unmarshaller;
 		try {
-
 			Class<?>[] customMapClasses = new Class[] { CustomMapSource.class, CustomWmsMapSource.class,
 					CustomMultiLayerMapSource.class, CustomCloudMade.class, CustomLocalTrackerFileMapSource.class };
-			context = JAXBContext.newInstance(customMapClasses);
+			JAXBContext context = JAXBContext.newInstance(customMapClasses);
 			unmarshaller = context.createUnmarshaller();
 			unmarshaller.setEventHandler(this);
 		} catch (JAXBException e) {
 			throw new RuntimeException("Unable to create JAXB context for custom map sources", e);
 		}
+	}
+
+	public void loadCustomMapSources() {
 		File[] customMapSourceFiles = mapSourcesDir.listFiles(new FileExtFilter(".xml"));
 		for (File f : customMapSourceFiles) {
 			try {
 				MapSource customMapSource;
 				Object o = unmarshaller.unmarshal(f);
-				;
 				if (o instanceof WrappedMapSource)
 					customMapSource = ((WrappedMapSource) o).getMapSource();
 				else
@@ -67,6 +67,18 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
 			}
 		}
+	}
+
+	public MapSource loadCustomMapSource(InputStream in) throws MapSourceCreateException, JAXBException {
+		MapSource customMapSource;
+		Object o = unmarshaller.unmarshal(in);
+		if (o instanceof WrappedMapSource)
+			customMapSource = ((WrappedMapSource) o).getMapSource();
+		else
+			customMapSource = (MapSource) o;
+		customMapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, null));
+		log.trace("Custom map source loaded: " + customMapSource);
+		return customMapSource;
 	}
 
 	public boolean handleEvent(ValidationEvent event) {

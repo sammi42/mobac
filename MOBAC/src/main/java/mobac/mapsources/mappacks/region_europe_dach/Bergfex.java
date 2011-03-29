@@ -30,7 +30,7 @@ public class Bergfex extends AbstractHttpMapSource {
 	/**
 	 * 2009-02-20: server 4 causes some problems - commented out
 	 */
-	static final byte[] SERVER_IDS = { 2, 3 /* , 4 */};
+	static final byte[] SERVER_IDS = { 4, 5 };
 
 	int SERVERNUM = 0;
 

@@ -26,13 +26,14 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.rmp.BoundingRect;
 import mobac.program.atlascreators.impl.rmp.MultiImage;
 import mobac.program.atlascreators.impl.rmp.RmpLayer;
+import mobac.program.atlascreators.impl.rmp.RmpLayer.TLMEntry;
 import mobac.program.atlascreators.impl.rmp.RmpTools;
 import mobac.program.atlascreators.impl.rmp.RmpWriter;
 import mobac.program.atlascreators.impl.rmp.Tiledata;
-import mobac.program.atlascreators.impl.rmp.RmpLayer.TLMEntry;
 import mobac.program.atlascreators.impl.rmp.rmpfile.Bmp2bit;
 import mobac.program.atlascreators.impl.rmp.rmpfile.Bmp4bit;
 import mobac.program.interfaces.AtlasInterface;
@@ -40,11 +41,16 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.TileImageDataWriter;
+import mobac.program.model.TileImageParameters.Name;
+import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName(value = "Magellan (RMP)", type = "Rmp")
+@SupportedParameters(names = { Name.format })
 public class MagellanRmp extends AtlasCreator {
 
+	TileImageDataWriter tileWriter = null;
 	RmpWriter rmpWriter = null;
 	String imageName = null;
 	int layerNum = 0;
@@ -73,6 +79,10 @@ public class MagellanRmp extends AtlasCreator {
 				Point min = map.getMinTileCoordinate();
 				if (max.x - min.x > 18000 || max.y - min.y > 18000)
 					throw new AtlasTestException("Map too large. Max size 18000x18000");
+				if (map.getParameters() != null) {
+					if (!(map.getParameters().getFormat().getDataWriter() instanceof TileImageJpegDataWriter))
+						throw new AtlasTestException("Only JPEG formats are supported", map);
+				}
 			}
 		}
 	}
@@ -80,6 +90,11 @@ public class MagellanRmp extends AtlasCreator {
 	@Override
 	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
 		super.initializeMap(map, tarTileIndex);
+		if (parameters != null) {
+			tileWriter = parameters.getFormat().getDataWriter();
+		} else
+			tileWriter = new TileImageJpegDataWriter(0.9);
+		tileWriter.initialize();
 	}
 
 	@Override
@@ -185,7 +200,7 @@ public class MagellanRmp extends AtlasCreator {
 				/* --- Create tile --- */
 				BoundingRect subrect = new BoundingRect(y * tile_height - 90, (y + 1) * tile_height - 90, x
 						* tile_width - 180, (x + 1) * tile_width - 180);
-				Tiledata td = new Tiledata();
+				Tiledata td = new Tiledata(tileWriter);
 				td.posx = x;
 				td.posy = y;
 				td.rect = subrect;
@@ -195,8 +210,7 @@ public class MagellanRmp extends AtlasCreator {
 		}
 
 		/* --- Build the TLM file --- */
-		rmpLayer
-				.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect.getNorth(), rect.getSouth());
+		rmpLayer.buildTLMFile(tile_width, tile_height, rect.getWest(), rect.getEast(), rect.getNorth(), rect.getSouth());
 
 		return rmpLayer;
 	}

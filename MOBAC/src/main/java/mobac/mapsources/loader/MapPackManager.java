@@ -53,8 +53,8 @@ import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
-import mobac.program.model.Settings;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
+import mobac.program.model.Settings;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.FileExtFilter;
@@ -125,8 +125,6 @@ public class MapPackManager {
 				loadMapPack(mapPackFile, mapSourcesManager);
 				if (oldMapPackFile.isFile())
 					Utilities.deleteFile(oldMapPackFile);
-			} catch (IOException e) {
-				log.error("Failed to load map pack: " + mapPackFile, e);
 			} catch (MapSourceCreateException e) {
 				if (oldMapPackFile.isFile()) {
 					mapPackFile.deleteOnExit();
@@ -143,6 +141,10 @@ public class MapPackManager {
 					}
 				}
 				GUIExceptionHandler.processException(e);
+			} catch (CertificateException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new IOException("Failed to load map pack: " + mapPackFile, e);
 			}
 		}
 	}
@@ -150,20 +152,22 @@ public class MapPackManager {
 	public void loadMapPack(File mapPackFile, MapSourcesManager mapSourcesManager) throws CertificateException,
 			IOException, MapSourceCreateException {
 		// testMapPack(mapPackFile);
+		URLClassLoader urlCl;
 		URL url = mapPackFile.toURI().toURL();
-		URLClassLoader urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, url, ClassLoader.getSystemClassLoader());
+		urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, url, ClassLoader.getSystemClassLoader());
 		InputStream manifestIn = urlCl.getResourceAsStream("META-INF/MANIFEST.MF");
 		String rev = null;
 		if (manifestIn != null) {
 			Manifest mf = new Manifest(manifestIn);
 			rev = mf.getMainAttributes().getValue("MapPackRevision");
-			rev = Integer.toString(Utilities.parseSVNRevision(rev));
-			log.debug(rev);
 			manifestIn.close();
+			if (rev != null)
+				rev = Integer.toString(Utilities.parseSVNRevision(rev));
 			mf = null;
 		}
 		MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev);
 		final Iterator<MapSource> iterator = ServiceLoader.load(MapSource.class, urlCl).iterator();
+
 		while (iterator.hasNext()) {
 			try {
 				MapSource ms = iterator.next();

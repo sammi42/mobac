@@ -90,7 +90,7 @@ public class Settings {
 	public List<Integer> selectedZoomLevels = null;
 
 	@XmlElement(nillable = false)
-	public String mapviewMapSource = "Mapnik";
+	public String mapviewMapSource = null;
 
 	public String elementName = "Layer name";
 

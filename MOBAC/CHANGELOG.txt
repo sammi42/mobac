@@ -9,10 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 preview 14 (2011-03-17)
- + Osmdroid SQLite: Tile image format conversion implemented
- - Osm Hiking maps removed (excluding the "Wanderreitkarte Abo" version)
- - Outdooractive.com maps removed as requested by map provider
+1.9 beta 1 (2011-03-29)
  + New map source: OpenStreetMap MapQuest
  + New map source: OpenStreetMap Bing layer (Mapnik powered by Microsoft)
  ~ Maximum zoom level of OpenStreetMap Mapnik decreased to 16 (zoom levels 
@@ -22,7 +19,12 @@
     BackCountry Navigator/Maverick/OSMAND atlas (from file system)
  ~ Atlas format PNG+Worldfile: projection file for Arcgis added and calculation 
     improved (patch by user mmartin2)
- 
+ ~ JPEG compression level selectable for Magellan (RMP) atlas format
+
+1.9 preview 14 (2011-03-17)
+ + Osmdroid SQLite: Tile image format conversion implemented
+ - Osm Hiking maps removed (excluding the "Wanderreitkarte Abo" version)
+ - Outdooractive.com maps removed as requested by map provider
 
 1.9 preview 13 (2011-03-12)
  + Download to tile store without creating an atlas:  

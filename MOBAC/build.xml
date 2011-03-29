@@ -169,6 +169,7 @@
 			-keep class mobac.program.model.* { public *; }
 			-keep class mobac.program.jaxb.* { public *; }
 			-keep class mobac.program.interfaces.* { public *; }
+			-keep class mobac.program.download.UserAgent { public *; }
 			-keep class mobac.utilities.beanshell.* { public *; }
 			-keep class mobac.utilities.tar.TarIndex { public *; }
 			-keep class mobac.utilities.tar.TarIndexedArchive { public *; }

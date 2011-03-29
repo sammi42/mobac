@@ -16,7 +16,10 @@
  ******************************************************************************/
 package mobac.mapsources.mappacks.region_europe_east;
 
+import java.net.HttpURLConnection;
+
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.download.UserAgent;
 import mobac.program.model.TileImageType;
 
 /**
@@ -26,17 +29,25 @@ import mobac.program.model.TileImageType;
 public class TuristikaMapSk extends AbstractHttpMapSource {
 
 	public TuristikaMapSk() {
-		super("TuristikaMapSk (Slovakia)", 12, 15, TileImageType.PNG);
+		super("TuristikaMapSk (Slovakia)", 13, 15, TileImageType.PNG);
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		String sx = String.format("%09d", tilex);
-		String sy = String.format("%09d", tiley);
-		sx = sx.substring(0, 3) + "/" + sx.substring(3, 6) + "/" + sx.substring(6, 9);
-		sy = sy.substring(0, 3) + "/" + sy.substring(3, 6) + "/" + sy.substring(6, 9);
+		// String sx = String.format("%09d", tilex);
+		// String sy = String.format("%09d", tiley);
+		// sx = sx.substring(0, 3) + "/" + sx.substring(3, 6) + "/" + sx.substring(6, 9);
+		// sy = sy.substring(0, 3) + "/" + sy.substring(3, 6) + "/" + sy.substring(6, 9);
+		//
+		// String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy + ".png";
+		return "http://mapy.hiking.sk/tiles/topo/" + zoom + "/" + tilex + "/" + tiley + ".png";
 
-		String s = "http://www.turistickamapa.sk/tiles/sr50/" + zoom + "/" + sx + "/" + sy + ".png";
-		return s;
+	}
+
+	@Override
+	protected void prepareTileUrlConnection(HttpURLConnection conn) {
+		super.prepareTileUrlConnection(conn);
+		conn.addRequestProperty("Referer", "http://mapy.hiking.sk/");
+		conn.addRequestProperty("User-Agent", UserAgent.FF3_WIN7);
 	}
 
 }

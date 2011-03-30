@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+Supported file formats are PNG, JPG and GIF files.  
+
+-->
+<localTrackerZip>
+	
+	<!-- Map source name as it appears in the map sources list. --> 
+	<name>Custom OSMTracker ZIP</name>
+	
+	<!-- 
+	-->
+	<zipFile>D:\TileServer\Maperative\Tiles\Tiles.zip</zipFile>
+	
+		
+	<backgroundColor>#000000</backgroundColor>
+</localTrackerZip>

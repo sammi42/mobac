@@ -19,7 +19,7 @@ Supported file formats are PNG, JPG and GIF files.
 	  
 	  Structure example: 0/0/0.png for the "world tile" on zoom level 0   
 	-->
-	<sourceFolder>D:\MOBAC\LocalTiles\TilesAtHome</sourceFolder>
+	<sourceFolder>D:\TileServer\Maperative\Tiles</sourceFolder>
 	
 		
 	<backgroundColor>#000000</backgroundColor>

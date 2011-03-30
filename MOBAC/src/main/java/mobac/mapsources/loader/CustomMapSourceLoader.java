@@ -16,7 +16,7 @@ import javax.xml.bind.ValidationEventLocator;
 import mobac.exceptions.MapSourceCreateException;
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.CustomCloudMade;
-import mobac.mapsources.custom.CustomLocalTrackerFileMapSource;
+import mobac.mapsources.custom.CustomLocalTrackerFilesMapSource;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.mapsources.custom.CustomWmsMapSource;
@@ -41,7 +41,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		this.mapSourcesDir = mapSourcesDir;
 		try {
 			Class<?>[] customMapClasses = new Class[] { CustomMapSource.class, CustomWmsMapSource.class,
-					CustomMultiLayerMapSource.class, CustomCloudMade.class, CustomLocalTrackerFileMapSource.class };
+					CustomMultiLayerMapSource.class, CustomCloudMade.class, CustomLocalTrackerFilesMapSource.class };
 			JAXBContext context = JAXBContext.newInstance(customMapClasses);
 			unmarshaller = context.createUnmarshaller();
 			unmarshaller.setEventHandler(this);

@@ -24,7 +24,6 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -36,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.exceptions.TileException;
+import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.MapSpace;
@@ -45,7 +45,7 @@ import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
 @XmlRootElement(name = "localTrackerFiles")
-public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
+public class CustomLocalTrackerFilesMapSource implements FileBasedMapSource {
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
@@ -58,9 +58,9 @@ public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
 	@XmlElement(nillable = false, defaultValue = "CustomLocal")
 	private String name = "Custom";
 
-	private int minZoom = 0;
+	private int minZoom = PreviewMap.MIN_ZOOM;
 
-	private int maxZoom = 0;
+	private int maxZoom = PreviewMap.MAX_ZOOM;
 
 	@XmlElement(required = true)
 	private File sourceFolder = null;
@@ -69,7 +69,7 @@ public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
 
-	public CustomLocalTrackerFileMapSource() {
+	public CustomLocalTrackerFilesMapSource() {
 		super();
 	}
 
@@ -80,6 +80,10 @@ public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
 			initialized = true;
 			return;
 		}
+		updateZoomLevelInfo();
+	}
+
+	protected void updateZoomLevelInfo() {
 		FileFilter ff = new NumericDirFileFilter();
 		File[] zoomDirs = sourceFolder.listFiles(ff);
 		if (zoomDirs.length < 1) {
@@ -88,14 +92,21 @@ public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
 			initialized = true;
 			return;
 		}
-		Arrays.sort(zoomDirs);
-		minZoom = Integer.parseInt(zoomDirs[0].getName());
-		maxZoom = Integer.parseInt(zoomDirs[zoomDirs.length - 1].getName());
+		int min = PreviewMap.MAX_ZOOM;
+		int max = PreviewMap.MIN_ZOOM;
+		for (File file : zoomDirs) {
+			int z = Integer.parseInt(file.getName());
+			min = Math.min(min, z);
+			max = Math.max(max, z);
+		}
+		minZoom = min;
+		maxZoom = max;
 	}
 
 	protected synchronized void initialize() {
 		if (initialized)
 			return;
+		updateZoomLevelInfo();
 		try {
 			FileFilter ff = new NumericDirFileFilter();
 			for (File zDir : sourceFolder.listFiles(ff)) {
@@ -121,12 +132,10 @@ public class CustomLocalTrackerFileMapSource implements FileBasedMapSource {
 						});
 					} catch (Exception e) {
 					}
-					break;
+					return;
 				}
 			}
-
 		} finally {
-			// TODO: Check file system
 			initialized = true;
 		}
 	}

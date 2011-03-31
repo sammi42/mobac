@@ -28,7 +28,7 @@ public class WanderreitkarteAbo extends AbstractOsmMapSource {
 	public WanderreitkarteAbo() {
 		super("WanderreitkarteAbo");
 		minZoom = 2;
-		maxZoom = 17;
+		maxZoom = 16;
 	}
 
 	@Override

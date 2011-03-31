@@ -10,7 +10,8 @@
  - = Features that has been removed
 
 1.9 beta 2 (2011-04-??)
- ! Custom atlas map source
+ ! Custom atlas map source / locally generated tiles map source
+ + New map source for using tiles from zip file(s)
 
 1.9 beta 1 (2011-03-29)
  + New map source: OpenStreetMap MapQuest

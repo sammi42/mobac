@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+Supported file formats are PNG, JPG and GIF files.  
+
+-->
+<localTileZip>
+	
+	<!-- Map source name as it appears in the map sources list. --> 
+	<name>Custom map from tile zips</name>
+	
+	<!-- 
+	  Path to the zip file containing the tile.
+	  Inside the zip file the structure has to as follows: zoom/x/y.png
+	  
+	  Structure example: 0/0/0.png for the "world tile" on zoom level 0
+	  
+	  Other file extensions like "jpg", "gif" or "png.andnav2", "jpg.xyz"
+	  are also supported.   
+	-->
+	<zipFile>D:\TileServer\Maperative\Tiles\Tiles1.zip</zipFile>
+	
+	<!-- 
+	  Optionally: Multiple (1..n) zip files can be specified. 
+	  They are used in the order as they are specified. If loading 
+	  a tile from the first zip file fails MOBAC tries the second, third ...
+	-->
+	<zipFile>D:\TileServer\Maperative\Tiles\Tiles2.zip</zipFile>
+	
+		
+	<backgroundColor>#000000</backgroundColor>
+</localTileZip>

@@ -44,8 +44,8 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
-@XmlRootElement(name = "localTrackerFiles")
-public class CustomLocalTrackerFilesMapSource implements FileBasedMapSource {
+@XmlRootElement(name = "localTileFiles")
+public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
@@ -69,7 +69,7 @@ public class CustomLocalTrackerFilesMapSource implements FileBasedMapSource {
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
 
-	public CustomLocalTrackerFilesMapSource() {
+	public CustomLocalTileFilesMapSource() {
 		super();
 	}
 

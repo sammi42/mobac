@@ -8,10 +8,10 @@ Maverick and OSMAND are also supported.
 Supported file formats are PNG, JPG and GIF files.  
 
 -->
-<localTrackerFiles>
+<localTileFiles>
 	
 	<!-- Map source name as it appears in the map sources list. --> 
-	<name>Custom OSMTracker files</name>
+	<name>Custom map from tile files</name>
 	
 	<!-- 
 	  Directory in which the existing atlas is located.
@@ -23,4 +23,4 @@ Supported file formats are PNG, JPG and GIF files.
 	
 		
 	<backgroundColor>#000000</backgroundColor>
-</localTrackerFiles>
+</localTileFiles>

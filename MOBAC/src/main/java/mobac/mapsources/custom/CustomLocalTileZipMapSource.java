@@ -20,10 +20,10 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -46,8 +46,8 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
-@XmlRootElement(name = "localTrackerZip")
-public class CustomLocalTrackerZipMapSource implements FileBasedMapSource {
+@XmlRootElement(name = "localTileZip")
+public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
@@ -64,40 +64,37 @@ public class CustomLocalTrackerZipMapSource implements FileBasedMapSource {
 
 	private int maxZoom = PreviewMap.MAX_ZOOM;
 
-	@XmlElement(required = true)
-	private File zipFile = null;
+	@XmlElement(name = "zipFile", required = true)
+	private File[] zipFiles = new File[] {};
 
-	private ZipFile zip = null;
+	private LinkedList<ZipFile> zips = new LinkedList<ZipFile>();
 
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
 
-	public CustomLocalTrackerZipMapSource() {
+	public CustomLocalTileZipMapSource() {
 		super();
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
-		if (!zipFile.isFile()) {
-			JOptionPane.showMessageDialog(null, "The specified sorce zip does not exist:\nMap name: " + name
-					+ "\nZip file: " + zipFile, "\nInvaild source zip", JOptionPane.ERROR_MESSAGE);
-			initialized = true;
-			return;
-		}
 	}
 
 	protected synchronized void openZipFile() {
-		if (zip != null)
-			return;
-		try {
-			Logging.LOG.debug("Opening zip file " + zipFile.getAbsolutePath());
-			zip = new ZipFile(zipFile);
-			Logging.LOG.debug("Zip file open completed");
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "The specified sorce zip can not be read:\nMap name: " + name
-					+ "\nZip file: " + zipFile, "\nError reading zip file", JOptionPane.ERROR_MESSAGE);
-			initialized = true;
-			return;
+		for (File zipFile : zipFiles) {
+			if (!zipFile.isFile()) {
+				JOptionPane.showMessageDialog(null, "The specified sorce zip does not exist:\nMap name: " + name
+						+ "\nZip file: " + zipFile, "\nInvaild source zip", JOptionPane.ERROR_MESSAGE);
+			} else {
+				try {
+					Logging.LOG.debug("Opening zip file " + zipFile.getAbsolutePath());
+					zips.add(new ZipFile(zipFile));
+					Logging.LOG.debug("Zip file open completed");
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "The specified sorce zip can not be read:\nMap name: " + name
+							+ "\nZip file: " + zipFile, "\nError reading zip file", JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		}
 	}
 
@@ -106,7 +103,9 @@ public class CustomLocalTrackerZipMapSource implements FileBasedMapSource {
 			return;
 		try {
 			openZipFile();
-			Enumeration<? extends ZipEntry> entries = zip.entries();
+			if (zips.size() == 0)
+				return;
+			Enumeration<? extends ZipEntry> entries = zips.get(0).entries();
 			String syntax = "%d/%d/%d";
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
@@ -139,17 +138,17 @@ public class CustomLocalTrackerZipMapSource implements FileBasedMapSource {
 			initialize();
 		if (fileSyntax == null)
 			return null;
-		try {
-			ZipEntry entry = zip.getEntry(String.format(fileSyntax, zoom, x, y));
-			if (entry == null)
-				return null;
-			InputStream in = zip.getInputStream(entry);
-			byte[] data = Utilities.getInputBytes(in);
-			in.close();
-			return data;
-		} catch (FileNotFoundException e) {
-			return null;
+		ZipEntry entry = null;
+		for (ZipFile zip : zips) {
+			entry = zip.getEntry(String.format(fileSyntax, zoom, x, y));
+			if (entry != null) {
+				InputStream in = zip.getInputStream(entry);
+				byte[] data = Utilities.getInputBytes(in);
+				in.close();
+				return data;
+			}
 		}
+		return null;
 	}
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,

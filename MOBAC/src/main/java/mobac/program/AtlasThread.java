@@ -30,6 +30,9 @@ import mobac.exceptions.MapDownloadSkippedException;
 import mobac.gui.AtlasProgress;
 import mobac.gui.AtlasProgress.AtlasCreationController;
 import mobac.program.atlascreators.AtlasCreator;
+import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
+import mobac.program.atlascreators.tileprovider.MapSourceProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.download.DownloadJobProducerThread;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.DownloadJobListener;
@@ -37,6 +40,7 @@ import mobac.program.interfaces.DownloadableElement;
 import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
@@ -49,8 +53,21 @@ import org.apache.log4j.Logger;
 
 public class AtlasThread extends Thread implements DownloadJobListener, AtlasCreationController {
 
+	private static final String MSG_TILESMISSING = "Something is wrong with download of atlas tiles.\n"
+			+ "The amount of downladed tiles is not as high as it was calculated.\nTherfore tiles "
+			+ "will be missing in the created atlas.\n %d tiles are missing.\n\n"
+			+ "Are you sure you want to continue " + "and create the atlas anyway?";
+
+	private static final String MSG_DOWNLOADERRORS = "<html>Multiple tile downloads have failed. "
+			+ "Something may be wrong with your connection to the download server or your selected area. "
+			+ "<br>Do you want to:<br><br>"
+			+ "<u>Continue</u> map download and ignore the errors? (results in blank/missing tiles)<br>"
+			+ "<u>Retry</u> to download this map, by starting over?<br>"
+			+ "<u>Skip</u> the current map and continue to process other maps in the atlas?<br>"
+			+ "<u>Abort</u> the current map and atlas creation process?<br></html>";
+
+	private static final Logger log = Logger.getLogger(AtlasThread.class);
 	private static int threadNum = 0;
-	private static Logger log = Logger.getLogger(AtlasThread.class);
 
 	private File customAtlasDir = null;
 
@@ -255,83 +272,78 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		ap.setZoomLevel(zoom);
 		try {
 			tileArchive = null;
-			if (!AtlasOutputFormat.TILESTORE.equals(atlas.getOutputFormat())) {
-				String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
-				File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
-				// If something goes wrong the temp file only
-				// persists until the VM exits
-				tileArchiveFile.deleteOnExit();
-				log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
-				tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
-			} else
-				log.debug("Downloading to tile store only");
+			TileProvider mapTileProvider;
+			if (!(map instanceof FileBasedMapSource)) {
+				// For online maps we download the tiles first and then start creating the map if 
+				// we are sure we got all tiles
+				if (!AtlasOutputFormat.TILESTORE.equals(atlas.getOutputFormat())) {
+					String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
+					File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
+					// If something goes wrong the temp file only persists until the VM exits
+					tileArchiveFile.deleteOnExit();
+					log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
+					tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
+				} else
+					log.debug("Downloading to tile store only");
 
-			djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive, (DownloadableElement) map);
+				djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive, (DownloadableElement) map);
 
-			boolean failedMessageAnswered = false;
+				boolean failedMessageAnswered = false;
 
-			while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
-					|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
-				Thread.sleep(500);
-				if (!failedMessageAnswered && (jobsRetryError > 50) && !ap.ignoreDownloadErrors()) {
-					pauseResumeHandler.pause();
-					String[] answers = new String[] { "Continue", "Retry", "Skip", "Abort" };
-					String message = "<html>Multiple tile downloads have failed. "
-							+ "Something may be wrong with your connection to the "
-							+ "download server or your selected area. "
-							+ "<br>Do you want to:<br><br>"
-							+ "<u>Continue</u> map download and ignore the errors? (results in blank/missing tiles)<br>"
-							+ "<u>Retry</u> to download this map, by starting over?<br>"
-							+ "<u>Skip</u> the current map and continue to process other maps in the atlas?<br>"
-							+ "<u>Abort</u> the current map and atlas creation process?<br></html>";
-					int answer = JOptionPane.showOptionDialog(ap, message,
-							"Multiple download errors - how to proceed?", 0, JOptionPane.QUESTION_MESSAGE, null,
-							answers, answers[0]);
-					failedMessageAnswered = true;
-					switch (answer) {
-					case 0: // Continue
-						pauseResumeHandler.resume();
-						break;
-					case 1: // Retry
-						djp.cancel();
-						djp = null;
-						downloadJobDispatcher.cancelOutstandingJobs();
-						return false;
-					case 2: // Skip
-						downloadJobDispatcher.cancelOutstandingJobs();
-						throw new MapDownloadSkippedException();
-					default: // Abort or close dialog
-						downloadJobDispatcher.cancelOutstandingJobs();
-						downloadJobDispatcher.terminateAllWorkerThreads();
-						throw new InterruptedException();
+				while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
+						|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
+					Thread.sleep(500);
+					if (!failedMessageAnswered && (jobsRetryError > 50) && !ap.ignoreDownloadErrors()) {
+						pauseResumeHandler.pause();
+						String[] answers = new String[] { "Continue", "Retry", "Skip", "Abort" };
+						int answer = JOptionPane.showOptionDialog(ap, MSG_DOWNLOADERRORS,
+								"Multiple download errors - how to proceed?", 0, JOptionPane.QUESTION_MESSAGE, null,
+								answers, answers[0]);
+						failedMessageAnswered = true;
+						switch (answer) {
+						case 0: // Continue
+							pauseResumeHandler.resume();
+							break;
+						case 1: // Retry
+							djp.cancel();
+							djp = null;
+							downloadJobDispatcher.cancelOutstandingJobs();
+							return false;
+						case 2: // Skip
+							downloadJobDispatcher.cancelOutstandingJobs();
+							throw new MapDownloadSkippedException();
+						default: // Abort or close dialog
+							downloadJobDispatcher.cancelOutstandingJobs();
+							downloadJobDispatcher.terminateAllWorkerThreads();
+							throw new InterruptedException();
+						}
 					}
 				}
-			}
-			djp = null;
-			log.debug("All download jobs has been completed!");
-			if (tileArchive != null) {
-				tileArchive.writeEndofArchive();
-				tileArchive.close();
-				tileIndex = tileArchive.getTarIndex();
-				if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
-					int missing = tileCount - tileIndex.size();
-					log.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
-							+ " missing: " + missing);
-					int answer = JOptionPane.showConfirmDialog(ap, "Something is wrong with download of atlas tiles.\n"
-							+ "The amount of downladed tiles is not as "
-							+ "high as it was calculated.\nTherfore tiles " + "will be missing in the created atlas.\n"
-							+ missing + " tiles are missing.\n\n" + "Are you sure you want to continue "
-							+ "and create the atlas anyway?",
-							"Error - tiles are missing - do you want to continue anyway?",
-							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-					if (answer != JOptionPane.YES_OPTION)
-						throw new InterruptedException();
+				djp = null;
+				log.debug("All download jobs has been completed!");
+				if (tileArchive != null) {
+					tileArchive.writeEndofArchive();
+					tileArchive.close();
+					tileIndex = tileArchive.getTarIndex();
+					if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
+						int missing = tileCount - tileIndex.size();
+						log.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
+								+ " missing: " + missing);
+						int answer = JOptionPane.showConfirmDialog(ap, String.format(MSG_TILESMISSING, missing),
+								"Error - tiles are missing - do you want to continue anyway?",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+						if (answer != JOptionPane.YES_OPTION)
+							throw new InterruptedException();
+					}
 				}
+				downloadJobDispatcher.cancelOutstandingJobs();
+				log.debug("Starting to create atlas from downloaded tiles");
+				mapTileProvider = new DownloadedTileProvider(tileIndex, map.getMapSource());
+			} else {
+				// We don't need to download anything. Everything is already stored locally therefore we can just use it
+				mapTileProvider = new MapSourceProvider(map.getMapSource(), map.getZoom(), LoadMethod.DEFAULT);
 			}
-			downloadJobDispatcher.cancelOutstandingJobs();
-			log.debug("Starting to create atlas from downloaded tiles");
-
-			atlasCreator.initializeMap(map, tileIndex);
+			atlasCreator.initializeMap(map, mapTileProvider);
 			atlasCreator.createMap();
 		} catch (Error e) {
 			log.error("Error in createMap: " + e.getMessage(), e);

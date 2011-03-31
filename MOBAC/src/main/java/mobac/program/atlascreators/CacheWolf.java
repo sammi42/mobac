@@ -26,17 +26,17 @@ import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName("CacheWolf (WFL)")
 public class CacheWolf extends Ozi {
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 	}
 
 	@Override

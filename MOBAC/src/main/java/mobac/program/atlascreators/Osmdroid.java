@@ -25,12 +25,12 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.impl.MapTileWriter;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.model.Settings;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * 
@@ -71,8 +71,8 @@ public class Osmdroid extends OSMTracker {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		currentMapStoreName = map.getMapSource().getName();
 		if (currentMapStoreName.equals("TilesAtHome"))
 			currentMapStoreName = "Osmarender";

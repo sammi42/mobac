@@ -32,13 +32,13 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Creates maps using the Mobile Trail Explorer (MTE) cache format.
@@ -80,8 +80,8 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {

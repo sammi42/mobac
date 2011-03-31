@@ -22,10 +22,10 @@ import java.io.IOException;
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Creates a tile cache structure as used by <a href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile,
@@ -40,8 +40,8 @@ public class PathAway extends OSMTracker {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 
 		MapSource mapSource = map.getMapSource();
 		String shortMapDir = null;

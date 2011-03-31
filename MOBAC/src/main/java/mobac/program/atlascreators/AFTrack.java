@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * AFTrack OSZ Atlas format
@@ -65,8 +65,8 @@ public class AFTrack extends OSMTracker {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		zoomLevel.add(new Integer(map.getZoom()));
 		if (map.getZoom() > maxZoom) {
 			maxZoom = map.getZoom();

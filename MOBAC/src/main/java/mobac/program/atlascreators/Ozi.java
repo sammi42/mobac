@@ -32,6 +32,7 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
@@ -39,7 +40,6 @@ import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.utilities.Utilities;
 import mobac.utilities.geo.GeoUtils;
 import mobac.utilities.imageio.PngXxlWriter;
-import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName(value = "OziExplorer (PNG & MAP)", type = "OziPng")
 @SupportedParameters(names = {})
@@ -57,8 +57,8 @@ public class Ozi extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		layerDir = new File(atlasDir, map.getLayer().getName());
 		mapName = map.getName();
 	}

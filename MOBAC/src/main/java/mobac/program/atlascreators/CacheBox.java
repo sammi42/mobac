@@ -28,13 +28,13 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName("CacheBox (PACK)")
 @SupportedParameters(names = { Name.format })
@@ -119,8 +119,8 @@ public class CacheBox extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		TileImageParameters param = map.getParameters();
 		if (param != null)
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());

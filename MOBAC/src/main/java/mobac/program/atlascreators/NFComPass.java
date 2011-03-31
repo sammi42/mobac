@@ -30,6 +30,7 @@ import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -40,7 +41,6 @@ import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImagePngDataWriter;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName(value = "nfComPass")
 @SupportedParameters(names = { Name.height, Name.width })
@@ -50,8 +50,8 @@ public class NFComPass extends AtlasCreator {
 	private File mapDir;
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		LayerInterface layer = map.getLayer();
 		layerDir = new File(atlasDir, layer.getName());
 		mapDir = new File(layerDir, map.getName());

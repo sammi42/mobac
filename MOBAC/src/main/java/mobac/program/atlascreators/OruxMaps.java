@@ -31,6 +31,7 @@ import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -40,7 +41,6 @@ import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Creates maps using the OruxMaps (Android) atlas format.
@@ -111,9 +111,9 @@ public class OruxMaps extends AtlasCreator {
 	 * mobac.utilities.tar.TarIndex)
 	 */
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 
-		super.initializeMap(map, tarTileIndex);
+		super.initializeMap(map, mapTileProvider);
 		// OruxMaps default image format, jpeg90; always TILE_SIZE=512;
 		if (parameters == null)
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);

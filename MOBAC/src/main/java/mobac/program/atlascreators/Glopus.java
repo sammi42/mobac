@@ -23,17 +23,17 @@ import java.io.OutputStreamWriter;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName("Glopus (PNG & KAL)")
 public class Glopus extends Ozi {
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		String layerName = map.getLayer().getName().replaceAll(" ", "_");
 		mapName = map.getName().replaceAll(" ", "_");
 		layerDir = new File(atlasDir, layerName);

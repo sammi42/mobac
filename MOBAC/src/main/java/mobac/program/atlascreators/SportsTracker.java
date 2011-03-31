@@ -28,13 +28,13 @@ import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * [Nokia] Sports Tracker
@@ -63,8 +63,8 @@ public class SportsTracker extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		tileType = map.getMapSource().getTileImageType().getFileExt();
 		TileImageParameters param = map.getParameters();
 		if (param != null) {

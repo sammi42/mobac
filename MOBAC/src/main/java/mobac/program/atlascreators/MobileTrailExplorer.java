@@ -26,12 +26,12 @@ import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Creates maps using the Mobile Trail Explorer (MTE) / JTileDownloader atlas format (converted to PNG, size 256x256
@@ -54,8 +54,8 @@ public class MobileTrailExplorer extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		String mapName = map.getMapSource().getName().replaceAll(" ", "_");
 		mapDir = new File(atlasDir, mapName);
 		mapZoomDir = new File(mapDir, Integer.toString(map.getZoom()));

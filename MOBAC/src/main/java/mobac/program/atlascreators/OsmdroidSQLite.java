@@ -31,6 +31,7 @@ import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -38,7 +39,6 @@ import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.interfaces.RequiresSQLite;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.jdbc.SQLiteLoader;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * http://sourceforge.net/tracker/?func=detail&aid=3154177&group_id=238075&atid=1105496
@@ -81,8 +81,8 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		if (parameters != null)
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
 	}

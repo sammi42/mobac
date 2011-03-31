@@ -28,7 +28,6 @@ import mobac.exceptions.MapCreationException;
 import mobac.gui.AtlasProgress;
 import mobac.program.AtlasThread;
 import mobac.program.PauseResumeHandler;
-import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
@@ -40,7 +39,6 @@ import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
 import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 import org.apache.log4j.Logger;
 
@@ -51,7 +49,7 @@ import org.apache.log4j.Logger;
  * <ol>
  * <li>AtlasCreator instantiation via {@link AtlasOutputFormat#createAtlasCreatorInstance()}</li>
  * <li>AtlasCreator atlas initialization via {@link #startAtlasCreation(AtlasInterface, File)}</li>
- * <li>1 to n times {@link #initializeMap(MapInterface, TarIndex)} followed by {@link #createMap()}</li>
+ * <li>1 to n times {@link #initializeMap(MapInterface, TileProvider)} followed by {@link #createMap()}</li>
  * <li>AtlasCreator atlas finalization via {@link #finishAtlasCreation()}</li>
  * </ol>
  */
@@ -77,7 +75,7 @@ public abstract class AtlasCreator {
 	/** map specific fields **/
 	/************************************************************/
 
-	protected MapInterface map; 
+	protected MapInterface map;
 	protected int xMin;
 	protected int xMax;
 	protected int yMin;
@@ -85,16 +83,12 @@ public abstract class AtlasCreator {
 	protected int zoom;
 	protected MapSource mapSource;
 	protected int tileSize;
-	
+
 	/**
-	 * Custom tile processing parameters. <code>null</code> if disabled in GUI 
+	 * Custom tile processing parameters. <code>null</code> if disabled in GUI
 	 */
 	protected TileImageParameters parameters;
 
-	/**
-	 * Temporary file in which the tiles has been downloaded into
-	 */
-	protected TarIndex tarTileIndex;
 	protected AtlasOutputFormat atlasOutputFormat;
 
 	protected TileProvider mapDlTileProvider;
@@ -168,8 +162,11 @@ public abstract class AtlasCreator {
 	/**
 	 * @see AtlasCreator
 	 */
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		LayerInterface layer = map.getLayer();
+		if (mapTileProvider == null)
+			throw new NullPointerException();
+		this.mapDlTileProvider = mapTileProvider;
 		this.map = map;
 		this.mapSource = map.getMapSource();
 		this.tileSize = mapSource.getMapSpace().getTileSize();
@@ -178,10 +175,8 @@ public abstract class AtlasCreator {
 		xMax = map.getMaxTileCoordinate().x / tileSize;
 		yMin = map.getMinTileCoordinate().y / tileSize;
 		yMax = map.getMaxTileCoordinate().y / tileSize;
-		this.tarTileIndex = tarTileIndex;
 		this.zoom = map.getZoom();
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
-		mapDlTileProvider = new DownloadedTileProvider(tarTileIndex, mapSource);
 		Thread t = Thread.currentThread();
 		if (!(t instanceof AtlasThread))
 			throw new RuntimeException("Calling thread must be AtlasThread!");

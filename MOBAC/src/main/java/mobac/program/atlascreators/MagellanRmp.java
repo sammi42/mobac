@@ -36,6 +36,7 @@ import mobac.program.atlascreators.impl.rmp.RmpWriter;
 import mobac.program.atlascreators.impl.rmp.Tiledata;
 import mobac.program.atlascreators.impl.rmp.rmpfile.Bmp2bit;
 import mobac.program.atlascreators.impl.rmp.rmpfile.Bmp4bit;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
@@ -44,7 +45,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
-import mobac.utilities.tar.TarIndex;
 
 @AtlasCreatorName(value = "Magellan (RMP)", type = "Rmp")
 @SupportedParameters(names = { Name.format })
@@ -88,8 +88,8 @@ public class MagellanRmp extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		if (parameters != null) {
 			tileWriter = parameters.getFormat().getDataWriter();
 		} else

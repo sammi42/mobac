@@ -28,11 +28,11 @@ import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Creates maps identical to the atlas format used by OSMTracker.
@@ -58,8 +58,8 @@ public class OSMTracker extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		mapDir = new File(atlasDir, map.getMapSource().getName());
 		tileType = mapSource.getTileImageType().getFileExt();
 		if (parameters != null) {

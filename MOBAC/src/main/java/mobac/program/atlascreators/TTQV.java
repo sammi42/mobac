@@ -27,10 +27,10 @@ import java.util.Locale;
 import mobac.exceptions.MapCreationException;
 import mobac.program.ProgramInfo;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Touratech QV
@@ -39,8 +39,8 @@ import mobac.utilities.tar.TarIndex;
 public class TTQV extends Ozi {
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 	}
 
 	@Override

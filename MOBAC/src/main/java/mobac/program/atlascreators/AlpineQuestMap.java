@@ -39,6 +39,7 @@ import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.aqm.FlatPackCreator;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -48,7 +49,6 @@ import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ArrayOutputStream;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * Creates maps using the AlpineQuestMap atlas format (AQM v2 complient).
@@ -285,8 +285,8 @@ public class AlpineQuestMap extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(final MapInterface map, final TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(final MapInterface map, final TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 
 		xResizeRatio = 1.0;
 		yResizeRatio = 1.0;

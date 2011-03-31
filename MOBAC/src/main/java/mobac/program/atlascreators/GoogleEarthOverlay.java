@@ -44,6 +44,7 @@ import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -53,7 +54,6 @@ import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
-import mobac.utilities.tar.TarIndex;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -135,8 +135,8 @@ public class GoogleEarthOverlay extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		mapDir = new File(atlasDir, map.getLayer().getName());
 		cleanedMapName = map.getName();
 		cleanedMapName = cleanedMapName.replaceAll("[[^\\p{Alnum}-_]]+", "_");

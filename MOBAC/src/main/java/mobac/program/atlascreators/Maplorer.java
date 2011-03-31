@@ -32,6 +32,7 @@ import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
+import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -39,7 +40,6 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
-import mobac.utilities.tar.TarIndex;
 
 /**
  * AtlasCreator for MAPLORER ( http://maplorer.com )
@@ -104,8 +104,8 @@ public class Maplorer extends AtlasCreator {
 	}
 
 	@Override
-	public void initializeMap(MapInterface map, TarIndex tarTileIndex) {
-		super.initializeMap(map, tarTileIndex);
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 		LayerInterface layer = map.getLayer();
 		layerFolder = new File(atlasDir, layer.getName());
 		mapFolder = new File(layerFolder, map.getName());

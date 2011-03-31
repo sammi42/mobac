@@ -21,5 +21,7 @@ package mobac.program.interfaces;
  * not stress online tile servers.
  */
 public interface FileBasedMapSource extends MapSource {
+	
+	public void initialize();
 
 }

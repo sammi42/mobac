@@ -94,6 +94,7 @@ import mobac.gui.panels.JTileStoreCoveragePanel;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Bookmark;
 import mobac.program.model.MapSelection;
@@ -691,6 +692,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 				mapSourceCombo.setSelectedIndex(0);
 				mapSource = (MapSource) mapSourceCombo.getSelectedItem();
 			}
+			if (mapSource instanceof FileBasedMapSource)
+				// initialize the map source e.g. detect available zoom levels
+				((FileBasedMapSource) mapSource).initialize();
 			previewMap.setMapSource(mapSource);
 			zoomSlider.setMinimum(previewMap.getMapSource().getMinZoom());
 			zoomSlider.setMaximum(previewMap.getMapSource().getMaxZoom());

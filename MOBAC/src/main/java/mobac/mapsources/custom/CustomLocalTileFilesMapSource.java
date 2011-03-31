@@ -103,7 +103,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		maxZoom = max;
 	}
 
-	protected synchronized void initialize() {
+	public synchronized void initialize() {
 		if (initialized)
 			return;
 		updateZoomLevelInfo();

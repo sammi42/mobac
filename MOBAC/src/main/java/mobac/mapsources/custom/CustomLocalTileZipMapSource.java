@@ -98,11 +98,35 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 		}
 	}
 
-	protected synchronized void initialize() {
+	protected void updateZoomInfo() {
+		int min = PreviewMap.MAX_ZOOM;
+		int max = PreviewMap.MIN_ZOOM;
+		for (ZipFile zip : zips) {
+			for (int z = PreviewMap.MAX_ZOOM; z > PreviewMap.MIN_ZOOM; z--) {
+				ZipEntry entry = zip.getEntry(Integer.toString(z) + "/");
+				if (entry != null) {
+					max = Math.max(max, z);
+					break;
+				}
+			}
+			for (int z = PreviewMap.MIN_ZOOM; z < PreviewMap.MAX_ZOOM; z++) {
+				ZipEntry entry = zip.getEntry(Integer.toString(z) + "/");
+				if (entry != null) {
+					min = Math.min(min, z);
+					break;
+				}
+			}
+		}
+		minZoom = min;
+		maxZoom = max;
+	}
+
+	public synchronized void initialize() {
 		if (initialized)
 			return;
 		try {
 			openZipFile();
+			updateZoomInfo();
 			if (zips.size() == 0)
 				return;
 			Enumeration<? extends ZipEntry> entries = zips.get(0).entries();

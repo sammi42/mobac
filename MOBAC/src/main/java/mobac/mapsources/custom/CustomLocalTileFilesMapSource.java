@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -73,16 +72,6 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		super();
 	}
 
-	public void afterUnmarshal(Unmarshaller u, Object parent) {
-		if (!sourceFolder.isDirectory()) {
-			JOptionPane.showMessageDialog(null, "The specified sorce folder does not exist:\nMap name: " + name
-					+ "\nSource folder: " + sourceFolder, "\nInvaild source folder", JOptionPane.ERROR_MESSAGE);
-			initialized = true;
-			return;
-		}
-		updateZoomLevelInfo();
-	}
-
 	protected void updateZoomLevelInfo() {
 		FileFilter ff = new NumericDirFileFilter();
 		File[] zoomDirs = sourceFolder.listFiles(ff);
@@ -106,6 +95,12 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	public synchronized void initialize() {
 		if (initialized)
 			return;
+		if (!sourceFolder.isDirectory()) {
+			JOptionPane.showMessageDialog(null, "The specified sorce folder does not exist:\nMap name: " + name
+					+ "\nSource folder: " + sourceFolder, "\nInvaild source folder", JOptionPane.ERROR_MESSAGE);
+			initialized = true;
+			return;
+		}
 		updateZoomLevelInfo();
 		try {
 			FileFilter ff = new NumericDirFileFilter();

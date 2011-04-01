@@ -29,7 +29,6 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -75,9 +74,6 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
 	public CustomLocalTileZipMapSource() {
 		super();
-	}
-
-	public void afterUnmarshal(Unmarshaller u, Object parent) {
 	}
 
 	protected synchronized void openZipFile() {

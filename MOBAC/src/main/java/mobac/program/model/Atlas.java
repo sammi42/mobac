@@ -44,7 +44,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	private String name = "Unnamed atlas";
 
-	@XmlElements( { @XmlElement(name = "Layer", type = Layer.class) })
+	@XmlElements({ @XmlElement(name = "Layer", type = Layer.class) })
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
 
 	private AtlasOutputFormat outputFormat = AtlasOutputFormat.FORMATS.get(0);
@@ -97,7 +97,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	@Override
 	public String toString() {
-		return getName();
+		return getName() + " (" + outputFormat + ")";
 	}
 
 	public Iterator<LayerInterface> iterator() {

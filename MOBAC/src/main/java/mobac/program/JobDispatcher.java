@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.program;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -178,6 +179,8 @@ public class JobDispatcher {
 					JobDispatcher.this.cancelOutstandingJobs();
 					log.warn("All downloads has been stoppened: " + e.getMessage());
 					return;
+				} catch (FileNotFoundException e) {
+					log.error("Download failed: " + e.getMessage());
 				} catch (Exception e) {
 					log.error("Unknown error occured while executing the job: ", e);
 				} catch (OutOfMemoryError e) {

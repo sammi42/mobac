@@ -75,6 +75,7 @@
 				<pathelement location="lib/ant-contrib-for.jar" />
 			</classpath>
 		</taskdef>
+		<delete dir="mapsources" includes="mp-*.jar" />
 		<dirset id="mappacks" dir="${mappack.srcbasedir}/" includes="*" />
 		<pathconvert pathsep=";" property="mappacklist" refid="mappacks">
 			<mapper type="flatten" />

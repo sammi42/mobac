@@ -138,7 +138,7 @@ public class EnvironmentSetup {
 			EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
 			EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
 			Layer layer = new Layer(atlas, "GM New York");
-			MapSource ms = MapSourcesManager.getInstance().getSourceByName("Google Maps");
+			MapSource ms = MapSourcesManager.getInstance().getSourceByName("Mapnik");
 			layer.addMapsAutocut("GM New York 16", ms, max, min, 16, null, 32000);
 			layer.addMapsAutocut("GM New York 14", ms, max, min, 14, null, 32000);
 			atlas.addLayer(layer);

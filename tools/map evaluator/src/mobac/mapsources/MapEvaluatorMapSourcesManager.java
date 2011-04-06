@@ -2,7 +2,6 @@ package mobac.mapsources;
 
 import java.util.Vector;
 
-import mobac.mapsources.mappacks.google.GoogleMaps;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.interfaces.MapSource;
 
@@ -16,7 +15,6 @@ public class MapEvaluatorMapSourcesManager extends MapSourcesManager {
 
 	private MapEvaluatorMapSourcesManager() {
 		mapSources.add(new Mapnik());
-		mapSources.add(new GoogleMaps());
 	}
 
 	@Override

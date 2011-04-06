@@ -34,7 +34,6 @@ import mobac.mapsources.MapEvaluatorBeanShellHttpMapSource;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.mapsources.custom.CustomCloudMade;
 import mobac.mapsources.loader.CustomMapSourceLoader;
-import mobac.mapsources.mappacks.google.GoogleMaps;
 import mobac.mapsources.mappacks.openstreetmap.CloudMade;
 import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.ProgramInfo;
@@ -107,7 +106,7 @@ public class MapEvaluator extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					String[] options = { "Empty", "OpenStreetMap Mapnik", "Yahoo", "Microsoft Maps" };
+					String[] options = { "Empty", "OpenStreetMap Mapnik" };
 					int a = JOptionPane.showOptionDialog(MapEvaluator.this,
 							"Please select an template", "Select template", 0,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -118,12 +117,6 @@ public class MapEvaluator extends JFrame {
 						break;
 					case (1):
 						code = Utilities.loadTextResource("bsh/osm.bsh");
-						break;
-					case (2):
-						code = Utilities.loadTextResource("bsh/yahoo.bsh");
-						break;
-					case (3):
-						code = Utilities.loadTextResource("bsh/bing.bsh");
 						break;
 					}
 
@@ -190,17 +183,6 @@ public class MapEvaluator extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				executeCode();
-			}
-		});
-		toolBar.add(button);
-
-		button = new JButton("Google Maps", Utilities.loadResourceImageIcon("google-icon.png"));
-		button.setToolTipText("Switch back to predefined Google Maps mapsource");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				previewMap.setMapSource(new GoogleMaps());
 			}
 		});
 		toolBar.add(button);

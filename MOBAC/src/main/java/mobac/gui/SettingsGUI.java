@@ -101,10 +101,6 @@ public class SettingsGUI extends JDialog {
 
 	private static final long MBIT1 = 1000000 / 8;
 
-	private static final String[] GOOGLE_LANGUAGES = new String[] { "en", "de", "ru", "uk", "zh-CN", "zh-TW" };
-
-	private static final String[] BING_LANGUAGES = new String[] { "en", "de-de" };
-
 	private enum Bandwidth {
 		UNLIMUTED("Unlimited", 0), MBit1("1 MBit", MBIT1), MBit5("5 MBit", MBIT1 * 5), MBit10("10 MBit", MBIT1 * 10), MBit15(
 				"15 MBit", MBIT1 * 15), MBit20("20 MBit", MBIT1 * 20);
@@ -128,8 +124,6 @@ public class SettingsGUI extends JDialog {
 	private JComboBox unitSystem;
 
 	private JButton mapSourcesOnlineUpdate;
-	private JComboBox googleLang;
-	private JComboBox bingLang;
 	private JTextField osmHikingTicket;
 
 	private JPanel tileStoreInfoPanel;
@@ -262,24 +256,6 @@ public class SettingsGUI extends JDialog {
 		mapSourcesOnlineUpdate.addActionListener(new MapPacksOnlineUpdateAction());
 		updatePanel.add(mapSourcesOnlineUpdate, GBC.std());
 
-		JPanel googlePanel = new JPanel(new GridBagLayout());
-		googlePanel.setBorder(createSectionBorder("Google Maps"));
-
-		googleLang = new JComboBox(GOOGLE_LANGUAGES);
-		googleLang.setEditable(true);
-
-		googlePanel.add(new JLabel("Language (hl parameter): "), GBC.std());
-		googlePanel.add(googleLang, GBC.eol());
-
-		JPanel bingPanel = new JPanel(new GridBagLayout());
-		bingPanel.setBorder(createSectionBorder("Bing/Microsoft Maps"));
-
-		bingLang = new JComboBox(BING_LANGUAGES);
-		bingLang.setEditable(true);
-
-		bingPanel.add(new JLabel("Language (mkt parameter): "), GBC.std());
-		bingPanel.add(bingLang, GBC.eol());
-
 		JPanel osmHikingPanel = new JPanel(new GridBagLayout());
 		osmHikingPanel.setBorder(createSectionBorder("Reit- und Wanderkarte ($Abo)"));
 
@@ -292,8 +268,6 @@ public class SettingsGUI extends JDialog {
 		osmHikingPanel.add(osmHikingTicketUrl, GBC.eol());
 
 		tab.add(updatePanel, GBC.eol().fill(GBC.HORIZONTAL));
-		tab.add(googlePanel, GBC.eol().fill(GBC.HORIZONTAL));
-		tab.add(bingPanel, GBC.eol().fill(GBC.HORIZONTAL));
 		tab.add(osmHikingPanel, GBC.eol().fill(GBC.HORIZONTAL));
 		tab.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
@@ -693,8 +667,8 @@ public class SettingsGUI extends JDialog {
 		threadCount = new JComboBox(THREADCOUNT_LIST);
 		threadCount.setMaximumRowCount(THREADCOUNT_LIST.length);
 		panel.add(threadCount, GBC.std().insets(5, 5, 5, 5).anchor(GBC.EAST));
-		panel.add(new JLabel("Number of parallel network connections for tile downloading"), GBC.eol().fill(
-				GBC.HORIZONTAL));
+		panel.add(new JLabel("Number of parallel network connections for tile downloading"),
+				GBC.eol().fill(GBC.HORIZONTAL));
 
 		bandwidth = new JComboBox(Bandwidth.values());
 		bandwidth.setMaximumRowCount(bandwidth.getItemCount());
@@ -805,8 +779,6 @@ public class SettingsGUI extends JDialog {
 		maxExpirationTime.setTimeMilliValue(s.tileMaxExpirationTime);
 		minExpirationTime.setTimeMilliValue(s.tileMinExpirationTime);
 
-		googleLang.setSelectedItem(s.googleLanguage);
-		bingLang.setSelectedItem(s.bingLanguage);
 		osmHikingTicket.setText(s.osmHikingTicket);
 	}
 
@@ -855,16 +827,6 @@ public class SettingsGUI extends JDialog {
 
 		MainGUI.getMainGUI().updateMapSourcesList();
 
-		if (googleLang.getSelectedIndex() < 0) {
-			s.googleLanguage = googleLang.getEditor().getItem().toString();
-		} else {
-			s.googleLanguage = googleLang.getSelectedItem().toString();
-		}
-		if (bingLang.getSelectedIndex() < 0) {
-			s.bingLanguage = bingLang.getEditor().getItem().toString();
-		} else {
-			s.bingLanguage = bingLang.getSelectedItem().toString();
-		}
 		s.osmHikingTicket = osmHikingTicket.getText().trim();
 		try {
 			MainGUI.getMainGUI().checkAndSaveSettings();

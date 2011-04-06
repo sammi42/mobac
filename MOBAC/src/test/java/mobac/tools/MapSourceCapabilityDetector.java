@@ -33,7 +33,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.openstreetmap.BingMapsOSM;
+import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -68,7 +68,7 @@ public class MapSourceCapabilityDetector {
 		}
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
-		List<MapSourceCapabilityDetector> result = testMapSource(BingMapsOSM.class);
+		List<MapSourceCapabilityDetector> result = testMapSource(Mapnik.class);
 		MapSourceCapabilityGUI gui = new MapSourceCapabilityGUI(result);
 		gui.setVisible(true);
 	}

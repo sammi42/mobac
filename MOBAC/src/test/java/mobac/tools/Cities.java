@@ -18,37 +18,8 @@ package mobac.tools;
 
 import java.util.HashMap;
 
-import mobac.mapsources.mappacks.bing.MicrosoftMapsChina;
-import mobac.mapsources.mappacks.bing.MicrosoftVirtualEarth;
-import mobac.mapsources.mappacks.google.GoogleMapMaker;
-import mobac.mapsources.mappacks.google.GoogleMapsChina;
-import mobac.mapsources.mappacks.google.GoogleMapsKorea;
-import mobac.mapsources.mappacks.openstreetmap.OpenPisteMap;
-import mobac.mapsources.mappacks.openstreetmap.Turaterkep;
-import mobac.mapsources.mappacks.region_america_north.AeroChartsIFR;
-import mobac.mapsources.mappacks.region_america_north.AeroChartsIFRH;
-import mobac.mapsources.mappacks.region_america_north.AeroChartsVFR;
-import mobac.mapsources.mappacks.region_asia.YahooMapsJapan;
-import mobac.mapsources.mappacks.region_asia.YahooMapsTaiwan;
-import mobac.mapsources.mappacks.region_europe_dach.Bergfex;
-import mobac.mapsources.mappacks.region_europe_dach.HubermediaBavaria;
-import mobac.mapsources.mappacks.region_europe_east.Cykloatlas;
-import mobac.mapsources.mappacks.region_europe_east.CykloatlasRelief;
-import mobac.mapsources.mappacks.region_europe_east.DoCeluPL;
-import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakia;
-import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaCycling;
-import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaHiking;
-import mobac.mapsources.mappacks.region_europe_east.YandexMap;
-import mobac.mapsources.mappacks.region_europe_east.YandexSat;
-import mobac.mapsources.mappacks.region_europe_north.StatkartTopo2;
-import mobac.mapsources.mappacks.region_europe_west.MicrosoftOrdnanceSurveyExplorer;
-import mobac.mapsources.mappacks.region_europe_west.MultimapCom;
-import mobac.mapsources.mappacks.region_europe_west.MultimapOSUkCom;
-import mobac.mapsources.mappacks.region_oceania.NearMap;
-import mobac.mapsources.mappacks.region_oceania.NzTopoMaps;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
-
 
 public class Cities {
 
@@ -78,35 +49,35 @@ public class Cities {
 
 	static {
 		TEST_COORDINATES = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
-		TEST_COORDINATES.put(GoogleMapMaker.class, Cities.BANGALORE);
-		TEST_COORDINATES.put(Cykloatlas.class, Cities.PRAHA);
-		TEST_COORDINATES.put(CykloatlasRelief.class, Cities.PRAHA);
-		TEST_COORDINATES.put(GoogleMapsChina.class, Cities.SHANGHAI);
-		TEST_COORDINATES.put(GoogleMapsKorea.class, Cities.SEOUL);
-		TEST_COORDINATES.put(MicrosoftMapsChina.class, Cities.SHANGHAI);
-		TEST_COORDINATES.put(MicrosoftVirtualEarth.class, Cities.NEY_YORK);
-		TEST_COORDINATES.put(MultimapCom.class, Cities.LONDON);
-		TEST_COORDINATES.put(MultimapOSUkCom.class, Cities.LONDON);
-		TEST_COORDINATES.put(DoCeluPL.class, Cities.WARSZAWA);
-		TEST_COORDINATES.put(YahooMapsJapan.class, TOKYO);
-		TEST_COORDINATES.put(YahooMapsTaiwan.class, TAIPEI);
+		// TEST_COORDINATES.put(GoogleMapMaker.class, Cities.BANGALORE);
+		// TEST_COORDINATES.put(Cykloatlas.class, Cities.PRAHA);
+		// TEST_COORDINATES.put(CykloatlasRelief.class, Cities.PRAHA);
+		// TEST_COORDINATES.put(GoogleMapsChina.class, Cities.SHANGHAI);
+		// TEST_COORDINATES.put(GoogleMapsKorea.class, Cities.SEOUL);
+		// TEST_COORDINATES.put(MicrosoftMapsChina.class, Cities.SHANGHAI);
+		// TEST_COORDINATES.put(MicrosoftVirtualEarth.class, Cities.NEY_YORK);
+		// TEST_COORDINATES.put(MultimapCom.class, Cities.LONDON);
+		// TEST_COORDINATES.put(MultimapOSUkCom.class, Cities.LONDON);
+		// TEST_COORDINATES.put(DoCeluPL.class, Cities.WARSZAWA);
+		// TEST_COORDINATES.put(YahooMapsJapan.class, TOKYO);
+		// TEST_COORDINATES.put(YahooMapsTaiwan.class, TAIPEI);
 		// TEST_COORDINATES.put(AustrianMap.class, Cities.VIENNA);
-		TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
-		TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
-		TEST_COORDINATES.put(FreemapSlovakiaCycling.class, Cities.BRATISLAVA);
-		TEST_COORDINATES.put(NearMap.class, Cities.PERTH);
-		TEST_COORDINATES.put(HubermediaBavaria.class, Cities.MUNICH);
-		TEST_COORDINATES.put(OpenPisteMap.class, Cities.MUNICH);
-		TEST_COORDINATES.put(StatkartTopo2.class, Cities.OSLO);
-		TEST_COORDINATES.put(Turaterkep.class, Cities.BUDAPEST);
-		TEST_COORDINATES.put(Bergfex.class, Cities.INNSBRUCK);
-		TEST_COORDINATES.put(AeroChartsIFR.class, Cities.NEY_YORK);
-		TEST_COORDINATES.put(AeroChartsIFRH.class, Cities.NEY_YORK);
-		TEST_COORDINATES.put(AeroChartsVFR.class, Cities.NEY_YORK);
-		TEST_COORDINATES.put(MicrosoftOrdnanceSurveyExplorer.class, Cities.LONDON);
-		TEST_COORDINATES.put(YandexMap.class, Cities.MOSCOW);
-		TEST_COORDINATES.put(YandexSat.class, Cities.MOSCOW);
-		TEST_COORDINATES.put(NzTopoMaps.class, Cities.WELLINGTON);
+		// TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
+		// TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
+		// TEST_COORDINATES.put(FreemapSlovakiaCycling.class, Cities.BRATISLAVA);
+		// TEST_COORDINATES.put(NearMap.class, Cities.PERTH);
+		// TEST_COORDINATES.put(HubermediaBavaria.class, Cities.MUNICH);
+		// TEST_COORDINATES.put(OpenPisteMap.class, Cities.MUNICH);
+		// TEST_COORDINATES.put(StatkartTopo2.class, Cities.OSLO);
+		// TEST_COORDINATES.put(Turaterkep.class, Cities.BUDAPEST);
+		// TEST_COORDINATES.put(Bergfex.class, Cities.INNSBRUCK);
+		// TEST_COORDINATES.put(AeroChartsIFR.class, Cities.NEY_YORK);
+		// TEST_COORDINATES.put(AeroChartsIFRH.class, Cities.NEY_YORK);
+		// TEST_COORDINATES.put(AeroChartsVFR.class, Cities.NEY_YORK);
+		// TEST_COORDINATES.put(MicrosoftOrdnanceSurveyExplorer.class, Cities.LONDON);
+		// TEST_COORDINATES.put(YandexMap.class, Cities.MOSCOW);
+		// TEST_COORDINATES.put(YandexSat.class, Cities.MOSCOW);
+		// TEST_COORDINATES.put(NzTopoMaps.class, Cities.WELLINGTON);
 	}
 
 	public static EastNorthCoordinate getTestCoordinate(MapSource mapSource, EastNorthCoordinate defaultCoordinate) {

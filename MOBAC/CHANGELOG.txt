@@ -12,7 +12,8 @@
 1.9 beta 2 (2011-04-??)
  ! Custom atlas map source / locally generated tiles map source
  + New map source for using tiles from zip file(s)
- + Removed all map sources except the OSM related
+ + Removed all map sources except the OSM related - for details see 
+    http://sourceforge.net/projects/mobac/forums/forum/861096/topic/4470412
 
 1.9 beta 1 (2011-03-29)
  + New map source: OpenStreetMap MapQuest

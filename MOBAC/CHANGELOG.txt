@@ -9,7 +9,11 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 beta 2 (2011-04-??)
+1.9 beta 3 (2011-04-??)
+ + Map source UMP-pcPL reactivated
+ + [Nokia] Sports Tracker file extension changed to jpg (feature request #3066161)
+
+1.9 beta 2 (2011-04-06)
  ! Custom atlas map source / locally generated tiles map source
  + New map source for using tiles from zip file(s)
  + Removed all map sources except the OSM related - for details see 

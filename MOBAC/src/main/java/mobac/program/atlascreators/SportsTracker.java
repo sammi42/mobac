@@ -110,7 +110,9 @@ public class SportsTracker extends AtlasCreator {
 			String dirName = tileName.substring(start, start + 3);
 			tileDir = new File(tileDir, dirName);
 		}
-		String fileName = tileName + "." + tileType;
+		// File extension needs to be jpg (requested by telemaxx)
+		// see https://sourceforge.net/tracker/?func=detail&atid=1105497&aid=3066161&group_id=238075
+		String fileName = tileName + ".jpg";
 		File file = new File(tileDir, fileName);
 		writeTile(file, tileData);
 	}

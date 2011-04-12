@@ -12,6 +12,7 @@
 1.9 beta 3 (2011-04-??)
  + Map source UMP-pcPL reactivated
  + [Nokia] Sports Tracker file extension changed to jpg (feature request #3066161)
+ + Reactivated atlas format "TwoNav (RMAP)"
 
 1.9 beta 2 (2011-04-06)
  ! Custom atlas map source / locally generated tiles map source

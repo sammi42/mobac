@@ -63,6 +63,7 @@ import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TileStoreDownload;
 import mobac.program.atlascreators.TrekBuddy;
 import mobac.program.atlascreators.TrekBuddyTared;
+import mobac.program.atlascreators.TwoNavRMAP;
 import mobac.program.atlascreators.Ublox;
 import mobac.program.jaxb.AtlasOutputFormatAdapter;
 
@@ -112,7 +113,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(createByClass(TTQV.class));
 		FORMATS.add(createByClass(TrekBuddyTared.class));
 		FORMATS.add(createByClass(TrekBuddy.class));
-		// FORMATS.add(createByClass(TwoNavRMAP.class));
+		FORMATS.add(createByClass(TwoNavRMAP.class));
 		FORMATS.add(createByClass(Ublox.class));
 		FORMATS.add(TILESTORE);
 	}

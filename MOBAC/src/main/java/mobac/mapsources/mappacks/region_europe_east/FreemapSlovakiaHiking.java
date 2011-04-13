@@ -17,6 +17,7 @@
 package mobac.mapsources.mappacks.region_europe_east;
 
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
 /**
@@ -24,7 +25,7 @@ import mobac.program.model.TileImageType;
  * 
  * @author SourceForge.net user didoa, nickn17
  */
-public class FreemapSlovakiaHiking extends AbstractHttpMapSource {
+public class FreemapSlovakiaHiking extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
 	public FreemapSlovakiaHiking() {
 		super("FreemapSlovakiaHiking", 6, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
@@ -37,5 +38,13 @@ public class FreemapSlovakiaHiking extends AbstractHttpMapSource {
 	@Override
 	public String toString() {
 		return "Freemap Slovakia Hiking";
+	}
+
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
 	}
 }

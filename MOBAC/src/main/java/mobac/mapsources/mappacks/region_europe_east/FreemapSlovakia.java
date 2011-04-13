@@ -17,6 +17,7 @@
 package mobac.mapsources.mappacks.region_europe_east;
 
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
 /**
@@ -24,7 +25,7 @@ import mobac.program.model.TileImageType;
  * 
  * @author SourceForge.net user didoa, nickn17
  */
-public class FreemapSlovakia extends AbstractHttpMapSource {
+public class FreemapSlovakia extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
 	public FreemapSlovakia() {
 		super("FreemapSlovakia", 5, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
@@ -39,4 +40,11 @@ public class FreemapSlovakia extends AbstractHttpMapSource {
 		return "Freemap Slovakia Car Atlas";
 	}
 
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
+	}
 }

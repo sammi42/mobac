@@ -17,12 +17,13 @@
 package mobac.mapsources.mappacks.region_europe_east;
 
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
 /**
  * http://www.freemap.sk
  */
-public class FreemapSlovakiaCycling extends AbstractHttpMapSource {
+public class FreemapSlovakiaCycling extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
 	public FreemapSlovakiaCycling() {
 		super("FreemapSlovakiaCyclo", 6, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
@@ -35,5 +36,13 @@ public class FreemapSlovakiaCycling extends AbstractHttpMapSource {
 	@Override
 	public String toString() {
 		return "Freemap Slovakia Cycle Map";
+	}
+
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
 	}
 }

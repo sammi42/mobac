@@ -18,6 +18,9 @@ package mobac.tools;
 
 import java.util.HashMap;
 
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakia;
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaCycling;
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaHiking;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
 
@@ -62,9 +65,9 @@ public class Cities {
 		// TEST_COORDINATES.put(YahooMapsJapan.class, TOKYO);
 		// TEST_COORDINATES.put(YahooMapsTaiwan.class, TAIPEI);
 		// TEST_COORDINATES.put(AustrianMap.class, Cities.VIENNA);
-		// TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
-		// TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
-		// TEST_COORDINATES.put(FreemapSlovakiaCycling.class, Cities.BRATISLAVA);
+		TEST_COORDINATES.put(FreemapSlovakia.class, Cities.BRATISLAVA);
+		TEST_COORDINATES.put(FreemapSlovakiaHiking.class, Cities.BRATISLAVA);
+		TEST_COORDINATES.put(FreemapSlovakiaCycling.class, Cities.BRATISLAVA);
 		// TEST_COORDINATES.put(NearMap.class, Cities.PERTH);
 		// TEST_COORDINATES.put(HubermediaBavaria.class, Cities.MUNICH);
 		// TEST_COORDINATES.put(OpenPisteMap.class, Cities.MUNICH);

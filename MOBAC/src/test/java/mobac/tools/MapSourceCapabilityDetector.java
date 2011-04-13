@@ -33,7 +33,7 @@ import javax.xml.bind.JAXBException;
 
 import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.mappacks.openstreetmap.Mapnik;
+import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaHiking;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.download.TileDownLoader;
@@ -59,6 +59,9 @@ public class MapSourceCapabilityDetector {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
+		Class<? extends HttpMapSource> mapSourceClass = FreemapSlovakiaHiking.class;
+
 		Logging.configureLogging();
 		ProgramInfo.initialize();
 		try {
@@ -68,7 +71,7 @@ public class MapSourceCapabilityDetector {
 		}
 		DefaultMapSourcesManager.initialize();
 		MapSourcesManager.getInstance().getAllMapSources();
-		List<MapSourceCapabilityDetector> result = testMapSource(Mapnik.class);
+		List<MapSourceCapabilityDetector> result = testMapSource(mapSourceClass);
 		MapSourceCapabilityGUI gui = new MapSourceCapabilityGUI(result);
 		gui.setVisible(true);
 	}
@@ -104,7 +107,7 @@ public class MapSourceCapabilityDetector {
 		for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
 			MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource, coordinate,
 					zoom);
-			//mstd.testMapSource();
+			mstd.testMapSource();
 			result.add(mstd);
 			// log.trace(mstd);
 		}
@@ -122,7 +125,7 @@ public class MapSourceCapabilityDetector {
 	private boolean expirationTimePresent = false;
 	private boolean lastModifiedTimePresent = false;
 	private boolean ifNoneMatchSupported = false;
-	private boolean ifModifiedSinceSupported = true;
+	private boolean ifModifiedSinceSupported = false;
 
 	private String contentType = "?";
 

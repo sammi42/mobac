@@ -87,9 +87,8 @@ public class FlatPackCreator {
 			throw new IOException("Write stream is null.");
 
 		// write file size
-		String fileSize = "" + buff.length + "\0";
-		for (int i = 0; i < fileSize.length(); i++)
-			dataStream.write(fileSize.charAt(i));
+		String fileSize = Integer.toString(buff.length) + "\0";
+		dataStream.write(fileSize.getBytes(Charsets.ISO_8859_1));
 
 		// write file into pack data
 		if (buff.length > 0)

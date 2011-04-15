@@ -33,6 +33,7 @@ import junit.framework.TestResult;
 import mobac.exceptions.AtlasTestException;
 import mobac.program.AtlasThread;
 import mobac.program.Logging;
+import mobac.program.ProgramInfo;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.model.Atlas;
@@ -61,6 +62,7 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 
 	static {
 		Logging.configureConsoleLogging(Level.TRACE,Logging.ADVANCED_LAYOUT);
+		ProgramInfo.initialize();
 		//Logger.getLogger("mobac").setLevel(Level.INFO);
 		TEST_TILE_SERVER = new TestTileServer(18888);
 		// TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));

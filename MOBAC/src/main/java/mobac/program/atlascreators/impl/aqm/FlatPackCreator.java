@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.program.atlascreators.impl.aqm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,17 +24,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
 
 public class FlatPackCreator {
 	public static final String FLAT_PACK_HEADER = "FLATPACK1";
-	public static final int FILE_COPY_BUFFER_LEN = 4096;
+	public static final int FILE_COPY_BUFFER_LEN = 4096 * 10;
 
 	private String packPath = null;
 
 	private FileOutputStream dataStream = null;
 
-	private StringBuffer structBuffer = null;
+	private ByteArrayOutputStream structBuffer = null;
+
+	private OutputStreamWriter structBufferWriter = null;
 
 	private long currentDataWritedSize = 0;
 
@@ -50,7 +54,8 @@ public class FlatPackCreator {
 			throw new NullPointerException("Pack file path is null.");
 
 		dataStream = new FileOutputStream(packPath + ".tmp");
-		structBuffer = new StringBuffer("");
+		structBuffer = new ByteArrayOutputStream();
+		structBufferWriter = new OutputStreamWriter(structBuffer, Charsets.ISO_8859_1);
 
 		currentDataWritedSize = 0;
 		currentNbFiles = 0;
@@ -91,7 +96,7 @@ public class FlatPackCreator {
 			dataStream.write(buff);
 
 		// write file into pack structure
-		structBuffer.append("" + fileEntryName + "\0" + currentDataWritedSize + "\0");
+		structBufferWriter.append(fileEntryName + "\0" + currentDataWritedSize + "\0");
 
 		// update writed size
 		currentDataWritedSize += buff.length + fileSize.length();
@@ -111,24 +116,25 @@ public class FlatPackCreator {
 		// open pack file
 		FileOutputStream packStream = new FileOutputStream(packPath);
 		try {
-			String nbFiles = "" + currentNbFiles + "\0";
+			String nbFiles = Long.toString(currentNbFiles) + "\0";
 
 			// write header
-			for (int i = 0; i < FLAT_PACK_HEADER.length(); i++)
-				packStream.write(FLAT_PACK_HEADER.charAt(i));
+			packStream.write(FLAT_PACK_HEADER.getBytes(Charsets.ISO_8859_1));
 
 			// write struct
-			String len = "" + (structBuffer.length() + nbFiles.length());
-			for (int i = 0; i < len.length(); i++)
-				packStream.write(len.charAt(i));
+			structBufferWriter.flush();
+			structBufferWriter.close();
+			int headerSize = structBuffer.size() + nbFiles.length();
+			packStream.write(Integer.toString(headerSize).getBytes(Charsets.ISO_8859_1));
 			packStream.write('\0');
 
-			for (int i = 0; i < nbFiles.length(); i++)
-				packStream.write(nbFiles.charAt(i));
+			packStream.write(nbFiles.getBytes(Charsets.ISO_8859_1));
 
-			OutputStreamWriter pw = new OutputStreamWriter(packStream);
-			pw.write(structBuffer.toString());
-			pw.flush();
+			structBuffer.writeTo(packStream);
+
+			// Free memory
+			structBufferWriter = null;
+			structBuffer = null;
 
 			// write data
 			FileInputStream in = new FileInputStream(tmpFile);
@@ -136,10 +142,9 @@ public class FlatPackCreator {
 				byte[] buffer = new byte[FILE_COPY_BUFFER_LEN];
 
 				int read;
-				while ((read = in.read(buffer)) == FILE_COPY_BUFFER_LEN)
-					packStream.write(buffer);
+				while ((read = in.read(buffer)) > 0)
+					packStream.write(buffer, 0, read);
 
-				packStream.write(buffer, 0, read);
 				packStream.flush();
 				packStream.close();
 			} finally {

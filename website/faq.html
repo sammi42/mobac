@@ -28,15 +28,14 @@
 		<h2>FAQ</h2>
 		<div id="faq">
 			<ul style="list-style-type:none">
-				<li><a name="GoogleBlockingIP"></a>
+				<li><a name="LocalTiles"></a>
 					<div class="question">
-						Q: One of the map sources by Google shows only red crosses instead of map tiles. What is wrong?
+						Q: I have a lot of tile images locally in my file-system e.g. by generating them from OpenStreetMap data or by previously created atlases. How do I use them in MOBAC?
 					</div>
 					<div class="answer">
-						A: Google changes the urls for their map tiles frequently. 
-						Please try to perform an online update (in settings dialog).<br />
-						If that doesn't solve the problem please make sure your IP is not banned by Google 
-						(can happen especially for the "Google Earth" map provider).
+						A: Since MOBAC v1.9 beta 2 local tile sources can be used. For details how to integrate tiles from the file-system into MOBAC 
+						please open the file <tt>README.HTM</tt> that comes with MOBAC and read section <b>Custom atlas as map source / locally generated tiles</b>
+						which can be found near to the end of the file.
 					</div>
 				</li>
 				<li><a name="NewMapSource"></a>
@@ -44,10 +43,18 @@
 						Q: My favorite online map is not in the list of maps provided by Mobile Atlas Creator - can it be added?
 					</div>
 					<div class="answer">
-						A: Maps have to meets certain criteria for beeing compatible with Mobile Atlas Creator. A 
-						lot of maps have already been identified as incompatible. Please check this list if your favorite 
-						online is already known to be incompatible. The complete list can be found 
+						A: Maps have to meets certain criteria for being compatible with Mobile Atlas Creator. 
+						First on a technical level several requirements has be met. A lot of maps have already been identified as incompatible. 
+						Please check this list if your favorite online map is already known to be incompatible. The complete list can be found 
 						<a href="https://mobac.svn.sourceforge.net/svnroot/mobac/trunk/MOBAC/misc/Incompatible%20maps.txt">here</a>.
+						For developing new map sources there is a special tool called <a href="http://sourceforge.net/apps/mediawiki/mobac/index.php?title=MapEvaluator">Map Evaluator</a>
+						that is designed to develop new map sources for MOBAC without having to install a development environment. 
+						For details on how to use this tool see the correspondent <a href="http://sourceforge.net/apps/mediawiki/mobac/index.php?title=MapEvaluator">wiki page on Map Evaluator</a>.
+						<br>
+						Second before adding the new map source to MOBAC I need an acceptance by the map source provider.
+						A lot of map sources cannot be added to MOBAC they don't allow mass download and/or cannot supply map tile images for MOBAC 
+						because of license restrictions. Therefore you there is no clear statement about tools like MOBAC in the service <i>terms and conditions</i> section
+						you need to ask the person/company running the online map service if they (can) allow adding their map service as new map source to MOBAC.
 					</div>
 				</li>
 				<li><a name="NewAtlasFormat"></a>
@@ -59,7 +66,7 @@
 						In general a feature request for a new atlas format hate to include the following information:
 						<ol>
 							<li>Name of the atlas format and name of the application which uses this format (best with Web-link)</li>
-							<li>Provide a detailed format description of the atlas format. If there is an online documentation available just link it in the feature request - otherwise you have to figure out the file format and describe it in the feature request.</li>
+							<li>Provide a detailed format description of the atlas format. If there is an online documentation available just link to it in the feature request - otherwise you have to figure out the file format and describe it in the feature request.</li>
 							<li>Attach at least one small example atlases in the desired output format to the feature request - including the information which region is covered by the example(s)</li>
 						</ol>
 						BTW: If any atlas format supported by MOBAC is similar to the desired atlas format please name it - this helps a lot and saves time.

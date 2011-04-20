@@ -21,6 +21,7 @@ import java.util.HashMap;
 import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakia;
 import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaCycling;
 import mobac.mapsources.mappacks.region_europe_east.FreemapSlovakiaHiking;
+import mobac.mapsources.mappacks.region_oceania.NzTopoMaps;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.EastNorthCoordinate;
 
@@ -80,7 +81,7 @@ public class Cities {
 		// TEST_COORDINATES.put(MicrosoftOrdnanceSurveyExplorer.class, Cities.LONDON);
 		// TEST_COORDINATES.put(YandexMap.class, Cities.MOSCOW);
 		// TEST_COORDINATES.put(YandexSat.class, Cities.MOSCOW);
-		// TEST_COORDINATES.put(NzTopoMaps.class, Cities.WELLINGTON);
+		TEST_COORDINATES.put(NzTopoMaps.class, Cities.WELLINGTON);
 	}
 
 	public static EastNorthCoordinate getTestCoordinate(MapSource mapSource, EastNorthCoordinate defaultCoordinate) {

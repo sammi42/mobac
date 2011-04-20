@@ -15,6 +15,7 @@
  + Reactivated atlas format "TwoNav (RMAP)"
  + New map source: FAA Sectional Charts (aeromaps.us)
  + Reactivated map sources Freemap.sk (Car atlas, Hiking map, Cycle map)
+ + Map source New Zealand Topographic Maps reactivated (+ new server)
 
 1.9 beta 2 (2011-04-06)
  ! Custom atlas map source / locally generated tiles map source

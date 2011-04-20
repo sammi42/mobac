@@ -161,7 +161,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 	private class OruxMapTileWriterDB implements MapTileWriter {
 
-		private int tileCounter;
+		private int tileCounter = 0;
 		private Runtime r = Runtime.getRuntime();
 
 		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
@@ -176,11 +176,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 				tileCounter++;
 				if (heapAvailable < HEAP_MIN || tileCounter == customTileCount) {
-					prepStmt.executeBatch();
-					prepStmt.clearBatch();
-					atlasProgress.incMapCreationProgress(tileCounter);
-					conn.commit();
-					System.gc();
+					commit();
 				}
 			} catch (SQLException e) {
 				throw new IOException(e.getCause());
@@ -188,8 +184,21 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 		}
 
-		public void finalizeMap() {
-			// Nothing to do
+		private void commit() throws SQLException {
+			prepStmt.executeBatch();
+			prepStmt.clearBatch();
+			atlasProgress.incMapCreationProgress(tileCounter);
+			tileCounter = 0;
+			conn.commit();
+			System.gc();
+		}
+
+		public void finalizeMap() throws IOException {
+			try {
+				commit();
+			} catch (SQLException e) {
+				throw new IOException(e);
+			}
 		}
 
 	}

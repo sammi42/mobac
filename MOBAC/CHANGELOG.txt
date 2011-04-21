@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 beta 3 (2011-04-??)
+1.9 beta 3 (2011-04-21)
  + Map source UMP-pcPL reactivated
  + [Nokia] Sports Tracker file extension changed to jpg (feature request #3066161)
  + Reactivated atlas format "TwoNav (RMAP)"

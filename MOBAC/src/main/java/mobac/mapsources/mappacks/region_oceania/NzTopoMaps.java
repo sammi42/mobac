@@ -19,6 +19,7 @@ package mobac.mapsources.mappacks.region_oceania;
 import java.net.HttpURLConnection;
 
 import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
 /**
@@ -32,7 +33,7 @@ import mobac.program.model.TileImageType;
  * Tiles created by and sourced from nztopomaps.com
  * </pre>
  */
-public class NzTopoMaps extends AbstractHttpMapSource {
+public class NzTopoMaps extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
 	public NzTopoMaps() {
 		super("New Zealand Topographic Maps", 6, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
@@ -52,7 +53,15 @@ public class NzTopoMaps extends AbstractHttpMapSource {
 
 	@Override
 	public String toString() {
-		return "New Zealand Topographic Maps";
+		return "nztopomaps.com (New Zealand only)";
+	}
+
+	public String getAttributionText() {
+		return "Images sourced from NZTopo database";
+	}
+
+	public String getAttributionLinkURL() {
+		return "http://nztopomaps.com";
 	}
 
 }

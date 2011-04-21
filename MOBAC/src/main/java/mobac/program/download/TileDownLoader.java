@@ -19,6 +19,7 @@ package mobac.program.download;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 
 import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.UnrecoverableDownloadException;
@@ -149,14 +150,7 @@ public class TileDownLoader {
 
 		log.trace("Downloading " + conn.getURL());
 
-		conn.setRequestMethod("GET");
-
-		Settings s = Settings.getInstance();
-		conn.setConnectTimeout(1000 * s.httpConnectionTimeout);
-		conn.setReadTimeout(1000 * s.httpReadTimeout);
-		if (conn.getRequestProperty("User-agent") == null)
-			conn.setRequestProperty("User-agent", s.getUserAgent());
-		conn.setRequestProperty("Accept", ACCEPT);
+		prepareConnection(conn);
 		conn.connect();
 
 		int code = conn.getResponseCode();
@@ -165,13 +159,8 @@ public class TileDownLoader {
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new DownloadFailedException(conn, code);
 
-		String contentType = conn.getContentType();
-		if (contentType != null && !contentType.startsWith("image/")) {
-			if (log.isTraceEnabled() && contentType.startsWith("text/")) {
-				log.trace("Content (" + contentType + "): " + new String(data));
-			}
-			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
-		}
+		checkContentType(conn, data);
+		checkContentLength(conn, data);
 
 		String eTag = conn.getHeaderField("ETag");
 		long timeLastModified = conn.getLastModified();
@@ -223,7 +212,7 @@ public class TileDownLoader {
 		if (log.isTraceEnabled())
 			log.trace(String.format("Checking %s %s", mapSource.getName(), tile));
 
-		conn.setRequestMethod("GET");
+		prepareConnection(conn);
 
 		boolean conditionalRequest = false;
 
@@ -244,12 +233,9 @@ public class TileDownLoader {
 		}
 		}
 
-		Settings s = Settings.getInstance();
-		conn.setConnectTimeout(1000 * s.httpConnectionTimeout);
-		conn.setReadTimeout(1000 * s.httpReadTimeout);
-		conn.addRequestProperty("User-agent", s.getUserAgent());
-		conn.setRequestProperty("Accept", ACCEPT);
 		conn.connect();
+
+		Settings s = Settings.getInstance();
 
 		int code = conn.getResponseCode();
 
@@ -267,9 +253,9 @@ public class TileDownLoader {
 
 		if (code != HttpURLConnection.HTTP_OK)
 			throw new DownloadFailedException(conn, code);
-		String contentType = conn.getContentType();
-		if (contentType != null && !contentType.startsWith("image/"))
-			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
+
+		checkContentType(conn, data);
+		checkContentLength(conn, data);
 
 		String eTag = conn.getHeaderField("ETag");
 		long timeLastModified = conn.getLastModified();
@@ -373,5 +359,42 @@ public class TileDownLoader {
 		if (onlineETag == null || onlineETag.length() == 0)
 			return true;
 		return (onlineETag.equals(eTag));
+	}
+
+	protected static void prepareConnection(HttpURLConnection conn) throws ProtocolException {
+		conn.setRequestMethod("GET");
+
+		Settings s = Settings.getInstance();
+		conn.setConnectTimeout(1000 * s.httpConnectionTimeout);
+		conn.setReadTimeout(1000 * s.httpReadTimeout);
+		if (conn.getRequestProperty("User-agent") == null)
+			conn.setRequestProperty("User-agent", s.getUserAgent());
+		conn.setRequestProperty("Accept", ACCEPT);
+	}
+
+	protected static void checkContentType(HttpURLConnection conn, byte[] data) throws UnrecoverableDownloadException {
+		String contentType = conn.getContentType();
+		if (contentType != null && !contentType.startsWith("image/")) {
+			if (log.isTraceEnabled() && contentType.startsWith("text/")) {
+				log.trace("Content (" + contentType + "): " + new String(data));
+			}
+			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
+		}
+	}
+
+	/**
+	 * Check if the retrieved data length is equal to the header value Content-Length
+	 * 
+	 * @param conn
+	 * @param data
+	 * @throws UnrecoverableDownloadException
+	 */
+	protected static void checkContentLength(HttpURLConnection conn, byte[] data) throws UnrecoverableDownloadException {
+		int len = conn.getContentLength();
+		if (len < 0)
+			return;
+		if (data.length != len)
+			throw new UnrecoverableDownloadException("Content length is not as declared by the server: retrived="
+					+ data.length + " bytes  expected-content-length=" + len + " bytes");
 	}
 }

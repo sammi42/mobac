@@ -385,11 +385,15 @@ public class MapPackManager {
 				InputStream in = zip.getInputStream(entry);
 				byte[] data = Utilities.getInputBytes(in);
 				in.close();
+				// name = name.replaceAll("\\\\", "/");
 				byte[] digest = md5.digest(data);
+				log.trace("Hashsum " + Hex.encodeHexString(digest) + " includes \"" + name + "\"");
 				md5Total.update(digest);
 				md5Total.update(name.getBytes());
 			}
-			return Hex.encodeHexString(md5Total.digest());
+			String md5sum = Hex.encodeHexString(md5Total.digest());
+			log.trace("md5sum of " + mapPackFile.getName() + ": " + md5sum);
+			return md5sum;
 		} finally {
 			zip.close();
 		}

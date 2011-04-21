@@ -130,7 +130,7 @@ public class TileLoader {
 				fileTilePainted = true;
 				return true;
 			} catch (Exception e) {
-				log.error("Failed to load tile from tile store", e);
+				log.error("Failed to load tile (z=" + zoom + ",x=" + tilex + ",y=" + tiley + ") from tile store", e);
 			}
 			return false;
 		}

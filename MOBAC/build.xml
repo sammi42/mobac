@@ -97,6 +97,10 @@
 					</classpath>
 				</javac>
 				<delete file="mapsources/mp-@{mappack}.jar" failonerror="false" />
+				<fileset dir="build/mp-@{mappack}" defaultexcludes="true" id="fileset-@{mappack}">
+					<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
+				</fileset>
+				
 				<jar destfile="mapsources/mp-@{mappack}.jar">
 					<manifest>
 						<attribute name="MapPackVersion" value="${mobac.mappackversion}" />
@@ -104,15 +108,11 @@
 						<attribute name="MapPackBuild-Date" value="${build.date}" />
 						<attribute name="MapPackRevision" value="${mobac.revision.new}" />
 					</manifest>
-					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
-						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
-					</fileset>
+					<fileset refid="fileset-@{mappack}" />
 					<zipfileset dir="${mappack.srcbasedir}/@{mappack}/" includes="mapsources.list" fullpath="META-INF/services/mobac.program.interfaces.MapSource" />
 				</jar>
 				<checksum algorithm="MD5" totalproperty="MD5-@{mappack}">
-					<fileset dir="build/mp-@{mappack}" defaultexcludes="true">
-						<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
-					</fileset>
+					<fileset refid="fileset-@{mappack}" />
 				</checksum>
 				<echo file="mapsources/mappacks-md5.txt" append="true" message="${MD5-@{mappack}} mp-@{mappack}.jar&#13;&#10;" />
 			</sequential>

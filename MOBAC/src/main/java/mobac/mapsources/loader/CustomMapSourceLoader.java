@@ -21,6 +21,7 @@ import mobac.mapsources.custom.CustomLocalTileZipMapSource;
 import mobac.mapsources.custom.CustomMapSource;
 import mobac.mapsources.custom.CustomMultiLayerMapSource;
 import mobac.mapsources.custom.CustomWmsMapSource;
+import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.WrappedMapSource;
 import mobac.program.model.MapSourceLoaderInfo;
@@ -63,6 +64,9 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 				else
 					customMapSource = (MapSource) o;
 				customMapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, f));
+				if (!(customMapSource instanceof FileBasedMapSource) && customMapSource.getTileImageType() == null)
+					log.warn("A problem occured while loading \"" + f.getName()
+							+ "\": tileType is null - some atlas formats will produce an error!");
 				log.trace("Custom map source loaded: " + customMapSource + " from file \"" + f.getName() + "\"");
 				mapSourcesManager.addMapSource(customMapSource);
 			} catch (Exception e) {

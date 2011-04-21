@@ -78,7 +78,7 @@ public class CustomMapSource implements HttpMapSource {
 	/**
 	 * Constructor without parameters - required by JAXB
 	 */
-	public CustomMapSource() {
+	protected CustomMapSource() {
 	}
 
 	public CustomMapSource(String name, String url) {
@@ -86,7 +86,7 @@ public class CustomMapSource implements HttpMapSource {
 		this.url = url;
 	}
 
-	public HttpMapSource.TileUpdate getTileUpdate() {
+	public TileUpdate getTileUpdate() {
 		return tileUpdate;
 	}
 

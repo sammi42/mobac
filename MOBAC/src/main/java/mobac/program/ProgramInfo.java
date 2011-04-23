@@ -28,7 +28,7 @@ public class ProgramInfo {
 	public static String PROG_NAME_SHORT = "MOBAC";
 
 	private static String VERSION = null;
-	private static int SVN_REVISION = -1;
+	private static String SVN_REVISION = "unknown";
 	private static String userAgent = "";
 
 	/**
@@ -56,10 +56,11 @@ public class ProgramInfo {
 				Properties props = new Properties();
 				props.load(propIn);
 				rev = props.getProperty("mobac.revision");
+				SVN_REVISION = Integer.toString(Utilities.parseSVNRevision(rev));
 			} else {
 				rev = System.getProperty("mobac.revision.fallback");
+				SVN_REVISION = Integer.toString(Utilities.parseSVNRevision(rev)) + " exported";
 			}
-			SVN_REVISION = Utilities.parseSVNRevision(rev);
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac-rev.properties", e);
 		} finally {
@@ -76,10 +77,6 @@ public class ProgramInfo {
 	}
 
 	public static String getRevisionStr() {
-		return Integer.toString(SVN_REVISION);
-	}
-
-	public static int getRevision() {
 		return SVN_REVISION;
 	}
 

@@ -161,8 +161,13 @@ public class MapPackManager {
 			Manifest mf = new Manifest(manifestIn);
 			rev = mf.getMainAttributes().getValue("MapPackRevision");
 			manifestIn.close();
-			if (rev != null)
-				rev = Integer.toString(Utilities.parseSVNRevision(rev));
+			if (rev != null) {
+				if ("exported".equals(rev)) {
+					rev = ProgramInfo.getRevisionStr();
+				} else {
+					rev = Integer.toString(Utilities.parseSVNRevision(rev));
+				}
+			}
 			mf = null;
 		}
 		MapSourceLoaderInfo loaderInfo = new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev);

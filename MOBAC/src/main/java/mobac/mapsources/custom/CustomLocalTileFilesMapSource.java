@@ -77,7 +77,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		File[] zoomDirs = sourceFolder.listFiles(ff);
 		if (zoomDirs.length < 1) {
 			JOptionPane.showMessageDialog(null, "No zoom directories found:\nMap name: " + name + "\nSource folder: "
-					+ sourceFolder, "\nInvaild source folder", JOptionPane.ERROR_MESSAGE);
+					+ sourceFolder, "Invaild source folder", JOptionPane.ERROR_MESSAGE);
 			initialized = true;
 			return;
 		}
@@ -96,8 +96,8 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		if (initialized)
 			return;
 		if (!sourceFolder.isDirectory()) {
-			JOptionPane.showMessageDialog(null, "The specified sorce folder does not exist:\nMap name: " + name
-					+ "\nSource folder: " + sourceFolder, "\nInvaild source folder", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "The specified source folder does not exist:\nMap name: " + name
+					+ "\nSource folder: " + sourceFolder, "Invaild source folder", JOptionPane.ERROR_MESSAGE);
 			initialized = true;
 			return;
 		}
@@ -142,7 +142,8 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		if (fileSyntax == null)
 			return null;
 		try {
-			return Utilities.getFileBytes(new File(sourceFolder, String.format(fileSyntax, zoom, x, y)));
+			String fileName = String.format(fileSyntax, zoom, x, y);
+			return Utilities.getFileBytes(new File(sourceFolder, fileName));
 		} catch (FileNotFoundException e) {
 			return null;
 		}

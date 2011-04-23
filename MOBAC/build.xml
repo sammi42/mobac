@@ -80,6 +80,7 @@
 		<pathconvert pathsep=";" property="mappacklist" refid="mappacks">
 			<mapper type="flatten" />
 		</pathconvert>
+		<mkdir dir="mapsources" />
 		<echo file="mapsources/mappacks-md5.txt" append="false" message="" />
 		<for list="${mappacklist}" param="mappack" delimiter=";">
 			<sequential>
@@ -100,7 +101,7 @@
 				<fileset dir="build/mp-@{mappack}" defaultexcludes="true" id="fileset-@{mappack}">
 					<include name="mobac/mapsources/mappacks/@{mappack}/**.class" />
 				</fileset>
-				
+
 				<jar destfile="mapsources/mp-@{mappack}.jar">
 					<manifest>
 						<attribute name="MapPackVersion" value="${mobac.mappackversion}" />
@@ -235,7 +236,15 @@
 
 	<target name="svnversion" description="Updates the revision information in src/mobac/mobac.properties">
 		<java jar="lib/svnversion.jar" fork="true" outputproperty="mobac.revision.new" />
+		<condition property="mobac.revision.exported">
+			<equals arg1="${mobac.revision.new}" arg2="exported" />
+		</condition>
 		<echo message="MOBAC revision: ${mobac.revision.new}" />
+		<echo message="MOBAC revision: ${mobac.revision.exported}" />
+		<antcall target="svnversion_write_property_file" />
+	</target>
+
+	<target name="svnversion_write_property_file" unless="mobac.revision.exported">
 		<propertyfile file="${rev.prop.file}">
 			<entry key="mobac.revision" value="${mobac.revision.new}" />
 		</propertyfile>

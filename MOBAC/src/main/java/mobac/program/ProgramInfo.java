@@ -51,9 +51,14 @@ public class ProgramInfo {
 		}
 		propIn = Main.class.getResourceAsStream("mobac-rev.properties");
 		try {
-			Properties props = new Properties();
-			props.load(propIn);
-			String rev = props.getProperty("mobac.revision");
+			String rev;
+			if (propIn != null) {
+				Properties props = new Properties();
+				props.load(propIn);
+				rev = props.getProperty("mobac.revision");
+			} else {
+				rev = System.getProperty("mobac.revision.fallback");
+			}
 			SVN_REVISION = Utilities.parseSVNRevision(rev);
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac-rev.properties", e);

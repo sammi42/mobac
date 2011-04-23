@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
@@ -625,11 +627,14 @@ public class Utilities {
 	 * @return parsed svn revision
 	 */
 	public static int parseSVNRevision(String revision) {
-		if (revision.endsWith("M"))
-			revision = revision.substring(0, revision.length() - 1);
-		int index = revision.indexOf(':');
-		if (index > 0)
-			revision = revision.substring(index + 1, revision.length());
-		return Integer.parseInt(revision);
+		revision = revision.trim();
+		int index = revision.lastIndexOf(':');
+		if (index >= 0) {
+			revision = revision.substring(index + 1).trim();
+		}
+		Matcher m = Pattern.compile("(\\d+)[^\\d]*").matcher(revision);
+		if (!m.matches())
+			return -1;
+		return Integer.parseInt(m.group(1));
 	}
 }

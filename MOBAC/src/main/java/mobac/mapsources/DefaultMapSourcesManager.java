@@ -68,13 +68,13 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 		try {
 			MapPackManager mpm = new MapPackManager(mapSourcesDir);
+			mpm.testMapPackDir();
 			mpm.installUpdates();
 			if (!devMode || !loadMapPacksEclipseMode()) {
 				mpm.loadMapPacks(this);
 			}
 		} catch (Exception e) {
-			log.error("Failed to load map packs", e);
-			throw new RuntimeException(e);
+			throw new RuntimeException("Failed to load map packs: " + e.getMessage(), e);
 		}
 		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(this, mapSourcesDir);
 		bsmsl.loadBeanShellMapSources();

@@ -90,7 +90,10 @@ public class MapPackManager {
 	 * @throws IOException
 	 */
 	public void installUpdates() throws IOException {
+		testMapPackDir();
 		File[] newMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.new"));
+		if (newMapPacks == null)
+			throw new IOException("Failed to enumerate installable mappacks");
 		for (File newMapPack : newMapPacks) {
 			try {
 				testMapPack(newMapPack);
@@ -450,6 +453,13 @@ public class MapPackManager {
 			jf.close();
 		}
 
+	}
+
+	public void testMapPackDir() throws IOException {
+		if (mapPackDir == null)
+			throw new IOException("map pack directory is unset");
+		if (!mapPackDir.isDirectory())
+			throw new IOException("map pack directory \"" + mapPackDir.getAbsolutePath() + "\" does not exist");
 	}
 
 	public static void main(String[] args) {

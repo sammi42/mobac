@@ -88,14 +88,14 @@ public class ThrottleSupport {
 				if (bytes < bandwidth - allocated) {
 					// we still have some bandwidth left
 					allocated += bytes;
-					logger.warn("returning " + bytes + " allocated now " + allocated);
+					logger.debug("returning " + bytes + " allocated now " + allocated);
 					return bytes;
 				}
 				if (bandwidth - allocated > 0) {
 					// don't have enough, but return all we have left
 					bytes = (int) (bandwidth - allocated);
 					allocated = bandwidth;
-					logger.warn("returning " + bytes + " allocated now " + allocated);
+					logger.debug("returning " + bytes + " allocated now " + allocated);
 					return bytes;
 				}
 

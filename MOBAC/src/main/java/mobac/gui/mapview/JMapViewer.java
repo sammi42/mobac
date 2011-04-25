@@ -18,6 +18,7 @@ package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -376,6 +377,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 		// outer border of the map
 		int mapSize = tileSize << zoom;
+		g.setColor(Color.BLACK);
 		g.drawRect(w2 - center.x, h2 - center.y, mapSize, mapSize);
 
 		// g.drawString("Tiles in cache: " + tileCache.getTileCount(), 50, 20);

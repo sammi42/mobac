@@ -40,7 +40,7 @@ public class DebugMapSource implements MapSource {
 	
 	private static final byte[] COLORS = { 0,// 
 			(byte) 0xff, (byte) 0xff, (byte) 0xff, // white
-			(byte) 0xff, (byte) 0x00, (byte) 0x00 // red
+			(byte) 0xff, (byte) 0xee, (byte) 0xee // red
 	};
 
 	private static final IndexColorModel COLORMODEL = new IndexColorModel(8, 2, COLORS, 1, false);

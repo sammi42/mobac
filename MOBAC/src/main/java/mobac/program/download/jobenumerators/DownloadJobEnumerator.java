@@ -42,7 +42,7 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 	final protected TarIndexedArchive tileArchive;
 
 	protected int x, y;
-	protected DownloadJob nextJob;
+	protected Job nextJob;
 
 	/**
 	 * This enumerator is the unfolded version for two encapsulated loops:
@@ -77,6 +77,8 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		x = xMin;
 
 		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
+		if (!tileFilter.testTile(x, y, zoom, mapSource))
+			nextElement();
 	}
 
 	public boolean hasMoreElements() {

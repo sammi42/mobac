@@ -60,6 +60,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
+import mobac.gui.actions.AddGpxTrackMap;
 import mobac.gui.actions.AddRectangleMapAutocut;
 import mobac.gui.actions.AtlasConvert;
 import mobac.gui.actions.AtlasCreate;
@@ -151,6 +152,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JProfilesPanel profilesPanel;
 	public JTileImageParametersPanel tileImageParametersPanel;
 	private JTileStoreCoveragePanel tileStoreCoveragePanel;
+	public JGpxPanel gpxPanel;
 
 	private JPanel mapControlPanel = new JPanel(new BorderLayout());
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -318,12 +320,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		smRectangular.setSelected(true);
 		selectionModeMenu.add(smRectangular);
 
-		JMenuItem sAddSelection = new JMenuItem("Add selection");
-		sAddSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
-		sAddSelection.setMnemonic(KeyEvent.VK_A);
-		sAddSelection.addActionListener(AddRectangleMapAutocut.INSTANCE);
-		mapsMenu.add(sAddSelection);
+		JMenuItem addSelection = new JMenuItem2("Add selection",AddRectangleMapAutocut.class);
+		addSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		addSelection.setMnemonic(KeyEvent.VK_A);
+		mapsMenu.add(addSelection);
 
+		JMenuItem addGpxTrackSelection = new JMenuItem2("Add selection by GPX track", AddGpxTrackMap.class);
+		mapsMenu.add(addGpxTrackSelection);
+
+		
 		// Bookmarks menu
 		bookmarkMenu.setMnemonic(KeyEvent.VK_B);
 		JMenuItem addBookmark = new JMenuItem("Save current view");
@@ -450,7 +455,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private void updateRightPanel() {
 		GBC gbc_eol = GBC.eol().insets(5, 2, 5, 2).fill();
-		JPanel gpxPanel = new JGpxPanel(previewMap);
+		gpxPanel = new JGpxPanel(previewMap);
 		rightPanel.add(gpxPanel, gbc_eol);
 	}
 

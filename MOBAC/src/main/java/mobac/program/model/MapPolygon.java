@@ -18,11 +18,19 @@ package mobac.program.model;
 
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobac.program.Logging;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
@@ -37,6 +45,95 @@ public class MapPolygon extends Map {
 	protected Polygon polygon = new Polygon();
 
 	protected MapPolygon() {
+	}
+
+	public static MapPolygon createFromTrack(Layer layer, String name, MapSource mapSource, int zoom,
+			EastNorthCoordinate[] trackPoints, int pixelDistance, TileImageParameters parameters) {
+
+		MapSpace mapSpace = mapSource.getMapSpace();
+		Area area = new Area();
+		for (int i = 1; i < trackPoints.length; i++) {
+			EastNorthCoordinate point1 = trackPoints[i - 1];
+			EastNorthCoordinate point2 = trackPoints[i];
+
+			int y1 = mapSpace.cLatToY(point1.lat, zoom);
+			int y2 = mapSpace.cLatToY(point2.lat, zoom);
+			int x1 = mapSpace.cLonToX(point1.lon, zoom);
+			int x2 = mapSpace.cLonToX(point2.lon, zoom);
+
+			Line2D.Double ln = new Line2D.Double(x1, y1, x2, y2);
+			double indent = pixelDistance; // distance from central line
+			double length = ln.getP1().distance(ln.getP2());
+
+			double dx_li = (ln.getX2() - ln.getX1()) / length * indent;
+			double dy_li = (ln.getY2() - ln.getY1()) / length * indent;
+
+			// moved p1 point
+			double p1X = ln.getX1() - dx_li;
+			double p1Y = ln.getY1() - dy_li;
+
+			// line moved to the left
+			double lX1 = ln.getX1() - dy_li;
+			double lY1 = ln.getY1() + dx_li;
+			double lX2 = ln.getX2() - dy_li;
+			double lY2 = ln.getY2() + dx_li;
+
+			// moved p2 point
+			double p2X = ln.getX2() + dx_li;
+			double p2Y = ln.getY2() + dy_li;
+
+			// line moved to the right
+			double rX1_ = ln.getX1() + dy_li;
+			double rY1 = ln.getY1() - dx_li;
+			double rX2 = ln.getX2() + dy_li;
+			double rY2 = ln.getY2() - dx_li;
+
+			Path2D p = new Path2D.Double();
+			p.moveTo(lX1, lY1);
+			p.lineTo(lX2, lY2);
+			p.lineTo(p2X, p2Y);
+			p.lineTo(rX2, rY2);
+			p.lineTo(rX1_, rY1);
+			p.lineTo(p1X, p1Y);
+			p.lineTo(lX1, lY1);
+
+			area.add(new Area(p));
+		}
+		PathIterator pi = area.getPathIterator(null);
+		ArrayList<Integer> xPoints = new ArrayList<Integer>(100);
+		ArrayList<Integer> yPoints = new ArrayList<Integer>(100);
+		double coords[] = new double[6];
+		while (!pi.isDone()) {
+			int type = pi.currentSegment(coords);
+			switch (type) {
+			case PathIterator.SEG_MOVETO:
+			case PathIterator.SEG_LINETO:
+				xPoints.add((int) coords[0]);
+				yPoints.add((int) coords[1]);
+				break;
+			default:
+				Logging.LOG.warn("Area to polygon conversion: unexpected segment type found: " + type + " "
+						+ Arrays.toString(coords));
+			}
+			pi.next();
+		}
+		int[] xp = new int[xPoints.size()];
+		int[] yp = new int[yPoints.size()];
+		for (int i = 0; i < xp.length; i++) {
+			xp[i] = xPoints.get(i);
+			yp[i] = yPoints.get(i);
+		}
+		Polygon polygon = new Polygon(xp, yp, xp.length);
+		return new MapPolygon(layer, name, mapSource, zoom, polygon, parameters);
+	}
+
+	public MapPolygon(Layer layer, String name, MapSource mapSource, int zoom, Polygon polygon,
+			TileImageParameters parameters) {
+		super(layer, name, mapSource, zoom, null, null, parameters);
+		this.polygon = polygon;
+		Rectangle bounds = polygon.getBounds();
+		minTileCoordinate = new Point(bounds.x, bounds.y);
+		maxTileCoordinate = new Point(bounds.x + bounds.width, bounds.y + bounds.height);
 	}
 
 	public MapPolygon(Layer layer, String name, MapSource mapSource, int zoom, Point minTileCoordinate,

@@ -13,7 +13,8 @@
  ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 
     atlas format in an NullPointerException like in bug #3290976
  ~ Settings dialog now lists all tile stores - not only the stores of loaded map 
-    sources  
+    sources
+ + Experimental: Polygonal map derived from GPX track segment
 
 1.9 beta 3 (2011-04-21)
  + Map source UMP-pcPL reactivated

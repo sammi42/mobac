@@ -240,7 +240,6 @@
 			<equals arg1="${mobac.revision.new}" arg2="exported" />
 		</condition>
 		<echo message="MOBAC revision: ${mobac.revision.new}" />
-		<echo message="MOBAC revision: ${mobac.revision.exported}" />
 		<antcall target="svnversion_write_property_file" />
 	</target>
 
@@ -260,7 +259,7 @@
 				<include name="CHANGELOG.txt" />
 				<include name="start.*" />
 				<include name="Mobile Atlas Creator.exe" />
-				<include name="mapsources/*.jar" />
+				<include name="mapsources/mp-*.jar" />
 			</fileset>
 		</zip>
 	</target>

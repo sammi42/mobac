@@ -88,8 +88,6 @@ public abstract class TileStore {
 
 	public abstract void prepareTileStore(MapSource mapSource);
 
-	public abstract void clearStore(MapSource mapSource);
-
 	public abstract void clearStore(String storeName);
 
 	public abstract String[] getAllStoreNames();
@@ -104,11 +102,11 @@ public abstract class TileStore {
 
 	/**
 	 * 
-	 * @param mapSource
+	 * @param mapSourceName
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public abstract TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException;
+	public abstract TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException;
 
 	/**
 	 * 

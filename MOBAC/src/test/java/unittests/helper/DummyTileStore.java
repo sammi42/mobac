@@ -36,12 +36,6 @@ public class DummyTileStore extends TileStore {
 	}
 
 	@Override
-	public void clearStore(MapSource mapSource) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void clearStore(String storeName) {
 		// TODO Auto-generated method stub
 
@@ -86,7 +80,7 @@ public class DummyTileStore extends TileStore {
 	}
 
 	@Override
-	public TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException {
+	public TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException {
 		// TODO Auto-generated method stub
 		return null;
 	}

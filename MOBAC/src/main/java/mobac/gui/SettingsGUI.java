@@ -503,6 +503,7 @@ public class SettingsGUI extends JDialog {
 		gbc_eol.gridwidth = GridBagConstraints.REMAINDER;
 
 		TileStore tileStore = TileStore.getInstance();
+		MapSourcesManager mapSourcesManager = MapSourcesManager.getInstance();
 
 		tileStoreInfoPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
 		tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
@@ -510,23 +511,26 @@ public class SettingsGUI extends JDialog {
 
 		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-		for (MapSource ts : MapSourcesManager.getInstance().getAllLayerMapSources()) {
-			if (!tileStore.storeExists(ts))
-				continue;
+		for (String name : tileStore.getAllStoreNames()) {
 			String mapTileCountText = "  ?  ";
 			String mapTileSizeText = "    ?    ";
-			final JLabel mapSourceNameLabel = new JLabel(ts.getName());
+			MapSource mapSource = mapSourcesManager.getSourceByName(name);
+			final JLabel mapSourceNameLabel;
+			if (mapSource != null)
+				mapSourceNameLabel = new JLabel(name);
+			else
+				mapSourceNameLabel = new JLabel(name + " (unused)");
 			final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
 			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
 			final JButton deleteButton = new JButton(trash);
 			TileSourceInfoComponents info = new TileSourceInfoComponents();
-			info.mapSource = ts;
+			info.name = name;
 			info.countLabel = mapTileCountLabel;
 			info.sizeLabel = mapTileSizeLabel;
 			tileStoreInfoList.add(info);
 			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-			deleteButton.setToolTipText("Delete all stored " + ts.getName() + " tiles.");
-			deleteButton.addActionListener(new ClearTileCacheAction(ts.getName()));
+			deleteButton.setToolTipText("Delete all stored " + name + " tiles.");
+			deleteButton.addActionListener(new ClearTileCacheAction(name));
 
 			tileStoreInfoPanel.add(mapSourceNameLabel, gbc_mapSource);
 			tileStoreInfoPanel.add(mapTileCountLabel, gbc_mapTiles);
@@ -548,19 +552,24 @@ public class SettingsGUI extends JDialog {
 		tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
 	}
 
-	private void updateTileStoreInfoPanel(String storeName) {
+	/**
+	 * 
+	 * @param updateStoreName
+	 *            name of the tile store to update or <code>null</code> in case of all tile stores to be updated
+	 */
+	private void updateTileStoreInfoPanel(String updateStoreName) {
 		try {
 			TileStore tileStore = TileStore.getInstance();
 
 			long totalTileCount = 0;
 			long totalTileSize = 0;
 			for (final TileSourceInfoComponents info : tileStoreInfoList) {
-				MapSource ms = info.mapSource;
+				String storeName = info.name;
 				Utilities.checkForInterruption();
 				int count;
 				long size;
-				if (storeName == null || ms.getName().equals(storeName)) {
-					TileStoreInfo tsi = tileStore.getStoreInfo(ms);
+				if (updateStoreName == null || info.name.equals(updateStoreName)) {
+					TileStoreInfo tsi = tileStore.getStoreInfo(storeName);
 					count = tsi.getTileCount();
 					size = tsi.getStoreSize();
 					info.count = count;
@@ -978,7 +987,7 @@ public class SettingsGUI extends JDialog {
 	private static class TileSourceInfoComponents {
 		JLabel sizeLabel;
 		JLabel countLabel;
-		MapSource mapSource;
+		String name;
 
 		int count = -1;
 		long size = 0;

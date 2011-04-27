@@ -169,9 +169,9 @@ public class BerkeleyDbTileStore extends TileStore {
 		try {
 			synchronized (tileDbMap) {
 				cleanupDatabases();
-				db = tileDbMap.get(mapSource.getName());
+				db = tileDbMap.get(storeName);
 				if (db == null) {
-					db = new TileDatabase(mapSource);
+					db = new TileDatabase(storeName);
 					db.lastAccess = System.currentTimeMillis();
 					tileDbMap.put(mapSource.getName(), db);
 				}
@@ -183,10 +183,39 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
+	private TileDatabase getTileDatabase(String storeName) throws DatabaseException {
+		TileDatabase db;
+		if (tileDbMap == null)
+			// Tile store has been closed already
+			return null;
+		if (storeName == null)
+			return null;
+		synchronized (tileDbMap) {
+			db = tileDbMap.get(storeName);
+		}
+		if (db != null)
+			return db;
+		try {
+			synchronized (tileDbMap) {
+				cleanupDatabases();
+				db = tileDbMap.get(storeName);
+				if (db == null) {
+					db = new TileDatabase(storeName);
+					db.lastAccess = System.currentTimeMillis();
+					tileDbMap.put(storeName, db);
+				}
+				return db;
+			}
+		} catch (Exception e) {
+			log.error("Error creating tile store db \"" + storeName + "\"", e);
+			throw new TileStoreException(e);
+		}
+	}
+
 	@Override
-	public TileStoreInfo getStoreInfo(MapSource mapSource) throws InterruptedException {
-		int tileCount = getNrOfTiles(mapSource);
-		long storeSize = getStoreSize(mapSource);
+	public TileStoreInfo getStoreInfo(String storeName) throws InterruptedException {
+		int tileCount = getNrOfTiles(storeName);
+		long storeSize = getStoreSize(storeName);
 		return new TileStoreInfo(storeSize, tileCount);
 	}
 
@@ -267,10 +296,6 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
-	public void clearStore(MapSource mapSource) {
-		clearStore(mapSource.getName());
-	}
-
 	public void clearStore(String storeName) {
 		File databaseDir = getStoreDir(storeName);
 
@@ -292,17 +317,17 @@ public class BerkeleyDbTileStore extends TileStore {
 	/**
 	 * This method returns the amount of tiles in the store of tiles which is specified by the {@link MapSource} object.
 	 * 
-	 * @param mapSource
+	 * @param mapSourceName
 	 *            the store to calculate number of tiles in
 	 * @return the amount of tiles in the specified store.
 	 * @throws InterruptedException
 	 */
-	public int getNrOfTiles(MapSource mapSource) throws InterruptedException {
+	public int getNrOfTiles(String mapSourceName) throws InterruptedException {
 		try {
-			File storeDir = getStoreDir(mapSource);
+			File storeDir = getStoreDir(mapSourceName);
 			if (!storeDir.isDirectory())
 				return 0;
-			TileDatabase db = getTileDatabase(mapSource);
+			TileDatabase db = getTileDatabase(mapSourceName);
 			int tileCount = (int) db.entryCount();
 			db.close();
 			return tileCount;
@@ -312,8 +337,8 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 	}
 
-	public long getStoreSize(MapSource mapSource) throws InterruptedException {
-		File tileStore = getStoreDir(mapSource);
+	public long getStoreSize(String storeName) throws InterruptedException {
+		File tileStore = getStoreDir(storeName);
 		if (tileStore.exists()) {
 			DirInfoFileFilter diff = new DirInfoFileFilter();
 			try {
@@ -378,6 +403,13 @@ public class BerkeleyDbTileStore extends TileStore {
 		return (tileStore.isDirectory()) && (tileStore.exists());
 	}
 
+	/**
+	 * Returns the directory used for storing the tile database of the {@link MapSource} specified by
+	 * <code>mapSource</code>
+	 * 
+	 * @param mapSource
+	 * @return
+	 */
 	protected File getStoreDir(MapSource mapSource) {
 		return getStoreDir(mapSource.getName());
 	}
@@ -437,7 +469,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	protected class TileDatabase {
 
-		final MapSource mapSource;
+		final String mapSourceName;
 		final Environment env;
 		final EntityStore store;
 		final PrimaryIndex<TileDbKey, TileDbEntry> tileIndex;
@@ -445,15 +477,15 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		long lastAccess;
 
-		public TileDatabase(MapSource mapSource) throws IOException, EnvironmentLockedException, DatabaseException {
-			log.debug("Opening tile store db: \"" + mapSource.getName() + "\"");
+		public TileDatabase(String mapSourceName) throws IOException, EnvironmentLockedException, DatabaseException {
+			log.debug("Opening tile store db: \"" + mapSourceName + "\"");
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			try {
 				t.pauseInterrupt();
-				this.mapSource = mapSource;
+				this.mapSourceName = mapSourceName;
 				lastAccess = System.currentTimeMillis();
 
-				File storeDir = getStoreDir(mapSource);
+				File storeDir = getStoreDir(mapSourceName);
 				Utilities.mkDirs(storeDir);
 
 				env = new Environment(storeDir, envConfig);
@@ -470,7 +502,7 @@ public class BerkeleyDbTileStore extends TileStore {
 					close();
 				t.resumeInterrupt();
 			}
-			log.debug("Opened tile store db: \"" + mapSource.getName() + "\"");
+			log.debug("Opened tile store db: \"" + mapSourceName + "\"");
 		}
 
 		public boolean isClosed() {
@@ -566,16 +598,16 @@ public class BerkeleyDbTileStore extends TileStore {
 				return;
 			if (removeFromMap) {
 				synchronized (tileDbMap) {
-					TileDatabase db2 = tileDbMap.get(mapSource.getName());
+					TileDatabase db2 = tileDbMap.get(mapSourceName);
 					if (db2 == this)
-						tileDbMap.remove(mapSource.getName());
+						tileDbMap.remove(mapSourceName);
 				}
 			}
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			try {
 				t.pauseInterrupt();
 				try {
-					log.debug("Closing tile store db \"" + mapSource.getName() + "\"");
+					log.debug("Closing tile store db \"" + mapSourceName + "\"");
 					if (store != null)
 						store.close();
 				} catch (Exception e) {

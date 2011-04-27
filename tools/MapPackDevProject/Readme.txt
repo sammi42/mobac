@@ -1,0 +1,1 @@
+Place "Mobile_Atlas_Creator.jar" inside this directory.

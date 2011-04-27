@@ -31,7 +31,7 @@ import mobac.gui.AtlasProgress;
 import mobac.gui.AtlasProgress.AtlasCreationController;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.atlascreators.tileprovider.DownloadedTileProvider;
-import mobac.program.atlascreators.tileprovider.MapSourceProvider;
+import mobac.program.atlascreators.tileprovider.FilteredMapSourceProvider;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.download.DownloadJobProducerThread;
 import mobac.program.interfaces.AtlasInterface;
@@ -273,8 +273,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		try {
 			tileArchive = null;
 			TileProvider mapTileProvider;
-			if (!(map instanceof FileBasedMapSource)) {
-				// For online maps we download the tiles first and then start creating the map if 
+			if (!(map.getMapSource() instanceof FileBasedMapSource)) {
+				// For online maps we download the tiles first and then start creating the map if
 				// we are sure we got all tiles
 				if (!AtlasOutputFormat.TILESTORE.equals(atlas.getOutputFormat())) {
 					String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
@@ -341,7 +341,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 				mapTileProvider = new DownloadedTileProvider(tileIndex, map.getMapSource());
 			} else {
 				// We don't need to download anything. Everything is already stored locally therefore we can just use it
-				mapTileProvider = new MapSourceProvider(map.getMapSource(), map.getZoom(), LoadMethod.DEFAULT);
+				mapTileProvider = new FilteredMapSourceProvider(map, LoadMethod.DEFAULT);
 			}
 			atlasCreator.initializeMap(map, mapTileProvider);
 			atlasCreator.createMap();

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobac.exceptions.InvalidNameException;
 import mobac.program.JobDispatcher.Job;
-import mobac.program.download.jobenumerators.DJERectangle;
+import mobac.program.download.jobenumerators.DownloadJobEnumerator;
 import mobac.program.interfaces.CapabilityDeletable;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.DownloadableElement;
@@ -36,7 +36,9 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.TileFilter;
 import mobac.program.interfaces.ToolTipProvider;
+import mobac.program.tilefilter.DummyTileFilter;
 import mobac.utilities.tar.TarIndexedArchive;
 
 import org.apache.log4j.Logger;
@@ -287,7 +289,11 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		return new DJERectangle(this, mapSource, tileArchive, listener);
+		return new DownloadJobEnumerator(this, mapSource, tileArchive, listener);
 	}
 
+	public TileFilter getTileFilter() {
+		return new DummyTileFilter();
+	}
+	
 }

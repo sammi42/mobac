@@ -19,19 +19,16 @@ package mobac.program.model;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.io.StringWriter;
-import java.util.Enumeration;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobac.program.JobDispatcher.Job;
-import mobac.program.download.jobenumerators.DJEPolygon;
-import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.utilities.tar.TarIndexedArchive;
+import mobac.program.interfaces.TileFilter;
+import mobac.program.tilefilter.PolygonTileFilter;
 
 @XmlRootElement
 public class MapPolygon extends Map {
@@ -100,13 +97,12 @@ public class MapPolygon extends Map {
 		return sw.toString();
 	}
 
-	@Override
-	public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		return new DJEPolygon(this, mapSource, tileArchive, listener);
-	}
-
 	public Polygon getPolygon() {
 		return polygon;
+	}
+
+	public TileFilter getTileFilter() {
+		return new PolygonTileFilter(this);
 	}
 
 	@Override

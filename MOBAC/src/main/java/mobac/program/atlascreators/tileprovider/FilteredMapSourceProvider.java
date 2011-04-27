@@ -19,52 +19,36 @@ package mobac.program.atlascreators.tileprovider;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import mobac.exceptions.TileException;
+import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSource.LoadMethod;
+import mobac.program.interfaces.TileFilter;
 
-/**
- * A {@link TileProvider} implementation that retrieves all tiles directly from the {@link MapSource}.
- */
-public class MapSourceProvider implements TileProvider {
+public class FilteredMapSourceProvider extends MapSourceProvider {
 
-	protected final MapSource mapSource;
-	protected final int zoom;
-	protected final LoadMethod loadMethod;
+	protected final TileFilter tileFilter;
 
-	/**
-	 * 
-	 * @param mapSource
-	 * @param zoom
-	 * @param loadMethod
-	 *            defines if the tile should be taken from tile cache or from it's original source (web server,
-	 *            generated...).
-	 */
-	public MapSourceProvider(MapSource mapSource, int zoom, LoadMethod loadMethod) {
-		super();
-		this.mapSource = mapSource;
-		this.zoom = zoom;
-		this.loadMethod = loadMethod;
+	public FilteredMapSourceProvider(MapInterface map, LoadMethod loadMethod) {
+		this(map.getMapSource(), map.getZoom(), loadMethod, map.getTileFilter());
 	}
 
+	public FilteredMapSourceProvider(MapSource mapSource, int zoom, LoadMethod loadMethod, TileFilter tileFilter) {
+		super(mapSource, zoom, loadMethod);
+		this.tileFilter = tileFilter;
+	}
+
+	@Override
 	public byte[] getTileData(int x, int y) throws IOException {
-		try {
-			return mapSource.getTileData(zoom, x, y, loadMethod);
-		} catch (TileException e) {
-			throw new IOException(e);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		if (!tileFilter.testTile(x, y, zoom, mapSource))
+			return null;
+		return super.getTileData(x, y);
 	}
 
+	@Override
 	public BufferedImage getTileImage(int x, int y) throws IOException {
-		try {
-			return mapSource.getTileImage(zoom, x, y, loadMethod);
-		} catch (TileException e) {
-			throw new IOException(e);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		if (!tileFilter.testTile(x, y, zoom, mapSource))
+			return null;
+		return super.getTileImage(x, y);
 	}
 
 }

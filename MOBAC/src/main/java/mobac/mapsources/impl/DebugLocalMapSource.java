@@ -14,40 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.interfaces;
+package mobac.mapsources.impl;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import mobac.program.interfaces.FileBasedMapSource;
 
-import mobac.program.model.TileImageParameters;
+/**
+ * A {@link FileBasedMapSource} for debugging and testing purposes
+ */
+public class DebugLocalMapSource extends DebugMapSource implements FileBasedMapSource {
 
+	public void initialize() {
+	}
 
+	@Override
+	public String getName() {
+		return "DebugLocal";
+	}
 
-public interface MapInterface extends AtlasObject, CapabilityDeletable {
+	@Override
+	public String toString() {
+		return "Debug (local)";
+	}
 
-	public Point getMinTileCoordinate();
-
-	public Point getMaxTileCoordinate();
-
-	public int getZoom();
-
-	public MapSource getMapSource();
-
-	public Dimension getTileSize();
-
-	public LayerInterface getLayer();
-
-	public void setLayer(LayerInterface layer);
-
-	public TileImageParameters getParameters();
-
-	public void setParameters(TileImageParameters p);
-
-	public long calculateTilesToDownload();
-
-	public String getInfoText();
-	
-	public TileFilter getTileFilter();
-	
-	public MapInterface deepClone(LayerInterface newLayer);
 }

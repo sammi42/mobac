@@ -14,14 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.interfaces;
+package mobac.program.tilefilter;
 
-import java.util.Enumeration;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.TileFilter;
 
-import mobac.program.JobDispatcher.Job;
+/**
+ * Dummy tile filter - always returns <code>true</code> for any tile.
+ */
+public class DummyTileFilter implements TileFilter {
 
-
-
-public interface DownloadJobEnumerator extends  Enumeration<Job> {
+	public boolean testTile(int x, int y, int zoom, MapSource mapSource) {
+		return true;
+	}
 
 }

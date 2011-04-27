@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import mobac.mapsources.custom.StandardMapSourceLayer;
+import mobac.mapsources.impl.DebugLocalMapSource;
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.mapsources.impl.SimpleMapSource;
@@ -63,6 +64,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		if (devMode) {
 			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
 			addMapSource(new DebugMapSource());
+			addMapSource(new DebugLocalMapSource());
 		}
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 

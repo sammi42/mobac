@@ -17,20 +17,22 @@
 package mobac.program.download.jobenumerators;
 
 import java.awt.Point;
+import java.util.Enumeration;
 
 import mobac.program.JobDispatcher.Job;
 import mobac.program.download.DownloadJob;
-import mobac.program.interfaces.DownloadJobEnumerator;
 import mobac.program.interfaces.DownloadJobListener;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.TileFilter;
 import mobac.program.model.Map;
 import mobac.utilities.tar.TarIndexedArchive;
 
 /**
  * Enumerates / creates the download jobs for a regular rectangle single layer map.
  */
-public class DJERectangle implements DownloadJobEnumerator {
+public class DownloadJobEnumerator implements Enumeration<Job> {
 
+	final protected TileFilter tileFilter;
 	final protected DownloadJobListener listener;
 	final protected int xMin;
 	final protected int xMax;
@@ -57,7 +59,9 @@ public class DJERectangle implements DownloadJobEnumerator {
 	 * @param tileArchive
 	 * @param listener
 	 */
-	public DJERectangle(Map map, MapSource mapSource, TarIndexedArchive tileArchive, DownloadJobListener listener) {
+	public DownloadJobEnumerator(Map map, MapSource mapSource, TarIndexedArchive tileArchive,
+			DownloadJobListener listener) {
+		this.tileFilter = map.getTileFilter();
 		this.listener = listener;
 		Point minCoord = map.getMinTileCoordinate();
 		Point maxCoord = map.getMaxTileCoordinate();
@@ -81,15 +85,19 @@ public class DJERectangle implements DownloadJobEnumerator {
 
 	public Job nextElement() {
 		Job job = nextJob;
-		x++;
-		if (x > xMax) {
-			y++;
-			x = xMin;
-			if (y > yMax) {
-				nextJob = null;
-				return job;
+		boolean filter = false;
+		do {
+			x++;
+			if (x > xMax) {
+				y++;
+				x = xMin;
+				if (y > yMax) {
+					nextJob = null;
+					return job;
+				}
 			}
-		}
+			filter = tileFilter.testTile(x, y, zoom, mapSource);
+		} while (!filter);
 		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
 		return job;
 	}

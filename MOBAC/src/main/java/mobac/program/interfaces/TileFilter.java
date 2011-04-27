@@ -14,24 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.download.jobenumerators;
+package mobac.program.interfaces;
 
-import mobac.program.interfaces.DownloadJobEnumerator;
-import mobac.program.interfaces.DownloadJobListener;
-import mobac.program.interfaces.MapInterface;
-import mobac.program.interfaces.MapSource;
-import mobac.program.model.Map;
-import mobac.program.model.MapPolygon;
-import mobac.utilities.tar.TarIndexedArchive;
+/**
+ * Basic interface that allows to filter tiles based on their position and zoom level in the map.
+ */
+public interface TileFilter {
 
-public class DJEFactory {
-
-	protected static DownloadJobEnumerator createInstance(MapInterface map, MapSource mapSource,
-			TarIndexedArchive tileArchive, DownloadJobListener listener) {
-		if (map instanceof Map)
-			return new DJERectangle((Map) map, mapSource, tileArchive, listener);
-		if (map instanceof MapPolygon)
-			return new DJEPolygon((MapPolygon) map, mapSource, tileArchive, listener);
-		throw new RuntimeException("Unsupported map type" + map.getClass());
-	}
+	/**
+	 * Tests if the tile specified by the parameters should be included or excluded
+	 * 
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @param mapSource
+	 * @return <ul>
+	 *         <li><code>true</code>: tile did pass the filter and should be included</li>
+	 *         <li><code>false</code>:tile did not pass the filter and should be excluded</li>
+	 *         </ul>
+	 */
+	public boolean testTile(int x, int y, int zoom, MapSource mapSource);
 }

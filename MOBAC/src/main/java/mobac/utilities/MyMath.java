@@ -18,17 +18,54 @@ package mobac.utilities;
 
 public class MyMath {
 
+	/**
+	 * 
+	 * Rounds down to the nearest multiple of <code>toNearest</code>
+	 * 
+	 * @param value
+	 *            positive value
+	 * @param toNearest
+	 *            positive value
+	 * @return
+	 */
+	public static int roundDownToNearest(int value, int toNearest) {
+		int remainder = value % toNearest;
+		value -= remainder;
+		return value;
+	}
+
+	/**
+	 * 
+	 * Rounds up to the nearest multiple of <code>toNearest</code>
+	 * 
+	 * @param value
+	 *            positive value
+	 * @param toNearest
+	 *            positive value
+	 * @return
+	 */
+	public static int roundUpToNearest(int value, int toNearest) {
+		int remainder = value % toNearest;
+		if (remainder == 0)
+			return value;
+		value += (toNearest - remainder);
+		return value;
+	}
+
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
 	public static int ceil(double value) {
 		return (int) Math.ceil(value);
 	}
 
 	/**
-	 * Divides <code>value</code> by <code>divisor</code> and performs the
-	 * function "ceil" on the fractional result. <b>Warning: This method works
-	 * only with positive input values!</b>
+	 * Divides <code>value</code> by <code>divisor</code> and performs the function "ceil" on the fractional result.
+	 * <b>Warning: This method works only with positive input values!</b>
 	 * <p>
-	 * Internally only integer arithmetics is used (no floating point
-	 * arithmetics)
+	 * Internally only integer arithmetics is used (no floating point arithmetics)
 	 * </p>
 	 * 
 	 * @param value
@@ -46,12 +83,10 @@ public class MyMath {
 	}
 
 	/**
-	 * Divides <code>value</code> by <code>divisor</code> and performs the
-	 * function "ceil" on the fractional result.<b>Warning: This method works
-	 * only with positive input values!</b>
+	 * Divides <code>value</code> by <code>divisor</code> and performs the function "ceil" on the fractional
+	 * result.<b>Warning: This method works only with positive input values!</b>
 	 * <p>
-	 * Internally only integer arithmetics is used (no floating point
-	 * arithmetics)
+	 * Internally only integer arithmetics is used (no floating point arithmetics)
 	 * </p>
 	 * 
 	 * @param value
@@ -68,12 +103,10 @@ public class MyMath {
 	}
 
 	/**
-	 * Divides <code>value</code> by <code>divisor</code> and performs the
-	 * function "round" on the fractional result. <b>Warning: This method works
-	 * only with positive input values!</b>
+	 * Divides <code>value</code> by <code>divisor</code> and performs the function "round" on the fractional result.
+	 * <b>Warning: This method works only with positive input values!</b>
 	 * <p>
-	 * Internally only integer arithmetics is used (no floating point
-	 * arithmetics)
+	 * Internally only integer arithmetics is used (no floating point arithmetics)
 	 * </p>
 	 * 
 	 * @param value
@@ -91,12 +124,10 @@ public class MyMath {
 	}
 
 	/**
-	 * Divides <code>value</code> by <code>divisor</code> and performs the
-	 * function "round" on the fractional result. <b>Warning: This method works
-	 * only with positive input values!</b>
+	 * Divides <code>value</code> by <code>divisor</code> and performs the function "round" on the fractional result.
+	 * <b>Warning: This method works only with positive input values!</b>
 	 * <p>
-	 * Internally only integer arithmetics is used (no floating point
-	 * arithmetics)
+	 * Internally only integer arithmetics is used (no floating point arithmetics)
 	 * </p>
 	 * 
 	 * @param value
@@ -115,6 +146,7 @@ public class MyMath {
 
 	/**
 	 * Examples:
+	 * 
 	 * <pre>
 	 *     0.1 to     1.0
 	 *     0.5 to     1.0

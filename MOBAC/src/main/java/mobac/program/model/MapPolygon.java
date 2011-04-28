@@ -37,6 +37,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.TileFilter;
 import mobac.program.tilefilter.PolygonTileFilter;
+import mobac.utilities.MyMath;
 
 @XmlRootElement
 public class MapPolygon extends Map {
@@ -108,6 +109,7 @@ public class MapPolygon extends Map {
 			switch (type) {
 			case PathIterator.SEG_MOVETO:
 			case PathIterator.SEG_LINETO:
+			case PathIterator.SEG_CLOSE:
 				xPoints.add((int) coords[0]);
 				yPoints.add((int) coords[1]);
 				break;
@@ -132,21 +134,14 @@ public class MapPolygon extends Map {
 		super(layer, name, mapSource, zoom, null, null, parameters);
 		this.polygon = polygon;
 		Rectangle bounds = polygon.getBounds();
-		minTileCoordinate = new Point(bounds.x, bounds.y);
-		maxTileCoordinate = new Point(bounds.x + bounds.width, bounds.y + bounds.height);
-	}
-
-	public MapPolygon(Layer layer, String name, MapSource mapSource, int zoom, Point minTileCoordinate,
-			Point maxTileCoordinate, TileImageParameters parameters) {
-		super(layer, name, mapSource, zoom, minTileCoordinate, maxTileCoordinate, parameters);
-
-		// Example diamond
-		int xMid = (maxTileCoordinate.x + minTileCoordinate.x) / 2;
-		int yMid = (maxTileCoordinate.y + minTileCoordinate.y) / 2;
-		polygon.addPoint(xMid, minTileCoordinate.y);
-		polygon.addPoint(maxTileCoordinate.x, yMid);
-		polygon.addPoint(xMid, maxTileCoordinate.y);
-		polygon.addPoint(minTileCoordinate.x, yMid);
+		int mapSourceTileSize = mapSource.getMapSpace().getTileSize();
+		// Make sure the minimum tile coordinate starts/ends on the edge of a tile from the map source
+		int minx = MyMath.roundDownToNearest(bounds.x, mapSourceTileSize);
+		int miny = MyMath.roundDownToNearest(bounds.y, mapSourceTileSize);
+		int maxx = MyMath.roundUpToNearest(bounds.x + bounds.width, mapSourceTileSize) - 1;
+		int maxy = MyMath.roundUpToNearest(bounds.y + bounds.height, mapSourceTileSize) - 1;
+		minTileCoordinate = new Point(minx, miny);
+		maxTileCoordinate = new Point(maxx, maxy);
 	}
 
 	@Override

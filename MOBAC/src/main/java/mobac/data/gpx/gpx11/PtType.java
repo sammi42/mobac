@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import mobac.data.gpx.interfaces.GpxPoint;
+
 /**
  * 
  * A geographic point with optional elevation and time. Available for use by
@@ -63,7 +65,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ptType", propOrder = { "ele", "time" })
-public class PtType {
+public class PtType implements GpxPoint {
 
 	protected BigDecimal ele;
 	protected XMLGregorianCalendar time;

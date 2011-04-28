@@ -27,12 +27,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import mobac.data.gpx.interfaces.GpxPoint;
 
 /**
  * 
@@ -84,7 +87,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "wptType", propOrder = { "ele", "time", "magvar", "geoidheight", "name", "cmt",
 		"desc", "src", "link", "sym", "type", "fix", "sat", "hdop", "vdop", "pdop",
 		"ageofdgpsdata", "dgpsid", "extensions" })
-public class WptType {
+public class WptType implements GpxPoint {
 
 	protected BigDecimal ele;
 	protected XMLGregorianCalendar time;

@@ -93,7 +93,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		setZoomContolsVisible(false);
 
 		mapKeyboardController = new MapKeyboardController(this, true);
-		mapSelectionController = new RectangleSelectionMapController(this, true);
+		setMapSelectionController(new RectangleSelectionMapController(this));
 
 		addComponentListener(this);
 	}
@@ -483,7 +483,14 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	}
 
 	public void setMapSelectionController(JMapController mapSelectionController) {
+		if (this.mapSelectionController != null)
+			this.mapSelectionController.disable();
 		this.mapSelectionController = mapSelectionController;
+		mapSelectionController.enable();
+		for (MapEventListener listener : mapEventListeners) {
+			listener.mapSelectionControllerChanged(mapSelectionController);
+		}
+		repaint();
 	}
 
 }

@@ -14,30 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.mapview.interfaces;
+package mobac.gui.actions;
 
-import mobac.gui.mapview.controller.JMapController;
-import mobac.program.interfaces.MapSource;
-import mobac.program.model.MercatorPixelCoordinate;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public interface MapEventListener {
+import mobac.gui.MainGUI;
+import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.controller.RectangleSelectionMapController;
 
-	/** the selection changed */
-	public void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
+public class SelectionModeRectangle implements ActionListener {
 
-	/** the zoom changed */
-	public void zoomChanged(int newZoomLevel);
+	public void actionPerformed(ActionEvent e) {
+		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+		previewMap.setMapSelectionController(new RectangleSelectionMapController(previewMap));
+	}
 
-	/** the grid zoom changed */
-	public void gridZoomChanged(int newGridZoomLevel);
-
-	/** select the next map source from the map list */
-	public void selectNextMapSource();
-
-	/** select the previous map source from the map list */
-	public void selectPreviousMapSource();
-
-	public void mapSourceChanged(MapSource newMapSource);
-
-	public void mapSelectionControllerChanged(JMapController newMapController);
 }

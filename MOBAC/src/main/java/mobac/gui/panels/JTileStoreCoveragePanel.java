@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.controller.JMapController;
 import mobac.gui.mapview.interfaces.MapEventListener;
 import mobac.gui.mapview.layer.TileStoreCoverageLayer;
 import mobac.mapsources.AbstractMultiLayerMapSource;
@@ -121,4 +122,7 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 	public void zoomChanged(int newZoomLevel) {
 	}
 
+	public void mapSelectionControllerChanged(JMapController newMapController) {
+	}
+	
 }

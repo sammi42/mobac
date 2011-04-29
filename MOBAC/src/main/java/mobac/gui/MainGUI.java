@@ -72,6 +72,8 @@ import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.PanelShowHide;
+import mobac.gui.actions.SelectionModePolygon;
+import mobac.gui.actions.SelectionModeRectangle;
 import mobac.gui.actions.ShowAboutDialog;
 import mobac.gui.actions.ShowHelpAction;
 import mobac.gui.actions.ShowReadme;
@@ -86,6 +88,9 @@ import mobac.gui.listeners.AtlasModelListener;
 import mobac.gui.mapview.GridZoom;
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.controller.JMapController;
+import mobac.gui.mapview.controller.PolygonSelectionMapController;
+import mobac.gui.mapview.controller.RectangleSelectionMapController;
 import mobac.gui.mapview.interfaces.MapEventListener;
 import mobac.gui.panels.JCoordinatesPanel;
 import mobac.gui.panels.JGpxPanel;
@@ -158,6 +163,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JPanel leftPanel = new JPanel(new GridBagLayout());
 	private JPanel leftPanelContent = null;
 	private JPanel rightPanel = new JPanel(new GridBagLayout());
+
+	private JMenuItem smRectangle;
+	private JMenuItem smPolygon;
 
 	private MercatorPixelCoordinate mapSelectionMax = null;
 	private MercatorPixelCoordinate mapSelectionMin = null;
@@ -316,11 +324,16 @@ public class MainGUI extends JFrame implements MapEventListener {
 		selectionModeMenu.setMnemonic(KeyEvent.VK_M);
 		mapsMenu.add(selectionModeMenu);
 
-		JMenuItem smRectangular = new JRadioButtonMenuItem("Rectangular");
-		smRectangular.setSelected(true);
-		selectionModeMenu.add(smRectangular);
+		smRectangle = new JRadioButtonMenuItem("Rectangle");
+		smRectangle.addActionListener(new SelectionModeRectangle());
+		smRectangle.setSelected(true);
+		selectionModeMenu.add(smRectangle);
 
-		JMenuItem addSelection = new JMenuItem2("Add selection",AddRectangleMapAutocut.class);
+		smPolygon = new JRadioButtonMenuItem("Polygon");
+		smPolygon.addActionListener(new SelectionModePolygon());
+		selectionModeMenu.add(smPolygon);
+
+		JMenuItem addSelection = new JMenuItem2("Add selection", AddRectangleMapAutocut.class);
 		addSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		addSelection.setMnemonic(KeyEvent.VK_A);
 		mapsMenu.add(addSelection);
@@ -328,7 +341,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JMenuItem addGpxTrackSelection = new JMenuItem2("Add selection by GPX track", AddGpxTrackMap.class);
 		mapsMenu.add(addGpxTrackSelection);
 
-		
 		// Bookmarks menu
 		bookmarkMenu.setMnemonic(KeyEvent.VK_B);
 		JMenuItem addBookmark = new JMenuItem("Save current view");
@@ -816,6 +828,15 @@ public class MainGUI extends JFrame implements MapEventListener {
 		if (newMapSource.equals(mapSourceCombo.getSelectedItem()))
 			return;
 		mapSourceCombo.setSelectedItem(newMapSource);
+	}
+
+	public void mapSelectionControllerChanged(JMapController newMapController) {
+		smPolygon.setSelected(false);
+		smRectangle.setSelected(false);
+		if (newMapController instanceof PolygonSelectionMapController)
+			smPolygon.setSelected(true);
+		if (newMapController instanceof RectangleSelectionMapController)
+			smRectangle.setSelected(true);
 	}
 
 	private void setSelectionByEnteredCoordinates() {

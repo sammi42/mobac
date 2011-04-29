@@ -38,8 +38,8 @@ public class RectangleSelectionMapController extends JMapController implements M
 	/** end point of selection rectangle */
 	private Point iEndSelectionPoint;
 
-	public RectangleSelectionMapController(PreviewMap map, boolean enabled) {
-		super(map, enabled);
+	public RectangleSelectionMapController(PreviewMap map) {
+		super(map, false);
 	}
 
 	/**

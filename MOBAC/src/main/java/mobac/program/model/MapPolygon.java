@@ -43,7 +43,7 @@ import mobac.utilities.MyMath;
 public class MapPolygon extends Map {
 
 	@XmlElement
-	protected Polygon polygon = new Polygon();
+	protected Polygon polygon;
 
 	protected MapPolygon() {
 	}
@@ -127,6 +127,24 @@ public class MapPolygon extends Map {
 		}
 		Polygon polygon = new Polygon(xp, yp, xp.length);
 		return new MapPolygon(layer, name, mapSource, zoom, polygon, parameters);
+	}
+
+	public static MapPolygon createFromMapPolygon(Layer layer, String name, int newZoom, MapPolygon map) {
+		Polygon oldPolygon = map.getPolygon();
+		int oldZoom = map.getZoom();
+		MapSpace mapSpace = map.getMapSource().getMapSpace();
+		int xPoints[] = new int[oldPolygon.npoints];
+		int yPoints[] = new int[oldPolygon.npoints];
+		Point p = new Point();
+		for (int i = 0; i < xPoints.length; i++) {
+			p.x = oldPolygon.xpoints[i];
+			p.y = oldPolygon.ypoints[i];
+			Point nP = mapSpace.changeZoom(p, oldZoom, newZoom);
+			xPoints[i] = nP.x;
+			yPoints[i] = nP.y;
+		}
+		Polygon newPolygon = new Polygon(xPoints, yPoints, xPoints.length);
+		return new MapPolygon(layer, name, map.getMapSource(), newZoom, newPolygon, map.getParameters());
 	}
 
 	public MapPolygon(Layer layer, String name, MapSource mapSource, int zoom, Polygon polygon,

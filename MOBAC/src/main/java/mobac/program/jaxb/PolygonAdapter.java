@@ -22,8 +22,6 @@ import java.util.Vector;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import mobac.program.Logging;
-
 /**
  * Required {@link XmlAdapter} implementation for serializing a {@link Polygon}
  */
@@ -35,7 +33,6 @@ public class PolygonAdapter extends XmlAdapter<PolygonType, Polygon> {
 		for (int i = 0; i < polygon.npoints; i++) {
 			Point p = new Point(polygon.xpoints[i], polygon.ypoints[i]);
 			points.add(p);
-			Logging.LOG.debug("Point: " + p);
 		}
 		return new PolygonType(points);
 	}

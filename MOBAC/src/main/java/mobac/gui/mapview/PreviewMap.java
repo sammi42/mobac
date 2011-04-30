@@ -320,19 +320,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
 	}
 
-	public void setSelectionByScreenPoint(Point aStart, Point aEnd, boolean notifyListeners) {
-		if (aStart == null || aEnd == null)
-			return;
-		Point p_max = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y, aStart.y));
-		Point p_min = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y, aStart.y));
-
-		Point tlc = getTopLeftCoordinate();
-
-		Point pEnd = new Point(p_max.x + tlc.x, p_max.y + tlc.y);
-		Point pStart = new Point(p_min.x + tlc.x, p_min.y + tlc.y);
-		setSelectionByTileCoordinate(pStart, pEnd, notifyListeners);
-	}
-
 	/**
 	 * 
 	 * @param pStart
@@ -357,10 +344,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		Point pNewStart = new Point();
 		Point pNewEnd = new Point();
 		int mapMaxCoordinate = mapSource.getMapSpace().getMaxPixels(cZoom);
-		pNewStart.x = Math.max(0, Math.min(mapMaxCoordinate, pStart.x));
-		pNewStart.y = Math.max(0, Math.min(mapMaxCoordinate, pStart.y));
-		pNewEnd.x = Math.max(0, Math.min(mapMaxCoordinate, pEnd.x));
-		pNewEnd.y = Math.max(0, Math.min(mapMaxCoordinate, pEnd.y));
+		pNewStart.x = Math.max(0, Math.min(mapMaxCoordinate, Math.min(pStart.x, pEnd.x)));
+		pNewStart.y = Math.max(0, Math.min(mapMaxCoordinate, Math.min(pStart.y, pEnd.y)));
+		pNewEnd.x = Math.max(0, Math.min(mapMaxCoordinate, Math.max(pStart.x, pEnd.x)));
+		pNewEnd.y = Math.max(0, Math.min(mapMaxCoordinate, Math.max(pStart.y, pEnd.y)));
 
 		int zoomDiff = MAX_ZOOM - cZoom;
 

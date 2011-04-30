@@ -21,35 +21,61 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
-
+import mobac.gui.mapview.layer.RectangleSelectionLayer;
 
 /**
- * Implements the GUI logic for the preview map panel that manages the map
- * selection and actions triggered by key strokes.
+ * Implements the GUI logic for the preview map panel that manages the map selection and actions triggered by key
+ * strokes.
  * 
  */
-public class RectangleSelectionMapController extends JMapController implements MouseMotionListener,
-		MouseListener {
+public class RectangleSelectionMapController extends JMapController implements MouseMotionListener, MouseListener {
 
-	/** start point of selection rectangle */
+	/**
+	 * start point of selection rectangle in absolute tile coordinated regarding {@link JMapViewer#MAX_ZOOM}
+	 */
 	private Point iStartSelectionPoint;
 
-	/** end point of selection rectangle */
+	/**
+	 * end point of selection rectangle in absolute tile coordinated regarding {@link JMapViewer#MAX_ZOOM}
+	 */
 	private Point iEndSelectionPoint;
+
+	protected RectangleSelectionLayer mapLayer;
 
 	public RectangleSelectionMapController(PreviewMap map) {
 		super(map, false);
+		mapLayer = new RectangleSelectionLayer(this);
+	}
+
+	@Override
+	public void enable() {
+		super.enable();
+		//map.mapLayers.add(mapLayer);
+	}
+
+	@Override
+	public void disable() {
+		map.mapLayers.remove(mapLayer);
+		super.disable();
+	}
+
+	private Point convertToAbsolutePoint(Point p) {
+		Point mapPoint = map.getTopLeftCoordinate();
+		mapPoint.x += p.getX();
+		mapPoint.y += p.getY();
+		mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
+		return mapPoint;
 	}
 
 	/**
-	 * Start drawing the selection rectangle if it was the 1st button (left
-	 * button)
+	 * Start drawing the selection rectangle if it was the 1st button (left button)
 	 */
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			iStartSelectionPoint = e.getPoint();
-			iEndSelectionPoint = e.getPoint();
+			iStartSelectionPoint = convertToAbsolutePoint(e.getPoint());
+			iEndSelectionPoint = convertToAbsolutePoint(e.getPoint());
 		}
 		map.grabFocus();
 	}
@@ -57,26 +83,21 @@ public class RectangleSelectionMapController extends JMapController implements M
 	public void mouseDragged(MouseEvent e) {
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
 			if (iStartSelectionPoint != null) {
-				iEndSelectionPoint = e.getPoint();
-				map.setSelectionByScreenPoint(iStartSelectionPoint,
-						iEndSelectionPoint, true);
+				iEndSelectionPoint = convertToAbsolutePoint(e.getPoint());
+				map.setSelectionByTileCoordinate(PreviewMap.MAX_ZOOM, iStartSelectionPoint, iEndSelectionPoint, true);
 			}
 		}
 	}
 
 	/**
-	 * When dragging the map change the cursor back to it's pre-move cursor. If
-	 * a double-click occurs center and zoom the map on the clicked location.
+	 * When dragging the map change the cursor back to it's pre-move cursor. If a double-click occurs center and zoom
+	 * the map on the clicked location.
 	 */
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (e.getClickCount() == 1) {
-				map.setSelectionByScreenPoint(iStartSelectionPoint, e.getPoint(),
-						true);
-
-				// reset the selections start and end
-				iEndSelectionPoint = null;
-				iStartSelectionPoint = null;
+				map.setSelectionByTileCoordinate(PreviewMap.MAX_ZOOM, iStartSelectionPoint,
+						convertToAbsolutePoint(e.getPoint()), true);
 			}
 		}
 		map.grabFocus();
@@ -93,6 +114,14 @@ public class RectangleSelectionMapController extends JMapController implements M
 	}
 
 	public void mouseExited(MouseEvent e) {
+	}
+
+	public Point getiStartSelectionPoint() {
+		return iStartSelectionPoint;
+	}
+
+	public Point getiEndSelectionPoint() {
+		return iEndSelectionPoint;
 	}
 
 }

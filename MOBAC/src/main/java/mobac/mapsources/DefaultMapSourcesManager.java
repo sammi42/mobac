@@ -29,7 +29,6 @@ import javax.swing.JOptionPane;
 import mobac.mapsources.custom.StandardMapSourceLayer;
 import mobac.mapsources.impl.DebugLocalMapSource;
 import mobac.mapsources.impl.DebugMapSource;
-import mobac.mapsources.impl.LocalhostTestSource;
 import mobac.mapsources.impl.SimpleMapSource;
 import mobac.mapsources.loader.BeanShellMapSourceLoader;
 import mobac.mapsources.loader.CustomMapSourceLoader;
@@ -37,7 +36,6 @@ import mobac.mapsources.loader.EclipseMapPackLoader;
 import mobac.mapsources.loader.MapPackManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
-import mobac.program.model.TileImageType;
 
 import org.apache.log4j.Logger;
 
@@ -60,33 +58,43 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	protected void loadMapSources() {
-		boolean devMode = Settings.getInstance().devMode;
-		if (devMode) {
-			addMapSource(new LocalhostTestSource("Localhost", TileImageType.PNG));
-			addMapSource(new DebugMapSource());
-			addMapSource(new DebugLocalMapSource());
-		}
-		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
-
 		try {
-			MapPackManager mpm = new MapPackManager(mapSourcesDir);
-			mpm.testMapPackDir();
-			mpm.installUpdates();
-			if (!devMode || !loadMapPacksEclipseMode()) {
-				mpm.loadMapPacks(this);
+			boolean devMode = Settings.getInstance().devMode;
+			if (devMode) {
+				addMapSource(new DebugMapSource());
+				addMapSource(new DebugLocalMapSource());
 			}
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to load map packs: " + e.getMessage(), e);
+			File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+			if (mapSourcesDir == null)
+				throw new RuntimeException("Map sources directory is unset");
+			if (!mapSourcesDir.isDirectory()) {
+				JOptionPane.showMessageDialog(null,
+						"Map sources directory does not exist - path:\n" + mapSourcesDir.getAbsolutePath()
+								+ "\nPlease make sure you extracted the release zip file\n"
+								+ "of MOBAC correctly including all subdirectories!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			try {
+				MapPackManager mpm = new MapPackManager(mapSourcesDir);
+				mpm.installUpdates();
+				if (!devMode || !loadMapPacksEclipseMode()) {
+					mpm.loadMapPacks(this);
+				}
+			} catch (Exception e) {
+				throw new RuntimeException("Failed to load map packs: " + e.getMessage(), e);
+			}
+			BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(this, mapSourcesDir);
+			bsmsl.loadBeanShellMapSources();
+
+			CustomMapSourceLoader cmsl = new CustomMapSourceLoader(this, mapSourcesDir);
+			cmsl.loadCustomMapSources();
+
+		} finally {
+			// If no map sources are available load the simple map source which shows the informative message
+			if (allMapSources.size() == 0)
+				addMapSource(new SimpleMapSource());
 		}
-		BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(this, mapSourcesDir);
-		bsmsl.loadBeanShellMapSources();
-
-		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(this, mapSourcesDir);
-		cmsl.loadCustomMapSources();
-
-		// If no map sources are available load the simple map source which shows the informative message
-		if (allMapSources.size() == 0)
-			addMapSource(new SimpleMapSource());
 	}
 
 	private boolean loadMapPacksEclipseMode() {

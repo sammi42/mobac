@@ -130,6 +130,19 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 	public static synchronized void showExceptionDialog(Thread thread, Throwable t, String additionalInfo) {
 		try {
+			if (t != null) {
+				// Recursive check - in case the Exception was thrown in a Component.paint() method
+				// this may lead to an infinite recursion with one message dialog per recursion loop
+				String thisClassName = GUIExceptionHandler.class.getName();
+				for (StackTraceElement ste : t.getStackTrace()) {
+					if (ste.getClassName().startsWith(thisClassName)
+							&& "showExceptionDialog".equals(ste.getMethodName())) {
+						log.error("Recursive error loop detected - aborting");
+						return;
+					}
+				}
+			}
+
 			StringBuilder sb = new StringBuilder(2048);
 			sb.append("Version: " + ProgramInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");

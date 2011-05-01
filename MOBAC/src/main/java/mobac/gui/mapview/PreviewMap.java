@@ -195,8 +195,11 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			graphics.drawString("Please wait - loading map data", 100, 100);
 			return;
 		}
+		if (mapSource == null)
+			return;
 		Graphics2D g = (Graphics2D) graphics;
 		super.paintComponent(g);
+
 		Point tlc = getTopLeftCoordinate();
 		if (gridZoom >= 0) {
 			// Only paint grid if it is enabled (gridZoom not -1)

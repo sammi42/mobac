@@ -85,7 +85,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 * x- and y-position of the center of this map-panel on the world map denoted in screen pixel regarding the current
 	 * zoom level.
 	 */
-	protected Point center;
+	protected Point center = new Point();
 
 	/**
 	 * Current zoom level
@@ -187,6 +187,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 *            {@link #MIN_ZOOM} <= zoom level <= {@link MapSource#getMaxZoom()}
 	 */
 	public void setDisplayPositionByLatLon(Point mapPoint, double lat, double lon, int zoom) {
+		zoom = Math.max(Math.min(zoom, mapSource.getMaxZoom()), mapSource.getMinZoom());
 		MapSpace mapSpace = mapSource.getMapSpace();
 		int x = mapSpace.cLonToX(lon, zoom);
 		int y = mapSpace.cLatToY(lat, zoom);

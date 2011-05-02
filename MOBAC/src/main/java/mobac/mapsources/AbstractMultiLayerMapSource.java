@@ -68,7 +68,7 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 			maxZoom = Math.min(maxZoom, ms.getMaxZoom());
 			minZoom = Math.max(minZoom, ms.getMinZoom());
 			if (!ms.getMapSpace().equals(mapSpace))
-				throw new RuntimeException("Different map spaces used");
+				throw new RuntimeException("Different map spaces used in multi-layer map source");
 		}
 	}
 

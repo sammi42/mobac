@@ -101,10 +101,21 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 		int lastSlash = file.lastIndexOf('/');
 		if (lastSlash > 0)
 			file = file.substring(lastSlash + 1);
-		JOptionPane.showMessageDialog(null,
-				"<html><h3>Failed to load a custom map</h3><p><i>" + event.getMessage() + "</i></p><br><p>file: \"<b>"
-						+ file + "</b>\"<br>line/column: <i>" + loc.getLineNumber() + "/" + loc.getColumnNumber()
-						+ "</i></p>", "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+
+		String errorMsg = event.getMessage();
+		if (errorMsg == null) {
+			Throwable t = event.getLinkedException();
+			while (t != null && errorMsg == null) {
+				errorMsg = t.getMessage();
+				t = t.getCause();
+			}
+		}
+
+		JOptionPane
+				.showMessageDialog(null, "<html><h3>Failed to load a custom map</h3><p><i>" + errorMsg
+						+ "</i></p><br><p>file: \"<b>" + file + "</b>\"<br>line/column: <i>" + loc.getLineNumber()
+						+ "/" + loc.getColumnNumber() + "</i></p>", "Error: custom map loading failed",
+						JOptionPane.ERROR_MESSAGE);
 		log.error(event.toString());
 		return false;
 	}

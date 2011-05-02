@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 beta 4 (2011-05-??)
+1.9 beta 4 (2011-05-02)
  ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 
     atlas format in an NullPointerException like in bug #3290976
  ~ Settings dialog now lists all tile stores - not only the stores of loaded map 

@@ -15,6 +15,7 @@
  ~ Settings dialog now lists all tile stores - not only the stores of loaded map 
     sources
  + Experimental: Polygonal map derived from GPX track segment
+ ! Endless opening of exception dialog (endless recursion)
 
 1.9 beta 3 (2011-04-21)
  + Map source UMP-pcPL reactivated

@@ -35,5 +35,10 @@ top of the OSM Mapnik layer.
             <tileUpdate>None</tileUpdate>
             <url>http://www.wanderreitkarte.de/hills/{$z}/{$x}/{$y}.png</url>
         </customMapSource>
+        <!--
+        Also possible: Custom atlas as map source / locally generated tiles (see README.HTM) 
+        <localTileFiles>...</localTileFiles>
+        <localTileZip>...</localTileZip>
+        -->
     </layers>
 </customMultiLayerMapSource>

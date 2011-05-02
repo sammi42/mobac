@@ -11,7 +11,9 @@
 
 1.9 beta 5 (2011-05-??)
  + Added possibility Change directory syntax for file and zip based map sources 
-    from zoom/x/y to zoom/y/x ("flipXYDir") 
+    from zoom/x/y to zoom/y/x ("flipXYDir")
+ + Added possibility to use <localTileFiles> and <localTileZip> within a custom 
+    multi-layer map source
 
 1.9 beta 4 (2011-05-02)
  ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 

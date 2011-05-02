@@ -42,7 +42,9 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 
 	@XmlElementWrapper(name = "layers")
 	@XmlElements({ @XmlElement(name = "customMapSource", type = CustomMapSource.class),
-			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class) })
+			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
+			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
+			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class) })
 	protected List<CustomMapSource> layers = new ArrayList<CustomMapSource>();
 
 	public CustomMultiLayerMapSource() {

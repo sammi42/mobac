@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
@@ -56,6 +57,7 @@ public class CustomMapSourceLoader implements ValidationEventHandler {
 
 	public void loadCustomMapSources() {
 		File[] customMapSourceFiles = mapSourcesDir.listFiles(new FileExtFilter(".xml"));
+		Arrays.sort(customMapSourceFiles);
 		for (File f : customMapSourceFiles) {
 			try {
 				MapSource customMapSource;

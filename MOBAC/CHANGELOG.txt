@@ -14,6 +14,7 @@
     from zoom/x/y to zoom/y/x ("flipXYDir")
  + Added possibility to use <localTileFiles> and <localTileZip> within a custom 
     multi-layer map source
+ ! CustomMultiLayerMapSource: "null" error when loading
 
 1.9 beta 4 (2011-05-02)
  ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 

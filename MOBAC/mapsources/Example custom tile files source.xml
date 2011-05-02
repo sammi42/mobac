@@ -16,11 +16,18 @@ Supported file formats are PNG, JPG and GIF files.
 	<!-- 
 	  Directory in which the existing atlas is located.
 	  Inside the specified folder the different zoom level directories have to present.
+	  The general structure is zoom/x/y
 	  
-	  Structure example: 0/0/0.png for the "world tile" on zoom level 0   
+	  Structure example: 
+	    0/0/0.png for the "world tile" on zoom level 0
+	       
 	-->
-	<sourceFolder>D:\TileServer\Maperative\Tiles</sourceFolder>
+	<sourceFolder>D:\MOBAC\LocalTiles\TilesAtHome</sourceFolder>
 	
+	<!--
+	Optional: reverse directory structure format to zoom/y/x
+	-->
+	<flipXYDir>false</flipXYDir>
 		
 	<backgroundColor>#000000</backgroundColor>
 </localTileFiles>

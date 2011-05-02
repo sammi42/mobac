@@ -27,6 +27,10 @@ Supported file formats are PNG, JPG and GIF files.
 	-->
 	<zipFile>D:\TileServer\Maperative\Tiles\Tiles2.zip</zipFile>
 	
+	<!--
+	Optional: reverse directory structure format to zoom/y/x
+	-->
+	<flipXYDir>false</flipXYDir>
 		
 	<backgroundColor>#000000</backgroundColor>
 </localTileZip>

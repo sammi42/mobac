@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.exceptions.UnrecoverableDownloadException;
+import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
@@ -118,11 +119,7 @@ public class CustomMapSource implements HttpMapSource {
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		String tmp = url;
-		tmp = tmp.replace("{$x}", Integer.toString(tilex));
-		tmp = tmp.replace("{$y}", Integer.toString(tiley));
-		tmp = tmp.replace("{$z}", Integer.toString(zoom));
-		return tmp;
+		return MapSourceTools.formatMapUrl(url, zoom, tilex, tiley);
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,

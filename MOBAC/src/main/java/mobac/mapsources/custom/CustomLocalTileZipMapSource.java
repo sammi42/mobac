@@ -66,6 +66,9 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	@XmlElement(name = "zipFile", required = true)
 	private File[] zipFiles = new File[] {};
 
+	@XmlElement(defaultValue = "false")
+	private boolean flipXYDir = false;
+
 	private LinkedList<ZipFile> zips = new LinkedList<ZipFile>();
 
 	@XmlElement(defaultValue = "#000000")
@@ -160,7 +163,12 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 			return null;
 		ZipEntry entry = null;
 		for (ZipFile zip : zips) {
-			entry = zip.getEntry(String.format(fileSyntax, zoom, x, y));
+			String fileName;
+			if (flipXYDir)
+				fileName = String.format(fileSyntax, zoom, y, x);
+			else
+				fileName = String.format(fileSyntax, zoom, x, y);
+			entry = zip.getEntry(fileName);
 			if (entry != null) {
 				InputStream in = zip.getInputStream(entry);
 				byte[] data = Utilities.getInputBytes(in);

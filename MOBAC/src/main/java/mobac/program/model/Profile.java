@@ -69,7 +69,7 @@ public class Profile implements Comparable<Profile> {
 	 * Profiles management method
 	 */
 	public static void updateProfiles() {
-		File profilesDir = DirectoryManager.currentDir;
+		File profilesDir = DirectoryManager.atlasProfilesDir;
 		final Set<Profile> deletedProfiles = new HashSet<Profile>();
 		deletedProfiles.addAll(profiles);
 		profilesDir.list(new FilenameFilter() {

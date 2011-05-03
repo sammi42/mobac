@@ -24,7 +24,7 @@
 
 #Uncomment one of the following lines starting with "mobac." for redefining the directory
 
-# Directory where to save settings.xml and serach for log4j.xml
+# Directory where to save settings.xml and search for log4j.xml
 #mobac.usersettingsdir=${home}/.mobac
 mobac.usersettingsdir=D:/MOBAC
 

@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -59,7 +61,7 @@ public class DirectoryManager {
 
 		userAppDataDir = getUserAppDataDir();
 		tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
-		
+
 		mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
 		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
 		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
@@ -74,7 +76,7 @@ public class DirectoryManager {
 			if (dirCfg == null) {
 				return defaultDir;
 			} else {
-				return getFileFromString(dirCfg);
+				return expandCommandLine(dirCfg);
 			}
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading directory configuration: " + e.getMessage(), e);
@@ -85,22 +87,39 @@ public class DirectoryManager {
 		}
 	}
 
-	private static File getFileFromString(String s) {
-		s = s.trim();
-		if (s.startsWith("${mobac-prog}")) {
-			s = s.substring(Math.min(14, s.length()));
-			if (s.length() > 0)
-				return new File(programDir, s);
+	/**
+	 * Modified version of
+	 * http://stackoverflow.com/questions/2090647/evaluation-of-environment-variables-in-command-run-
+	 * by-javas-runtime-exec
+	 * 
+	 * @param cmd
+	 * @return
+	 */
+	private static File expandCommandLine(final String cmd) {
+		final Pattern vars = Pattern.compile("[$]\\{(\\S+)\\}");
+		final Matcher m = vars.matcher(cmd.trim());
+
+		final StringBuffer sb = new StringBuffer(cmd.length());
+		int lastMatchEnd = 0;
+		while (m.find()) {
+			sb.append(cmd.substring(lastMatchEnd, m.start()));
+			final String envVar = m.group(1);
+			String envVal = System.getenv(envVar);
+			if (envVal == null) {
+				if ("mobac-prog".equalsIgnoreCase(envVar))
+					envVal = programDir.getAbsolutePath();
+				else if ("home".equalsIgnoreCase(envVar))
+					envVal = userHomeDir.getAbsolutePath();
+			}
+			if (envVal == null)
+				sb.append(cmd.substring(m.start(), m.end()));
 			else
-				return programDir;
-		} else if (s.startsWith("${home}")) {
-			s = s.substring(Math.min(8, s.length()));
-			if (s.length() > 0)
-				return new File(userHomeDir, s);
-			else
-				return userHomeDir;
-		} else
-			return new File(s);
+				sb.append(envVal);
+			lastMatchEnd = m.end();
+		}
+		sb.append(cmd.substring(lastMatchEnd));
+
+		return new File(sb.toString());
 	}
 
 	public static void initialize() {

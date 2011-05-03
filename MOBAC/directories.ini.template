@@ -6,9 +6,13 @@
 # (remove the .template extension) and place it in the same directory as
 # the file Mobile_Atlas_Creator.jar
 #
-# Available variables:
+# You can use any available system variable - but you have to write it in Java notation
+# 
+# Therefore the tmp directory is available on all platforms via "${TMP}"
 #
-# ${home}  
+# Besides the default system variables MOBAC defines two own variables: 
+#
+# ${home}
 # user home directory, e.g. /home/username/ on Linux or C:\Users\username\ on Win Vista/7
 #
 # ${mobac-prog}  

@@ -26,6 +26,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -42,10 +43,17 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
+import mobac.utilities.Utilities;
 import mobac.utilities.jdbc.SQLiteLoader;
 
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * MBTiles input
+ * http://mbtiles.org/
+ *
+ */
 @XmlRootElement(name = "localTileSQLite")
 public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
@@ -71,35 +79,45 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
 
+	private String sqlMaxZoomStatement;
+	private String sqlMinZoomStatement;
+	private String sqlTileStatement;
+
 	/**
 	 * SQLite connection with database file
 	 */
 	private Connection conn = null;
 
-	private PreparedStatement statement = null;
+	private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
 
 	public CustomLocalTileSQliteMapSource() {
 		super();
 	}
 
 	protected void updateZoomLevelInfo() {
-		// FileFilter ff = new NumericDirFileFilter();
-		// File[] zoomDirs = sourceFile.listFiles(ff);
-		// if (zoomDirs.length < 1) {
-		// JOptionPane.showMessageDialog(null, "No zoom directories found:\nMap name: " + name + "\nSource folder: "
-		// + sourceFolder, "\nInvaild source folder", JOptionPane.ERROR_MESSAGE);
-		// initialized = true;
-		// return;
-		// }
-		// int min = PreviewMap.MAX_ZOOM;
-		// int max = PreviewMap.MIN_ZOOM;
-		// for (File file : zoomDirs) {
-		// int z = Integer.parseInt(file.getName());
-		// min = Math.min(min, z);
-		// max = Math.max(max, z);
-		// }
-		// minZoom = min;
-		// maxZoom = max;
+		Statement statement = null;
+		try {
+			statement = conn.createStatement();
+			if (statement.execute(sqlMaxZoomStatement)) {
+				ResultSet rs = statement.getResultSet();
+				if (rs.next()) {
+					maxZoom = rs.getInt(1);
+				}
+				rs.close();
+			}
+			if (statement.execute(sqlMinZoomStatement)) {
+				ResultSet rs = statement.getResultSet();
+				if (rs.next()) {
+					minZoom = rs.getInt(1);
+				}
+				rs.close();
+			}
+			statement.close();
+		} catch (SQLException e) {
+			log.error("", e);
+		} finally {
+			Utilities.closeStatement(statement);
+		}
 	}
 
 	public synchronized void initialize() {
@@ -126,40 +144,38 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			initialized = true;
 			return;
 		}
-		try {
-			statement = conn.prepareStatement("SELECT image from tiles WHERE z=? AND x=? AND y=?;");
-		} catch (SQLException e) {
-			closeConnection();
-			JOptionPane.showMessageDialog(null, "The specified source SQLite database could not be loaded:\nMap name: "
-					+ name + "\nFilename: " + sourceFile + "\nError: " + e.getMessage(), "Error loading database",
-					JOptionPane.ERROR_MESSAGE);
-			initialized = true;
-			return;
-		}
+		// DISTINCT works much faster than min(zoom_level) or max(zoom_level) - uses index?
+		sqlMaxZoomStatement = "SELECT DISTINCT zoom_level FROM TILES ORDER BY zoom_level DESC LIMIT 1;";
+		sqlMinZoomStatement = "SELECT DISTINCT zoom_level FROM TILES ORDER BY zoom_level ASC LIMIT 1;";
+		sqlTileStatement = "SELECT tile_data from tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?;";
 		updateZoomLevelInfo();
 		initialized = true;
 	}
 
-	public synchronized byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-			TileException, InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+			InterruptedException {
 		if (!initialized)
 			initialize();
+		PreparedStatement statement = null;
 		try {
-			PreparedStatement statement = conn.prepareStatement("SELECT image from tiles WHERE z=? AND x=? AND y=?;");
+			y = (1 << zoom) - y - 1;
+			statement = conn.prepareStatement(sqlTileStatement);
 			statement.setInt(1, zoom);
 			statement.setInt(2, x);
 			statement.setInt(3, y);
 			if (statement.execute()) {
 				ResultSet rs = statement.getResultSet();
-				if (!rs.next())
+				if (!rs.next()) {
 					return null;
+				}
 				byte[] data = rs.getBytes(1);
 				rs.close();
-				statement.close();
 				return data;
 			}
 		} catch (SQLException e) {
 			log.error("", e);
+		} finally {
+			Utilities.closeStatement(statement);
 		}
 		return null;
 	}
@@ -194,7 +210,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	}
 
 	public MapSpace getMapSpace() {
-		return MapSpaceFactory.getInstance(256, true);
+		return mapSpace;
 	}
 
 	public Color getBackgroundColor() {

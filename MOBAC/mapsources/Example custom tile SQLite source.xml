@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+
+-->
+<localTileSQLite>
+	
+	<!-- Map source name as it appears in the map sources list. --> 
+	<name>Haiti_Terrain_Grey</name>
+	
+	<sourceFile>D:\MOBAC\LocalTiles\Haiti_Terrain_Grey.mbtiles</sourceFile>
+	
+		
+	<backgroundColor>#000000</backgroundColor>
+</localTileSQLite>

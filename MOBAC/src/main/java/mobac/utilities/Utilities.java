@@ -36,6 +36,8 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -276,6 +278,15 @@ public class Utilities {
 		try {
 			reader.close();
 		} catch (IOException e) {
+		}
+	}
+
+	public static void closeStatement(Statement statement) {
+		if (statement == null)
+			return;
+		try {
+			statement.close();
+		} catch (SQLException e) {
 		}
 	}
 
@@ -637,4 +648,5 @@ public class Utilities {
 			return -1;
 		return Integer.parseInt(m.group(1));
 	}
+
 }

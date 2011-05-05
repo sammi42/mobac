@@ -50,14 +50,17 @@ import org.apache.log4j.Logger;
 
 /**
  * 
- * MBTiles input
- * http://mbtiles.org/
- *
+ * MBTiles input http://mbtiles.org/
+ * 
  */
 @XmlRootElement(name = "localTileSQLite")
 public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
 	private static Logger log = Logger.getLogger(CustomLocalTileSQliteMapSource.class);
+
+	private static enum SQLiteAtlasType {
+		RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer
+	};
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
@@ -74,6 +77,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
 	@XmlElement(required = true)
 	private File sourceFile = null;
+
+	@XmlElement(required = true)
+	private SQLiteAtlasType atlasType = null;
 
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
@@ -123,6 +129,12 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	public synchronized void initialize() {
 		if (initialized)
 			return;
+		if (atlasType == null) {
+			JOptionPane.showMessageDialog(null, "No database  specified.\nMap name:" + name + "\nFilename: "
+					+ sourceFile, "Invaild source file", JOptionPane.ERROR_MESSAGE);
+			initialized = true;
+			return;
+		}
 		if (!sourceFile.isFile()) {
 			JOptionPane.showMessageDialog(null, "The specified source SQLite database does not exist:\nMap name: "
 					+ name + "\nFilename: " + sourceFile, "Invaild source file", JOptionPane.ERROR_MESSAGE);
@@ -144,10 +156,26 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			initialized = true;
 			return;
 		}
-		// DISTINCT works much faster than min(zoom_level) or max(zoom_level) - uses index?
-		sqlMaxZoomStatement = "SELECT DISTINCT zoom_level FROM TILES ORDER BY zoom_level DESC LIMIT 1;";
-		sqlMinZoomStatement = "SELECT DISTINCT zoom_level FROM TILES ORDER BY zoom_level ASC LIMIT 1;";
-		sqlTileStatement = "SELECT tile_data from tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?;";
+		switch (atlasType) {
+		case MBTiles:
+			// DISTINCT works much faster than min(zoom_level) or max(zoom_level) - uses index?
+			sqlMaxZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level DESC LIMIT 1;";
+			sqlMinZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level ASC LIMIT 1;";
+			sqlTileStatement = "SELECT tile_data from tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?;";
+			break;
+		case RMaps:
+		case BigPlanetTracks:
+		case Galileo:
+			sqlMaxZoomStatement = "SELECT DISTINCT z FROM tiles ORDER BY z DESC LIMIT 1;";
+			sqlMinZoomStatement = "SELECT DISTINCT z FROM tiles ORDER BY z ASC LIMIT 1;";
+			sqlTileStatement = "SELECT image from tiles WHERE z=? AND x=? AND y=?;";
+			break;
+		case NaviComputer:
+			sqlMaxZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom DESC LIMIT 1;";
+			sqlMinZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom ASC LIMIT 1;";
+			sqlTileStatement = "SELECT Tile FROM Tiles LEFT JOIN Tilesdata ON Tiles.id=Tilesdata.id WHERE Zoom=? AND X=? AND Y=?;";
+			break;
+		}
 		updateZoomLevelInfo();
 		initialized = true;
 	}
@@ -158,7 +186,17 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			initialize();
 		PreparedStatement statement = null;
 		try {
-			y = (1 << zoom) - y - 1;
+			switch (atlasType) {
+			case MBTiles:
+				y = (1 << zoom) - y - 1;
+				break;
+			case RMaps:
+			case BigPlanetTracks:
+			case Galileo:
+				zoom = 17 - zoom;
+				break;
+			}
+
 			statement = conn.prepareStatement(sqlTileStatement);
 			statement.setInt(1, zoom);
 			statement.setInt(2, x);

@@ -52,7 +52,7 @@ public class RectangleSelectionMapController extends JMapController implements M
 	@Override
 	public void enable() {
 		super.enable();
-		//map.mapLayers.add(mapLayer);
+		// map.mapLayers.add(mapLayer);
 	}
 
 	@Override
@@ -122,6 +122,14 @@ public class RectangleSelectionMapController extends JMapController implements M
 
 	public Point getiEndSelectionPoint() {
 		return iEndSelectionPoint;
+	}
+
+	public RectangleSelectionLayer getMapLayer() {
+		return mapLayer;
+	}
+
+	public PreviewMap getMap() {
+		return map;
 	}
 
 }

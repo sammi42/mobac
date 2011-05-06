@@ -41,6 +41,7 @@ import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.program.model.Settings;
+import mobac.utilities.MyMath;
 
 import org.apache.log4j.Logger;
 
@@ -211,7 +212,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 				int posx;
 				int posy;
 				int tilesize = mapSource.getMapSpace().getTileSize();
-				if (gridSize >= mapSource.getMapSpace().getTileSize()) {
+				if (gridSize >= tilesize) {
 					posx = -(tlc.x % gridSize);
 					posy = -(tlc.y % gridSize);
 					for (int x = posx; x < w; x += gridSize) {
@@ -221,8 +222,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 						g.drawLine(posx, y, w, y);
 					}
 				} else {
-					int off_x = tlc.x % tilesize;
-					int off_y = tlc.y % tilesize;
+					int off_x = (tlc.x < 0) ? tlc.x : tlc.x % tilesize;
+					int off_y = (tlc.y < 0) ? tlc.y : tlc.y % tilesize;
 					for (int x = -off_x; x < w; x += 256) {
 						for (int y = -off_y; y < h; y += 256) {
 							g.drawImage(gridTile, x, y, null);
@@ -347,6 +348,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		Point pNewStart = new Point();
 		Point pNewEnd = new Point();
 		int mapMaxCoordinate = mapSource.getMapSpace().getMaxPixels(cZoom);
+		// Sort x/y coordinate of points so that pNewStart < pnewEnd and limit selection to map size
 		pNewStart.x = Math.max(0, Math.min(mapMaxCoordinate, Math.min(pStart.x, pEnd.x)));
 		pNewStart.y = Math.max(0, Math.min(mapMaxCoordinate, Math.min(pStart.y, pEnd.y)));
 		pNewEnd.x = Math.max(0, Math.min(mapMaxCoordinate, Math.max(pStart.x, pEnd.x)));
@@ -364,6 +366,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		gridSelectionStart = null;
 		gridSelectionEnd = null;
 
+		updateGridValues();
 		applyGridOnSelection();
 
 		if (notifyListeners)
@@ -388,12 +391,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		Point pNewEnd = new Point(iSelectionMax);
 
 		// Snap to the current grid
-		pNewStart.x = pNewStart.x - (pNewStart.x % gridFactor);
-		pNewStart.y = pNewStart.y - (pNewStart.y % gridFactor);
-		pNewEnd.x += gridFactor;
-		pNewEnd.y += gridFactor;
-		pNewEnd.x = pNewEnd.x - (pNewEnd.x % gridFactor) - 1;
-		pNewEnd.y = pNewEnd.y - (pNewEnd.y % gridFactor) - 1;
+		pNewStart.x = MyMath.roundDownToNearest(pNewStart.x, gridFactor);
+		pNewStart.y = MyMath.roundDownToNearest(pNewStart.y, gridFactor);
+		pNewEnd.x = MyMath.roundUpToNearest(pNewEnd.x, gridFactor);
+		pNewEnd.y = MyMath.roundUpToNearest(pNewEnd.y, gridFactor);
 
 		gridSelectionStart = pNewStart;
 		gridSelectionEnd = pNewEnd;

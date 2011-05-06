@@ -105,6 +105,7 @@ public class TileLoader {
 					listener.tileLoadingFinished(tile, true);
 				} else {
 					tile.setErrorImage();
+					listener.tileLoadingFinished(tile, false);
 				}
 				return;
 			} catch (ConnectException e) {

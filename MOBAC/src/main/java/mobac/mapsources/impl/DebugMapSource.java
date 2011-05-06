@@ -35,15 +35,18 @@ import mobac.program.model.TileImageType;
 import mobac.utilities.imageio.Png4BitWriter;
 
 public class DebugMapSource implements MapSource {
-	
+
 	private int pngCompressionLevel = Deflater.BEST_SPEED;
-	
-	private static final byte[] COLORS = { 0,// 
+
+	private static final byte[] COLORS = { 0,//
 			(byte) 0xff, (byte) 0xff, (byte) 0xff, // white
-			(byte) 0xff, (byte) 0xee, (byte) 0xee // red
+			(byte) 0xcc, (byte) 0xcc, (byte) 0xcc // light gray
 	};
 
 	private static final IndexColorModel COLORMODEL = new IndexColorModel(8, 2, COLORS, 1, false);
+
+	private Color COLOR_BG = new Color(COLORS[1] & 0xFF, COLORS[2] & 0xFF, COLORS[3] & 0xFF);
+	private Color COLOR_VG = new Color(COLORS[4] & 0xFF, COLORS[5] & 0xFF, COLORS[6] & 0xFF);
 
 	private static final Font FONT_LARGE = new Font("Sans Serif", Font.BOLD, 30);
 
@@ -73,8 +76,8 @@ public class DebugMapSource implements MapSource {
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-		//ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
-		String pngMetaText = String.format("zoom=%d x=%d y=%d",zoom,x,y);
+		// ImageIO.write(getTileImage(zoom, x, y, LoadMethod.DEFAULT), "png", buf);
+		String pngMetaText = String.format("zoom=%d x=%d y=%d", zoom, x, y);
 		Png4BitWriter.writeImage(buf, getTileImage(zoom, x, y, loadMethod), pngCompressionLevel, pngMetaText);
 		return buf.toByteArray();
 	}
@@ -84,10 +87,11 @@ public class DebugMapSource implements MapSource {
 		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_INDEXED, COLORMODEL);
 		Graphics2D g2 = image.createGraphics();
 		try {
-			g2.setColor(Color.WHITE);
+			g2.setColor(COLOR_BG);
 			g2.fillRect(0, 0, 255, 255);
-			g2.setColor(Color.RED);
+			g2.setColor(COLOR_VG);
 			g2.drawRect(0, 0, 255, 255);
+			g2.drawRect(1, 1, 254, 254);
 			g2.drawLine(0, 0, 255, 255);
 			g2.drawLine(255, 0, 0, 255);
 			g2.setFont(FONT_LARGE);
@@ -107,7 +111,7 @@ public class DebugMapSource implements MapSource {
 	public MapSourceLoaderInfo getLoaderInfo() {
 		return null;
 	}
-	
+
 	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
 		throw new RuntimeException("LoaderInfo can not be set");
 	}

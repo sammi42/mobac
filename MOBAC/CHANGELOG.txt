@@ -20,6 +20,7 @@
  + Local map sources from SQLite atlases can now be used - supported formats are 
     RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer
  ! Fixed OpenStreetMap Cycle Map
+ + Experimental: adding user-defined polygon maps
  
 1.9 beta 4 (2011-05-02)
  ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 

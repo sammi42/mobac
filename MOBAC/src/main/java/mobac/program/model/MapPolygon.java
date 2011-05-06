@@ -44,6 +44,7 @@ public class MapPolygon extends Map {
 
 	@XmlElement
 	protected Polygon polygon;
+	protected long calculatedTileCount = -1;
 
 	protected MapPolygon() {
 	}
@@ -160,10 +161,17 @@ public class MapPolygon extends Map {
 		int maxy = MyMath.roundUpToNearest(bounds.y + bounds.height, mapSourceTileSize) - 1;
 		minTileCoordinate = new Point(minx, miny);
 		maxTileCoordinate = new Point(maxx, maxy);
+		internalCalculateTilesToDownload();
 	}
 
 	@Override
 	public long calculateTilesToDownload() {
+		if (calculatedTileCount < 0)
+			internalCalculateTilesToDownload();
+		return calculatedTileCount;
+	}
+
+	protected void internalCalculateTilesToDownload() {
 		int tileSize = mapSource.getMapSpace().getTileSize();
 		double tileSizeD = tileSize;
 		int xMin = minTileCoordinate.x;
@@ -178,7 +186,7 @@ public class MapPolygon extends Map {
 					count++;
 			}
 		}
-		return count;
+		calculatedTileCount = count;
 	}
 
 	@Override

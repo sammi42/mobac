@@ -21,8 +21,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -45,7 +43,7 @@ import mobac.utilities.MyMath;
 
 import org.apache.log4j.Logger;
 
-public class PreviewMap extends JMapViewer implements ComponentListener {
+public class PreviewMap extends JMapViewer {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,8 +71,8 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 	private Point gridSelectionEnd;
 
 	/**
-	 * Pre-painted tile with grid lines on it. This makes painting the grid a lot faster in difference to painting each
-	 * line or rectangle if the grid zoom is much higher that the current zoom level.
+	 * Pre-painted transparent tile with grid lines on it. This makes painting the grid a lot faster in difference to
+	 * painting each line or rectangle if the grid zoom is much higher that the current zoom level.
 	 */
 	private BufferedImage gridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 
@@ -95,8 +93,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 
 		mapKeyboardController = new MapKeyboardController(this, true);
 		setMapSelectionController(new RectangleSelectionMapController(this));
-
-		addComponentListener(this);
 	}
 
 	public void setDisplayPositionByLatLon(EastNorthCoordinate c, int zoom) {
@@ -164,25 +160,31 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		return gridZoom;
 	}
 
+	/**
+	 * Updates the <code>gridSize</code> and the <code>gridTile</code>. This method has to called if
+	 * <code>mapSource</code> or <code>zoom</code> as been changed.
+	 */
 	protected void updateGridValues() {
 		if (gridZoom < 0)
 			return;
 		int zoomToGridZoom = zoom - gridZoom;
-		int tilesize = mapSource.getMapSpace().getTileSize();
+		int tileSize = mapSource.getMapSpace().getTileSize();
 		if (zoomToGridZoom > 0) {
-			gridSize = tilesize << zoomToGridZoom;
+			gridSize = tileSize << zoomToGridZoom;
+			gridTile = null;
 		} else {
-			gridSize = tilesize >> (-zoomToGridZoom);
-			BufferedImage newGridTile = new BufferedImage(tilesize, tilesize, BufferedImage.TYPE_INT_ARGB);
+			gridSize = tileSize >> (-zoomToGridZoom);
+			BufferedImage newGridTile = null;
 			if (gridSize > 2) {
+				newGridTile = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
 				Graphics2D g = newGridTile.createGraphics();
 				int alpha = 5 + (6 + zoomToGridZoom) * 16;
 				alpha = Math.max(0, alpha);
 				alpha = Math.min(130, alpha);
 				g.setColor(new Color(200, 20, 20, alpha));
-				for (int x = 0; x < tilesize; x += gridSize)
+				for (int x = 0; x < tileSize; x += gridSize)
 					g.drawLine(x, 0, x, 255);
-				for (int y = 0; y < tilesize; y += gridSize)
+				for (int y = 0; y < tileSize; y += gridSize)
 					g.drawLine(0, y, 255, y);
 			}
 			gridTile = newGridTile;
@@ -233,6 +235,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			}
 		}
 		if (gridSelectionStart != null && gridSelectionEnd != null) {
+			// Draw the selection rectangle widened by the current grid
 			int zoomDiff = MAX_ZOOM - zoom;
 			int x_min = (gridSelectionStart.x >> zoomDiff) - tlc.x;
 			int y_min = (gridSelectionStart.y >> zoomDiff) - tlc.y;
@@ -245,6 +248,7 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 			g.fillRect(x_min, y_min, w, h);
 		}
 		if (iSelectionMin != null && iSelectionMax != null) {
+			// Draw the selection rectangle exactly as it has been specified by the user
 			int zoomDiff = MAX_ZOOM - zoom;
 			int x_min = (iSelectionMin.x >> zoomDiff) - tlc.x;
 			int y_min = (iSelectionMin.y >> zoomDiff) - tlc.y;
@@ -260,13 +264,15 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		if (mapSource instanceof MapSourceTextAttribution) {
 			MapSourceTextAttribution ta = (MapSourceTextAttribution) mapSource;
 			String attributionText = ta.getAttributionText();
-			Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
-			int text_x = getWidth() - 10 - (int) stringBounds.getWidth();
-			int text_y = getHeight() - 1 - (int) stringBounds.getHeight();
-			g.setColor(Color.black);
-			g.drawString(attributionText, text_x + 1, text_y + 1);
-			g.setColor(Color.white);
-			g.drawString(attributionText, text_x, text_y);
+			if (attributionText != null) {
+				Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
+				int text_x = getWidth() - 10 - (int) stringBounds.getWidth();
+				int text_y = getHeight() - 1 - (int) stringBounds.getHeight();
+				g.setColor(Color.black);
+				g.drawString(attributionText, text_x + 1, text_y + 1);
+				g.setColor(Color.white);
+				g.drawString(attributionText, text_x, text_y);
+			}
 		}
 	}
 
@@ -336,6 +342,15 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		setSelectionByTileCoordinate(zoom, pStart, pEnd, notifyListeners);
 	}
 
+	/**
+	 * Sets the rectangular selection to the absolute tile coordinates <code>pStart</code> and <code>pEnd</code>
+	 * regarding the zoom-level <code>cZoom</code>.
+	 * 
+	 * @param cZoom
+	 * @param pStart
+	 * @param pEnd
+	 * @param notifyListeners
+	 */
 	public void setSelectionByTileCoordinate(int cZoom, Point pStart, Point pEnd, boolean notifyListeners) {
 		if (pStart == null || pEnd == null) {
 			iSelectionMin = null;
@@ -400,6 +415,10 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		gridSelectionEnd = pNewEnd;
 	}
 
+	/**
+	 * Notifies all registered {@link MapEventListener} of a
+	 * {@link MapEventListener#selectionChanged(MercatorPixelCoordinate, MercatorPixelCoordinate)} event.
+	 */
 	public void updateMapSelection() {
 		int x_min, y_min, x_max, y_max;
 
@@ -430,20 +449,6 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		mapEventListeners.add(l);
 	}
 
-	public void componentHidden(ComponentEvent e) {
-
-	}
-
-	public void componentMoved(ComponentEvent e) {
-
-	}
-
-	public void componentResized(ComponentEvent e) {
-	}
-
-	public void componentShown(ComponentEvent e) {
-	}
-
 	public void selectPreviousMap() {
 		for (MapEventListener listener : mapEventListeners) {
 			listener.selectPreviousMapSource();
@@ -469,10 +474,18 @@ public class PreviewMap extends JMapViewer implements ComponentListener {
 		return mapKeyboardController;
 	}
 
+	/**
+	 * @return Currently active <code>mapSelectionController</code>
+	 */
 	public JMapController getMapSelectionController() {
 		return mapSelectionController;
 	}
 
+	/**
+	 * Sets a new mapSelectionController. Previous controller are disabled and removed.
+	 * 
+	 * @param mapSelectionController
+	 */
 	public void setMapSelectionController(JMapController mapSelectionController) {
 		if (this.mapSelectionController != null)
 			this.mapSelectionController.disable();

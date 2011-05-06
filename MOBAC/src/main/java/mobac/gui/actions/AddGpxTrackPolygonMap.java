@@ -51,9 +51,9 @@ import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.UnitSystem;
 
-public class AddGpxTrackMap implements ActionListener {
+public class AddGpxTrackPolygonMap implements ActionListener {
 
-	public static final AddGpxTrackMap INSTANCE = new AddGpxTrackMap();
+	public static final AddGpxTrackPolygonMap INSTANCE = new AddGpxTrackPolygonMap();
 
 	public void actionPerformed(ActionEvent event) {
 		MainGUI mg = MainGUI.getMainGUI();

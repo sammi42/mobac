@@ -58,6 +58,7 @@ public class RectangleSelectionMapController extends JMapController implements M
 	@Override
 	public void disable() {
 		map.mapLayers.remove(mapLayer);
+		map.setSelectionByTileCoordinate(null, null, true);
 		super.disable();
 	}
 

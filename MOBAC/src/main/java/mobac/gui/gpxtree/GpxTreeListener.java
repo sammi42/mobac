@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.actions;
+package mobac.gui.gpxtree;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -27,7 +27,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import mobac.gui.gpxtree.GpxEntry;
+import mobac.gui.actions.GpxElementListener;
 
 /**
  * Listener for the gpx editor tree.

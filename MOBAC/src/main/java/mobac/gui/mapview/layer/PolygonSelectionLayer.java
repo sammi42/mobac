@@ -41,7 +41,7 @@ public class PolygonSelectionLayer implements MapLayer {
 
 	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
 		MapSpace mapSpace = map.getMapSource().getMapSpace();
-		g.setColor(Color.BLUE);
+		g.setColor(Color.RED);
 		Point lastPoint = null;
 		List<Point> pointList = mapController.getPolygonPoints();
 		if (pointList.size() == 0)

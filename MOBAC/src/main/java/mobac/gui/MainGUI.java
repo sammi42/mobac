@@ -60,8 +60,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
-import mobac.gui.actions.AddGpxTrackMap;
-import mobac.gui.actions.AddRectangleMapAutocut;
+import mobac.gui.actions.AddGpxTrackPolygonMap;
+import mobac.gui.actions.AddMapLayer;
 import mobac.gui.actions.AtlasConvert;
 import mobac.gui.actions.AtlasCreate;
 import mobac.gui.actions.AtlasNew;
@@ -333,12 +333,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 		smPolygon.addActionListener(new SelectionModePolygon());
 		selectionModeMenu.add(smPolygon);
 
-		JMenuItem addSelection = new JMenuItem2("Add selection", AddRectangleMapAutocut.class);
+		JMenuItem addSelection = new JMenuItem("Add selection");
+		addSelection.addActionListener(AddMapLayer.INSTANCE);
 		addSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		addSelection.setMnemonic(KeyEvent.VK_A);
 		mapsMenu.add(addSelection);
 
-		JMenuItem addGpxTrackSelection = new JMenuItem2("Add selection by GPX track", AddGpxTrackMap.class);
+		JMenuItem addGpxTrackSelection = new JMenuItem2("Add selection by GPX track", AddGpxTrackPolygonMap.class);
 		mapsMenu.add(addGpxTrackSelection);
 
 		// Bookmarks menu
@@ -432,7 +433,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		clearAtlas.addActionListener(new AtlasNew());
 		JButton addLayers = new JButton("Add selection");
 		atlasContentPanel.addContent(addLayers, GBC.eol());
-		addLayers.addActionListener(AddRectangleMapAutocut.INSTANCE);
+		addLayers.addActionListener(AddMapLayer.INSTANCE);
 		atlasContentPanel.addContent(new JLabel("Name: "), gbc_std);
 		atlasContentPanel.addContent(atlasNameTextField, gbc_eol.fill(GBC.HORIZONTAL));
 

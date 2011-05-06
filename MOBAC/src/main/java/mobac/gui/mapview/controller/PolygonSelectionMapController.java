@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.layer.PolygonSelectionLayer;
 
@@ -39,6 +40,10 @@ public class PolygonSelectionMapController extends JMapController implements Mou
 		mapLayer = new PolygonSelectionLayer(this);
 	}
 
+	public void reset() {
+		polygonPoints = new ArrayList<Point>();
+	}
+	
 	@Override
 	public void enable() {
 		map.mapLayers.add(mapLayer);
@@ -78,6 +83,9 @@ public class PolygonSelectionMapController extends JMapController implements Mou
 
 	}
 
+	/**
+	 * @return List of absolute tile coordinate points regarding {@link JMapViewer#MAX_ZOOM}
+	 */
 	public ArrayList<Point> getPolygonPoints() {
 		return polygonPoints;
 	}

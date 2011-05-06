@@ -17,44 +17,40 @@
 package mobac.gui.actions;
 
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import mobac.exceptions.InvalidNameException;
 import mobac.gui.MainGUI;
 import mobac.gui.atlastree.JAtlasTree;
-import mobac.program.Logging;
+import mobac.gui.mapview.JMapViewer;
+import mobac.gui.mapview.controller.PolygonSelectionMapController;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
 import mobac.program.model.Layer;
-import mobac.program.model.MapSelection;
+import mobac.program.model.MapPolygon;
 import mobac.program.model.SelectedZoomLevels;
-import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters;
 
-public class AddRectangleMapAutocut implements ActionListener {
+public class AddPolygonMapLayer implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 		MainGUI mg = MainGUI.getMainGUI();
+
+		PolygonSelectionMapController msc = (PolygonSelectionMapController) mg.previewMap.getMapSelectionController();
+
 		JAtlasTree jAtlasTree = mg.jAtlasTree;
 		final String mapNameFmt = "%s %02d";
 		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
 		String name = mg.getUserText();
 		MapSource mapSource = mg.getSelectedMapSource();
+		MapSpace mapSpace = mapSource.getMapSpace();
 		SelectedZoomLevels sZL = mg.getSelectedZoomLevels();
-		MapSelection ms = mg.getMapSelectionCoordinates();
-		if (ms == null) {
-			JOptionPane.showMessageDialog(mg, "Please select an area");
-			return;
-		}
-		Settings settings = Settings.getInstance();
-		// String errorText = mg.validateInput();
-		// if (errorText.length() > 0) {
-		// JOptionPane.showMessageDialog(mg, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
-		// return;
-		// }
 
 		int[] zoomLevels = sZL.getZoomLevels();
 		if (zoomLevels.length == 0) {
@@ -74,20 +70,26 @@ public class AddRectangleMapAutocut implements ActionListener {
 				layerName = name + "_" + Integer.toString(c++);
 			}
 		} while (!success);
+		List<Point> polygonPoints = msc.getPolygonPoints();
+
 		for (int zoom : zoomLevels) {
-			Point tl = ms.getTopLeftPixelCoordinate(zoom);
-			Point br = ms.getBottomRightPixelCoordinate(zoom);
-			TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
-			try {
-				String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
-				layer.addMapsAutocut(mapName, mapSource, tl, br, zoom, customTileParameters, settings.maxMapSize);
-			} catch (InvalidNameException e) {
-				Logging.LOG.error("", e);
+			int xpoints[] = new int[polygonPoints.size()];
+			int ypoints[] = new int[polygonPoints.size()];
+			for (int i = 0; i < xpoints.length; i++) {
+				Point p = mapSpace.changeZoom(polygonPoints.get(i), JMapViewer.MAX_ZOOM, zoom);
+				xpoints[i] = p.x;
+				ypoints[i] = p.y;
 			}
+			TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
+			Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
+			String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
+			MapPolygon map = new MapPolygon(layer, mapName, mapSource, zoom, polygon, customTileParameters);
+			layer.addMap(map);
 		}
 		atlasInterface.addLayer(layer);
 		jAtlasTree.getTreeModel().notifyNodeInsert(layer);
 
+		msc.reset();
 	}
 
 }

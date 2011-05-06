@@ -283,7 +283,7 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		}
 	}
 
-	public void afterUnmarshal(Unmarshaller u, Object parent) {
+	protected void afterUnmarshal(Unmarshaller u, Object parent) {
 		this.layer = (Layer) parent;
 		calculateRuntimeValues();
 	}

@@ -17,7 +17,7 @@
  ! CustomMultiLayerMapSource: "null" error when loading
  ! directories.ini: mobac.atlasprofilesdir not used for loading profiles list
  + directories.ini: System variables can be used in the form ${VARNAME}
- + Local map sources frokm SQLite atlases can now be used - supported formats are 
+ + Local map sources from SQLite atlases can now be used - supported formats are 
     RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer
  ! Fixed OpenStreetMap Cycle Map
  

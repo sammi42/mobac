@@ -68,7 +68,7 @@ public class AtlasNew implements ActionListener {
 			atlasFormatList.setSelectedIndex(1);
 		int result = JOptionPane.showConfirmDialog(MainGUI.getMainGUI(), panel, "Settings for new Atlas",
 				JOptionPane.OK_CANCEL_OPTION);
-		if (result == JOptionPane.CANCEL_OPTION)
+		if (result != JOptionPane.OK_OPTION)
 			return;
 
 		AtlasOutputFormat format = (AtlasOutputFormat) atlasFormatList.getSelectedValue();

@@ -152,7 +152,7 @@ public class JProfilesPanel extends JCollapsiblePanel {
 				int response = JOptionPane.showConfirmDialog(null, "Profile \"" + profileName
 						+ "\" already exists. Overwrite?", "Please confirm",
 						JOptionPane.YES_NO_OPTION);
-				if (response == JOptionPane.NO_OPTION)
+				if (response != JOptionPane.YES_OPTION)
 					return;
 			}
 

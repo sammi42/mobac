@@ -20,7 +20,8 @@ import mobac.program.interfaces.HttpMapSource;
 
 public class CycleMap extends AbstractOsmMapSource {
 
-	private static final String PATTERN = "http://%s.andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png";
+	
+	private static final String PATTERN = "http://%s.tile.opencyclemap.org/cycle/%d/%d/%d.png";
 
 	private static final String[] SERVER = { "a", "b", "c" };
 

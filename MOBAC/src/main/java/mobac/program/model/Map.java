@@ -283,7 +283,10 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		}
 	}
 
-	protected void afterUnmarshal(Unmarshaller u, Object parent) {
+	/**
+	 * Needs to be public - otherwise it will be kicked by ProGuard!
+	 */
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
 		this.layer = (Layer) parent;
 		calculateRuntimeValues();
 	}
@@ -295,5 +298,5 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	public TileFilter getTileFilter() {
 		return new DummyTileFilter();
 	}
-	
+
 }

@@ -35,13 +35,18 @@ public class JDistanceSlider extends JSlider {
 		labelTable = new Hashtable<Integer, JLabel>();
 
 		int diff4 = (pixelMax - pixelMin) / 4;
-		int[] labelvalues = new int[] { pixelMin, pixelMin + diff4, pixelMin + 2 * diff4, pixelMin + 3 * diff4, pixelMax };
+		int[] labelvalues = new int[] { pixelMin, pixelMin + diff4, pixelMin + 2 * diff4, pixelMin + 3 * diff4,
+				pixelMax };
 
 		for (int i : labelvalues) {
-			labelTable.put(
-					new Integer(i),
-					new JLabel(String.format("%2.0f %s", mapSpace.horizontalDistance(zoom, y, i) * unit.earthRadius
-							* unit.unitFactor, unit.unitSmall)));
+			double distance = mapSpace.horizontalDistance(zoom, y, i) * unit.earthRadius * unit.unitFactor;
+			String label;
+			if (distance > unit.unitFactor) {
+				distance /= unit.unitFactor;
+				label = String.format("%2.0f %s", distance, unit.unitLarge);
+			} else
+				label = String.format("%2.0f %s", distance, unit.unitSmall);
+			labelTable.put(new Integer(i), new JLabel(label));
 		}
 		setPaintTicks(true);
 		setMajorTickSpacing(diff4);

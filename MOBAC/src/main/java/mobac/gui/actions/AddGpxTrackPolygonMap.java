@@ -135,7 +135,12 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 			public void stateChanged(ChangeEvent e) {
 				double d = mapSpace.horizontalDistance(maxZoom, centerY, slider.getValue());
 				d *= unitSystem.earthRadius * unitSystem.unitFactor;
-				label.setText("Selected distance around track: " + ((int) d) + " " + unitSystem.unitSmall);
+				String unitName = unitSystem.unitSmall;
+				if (d > unitSystem.unitFactor) {
+					d /= unitSystem.unitFactor;
+					unitName = unitSystem.unitLarge;
+				}
+				label.setText("Selected distance around track: " + ((int) d) + " " + unitName);
 			}
 		};
 		cl.stateChanged(null);

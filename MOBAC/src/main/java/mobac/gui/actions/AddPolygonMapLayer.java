@@ -89,7 +89,7 @@ public class AddPolygonMapLayer implements ActionListener {
 		atlasInterface.addLayer(layer);
 		jAtlasTree.getTreeModel().notifyNodeInsert(layer);
 
-		msc.reset();
+		msc.finishPolygon();
 	}
 
 }

@@ -32,6 +32,7 @@ import mobac.gui.mapview.layer.PolygonSelectionLayer;
  */
 public class PolygonSelectionMapController extends JMapController implements MouseListener {
 
+	private boolean finished = false;
 	private ArrayList<Point> polygonPoints = new ArrayList<Point>();
 	private PolygonSelectionLayer mapLayer = null;
 
@@ -42,8 +43,13 @@ public class PolygonSelectionMapController extends JMapController implements Mou
 
 	public void reset() {
 		polygonPoints = new ArrayList<Point>();
+		finished = false;
 	}
-	
+
+	public void finishPolygon() {
+		finished = true;
+	}
+
 	@Override
 	public void enable() {
 		map.mapLayers.add(mapLayer);
@@ -65,6 +71,8 @@ public class PolygonSelectionMapController extends JMapController implements Mou
 
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (finished)
+				reset();
 			Point mapPoint = map.getTopLeftCoordinate();
 			mapPoint.x += e.getX();
 			mapPoint.y += e.getY();

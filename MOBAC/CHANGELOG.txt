@@ -21,6 +21,7 @@
     RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer
  ! Fixed OpenStreetMap Cycle Map
  + Experimental: adding user-defined polygon maps
+ ~ Changed polygon selection behavior - selection stays now after adding it 
  
 1.9 beta 4 (2011-05-02)
  ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 

@@ -147,7 +147,8 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		StringWriter sw = new StringWriter(1024);
 		sw.write("<html>");
 		sw.write("<b>Map</b><br>");
-		sw.write("Map source: " + mapSource.getName() + "<br>");
+		sw.write("Map source: " + mapSource.toString());
+		sw.write(" (" + mapSource.getName() + ")<br>");
 		sw.write("Zoom level: " + zoom + "<br>");
 		sw.write("Area start: " + tl + " (" + minTileCoordinate.x + " / " + minTileCoordinate.y + ")<br>");
 		sw.write("Area end: " + br + " (" + maxTileCoordinate.x + " / " + maxTileCoordinate.y + ")<br>");

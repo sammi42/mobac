@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 beta 5 (2011-05-??)
+1.9 beta 5 (2011-05-17)
  + Added possibility Change directory syntax for file and zip based map sources 
     from zoom/x/y to zoom/y/x ("flipXYDir")
  + Added possibility to use <localTileFiles> and <localTileZip> within a custom 

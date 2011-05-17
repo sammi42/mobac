@@ -43,6 +43,7 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 	@XmlElementWrapper(name = "layers")
 	@XmlElements({ @XmlElement(name = "customMapSource", type = CustomMapSource.class),
 			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
+			@XmlElement(name = "cloudMade", type = CustomCloudMade.class),
 			@XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
 			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
 			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class) })

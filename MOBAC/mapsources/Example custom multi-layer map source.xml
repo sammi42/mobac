@@ -39,6 +39,7 @@ top of the OSM Mapnik layer.
         Also possible: Custom atlas as map source / locally generated tiles (see README.HTM) 
         <localTileFiles>...</localTileFiles>
         <localTileZip>...</localTileZip>
+        <localTileSQLite>..</localTileSQLite>
         -->
     </layers>
 </customMultiLayerMapSource>

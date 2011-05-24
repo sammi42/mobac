@@ -33,6 +33,7 @@ import mobac.program.atlascreators.BackCountryNavigator;
 import mobac.program.atlascreators.BigPlanetTracks;
 import mobac.program.atlascreators.CacheBox;
 import mobac.program.atlascreators.CacheWolf;
+import mobac.program.atlascreators.GCLive;
 import mobac.program.atlascreators.Galileo;
 import mobac.program.atlascreators.GarminCustom;
 import mobac.program.atlascreators.Glopus;
@@ -86,6 +87,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(createByClass(CacheWolf.class));
 		FORMATS.add(createByClass(Galileo.class));
 		FORMATS.add(createByClass(GarminCustom.class));
+		FORMATS.add(createByClass(GCLive.class));
 		FORMATS.add(createByClass(Glopus.class));
 		FORMATS.add(createByClass(GlopusMapFile.class));
 		FORMATS.add(createByClass(GoogleEarthOverlay.class));

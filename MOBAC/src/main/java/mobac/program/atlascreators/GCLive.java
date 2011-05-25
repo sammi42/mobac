@@ -19,6 +19,8 @@ package mobac.program.atlascreators;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
@@ -30,14 +32,62 @@ import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
 import mobac.program.atlascreators.tileprovider.TileProvider;
+import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 
+/**
+ * <a href=
+ * "http://palmtopia.de/trac/GCLiveMapGen/browser/Reengineering%20of%20the%20Geocaching%20Live%20Tile%20Database.txt?format=txt"
+ * >File format documentation</a>
+ * 
+ * <pre>
+ * ===
+ * === Reengineering of the Geocaching Live Tile Database ===
+ * ===
+ * 
+ * index file:
+ * ===========
+ * 
+ * 16 Bytes Header:
+ * ----------------
+ * 
+ * 00 00 00 0A		Highest index used currently for the data files. Index is incremented starting with 0.
+ * 00 00 4E 20		Max. number of tiles index. Current max. number is 20000.
+ * 00 00 01 4D		Number of tile entries (16 bytes) indexed.
+ * 00 01 0C FF		Size of the data file with the currently used highest index.
+ * 
+ * 16 Bytes per tile:
+ * ------------------
+ * 
+ * 00 00			Inverse zoom level = 17 - Z. 
+ * 01 0E 16			Number of the X tile.
+ * 00 B1 0E			Number of the Y tile.
+ * 00 00 50 92		Start offset of the PNG data in the data file.
+ * 00 9D 6 			Size of the PNG data.
+ *        0 01		Index of the data file which contains the PNG data.
+ * 
+ * The tiles are sorted starting by zoom level 17 (INVZ = 0).
+ * 
+ * data file:
+ * ----------
+ * 
+ * Max. 32 PNGs concated directly together.
+ * 
+ * 
+ * [0] - [x] directories:
+ * ----------------------
+ * 
+ * Max. 32 data files per directory. The data files are named from 'data0' to 'dataN'.
+ * </pre>
+ */
 @AtlasCreatorName("Geocaching Live offline map")
 @SupportedParameters(names = { Name.format })
 public class GCLive extends AtlasCreator {
+
+	private static final int MAX_TILES = 65535;
 
 	private MapTileWriter mapTileWriter = null;
 
@@ -48,8 +98,42 @@ public class GCLive extends AtlasCreator {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
-		super.testAtlas();
+		long tileCount = 0;
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				// We can not use map.calculateTilesToDownload() because be need the full tile count not the sparse
+				int tileSize_t = 256; // Everything else is not allowed
+				int xMin_t = map.getMinTileCoordinate().x / tileSize_t;
+				int xMax_t = map.getMaxTileCoordinate().x / tileSize_t;
+				int yMin_t = map.getMinTileCoordinate().y / tileSize_t;
+				int yMax_t = map.getMaxTileCoordinate().y / tileSize_t;
+				tileCount += (xMax_t - xMin_t + 1) * (yMax_t - yMin_t + 1);
+			}
+			if (tileCount > MAX_TILES)
+				throw new AtlasTestException("Tile count too high in layer " + layer.getName()
+						+ "\n - please select smaller/fewer areas");
+		}
 		// Check for max tile count <= 65535
+	}
+
+	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
+		mapTileWriter = new GCLiveWriter(new File(atlasDir, layer.getName()));
+	}
+
+	@Override
+	public void finishLayerCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
+		super.finishLayerCreation();
+	}
+
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
+		super.abortAtlasCreation();
 	}
 
 	@Override
@@ -62,15 +146,7 @@ public class GCLive extends AtlasCreator {
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
-		// This means there should not be any resizing of the tiles.
-		try {
-			mapTileWriter = new GCLiveWriter(new File(atlasDir, map.getName()));
-			createTiles();
-			mapTileWriter.finalizeMap();
-			mapTileWriter = null;
-		} catch (IOException e) {
-			throw new MapCreationException(map, e);
-		}
+		createTiles();
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
@@ -96,30 +172,23 @@ public class GCLive extends AtlasCreator {
 		}
 	}
 
-	/**
-	 * http://palmtopia.de/trac/GCLiveMapGen/browser/Reengineering%20of%20the%20Geocaching%20Live%20Tile%20Database.txt?
-	 * format=txt
-	 */
 	protected class GCLiveWriter implements MapTileWriter {
 
 		private File mapDir;
-
-		private RandomAccessFile indexFile;
 
 		private int dataDirCounter = 0;
 		private int dataFileCounter = 0;
 		private int imageCounter = 0;
 
-		private int tileEntries = 0;
-
 		private RandomAccessFile currentDataFile;
+
+		private ArrayList<GCHeaderEntry> headerEntries;
 
 		public GCLiveWriter(File mapDir) throws IOException {
 			super();
 			this.mapDir = mapDir;
 			Utilities.mkDir(mapDir);
-			indexFile = new RandomAccessFile(new File(mapDir, "index"), "rw");
-			indexFile.seek(16); // skip header - we write it later
+			headerEntries = new ArrayList<GCHeaderEntry>(MAX_TILES);
 			prepareDataFile();
 		}
 
@@ -150,38 +219,95 @@ public class GCLive extends AtlasCreator {
 			currentDataFile.write(tileData);
 			int len = tileData.length;
 
-			indexFile.writeShort((short) (17 - zoom));
-			indexFile.write((tilex >> 16) & 0xFF);
-			indexFile.write((tilex >> 8) & 0xFF);
-			indexFile.write(tilex & 0xFF);
-			indexFile.write((tiley >> 16) & 0xFF);
-			indexFile.write((tiley >> 8) & 0xFF);
-			indexFile.write(tiley & 0xFF);
-			indexFile.writeInt((int) offset);
-
 			int dataFileIndex = dataDirCounter * 32 + dataFileCounter;
-			int tmp = (len << 4);
-			tmp = tmp | ((dataFileIndex >> 8) & 0x0F);
-
-			indexFile.write((tmp >> 16) & 0xFF);
-			indexFile.write((tmp >> 8) & 0xFF);
-			indexFile.write(tmp & 0xFF);
-			indexFile.write(dataFileIndex & 0xFF);
-			tileEntries++;
+			GCHeaderEntry header = new GCHeaderEntry(zoom, tilex, tiley, dataFileIndex, (int) offset, len);
+			headerEntries.add(header);
 		}
 
 		public void finalizeMap() throws IOException {
+			int dataPos = (int) currentDataFile.getFilePointer();
+			Utilities.closeFile(currentDataFile);
+			Collections.sort(headerEntries);
+
+			RandomAccessFile indexFile;
+			indexFile = new RandomAccessFile(new File(mapDir, "index"), "rw");
+
 			// Write index header (first 16 bytes)
 			indexFile.seek(0);
 			int dataFileIndex = dataDirCounter * 32 + dataFileCounter;
 			indexFile.writeInt(dataFileIndex); // Highest index used currently for the data files. Index is incremented
 												// starting with 0.
-			indexFile.writeInt(tileEntries); // Max. number of tiles index. Current max. number is 20000.
-			indexFile.writeInt(tileEntries); // Number of tile entries (16 bytes) indexed.
-			indexFile.writeInt((int) currentDataFile.getFilePointer()); // Size of the data file with the currently used
-																		// highest index.
-			Utilities.closeFile(currentDataFile);
+			indexFile.writeInt(headerEntries.size()); // Max. number of tiles index. Current max. number is 20000.
+			indexFile.writeInt(headerEntries.size()); // Number of tile entries (16 bytes) indexed.
+			indexFile.writeInt(dataPos); // Size of the data file with the currently used highest index.
+
+			for (GCHeaderEntry entry : headerEntries) {
+				entry.writeHeader(indexFile);
+				System.out.println(entry);
+			}
+			headerEntries = null;
 			Utilities.closeFile(indexFile);
 		}
+	}
+
+	public static class GCHeaderEntry implements Comparable<GCHeaderEntry> {
+		public final int zoom;
+		public final int tilex;
+		public final int tiley;
+		public final int dataFileIndex;
+		public final int offset;
+		public final int len;
+
+		public GCHeaderEntry(int zoom, int tilex, int tiley, int dataFileIndex, int offset, int len) {
+			super();
+			this.zoom = zoom;
+			this.tilex = tilex;
+			this.tiley = tiley;
+			this.dataFileIndex = dataFileIndex;
+			this.offset = offset;
+			this.len = len;
+		}
+
+		public void writeHeader(RandomAccessFile file) throws IOException {
+			file.writeShort((short) (17 - zoom));
+			file.write((tilex >> 16) & 0xFF);
+			file.write((tilex >> 8) & 0xFF);
+			file.write(tilex & 0xFF);
+			file.write((tiley >> 16) & 0xFF);
+			file.write((tiley >> 8) & 0xFF);
+			file.write(tiley & 0xFF);
+			file.writeInt(offset);
+
+			int tmp = (len << 4);
+			tmp = tmp | ((dataFileIndex >> 8) & 0x0F);
+
+			file.write((tmp >> 16) & 0xFF);
+			file.write((tmp >> 8) & 0xFF);
+			file.write(tmp & 0xFF);
+			file.write(dataFileIndex & 0xFF);
+		}
+
+		public int compareTo(GCHeaderEntry o) {
+			if (zoom > o.zoom)
+				return -1;
+			if (zoom < o.zoom)
+				return 1;
+			if (tilex > o.tilex)
+				return 1;
+			if (tilex < o.tilex)
+				return -1;
+			if (tiley > o.tiley)
+				return 1;
+			if (tiley < o.tiley)
+				return -1;
+			return 0;
+		}
+
+		@Override
+		public String toString() {
+			return "GCHeaderEntry [zoom=" + zoom + ", tilex=" + tilex + ", tiley=" + tiley + ", dataFileIndex="
+					+ dataFileIndex + ", offset=" + offset + ", len=" + len + "]";
+		}
+
 	}
 }

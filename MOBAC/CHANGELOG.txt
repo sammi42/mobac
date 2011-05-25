@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9 beta 6 (2011-06-??)
+ + New atlas format: Geocaching Live offline maps
+
 1.9 beta 5 (2011-05-17)
  + Added possibility Change directory syntax for file and zip based map sources 
     from zoom/x/y to zoom/y/x ("flipXYDir")

@@ -5,6 +5,13 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 
+/**
+ * 
+ * A simple tool for dumping the index file of a Geocaching-Live map/atlas
+ * 
+ *  File format description taken from http://palmtopia.de/trac/GCLiveMapGen
+ *
+ */
 public class GCLiveReader {
 
 	/**

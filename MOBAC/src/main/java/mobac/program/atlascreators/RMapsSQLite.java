@@ -61,15 +61,15 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
-	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,s,image) VALUES (?,?,?,?,?)";
+	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (x,y,z,s,image) VALUES (?,?,?,0,?)";
 	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 AS minzoom, 0 AS maxzoom";
 	private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info;";
 	private static final String RMAPS_UPDATE_INFO_SQL = "INSERT INTO info SELECT MIN(z) as minzoom, MAX(z) as maxzoom FROM tiles;";
 
-	private String databaseFile;
+	protected File databaseFile;
 
 	protected Connection conn = null;
-	private PreparedStatement prepStmt;
+	protected PreparedStatement prepStmt;
 
 	public RMapsSQLite() {
 		super();
@@ -91,7 +91,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		if (customAtlasDir == null)
 			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
 		super.startAtlasCreation(atlas, customAtlasDir);
-		databaseFile = new File(atlasDir, getDatabaseFileName()).getAbsolutePath();
+		databaseFile = new File(atlasDir, getDatabaseFileName());
 		log.debug("SQLite Database file: " + databaseFile);
 	}
 
@@ -117,9 +117,9 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		}
 	}
 
-	private void openConnection() throws SQLException {
+	protected void openConnection() throws SQLException {
 		if (conn == null || conn.isClosed()) {
-			String url = "jdbc:sqlite:/" + this.databaseFile;
+			String url = "jdbc:sqlite:/" + databaseFile.getAbsolutePath();
 			conn = DriverManager.getConnection(url);
 		}
 	}
@@ -215,12 +215,10 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 	}
 
 	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
-		int s = 0;
 		prepStmt.setInt(1, x);
 		prepStmt.setInt(2, y);
 		prepStmt.setInt(3, 17 - z);
-		prepStmt.setInt(4, s);
-		prepStmt.setBytes(5, tileData);
+		prepStmt.setBytes(4, tileData);
 		prepStmt.addBatch();
 	}
 

@@ -201,6 +201,8 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			statement.setInt(1, zoom);
 			statement.setInt(2, x);
 			statement.setInt(3, y);
+			if (log.isTraceEnabled())
+				log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
 			if (statement.execute()) {
 				ResultSet rs = statement.getResultSet();
 				if (!rs.next()) {

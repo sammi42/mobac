@@ -109,11 +109,11 @@ public class GCLive extends AtlasCreator {
 				int yMax_t = map.getMaxTileCoordinate().y / tileSize_t;
 				tileCount += (xMax_t - xMin_t + 1) * (yMax_t - yMin_t + 1);
 			}
+			// Check for max tile count <= 65535
 			if (tileCount > MAX_TILES)
 				throw new AtlasTestException("Tile count too high in layer " + layer.getName()
 						+ "\n - please select smaller/fewer areas");
 		}
-		// Check for max tile count <= 65535
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class GCLive extends AtlasCreator {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 		ImageIO.setUseCache(false);
 
-		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
+		//byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
 
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {
@@ -163,8 +163,8 @@ public class GCLive extends AtlasCreator {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 					if (sourceTileData != null)
 						mapTileWriter.writeTile(x, y, null, sourceTileData);
-					else
-						mapTileWriter.writeTile(x, y, null, emptyTileData);
+					// else
+					// mapTileWriter.writeTile(x, y, null, emptyTileData);
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}

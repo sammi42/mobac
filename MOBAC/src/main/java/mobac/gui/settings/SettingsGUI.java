@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui;
+package mobac.gui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -68,6 +68,7 @@ import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
 import mobac.StartMOBAC;
+import mobac.gui.MainGUI;
 import mobac.gui.actions.OpenInWebbrowser;
 import mobac.gui.components.JDirectoryChooser;
 import mobac.gui.components.JMapSizeCombo;
@@ -149,6 +150,8 @@ public class SettingsGUI extends JDialog {
 
 	private JTextField proxyUserName;
 	private JTextField proxyPassword;
+	
+	private JCheckBox ignoreDlErrors;
 
 	private JButton okButton;
 	private JButton cancelButton;
@@ -167,13 +170,16 @@ public class SettingsGUI extends JDialog {
 
 	private MapSourcesListModel disabledMapSourcesModel;
 
-	static void showSettingsDialog(final JFrame owner) {
+	public static void showSettingsDialog(final JFrame owner) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new SettingsGUI(owner);
 			}
 		});
 	}
+	
+	private final SettingsGUIPaper paperAtlas = new SettingsGUIPaper();
+	private final SettingsGUIWgsGrid display = new SettingsGUIWgsGrid();
 
 	private SettingsGUI(JFrame owner) {
 		super(owner);
@@ -205,6 +211,7 @@ public class SettingsGUI extends JDialog {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
 		addDisplaySettingsPanel();
+		tabbedPane.addTab(paperAtlas.getName(), paperAtlas);
 		try {
 			addMapSourceSettingsPanel();
 		} catch (URISyntaxException e) {
@@ -241,6 +248,7 @@ public class SettingsGUI extends JDialog {
 		unitSystemPanel.add(unitSystem, GBC.std());
 		unitSystemPanel.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
 		tab.add(unitSystemPanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tab.add(display, GBC.eol().fill(GBC.HORIZONTAL));
 		tab.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 	}
 
@@ -743,6 +751,13 @@ public class SettingsGUI extends JDialog {
 
 		backGround.add(panel, GBC.eol().fillH());
 
+		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically", settings.ignoreDlErrors);
+		JPanel jPanel = new JPanel(new GridBagLayout());
+		jPanel.setBorder(createSectionBorder("Default"));
+		jPanel.add(ignoreDlErrors, GBC.std());
+		jPanel.add(Box.createHorizontalGlue(), GBC.eol().fillH());
+		backGround.add(jPanel, GBC.eol().fillH());
+
 		backGround.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
 
@@ -760,7 +775,7 @@ public class SettingsGUI extends JDialog {
 	private void loadSettings() {
 		Settings s = settings;
 
-		unitSystem.setSelectedItem(s.getUnitSystem());
+		unitSystem.setSelectedItem(s.unitSystem);
 		tileStoreEnabled.setSelected(s.tileStoreEnabled);
 
 		mapSize.setValue(s.maxMapSize);
@@ -789,6 +804,11 @@ public class SettingsGUI extends JDialog {
 		minExpirationTime.setTimeMilliValue(s.tileMinExpirationTime);
 
 		osmHikingTicket.setText(s.osmHikingTicket);
+		
+		ignoreDlErrors.setSelected(s.ignoreDlErrors);
+		
+		paperAtlas.loadSettings(s);
+		display.loadSettings(s);
 	}
 
 	/**
@@ -798,7 +818,7 @@ public class SettingsGUI extends JDialog {
 	private void applySettings() {
 		Settings s = settings;
 
-		s.setUnitSystem((UnitSystem) unitSystem.getSelectedItem());
+		s.unitSystem = (UnitSystem) unitSystem.getSelectedItem();
 		s.tileStoreEnabled = tileStoreEnabled.isSelected();
 		s.tileDefaultExpirationTime = defaultExpirationTime.getTimeMilliValue();
 		s.tileMinExpirationTime = minExpirationTime.getTimeMilliValue();
@@ -830,6 +850,11 @@ public class SettingsGUI extends JDialog {
 			enabledMaps.add(ms.getName());
 		}
 		s.mapSourcesEnabled = enabledMaps;
+		
+		s.ignoreDlErrors = ignoreDlErrors.isSelected();
+		
+		paperAtlas.applySettings(s);
+		display.applySettings(s);
 
 		if (MainGUI.getMainGUI() == null)
 			return;
@@ -888,7 +913,7 @@ public class SettingsGUI extends JDialog {
 		getRootPane().getActionMap().put("ESCAPE", escapeAction);
 	}
 
-	private TitledBorder createSectionBorder(String title) {
+	public static TitledBorder createSectionBorder(String title) {
 		TitledBorder tb = BorderFactory.createTitledBorder(title);
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		Border margin = new EmptyBorder(3, 3, 3, 3);

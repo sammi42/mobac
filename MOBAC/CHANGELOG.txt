@@ -12,6 +12,8 @@
 1.9 beta 6 (2011-06-??)
  + New atlas format: Geocaching Live offline maps (Experimental)
  + New atlas format: MBTiles (Experimental)
+ + New atlas format: Paper Atlas (PDF) & Paper Atlas (PNG) 
+    [provided by Ľubomír Vasek] 
 
 1.9 beta 5 (2011-05-17)
  + Added possibility Change directory syntax for file and zip based map sources 

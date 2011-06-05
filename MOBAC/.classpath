@@ -19,6 +19,7 @@
 			<attribute name="javadoc_location" value="http://download.oracle.com/berkeley-db/docs/je/3.3.62/java/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/itextpdf-5.1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/webserver.jar"/>

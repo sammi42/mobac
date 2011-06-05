@@ -24,6 +24,7 @@ import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -88,6 +89,7 @@ import mobac.gui.listeners.AtlasModelListener;
 import mobac.gui.mapview.GridZoom;
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.WgsGrid.WgsDensity;
 import mobac.gui.mapview.controller.JMapController;
 import mobac.gui.mapview.controller.PolygonSelectionMapController;
 import mobac.gui.mapview.controller.RectangleSelectionMapController;
@@ -97,6 +99,7 @@ import mobac.gui.panels.JGpxPanel;
 import mobac.gui.panels.JProfilesPanel;
 import mobac.gui.panels.JTileImageParametersPanel;
 import mobac.gui.panels.JTileStoreCoveragePanel;
+import mobac.gui.settings.SettingsGUI;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.AtlasInterface;
@@ -108,6 +111,7 @@ import mobac.program.model.MercatorPixelCoordinate;
 import mobac.program.model.Profile;
 import mobac.program.model.SelectedZoomLevels;
 import mobac.program.model.Settings;
+import mobac.program.model.SettingsWgsGrid;
 import mobac.program.model.TileImageParameters;
 import mobac.utilities.GBC;
 import mobac.utilities.GUIExceptionHandler;
@@ -140,6 +144,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	public final PreviewMap previewMap = new PreviewMap();
 	public final JAtlasTree jAtlasTree = new JAtlasTree(previewMap);
 
+	private JCheckBox wgsGridCheckBox;
+	private JComboBox wgsGridCombo;
+	
 	private JLabel zoomLevelText;
 	private JComboBox gridZoomCombo;
 	private JSlider zoomSlider;
@@ -254,6 +261,37 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setEditable(false);
 		gridZoomCombo.addActionListener(new GridZoomComboListener());
 		gridZoomCombo.setToolTipText("Projects a grid of the specified zoom level over the map");
+
+		SettingsWgsGrid s = Settings.getInstance().wgsGrid;
+		
+		// WGS Grid label
+		wgsGridCheckBox = new JCheckBox(" WGS Grid: ", s.enabled);
+		wgsGridCheckBox.setOpaque(true);
+		wgsGridCheckBox.setBackground(labelBackgroundColor);
+		wgsGridCheckBox.setForeground(labelForegroundColor);
+		wgsGridCheckBox.setToolTipText("Projects WGS Grid.");
+		wgsGridCheckBox.setMargin(new Insets(0, 0, 0, 0));
+		wgsGridCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean enabled = wgsGridCheckBox.isSelected();
+				Settings.getInstance().wgsGrid.enabled = enabled;
+				wgsGridCombo.setVisible(enabled);
+				previewMap.repaint();
+			}
+		});
+
+		// WGS Grid combo		
+		wgsGridCombo = new JComboBox(WgsDensity.values());
+		wgsGridCombo.setVisible(s.enabled);
+		wgsGridCombo.setSelectedItem(s.density);
+		wgsGridCombo.setToolTipText("Specifies density for WGS Grid.");
+		wgsGridCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				WgsDensity d = (WgsDensity) wgsGridCombo.getSelectedItem();
+				Settings.getInstance().wgsGrid.density = d;
+				previewMap.repaint();
+			}
+		});
 
 		// map source combo
 		mapSourceCombo = new JComboBox(MapSourcesManager.getInstance().getEnabledOrderedMapSources());
@@ -489,6 +527,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		topControls.add(zoomSlider, GBC.std().insets(0, 5, 0, 0));
 		topControls.add(zoomLevelText, GBC.std().insets(0, 5, 0, 0));
 		topControls.add(gridZoomCombo, GBC.std().insets(10, 5, 0, 0));
+		topControls.add(wgsGridCheckBox, GBC.std().insets(10, 5, 0, 0));
+		topControls.add(wgsGridCombo, GBC.std().insets(5, 5, 0, 0));
 		topControls.add(Box.createHorizontalGlue(), GBC.std().fillH());
 		mapControlPanel.add(topControls, BorderLayout.NORTH);
 

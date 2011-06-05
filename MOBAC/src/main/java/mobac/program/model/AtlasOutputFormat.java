@@ -58,6 +58,8 @@ import mobac.program.atlascreators.OsmdroidSQLite;
 import mobac.program.atlascreators.Ozi;
 import mobac.program.atlascreators.PNGWorldfile;
 import mobac.program.atlascreators.PathAway;
+import mobac.program.atlascreators.PaperAtlasPdf;
+import mobac.program.atlascreators.PaperAtlasPng;
 import mobac.program.atlascreators.RMapsSQLite;
 import mobac.program.atlascreators.RunGPSAtlas;
 import mobac.program.atlascreators.SportsTracker;
@@ -109,6 +111,8 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(createByClass(OsmdroidSQLite.class));
 		FORMATS.add(createByClass(OSMTracker.class));
 		FORMATS.add(createByClass(Ozi.class));
+		FORMATS.add(createByClass(PaperAtlasPdf.class));
+		FORMATS.add(createByClass(PaperAtlasPng.class));
 		FORMATS.add(createByClass(PathAway.class));
 		FORMATS.add(createByClass(PNGWorldfile.class));
 		FORMATS.add(createByClass(RMapsSQLite.class));

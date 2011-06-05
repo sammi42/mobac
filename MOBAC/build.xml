@@ -20,6 +20,7 @@
 		<fileset dir="lib" includes="bsh-2.0b4.jar" />
 		<fileset dir="lib" includes="Tidy.jar" />
 		<fileset dir="lib" includes="javapng-2.0.jar" />
+		<fileset dir="lib" includes="itextpdf-5.1.0.jar" />
 		<fileset dir="lib" includes="commons-codec-1.4.jar" />
 		<fileset dir="lib" includes="commons-io-2.0.jar" />
 		<fileset dir="lib" includes="je-${je-version}.jar" />
@@ -149,6 +150,7 @@
 			<zipfileset src="lib/commons-io-2.0.jar" includes="**/*.class" />
 			<zipfileset src="lib/javapng-2.0.jar" includes="**/*.class" />
 			<zipfileset src="lib/Tidy.jar" includes="org/w3c/tidy/**" />
+			<zipfileset src="lib/itextpdf-5.1.0.jar" />
 			<fileset dir="build/mobac">
 				<exclude name="**/unittest/**" />
 				<exclude name="mobac/mapsources/mapapcks/**" />

@@ -27,10 +27,9 @@ import java.awt.Stroke;
 import javax.swing.JComponent;
 
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.Settings;
 import mobac.program.model.UnitSystem;
 import mobac.utilities.MyMath;
-
-
 
 /**
  * Simple scale bar showing the map scale using the selected unit system.
@@ -52,10 +51,7 @@ public class ScaleBar {
 
 	private static final int DESIRED_SCALE_BAR_WIDTH = 150;
 
-	public static UnitSystem unitSystem = UnitSystem.Metric;
-
-	public static void paintScaleBar(JComponent c, Graphics2D g, MapSpace mapSpace, Point tlc,
-			int zoom) {
+	public static void paintScaleBar(JComponent c, Graphics2D g, MapSpace mapSpace, Point tlc, int zoom) {
 		Rectangle r = c.getBounds();
 		int posX;
 		int posY = r.height - r.y;
@@ -66,6 +62,8 @@ public class ScaleBar {
 		int coordY = tlc.y + posY;
 
 		int w1 = DESIRED_SCALE_BAR_WIDTH;
+
+		UnitSystem unitSystem = Settings.getInstance().unitSystem;
 
 		// Calculate the angular distance of our desired scale bar
 		double ad = mapSpace.horizontalDistance(zoom, coordY, w1);

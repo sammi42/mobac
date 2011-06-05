@@ -84,6 +84,8 @@ public class PreviewMap extends JMapViewer {
 	protected JMapController mapKeyboardController;
 	protected JMapController mapSelectionController;
 
+	private final WgsGrid wgsGrid = new WgsGrid(Settings.getInstance().wgsGrid, this);
+
 	public PreviewMap() {
 		super(MapSourcesManager.getInstance().getDefaultMapSource(), 5);
 		setEnabled(false);
@@ -260,7 +262,6 @@ public class PreviewMap extends JMapViewer {
 			g.setColor(GRID_COLOR);
 			g.drawRect(x_min, y_min, w, h);
 		}
-		ScaleBar.paintScaleBar(this, g, mapSource.getMapSpace(), tlc, zoom);
 		if (mapSource instanceof MapSourceTextAttribution) {
 			MapSourceTextAttribution ta = (MapSourceTextAttribution) mapSource;
 			String attributionText = ta.getAttributionText();
@@ -274,6 +275,10 @@ public class PreviewMap extends JMapViewer {
 				g.drawString(attributionText, text_x, text_y);
 			}
 		}
+		if (Settings.getInstance().wgsGrid.enabled) {
+			wgsGrid.paintWgsGrid(g, mapSource.getMapSpace(), tlc, zoom);
+		}
+		ScaleBar.paintScaleBar(this, g, mapSource.getMapSpace(), tlc, zoom);
 	}
 
 	public Bookmark getPositionBookmark() {

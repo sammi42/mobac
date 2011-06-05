@@ -219,7 +219,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		totalDownloadTime = new JLabel("Total creation time");
 		totalDownloadTimeValue = new JLabel();
 
-		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically");
+		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically", Settings.getInstance().ignoreDlErrors);
 		abortAtlasCreationButton = new JButton("Abort creation");
 		abortAtlasCreationButton.setToolTipText("Abort current Atlas download");
 		dismissWindowButton = new JButton("Close Window");

@@ -45,7 +45,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobac.gui.actions.GpxLoad;
-import mobac.gui.mapview.ScaleBar;
 import mobac.gui.panels.JCoordinatesPanel;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.DirectoryManager;
@@ -213,6 +212,13 @@ public class Settings {
 		public Date lastUpdate;
 	}
 
+	public transient UnitSystem unitSystem = UnitSystem.Metric;
+
+	public final SettingsPaperAtlas paperAtlas = new SettingsPaperAtlas();
+	public final SettingsWgsGrid wgsGrid = new SettingsWgsGrid();
+	
+	public boolean ignoreDlErrors = false;
+
 	private Settings() {
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		mainWindow.size.width = (int) (0.9f * dScreen.width);
@@ -238,6 +244,8 @@ public class Settings {
 				}
 			});
 			instance = (Settings) um.unmarshal(FILE);
+			instance.wgsGrid.checkValues();
+			instance.paperAtlas.checkValues();
 			SETTINGS_LAST_MODIFIED = FILE.lastModified();
 		} finally {
 			Settings s = getInstance();
@@ -420,11 +428,11 @@ public class Settings {
 	public void setUnitSystem(UnitSystem unitSystem) {
 		if (unitSystem == null)
 			unitSystem = UnitSystem.Metric;
-		ScaleBar.unitSystem = unitSystem;
+		this.unitSystem = unitSystem;
 	}
 
 	public UnitSystem getUnitSystem() {
-		return ScaleBar.unitSystem;
+		return unitSystem;
 	}
 
 	public File getAtlasOutputDirectory() {

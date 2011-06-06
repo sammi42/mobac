@@ -126,7 +126,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private static Logger log = Logger.getLogger(MainGUI.class);
 
 	private static Color labelBackgroundColor = new Color(0, 0, 0, 127);
-	private static Color labelForegroundColor = Color.white;
+	private static Color labelForegroundColor = Color.WHITE;
 
 	private static MainGUI mainGUI = null;
 	public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<Image>(3);
@@ -266,10 +266,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		
 		// WGS Grid label
 		wgsGridCheckBox = new JCheckBox(" WGS Grid: ", s.enabled);
-		wgsGridCheckBox.setOpaque(true);
+		//wgsGridCheckBox.setOpaque(true);
 		wgsGridCheckBox.setBackground(labelBackgroundColor);
 		wgsGridCheckBox.setForeground(labelForegroundColor);
-		wgsGridCheckBox.setToolTipText("Projects WGS Grid.");
+		wgsGridCheckBox.setToolTipText("Projects WGS Grid on map preview (not included in atlas)");
 		wgsGridCheckBox.setMargin(new Insets(0, 0, 0, 0));
 		wgsGridCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -282,9 +282,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// WGS Grid combo		
 		wgsGridCombo = new JComboBox(WgsDensity.values());
+		wgsGridCombo.setMaximumRowCount(WgsDensity.values().length);
 		wgsGridCombo.setVisible(s.enabled);
 		wgsGridCombo.setSelectedItem(s.density);
-		wgsGridCombo.setToolTipText("Specifies density for WGS Grid.");
+		wgsGridCombo.setToolTipText("Specifies density for WGS Grid");
 		wgsGridCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				WgsDensity d = (WgsDensity) wgsGridCombo.getSelectedItem();

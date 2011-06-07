@@ -207,9 +207,8 @@ public class GCLive extends AtlasCreator {
 			imageCounter++;
 			if (imageCounter >= 32) {
 				dataFileCounter++;
-				if (dataFileCounter >= 32) {
+				if (dataFileCounter % 32 == 0) {
 					dataDirCounter++;
-					dataFileCounter = 0;
 					if (dataDirCounter >= 32)
 						throw new RuntimeException("Maximum number of tiles exceeded");
 				}
@@ -219,8 +218,7 @@ public class GCLive extends AtlasCreator {
 			currentDataFile.write(tileData);
 			int len = tileData.length;
 
-			int dataFileIndex = dataDirCounter * 32 + dataFileCounter;
-			GCHeaderEntry header = new GCHeaderEntry(zoom, tilex, tiley, dataFileIndex, (int) offset, len);
+			GCHeaderEntry header = new GCHeaderEntry(zoom, tilex, tiley, dataFileCounter, (int) offset, len);
 			headerEntries.add(header);
 		}
 

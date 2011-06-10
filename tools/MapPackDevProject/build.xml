@@ -12,7 +12,7 @@
 	<property name="je-version" value="3.3.93" />
 
 	<path id="maincp">
-		<fileset dir="./" includes="Mobile_Atlas_Creator.jar" />
+		<fileset dir="lib" includes="Mobile_Atlas_Creator.jar" />
 	</path>
 
 	<target name="all" depends="clean_build,build_mapsources" />

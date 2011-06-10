@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Mobile Atlas Creator - MapPack Development Project Readme</title>
+<style type="text/css">
+body {
+	margin-left: 10px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+h1,h2,h3,h4 {
+	color: #0000CC;
+	font-style: italic;
+}
+
+h1 {
+	border-bottom: solid thin black;
+}
+
+h2 {
+	margin-left: 20px;
+}
+
+h3 {
+	margin-left: 50px;
+}
+
+h4 {
+	margin-left: 80px;
+}
+
+pre {
+	margin-left: 140px;
+}
+
+p,ul,ol {
+	font-size: 110%;
+	margin-left: 100px;
+}
+</style>
+</head>
+<body>
+	<h1>Mobile Atlas Creator - MapPack Development Project Readme</h1>
+
+	<h2>Table of contents</h2>
+	<ul style="margin-left: 50px;">
+		<li><a href="#Requirements">Requirements</a>
+		</li>
+		<li><a href="#Setup">Setting up the mappack development
+				project</a>
+		</li>
+		<li><a href="#MyMapSource">My first map source</a>
+		</li>
+		<li><a href="#Mappack">Building the map pack(s)</a>
+		</li>
+	</ul>
+
+	<h2>
+		<a name="Requirements">Requirements</a>
+	</h2>
+	<p></p>
+	<ul>
+		<li>Installed <a
+			href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java
+				Development Kit (JDK)</a> version 6 or higher</li>
+		<li><a href="http://www.eclipse.org/downloads/">EclipseIDE</a>
+			with Java Development modules (edition "Java Developers", "Java EE
+			Developers" or "Classic")</li>
+	</ul>
+
+	<h2>
+		<a name="Setup">Setting up the mappack development project</a>
+	</h2>
+	<ol>
+		<li>Start Eclipse, select the <b>Java perspective</b>
+		</li>
+		<li>Import this project into your Eclipse workspace (menu <b>File</b>
+			-> <b>Import</b> <b>General/Existing projects into Workspace</b>
+			)</li>
+		<li>Copy the latest release jar (<tt>Mobile_Atlas_Creator.jar</tt>)
+			into the sub-directory <tt>lib</tt>
+		<li>Clean & rebuild the project (menu <b>Project</b> -> <b>Clean</b>)</li>
+		<li>Now all Errors in the view <b>Problems</b> should disappear</li>
+	</ol>
+
+	<h2>
+		<a name="MyMapSource">My first map source</a>
+	</h2>
+	<p></p>
+
+
+
+	<h2>
+		<a name="CustomMapPack">Developing a custom map pack</a>
+	</h2>
+	<p>
+		For creating your own custom map pack you have to create a new Java
+		package below
+		<tt>mobac.mapsources.mappacks</tt>
+		. For example lets assume that the name of the new map pack should be
+		<b>mymappack</b>. Therefore you have to create the package
+		<tt>mobac.mapsources.mappacks.mymappack</tt>
+		. Place all Java source files within this package (sub-packages are
+		also possible).
+	</p>
+	<p>
+		Additionally you have to create a text file named
+		<tt>mapsources.list</tt>
+		inside the package
+		<tt>mobac.mapsources.mappacks.mymappack</tt>
+		. This file contains a list of class names (full class name including
+		the package name, one per line) that should be loaded by MOBAC as map
+		source.
+	</p>
+	<p>
+		Background: During the build process this file will be included into
+		the map-pack jar as
+		<tt>META-INF/services/mobac.program.interfaces.MapSource</tt>
+		so that it can be found by the <a
+			href="http://download.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">ServiceLoader</a>.
+	</p>
+	<h2>
+		<a name="MapPackBuilding">Building the map pack(s)</a>
+	</h2>
+	<p>
+		Map packs can be built using <a href="http://ant.apache.org/">Apache
+			Ant.</a> Apache Ant is already included in Eclipse, so that you only have
+		to select the file
+		<tt>build.xml</tt>
+		, press the right mouse button and select <b>Run As</b> - <b>Ant
+			Build</b>.
+	</p>
+	<p>
+		Each sub-package of
+		<tt>mobac.mapsources.mappacks</tt>
+		will be compiled and packed to an map package. The created map
+		packages are saved into the
+		<tt>mapsources</tt>
+		directory. Therefore our example map pack will be packed into the file
+		<tt>mapsources/mp-mymappack.jar</tt>
+	</p>
+
+
+</body>
+</html>

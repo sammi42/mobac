@@ -44,7 +44,7 @@ public class MyMapsourceTemplate extends AbstractHttpMapSource {
 	@Override
 	protected void prepareTileUrlConnection(HttpURLConnection conn) {
 		super.prepareTileUrlConnection(conn);
-		conn.setRequestProperty("User-agent", UserAgent.FF3_WIN7);
+		// conn.setRequestProperty("User-agent", UserAgent.FF3_WIN7);
 	}
 
 	@Override

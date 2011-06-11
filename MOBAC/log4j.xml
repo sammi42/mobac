@@ -52,7 +52,7 @@
   <root>
     <!-- 
     For maximum verboseness please use the following line
-    <priority value="DEBUG" /> 
+    <priority value="TRACE" /> 
     -->
     <!-- By default we use log level/priority "DEBUG" -->
     <priority value="DEBUG" />

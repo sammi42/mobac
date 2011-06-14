@@ -14,6 +14,7 @@
  + New atlas format: MBTiles (Experimental)
  + New atlas format: Paper Atlas (PDF) & Paper Atlas (PNG) 
     [provided by Ľubomír Vasek] 
+ ! Bug #3316081 - "String index out of range: -1" upon map sources update 
 
 1.9 beta 5 (2011-05-17)
  + Added possibility Change directory syntax for file and zip based map sources 

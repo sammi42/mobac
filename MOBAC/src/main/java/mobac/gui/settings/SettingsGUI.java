@@ -68,6 +68,7 @@ import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
 import mobac.StartMOBAC;
+import mobac.exceptions.UpdateFailedException;
 import mobac.gui.MainGUI;
 import mobac.gui.actions.OpenInWebbrowser;
 import mobac.gui.components.JDirectoryChooser;
@@ -970,12 +971,13 @@ public class SettingsGUI extends JDialog {
 							+ " map packs has been updated.\nPlease restart MOBAC for installing the updates.",
 							"Updates has been downloaded", JOptionPane.INFORMATION_MESSAGE);
 				}
+			} catch (UpdateFailedException e) {
+				JOptionPane.showMessageDialog(SettingsGUI.this, e.getMessage(), "Update failed",
+						JOptionPane.ERROR_MESSAGE);
 			} catch (Exception e) {
 				Settings.getInstance().mapSourcesUpdate.etag = null;
 				GUIExceptionHandler.processException(e);
 			}
-			// JOptionPane.showMessageDialog(SettingsGUI.this, "Not implemented", "Not implemented",
-			// JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

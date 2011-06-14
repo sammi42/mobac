@@ -40,6 +40,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -48,6 +50,7 @@ import javax.swing.JOptionPane;
 
 import mobac.exceptions.MapSourceCreateException;
 import mobac.exceptions.UnrecoverableDownloadException;
+import mobac.exceptions.UpdateFailedException;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
@@ -189,7 +192,7 @@ public class MapPackManager {
 		}
 	}
 
-	public String downloadMD5SumList() throws IOException {
+	public String downloadMD5SumList() throws IOException, UpdateFailedException {
 		String md5eTag = Settings.getInstance().mapSourcesUpdate.etag;
 		log.debug("Last md5 eTag: " + md5eTag);
 		String updateUrl = System.getProperty("mobac.updateurl");
@@ -200,6 +203,7 @@ public class MapPackManager {
 
 		// Proxy p = new Proxy(Type.HTTP, InetSocketAddress.createUnresolved("localhost", 8888));
 		HttpURLConnection conn = (HttpURLConnection) new URL(updateUrl).openConnection();
+		conn.setInstanceFollowRedirects(false);
 		if (md5eTag != null)
 			conn.addRequestProperty("If-None-Match", md5eTag);
 		int responseCode = conn.getResponseCode();
@@ -208,7 +212,7 @@ public class MapPackManager {
 			return null;
 		}
 		if (responseCode != HttpURLConnection.HTTP_OK)
-			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
+			throw new UpdateFailedException("Invalid HTTP response: " + responseCode + " for update url " + conn.getURL());
 		// Case HTTP_OK
 		InputStream in = conn.getInputStream();
 		data = Utilities.getInputBytes(in);
@@ -243,7 +247,7 @@ public class MapPackManager {
 	 *         </ul>
 	 * @throws IOException
 	 */
-	public int updateMapPacks() throws UnrecoverableDownloadException, IOException {
+	public int updateMapPacks() throws UpdateFailedException, UnrecoverableDownloadException, IOException {
 		String updateBaseUrl = System.getProperty("mobac.updatebaseurl");
 		if (updateBaseUrl == null)
 			throw new RuntimeException("Update base url not present");
@@ -332,13 +336,21 @@ public class MapPackManager {
 	 * @param md5sumList
 	 * @return Array of filenames of map packs which are outdated
 	 */
-	public String[] searchForOutdatedMapPacks(String md5sumList) {
+	public String[] searchForOutdatedMapPacks(String md5sumList) throws UpdateFailedException {
 		ArrayList<String> outdatedMappacks = new ArrayList<String>();
 		String[] md5s = md5sumList.split("[\\n\\r]+");
+		Pattern linePattern = Pattern.compile("([0-9a-f]{32}) (mp-[\\w]+\\.jar)");
+
 		for (String line : md5s) {
-			int index = line.indexOf(' ');
-			String md5 = line.substring(0, index).toLowerCase();
-			String filename = line.substring(index + 1);
+			line = line.trim();
+			if (line.length() == 0)
+				continue;
+			Matcher m = linePattern.matcher(line);
+			if (!m.matches()) {
+				throw new UpdateFailedException("Invalid content found in md5 list: \"" + line + "\"");
+			}
+			String md5 = m.group(1);
+			String filename = m.group(2);
 			// Check if there is already an update map pack
 			File mapPackFile = new File(mapPackDir, filename + ".new");
 			if (!mapPackFile.isFile())

@@ -10,7 +10,7 @@
  - = Features that has been removed
 
 1.9 beta 6 (2011-06-??)
- + New atlas format: Geocaching Live offline maps (Experimental)
+ + New atlas format: Geocaching Live offline maps
  + New atlas format: MBTiles (Experimental)
  + New atlas format: Paper Atlas (PDF) & Paper Atlas (PNG) 
     [provided by Ľubomír Vasek] 

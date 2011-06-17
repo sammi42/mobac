@@ -19,7 +19,6 @@ package mobac.gui.settings;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -30,15 +29,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -51,13 +47,11 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -85,8 +79,6 @@ import mobac.program.model.ProxyType;
 import mobac.program.model.Settings;
 import mobac.program.model.UnitSystem;
 import mobac.program.tilestore.TileStore;
-import mobac.program.tilestore.TileStoreInfo;
-import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 import mobac.utilities.GBC;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
@@ -97,7 +89,7 @@ import org.apache.log4j.Logger;
 public class SettingsGUI extends JDialog {
 	private static final long serialVersionUID = -5227934684609357198L;
 
-	private static Logger log = Logger.getLogger(SettingsGUI.class);
+	public static Logger log = Logger.getLogger(SettingsGUI.class);
 
 	private static final Integer[] THREADCOUNT_LIST = { 1, 2, 4, 6 };
 
@@ -128,15 +120,11 @@ public class SettingsGUI extends JDialog {
 	private JButton mapSourcesOnlineUpdate;
 	private JTextField osmHikingTicket;
 
-	private JPanel tileStoreInfoPanel;
+	private SettingsGUITileStore tileStoreTab;
 
-	private JCheckBox tileStoreEnabled;
 	private JTimeSlider defaultExpirationTime;
 	private JTimeSlider minExpirationTime;
 	private JTimeSlider maxExpirationTime;
-
-	private JLabel totalTileCountLabel;
-	private JLabel totalTileSizeLabel;
 
 	private JMapSizeCombo mapSize;
 
@@ -151,17 +139,13 @@ public class SettingsGUI extends JDialog {
 
 	private JTextField proxyUserName;
 	private JTextField proxyPassword;
-	
+
 	private JCheckBox ignoreDlErrors;
 
 	private JButton okButton;
 	private JButton cancelButton;
 
 	private JTabbedPane tabbedPane;
-
-	private DelayedInterruptThread tileStoreAsyncThread = null;
-
-	private List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<TileSourceInfoComponents>();
 
 	private JList enabledMapSources;
 
@@ -178,7 +162,7 @@ public class SettingsGUI extends JDialog {
 			}
 		});
 	}
-	
+
 	private final SettingsGUIPaper paperAtlas = new SettingsGUIPaper();
 	private final SettingsGUIWgsGrid display = new SettingsGUIWgsGrid();
 
@@ -220,7 +204,7 @@ public class SettingsGUI extends JDialog {
 		}
 		addMapSourceManagerPanel();
 		addTileUpdatePanel();
-		addTileStorePanel();
+		tileStoreTab = new SettingsGUITileStore(this);
 		addMapSizePanel();
 		addDirectoriesPanel();
 		addNetworkPanel();
@@ -230,10 +214,14 @@ public class SettingsGUI extends JDialog {
 
 	private JPanel createNewTab(String tabTitle) {
 		JPanel tabPanel = new JPanel();
+		addTab(tabTitle, tabPanel);
+		return tabPanel;
+	}
+
+	protected void addTab(String tabTitle, JPanel tabPanel) {
 		tabPanel.setName(tabTitle);
 		tabPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		tabbedPane.add(tabPanel, tabTitle);
-		return tabPanel;
 	}
 
 	private void addDisplaySettingsPanel() {
@@ -456,162 +444,6 @@ public class SettingsGUI extends JDialog {
 		backGround.add(Box.createVerticalGlue(), GBC.std().fill());
 	}
 
-	private void addTileStorePanel() {
-		JPanel backGround = createNewTab("Tile store");
-
-		tileStoreEnabled = new JCheckBox("Enable tile store for map preview and atlas download");
-
-		JPanel tileStorePanel = new JPanel(new BorderLayout());
-		tileStorePanel.setBorder(createSectionBorder("Tile store settings"));
-		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
-		tileStoreInfoPanel = new JPanel(new GridBagLayout());
-		// tileStoreInfoPanel.setBorder(createSectionBorder("Information"));
-
-		prepareTileStoreInfoPanel();
-
-		backGround.setLayout(new BorderLayout());
-		backGround.add(tileStorePanel, BorderLayout.NORTH);
-		JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		tileStoreInfoPanel.setMinimumSize(new Dimension(200, 300));
-		// scrollPane.setMinimumSize(new Dimension(100, 100));
-		scrollPane.setPreferredSize(new Dimension(520, 100));
-		scrollPane.setBorder(createSectionBorder("Information"));
-
-		backGround.add(scrollPane, BorderLayout.CENTER);
-	}
-
-	private synchronized void updateTileStoreInfoPanelAsync(final String storeName) {
-		if (tileStoreAsyncThread != null)
-			return; // An update is currently running
-		tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
-
-			@Override
-			public void run() {
-				if (storeName == null)
-					log.debug("Updating tilestore information in background");
-				else
-					log.debug("Updating tilestore information for \"" + storeName + "\" in background");
-				updateTileStoreInfoPanel(storeName);
-				log.debug("Updating tilestore information finished");
-				tileStoreAsyncThread = null;
-			}
-		};
-		tileStoreAsyncThread.start();
-	}
-
-	private void prepareTileStoreInfoPanel() {
-
-		final GridBagConstraints gbc_mapSource = new GridBagConstraints();
-		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
-		gbc_mapSource.anchor = GridBagConstraints.WEST;
-		final GridBagConstraints gbc_mapTiles = new GridBagConstraints();
-		gbc_mapTiles.insets = gbc_mapSource.insets;
-		gbc_mapTiles.anchor = GridBagConstraints.EAST;
-		final GridBagConstraints gbc_eol = new GridBagConstraints();
-		gbc_eol.gridwidth = GridBagConstraints.REMAINDER;
-
-		TileStore tileStore = TileStore.getInstance();
-		MapSourcesManager mapSourcesManager = MapSourcesManager.getInstance();
-
-		tileStoreInfoPanel.add(new JLabel("<html><b>Map source</b></html>"), gbc_mapSource);
-		tileStoreInfoPanel.add(new JLabel("<html><b>Tiles</b></html>"), gbc_mapTiles);
-		tileStoreInfoPanel.add(new JLabel("<html><b>Size</b></html>"), gbc_eol);
-
-		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
-
-		for (String name : tileStore.getAllStoreNames()) {
-			String mapTileCountText = "  ?  ";
-			String mapTileSizeText = "    ?    ";
-			MapSource mapSource = mapSourcesManager.getSourceByName(name);
-			final JLabel mapSourceNameLabel;
-			if (mapSource != null)
-				mapSourceNameLabel = new JLabel(name);
-			else
-				mapSourceNameLabel = new JLabel(name + " (unused)");
-			final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
-			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
-			final JButton deleteButton = new JButton(trash);
-			TileSourceInfoComponents info = new TileSourceInfoComponents();
-			info.name = name;
-			info.countLabel = mapTileCountLabel;
-			info.sizeLabel = mapTileSizeLabel;
-			tileStoreInfoList.add(info);
-			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-			deleteButton.setToolTipText("Delete all stored " + name + " tiles.");
-			deleteButton.addActionListener(new ClearTileCacheAction(name));
-
-			tileStoreInfoPanel.add(mapSourceNameLabel, gbc_mapSource);
-			tileStoreInfoPanel.add(mapTileCountLabel, gbc_mapTiles);
-			tileStoreInfoPanel.add(mapTileSizeLabel, gbc_mapTiles);
-			tileStoreInfoPanel.add(deleteButton, gbc_eol);
-		}
-		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
-		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		tileStoreInfoPanel.add(hr, gbc);
-
-		JLabel totalMapLabel = new JLabel("<html><b>Total</b></html>");
-		totalTileCountLabel = new JLabel("<html><b>??</b></html>");
-		totalTileSizeLabel = new JLabel("<html><b>??</b></html>");
-		tileStoreInfoPanel.add(totalMapLabel, gbc_mapSource);
-		tileStoreInfoPanel.add(totalTileCountLabel, gbc_mapTiles);
-		tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
-	}
-
-	/**
-	 * 
-	 * @param updateStoreName
-	 *            name of the tile store to update or <code>null</code> in case of all tile stores to be updated
-	 */
-	private void updateTileStoreInfoPanel(String updateStoreName) {
-		try {
-			TileStore tileStore = TileStore.getInstance();
-
-			long totalTileCount = 0;
-			long totalTileSize = 0;
-			for (final TileSourceInfoComponents info : tileStoreInfoList) {
-				String storeName = info.name;
-				Utilities.checkForInterruption();
-				int count;
-				long size;
-				if (updateStoreName == null || info.name.equals(updateStoreName)) {
-					TileStoreInfo tsi = tileStore.getStoreInfo(storeName);
-					count = tsi.getTileCount();
-					size = tsi.getStoreSize();
-					info.count = count;
-					info.size = size;
-					final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
-					final String mapTileSizeText = Utilities.formatBytes(size);
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
-							info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
-						}
-					});
-				} else {
-					count = info.count;
-					size = info.size;
-				}
-				totalTileCount += count;
-				totalTileSize += size;
-			}
-			final String totalTileCountText = "<html><b>" + Long.toString(totalTileCount) + "</b></html>";
-			final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>";
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					totalTileCountLabel.setText(totalTileCountText);
-					totalTileSizeLabel.setText(totalTileSizeText);
-				}
-			});
-		} catch (InterruptedException e) {
-			log.debug("Tile store information retrieval was canceled");
-		}
-
-	}
-
 	private void addMapSizePanel() {
 		JPanel backGround = createNewTab("Map size");
 		backGround.setLayout(new GridBagLayout());
@@ -623,15 +455,16 @@ public class SettingsGUI extends JDialog {
 			}
 		});
 
-		JLabel mapSizeLabel = new JLabel("Maximum size (width & height) of each map: ");
+		JLabel mapSizeLabel = new JLabel("Maximum size (width & height) of rectangular maps: ");
 		JLabel mapSizeText = new JLabel(
-				"<html>If the image of the selected region to download "
+				"<html>If the area of the selected rectangular region to download "
 						+ "is larger in height or width than <br>the map size it will be splitted into "
 						+ "several maps <b>when adding the map selection</b>.<br>"
 						+ "Each map is no larger than the specified maximum map size.<br>"
+						+ "Note that polygonal maps are not affected by this setting!<br>"
 						+ "You can see the number of maps and their region in the atlas content tree.<br>"
 						+ "Changing the maximum map size after an area has been added the atlas has no effect on the atlas.<br><br>"
-						+ "<b>Note for TrekBuddy users:</b><br>" + "TrekBuddy versions before v0.9.88 "
+						+ "<b>Note for TrekBuddy users:</b><br>TrekBuddy versions before v0.9.88 "
 						+ "do not support map sizes larger than 32767.<br>"
 						+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
@@ -777,7 +610,7 @@ public class SettingsGUI extends JDialog {
 		Settings s = settings;
 
 		unitSystem.setSelectedItem(s.unitSystem);
-		tileStoreEnabled.setSelected(s.tileStoreEnabled);
+		tileStoreTab.tileStoreEnabled.setSelected(s.tileStoreEnabled);
 
 		mapSize.setValue(s.maxMapSize);
 
@@ -805,9 +638,9 @@ public class SettingsGUI extends JDialog {
 		minExpirationTime.setTimeMilliValue(s.tileMinExpirationTime);
 
 		osmHikingTicket.setText(s.osmHikingTicket);
-		
+
 		ignoreDlErrors.setSelected(s.ignoreDlErrors);
-		
+
 		paperAtlas.loadSettings(s);
 		display.loadSettings(s);
 	}
@@ -820,7 +653,7 @@ public class SettingsGUI extends JDialog {
 		Settings s = settings;
 
 		s.unitSystem = (UnitSystem) unitSystem.getSelectedItem();
-		s.tileStoreEnabled = tileStoreEnabled.isSelected();
+		s.tileStoreEnabled = tileStoreTab.tileStoreEnabled.isSelected();
 		s.tileDefaultExpirationTime = defaultExpirationTime.getTimeMilliValue();
 		s.tileMinExpirationTime = minExpirationTime.getTimeMilliValue();
 		s.tileMaxExpirationTime = maxExpirationTime.getTimeMilliValue();
@@ -851,9 +684,9 @@ public class SettingsGUI extends JDialog {
 			enabledMaps.add(ms.getName());
 		}
 		s.mapSourcesEnabled = enabledMaps;
-		
+
 		s.ignoreDlErrors = ignoreDlErrors.isSelected();
-		
+
 		paperAtlas.applySettings(s);
 		display.applySettings(s);
 
@@ -899,7 +732,7 @@ public class SettingsGUI extends JDialog {
 				// First time the tile store tab is selected start updating the tile store information
 				if ("Tile store".equals(tabbedPane.getSelectedComponent().getName())) {
 					tabbedPane.removeChangeListener(this);
-					updateTileStoreInfoPanelAsync(null);
+					tileStoreTab.updateTileStoreInfoPanelAsync(null);
 				}
 			}
 		});
@@ -914,7 +747,7 @@ public class SettingsGUI extends JDialog {
 		getRootPane().getActionMap().put("ESCAPE", escapeAction);
 	}
 
-	public static TitledBorder createSectionBorder(String title) {
+	public static final TitledBorder createSectionBorder(String title) {
 		TitledBorder tb = BorderFactory.createTitledBorder(title);
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		Border margin = new EmptyBorder(3, 3, 3, 3);
@@ -928,9 +761,7 @@ public class SettingsGUI extends JDialog {
 		public void windowClosed(WindowEvent event) {
 			// On close we check if the tile store information retrieval thread
 			// is still running and if yes we interrupt it
-			Thread t = tileStoreAsyncThread;
-			if (t != null)
-				t.interrupt();
+			tileStoreTab.stopThread();
 		}
 
 	}
@@ -979,45 +810,6 @@ public class SettingsGUI extends JDialog {
 				GUIExceptionHandler.processException(e);
 			}
 		}
-	}
-
-	private class ClearTileCacheAction implements ActionListener {
-
-		String storeName;
-
-		public ClearTileCacheAction(String storeName) {
-			this.storeName = storeName;
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			final JButton b = (JButton) e.getSource();
-			b.setEnabled(false);
-			b.setToolTipText("Deleting in progress - please wait");
-			Thread t = new DelayedInterruptThread("TileStore_" + storeName + "_DeleteThread") {
-
-				@Override
-				public void run() {
-					try {
-						TileStore ts = TileStore.getInstance();
-						ts.clearStore(storeName);
-						SettingsGUI.this.updateTileStoreInfoPanelAsync(storeName);
-						SettingsGUI.this.repaint();
-					} catch (Exception e) {
-						log.error("An error occured while cleaning tile cache: ", e);
-					}
-				}
-			};
-			t.start();
-		}
-	}
-
-	private static class TileSourceInfoComponents {
-		JLabel sizeLabel;
-		JLabel countLabel;
-		String name;
-
-		int count = -1;
-		long size = 0;
 	}
 
 	public static void main(String[] args) {

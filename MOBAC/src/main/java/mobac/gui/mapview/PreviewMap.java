@@ -366,7 +366,7 @@ public class PreviewMap extends JMapViewer {
 
 		Point pNewStart = new Point();
 		Point pNewEnd = new Point();
-		int mapMaxCoordinate = mapSource.getMapSpace().getMaxPixels(cZoom);
+		int mapMaxCoordinate = mapSource.getMapSpace().getMaxPixels(cZoom) - 1;
 		// Sort x/y coordinate of points so that pNewStart < pnewEnd and limit selection to map size
 		pNewStart.x = Math.max(0, Math.min(mapMaxCoordinate, Math.min(pStart.x, pEnd.x)));
 		pNewStart.y = Math.max(0, Math.min(mapMaxCoordinate, Math.min(pStart.y, pEnd.y)));

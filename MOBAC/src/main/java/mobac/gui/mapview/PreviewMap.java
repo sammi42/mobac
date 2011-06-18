@@ -212,18 +212,17 @@ public class PreviewMap extends JMapViewer {
 			int w = Math.min(getWidth(), max - tlc.x);
 			int h = Math.min(getHeight(), max - tlc.y);
 			g.setColor(GRID_COLOR);
+			// g.setStroke(new BasicStroke(4.0f));
 			if (gridSize > 1) {
-				int posx;
-				int posy;
 				int tilesize = mapSource.getMapSpace().getTileSize();
 				if (gridSize >= tilesize) {
-					posx = -(tlc.x % gridSize);
-					posy = -(tlc.y % gridSize);
-					for (int x = posx; x < w; x += gridSize) {
-						g.drawLine(x, posy, x, h);
+					int off_x = tlc.x < 0 ? -tlc.x : -(tlc.x % gridSize);
+					int off_y = tlc.y < 0 ? -tlc.y : -(tlc.y % gridSize);
+					for (int x = off_x; x <= w; x += gridSize) {
+						g.drawLine(x, off_y, x, h);
 					}
-					for (int y = posy; y < h; y += gridSize) {
-						g.drawLine(posx, y, w, y);
+					for (int y = off_y; y <= h; y += gridSize) {
+						g.drawLine(off_x, y, w, y);
 					}
 				} else {
 					int off_x = (tlc.x < 0) ? tlc.x : tlc.x % tilesize;
@@ -411,10 +410,11 @@ public class PreviewMap extends JMapViewer {
 		Point pNewEnd = new Point(iSelectionMax);
 
 		// Snap to the current grid
+
 		pNewStart.x = MyMath.roundDownToNearest(pNewStart.x, gridFactor);
 		pNewStart.y = MyMath.roundDownToNearest(pNewStart.y, gridFactor);
-		pNewEnd.x = MyMath.roundUpToNearest(pNewEnd.x, gridFactor);
-		pNewEnd.y = MyMath.roundUpToNearest(pNewEnd.y, gridFactor);
+		pNewEnd.x = MyMath.roundUpToNearest(pNewEnd.x, gridFactor) - 1;
+		pNewEnd.y = MyMath.roundUpToNearest(pNewEnd.y, gridFactor) - 1;
 
 		gridSelectionStart = pNewStart;
 		gridSelectionEnd = pNewEnd;

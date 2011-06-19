@@ -20,29 +20,26 @@ import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
 /**
- * Darmowa Mapa Polski dla GPS Garmin - UMP-pcPL (added by "maniek-ols")
- * <p>
- * <a href="http://ump.waw.pl">ump.waw.pl</a>
- * </p>
+ * Institute of Geodesy Technical Research and Cadastre "INGEOCAD" under Sate Agency of Land
+ * Relations and Cadastre Tiles created by and sourced from point.md
+ * 
+ * http://point.md/Map/#x=28.870983&y=47.017756&z=10
+ * 
+ * https://sourceforge.net/tracker/?func=detail&atid=1105497&aid=3321793&group_id=238075
  */
-public class UmpWawPl extends AbstractHttpMapSource {
+public class MoldovaPointMd extends AbstractHttpMapSource {
 
-	private static int SERVER_NUM = 0;
-	private static final int MAX_SERVER_NUM = 4;
-
-	public UmpWawPl() {
-		super("UMP-pcPL", 0, 18, TileImageType.PNG, TileUpdate.LastModified);
+	public MoldovaPointMd() {
+		super("MoldovaPointMd", 8, 18, TileImageType.PNG, TileUpdate.None);
 	}
 
-	public String getTileUrl(int zoom, int tilex, int tiley) {
-		String s = "http://" + SERVER_NUM + ".tiles.ump.waw.pl/ump_tiles/" + zoom + "/" + tilex + "/" + tiley + ".png";
-		SERVER_NUM = (SERVER_NUM + 1) % MAX_SERVER_NUM;
-		return s;
+	public String getTileUrl(int zoom, int x, int y) {
+		return "http://point.md/map/Map/GetTile?path=1/" + zoom + "/" + x + "/" + y + ".png";
 	}
 
 	@Override
 	public String toString() {
-		return getName() + " (Poland only)";
+		return "Moldova (point.md)";
 	}
 
 }

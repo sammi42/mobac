@@ -155,6 +155,9 @@ public class SettingsGUI extends JDialog {
 
 	private MapSourcesListModel disabledMapSourcesModel;
 
+	private final SettingsGUIPaper paperAtlas = new SettingsGUIPaper();
+	private final SettingsGUIWgsGrid display = new SettingsGUIWgsGrid();
+
 	public static void showSettingsDialog(final JFrame owner) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -162,9 +165,6 @@ public class SettingsGUI extends JDialog {
 			}
 		});
 	}
-
-	private final SettingsGUIPaper paperAtlas = new SettingsGUIPaper();
-	private final SettingsGUIWgsGrid display = new SettingsGUIWgsGrid();
 
 	private SettingsGUI(JFrame owner) {
 		super(owner);
@@ -196,7 +196,6 @@ public class SettingsGUI extends JDialog {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 492, 275);
 		addDisplaySettingsPanel();
-		tabbedPane.addTab(paperAtlas.getName(), paperAtlas);
 		try {
 			addMapSourceSettingsPanel();
 		} catch (URISyntaxException e) {
@@ -208,6 +207,7 @@ public class SettingsGUI extends JDialog {
 		addMapSizePanel();
 		addDirectoriesPanel();
 		addNetworkPanel();
+		tabbedPane.addTab(paperAtlas.getName(), paperAtlas);
 
 		add(tabbedPane, BorderLayout.CENTER);
 	}

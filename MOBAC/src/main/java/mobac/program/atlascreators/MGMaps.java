@@ -39,8 +39,8 @@ import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ArrayOutputStream;
@@ -133,8 +133,8 @@ public class MGMaps extends AtlasCreator {
 
 			int pxMin = xMin / TILES_PER_FILE_X;
 			int pxMax = xMax / TILES_PER_FILE_X;
-			int pyMin = yMin / TILES_PER_FILE_X;
-			int pyMax = xMax / TILES_PER_FILE_X;
+			int pyMin = yMin / TILES_PER_FILE_Y;
+			int pyMax = yMax / TILES_PER_FILE_Y;
 
 			for (int px = pxMin; px <= pxMax; px++) {
 				for (int py = pyMin; py <= pyMax; py++) {

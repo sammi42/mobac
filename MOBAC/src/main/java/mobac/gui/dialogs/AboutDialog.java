@@ -16,16 +16,15 @@
  ******************************************************************************/
 package mobac.gui.dialogs;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,42 +33,69 @@ import javax.swing.UIManager;
 import mobac.gui.MainGUI;
 import mobac.program.ProgramInfo;
 import mobac.utilities.GBC;
+import mobac.utilities.Utilities;
 
-public class AboutDialog extends JDialog {
+public class AboutDialog extends JDialog implements MouseListener {
 
 	public AboutDialog() throws HeadlessException {
 		super(MainGUI.getMainGUI(), "About");
-		setLayout(new GridBagLayout());
 		setIconImages(MainGUI.MOBAC_ICONS);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		JButton ok = new JButton("OK");
+		setResizable(false);
+
+		JPanel panel = new JPanel(null);
+		panel.setBackground(Color.WHITE);
 		GBC std = GBC.std();
 		GBC eol = GBC.eol();
 		std.insets(3, 3, 3, 3);
 		eol.insets(3, 3, 3, 3);
-		add(new JLabel(new ImageIcon(MainGUI.MOBAC_ICONS.get(0))), std);
+		ImageIcon splash = Utilities.loadResourceImageIcon("Splash.jpg");
+		Dimension size = new Dimension(splash.getIconWidth(), splash.getIconHeight());
+		panel.setPreferredSize(size);
+		panel.setMinimumSize(size);
+		panel.setMaximumSize(size);
+		panel.setSize(size);
+
+		JLabel splashLabel = new JLabel(splash);
 		JPanel infoPanel = new JPanel(new GridBagLayout());
-		infoPanel.add(new JLabel("<html><h1>" + ProgramInfo.PROG_NAME + "</h1></html>"), eol);
+		infoPanel.setBackground(Color.WHITE);
+		infoPanel.setOpaque(false);
+		// infoPanel.add(new JLabel("<html><h2>" + ProgramInfo.PROG_NAME + "</h2></html>"), eol);
 		infoPanel.add(new JLabel("Version:"), std);
 		infoPanel.add(new JLabel(ProgramInfo.getVersion()), eol);
 		infoPanel.add(new JLabel("Program revision:"), std);
 		infoPanel.add(new JLabel(ProgramInfo.getRevisionStr()), eol);
 		// infoPanel.add(new JLabel("Map sources revision:"), std);
 		// infoPanel.add(new JLabel(Integer.toString(MapSourcesUpdater.getCurrentMapSourcesRev())), eol);
-		add(infoPanel, eol);
-		add(Box.createVerticalGlue(), eol);
-		add(ok, GBC.eol().anchor(GBC.CENTER).insets(5, 10, 10, 10));
-		ok.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				AboutDialog.this.dispose();
-			}
-		});
+		panel.add(infoPanel);
+		panel.add(splashLabel);
+
+		infoPanel.setBounds(270, 155, 200, 200);
+		splashLabel.setBounds(0, 0, splash.getIconWidth(), splash.getIconHeight());
+
+		add(panel);
 		pack();
-
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
 
+		addMouseListener(this);
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		setVisible(false);
+	}
+
+	public void mousePressed(MouseEvent e) {
+	}
+
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
 	}
 
 	public static void main(String[] args) {

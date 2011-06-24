@@ -84,6 +84,16 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		processException(Thread.currentThread(), e);
 	}
 
+	public static void processFatalExceptionSimpleDialog(String dialogMessage, Throwable e) {
+		log.error(dialogMessage + ": " + e.getMessage(), e);
+		String[] options = { "Exit", "Show error report" };
+		int a = JOptionPane.showOptionDialog(null, dialogMessage, "Error", 0, JOptionPane.ERROR_MESSAGE, null, options,
+				options[0]);
+		if (a == 1)
+			GUIExceptionHandler.showExceptionDialog(e);
+		System.exit(1);
+	}
+
 	public static void processException(Thread thread, Throwable t) {
 		log.error("Uncaught exception: ", t);
 		showExceptionDialog(thread, t, null);

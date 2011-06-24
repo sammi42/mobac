@@ -100,10 +100,10 @@ public class EnvironmentSetup {
 	}
 
 	public static void checkFileSetup() {
-		checkDirectory(DirectoryManager.userSettingsDir, "user settings");
-		checkDirectory(DirectoryManager.atlasProfilesDir, "atlas profile");
-		checkDirectory(DirectoryManager.tileStoreDir, "tile store");
-		checkDirectory(DirectoryManager.tempDir, "temporary atlas download");
+		checkDirectory(DirectoryManager.userSettingsDir, "user settings", true);
+		checkDirectory(DirectoryManager.atlasProfilesDir, "atlas profile", true);
+		checkDirectory(DirectoryManager.tileStoreDir, "tile store", true);
+		checkDirectory(DirectoryManager.tempDir, "temporary atlas download", true);
 		if (!Settings.FILE.exists()) {
 			try {
 				FIRST_START = true;
@@ -120,18 +120,25 @@ public class EnvironmentSetup {
 		}
 	}
 
-	protected static void checkDirectory(File dir, String dirName) {
+	protected static void checkDirectory(File dir, String dirName, boolean checkIsWriteable) {
 		try {
 			Utilities.mkDirs(dir);
 		} catch (IOException e) {
-			String msg = "Error while creating " + dirName + " directory";
-			log.error(msg + ": " + e.getMessage(), e);
-			String[] options = { "Exit", "Show error report" };
-			int a = JOptionPane.showOptionDialog(null, msg + " - program will exit.", "Error", 0,
-					JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-			if (a == 1)
-				GUIExceptionHandler.showExceptionDialog(e);
-			System.exit(1);
+			GUIExceptionHandler.processFatalExceptionSimpleDialog("Error while creating " + dirName + " directory\n"
+					+ dir.getAbsolutePath() + "\nProgram will exit.", e);
+		}
+		if (!checkIsWriteable)
+			return;
+		try {
+			// test if we can write into that directory
+			File testFile = File.createTempFile("MOBAC", "", dir);
+			testFile.createNewFile();
+			testFile.deleteOnExit();
+			testFile.delete();
+		} catch (IOException e) {
+			GUIExceptionHandler.processFatalExceptionSimpleDialog(
+					"Unable to write to " + dirName + "\n" + dir.getAbsolutePath()
+							+ "\nPlease correct file permissions and restart MOBAC", e);
 		}
 	}
 

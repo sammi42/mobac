@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -27,6 +27,7 @@ namespace MOBACFiddler
         // Called when Fiddler User Interface is fully available
         public void OnLoad()
         {
+            Debug.Write("Loading MOBAC Fiddler plugin");
             /*TabPage oPage = new TabPage("MOBAC");
             oPage.ImageIndex = (int)Fiddler.SessionIcons.Timeline;
             oView = new TimelineView();
@@ -66,7 +67,7 @@ namespace MOBACFiddler
         // Called before the user can edit a response using the Fiddler Inspectors, unless streaming.
         public void AutoTamperResponseBefore(Session oSession)
         {
-            if (!urlPainterEnabled) 
+            if (!urlPainterEnabled)
                 return;
             oSession.utilDecodeResponse();
             if (oSession.responseCode != 200)
@@ -87,9 +88,9 @@ namespace MOBACFiddler
             int ind = url.IndexOf(oSession.hostname);
             if (ind >= 0)
                 url = url.Substring(ind + oSession.hostname.Length);
-            Brush bgBrush = new SolidBrush(Color.FromArgb(150,100,100,100));
+            Brush bgBrush = new SolidBrush(Color.FromArgb(150, 100, 100, 100));
             g.FillRectangle(bgBrush, 0, 0, 255, LINE_HEIGHT);
-            g.DrawString(oSession.hostname,font, whiteBrush,1f,1f);
+            g.DrawString(oSession.hostname, font, whiteBrush, 1f, 1f);
             SizeF urlSize = g.MeasureString(url, font);
             if (urlSize.Width > 254)
             {
@@ -121,18 +122,19 @@ namespace MOBACFiddler
 
             MemoryStream outStream = new MemoryStream(30000);
             ImageFormat outputFormat = null;
-            if ("image/jpeg".Equals(oSession.oResponse.MIMEType))
+            Debug.Write("Mime type: " + mimeType + " " + oSession.url);
+            if ("image/jpeg".Equals(mimeType))
                 outputFormat = ImageFormat.Jpeg;
-            else if ("image/gif".Equals(oSession.oResponse.MIMEType))
+            else if ("image/gif".Equals(mimeType))
                 outputFormat = ImageFormat.Gif;
-
-            if (outputFormat == null) {
+            if (outputFormat == null)
+            {
                 outputFormat = ImageFormat.Png;
                 oSession.oResponse.headers.Remove("Content-Type");
                 oSession.oResponse.headers.Add("Content-Type", "image/png");
             }
 
-            newImage.Save(outStream, ImageFormat.Png);
+            newImage.Save(outStream, outputFormat);
 
             body = outStream.ToArray();
             oSession.oResponse.headers.Remove("Cache-Control");
@@ -164,7 +166,7 @@ namespace MOBACFiddler
         void miToggleUrlPainter_Click(object sender, EventArgs e)
         {
             this.urlPainterEnabled = !this.urlPainterEnabled;
-            if (miToggleUrlPainter != null) 
+            if (miToggleUrlPainter != null)
                 miToggleUrlPainter.Checked = urlPainterEnabled;
         }
         #endregion

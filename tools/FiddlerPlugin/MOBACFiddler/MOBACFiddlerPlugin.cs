@@ -35,7 +35,7 @@ namespace MOBACFiddler
             oView.Dock = DockStyle.Fill;
             FiddlerApplication.UI.tabsViews.TabPages.Add(oPage);*/
             // Called when Fiddler loads this extension.
-            MenuItem mnuMOBAC = new MenuItem("&MOBAC Extension");
+            MenuItem mnuMOBAC = new MenuItem("&MOBAC");
             MenuItem miClear = new MenuItem("&Clear Cache");
             miToggleUrlPainter = new MenuItem("&Enable/Disable URL tile painter");
             miToggleUrlPainter.Checked = urlPainterEnabled;
@@ -89,14 +89,14 @@ namespace MOBACFiddler
             if (ind >= 0)
                 url = url.Substring(ind + oSession.hostname.Length);
             Brush bgBrush = new SolidBrush(Color.FromArgb(150, 100, 100, 100));
-            g.FillRectangle(bgBrush, 0, 0, 255, LINE_HEIGHT);
+            g.FillRectangle(bgBrush, 1, 1, 254, LINE_HEIGHT);
             g.DrawString(oSession.hostname, font, whiteBrush, 1f, 1f);
             SizeF urlSize = g.MeasureString(url, font);
+            int paintYCoord = LINE_HEIGHT + 1;
             if (urlSize.Width > 254)
             {
                 int lines = (int)Math.Ceiling(urlSize.Width / 255);
                 int chars = url.Length / lines;
-                int paintYCoord = LINE_HEIGHT;
                 while (url.Length > 0)
                 {
                     int lineLength = 0;
@@ -108,17 +108,17 @@ namespace MOBACFiddler
                     } while (urlSize.Width < 250 && lineLength < url.Length);
 
                     url = url.Substring(lineLength);
-                    g.FillRectangle(bgBrush, 0, paintYCoord, 255, LINE_HEIGHT);
+                    //g.FillRectangle(bgBrush, 1, paintYCoord, 254, LINE_HEIGHT);
                     g.DrawString(lineStr, font, whiteBrush, 1f, paintYCoord);
                     paintYCoord += LINE_HEIGHT;
                 }
             }
             else
             {
-                g.FillRectangle(bgBrush, LINE_HEIGHT, 0, 255, 30);
-                g.DrawString(url, font, whiteBrush, 1f, 15f);
+                g.FillRectangle(bgBrush, 1, paintYCoord, 254, LINE_HEIGHT);
+                g.DrawString(url, font, whiteBrush, 1f, LINE_HEIGHT);
             }
-            g.DrawRectangle(new Pen(blackBrush), 0, 0, 255, 255);
+            g.DrawRectangle(new Pen(bgBrush), 0, 0, 255, 255);
 
             MemoryStream outStream = new MemoryStream(30000);
             ImageFormat outputFormat = null;

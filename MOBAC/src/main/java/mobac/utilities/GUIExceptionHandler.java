@@ -171,6 +171,8 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			}
 			// sb.append("\nMapsources rev: " + MapSourcesUpdater.getCurrentMapSourcesRev());
 
+			sb.append("\nCPU cores: " + Runtime.getRuntime().availableProcessors());
+
 			if (thread != null)
 				sb.append("\n\nThread: " + thread.getName());
 

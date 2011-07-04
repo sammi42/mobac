@@ -56,6 +56,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import mobac.Main;
+import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 import mobac.utilities.file.DirectoryFileFilter;
@@ -368,8 +369,24 @@ public class Utilities {
 	public static void mkDirs(File dir) throws IOException {
 		if (dir.isDirectory())
 			return;
-		if (!dir.mkdirs())
-			throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
+		if (dir.mkdirs())
+			return;
+
+		if (Logging.isCONFIGURED())
+			Logging.LOG.error("mkDirs creation failed first time - one retry left");
+
+		// Wait some time and then retry it.
+		// See for details:
+		// http://javabyexample.wisdomplug.com/component/content/article/37-core-java/48-is-mkdirs-thread-safe.html
+		// Hopefully this will fix the different bugs reported for this method
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		if (dir.mkdirs())
+			return;
+
+		throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
 	}
 
 	public static void fileCopy(File sourceFile, File destFile) throws IOException {

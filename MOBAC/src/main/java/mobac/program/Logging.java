@@ -21,9 +21,9 @@ import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Enumeration;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.logging.Handler;
 
 import mobac.utilities.GUIExceptionHandler;
@@ -88,6 +88,7 @@ public class Logging {
 		Logger logger = Logger.getLogger("LogSystem");
 		logger.setLevel(Level.INFO);
 		logger.info("Logging configured by \"" + f.getAbsolutePath() + "\"");
+		CONFIGURED = true;
 		return true;
 	}
 
@@ -110,6 +111,7 @@ public class Logging {
 		consoleAppender.setThreshold(level);
 		logger.addAppender(consoleAppender);
 		logger.setLevel(level);
+		CONFIGURED = true;
 	}
 
 	public static void configureLogFileLogging(Level level) {
@@ -201,6 +203,10 @@ public class Logging {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isCONFIGURED() {
+		return CONFIGURED;
 	}
 
 }

@@ -54,8 +54,7 @@ import mobac.utilities.GBCTable;
 public class SettingsGUIPaper extends JPanel {
 	private static final long serialVersionUID = -8265562215604604074L;
 
-	private static void setModel(SpinnerNumberModel model, double min,
-			double max, Double step) {
+	private static void setModel(SpinnerNumberModel model, double min, double max, Double step) {
 		model.setMaximum(max);
 		model.setMinimum(min);
 		model.setStepSize(step);
@@ -67,101 +66,60 @@ public class SettingsGUIPaper extends JPanel {
 	private static void setEditor(JSpinner jSpinner, String pattern) {
 		jSpinner.setEditor(new JSpinner.NumberEditor(jSpinner, pattern));
 	}
-	
+
 	private static JPanel createSection(TitledBorder border) {
 		JPanel jPanel = new JPanel(new GridBagLayout());
 		jPanel.setBorder(border);
 		return jPanel;
 	}
-	
-	private final JButton
-		jButtonDefaults = new JButton(),
-		jButtonExport = new JButton(),
-		jButtonImport = new JButton();
-	
-	private final JCheckBox
-		jCheckBoxCompass = new JCheckBox(),
-		jCheckBoxLandscape = new JCheckBox(),
-		jCheckBoxPageNumbers = new JCheckBox("", true),
-		jCheckBoxScaleBar = new JCheckBox(),
-		jCheckBoxWgsGrid = new JCheckBox("", true);
 
-	private final JFileChooser
-		jFileChooser = new JFileChooser();
-	
-	private final TitledBorder
-		titledBorderActions = SettingsGUI.createSectionBorder(""),
-		titledBorderAdditions = SettingsGUI.createSectionBorder(""),
-		titledBorderAdvanced = SettingsGUI.createSectionBorder(""),
-		titledBorderMargins = SettingsGUI.createSectionBorder(""),
-		titledBorderSize = SettingsGUI.createSectionBorder("");
-	
-	private final JPanel
-		jPanelActions = createSection(titledBorderActions),
-		jPanelAdditions = createSection(titledBorderAdditions),
-		jPanelAdvanced = createSection(titledBorderAdvanced),
-		jPanelMargins = createSection(titledBorderMargins),
-		jPanelSize = createSection(titledBorderSize);
+	private final JButton jButtonDefaults = new JButton(), jButtonExport = new JButton(),
+			jButtonImport = new JButton();
 
-	private final JComboBox
-		jComboBoxFormat = new JComboBox(Format.values()),
-		jComboBoxWgsDensity = new JComboBox(WgsDensity.values());
+	private final JCheckBox jCheckBoxCompass = new JCheckBox(), jCheckBoxLandscape = new JCheckBox(),
+			jCheckBoxPageNumbers = new JCheckBox("", true), jCheckBoxScaleBar = new JCheckBox(),
+			jCheckBoxWgsGrid = new JCheckBox("", true);
 
-	private final JRadioButton
-		jRadioButtonCustom = new JRadioButton("", true),
-		jRadioButtonDefault = new JRadioButton("", true),
-		jRadioButtonSelection = new JRadioButton("", true);
+	private final JFileChooser jFileChooser = new JFileChooser();
 
-	private final SpinnerNumberModel
-		modelCompression = new SpinnerNumberModel(
-				SettingsPaperAtlas.COMPRESSION_DEFAULT,
-				SettingsPaperAtlas.COMPRESSION_MIN,
-				SettingsPaperAtlas.COMPRESSION_MAX, 1),
-		modelCrop = new SpinnerNumberModel(SettingsPaperAtlas.CROP_DEFAULT,
-				SettingsPaperAtlas.CROP_MIN,
-				SettingsPaperAtlas.CROP_MAX, 1),
-		modelDpi = new SpinnerNumberModel(SettingsPaperAtlas.DPI_DEFAULT,
-				SettingsPaperAtlas.DPI_MIN,
-				SettingsPaperAtlas.DPI_MAX, 1),
-		modelHeight = new SpinnerNumberModel(),
-		modelMarginBottom = new SpinnerNumberModel(),
-		modelMarginLeft = new SpinnerNumberModel(),
-		modelMarginRight = new SpinnerNumberModel(),
-		modelMarginTop = new SpinnerNumberModel(),
-		modelOverlap = new SpinnerNumberModel(),
-		modelWidth = new SpinnerNumberModel();
+	private final TitledBorder titledBorderActions = SettingsGUI.createSectionBorder(""),
+			titledBorderAdditions = SettingsGUI.createSectionBorder(""), titledBorderAdvanced = SettingsGUI
+					.createSectionBorder(""), titledBorderMargins = SettingsGUI.createSectionBorder(""),
+			titledBorderSize = SettingsGUI.createSectionBorder("");
 
-	private final JSpinner
-		jSpinnerDpi = new JSpinner(modelDpi),
-		jSpinnerWidth = new JSpinner(modelWidth),
-		jSpinnerHeight = new JSpinner(modelHeight),
-		jSpinnerMarginTop = new JSpinner(modelMarginTop),
-		jSpinnerMarginLeft = new JSpinner(modelMarginLeft),
-		jSpinnerMarginBottom = new JSpinner(modelMarginBottom),
-		jSpinnerMarginRight = new JSpinner(modelMarginRight),
-		jSpinnerOverlap = new JSpinner(modelOverlap),
-		jSpinnerCrop = new JSpinner(modelCrop),
-		jSpinnerCompression = new JSpinner(modelCompression);
-	
-	private final JLabel
-		jLabelCompression = new JLabel(),
-		jLabelDpi = new JLabel(),
-		jLabelWidth = new JLabel(),
-		jLabelHeight = new JLabel(),
-		jLabelMarginTop = new JLabel(),
-		jLabelMarginLeft = new JLabel(),
-		jLabelMarginBottom = new JLabel(),
-		jLabelMarginRight = new JLabel(),
-		jLabelOverlap = new JLabel(),
-		jLabelCrop = new JLabel();
+	private final JPanel jPanelActions = createSection(titledBorderActions),
+			jPanelAdditions = createSection(titledBorderAdditions),
+			jPanelAdvanced = createSection(titledBorderAdvanced), jPanelMargins = createSection(titledBorderMargins),
+			jPanelSize = createSection(titledBorderSize);
 
-	private String
-		importError,
-		exportError,
-		errorReason,
-		errorTitle,
-		xmlFileFilter;
-	
+	private final JComboBox jComboBoxFormat = new JComboBox(Format.values()), jComboBoxWgsDensity = new JComboBox(
+			WgsDensity.values());
+
+	private final JRadioButton jRadioButtonCustom = new JRadioButton("", true), jRadioButtonDefault = new JRadioButton(
+			"", true), jRadioButtonSelection = new JRadioButton("", true);
+
+	private final SpinnerNumberModel modelCompression = new SpinnerNumberModel(SettingsPaperAtlas.COMPRESSION_DEFAULT,
+			SettingsPaperAtlas.COMPRESSION_MIN, SettingsPaperAtlas.COMPRESSION_MAX, 1),
+			modelCrop = new SpinnerNumberModel(SettingsPaperAtlas.CROP_DEFAULT, SettingsPaperAtlas.CROP_MIN,
+					SettingsPaperAtlas.CROP_MAX, 1), modelDpi = new SpinnerNumberModel(SettingsPaperAtlas.DPI_DEFAULT,
+					SettingsPaperAtlas.DPI_MIN, SettingsPaperAtlas.DPI_MAX, 1), modelHeight = new SpinnerNumberModel(),
+			modelMarginBottom = new SpinnerNumberModel(), modelMarginLeft = new SpinnerNumberModel(),
+			modelMarginRight = new SpinnerNumberModel(), modelMarginTop = new SpinnerNumberModel(),
+			modelOverlap = new SpinnerNumberModel(), modelWidth = new SpinnerNumberModel();
+
+	private final JSpinner jSpinnerDpi = new JSpinner(modelDpi), jSpinnerWidth = new JSpinner(modelWidth),
+			jSpinnerHeight = new JSpinner(modelHeight), jSpinnerMarginTop = new JSpinner(modelMarginTop),
+			jSpinnerMarginLeft = new JSpinner(modelMarginLeft), jSpinnerMarginBottom = new JSpinner(modelMarginBottom),
+			jSpinnerMarginRight = new JSpinner(modelMarginRight), jSpinnerOverlap = new JSpinner(modelOverlap),
+			jSpinnerCrop = new JSpinner(modelCrop), jSpinnerCompression = new JSpinner(modelCompression);
+
+	private final JLabel jLabelCompression = new JLabel(), jLabelDpi = new JLabel(), jLabelWidth = new JLabel(),
+			jLabelHeight = new JLabel(), jLabelMarginTop = new JLabel(), jLabelMarginLeft = new JLabel(),
+			jLabelMarginBottom = new JLabel(), jLabelMarginRight = new JLabel(), jLabelOverlap = new JLabel(),
+			jLabelCrop = new JLabel();
+
+	private String importError, exportError, errorReason, errorTitle, xmlFileFilter;
+
 	private UnitSystem unitSystem;
 
 	public SettingsGUIPaper() {
@@ -174,6 +132,7 @@ public class SettingsGUIPaper extends JPanel {
 			public boolean accept(File f) {
 				return f.isDirectory() || f.getName().endsWith(".xml");
 			}
+
 			@Override
 			public String getDescription() {
 				return xmlFileFilter;
@@ -225,14 +184,14 @@ public class SettingsGUIPaper extends JPanel {
 				jCheckBoxLandscape.setEnabled(enabled);
 			}
 		});
-		
+
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonSelection);
 		buttonGroup.add(jRadioButtonDefault);
 		buttonGroup.add(jRadioButtonCustom);
 
 		GBCTable gbc = new GBCTable();
-		
+
 		jPanelSize.add(jRadioButtonDefault, gbc.begin());
 		jPanelSize.add(jRadioButtonCustom, gbc.incY());
 		jPanelSize.add(jRadioButtonSelection, gbc.incY());
@@ -276,7 +235,7 @@ public class SettingsGUIPaper extends JPanel {
 		jPanelActions.add(jButtonExport, gbc.incX());
 		jPanelActions.add(jButtonDefaults, gbc.incX());
 		jPanelActions.add(Box.createHorizontalGlue(), gbc.incX().fillH());
-		
+
 		gbc = new GBCTable(0);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		add(jPanelSize, gbc.begin());
@@ -286,10 +245,10 @@ public class SettingsGUIPaper extends JPanel {
 		add(jPanelActions, gbc.begin(1, 3).gridwidth(2).fillH());
 		add(Box.createGlue(), gbc.incY().gridwidth(2).fill());
 	}
-	
+
 	private void importFromXml() {
 		int state = jFileChooser.showOpenDialog(SettingsGUIPaper.this);
-		if(state == JFileChooser.APPROVE_OPTION) {
+		if (state == JFileChooser.APPROVE_OPTION) {
 			File file = jFileChooser.getSelectedFile();
 			JAXBContext context;
 			try {
@@ -298,17 +257,15 @@ public class SettingsGUIPaper extends JPanel {
 				SettingsPaperAtlas s = (SettingsPaperAtlas) um.unmarshal(file);
 				loadSettings(s);
 			} catch (JAXBException ex) {
-				String text = importError + file.getName() + "\n"
-						+ errorReason + ex.getMessage();
-				JOptionPane.showMessageDialog(SettingsGUIPaper.this,
-						text, errorTitle, JOptionPane.ERROR_MESSAGE);
+				String text = importError + file.getName() + "\n" + errorReason + ex.getMessage();
+				JOptionPane.showMessageDialog(SettingsGUIPaper.this, text, errorTitle, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void exportToXml() {
 		int state = jFileChooser.showSaveDialog(SettingsGUIPaper.this);
-		if(state == JFileChooser.APPROVE_OPTION) {
+		if (state == JFileChooser.APPROVE_OPTION) {
 			File file = jFileChooser.getSelectedFile();
 			JAXBContext context;
 			try {
@@ -318,18 +275,16 @@ public class SettingsGUIPaper extends JPanel {
 				applySettings(s);
 				m.marshal(s, file);
 			} catch (JAXBException ex) {
-				String text = exportError + file.getName() + "\n"
-						+ errorReason + ex.getMessage();
-				JOptionPane.showMessageDialog(SettingsGUIPaper.this,
-						text, errorTitle, JOptionPane.ERROR_MESSAGE);
+				String text = exportError + file.getName() + "\n" + errorReason + ex.getMessage();
+				JOptionPane.showMessageDialog(SettingsGUIPaper.this, text, errorTitle, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void resetToDefaults() {
 		loadSettings(new SettingsPaperAtlas());
 	}
-	
+
 	private void i18n() {
 		setName("Paper Atlas");
 		titledBorderActions.setTitle("Actions");
@@ -357,18 +312,17 @@ public class SettingsGUIPaper extends JPanel {
 		jCheckBoxPageNumbers.setToolTipText("If selected, page numbers will be painted on each page.");
 		jLabelCompression.setText("Compression:");
 		String compression = "<html>Specifies the compression level used for PDF document. <br />"
-			+ "Zero means no compression and 9 means best compression. <br />"
-			+ "The higher number the better compression. The default value is 6.";
+				+ "Zero means no compression and 9 means best compression. <br />"
+				+ "The higher number the better compression. The default value is 6.";
 		jLabelCompression.setToolTipText(compression);
 		jSpinnerCompression.setToolTipText(compression);
 		jLabelDpi.setText("Resolution");
 		String dpi = "<html>Specifies the resolution (DPI) to be used for images. <br />"
-			+ "Generally higher values means better quality, <br />"
-			+ "but smaller pixel based objects <br />"
-			+ "( such as scale bar, WGS-84 grid, compass and page numbers). <br />"
-			+ "Default value is 96, better quality can be achieved width 120. <br />"
-			+ "Notice: Make sure, your PDF viewer displays the page with the <br />"
-			+ "selected resolution.</html>";
+				+ "Generally higher values means better quality, <br />" + "but smaller pixel based objects <br />"
+				+ "( such as scale bar, WGS-84 grid, compass and page numbers). <br />"
+				+ "Default value is 96, better quality can be achieved width 120. <br />"
+				+ "Notice: Make sure, your PDF viewer displays the page with the <br />"
+				+ "selected resolution.</html>";
 		jLabelDpi.setToolTipText(dpi);
 		jSpinnerDpi.setToolTipText(dpi);
 		jLabelWidth.setText("Width:");
@@ -398,8 +352,8 @@ public class SettingsGUIPaper extends JPanel {
 		jSpinnerOverlap.setToolTipText(overlap);
 		jLabelCrop.setText("Crop:");
 		String crop = "<html>Specifies the number of crop percentage. <br />"
-			+ "If any edge page is covered less than the crop percentage, <br />"
-			+ "it will not be processed.</html>";
+				+ "If any edge page is covered less than the crop percentage, <br />"
+				+ "it will not be processed.</html>";
 		jLabelCrop.setToolTipText(crop);
 		jSpinnerCrop.setToolTipText(crop);
 		jButtonImport.setText("Import from XML");
@@ -417,9 +371,8 @@ public class SettingsGUIPaper extends JPanel {
 	}
 
 	private void setUnitSystem(UnitSystem unitSystem) {
-		if(this.unitSystem == unitSystem) {
+		if (this.unitSystem.equals(unitSystem))
 			return;
-		}
 		this.unitSystem = unitSystem;
 		Double step = 0.1d;
 		double min, max;
@@ -447,12 +400,12 @@ public class SettingsGUIPaper extends JPanel {
 	}
 
 	private PaperSize getPaperSize() {
-		if(jRadioButtonDefault.isSelected()) {
+		if (jRadioButtonDefault.isSelected()) {
 			Format format = (Format) jComboBoxFormat.getSelectedItem();
 			boolean landscape = jCheckBoxLandscape.isSelected();
 			return new PaperSize(format, landscape);
 		}
-		if(jRadioButtonCustom.isSelected()) {
+		if (jRadioButtonCustom.isSelected()) {
 			double width = modelWidth.getNumber().doubleValue();
 			double height = modelHeight.getNumber().doubleValue();
 			width = unitSystem.unitsToPoints(width);
@@ -461,13 +414,13 @@ public class SettingsGUIPaper extends JPanel {
 		}
 		return null;
 	}
-	
+
 	private void setPaperSize(PaperSize paperSize) {
-		if(paperSize == null) {
+		if (paperSize == null) {
 			jRadioButtonSelection.setSelected(true);
 			return;
 		}
-		if(paperSize.format != null) {
+		if (paperSize.format != null) {
 			jRadioButtonDefault.setSelected(true);
 			jComboBoxFormat.setSelectedIndex(paperSize.format.ordinal());
 			jCheckBoxLandscape.setSelected(paperSize.landscape);
@@ -480,7 +433,7 @@ public class SettingsGUIPaper extends JPanel {
 		setUnitSystem(s.unitSystem);
 		loadSettings(s.paperAtlas);
 	}
-	
+
 	public void loadSettings(SettingsPaperAtlas s) {
 		setPaperSize(s.paperSize);
 		modelMarginTop.setValue(unitSystem.pointsToUnits(s.marginTop));
@@ -497,11 +450,11 @@ public class SettingsGUIPaper extends JPanel {
 		modelCompression.setValue(s.compression);
 		modelDpi.setValue(s.dpi);
 	}
-	
+
 	public void applySettings(Settings s) {
 		applySettings(s.paperAtlas);
 	}
-	
+
 	public void applySettings(SettingsPaperAtlas s) {
 		s.paperSize = getPaperSize();
 		s.marginTop = unitSystem.unitsToPoints(modelMarginTop.getNumber().doubleValue());

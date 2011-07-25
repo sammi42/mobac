@@ -106,18 +106,23 @@ public class DirectoryManager {
 			final String envVar = m.group(1);
 			String envVal = System.getenv(envVar);
 			if (envVal == null) {
+				File defPath = null;
+
 				if ("mobac-prog".equalsIgnoreCase(envVar))
-					envVal = programDir.getAbsolutePath();
+					defPath = programDir;
 				else if ("home".equalsIgnoreCase(envVar))
-					envVal = userHomeDir.getAbsolutePath();
+					defPath = userHomeDir;
 				else if ("XDG_CONFIG_HOME".equalsIgnoreCase(envVar))
-					envVal = new File(userHomeDir, ".config").getAbsolutePath();
+					defPath = new File(userHomeDir, ".config");
 				else if ("XDG_CACHE_HOME".equalsIgnoreCase(envVar))
-					envVal = new File(userHomeDir, ".cache").getAbsolutePath();
+					defPath = new File(userHomeDir, ".cache");
 				else if ("XDG_DATA_HOME".equalsIgnoreCase(envVar)) {
 					File localDataDir = new File(userHomeDir, ".local");
-					envVal = new File(localDataDir, "share").getAbsolutePath();
+					defPath = new File(localDataDir, "share");
 				}
+
+				if (defPath != null)
+					envVal = defPath.getAbsolutePath();
 			}
 			if (envVal == null)
 				sb.append(cmd.substring(m.start(), m.end()));

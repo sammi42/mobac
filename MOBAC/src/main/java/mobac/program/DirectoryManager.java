@@ -110,6 +110,14 @@ public class DirectoryManager {
 					envVal = programDir.getAbsolutePath();
 				else if ("home".equalsIgnoreCase(envVar))
 					envVal = userHomeDir.getAbsolutePath();
+				else if ("XDG_CONFIG_HOME".equalsIgnoreCase(envVar))
+					envVal = new File(userHomeDir, ".config").getAbsolutePath();
+				else if ("XDG_CACHE_HOME".equalsIgnoreCase(envVar))
+					envVal = new File(userHomeDir, ".cache").getAbsolutePath();
+				else if ("XDG_DATA_HOME".equalsIgnoreCase(envVar)) {
+					File localDataDir = new File(userHomeDir, ".local");
+					envVal = new File(localDataDir, "share").getAbsolutePath();
+				}
 			}
 			if (envVal == null)
 				sb.append(cmd.substring(m.start(), m.end()));

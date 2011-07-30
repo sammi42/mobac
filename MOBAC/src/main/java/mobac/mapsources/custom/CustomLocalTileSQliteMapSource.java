@@ -166,9 +166,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 		case RMaps:
 		case BigPlanetTracks:
 		case Galileo:
-			sqlMaxZoomStatement = "SELECT DISTINCT z FROM tiles ORDER BY z DESC LIMIT 1;";
-			sqlMinZoomStatement = "SELECT DISTINCT z FROM tiles ORDER BY z ASC LIMIT 1;";
-			sqlTileStatement = "SELECT image from tiles WHERE z=? AND x=? AND y=?;";
+			sqlMaxZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom DESC LIMIT 1;";
+			sqlMinZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom ASC LIMIT 1;";
+			sqlTileStatement = "SELECT image from tiles WHERE z=(17 - ?) AND x=? AND y=?;";
 			break;
 		case NaviComputer:
 			sqlMaxZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom DESC LIMIT 1;";
@@ -189,11 +189,6 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			switch (atlasType) {
 			case MBTiles:
 				y = (1 << zoom) - y - 1;
-				break;
-			case RMaps:
-			case BigPlanetTracks:
-			case Galileo:
-				zoom = 17 - zoom;
 				break;
 			}
 

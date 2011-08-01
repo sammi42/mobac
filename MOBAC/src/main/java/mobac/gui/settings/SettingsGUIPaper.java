@@ -371,7 +371,7 @@ public class SettingsGUIPaper extends JPanel {
 	}
 
 	private void setUnitSystem(UnitSystem unitSystem) {
-		if (this.unitSystem.equals(unitSystem))
+		if (unitSystem.equals(this.unitSystem))
 			return;
 		this.unitSystem = unitSystem;
 		Double step = 0.1d;

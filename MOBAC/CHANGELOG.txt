@@ -13,6 +13,7 @@
  ! Calculation problem in MGMaps atlas format (fix by Pierre-Luc Paour)
  ! Custom mapsource from RMaps SQLite atlas shows wrong zoom levels 
  - Removed map source: Open Cycle Map (request by Andy Allan)
+ + New map source: OSMapa-Topo (Poland)
 
 1.9 beta 6 (2011-06-21)
  + New atlas format: Geocaching Live offline maps

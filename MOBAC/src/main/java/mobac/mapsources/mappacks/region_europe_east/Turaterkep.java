@@ -1,4 +1,4 @@
-package mobac.mapsources.mappacks.openstreetmap;
+package mobac.mapsources.mappacks.region_europe_east;
 
 import java.awt.Color;
 

@@ -24,6 +24,7 @@ import mobac.program.tilestore.TileStore;
 import mobac.utilities.Utilities;
 
 /**
+ * http://openseamap.org/
  * @see OpenSeaMapLayer
  */
 public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSourceTextAttribution {

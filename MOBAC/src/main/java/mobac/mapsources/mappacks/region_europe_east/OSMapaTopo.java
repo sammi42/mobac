@@ -21,6 +21,7 @@ import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
 /**
+ * http://osm.trail.pl/ol.xhtml
  * http://sourceforge.net/tracker/?func=detail&aid=3379692&group_id=238075&atid=1105497
  */
 public class OSMapaTopo extends AbstractHttpMapSource implements MapSourceTextAttribution {

@@ -32,6 +32,7 @@ import mobac.program.model.TileImageType;
  * 
  * Tiles created by and sourced from nztopomaps.com
  * </pre>
+ * http://www.nztopomaps.com/
  */
 public class NzTopoMaps extends AbstractHttpMapSource implements MapSourceTextAttribution {
 

@@ -26,6 +26,10 @@ top of the OSM Mapnik layer.
             <tileUpdate>None</tileUpdate>
             <url>http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png</url>
             <backgroundColor>#000000</backgroundColor>
+            
+            <!-- Optional: IgnoreErrors - change to true for maps where only some tiles exist -->
+            <ignoreErrors>false</ignoreErrors>
+            
         </customMapSource>
         <customMapSource>
             <name>Custom transparent hillshade</name>

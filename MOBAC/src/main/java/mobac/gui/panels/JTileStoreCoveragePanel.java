@@ -43,7 +43,7 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 	private PreviewMap mapViewer;
 
 	public JTileStoreCoveragePanel(PreviewMap mapViewer) {
-		super("Tile store coverage");
+		super("Map source tile store coverage");
 		contentContainer.setLayout(new GridBagLayout());
 		this.mapViewer = mapViewer;
 
@@ -62,7 +62,7 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		GBC gbc_eol = GBC.eol().insets(2, 2, 2, 2);
 		GBC gbc_std = GBC.std().insets(2, 2, 2, 2);
 		
-		contentContainer.add(new JLabel("zoom level: "), gbc_std);
+		contentContainer.add(new JLabel("Zoom level: "), gbc_std);
 		contentContainer.add(zoomCombo, gbc_eol);
 		contentContainer.add(new JLabel("Layer: "), gbc_std);
 		contentContainer.add(layerSelector, gbc_eol);

@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 beta 7 (2011-07-??)
+1.9 beta 7 (2011-08-??)
  ! Calculation problem in MGMaps atlas format (fix by Pierre-Luc Paour)
  ! Custom mapsource from RMaps SQLite atlas shows wrong zoom levels 
  - Removed map source: Open Cycle Map (request by Andy Allan)

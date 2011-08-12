@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.gui.panels;
 
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +25,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import mobac.gui.components.JCollapsiblePanel;
 import mobac.gui.mapview.PreviewMap;
@@ -38,6 +40,7 @@ import mobac.utilities.GBC;
 public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEventListener, ActionListener {
 
 	private JButton showCoverage;
+	private JButton hideCoverage;
 	private JComboBox layerSelector;
 	private JComboBox zoomCombo;
 	private PreviewMap mapViewer;
@@ -52,6 +55,9 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		showCoverage.setToolTipText("<html>Display tile store coverage for the current map "
 				+ "source,<br>the selected zoom level and the current visible map region.<br>"
 				+ "Green regions are present in the cache, gray regions are not covered.</html>");
+		hideCoverage = new JButton("Hide coverage");
+		hideCoverage.addActionListener(this);
+		hideCoverage.setEnabled(false);
 		zoomCombo = new JComboBox();
 		zoomCombo.setToolTipText("Select the zoom level you wish " + "to display tile store coverage");
 		titlePanel.setToolTipText("<html>Displays the regions for the curently "
@@ -61,17 +67,26 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 
 		GBC gbc_eol = GBC.eol().insets(2, 2, 2, 2);
 		GBC gbc_std = GBC.std().insets(2, 2, 2, 2);
-		
+
 		contentContainer.add(new JLabel("Zoom level: "), gbc_std);
 		contentContainer.add(zoomCombo, gbc_eol);
 		contentContainer.add(new JLabel("Layer: "), gbc_std);
 		contentContainer.add(layerSelector, gbc_eol);
-		contentContainer.add(showCoverage, gbc_eol.fillH());
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+		buttonPanel.add(showCoverage);
+		buttonPanel.add(hideCoverage);
+		contentContainer.add(buttonPanel, gbc_eol.fillH());
 		mapSourceChanged(mapViewer.getMapSource());
 		mapViewer.addMapEventListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (hideCoverage.equals(e.getSource())) {
+			TileStoreCoverageLayer.removeCacheCoverageLayers();
+			mapViewer.repaint();
+			hideCoverage.setEnabled(false);
+			return;
+		}
 		Integer zoom = (Integer) zoomCombo.getSelectedItem();
 		if (zoom == null)
 			return;
@@ -80,6 +95,7 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		TileStoreCoverageLayer tscl = new TileStoreCoverageLayer(mapViewer,
 				(MapSource) layerSelector.getSelectedItem(), zoom);
 		mapViewer.mapLayers.add(tscl);
+		hideCoverage.setEnabled(true);
 	}
 
 	public void gridZoomChanged(int newGridZoomLevel) {
@@ -87,6 +103,7 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 
 	public void mapSourceChanged(MapSource newMapSource) {
 		TileStoreCoverageLayer.removeCacheCoverageLayers();
+		hideCoverage.setEnabled(false);
 		Integer selZoom = (Integer) zoomCombo.getSelectedItem();
 		if (selZoom == null)
 			selZoom = new Integer(8);
@@ -124,5 +141,5 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 
 	public void mapSelectionControllerChanged(JMapController newMapController) {
 	}
-	
+
 }

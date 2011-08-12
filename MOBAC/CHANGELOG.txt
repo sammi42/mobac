@@ -14,6 +14,7 @@
  ! Custom mapsource from RMaps SQLite atlas shows wrong zoom levels 
  - Removed map source: Open Cycle Map (request by Andy Allan)
  + New map source: OSMapa-Topo (Poland)
+ + Map source tile store coverage: button for hiding colored layer added 
 
 1.9 beta 6 (2011-06-21)
  + New atlas format: Geocaching Live offline maps

@@ -76,6 +76,18 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		super();
 	}
 
+	/**
+	 * Implementation for {@link com.sleepycat.je.ExceptionListener}
+	 */
+	public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
+		Exception e = paramExceptionEvent.getException();
+		log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
+		showExceptionDialog(e);
+	}
+
+	/**
+	 * Implementation for {@link Thread.UncaughtExceptionHandler}
+	 */
 	public void uncaughtException(Thread t, Throwable e) {
 		processException(t, e);
 	}
@@ -120,12 +132,6 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 		showExceptionDialog(thread, t, eventText);
 	}
 
-	public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
-		Exception e = paramExceptionEvent.getException();
-		log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
-		showExceptionDialog(e);
-	}
-
 	public static String prop(String key) {
 		String s = System.getProperty(key);
 		if (s != null)
@@ -135,10 +141,19 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	}
 
 	public static void showExceptionDialog(Throwable t) {
-		showExceptionDialog(Thread.currentThread(), t, null);
+		showExceptionDialog(null, Thread.currentThread(), t, null);
 	}
 
-	public static synchronized void showExceptionDialog(Thread thread, Throwable t, String additionalInfo) {
+	public static void showExceptionDialog(String message, Throwable t) {
+		showExceptionDialog(message, Thread.currentThread(), t, null);
+	}
+
+	public static void showExceptionDialog(Thread thread, Throwable t, String additionalInfo) {
+		showExceptionDialog(null, thread, t, additionalInfo);
+	}
+
+	public static synchronized void showExceptionDialog(String message, Thread thread, Throwable t,
+			String additionalInfo) {
 		try {
 			if (t != null) {
 				// Recursive check - in case the Exception was thrown in a Component.paint() method
@@ -154,6 +169,8 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			}
 
 			StringBuilder sb = new StringBuilder(2048);
+			if (message != null)
+				sb.append("Error message: " + message + "\n");
 			sb.append("Version: " + ProgramInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
 			String windowManager = System.getProperty("sun.desktop");
@@ -305,7 +322,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				throw new RuntimeException("Test", new Exception("Inner"));
 			} catch (Exception e) {
-				showExceptionDialog(e);
+				showExceptionDialog("Test 123",e);
 			} catch (Error e) {
 				showExceptionDialog(e);
 			}

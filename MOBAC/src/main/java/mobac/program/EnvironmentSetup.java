@@ -152,6 +152,9 @@ public class EnvironmentSetup {
 			EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
 			Layer layer = new Layer(atlas, "GM New York");
 			MapSource ms = MapSourcesManager.getInstance().getSourceByName("Mapnik");
+			if (ms == null)
+				throw new RuntimeException("Unable to load map source Mapnik - invalid MOBAC installation.\n"
+						+ "Please reinstall MOBAC and try again.");
 			layer.addMapsAutocut("GM New York 16", ms, max, min, 16, null, 32000);
 			layer.addMapsAutocut("GM New York 14", ms, max, min, 14, null, 32000);
 			atlas.addLayer(layer);

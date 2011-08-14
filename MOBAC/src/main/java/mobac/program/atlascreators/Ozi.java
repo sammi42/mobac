@@ -99,13 +99,42 @@ public class Ozi extends AtlasCreator {
 		int width = (xMax - xMin + 1) * tileSize;
 		int height = (yMax - yMin + 1) * tileSize;
 
+		// Calculate the 100 pixel scale here for MM1B
+		// Supplied by MrPete, based on suggestion from Des Newman, author of OziExplorer
+		// Set latitude to midpoint (maxLat+minLat/2)
+		double midLat = Math.toRadians((latitudeMax + latitudeMin) / 2.0);
+
+		// Calculate 50 pixel Longitude for interpolation: Lon50 = 50/(ImagePixelWidth) * abs(maxLon - minLon)
+		double rlonMax = Math.toRadians(longitudeMax);
+		double rlonMin = Math.toRadians(longitudeMin);
+		double Lon50 = (50.0 / width) * Math.abs(rlonMax - rlonMin);
+
+		// Calculate midpoint Lon: midLon = (maxLon+minLon)/2
+		double midLon = (rlonMax + rlonMin) / 2.0;
+
+		// Set lonW and lonE to midpoint +/1 50 pixels: lonW = midLon - Lon50; lonE = midLon+Lon50
+		double lonW = midLon - Lon50;
+		double lonE = midLon + Lon50;
+
+		// Now do the calculation:
+		// d=2*asin(sqrt((sin((lat1-lat2)/2))^2 + cos(lat1)*cos(lat2)*(sin((lon1-lon2)/2))^2))
+		// d=2*asin(sqrt(0 + cos(lat1)*cos(lat2)*(sin((lon1-lon2)/2))^2))
+		double mDistA = Math.cos(midLat);
+		double mDistB = Math.sin((lonW - lonE) / 2.0);
+		double mDist = 2.0 * Math.asin(Math.sqrt(mDistA * mDistA * mDistB * mDistB));
+
+		// For the final scaling, convert to distance in meters (multiply by earth radius),
+		// then simply divide by 100 (100 pixels between the two reference points)
+		// We're using the polar radius, as this gives results very close to OziExplorer
+		double mm1b = 6399592 * mDist / 100.0;
+
 		mapWriter.write(prepareMapString(imageFileName, longitudeMin, longitudeMax, latitudeMin, latitudeMax, width,
-				height));
+				height, mm1b));
 		mapWriter.flush();
 	}
 
 	protected String prepareMapString(String fileName, double longitudeMin, double longitudeMax, double latitudeMin,
-			double latitudeMax, int width, int height) {
+			double latitudeMax, int width, int height, double mm1b) {
 
 		StringBuffer sbMap = new StringBuffer();
 
@@ -158,11 +187,6 @@ public class Ozi extends AtlasCreator {
 		sbMap.append(String.format(Locale.ENGLISH, mpllLine, 4, longitudeMin, latitudeMin));
 
 		sbMap.append("MOP,Map Open Position,0,0\r\n");
-
-		// The simple variant for calculating mm1b
-		// http://www.trekbuddy.net/forum/viewtopic.php?t=3755&postdays=0&postorder=asc&start=286
-		double mm1b = (longitudeMax - longitudeMin) * 111319;
-		mm1b *= Math.cos(Math.toRadians((latitudeMax + latitudeMin) / 2.0)) / width;
 
 		sbMap.append(String.format(Locale.ENGLISH, "MM1B, %2.6f\r\n", mm1b));
 

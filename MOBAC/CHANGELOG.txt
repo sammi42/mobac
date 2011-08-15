@@ -15,7 +15,9 @@
  - Removed map source: Open Cycle Map (request by Andy Allan)
  + New map source: OSMapa-Topo (Poland)
  + Map source tile store coverage: button for hiding colored layer added
- + OziExplorer/Trekbuddy: MM1B calculation improved (patch by MrPete #3026830) 
+ + OziExplorer/Trekbuddy: MM1B calculation improved (patch by MrPete #3026830)
+ + Custom XML map source: {$serverpart} / <serverParts> implemented for 
+    balancing load among multiple servers with different DNS names 
 
 1.9 beta 6 (2011-06-21)
  + New atlas format: Geocaching Live offline maps

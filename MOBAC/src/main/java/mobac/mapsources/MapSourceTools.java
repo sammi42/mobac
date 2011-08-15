@@ -84,9 +84,12 @@ public class MapSourceTools {
 	public static String formatMapUrl(String mapUrl, int serverNum, int zoom, int tilex, int tiley) {
 		String tmp = mapUrl;
 		tmp = tmp.replace("{$servernum}", Integer.toString(serverNum));
-		tmp = tmp.replace("{$x}", Integer.toString(tilex));
-		tmp = tmp.replace("{$y}", Integer.toString(tiley));
-		tmp = tmp.replace("{$z}", Integer.toString(zoom));
-		return tmp;
+		return formatMapUrl(tmp, zoom, tilex, tiley);
+	}
+
+	public static String formatMapUrl(String mapUrl, String serverPart, int zoom, int tilex, int tiley) {
+		String tmp = mapUrl;
+		tmp = tmp.replace("{$serverpart}", serverPart);
+		return formatMapUrl(tmp, zoom, tilex, tiley);
 	}
 }

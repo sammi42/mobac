@@ -26,6 +26,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -74,6 +75,11 @@ public class CustomMapSource implements HttpMapSource {
 	@XmlElement(required = false, defaultValue = "false")
 	private boolean ignoreErrors = false;
 
+	@XmlElement(required = false, defaultValue = "")
+	@XmlList
+	private String[] serverParts = null;
+	private int currentServerPart = 0;
+
 	private MapSourceLoaderInfo loaderInfo = null;
 
 	/**
@@ -119,7 +125,13 @@ public class CustomMapSource implements HttpMapSource {
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return MapSourceTools.formatMapUrl(url, zoom, tilex, tiley);
+		if (serverParts == null || serverParts.length == 0) {
+			return MapSourceTools.formatMapUrl(url, zoom, tilex, tiley);
+		} else {
+			currentServerPart = (currentServerPart + 1) % serverParts.length;
+			String serverPart = serverParts[currentServerPart];
+			return MapSourceTools.formatMapUrl(url, serverPart, zoom, tilex, tiley);
+		}
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,

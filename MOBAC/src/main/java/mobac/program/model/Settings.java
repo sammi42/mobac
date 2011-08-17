@@ -43,6 +43,7 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import mobac.gui.actions.GpxLoad;
 import mobac.gui.panels.JCoordinatesPanel;
@@ -216,7 +217,7 @@ public class Settings {
 
 	public final SettingsPaperAtlas paperAtlas = new SettingsPaperAtlas();
 	public final SettingsWgsGrid wgsGrid = new SettingsWgsGrid();
-	
+
 	public boolean ignoreDlErrors = false;
 
 	private Settings() {
@@ -435,12 +436,7 @@ public class Settings {
 		return unitSystem;
 	}
 
-	public File getAtlasOutputDirectory() {
-		if (directories.atlasOutputDirectory != null)
-			return new File(directories.atlasOutputDirectory);
-		return new File(DirectoryManager.currentDir, "atlases");
-	}
-
+	@XmlTransient
 	public File getMapSourcesDirectory() {
 		String mapSourcesDirCfg = directories.mapSourcesDirectory;
 		File mapSourcesDir;
@@ -451,14 +447,17 @@ public class Settings {
 		return mapSourcesDir;
 	}
 
+	@XmlTransient
+	public File getAtlasOutputDirectory() {
+		if (directories.atlasOutputDirectory != null)
+			return new File(directories.atlasOutputDirectory);
+		return new File(DirectoryManager.currentDir, "atlases");
+	}
+
 	public String getAtlasOutputDirectoryString() {
 		if (directories.atlasOutputDirectory == null)
 			return "";
 		return directories.atlasOutputDirectory;
-	}
-
-	public String getVersion() {
-		return version;
 	}
 
 	/**
@@ -472,4 +471,9 @@ public class Settings {
 			dir = null;
 		directories.atlasOutputDirectory = dir;
 	}
+
+	public String getVersion() {
+		return version;
+	}
+
 }

@@ -43,7 +43,6 @@ p,ul,ol {
 <body>
 	<h1>Mobile Atlas Creator - Read-me</h1>
 	<p>Welcome to Mobile Atlas Creator read-me file for end users.</p>
-	<p>Readme version: $LastChangedDate$</p>
 	<p>Before January 2010 this project was known as "TrekBuddy Atlas
 		Creator".</p>
 	<p>
@@ -52,114 +51,74 @@ p,ul,ol {
 	</p>
 	<h2>Table of contents</h2>
 	<ul style="margin-left: 50px;">
-		<li><a href="#License">License</a>
-		</li>
-		<li><a href="#Description">Description</a>
-		</li>
+		<li><a href="#License">License</a></li>
+		<li><a href="#Description">Description</a></li>
 		<li><a href="#Requirements">Requirements</a>
 			<ul style="margin-left: 10px;">
-				<li><a href="#SQLite">SQLite atlas formats</a>
-				</li>
-				<li><a href="#JAI">Java Advanced Imaging" (JAI)</a>
-				</li>
-			</ul></li>
-		<li><a href="#Installation">Installation</a>
+				<li><a href="#JAI">Java Advanced Imaging" (JAI)</a></li>
+			</ul>
 		</li>
-		<li><a href="#Start">Application start</a>
-		</li>
+		<li><a href="#Installation">Installation</a></li>
+		<li><a href="#Start">Application start</a></li>
 		<li><a href="#AtlasFormats">The different atlas formats</a>
 			<ul style="margin-left: 10px;">
-				<li><a href="#AFTrackOSZ">AFTrack (OSZ)</a>
-				</li>
-				<li><a href="#AndNav">AndNav</a>
-				</li>
-				<li><a href="#BigPlanet">Big Planet Tracks</a>
-				</li>
+				<li><a href="#AFTrackOSZ">AFTrack (OSZ)</a></li>
+				<li><a href="#AndNav">AndNav</a></li>
+				<li><a href="#BigPlanet">Big Planet Tracks</a></li>
 				<!-- CacheBox  -->
-				<li><a href="#CacheWolf">CacheWolf</a>
-				</li>
-				<li><a href="#GarminCustom">Garmin Custom maps</a>
-				</li>
-				<li><a href="#Glopus">Glopus</a>
-				</li>
-				<li><a href="#GMF">Glopus Map File / AFTrack (GMF)</a>
-				</li>
-				<li><a href="#KMZ">Google Earth Overlay (KMZ)</a>
-				</li>
+				<li><a href="#CacheWolf">CacheWolf</a></li>
+				<li><a href="#GarminCustom">Garmin Custom maps</a></li>
+				<li><a href="#Glopus">Glopus</a></li>
+				<li><a href="#GMF">Glopus Map File / AFTrack (GMF)</a></li>
+				<li><a href="#KMZ">Google Earth Overlay (KMZ)</a></li>
 				<!-- GPS Sports Tracker -->
-				<li><a href="#Magellan">Magellan RMP</a>
-				</li>
-				<li><a href="#MAPLORER">MAPLORER</a>
-				</li>
-				<li><a href="#Maverick">Maverick</a>
-				</li>
-				<li><a href="#MGMaps">MGMaps</a>
-				</li>
-				<li><a href="#MTE">Mobile Trail Explorer (MTE)</a>
-				</li>
-				<li><a href="#NaviComputer">NaviComputer</a>
-				</li>
-				<li><a href="#nfComPass">nfComPass</a>
-				</li>
-				<li><a href="#OruxMaps">OruxMaps</a>
-				</li>
+				<li><a href="#Magellan">Magellan RMP</a></li>
+				<li><a href="#MAPLORER">MAPLORER</a></li>
+				<li><a href="#Maverick">Maverick</a></li>
+				<li><a href="#MGMaps">MGMaps</a></li>
+				<li><a href="#MTE">Mobile Trail Explorer (MTE)</a></li>
+				<li><a href="#NaviComputer">NaviComputer</a></li>
+				<li><a href="#nfComPass">nfComPass</a></li>
+				<li><a href="#OruxMaps">OruxMaps</a></li>
 				<!-- OSMAND -->
-				<li><a href="#Osmdroid">Osmdroid</a>
-				</li>
-				<li><a href="#OSMTracker">OSMTracker</a>
-				</li>
-				<li><a href="#Ozi">OziExplorer / large PNG image</a>
-				</li>
-				<li><a href="#PathAway">PathAway</a>
-				</li>
-				<li><a href="#RMaps">RMaps</a>
-				</li>
-				<li><a href="#SportsTracker">[Nokia] Sports Tracker</a>
-				</li>
-				<li><a href="#TTQV">Touratech QV</a>
-				</li>
-				<li><a href="#TrekBuddy">TrekBuddy</a>
-				</li>
-				<li><a href="#TwoNav">TwoNav (RMAP)</a>
-				</li>
+				<li><a href="#Osmdroid">Osmdroid</a></li>
+				<li><a href="#OSMTracker">OSMTracker</a></li>
+				<li><a href="#Ozi">OziExplorer / large PNG image</a></li>
+				<li><a href="#PathAway">PathAway</a></li>
+				<li><a href="#RMaps">RMaps</a></li>
+				<li><a href="#SportsTracker">[Nokia] Sports Tracker</a></li>
+				<li><a href="#TTQV">Touratech QV</a></li>
+				<li><a href="#TrekBuddy">TrekBuddy</a></li>
+				<li><a href="#TwoNav">TwoNav (RMAP)</a></li>
 				<!-- UBlox -->
-			</ul></li>
-		<li><a href="#Enhancement">Enhancement requests</a>
+			</ul>
 		</li>
-		<li><a href="#Bugs">Problems, Bugs &amp; Errors</a>
-		</li>
-		<li><a href="#Limitations">Known problems and limitations</a>
-		</li>
+		<li><a href="#Enhancement">Enhancement requests</a></li>
+		<li><a href="#Bugs">Problems, Bugs &amp; Errors</a></li>
+		<li><a href="#Limitations">Known problems and limitations</a></li>
 		<li><a href="#AdvancedUsers">Details for advanced users</a>
 			<ul style="margin-left: 10px;">
 				<li><a href="#DirectoryConfig">Specifying directory
-						configuration</a>
-				</li>
+						configuration</a></li>
 				<li><a href="#TileStoreDir">Moving the tile store directory</a>
 				</li>
 			</ul>
 		<li><a href="#CustomMapSource">Custom map sources</a>
 			<ul style="margin-left: 10px;">
 				<li><a href="#SimpleCustomMapSource">Simple custom map
-						sources</a>
-				</li>
-				<li><a href="#CustomWMSMapSource">Custom WMS map sources</a>
-				</li>
+						sources</a></li>
+				<li><a href="#CustomWMSMapSource">Custom WMS map sources</a></li>
 				<li><a href="#CustomMultiLayerMapSource">Custom multi-layer
-						map sources</a>
-				</li>
+						map sources</a></li>
 				<li><a href="#CloudMadeMapSource">Custom CloudMade map
-						sources</a>
-				</li>
+						sources</a></li>
 				<li><a href="#BeanShellMapSource">Custom BeanShell map
-						sources</a>
-				</li>
-				<li><a href="#CustomMapPack">Custom MapPack</a>
-				</li>
+						sources</a></li>
+				<li><a href="#CustomMapPack">Custom MapPack</a></li>
 				<li><a href="#FileBased">Custom atlas as map source /
-						locally generated tiles</a>
-				</li>
-			</ul></li>
+						locally generated tiles</a></li>
+			</ul>
+		</li>
 	</ul>
 	<hr>
 
@@ -206,25 +165,6 @@ p,ul,ol {
 		should prefer the Java Runtime provided by Sun/Oracle. Especially the
 		OpenJDK has some bugs regarding MOBAC and tends to crash on certain
 		situations.</p>
-	<h3>
-		<a name="SQLite">SQLite (optional)</a>
-	</h3>
-	<p>
-		Some atlas formats uses a SQLite database for storing the tiles. For
-		creating SQLite database the additional Java library <a
-			href="http://www.zentus.com/sqlitejdbc/">SQLiteJDBC</a> is required.
-		MOBAC has been tested with <a
-			href="http://files.zentus.com/sqlitejdbc/sqlitejdbc-v056.jar">sqlitejdbc-v056.jar</a>
-		- newer versions should also work.
-	</p>
-	<p>
-		Installation of the additional SQLite libraries is pretty simple: Just
-		jownload the JAR file and place it in the same directory where
-		<tt>Mobile_Atlas_Creator.jar</tt>
-		is located. Alternatively you can place it in any path covered by the
-		JAVA search path. The next time MOBAC is started the SQLite library is
-		loaded and can be used.
-	</p>
 	<h3>
 		<a name="JAI">Java Advanced Imaging (optional)</a>
 	</h3>
@@ -328,13 +268,9 @@ p,ul,ol {
 			Tracks</a> (Android application) you have to select <b>Big Planet
 			Tracks SQLite</b> as format in atlas format selection dialog that appears
 		when starting a new atlas (menu <b>Atlas</b> entry <b>New Atlas</b>).<br>
-		Please not that this atlas format requires additional libraries which
-		are not shipped with Mobile Atlas Creator. Read section <a
-			href="#SQLite">SQLite library</a> for details what libraries are
-		required and how to obtain them.<br> The atlas format BigPlanet
-		SQLite does not support all features provided by Mobile Atlas Creator
-		the following settings can not be used or are ignored when creating
-		atlases using this output format:
+		The atlas format BigPlanet SQLite does not support all features
+		provided by Mobile Atlas Creator the following settings can not be
+		used or are ignored when creating atlases using this output format:
 	</p>
 	<ul>
 		<li>Recreate/adjust map tiles with custom tile size (height and
@@ -665,15 +601,11 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		For creating atlases, compatible with NaviComputer, you have to select
 		<b>NaviComputer (NMAP)</b> as format in atlas format selection dialog
 		that appears when starting a new atlas (menu <b>Atlas</b> entry <b>New
-			Atlas</b>).<br> Please not that this atlas format requires
-		additional libraries which are not shipped with Mobile Atlas Creator.
-		Read section <a href="#SQLite">SQLite library</a> for details what
-		libraries are required and how to obtain them.<br> After defining
-		the maps and layers for the atlas to be created, start atlas download
-		and creation via the button <b>Create Atlas</b>. Once download and
-		creation has completed, the generated file with the extension nmap can
-		be found in the MOBAC output directory. This *.nmap-file is the
-		required input file for NaviComputer.
+			Atlas</b>).<br> After defining the maps and layers for the atlas to
+		be created, start atlas download and creation via the button <b>Create
+			Atlas</b>. Once download and creation has completed, the generated file
+		with the extension nmap can be found in the MOBAC output directory.
+		This *.nmap-file is the required input file for NaviComputer.
 	</p>
 	<!-- *************************************************************************** -->
 	<h3>
@@ -717,10 +649,6 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 	<p>The output format of an "atlas" for OruxMaps is one or more map
 		directories in the atlas directory. You have to copy those maps onto
 		your device (default directory: /oruxmaps/mapfiles/).</p>
-	<p>
-		If you select OruxMaps Sqlite format, then you need SQLite native
-		libraries; see <a href="#SQLite">SQLite atlas formats</a>
-	</p>
 	<!-- *************************************************************************** -->
 	<h3>
 		<a name="Osmdroid">Creating atlases for Osmdroid</a>
@@ -828,13 +756,10 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 			href="http://robertdeveloper.blogspot.com/search/label/rmaps">RMaps</a>
 		(Android application) you have to select <b>RMaps SQLite</b> as format
 		in atlas format selection dialog that appears when starting a new
-		atlas (menu <b>Atlas</b> entry <b>New Atlas</b>).<br> Please not
-		that this atlas format requires additional libraries which are not
-		shipped with Mobile Atlas Creator. Read section <a href="#SQLite">SQLite
-			library</a> for details what libraries are required and how to obtain
-		them.<br> The atlas format RMaps does not support all features
-		provided by Mobile Atlas Creator the following settings can not be
-		used or are ignored when creating atlases using this output format:
+		atlas (menu <b>Atlas</b> entry <b>New Atlas</b>).<br> The atlas
+		format RMaps does not support all features provided by Mobile Atlas
+		Creator the following settings can not be used or are ignored when
+		creating atlases using this output format:
 	</p>
 	<ul>
 		<li>Recreate/adjust map tiles with custom tile size (height and
@@ -863,12 +788,9 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 	<p>Copy the created atlas (the whole folder) into the following
 		folder of youre phone (depending of the Sports Tracker version):</p>
 	<ul>
-		<li>Sports Tracker 1.76: <tt>E:\system\data\Maps\Street\</tt>
-		</li>
-		<li>Sports Tracker 2.x: <tt>E:\system\data\Maps\Street\</tt>
-		</li>
-		<li>Sports Tracker 3.x: <tt>E:\system\data\STMaps\Street\</tt>
-		</li>
+		<li>Sports Tracker 1.76: <tt>E:\system\data\Maps\Street\</tt></li>
+		<li>Sports Tracker 2.x: <tt>E:\system\data\Maps\Street\</tt></li>
+		<li>Sports Tracker 3.x: <tt>E:\system\data\STMaps\Street\</tt></li>
 	</ul>
 	<p>For changing the zoom level inside Storts Tracker press 5 to
 		zoom in and 0 to zoom out.</p>
@@ -1079,7 +1001,8 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		<li>Install Mobile Atlas Creator into a directory which path
 			contains an "!" (exclamation mark) because of this <a
 			href="http://bugs.sun.com/view_bug.do?bug_id=4523159">Sun Java
-				bug</a></li>
+				bug</a>
+		</li>
 		<li>Do not use OpenJDK if you want to work with GPX tracks in
 			Mobile Atlas Creator</li>
 		<li>On Windows without a system proxy set (see connection
@@ -1120,8 +1043,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		<li>Open <tt>settings.xml</tt> in an text editor</li>
 		<li>Inside of the tag <tt>&lt;settings&gt;</tt> search for the
 			tag <tt>&lt;directories&gt;</tt>. Inside this tag create a new tag
-			named <tt>&lt;tileStoreDirectory&gt;</tt>
-		</li>
+			named <tt>&lt;tileStoreDirectory&gt;</tt></li>
 		<li>Set the path name to the value of this tag (Windows users
 			should replace backslashes with a slashes)</li>
 		<li>(optional) Copy or move the content of the old tile store
@@ -1188,11 +1110,9 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		<li><b>{$z}</b> for the zoom level - number range: [<i>minZoom</i>
 			.. <i>maxZoom</i>]</li>
 		<li><b>{$x}</b> for the x tile coordinate - number range: [0..2<sup><i>zoom
-					level</i>
-		</sup>]</li>
+					level</i> </sup>]</li>
 		<li><b>{$y}</b> for the y tile coordinate - number range: [0..2<sup><i>zoom
-					level</i>
-		</sup>]</li>
+					level</i> </sup>]</li>
 	</ul>
 	<p>
 		Example file for download: <a

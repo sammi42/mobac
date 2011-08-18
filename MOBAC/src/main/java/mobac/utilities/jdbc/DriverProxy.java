@@ -21,14 +21,14 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
 /**
- * Proxies all calls to {@link Driver} that has been loaded using a custom
- * {@link ClassLoader}. This is necessary as the SQL {@link DriverManager} does
- * only accept drivers loaded by the <code>SystemClassLoader</code>.
+ * Proxies all calls to {@link Driver} that has been loaded using a custom {@link ClassLoader}. This is necessary as the
+ * SQL {@link DriverManager} does only accept drivers loaded by the <code>SystemClassLoader</code>.
  */
 public class DriverProxy implements Driver {
 
@@ -41,13 +41,12 @@ public class DriverProxy implements Driver {
 			InstantiationException, IllegalAccessException {
 		Class<Driver> c = (Class<Driver>) classLoader.loadClass(className);
 		driver = c.newInstance();
-		log.info("SQL driver loaded: v" + driver.getMajorVersion() + "." + driver.getMinorVersion()
-				+ " [" + driver.getClass().getName() + "]");
+		log.info("SQL driver loaded: v" + driver.getMajorVersion() + "." + driver.getMinorVersion() + " ["
+				+ driver.getClass().getName() + "]");
 	}
 
-	public static void loadSQLDriver(String className, ClassLoader classLoader)
-			throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-			SQLException {
+	public static void loadSQLDriver(String className, ClassLoader classLoader) throws ClassNotFoundException,
+			InstantiationException, IllegalAccessException, SQLException {
 		DriverProxy driver = new DriverProxy(className, classLoader);
 		DriverManager.registerDriver(driver);
 	}
@@ -74,6 +73,13 @@ public class DriverProxy implements Driver {
 
 	public boolean jdbcCompliant() {
 		return driver.jdbcCompliant();
+	}
+
+	/**
+	 * Required for Java 7
+	 */
+	public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		throw new SQLFeatureNotSupportedException();
 	}
 
 }

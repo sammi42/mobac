@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9 beta 7 (2011-08-??) 
+1.9 (2011-08-18) 
  ! Calculation problem in MGMaps atlas format (fix by Pierre-Luc Paour)
  ! Custom mapsource from RMaps SQLite atlas shows wrong zoom levels 
  - Removed map source: Open Cycle Map (request by Andy Allan)
@@ -17,7 +17,8 @@
  + Map source tile store coverage: button for hiding colored layer added
  + OziExplorer/Trekbuddy: MM1B calculation improved (patch by MrPete #3026830)
  + Custom XML map source: {$serverpart} / <serverParts> implemented for 
-    balancing load among multiple servers with different DNS names 
+    balancing load among multiple servers with different DNS names
+ + SQLite library included in MOBAC distribution 
 
 1.9 beta 6 (2011-06-21)
  + New atlas format: Geocaching Live offline maps

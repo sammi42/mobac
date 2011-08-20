@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.1 (2011-08-??) 
+ ! Opening settings dialog: ClassCastException on Linux/OpenJDK 
+
 1.9 (2011-08-18) 
  ! Calculation problem in MGMaps atlas format (fix by Pierre-Luc Paour)
  ! Custom mapsource from RMaps SQLite atlas shows wrong zoom levels 

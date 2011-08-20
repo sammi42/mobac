@@ -40,51 +40,40 @@ import mobac.program.model.SettingsWgsGrid;
 import mobac.utilities.GBCTable;
 
 public class SettingsGUIWgsGrid extends JPanel {
-	
-	private static final long
-		serialVersionUID = -3067609813682787669L;
 
-	private final FontChooser
-		fontChooser = new FontChooser();
+	private static final long serialVersionUID = -3067609813682787669L;
 
-	private final JButton
-		jButtonFont = new JButton(FontChooser.encodeFont(FontChooser.DEFAULT));
+	private final FontChooser fontChooser = new FontChooser();
 
-	private final JCheckBox
-		jCheckBoxCompressLabels = new JCheckBox();
-	
-	private final JPanel
-		jPanelColor = new JPanel();
-	
-	private final SpinnerNumberModel
-		modelWidth = new SpinnerNumberModel(0.5d, 0.5d, 5, 0.5);
-	
-	private final JSpinner
-		jSpinnerWidth = new JSpinner(modelWidth);
-	
-	private JLabel
-		jLabelColor = new JLabel(),
-		jLabelFont = new JLabel(),
-		jLabelWidth = new JLabel();
-	
-	private String
-		title;
+	private final JButton jButtonFont = new JButton(FontChooser.encodeFont(FontChooser.DEFAULT));
+
+	private final JCheckBox jCheckBoxCompressLabels = new JCheckBox();
+
+	private final JPanel jPanelColor = new JPanel();
+
+	private final SpinnerNumberModel modelWidth = new SpinnerNumberModel(0.5d, 0.5d, 5.0d, 0.5d);
+
+	private final JSpinner jSpinnerWidth = new JSpinner(modelWidth);
+
+	private JLabel jLabelColor = new JLabel(), jLabelFont = new JLabel(), jLabelWidth = new JLabel();
+
+	private String title;
 
 	public SettingsGUIWgsGrid() {
 		super(new GridBagLayout());
 		i18n();
-		
+
 		jButtonFont.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fontChooser.show();
-				if(fontChooser.wasCanceled()) {
+				if (fontChooser.wasCanceled()) {
 					return;
 				}
 				String text = FontChooser.encodeFont(fontChooser.getFont());
 				jButtonFont.setText(text);
 			}
 		});
-		
+
 		jPanelColor.setPreferredSize(new Dimension(64, 18));
 		jPanelColor.setOpaque(true);
 		jPanelColor.setBorder(BorderFactory.createEtchedBorder());
@@ -92,13 +81,15 @@ public class SettingsGUIWgsGrid extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				Color color = jPanelColor.getBackground();
 				color = JColorChooser.showDialog(jPanelColor, title, color);
-				if(color != null) {
+				if (color != null) {
 					jPanelColor.setBackground(color);
 				}
 			}
+
 			public void mouseEntered(MouseEvent e) {
 				jPanelColor.setBorder(BorderFactory.createRaisedBevelBorder());
 			}
+
 			public void mouseExited(MouseEvent e) {
 				jPanelColor.setBorder(BorderFactory.createEtchedBorder());
 			}
@@ -114,10 +105,11 @@ public class SettingsGUIWgsGrid extends JPanel {
 		add(jButtonFont, gbc.incX());
 		add(Box.createHorizontalGlue(), gbc.incX().fillH());
 	}
-	
+
 	public void i18n() {
 		jCheckBoxCompressLabels.setText("Compress labels");
-		jCheckBoxCompressLabels.setToolTipText("If selected, the coordinate labels will not containt explicit information.");
+		jCheckBoxCompressLabels
+				.setToolTipText("If selected, the coordinate labels will not containt explicit information.");
 		setBorder(SettingsGUI.createSectionBorder("WGS Grid"));
 		title = "Choose grid color";
 		jLabelWidth.setText("Width:");
@@ -137,7 +129,7 @@ public class SettingsGUIWgsGrid extends JPanel {
 	public void applySettings(Settings s) {
 		applySettings(s.wgsGrid);
 	}
-	
+
 	public void applySettings(SettingsWgsGrid s) {
 		s.compressLabels = jCheckBoxCompressLabels.isSelected();
 		s.font = fontChooser.getFont();
@@ -148,12 +140,12 @@ public class SettingsGUIWgsGrid extends JPanel {
 	public void loadSettings(Settings s) {
 		loadSettings(s.wgsGrid);
 	}
-	
+
 	public void loadSettings(SettingsWgsGrid s) {
 		jCheckBoxCompressLabels.setSelected(s.compressLabels);
 		fontChooser.setFont(s.font);
 		jButtonFont.setText(FontChooser.encodeFont(s.font));
 		jPanelColor.setBackground(s.color);
-		modelWidth.setValue(s.width);
+		modelWidth.setValue((double) s.width);
 	}
 }

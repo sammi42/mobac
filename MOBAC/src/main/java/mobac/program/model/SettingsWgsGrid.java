@@ -34,7 +34,9 @@ public class SettingsWgsGrid implements Cloneable {
 
 	public static final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
 
-	public static final float WIDTH_DEFAULT = 1f, WIDTH_MIN = 0.5f, WIDTH_MAX = 5f;
+	public static final float WIDTH_DEFAULT = 1f;
+	public static final float WIDTH_MIN = 0.5f;
+	public static final float WIDTH_MAX = 5f;
 
 	@XmlElement(defaultValue = "#0000FF")
 	@XmlJavaTypeAdapter(ColorAdapter.class)

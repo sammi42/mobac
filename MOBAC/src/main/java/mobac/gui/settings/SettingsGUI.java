@@ -155,8 +155,8 @@ public class SettingsGUI extends JDialog {
 
 	private MapSourcesListModel disabledMapSourcesModel;
 
-	private final SettingsGUIPaper paperAtlas = new SettingsGUIPaper();
-	private final SettingsGUIWgsGrid display = new SettingsGUIWgsGrid();
+	private final SettingsGUIPaper paperAtlas;
+	private final SettingsGUIWgsGrid display;
 
 	public static void showSettingsDialog(final JFrame owner) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -173,6 +173,10 @@ public class SettingsGUI extends JDialog {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setModal(true);
 		setMinimumSize(new Dimension(300, 300));
+
+		paperAtlas = new SettingsGUIPaper();
+		display = new SettingsGUIWgsGrid();
+
 		createJFrame();
 		createTabbedPane();
 		createJButtons();

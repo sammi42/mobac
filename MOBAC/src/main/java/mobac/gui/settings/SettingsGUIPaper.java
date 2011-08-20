@@ -73,39 +73,52 @@ public class SettingsGUIPaper extends JPanel {
 		return jPanel;
 	}
 
-	private final JButton jButtonDefaults = new JButton(), jButtonExport = new JButton(),
-			jButtonImport = new JButton();
+	private final JButton jButtonDefaults = new JButton();
+	private final JButton jButtonExport = new JButton();
+	private final JButton jButtonImport = new JButton();
 
-	private final JCheckBox jCheckBoxCompass = new JCheckBox(), jCheckBoxLandscape = new JCheckBox(),
-			jCheckBoxPageNumbers = new JCheckBox("", true), jCheckBoxScaleBar = new JCheckBox(),
-			jCheckBoxWgsGrid = new JCheckBox("", true);
+	private final JCheckBox jCheckBoxCompass = new JCheckBox();
+	private final JCheckBox jCheckBoxLandscape = new JCheckBox();
+	private final JCheckBox jCheckBoxPageNumbers = new JCheckBox("", true);
+	private final JCheckBox jCheckBoxScaleBar = new JCheckBox();
+	private final JCheckBox jCheckBoxWgsGrid = new JCheckBox("", true);
 
 	private final JFileChooser jFileChooser = new JFileChooser();
 
-	private final TitledBorder titledBorderActions = SettingsGUI.createSectionBorder(""),
-			titledBorderAdditions = SettingsGUI.createSectionBorder(""), titledBorderAdvanced = SettingsGUI
-					.createSectionBorder(""), titledBorderMargins = SettingsGUI.createSectionBorder(""),
-			titledBorderSize = SettingsGUI.createSectionBorder("");
+	private final TitledBorder titledBorderActions = SettingsGUI.createSectionBorder("");
+	private final TitledBorder titledBorderAdditions = SettingsGUI.createSectionBorder("");
+	private final TitledBorder titledBorderAdvanced = SettingsGUI.createSectionBorder("");
+	private final TitledBorder titledBorderMargins = SettingsGUI.createSectionBorder("");
+	private final TitledBorder titledBorderSize = SettingsGUI.createSectionBorder("");
 
 	private final JPanel jPanelActions = createSection(titledBorderActions),
 			jPanelAdditions = createSection(titledBorderAdditions),
 			jPanelAdvanced = createSection(titledBorderAdvanced), jPanelMargins = createSection(titledBorderMargins),
 			jPanelSize = createSection(titledBorderSize);
 
-	private final JComboBox jComboBoxFormat = new JComboBox(Format.values()), jComboBoxWgsDensity = new JComboBox(
-			WgsDensity.values());
+	private final JComboBox jComboBoxFormat = new JComboBox(Format.values());
+	private final JComboBox jComboBoxWgsDensity = new JComboBox(WgsDensity.values());
 
-	private final JRadioButton jRadioButtonCustom = new JRadioButton("", true), jRadioButtonDefault = new JRadioButton(
-			"", true), jRadioButtonSelection = new JRadioButton("", true);
+	private final JRadioButton jRadioButtonCustom = new JRadioButton("", true);
+	private final JRadioButton jRadioButtonDefault = new JRadioButton("", true);
+	private final JRadioButton jRadioButtonSelection = new JRadioButton("", true);
 
 	private final SpinnerNumberModel modelCompression = new SpinnerNumberModel(SettingsPaperAtlas.COMPRESSION_DEFAULT,
-			SettingsPaperAtlas.COMPRESSION_MIN, SettingsPaperAtlas.COMPRESSION_MAX, 1),
-			modelCrop = new SpinnerNumberModel(SettingsPaperAtlas.CROP_DEFAULT, SettingsPaperAtlas.CROP_MIN,
-					SettingsPaperAtlas.CROP_MAX, 1), modelDpi = new SpinnerNumberModel(SettingsPaperAtlas.DPI_DEFAULT,
-					SettingsPaperAtlas.DPI_MIN, SettingsPaperAtlas.DPI_MAX, 1), modelHeight = new SpinnerNumberModel(),
-			modelMarginBottom = new SpinnerNumberModel(), modelMarginLeft = new SpinnerNumberModel(),
-			modelMarginRight = new SpinnerNumberModel(), modelMarginTop = new SpinnerNumberModel(),
-			modelOverlap = new SpinnerNumberModel(), modelWidth = new SpinnerNumberModel();
+			SettingsPaperAtlas.COMPRESSION_MIN, SettingsPaperAtlas.COMPRESSION_MAX, 1);
+
+	private final SpinnerNumberModel modelCrop = new SpinnerNumberModel(SettingsPaperAtlas.CROP_DEFAULT,
+			SettingsPaperAtlas.CROP_MIN, SettingsPaperAtlas.CROP_MAX, 1), modelDpi = new SpinnerNumberModel(
+			SettingsPaperAtlas.DPI_DEFAULT, SettingsPaperAtlas.DPI_MIN, SettingsPaperAtlas.DPI_MAX, 1);
+
+	private final SpinnerNumberModel modelHeight = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
+	private final SpinnerNumberModel modelWidth = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
+
+	private final SpinnerNumberModel modelMarginBottom = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
+	private final SpinnerNumberModel modelMarginLeft = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
+	private final SpinnerNumberModel modelMarginRight = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
+	private final SpinnerNumberModel modelMarginTop = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
+
+	private final SpinnerNumberModel modelOverlap = new SpinnerNumberModel(0.0, 0.0, 0.0, 1.0);
 
 	private final JSpinner jSpinnerDpi = new JSpinner(modelDpi), jSpinnerWidth = new JSpinner(modelWidth),
 			jSpinnerHeight = new JSpinner(modelHeight), jSpinnerMarginTop = new JSpinner(modelMarginTop),

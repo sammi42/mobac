@@ -10,7 +10,9 @@
  - = Features that has been removed
 
 1.9.1 (2011-08-??) 
- ! Opening settings dialog: ClassCastException on Linux/OpenJDK 
+ ! Opening settings dialog: ClassCastException on Linux/OpenJDK
+ ! Custom atlas as map source fixed for atlas formats AndNav, BackCountry 
+    Navigator and Osmand 
 
 1.9 (2011-08-18) 
  ! Calculation problem in MGMaps atlas format (fix by Pierre-Luc Paour)

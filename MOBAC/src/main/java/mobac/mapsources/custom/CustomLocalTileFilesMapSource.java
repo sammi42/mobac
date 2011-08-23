@@ -43,8 +43,12 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
+import org.apache.log4j.Logger;
+
 @XmlRootElement(name = "localTileFiles")
 public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
+
+	private static final Logger log = Logger.getLogger(CustomLocalTileFilesMapSource.class);
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
@@ -119,16 +123,17 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 								if (parts.length < 2 || parts.length > 3)
 									return false;
 								syntax += "." + parts[1];
-								if (parts.length == 3) {
-									syntax += parts[2];
-									tileImageType = TileImageType.getTileImageType(parts[2]);
-								} else
-									tileImageType = TileImageType.getTileImageType(parts[1]);
+								if (parts.length == 3)
+									syntax += "." + parts[2];
+								tileImageType = TileImageType.getTileImageType(parts[1]);
 								fileSyntax = syntax;
+								log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
 								throw new RuntimeException("break");
 							}
 						});
+					} catch (RuntimeException e) {
 					} catch (Exception e) {
+						log.error(e.getMessage());
 					}
 					return;
 				}

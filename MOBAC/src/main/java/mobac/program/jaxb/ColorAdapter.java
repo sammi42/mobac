@@ -28,12 +28,16 @@ public class ColorAdapter extends XmlAdapter<String, Color> {
 		if (color.getAlpha() == 255)
 			return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 		else
-			return String.format("#%02x%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue(), color
-					.getAlpha());
+			return String.format("#%02x%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue(),
+					color.getAlpha());
 	}
 
 	@Override
 	public Color unmarshal(String value) throws Exception {
+		return parseColor(value);
+	}
+
+	public static Color parseColor(String value) throws UnmarshalException {
 		value = value.trim();
 		int length = value.length();
 		if (!value.startsWith("#"))

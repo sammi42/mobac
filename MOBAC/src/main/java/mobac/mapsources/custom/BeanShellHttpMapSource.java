@@ -15,6 +15,7 @@ import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Charsets;
 import mobac.utilities.Utilities;
@@ -29,6 +30,8 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	private static int NUM = 0;
 
 	private final Interpreter i;
+
+	private Color backgroundColor = Color.BLACK;
 
 	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
 		FileInputStream in = new FileInputStream(f);
@@ -59,30 +62,43 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		Object o = i.get("name");
 		if (o != null)
 			name = (String) o;
+
 		o = i.get("tileSize");
 		if (o != null) {
 			int tileSize = ((Integer) o).intValue();
 			mapSpace = MapSpaceFactory.getInstance(tileSize, true);
 		} else
 			mapSpace = MercatorPower2MapSpace.INSTANCE_256;
+
 		o = i.get("minZoom");
 		if (o != null)
 			minZoom = ((Integer) o).intValue();
 		else
 			minZoom = 0;
+
 		o = i.get("maxZoom");
 		if (o != null)
 			maxZoom = ((Integer) o).intValue();
 		else
 			maxZoom = PreviewMap.MAX_ZOOM;
+
 		o = i.get("tileType");
 		if (o != null)
 			tileType = TileImageType.getTileImageType((String) o);
 		else
 			throw new EvalError("tileType definition missing", null, null);
+
 		o = i.get("tileUpdate");
 		if (o != null)
 			tileUpdate = (TileUpdate) o;
+
+		o = i.get("backgroundColor");
+		if (o != null)
+			try {
+				backgroundColor = ColorAdapter.parseColor((String) o);
+			} catch (javax.xml.bind.UnmarshalException e) {
+				throw new EvalError(e.getMessage(), null, null);
+			}
 	}
 
 	@Override
@@ -149,7 +165,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	}
 
 	public Color getBackgroundColor() {
-		return Color.BLACK;
+		return backgroundColor;
 	}
 
 }

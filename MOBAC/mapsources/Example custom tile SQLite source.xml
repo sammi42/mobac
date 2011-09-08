@@ -27,7 +27,7 @@ Not supported are: OruxMaps and Osmdroid
 	<backgroundColor>#000000</backgroundColor>
 	
 	<!-- 
-	optional: Specify the image type: PNG JPG or GIF 
+	optional: Specify the image type: PNG JPG or GIF (supported since MOBAC 1.9.1)
 	By default this value is detected automatically if not specified.  
 	-->
 	<!-- <tileImageType>PNG</tileImageType> -->

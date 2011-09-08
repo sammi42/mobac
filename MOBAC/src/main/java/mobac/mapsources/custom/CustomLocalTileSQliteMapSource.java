@@ -66,6 +66,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
 	private boolean initialized = false;
 
+	@XmlElement(required = false)
 	private TileImageType tileImageType = null;
 
 	@XmlElement(nillable = false, defaultValue = "CustomLocalSQLite")
@@ -88,6 +89,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	private String sqlMaxZoomStatement;
 	private String sqlMinZoomStatement;
 	private String sqlTileStatement;
+	private String sqlTileImageTypeStatement;
 
 	/**
 	 * SQLite connection with database file
@@ -162,6 +164,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			sqlMaxZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level DESC LIMIT 1;";
 			sqlMinZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level ASC LIMIT 1;";
 			sqlTileStatement = "SELECT tile_data from tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?;";
+			sqlTileImageTypeStatement = "SELECT tile_data from tiles LIMIT 1;";
 			break;
 		case RMaps:
 		case BigPlanetTracks:
@@ -169,15 +172,42 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			sqlMaxZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom DESC LIMIT 1;";
 			sqlMinZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom ASC LIMIT 1;";
 			sqlTileStatement = "SELECT image from tiles WHERE z=(17 - ?) AND x=? AND y=?;";
+			sqlTileImageTypeStatement = "SELECT image from tiles LIMIT 1;";
 			break;
 		case NaviComputer:
 			sqlMaxZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom DESC LIMIT 1;";
 			sqlMinZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom ASC LIMIT 1;";
 			sqlTileStatement = "SELECT Tile FROM Tiles LEFT JOIN Tilesdata ON Tiles.id=Tilesdata.id WHERE Zoom=? AND X=? AND Y=?;";
+			sqlTileImageTypeStatement = "SELECT Tile from Tilesdata LIMIT 1;";
 			break;
 		}
 		updateZoomLevelInfo();
+		detectTileImageType();
 		initialized = true;
+	}
+
+	protected void detectTileImageType() {
+		if (tileImageType != null)
+			return; // Already specified manually by user
+		Statement statement = null;
+		try {
+			statement = conn.createStatement();
+			if (statement.execute(sqlTileImageTypeStatement)) {
+				ResultSet rs = statement.getResultSet();
+				if (rs.next())
+					tileImageType = Utilities.getImageType(rs.getBytes(1));
+				rs.close();
+			}
+			statement.close();
+		} catch (SQLException e) {
+			log.error("", e);
+		} finally {
+			Utilities.closeStatement(statement);
+		}
+		if (tileImageType == null)
+			throw new RuntimeException("Unable to detect image type of " + sourceFile + ".\n"
+					+ "Please specify it manually using <tileImageType> entry in map source definition.");
+
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,

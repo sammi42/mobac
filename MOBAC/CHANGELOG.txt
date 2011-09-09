@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.1 (2011-09-??) 
+1.9.1 (2011-09-09) 
  ! Opening settings dialog: ClassCastException on Linux/OpenJDK
  ! Custom SQlite atlas as map source fixed for atlas formats AndNav, 
     BackCountry Navigator and Osmand 

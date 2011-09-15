@@ -52,6 +52,8 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
+	private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+
 	private boolean initialized = false;
 
 	private String fileSyntax = null;
@@ -71,9 +73,13 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	@XmlElement(defaultValue = "false")
 	private boolean flipXYDir = false;
 
+	@XmlElement(defaultValue = "false")
+	private boolean invertYCoordinate = false;
+
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
+
 
 	public CustomLocalTileFilesMapSource() {
 		super();
@@ -149,6 +155,8 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 			initialize();
 		if (fileSyntax == null)
 			return null;
+		if (invertYCoordinate)
+			y = ((1 << zoom) - y - 1);
 		try {
 			String fileName;
 			if (flipXYDir)
@@ -191,7 +199,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	}
 
 	public MapSpace getMapSpace() {
-		return MapSpaceFactory.getInstance(256, true);
+		return mapSpace;
 	}
 
 	public Color getBackgroundColor() {

@@ -50,6 +50,8 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
+	private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+
 	private boolean initialized = false;
 
 	private String fileSyntax = null;
@@ -68,6 +70,9 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
 	@XmlElement(defaultValue = "false")
 	private boolean flipXYDir = false;
+
+	@XmlElement(defaultValue = "false")
+	private boolean invertYCoordinate = false;
 
 	private LinkedList<ZipFile> zips = new LinkedList<ZipFile>();
 
@@ -161,6 +166,8 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 			initialize();
 		if (fileSyntax == null)
 			return null;
+		if (invertYCoordinate)
+			y = ((1 << zoom) - y - 1);
 		ZipEntry entry = null;
 		for (ZipFile zip : zips) {
 			String fileName;
@@ -209,7 +216,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	}
 
 	public MapSpace getMapSpace() {
-		return MapSpaceFactory.getInstance(256, true);
+		return mapSpace;
 	}
 
 	public Color getBackgroundColor() {

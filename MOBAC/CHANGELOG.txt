@@ -9,6 +9,10 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.2 (2011-10-??)
+ + Custom map source from ZIP/files in file-system: added possibility to invert
+   y coordinate via "invertYCoordinate" like it is used by MapTiler
+
 1.9.1 (2011-09-09) 
  ! Opening settings dialog: ClassCastException on Linux/OpenJDK
  ! Custom SQlite atlas as map source fixed for atlas formats AndNav, 
@@ -39,7 +43,7 @@
  + New map source: Moldova (point.md)
 
 1.9 beta 5 (2011-05-17)
- + Added possibility Change directory syntax for file and zip based map sources 
+ + Added possibility change directory syntax for file and zip based map sources 
     from zoom/x/y to zoom/y/x ("flipXYDir")
  + Added possibility to use <localTileFiles> and <localTileZip> within a custom 
     multi-layer map source

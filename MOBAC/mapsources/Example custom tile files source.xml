@@ -28,6 +28,14 @@ Supported file formats are PNG, JPG and GIF files.
 	Optional: reverse directory structure format to zoom/y/x
 	-->
 	<flipXYDir>false</flipXYDir>
+	
+	<!--
+	Optional: supported since MOBAC 1.9.2 
+	If set to true it inverts the y coordinate so that it starts south (min=0) and increases 
+	towards north (max=2^zoom -1)
+	If not set or false default scheme is used: start north and increase towards south
+	<invertYCoordinate>true</invertYCoordinate>
+	-->
 		
 	<backgroundColor>#000000</backgroundColor>
 </localTileFiles>

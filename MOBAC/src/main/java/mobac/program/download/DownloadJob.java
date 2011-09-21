@@ -34,8 +34,6 @@ import org.apache.log4j.Logger;
 
 public class DownloadJob implements Job {
 
-	private static final int MAX_RETRIES = 1;
-
 	static Logger log = Logger.getLogger(DownloadJob.class);
 
 	int errorCounter = 0;
@@ -92,7 +90,7 @@ public class DownloadJob implements Job {
 	private void processError(JobDispatcher dispatcher, Exception e) {
 		errorCounter++;
 		// Reschedule job to try it later again
-		if (errorCounter <= MAX_RETRIES) {
+		if (errorCounter <= listener.getMaxDownloadRetries()) {
 			listener.jobFinishedWithError(true);
 			log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue + " failed: \"" + e.getMessage()
 					+ "\" (tries: " + errorCounter + ") - rescheduling download job");

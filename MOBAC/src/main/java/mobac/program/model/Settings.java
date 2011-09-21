@@ -97,6 +97,7 @@ public class Settings {
 	private String userAgent = null;
 
 	public int downloadThreadCount = 2;
+	public int downloadRetryCount = 1;
 
 	private boolean customTileProcessing = false;
 	private Dimension tileSize = new Dimension(256, 256);

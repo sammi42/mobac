@@ -12,6 +12,9 @@
 1.9.2 (2011-10-??)
  + Custom map source from ZIP/files in file-system: added possibility to invert
    y coordinate via "invertYCoordinate" like it is used by MapTiler
+ + New settings.xml option: <downloadRetryCount> (default 1). Allows to reduce 
+    or increase the maximum attempts MOBAC tries to download a tile in case 
+    of errors occur while download or HTTP response is not as expected.  
 
 1.9.1 (2011-09-09) 
  ! Opening settings dialog: ClassCastException on Linux/OpenJDK

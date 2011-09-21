@@ -83,6 +83,9 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private int jobsCompleted = 0;
 	private int jobsRetryError = 0;
 	private int jobsPermanentError = 0;
+	private int maxDownloadRetries = 1;
+
+
 
 	public AtlasThread(AtlasInterface atlas) throws AtlasTestException {
 		this(atlas, atlas.getOutputFormat().createAtlasCreatorInstance());
@@ -95,6 +98,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		this.atlasCreator = atlasCreator;
 		testAtlas();
 		TileStore.getInstance().closeAll();
+		maxDownloadRetries = Settings.getInstance().downloadRetryCount;
 		pauseResumeHandler = new PauseResumeHandler();
 	}
 
@@ -423,6 +427,10 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 			Toolkit.getDefaultToolkit().beep();
 		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
 		ap.updateGUI();
+	}
+
+	public int getMaxDownloadRetries() {
+		return maxDownloadRetries;
 	}
 
 	public AtlasProgress getAtlasProgress() {

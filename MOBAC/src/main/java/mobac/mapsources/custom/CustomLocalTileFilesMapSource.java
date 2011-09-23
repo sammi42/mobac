@@ -80,7 +80,6 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
 
-
 	public CustomLocalTileFilesMapSource() {
 		super();
 	}
@@ -155,16 +154,21 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 			initialize();
 		if (fileSyntax == null)
 			return null;
+		if (log.isTraceEnabled())
+			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+
 		if (invertYCoordinate)
 			y = ((1 << zoom) - y - 1);
+		String fileName;
+		if (flipXYDir)
+			fileName = String.format(fileSyntax, zoom, y, x);
+		else
+			fileName = String.format(fileSyntax, zoom, x, y);
+		File file = new File(sourceFolder, fileName);
 		try {
-			String fileName;
-			if (flipXYDir)
-				fileName = String.format(fileSyntax, zoom, y, x);
-			else
-				fileName = String.format(fileSyntax, zoom, x, y);
-			return Utilities.getFileBytes(new File(sourceFolder, fileName));
+			return Utilities.getFileBytes(file);
 		} catch (FileNotFoundException e) {
+			log.debug("Map tile file not found: " + file.getAbsolutePath());
 			return null;
 		}
 	}

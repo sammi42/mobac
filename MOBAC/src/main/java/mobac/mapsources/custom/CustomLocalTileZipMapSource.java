@@ -34,6 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.log4j.Logger;
+
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.mapspace.MapSpaceFactory;
@@ -47,6 +49,8 @@ import mobac.utilities.Utilities;
 
 @XmlRootElement(name = "localTileZip")
 public class CustomLocalTileZipMapSource implements FileBasedMapSource {
+
+	private static final Logger log = Logger.getLogger(CustomLocalTileZipMapSource.class);
 
 	private MapSourceLoaderInfo loaderInfo = null;
 
@@ -166,15 +170,18 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 			initialize();
 		if (fileSyntax == null)
 			return null;
+		if (log.isTraceEnabled())
+			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+		
 		if (invertYCoordinate)
 			y = ((1 << zoom) - y - 1);
 		ZipEntry entry = null;
+		String fileName;
+		if (flipXYDir)
+			fileName = String.format(fileSyntax, zoom, y, x);
+		else
+			fileName = String.format(fileSyntax, zoom, x, y);
 		for (ZipFile zip : zips) {
-			String fileName;
-			if (flipXYDir)
-				fileName = String.format(fileSyntax, zoom, y, x);
-			else
-				fileName = String.format(fileSyntax, zoom, x, y);
 			entry = zip.getEntry(fileName);
 			if (entry != null) {
 				InputStream in = zip.getInputStream(entry);
@@ -183,6 +190,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 				return data;
 			}
 		}
+		log.debug("Map tile file not found in zip files: " + fileName);
 		return null;
 	}
 

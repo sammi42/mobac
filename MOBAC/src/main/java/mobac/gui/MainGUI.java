@@ -68,6 +68,7 @@ import mobac.gui.actions.AtlasCreate;
 import mobac.gui.actions.AtlasNew;
 import mobac.gui.actions.BookmarkAdd;
 import mobac.gui.actions.BookmarkManage;
+import mobac.gui.actions.DebugSetLogLevel;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
@@ -117,7 +118,9 @@ import mobac.utilities.GBC;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.lf5.LogLevel;
 
 public class MainGUI extends JFrame implements MapEventListener {
 
@@ -146,7 +149,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private JCheckBox wgsGridCheckBox;
 	private JComboBox wgsGridCombo;
-	
+
 	private JLabel zoomLevelText;
 	private JComboBox gridZoomCombo;
 	private JSlider zoomSlider;
@@ -171,6 +174,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	private JPanel leftPanelContent = null;
 	private JPanel rightPanel = new JPanel(new GridBagLayout());
 
+	public JMenu logLevelMenu; 
 	private JMenuItem smRectangle;
 	private JMenuItem smPolygon;
 
@@ -263,10 +267,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		gridZoomCombo.setToolTipText("Projects a grid of the specified zoom level over the map");
 
 		SettingsWgsGrid s = Settings.getInstance().wgsGrid;
-		
+
 		// WGS Grid label
 		wgsGridCheckBox = new JCheckBox(" WGS Grid: ", s.enabled);
-		//wgsGridCheckBox.setOpaque(true);
+		// wgsGridCheckBox.setOpaque(true);
 		wgsGridCheckBox.setBackground(labelBackgroundColor);
 		wgsGridCheckBox.setForeground(labelForegroundColor);
 		wgsGridCheckBox.setToolTipText("Projects WGS Grid on map preview (not included in atlas)");
@@ -280,7 +284,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			}
 		});
 
-		// WGS Grid combo		
+		// WGS Grid combo
 		wgsGridCombo = new JComboBox(WgsDensity.values());
 		wgsGridCombo.setMaximumRowCount(WgsDensity.values().length);
 		wgsGridCombo.setVisible(s.enabled);
@@ -411,8 +415,23 @@ public class MainGUI extends JFrame implements MapEventListener {
 		debugMenu.add(mapSourceNames);
 		debugMenu.addSeparator();
 		JMenuItem showLog = new JMenuItem2("Show log file", DebugShowLogFile.class);
-		showLog.setMnemonic(KeyEvent.VK_L);
+		showLog.setMnemonic(KeyEvent.VK_S);
 		debugMenu.add(showLog);
+		
+		logLevelMenu = new JMenu("General log level");
+		logLevelMenu.setMnemonic(KeyEvent.VK_L);
+		Level[] list = new Level[]{Level.TRACE, Level.DEBUG, Level.INFO, Level.ERROR, Level.FATAL, Level.OFF};
+		ActionListener al = new DebugSetLogLevel();
+		Level rootLogLevel = Logger.getRootLogger().getLevel();
+		for (Level level : list) {
+			String name = level.toString();
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(name,(rootLogLevel.toString().equals(name)));
+			item.setName(name);
+			item.addActionListener(al);
+			logLevelMenu.add(item);
+		}
+		debugMenu.add(logLevelMenu);
+		debugMenu.addSeparator();
 		JMenuItem report = new JMenuItem2("Generate system report", DebugShowReport.class);
 		report.setMnemonic(KeyEvent.VK_R);
 		debugMenu.add(report);

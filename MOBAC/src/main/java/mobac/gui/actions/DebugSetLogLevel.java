@@ -14,39 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.gui.components;
+package mobac.gui.actions;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-public class JMenuItem2 extends JMenuItem implements ActionListener {
+import mobac.gui.MainGUI;
 
-	private Class<? extends ActionListener> actionClass;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
-	public JMenuItem2(String text, int mnemonic, Class<? extends ActionListener> actionClass) {
-		super(text, mnemonic);
-		this.actionClass = actionClass;
-		addActionListener(this);
-	}
-
-	public JMenuItem2(String text, Class<? extends ActionListener> actionClass) {
-		super(text);
-		this.actionClass = actionClass;
-		addActionListener(this);
-	}
+public class DebugSetLogLevel implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
-		ActionListener al;
-		try {
-			al = actionClass.newInstance();
-			al.actionPerformed(event);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
+		Logger log = Logger.getRootLogger();
+		JMenuItem menuItem = (JMenuItem) event.getSource();
+		log.setLevel(Level.toLevel(menuItem.getName()));
+		JMenu menu = MainGUI.getMainGUI().logLevelMenu;
+		Component[] c = menu.getMenuComponents();
+		for (int i = 0; i < c.length; i++) {
+			((JMenuItem) c[i]).setSelected(c[i] == menuItem);
 		}
 	}
-
 }

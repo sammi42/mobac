@@ -93,8 +93,9 @@ public class Logging {
 	}
 
 	public static void configureDefaultErrorLogging() {
-		configureConsoleLogging(Level.INFO, new SimpleLayout());
-		configureLogFileLogging(Level.INFO);
+		Logger.getRootLogger().setLevel(Level.INFO);
+		configureConsoleLogging(Level.TRACE, new SimpleLayout());
+		configureLogFileLogging(Level.TRACE);
 	}
 
 	public static void configureConsoleLogging() {
@@ -108,9 +109,9 @@ public class Logging {
 	public static void configureConsoleLogging(Level level, Layout layout) {
 		Logger logger = Logger.getRootLogger();
 		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-		consoleAppender.setThreshold(level);
+		if (level != null)
+			consoleAppender.setThreshold(level);
 		logger.addAppender(consoleAppender);
-		logger.setLevel(level);
 		CONFIGURED = true;
 	}
 
@@ -122,7 +123,8 @@ public class Logging {
 		FileAppender consoleAppender;
 		try {
 			consoleAppender = new FileAppender(layout, logFilename, false);
-			consoleAppender.setThreshold(level);
+			if (level != null)
+				consoleAppender.setThreshold(level);
 			logger.addAppender(consoleAppender);
 		} catch (Exception e) {
 			Logger log = Logger.getLogger("LogSystem");

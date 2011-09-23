@@ -231,6 +231,8 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			if (statement.execute()) {
 				ResultSet rs = statement.getResultSet();
 				if (!rs.next()) {
+					if (log.isDebugEnabled())
+						log.debug(String.format("Tile in database not found: z=%d x=%d y=%d", zoom, x, y));
 					return null;
 				}
 				byte[] data = rs.getBytes(1);

@@ -224,10 +224,10 @@ public abstract class PaperAtlas extends AtlasCreator {
 				dummy.setSize(size);
 				Point tlc = new Point(firstTileX * tileSize + firstTileXOffset, firstTileY * tileSize
 						+ firstTileYOffset);
-				wgsGrid.paintWgsGrid(g, mapSource.getMapSpace(), tlc, zoom);
-				if (s.scaleBar) {
+				if (s.wgsEnabled)
+					wgsGrid.paintWgsGrid(g, mapSource.getMapSpace(), tlc, zoom);
+				if (s.scaleBar)
 					ScaleBar.paintScaleBar(dummy, g, mapSource.getMapSpace(), tlc, zoom);
-				}
 				Image compassRaw;
 				try {
 					compassRaw = ImageIO.read(Utilities.loadResourceAsStream("images/compass.png"));

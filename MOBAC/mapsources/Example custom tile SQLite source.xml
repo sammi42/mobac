@@ -3,26 +3,26 @@
 
 Example custom map definition that uses an existing SQLite based atlas. 
 
-Supported atlas formats are RMaps, MBTiles, BigPlanetTracks and NaviComputer.
+Supported atlas formats are RMaps, MBTiles, BigPlanetTracks, NaviComputer and OSMAND.
 
 Not supported are: OruxMaps and Osmdroid
 -->
 <localTileSQLite>
 	
 	<!-- Map source name as it appears in the map sources list. --> 
-	<name>Haiti_Terrain_Grey</name>
+	<name>Custom SQLite atlas</name>
 	
 	<!-- File path to SQLite atlas file --> 
-	<sourceFile>D:\MOBAC\LocalTiles\2011-05-05_165725_Unnamed atlas.nmap</sourceFile>
+	<sourceFile>D:\MOBAC\LocalTiles\Region.Mapnik.sqlitedb</sourceFile>
 	
 	<!-- 
        The atlas type has to be specified manually
        
-	   Possible values: RMaps, MBTiles, BigPlanetTracks or NaviComputer
+	   Possible values: RMaps, MBTiles, BigPlanetTracks, NaviComputer or OSMAND
 	   
 	   Not that this field is case sensitive! 
 	-->
-	<atlasType>NaviComputer</atlasType>
+	<atlasType>OSMAND</atlasType>
 		
 	<backgroundColor>#000000</backgroundColor>
 	

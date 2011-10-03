@@ -59,7 +59,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	private static Logger log = Logger.getLogger(CustomLocalTileSQliteMapSource.class);
 
 	private static enum SQLiteAtlasType {
-		RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer
+		RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer, OSMAND
 	};
 
 	private MapSourceLoaderInfo loaderInfo = null;
@@ -169,6 +169,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 		case RMaps:
 		case BigPlanetTracks:
 		case Galileo:
+		case OSMAND:
 			sqlMaxZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom DESC LIMIT 1;";
 			sqlMinZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom ASC LIMIT 1;";
 			sqlTileStatement = "SELECT image from tiles WHERE z=(17 - ?) AND x=? AND y=?;";

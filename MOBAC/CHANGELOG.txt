@@ -17,6 +17,7 @@
     of errors occur while download or HTTP response is not as expected.
  + Logging verboseness now configurable for the current session via GUI  
  ! PaperAtlas: NullPointerException when WGS Grid=off has been fixed
+ + CustomSQLite atlas as map source: OSMAND format added
 
 
 1.9.1 (2011-09-09) 

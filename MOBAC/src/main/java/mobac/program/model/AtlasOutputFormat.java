@@ -50,6 +50,7 @@ import mobac.program.atlascreators.MobileTrailExplorerCache;
 import mobac.program.atlascreators.NFComPass;
 import mobac.program.atlascreators.NaviComputer;
 import mobac.program.atlascreators.OSMAND;
+import mobac.program.atlascreators.OSMAND_SQlite;
 import mobac.program.atlascreators.OSMTracker;
 import mobac.program.atlascreators.OruxMaps;
 import mobac.program.atlascreators.OruxMapsSqlite;
@@ -107,6 +108,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(createByClass(OruxMaps.class));
 		FORMATS.add(createByClass(OruxMapsSqlite.class));
 		FORMATS.add(createByClass(OSMAND.class));
+		FORMATS.add(createByClass(OSMAND_SQlite.class));
 		FORMATS.add(createByClass(Osmdroid.class));
 		FORMATS.add(createByClass(OsmdroidSQLite.class));
 		FORMATS.add(createByClass(OSMTracker.class));

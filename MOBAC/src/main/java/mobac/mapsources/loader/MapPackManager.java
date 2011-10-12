@@ -68,8 +68,6 @@ import org.apache.log4j.Logger;
 
 public class MapPackManager {
 
-	private static final String MAP_PACK_PACKAGE = "mobac.mapsources.mappacks";
-
 	private final Logger log = Logger.getLogger(MapPackManager.class);
 
 	private final int requiredMapPackVersion;
@@ -159,7 +157,7 @@ public class MapPackManager {
 		// testMapPack(mapPackFile);
 		URLClassLoader urlCl;
 		URL url = mapPackFile.toURI().toURL();
-		urlCl = new MapPackClassLoader(MAP_PACK_PACKAGE, url, ClassLoader.getSystemClassLoader());
+		urlCl = new MapPackClassLoader(url, ClassLoader.getSystemClassLoader());
 		InputStream manifestIn = urlCl.getResourceAsStream("META-INF/MANIFEST.MF");
 		String rev = null;
 		if (manifestIn != null) {
@@ -212,7 +210,8 @@ public class MapPackManager {
 			return null;
 		}
 		if (responseCode != HttpURLConnection.HTTP_OK)
-			throw new UpdateFailedException("Invalid HTTP response: " + responseCode + " for update url " + conn.getURL());
+			throw new UpdateFailedException("Invalid HTTP response: " + responseCode + " for update url "
+					+ conn.getURL());
 		// Case HTTP_OK
 		InputStream in = conn.getInputStream();
 		data = Utilities.getInputBytes(in);

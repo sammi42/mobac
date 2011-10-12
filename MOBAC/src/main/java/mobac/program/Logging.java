@@ -120,12 +120,12 @@ public class Logging {
 		File logFileDir = DirectoryManager.userAppDataDir;
 		String logFilename = new File(logFileDir, LOG_FILENAME).getAbsolutePath();
 		Layout layout = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
-		FileAppender consoleAppender;
+		FileAppender fileAppender;
 		try {
-			consoleAppender = new FileAppender(layout, logFilename, false);
+			fileAppender = new FileAppender(layout, logFilename, false);
 			if (level != null)
-				consoleAppender.setThreshold(level);
-			logger.addAppender(consoleAppender);
+				fileAppender.setThreshold(level);
+			logger.addAppender(fileAppender);
 		} catch (Exception e) {
 			Logger log = Logger.getLogger("LogSystem");
 			log.error("", e);

@@ -15,7 +15,14 @@
 		<fileset dir="lib" includes="Mobile_Atlas_Creator.jar" />
 	</path>
 
-	<target name="all" depends="clean_build,build_mapsources" />
+	<!-- All additional jar files from the lib directory will be added to classpath while compiling -->
+	<fileset id="mappack-libs-fs" dir="lib" excludes="ant-contrib-for.jar" includes="*.jar"/>
+	
+	<path id="mappack-libs">
+		<fileset refid="mappack-libs-fs"/>
+	</path>
+	
+	<target name="all" depends="clean_build,build_mapsources,include_libs" />
 
 	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
 		<delete includeemptydirs="true" failonerror="false">
@@ -53,6 +60,7 @@
 				<javac srcdir="${src.dir}" destdir="build/mp-@{mappack}" defaultexcludes="true" debug="true">
 					<include name="mobac/mapsources/mappacks/@{mappack}/**.java" />
 					<classpath refid="maincp" />
+					<classpath refid="mappack-libs" />
 				</javac>
 				<delete file="mapsources/mp-@{mappack}.jar" failonerror="false" />
 				<fileset dir="build/mp-@{mappack}" defaultexcludes="true" id="fileset-@{mappack}">
@@ -75,4 +83,18 @@
 		</for>
 	</target>
 
+	<target name="include_libs" description="optional task, allows to include additional jar libraries into mappacks">
+
+		<!-- Include all additional jars in lib directory into mappack "mymappack"-->
+		<zip destfile="mapsources/mp-mymappack.jar" update="true">
+			<zipfileset refid="mappack-libs-fs" />
+		</zip>
+		
+		<!--
+		<zip destfile="mapsources/mp-mymappack.jar" update="true">
+			<zipfileset src="lib/jcommon-1.0.16.jar" />
+			<zipfileset src="lib/jfreechart-1.0.13.jar" />
+		</zip>
+		-->
+	</target>
 </project>

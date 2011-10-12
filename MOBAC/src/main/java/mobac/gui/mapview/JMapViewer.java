@@ -111,7 +111,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		initializeZoomSlider();
 		setMinimumSize(new Dimension(256, 256));
 		setPreferredSize(new Dimension(400, 400));
-		setDisplayPositionByLatLon(50, 9, 3);
+		setDisplayPositionByLatLon(50.0, 9.0, 1);
 	}
 
 	protected void initializeZoomSlider() {

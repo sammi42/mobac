@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.2 (2011-10-??)
+1.9.2 (2011-10-12)
  + Custom map source from ZIP/files in file-system: added possibility to invert
    y coordinate via "invertYCoordinate" like it is used by MapTiler
  + New settings.xml option: <downloadRetryCount> (default 1). Allows to reduce 

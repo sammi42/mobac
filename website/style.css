@@ -27,18 +27,20 @@ a {
 }
 ul#nav li {
 	display:inline;
-	padding:0 16px;
+	padding:0 10px;
+	font-weight:bold;
+	font-size:17px;
 }
 ul#nav a {
-	color:#fff;
+	color:#000;
 }
 ul#nav a:hover {
 	color:#000;
 	text-decoration:underline
 }
 ul#nav {
-	padding-top:20px;
-	padding-left:180px;
+	padding-top:18px;
+	padding-left:60px;
 }
 #content {
 	padding:35px;

@@ -40,6 +40,7 @@ import mobac.program.interfaces.DownloadableElement;
 import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
+import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.model.AtlasOutputFormat;
 import mobac.program.model.Settings;
@@ -85,8 +86,6 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 	private int jobsPermanentError = 0;
 	private int maxDownloadRetries = 1;
 
-
-
 	public AtlasThread(AtlasInterface atlas) throws AtlasTestException {
 		this(atlas, atlas.getOutputFormat().createAtlasCreatorInstance());
 	}
@@ -106,7 +105,8 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 		try {
 			for (LayerInterface layer : atlas) {
 				for (MapInterface map : layer) {
-					if (!atlasCreator.testMapSource(map.getMapSource()))
+					MapSource mapSource = map.getMapSource();
+					if (!atlasCreator.testMapSource(mapSource))
 						throw new AtlasTestException("The selected atlas output format \"" + atlas.getOutputFormat()
 								+ "\" does not support the map source \"" + map.getMapSource() + "\"");
 				}

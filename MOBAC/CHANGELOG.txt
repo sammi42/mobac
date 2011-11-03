@@ -9,6 +9,11 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.3 (2011-11-??)
+ + Custom map source from files XML schema changed: 
+    new <sourceType> values: DIR_ZOOM_X_Y, DIR_ZOOM_Y_X, QUADKEY
+    removed flipXYDirs (use <sourceType>DIR_ZOOM_Y_X</sourceType> instead
+
 1.9.2 (2011-10-12)
  + Custom map source from ZIP/files in file-system: added possibility to invert
    y coordinate via "invertYCoordinate" like it is used by MapTiler

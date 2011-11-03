@@ -24,6 +24,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -35,6 +36,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
+import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.MapSpace;
@@ -70,8 +72,8 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	@XmlElement(required = true)
 	private File sourceFolder = null;
 
-	@XmlElement(defaultValue = "false")
-	private boolean flipXYDir = false;
+	@XmlElement(defaultValue = "DIR_ZOOM_X_Y")
+	private CustomMapSourceType sourceType;
 
 	@XmlElement(defaultValue = "false")
 	private boolean invertYCoordinate = false;
@@ -84,7 +86,34 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		super();
 	}
 
-	protected void updateZoomLevelInfo() {
+	public synchronized void initialize() {
+		if (initialized)
+			return;
+		try {
+			if (!sourceFolder.isDirectory()) {
+				JOptionPane.showMessageDialog(null, "The specified source folder does not exist:\nMap name: " + name
+						+ "\nSource folder: " + sourceFolder, "Invaild source folder", JOptionPane.ERROR_MESSAGE);
+				initialized = true;
+				return;
+			}
+			switch (sourceType) {
+			case DIR_ZOOM_X_Y:
+			case DIR_ZOOM_Y_X:
+				initializeDirType();
+				break;
+			case QUADKEY:
+				initializeQuadKeyType();
+				break;
+			default:
+				throw new RuntimeException("Invalid source type");
+			}
+		} finally {
+			initialized = true;
+		}
+	}
+
+	private void initializeDirType() {
+		/* Update zoom levels */
 		FileFilter ff = new NumericDirFileFilter();
 		File[] zoomDirs = sourceFolder.listFiles(ff);
 		if (zoomDirs.length < 1) {
@@ -102,50 +131,58 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		}
 		minZoom = min;
 		maxZoom = max;
+
+		for (File zDir : zoomDirs) {
+			for (File xDir : zDir.listFiles(ff)) {
+				try {
+					xDir.listFiles(new FilenameFilter() {
+
+						String syntax = "%d/%d/%d";
+
+						public boolean accept(File dir, String name) {
+							String[] parts = name.split("\\.");
+							if (parts.length < 2 || parts.length > 3)
+								return false;
+							syntax += "." + parts[1];
+							if (parts.length == 3)
+								syntax += "." + parts[2];
+							tileImageType = TileImageType.getTileImageType(parts[1]);
+							fileSyntax = syntax;
+							log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
+							throw new RuntimeException("break");
+						}
+					});
+				} catch (RuntimeException e) {
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+				return;
+			}
+		}
 	}
 
-	public synchronized void initialize() {
-		if (initialized)
-			return;
-		if (!sourceFolder.isDirectory()) {
-			JOptionPane.showMessageDialog(null, "The specified source folder does not exist:\nMap name: " + name
-					+ "\nSource folder: " + sourceFolder, "Invaild source folder", JOptionPane.ERROR_MESSAGE);
-			initialized = true;
-			return;
-		}
-		updateZoomLevelInfo();
-		try {
-			FileFilter ff = new NumericDirFileFilter();
-			for (File zDir : sourceFolder.listFiles(ff)) {
-				for (File xDir : zDir.listFiles(ff)) {
-					try {
-						xDir.listFiles(new FilenameFilter() {
+	private void initializeQuadKeyType() {
+		String[] files = sourceFolder.list();
+		Pattern p = Pattern.compile("([0123]+)\\.(png|gif|jpg)", Pattern.CASE_INSENSITIVE);
+		int found = 0;
 
-							String syntax = "%d/%d/%d";
+		int min = PreviewMap.MAX_ZOOM;
+		int max = 1;
 
-							public boolean accept(File dir, String name) {
-								String[] parts = name.split("\\.");
-								if (parts.length < 2 || parts.length > 3)
-									return false;
-								syntax += "." + parts[1];
-								if (parts.length == 3)
-									syntax += "." + parts[2];
-								tileImageType = TileImageType.getTileImageType(parts[1]);
-								fileSyntax = syntax;
-								log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
-								throw new RuntimeException("break");
-							}
-						});
-					} catch (RuntimeException e) {
-					} catch (Exception e) {
-						log.error(e.getMessage());
-					}
-					return;
-				}
-			}
-		} finally {
-			initialized = true;
+		for (String file : files) {
+			Matcher m = p.matcher(file);
+			if (!m.matches())
+				continue;
+			if (fileSyntax == null)
+				fileSyntax = "%s." + m.group(2);
+			int z = m.group(1).length();
+			min = Math.min(min, z);
+			max = Math.max(max, z);
+
+			found++;
 		}
+		minZoom = min;
+		maxZoom = max;
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
@@ -160,10 +197,19 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		if (invertYCoordinate)
 			y = ((1 << zoom) - y - 1);
 		String fileName;
-		if (flipXYDir)
-			fileName = String.format(fileSyntax, zoom, y, x);
-		else
+		switch (sourceType) {
+		case DIR_ZOOM_X_Y:
 			fileName = String.format(fileSyntax, zoom, x, y);
+			break;
+		case DIR_ZOOM_Y_X:
+			fileName = String.format(fileSyntax, zoom, y, x);
+			break;
+		case QUADKEY:
+			fileName = String.format(fileSyntax, MapSourceTools.encodeQuadTree(zoom, x, y));
+			break;
+		default:
+			throw new RuntimeException("Invalid source type");
+		}
 		File file = new File(sourceFolder, fileName);
 		try {
 			return Utilities.getFileBytes(file);

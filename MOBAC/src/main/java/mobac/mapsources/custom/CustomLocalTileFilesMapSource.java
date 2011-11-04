@@ -72,8 +72,8 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	@XmlElement(required = true)
 	private File sourceFolder = null;
 
-	@XmlElement(defaultValue = "DIR_ZOOM_X_Y")
-	private CustomMapSourceType sourceType;
+	@XmlElement()
+	private CustomMapSourceType sourceType = CustomMapSourceType.DIR_ZOOM_X_Y;
 
 	@XmlElement(defaultValue = "false")
 	private boolean invertYCoordinate = false;
@@ -164,7 +164,19 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	private void initializeQuadKeyType() {
 		String[] files = sourceFolder.list();
 		Pattern p = Pattern.compile("([0123]+)\\.(png|gif|jpg)", Pattern.CASE_INSENSITIVE);
-		int found = 0;
+		String fileExt = null;
+		for (String file : files) {
+			Matcher m = p.matcher(file);
+			if (!m.matches())
+				continue;
+			fileExt = m.group(2);
+			break;
+		}
+		if (fileExt == null)
+			return; // Error no suitable file found
+		fileSyntax = "%s." + fileExt;
+
+		p = Pattern.compile("([0123]+)\\.(" + fileExt + ")", Pattern.CASE_INSENSITIVE);
 
 		int min = PreviewMap.MAX_ZOOM;
 		int max = 1;
@@ -178,8 +190,6 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 			int z = m.group(1).length();
 			min = Math.min(min, z);
 			max = Math.max(max, z);
-
-			found++;
 		}
 		minZoom = min;
 		maxZoom = max;

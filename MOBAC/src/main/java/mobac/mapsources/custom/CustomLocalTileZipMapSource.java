@@ -34,10 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.log4j.Logger;
-
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
+import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.program.Logging;
 import mobac.program.interfaces.FileBasedMapSource;
@@ -46,6 +45,8 @@ import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
+
+import org.apache.log4j.Logger;
 
 @XmlRootElement(name = "localTileZip")
 public class CustomLocalTileZipMapSource implements FileBasedMapSource {
@@ -72,8 +73,8 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	@XmlElement(name = "zipFile", required = true)
 	private File[] zipFiles = new File[] {};
 
-	@XmlElement(defaultValue = "false")
-	private boolean flipXYDir = false;
+	@XmlElement()
+	private CustomMapSourceType sourceType = CustomMapSourceType.DIR_ZOOM_X_Y;
 
 	@XmlElement(defaultValue = "false")
 	private boolean invertYCoordinate = false;
@@ -151,12 +152,11 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 				if (parts.length < 2 || parts.length > 3)
 					break;
 				syntax += "." + parts[1];
-				if (parts.length == 3) {
-					syntax += parts[2];
-					tileImageType = TileImageType.getTileImageType(parts[2]);
-				} else
-					tileImageType = TileImageType.getTileImageType(parts[1]);
+				tileImageType = TileImageType.getTileImageType(parts[1]);
+				if (parts.length == 3)
+					syntax += "." + parts[2];
 				fileSyntax = syntax;
+				log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
 				break;
 			}
 		} finally {
@@ -172,15 +172,24 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 			return null;
 		if (log.isTraceEnabled())
 			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
-		
+
 		if (invertYCoordinate)
 			y = ((1 << zoom) - y - 1);
 		ZipEntry entry = null;
 		String fileName;
-		if (flipXYDir)
-			fileName = String.format(fileSyntax, zoom, y, x);
-		else
+		switch (sourceType) {
+		case DIR_ZOOM_X_Y:
 			fileName = String.format(fileSyntax, zoom, x, y);
+			break;
+		case DIR_ZOOM_Y_X:
+			fileName = String.format(fileSyntax, zoom, y, x);
+			break;
+		case QUADKEY:
+			fileName = String.format(fileSyntax, MapSourceTools.encodeQuadTree(zoom, x, y));
+			break;
+		default:
+			throw new RuntimeException("Invalid source type");
+		}
 		for (ZipFile zip : zips) {
 			entry = zip.getEntry(fileName);
 			if (entry != null) {

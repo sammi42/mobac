@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -107,7 +109,30 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 		}
 	}
 
-	protected void updateZoomInfo() {
+	public synchronized void initialize() {
+		if (initialized)
+			return;
+		try {
+			openZipFile();
+			if (zips.size() == 0)
+				return;
+			switch (sourceType) {
+			case DIR_ZOOM_X_Y:
+			case DIR_ZOOM_Y_X:
+				initializeDirType();
+				break;
+			case QUADKEY:
+				initializeQuadKeyType();
+				break;
+			default:
+				throw new RuntimeException("Invalid source type");
+			}
+		} finally {
+			initialized = true;
+		}
+	}
+
+	public synchronized void initializeDirType() {
 		int min = PreviewMap.MAX_ZOOM;
 		int max = PreviewMap.MIN_ZOOM;
 		for (ZipFile zip : zips) {
@@ -128,40 +153,67 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 		}
 		minZoom = min;
 		maxZoom = max;
+
+		Enumeration<? extends ZipEntry> entries = zips.get(0).entries();
+		String syntax = "%d/%d/%d";
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			if (entry.isDirectory())
+				continue;
+			String name = entry.getName();
+			int i = name.lastIndexOf("/");
+			name = name.substring(i + 1);
+
+			String[] parts = name.split("\\.");
+			if (parts.length < 2 || parts.length > 3)
+				break;
+			syntax += "." + parts[1];
+			tileImageType = TileImageType.getTileImageType(parts[1]);
+			if (parts.length == 3)
+				syntax += "." + parts[2];
+			fileSyntax = syntax;
+			log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
+			break;
+		}
 	}
 
-	public synchronized void initialize() {
-		if (initialized)
-			return;
-		try {
-			openZipFile();
-			updateZoomInfo();
-			if (zips.size() == 0)
-				return;
-			Enumeration<? extends ZipEntry> entries = zips.get(0).entries();
-			String syntax = "%d/%d/%d";
+	public synchronized void initializeQuadKeyType() {
+		Pattern p = Pattern.compile("([0123]+)\\.(png|gif|jpg)", Pattern.CASE_INSENSITIVE);
+		Enumeration<? extends ZipEntry> entries = zips.get(0).entries();
+		String fileExt = null;
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			Matcher m = p.matcher(entry.getName());
+			if (!m.matches())
+				continue;
+			fileExt = m.group(2);
+			break;
+		}
+		if (fileExt == null)
+			return; // Error no suitable file found
+		fileSyntax = "%s." + fileExt;
+
+		p = Pattern.compile("([0123]+)\\.(" + fileExt + ")", Pattern.CASE_INSENSITIVE);
+
+		int min = PreviewMap.MAX_ZOOM;
+		int max = 1;
+
+		for (ZipFile zipFile : zips) {
+			entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
-				if (entry.isDirectory())
+				Matcher m = p.matcher(entry.getName());
+				if (!m.matches())
 					continue;
-				String name = entry.getName();
-				int i = name.lastIndexOf("/");
-				name = name.substring(i + 1);
-
-				String[] parts = name.split("\\.");
-				if (parts.length < 2 || parts.length > 3)
-					break;
-				syntax += "." + parts[1];
-				tileImageType = TileImageType.getTileImageType(parts[1]);
-				if (parts.length == 3)
-					syntax += "." + parts[2];
-				fileSyntax = syntax;
-				log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
-				break;
+				if (fileSyntax == null)
+					fileSyntax = "%s." + m.group(2);
+				int z = m.group(1).length();
+				min = Math.min(min, z);
+				max = Math.max(max, z);
 			}
-		} finally {
-			initialized = true;
 		}
+		minZoom = min;
+		maxZoom = max;
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,

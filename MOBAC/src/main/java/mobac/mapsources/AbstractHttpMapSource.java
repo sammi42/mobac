@@ -94,7 +94,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 	/**
 	 * Can be used to e.g. retrieve the url pattern before the first call
 	 */
-	protected final void initialize() {
+	public final void initialize() {
 		if (initialized)
 			return;
 		// Prevent multiple initializations in case of multi-threaded access

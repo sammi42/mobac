@@ -94,7 +94,7 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 	/**
 	 * Can be used to e.g. retrieve the url pattern before the first call
 	 */
-	public final void initialize() {
+	protected final void initializeHttpMapSource() {
 		if (initialized)
 			return;
 		// Prevent multiple initializations in case of multi-threaded access
@@ -129,10 +129,10 @@ public abstract class AbstractHttpMapSource implements HttpMapSource {
 			}
 			return data;
 		} else if (loadMethod == LoadMethod.SOURCE) {
-			initialize();
+			initializeHttpMapSource();
 			return TileDownLoader.downloadTileAndUpdateStore(x, y, zoom, this);
 		} else {
-			initialize();
+			initializeHttpMapSource();
 			return TileDownLoader.getImage(x, y, zoom, this);
 		}
 	}

@@ -42,19 +42,18 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.utilities.MyMath;
+import mobac.utilities.Utilities;
 
 import org.apache.log4j.Logger;
 
 /**
- * A layer holding one or multiple maps of the same map source and the same zoom
- * level. The number of maps depends on the size of the covered area - if it is
- * smaller than the specified <code>maxMapSize</code> then there will be only
+ * A layer holding one or multiple maps of the same map source and the same zoom level. The number of maps depends on
+ * the size of the covered area - if it is smaller than the specified <code>maxMapSize</code> then there will be only
  * one map.
  * 
  */
 @XmlRootElement
-public class Layer implements LayerInterface, TreeNode, ToolTipProvider, CapabilityDeletable,
-		Iterable<MapInterface> {
+public class Layer implements LayerInterface, TreeNode, ToolTipProvider, CapabilityDeletable {
 
 	private static Logger log = Logger.getLogger(Layer.class);
 
@@ -63,7 +62,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 
 	private String name;
 
-	@XmlElements( { @XmlElement(name = "PolygonMap", type = MapPolygon.class),
+	@XmlElements({ @XmlElement(name = "PolygonMap", type = MapPolygon.class),
 			@XmlElement(name = "Map", type = Map.class) })
 	private LinkedList<MapInterface> maps = new LinkedList<MapInterface>();
 
@@ -75,9 +74,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		setName(name);
 	}
 
-	public void addMapsAutocut(String mapNameBase, MapSource mapSource,
-			EastNorthCoordinate minCoordinate, EastNorthCoordinate maxCoordinate, int zoom,
-			TileImageParameters parameters, int maxMapSize) throws InvalidNameException {
+	public void addMapsAutocut(String mapNameBase, MapSource mapSource, EastNorthCoordinate minCoordinate,
+			EastNorthCoordinate maxCoordinate, int zoom, TileImageParameters parameters, int maxMapSize)
+			throws InvalidNameException {
 		MapSpace mapSpace = mapSource.getMapSpace();
 		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapSpace, zoom),
 				maxCoordinate.toTileCoordinate(mapSpace, zoom), zoom, parameters, maxMapSize);
@@ -86,9 +85,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
 			Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize)
 			throws InvalidNameException {
-		log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom
-				+ " min=" + minTileCoordinate.x + "/" + minTileCoordinate.y + " max="
-				+ maxTileCoordinate.x + "/" + maxTileCoordinate.y);
+		log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom + " min="
+				+ minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x + "/"
+				+ maxTileCoordinate.y);
 
 		int tileSize = mapSource.getMapSpace().getTileSize();
 
@@ -112,8 +111,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		int mapWidth = maxTileCoordinate.x - minTileCoordinate.x;
 		int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
 		if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
-			Map s = new Map(this, mapNameBase, mapSource, zoom, minTileCoordinate,
-					maxTileCoordinate, parameters);
+			Map s = new Map(this, mapNameBase, mapSource, zoom, minTileCoordinate, maxTileCoordinate, parameters);
 			maps.add(s);
 			return;
 		}
@@ -128,8 +126,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
 				Point min = new Point(mapX, mapY);
 				Point max = new Point(maxX - 1, maxY - 1);
-				String mapName = String.format(mapNameFormat, new Object[] { mapNameBase,
-						mapCounter++ });
+				String mapName = String.format(mapNameFormat, new Object[] { mapNameBase, mapCounter++ });
 				Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
 				maps.add(s);
 			}
@@ -187,12 +184,49 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		return result;
 	}
 
+	public double getMinLat() {
+		double lat = 90d;
+		for (MapInterface m : maps) {
+			lat = Math.min(lat, m.getMinLat());
+		}
+		return lat;
+	}
+
+	public double getMaxLat() {
+		double lat = -90d;
+		for (MapInterface m : maps) {
+			lat = Math.max(lat, m.getMaxLat());
+		}
+		return lat;
+	}
+
+	public double getMinLon() {
+		double lon = 180d;
+		for (MapInterface m : maps) {
+			lon = Math.min(lon, m.getMinLon());
+		}
+		return lon;
+	}
+
+	public double getMaxLon() {
+		double lon = -180d;
+		for (MapInterface m : maps) {
+			lon = Math.max(lon, m.getMaxLon());
+		}
+		return lon;
+	}
+
 	public String getToolTip() {
 		StringWriter sw = new StringWriter(1024);
 		sw.write("<html>");
 		sw.write("<b>Layer</b><br>");
 		sw.write("Map count: " + maps.size() + "<br>");
 		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
+		sw.write(String.format("Area start: %s %s<br>", Utilities.prettyPrintLatLon(getMaxLat(), true),
+				Utilities.prettyPrintLatLon(getMinLon(), false)));
+		sw.write(String.format("Area end: %s %s<br>", Utilities.prettyPrintLatLon(getMinLat(), true),
+				Utilities.prettyPrintLatLon(getMaxLon(), false)));
+
 		sw.write("</html>");
 		return sw.toString();
 	}

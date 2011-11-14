@@ -42,8 +42,8 @@ import mobac.program.interfaces.MapSpace;
  */
 public class MercatorPower2MapSpace implements MapSpace {
 
-	protected static final double MAX_LAT = 85.05112877980659;
-	protected static final double MIN_LAT = -85.05112877980659;
+	public static final double MAX_LAT = 85.05112877980659;
+	public static final double MIN_LAT = -85.05112877980659;
 
 	protected final int tileSize;
 

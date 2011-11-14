@@ -14,41 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package mobac.program.interfaces;
+package mobac.externaltools;
 
-import java.awt.Dimension;
-import java.awt.Point;
+public enum ToolParameters {
 
-import mobac.program.model.TileImageParameters;
-
-
-
-public interface MapInterface extends AtlasObject, CapabilityDeletable {
-
-	public Point getMinTileCoordinate();
-
-	public Point getMaxTileCoordinate();
-
-	public int getZoom();
-
-	public MapSource getMapSource();
-
-	public Dimension getTileSize();
-
-	public LayerInterface getLayer();
-
-	public void setLayer(LayerInterface layer);
-
-	public TileImageParameters getParameters();
-
-	public void setParameters(TileImageParameters p);
-
-	public long calculateTilesToDownload();
-
-	public String getInfoText();
-	
-	public TileFilter getTileFilter();
-	
-	public MapInterface deepClone(LayerInterface newLayer);
-
+	MAX_LAT, MIN_LAT, MAX_LON, MIN_LON,
+	MIN_ZOOM, MAX_ZOOM,
+	// MAPSOURCE_NAME, MAPSOURCE_DOIPLAYNAME
 }

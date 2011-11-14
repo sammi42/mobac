@@ -48,6 +48,7 @@ public class DirectoryManager {
 
 	public static final File userSettingsDir;
 	public static final File mapSourcesDir;
+	public static final File toolsDir;
 	public static final File atlasProfilesDir;
 	public static final File tileStoreDir;
 
@@ -63,6 +64,7 @@ public class DirectoryManager {
 		tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
 
 		mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
+		toolsDir = applyDirConfig("mobac.toolsdir", new File(programDir, "tools"));
 		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
 		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
 		tileStoreDir = applyDirConfig("mobac.tilestoredir", new File(programDir, "tilestore"));

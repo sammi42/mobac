@@ -34,4 +34,9 @@ public interface AtlasObject {
 	 * @return any problems found? <code>true</code>=yes
 	 */
 	public boolean checkData();
+
+	public double getMinLat();
+	public double getMaxLat();
+	public double getMinLon();
+	public double getMaxLon();	
 }

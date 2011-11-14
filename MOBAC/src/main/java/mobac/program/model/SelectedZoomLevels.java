@@ -58,7 +58,7 @@ public class SelectedZoomLevels {
 		return new ArrayList<Integer>(zoomLevels);
 	}
 
-	public int getNrOfLayers() {
+	public int getZoomLevelCount() {
 		return zoomLevels.size();
 	}
 

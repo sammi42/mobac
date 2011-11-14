@@ -61,6 +61,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBException;
 
+import mobac.externaltools.ExternalToolDef;
+import mobac.externaltools.ExternalToolsLoader;
 import mobac.gui.actions.AddGpxTrackPolygonMap;
 import mobac.gui.actions.AddMapLayer;
 import mobac.gui.actions.AtlasConvert;
@@ -406,6 +408,23 @@ public class MainGUI extends JFrame implements MapEventListener {
 		panelsMenu.add(showLeftPanel);
 		panelsMenu.add(showRightPanel);
 
+		menuBar.add(atlasMenu);
+		menuBar.add(mapsMenu);
+		menuBar.add(bookmarkMenu);
+		menuBar.add(panelsMenu);
+
+		if (ExternalToolsLoader.tools != null) {
+			JMenu tools = new JMenu("Tools");
+			for (ExternalToolDef t : ExternalToolsLoader.tools) {
+				JMenuItem m = new JMenuItem(t.name);
+				m.addActionListener(t);
+				tools.add(m);
+			}
+			menuBar.add(tools);
+		}
+		
+		menuBar.add(Box.createHorizontalGlue());
+
 		// Debug menu
 		JMenu debugMenu = new JMenu("Debug");
 		debugMenu.setMnemonic(KeyEvent.VK_D);
@@ -434,6 +453,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JMenuItem report = new JMenuItem2("Generate system report", DebugShowReport.class);
 		report.setMnemonic(KeyEvent.VK_R);
 		debugMenu.add(report);
+		menuBar.add(debugMenu);
 
 		// Help menu
 		JMenu help = new JMenu("Help");
@@ -452,12 +472,6 @@ public class MainGUI extends JFrame implements MapEventListener {
 		help.addSeparator();
 		help.add(about);
 
-		menuBar.add(atlasMenu);
-		menuBar.add(mapsMenu);
-		menuBar.add(bookmarkMenu);
-		menuBar.add(panelsMenu);
-		menuBar.add(Box.createHorizontalGlue());
-		menuBar.add(debugMenu);
 		menuBar.add(help);
 	}
 

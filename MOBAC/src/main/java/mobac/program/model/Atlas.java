@@ -30,9 +30,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobac.gui.mapview.PreviewMap;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
+import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.ToolTipProvider;
+import mobac.utilities.Utilities;
 
 @XmlRootElement
 public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
@@ -123,14 +126,50 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		return false;
 	}
 
+	public double getMinLat() {
+		double lat = 90d;
+		for (LayerInterface l : layers) {
+			lat = Math.min(lat, l.getMinLat());
+		}
+		return lat;
+	}
+
+	public double getMaxLat() {
+		double lat = -90d;
+		for (LayerInterface l : layers) {
+			lat = Math.max(lat, l.getMaxLat());
+		}
+		return lat;
+	}
+
+	public double getMinLon() {
+		double lon = 180d;
+		for (LayerInterface l : layers) {
+			lon = Math.min(lon, l.getMinLon());
+		}
+		return lon;
+	}
+
+	public double getMaxLon() {
+		double lon = -180d;
+		for (LayerInterface l : layers) {
+			lon = Math.max(lon, l.getMaxLon());
+		}
+		return lon;
+	}
+	
 	public String getToolTip() {
 		StringWriter sw = new StringWriter(1024);
 		sw.write("<html>");
 		sw.write("<b>Atlas</b><br>");
 		sw.write("Name: " + name + "<br>");
 		sw.write("Layer count: " + layers.size() + "<br>");
-		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
 		sw.write("Atlas format: " + outputFormat + "<br>");
+		sw.write("Maximum tiles to download: " + calculateTilesToDownload() + "<br>");
+		sw.write(String.format("Area start: %s %s<br>", Utilities.prettyPrintLatLon(getMaxLat(), true),
+				Utilities.prettyPrintLatLon(getMinLon(), false)));
+		sw.write(String.format("Area end: %s %s<br>", Utilities.prettyPrintLatLon(getMinLat(), true),
+				Utilities.prettyPrintLatLon(getMaxLon(), false)));
 		sw.write("</html>");
 		return sw.toString();
 	}

@@ -168,6 +168,22 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 		return tileDimension;
 	}
 
+	public double getMinLat() {
+		return mapSource.getMapSpace().cYToLat(maxTileCoordinate.y, zoom);
+	}
+
+	public double getMaxLat() {
+		return mapSource.getMapSpace().cYToLat(minTileCoordinate.y, zoom);
+	}
+
+	public double getMinLon() {
+		return mapSource.getMapSpace().cXToLon(minTileCoordinate.x, zoom);
+	}
+
+	public double getMaxLon() {
+		return mapSource.getMapSpace().cXToLon(maxTileCoordinate.x, zoom);
+	}
+
 	public void delete() {
 		layer.deleteMap(this);
 	}

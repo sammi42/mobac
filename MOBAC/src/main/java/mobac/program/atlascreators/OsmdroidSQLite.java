@@ -97,7 +97,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 			int batchTileCount = 0;
 
 			ImageIO.setUseCache(false);
-			PreparedStatement prep = conn.prepareStatement("insert into tiles values (?, ?, ?);");
+			PreparedStatement prep = conn.prepareStatement("INSERT or REPLACE INTO tiles VALUES (?, ?, ?);");
 			Runtime r = Runtime.getRuntime();
 			long heapMaxSize = r.maxMemory();
 

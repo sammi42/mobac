@@ -29,8 +29,12 @@ import mobac.gui.MainGUI;
 import mobac.program.model.MapSelection;
 import mobac.utilities.GUIExceptionHandler;
 
+import org.apache.log4j.Logger;
+
 @XmlRootElement(name = "ExternalTool")
 public class ExternalToolDef implements ActionListener {
+
+	private static final Logger log = Logger.getLogger(ExternalToolDef.class);
 
 	/**
 	 * Name used for the menu entry in MOBAC
@@ -61,10 +65,10 @@ public class ExternalToolDef implements ActionListener {
 					add = Double.toString(mapSel.getMax().lat);
 					break;
 				case MIN_LAT:
-					add = Double.toString(mapSel.getMax().lon);
+					add = Double.toString(mapSel.getMin().lat);
 					break;
 				case MAX_LON:
-					add = Double.toString(mapSel.getMin().lat);
+					add = Double.toString(mapSel.getMax().lon);
 					break;
 				case MIN_LON:
 					add = Double.toString(mapSel.getMin().lon);
@@ -80,11 +84,14 @@ public class ExternalToolDef implements ActionListener {
 				}
 				executeCommand += " " + add;
 			}
-			if (debug)
-				JOptionPane.showMessageDialog(gui, "<html>Command to be executed:<br><tt>" + executeCommand
-						+ "</tt></html>");
+			if (debug) {
+				int r = JOptionPane.showConfirmDialog(gui, "<html>Command to be executed:<br><tt>" + executeCommand
+						+ "</tt></html>", "Do you want to execute the command?", JOptionPane.OK_CANCEL_OPTION);
+				if (r != JOptionPane.OK_OPTION)
+					return;
+			}
+			log.debug("Executing " + executeCommand);
 			Process p = Runtime.getRuntime().exec(executeCommand);
-
 		} catch (Exception e1) {
 			GUIExceptionHandler.showExceptionDialog(e1);
 		}

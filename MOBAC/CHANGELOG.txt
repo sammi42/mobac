@@ -15,6 +15,7 @@
     removed flipXYDirs (use <sourceType>DIR_ZOOM_Y_X</sourceType> instead
  ! Custom map source from ZIPs: Handling for atlas types with two file 
     extensions fixed
+ ! Bugfix Osmdroid SQlite: PRIMARY KEY must be unique (#3438206)
 
 1.9.2 (2011-10-12)
  + Custom map source from ZIP/files in file-system: added possibility to invert

@@ -218,20 +218,35 @@
 	</target>
 
 	<target name="create_svnversion_jar" description="helper function for creating a combined svnversion.jar out of the the different SVNKit jars">
-		<property name="svnkit.home" value="Enter path to SVNKit here" />
-		<available file="${svnkit.home}/svnkit.jar" property="svjkit.present" />
+		<property name="svnkit.home" value="D:\Temp\svnkit-1.3.6-v1 test" />
+		<available file="${svnkit.home}/lib" type="dir" property="svjkit.present" />
 		<fail unless="svjkit.present" message="SVNKit home dir not set" />
 		<delete file="lib/svnversion.jar" />
 
-		<java jar="lib/proguard.jar" fork="true">
-			<arg line=" -injars ${svnkit.home}/svnkit.jar;${svnkit.home}/svnkit-cli.jar;${svnkit.home}/svnkit-javahl.jar;${svnkit.home}/trilead.jar" />
-			<arg line=" -outjars lib/svnversion.jar " />
-			<arg line=" -libraryjars '${java.home}/lib/rt.jar' " />
-			<arg line=" -keep public class org.tmatesoft.svn.cli.svnversion.SVNVersion { public static void main(java.lang.String[]); }" />
-			<arg line=" -keep public class org.apache.log4j.PatternLayout { public *; } " />
-			<arg line=" -keep public class org.apache.log4j.FileAppender { public *; } " />
-			<arg line=" -dontwarn -dontoptimize -dontobfuscate " />
-		</java>
+		<taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
+		<fileset dir="${svnkit.home}/lib" id="svnkit-libs.fileset" >
+			<include name="svnkit*.jar" />
+			<include name="trilead*.jar" />
+			<exclude name="svnkit-javahl*" />
+		</fileset>
+		<pathconvert property="svnkit-libs.path" refid="svnkit-libs.fileset">
+		  <firstmatchmapper>
+		    <regexpmapper from='^([^ ]*)( .*)$$' to='"\1\2"(!META-INF/MANIFEST.MF)'/>
+		    <identitymapper/>
+		  </firstmatchmapper>
+		</pathconvert>
+		
+		<proguard>
+			-libraryjars "${java.home}/lib/rt.jar"
+			-injars     ${svnkit-libs.path}
+			-outjars    lib/svnversion.jar
+			-keepattributes *Annotation*
+			-keep class org.tmatesoft.svn.cli.svnversion.SVNVersion { public static void main(java.lang.String[]); }
+			-keep class org.apache.log4j.PatternLayout { public *; }
+			-keep class org.apache.log4j.FileAppender { public *; }
+			-keep class com.sun.jna.Native { public *; }
+			-dontwarn -dontoptimize -dontobfuscate
+		</proguard>
 		<jar destfile="lib/svnversion.jar" update="true">
 			<manifest>
 				<attribute name="Main-Class" value="org.tmatesoft.svn.cli.svnversion.SVNVersion" />

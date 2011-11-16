@@ -18,7 +18,9 @@ package mobac.externaltools;
 
 public enum ToolParameters {
 
-	MAX_LAT, MIN_LAT, MAX_LON, MIN_LON,
-	MIN_ZOOM, MAX_ZOOM,
-	// MAPSOURCE_NAME, MAPSOURCE_DOIPLAYNAME
+	MAX_LAT, MIN_LAT, MAX_LON, MIN_LON, // 
+	MIN_ZOOM, MAX_ZOOM, // minimum and maximum of selected zoom levels check-boxes
+	MAPSOURCE_NAME, MAPSOURCE_DISPLAYNAME, // Currently select map source internal or display name 
+	NAME_EDITBOX // content of the edit box "Name" in the side panel "Atlas Content"
+
 }

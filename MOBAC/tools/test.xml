@@ -2,6 +2,6 @@
 <ExternalTool>
     <name>Name shown in tools menu</name>
     <command>cmd.exe /c start mybatch.cmd</command>
-    <parameters>MAX_LAT MAX_LON MIN_LAT MIN_LON MIN_ZOOM MAX_ZOOM</parameters>
+    <parameters>MAX_LAT MAX_LON MIN_LAT MIN_LON MIN_ZOOM MAX_ZOOM MAPSOURCE_NAME MAPSOURCE_DISPLAYNAME NAME_EDITBOX</parameters>
     <debug>true</debug>
 </ExternalTool>

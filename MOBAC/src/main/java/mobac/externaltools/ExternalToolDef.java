@@ -79,9 +79,20 @@ public class ExternalToolDef implements ActionListener {
 				case MIN_ZOOM:
 					add = Integer.toString(zooms[0]);
 					break;
+				case MAPSOURCE_NAME:
+					add = gui.previewMap.getMapSource().getName();
+					break;
+				case MAPSOURCE_DISPLAYNAME:
+					add = gui.previewMap.getMapSource().toString();
+					break;
+				case NAME_EDITBOX:
+					add = gui.getUserText();
+					break;
 				default:
 					throw new RuntimeException("Unsupported parameter type: " + param);
 				}
+				if (add.indexOf(' ') >= 0)
+					add = "\"" + add + "\"";
 				executeCommand += " " + add;
 			}
 			if (debug) {

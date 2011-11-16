@@ -3,29 +3,20 @@ package mobac.mapsources.mappacks.region_europe_east;
 import java.awt.Color;
 
 import mobac.mapsources.AbstractHttpMapSource;
-import mobac.mapsources.mapspace.MapSpaceFactory;
-import mobac.program.interfaces.HttpMapSource;
-import mobac.program.interfaces.MapSpace;
 import mobac.program.model.TileImageType;
 
 /**
- * Uses 512x512 tiles - not fully supported at the moment!
+ * 
  */
 public class Turaterkep extends AbstractHttpMapSource {
 
-	private static MapSpace space = MapSpaceFactory.getInstance(512, true);
-
 	public Turaterkep() {
-		super("Turaterkep", 7, 16, TileImageType.PNG, HttpMapSource.TileUpdate.IfNoneMatch);
+		super("Turaterkep256", 7, 15, TileImageType.PNG, TileUpdate.IfModifiedSince);
 	}
 
-	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return "http://turaterkep.hostcity.hu/tiles/" + zoom + "/" + tilex + "/" + tiley + ".png";
-	}
+	public String getTileUrl(int zoom, int x, int y) {
+		return "http://a.map.turistautak.hu/tiles/turistautak-domborzattal/" + zoom + "/" + x + "/" + y + ".png";
 
-	@Override
-	public MapSpace getMapSpace() {
-		return space;
 	}
 
 	@Override

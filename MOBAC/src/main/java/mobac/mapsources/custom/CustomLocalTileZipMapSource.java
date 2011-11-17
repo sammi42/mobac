@@ -112,6 +112,10 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	public synchronized void initialize() {
 		if (initialized)
 			return;
+		reinitialize();
+	}
+
+	public void reinitialize() {
 		try {
 			openZipFile();
 			if (zips.size() == 0)

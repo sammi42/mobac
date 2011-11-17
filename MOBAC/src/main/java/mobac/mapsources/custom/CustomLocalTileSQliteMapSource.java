@@ -131,6 +131,10 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	public synchronized void initialize() {
 		if (initialized)
 			return;
+		reinitialize();
+	}
+
+	public void reinitialize() {
 		if (atlasType == null) {
 			JOptionPane.showMessageDialog(null, "No database  specified.\nMap name:" + name + "\nFilename: "
 					+ sourceFile, "Invaild source file", JOptionPane.ERROR_MESSAGE);

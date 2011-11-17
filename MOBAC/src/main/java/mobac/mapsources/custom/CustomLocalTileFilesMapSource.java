@@ -89,6 +89,10 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 	public synchronized void initialize() {
 		if (initialized)
 			return;
+		reinitialize();
+	}
+
+	public void reinitialize() {
 		try {
 			if (!sourceFolder.isDirectory()) {
 				JOptionPane.showMessageDialog(null, "The specified source folder does not exist:\nMap name: " + name

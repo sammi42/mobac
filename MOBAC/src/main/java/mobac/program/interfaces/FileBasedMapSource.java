@@ -24,4 +24,6 @@ public interface FileBasedMapSource extends MapSource {
 	
 	public void initialize();
 
+	public void reinitialize();
+
 }

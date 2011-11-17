@@ -26,6 +26,9 @@ public class DebugLocalMapSource extends DebugMapSource implements FileBasedMapS
 	public void initialize() {
 	}
 
+	public void reinitialize() {
+	}
+
 	@Override
 	public String getName() {
 		return "DebugLocal";

@@ -59,6 +59,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.xml.bind.JAXBException;
 
 import mobac.externaltools.ExternalToolDef;
@@ -76,7 +78,7 @@ import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.PanelShowHide;
-import mobac.gui.actions.ReloadToolsMenu;
+import mobac.gui.actions.RefreshCustomMapsources;
 import mobac.gui.actions.SelectionModePolygon;
 import mobac.gui.actions.SelectionModeRectangle;
 import mobac.gui.actions.ShowAboutDialog;
@@ -426,8 +428,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		mapSourceNames.setMnemonic(KeyEvent.VK_N);
 		debugMenu.add(mapSourceNames);
 		debugMenu.addSeparator();
-		JMenuItem reloadToolsMenu = new JMenuItem2("Reload tools menu", ReloadToolsMenu.class);
-		debugMenu.add(reloadToolsMenu);
+		JMenuItem refreshCustomMapSources = new JMenuItem2("Refresh custom map sources", RefreshCustomMapsources.class);
+		debugMenu.add(refreshCustomMapSources);
 		debugMenu.addSeparator();
 		JMenuItem showLog = new JMenuItem2("Show log file", DebugShowLogFile.class);
 		showLog.setMnemonic(KeyEvent.VK_S);
@@ -476,6 +478,19 @@ public class MainGUI extends JFrame implements MapEventListener {
 		if (ExternalToolsLoader.load()) {
 			if (toolsMenu == null) {
 				toolsMenu = new JMenu("Tools");
+				toolsMenu.addMenuListener(new MenuListener() {
+
+					public void menuSelected(MenuEvent e) {
+						loadToolsMenu();
+						System.out.println("Loaded");
+					}
+
+					public void menuDeselected(MenuEvent e) {
+					}
+
+					public void menuCanceled(MenuEvent e) {
+					}
+				});
 				menuBar.add(toolsMenu);
 			}
 			toolsMenu.removeAll();
@@ -912,8 +927,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 	public void mapSourceChanged(MapSource newMapSource) {
 		// TODO update selected area if new map source has different projectionCategory
 		calculateNrOfTilesToDownload();
-		if (newMapSource.equals(mapSourceCombo.getSelectedItem()))
-			return;
+//		if (newMapSource != null && newMapSource.equals(mapSourceCombo.getSelectedItem()))
+//			return;
 		mapSourceCombo.setSelectedItem(newMapSource);
 	}
 

@@ -47,18 +47,20 @@ public class ExternalToolsLoader {
 		load();
 	}
 
-	protected static void load() {
+	public static boolean load() {
 		try {
 			File dir = DirectoryManager.toolsDir;
 			if (!dir.isDirectory())
-				return;
+				return false;
 			File[] files = dir.listFiles(new FileExtFilter(".xml"));
 			tools = new LinkedList<ExternalToolDef>();
 			for (File f : files) {
 				tools.add(loadFile(f));
 			}
+			return true;
 		} catch (Exception e) {
 			GUIExceptionHandler.showExceptionDialog("Failed to load external tools definition", e);
+			return false;
 		}
 	}
 

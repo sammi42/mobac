@@ -76,6 +76,7 @@ import mobac.gui.actions.DebugShowMapSourceNames;
 import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.PanelShowHide;
+import mobac.gui.actions.ReloadToolsMenu;
 import mobac.gui.actions.SelectionModePolygon;
 import mobac.gui.actions.SelectionModeRectangle;
 import mobac.gui.actions.ShowAboutDialog;
@@ -142,6 +143,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	protected JMenuBar menuBar;
+	protected JMenu toolsMenu = null;
 
 	private JMenu bookmarkMenu = new JMenu("Bookmarks");
 
@@ -413,16 +415,8 @@ public class MainGUI extends JFrame implements MapEventListener {
 		menuBar.add(bookmarkMenu);
 		menuBar.add(panelsMenu);
 
-		if (ExternalToolsLoader.tools != null) {
-			JMenu tools = new JMenu("Tools");
-			for (ExternalToolDef t : ExternalToolsLoader.tools) {
-				JMenuItem m = new JMenuItem(t.name);
-				m.addActionListener(t);
-				tools.add(m);
-			}
-			menuBar.add(tools);
-		}
-		
+		loadToolsMenu();
+
 		menuBar.add(Box.createHorizontalGlue());
 
 		// Debug menu
@@ -431,6 +425,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		JMenuItem mapSourceNames = new JMenuItem2("Show all map source names", DebugShowMapSourceNames.class);
 		mapSourceNames.setMnemonic(KeyEvent.VK_N);
 		debugMenu.add(mapSourceNames);
+		debugMenu.addSeparator();
+		JMenuItem reloadToolsMenu = new JMenuItem2("Reload tools menu", ReloadToolsMenu.class);
+		debugMenu.add(reloadToolsMenu);
 		debugMenu.addSeparator();
 		JMenuItem showLog = new JMenuItem2("Show log file", DebugShowLogFile.class);
 		showLog.setMnemonic(KeyEvent.VK_S);
@@ -473,6 +470,21 @@ public class MainGUI extends JFrame implements MapEventListener {
 		help.add(about);
 
 		menuBar.add(help);
+	}
+
+	public void loadToolsMenu() {
+		if (ExternalToolsLoader.load()) {
+			if (toolsMenu == null) {
+				toolsMenu = new JMenu("Tools");
+				menuBar.add(toolsMenu);
+			}
+			toolsMenu.removeAll();
+			for (ExternalToolDef t : ExternalToolsLoader.tools) {
+				JMenuItem m = new JMenuItem(t.name);
+				m.addActionListener(t);
+				toolsMenu.add(m);
+			}
+		}
 	}
 
 	private void updateLeftPanel() {

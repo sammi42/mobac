@@ -74,9 +74,19 @@ public class ExternalToolDef implements ActionListener {
 					add = Double.toString(mapSel.getMin().lon);
 					break;
 				case MAX_ZOOM:
+					if (zooms.length == 0) {
+						JOptionPane
+								.showMessageDialog(gui, "No zoom level selected", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					add = Integer.toString(zooms[zooms.length - 1]);
 					break;
 				case MIN_ZOOM:
+					if (zooms.length == 0) {
+						JOptionPane
+								.showMessageDialog(gui, "No zoom level selected", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					add = Integer.toString(zooms[0]);
 					break;
 				case MAPSOURCE_NAME:
@@ -104,8 +114,8 @@ public class ExternalToolDef implements ActionListener {
 			log.debug("Executing " + executeCommand);
 			Process p = Runtime.getRuntime().exec(executeCommand);
 		} catch (Exception e1) {
-			GUIExceptionHandler.showExceptionDialog(e1);
+			GUIExceptionHandler.processException(e1);
 		}
 	}
-
+	
 }

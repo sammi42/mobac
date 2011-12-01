@@ -5,7 +5,12 @@ Example custom map definition that uses an existing OSMTracker atlas.
 Atlases that very similar to OSMTracker like AndNav, BackCountry Navigator,
 Maverick and OSMAND are also supported.
 
+Quad-key based map sources as they are created by MapCruncher are also supported.
+They can be selected via <sourceType> entry.  
+
 Supported file formats are PNG, JPG and GIF files.  
+
+This file work with MOBAC 1.9.3 and higher
 
 -->
 <localTileFiles>
@@ -13,22 +18,33 @@ Supported file formats are PNG, JPG and GIF files.
 	<!-- Map source name as it appears in the map sources list. --> 
 	<name>Custom map from tile files</name>
 	
+		
+	<!-- 
+	  Source type specifies the directory structure and file name
+	  inside the zip files (since MOBAC 1.9.3).
+	  
+	  Possible values: DIR_ZOOM_X_Y, DIR_ZOOM_Y_X or QUADKEY
+	  
+	  DIR_ZOOM_X_Y: directory structure "zoom/x/y.png"
+	   	Other file extensions like "jpg", "gif" or "png.andnav2", "jpg.xyz"
+	    are also supported.   
+	   
+	  DIR_ZOOM_Y_X: directory structure "zoom/y/x.png" "zoom/y/x.jpg"
+	   	Other file extensions like "jpg", "gif" or "png.andnav2", "jpg.xyz"
+	    are also supported.   
+	   
+	  QUADKEY: plain files with quad-key file name with extension: 
+	    regular expression for the file name: [0123]+\.(png|gif|jpg) 
+	  
+	-->
+	<sourceType>DIR_ZOOM_X_Y</sourceType>
+	
 	<!-- 
 	  Directory in which the existing atlas is located.
-	  Inside the specified folder the different zoom level directories have to present.
-	  The general structure is zoom/x/y
-	  
-	  Structure example: 
-	    0/0/0.png for the "world tile" on zoom level 0
-	       
+	  Inside directory structure and file name depends on the sourceType.
 	-->
-	<sourceFolder>D:\MOBAC\LocalTiles\TilesAtHome</sourceFolder>
-	
-	<!--
-	Optional: reverse directory structure format to zoom/y/x
-	-->
-	<flipXYDir>false</flipXYDir>
-	
+	<sourceFolder>D:\MOBAC\LocalTiles\OSMAND\TilesAtHome</sourceFolder>
+
 	<!--
 	Optional: supported since MOBAC 1.9.2 
 	If set to true it inverts the y coordinate so that it starts south (min=0) and increases 

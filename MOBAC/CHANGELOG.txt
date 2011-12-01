@@ -18,6 +18,7 @@
  ! Bugfix Osmdroid SQlite: PRIMARY KEY must be unique (#3438206)
  ~ Turaterkep map updated (renamed internally to Turaterkep256 because of map 
     format change)
+ + Support added for starting external tools from within MOBAC 
 
 1.9.2 (2011-10-12)
  + Custom map source from ZIP/files in file-system: added possibility to invert

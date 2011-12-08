@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.4 (2012-01-??)
+ + BeanShell map source: ignoreError=true feature added
+
 1.9.3 (2011-12-01)
  + Custom map source from local tiles XML schema changed: 
     new <sourceType> values: DIR_ZOOM_X_Y, DIR_ZOOM_Y_X, QUADKEY

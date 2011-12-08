@@ -12,6 +12,7 @@ minZoom = 0;    // optional
 maxZoom = 22;   // optional
 tileUpdate = TileUpdate.IfModifiedSince; // optional
 backgroundColor = "#ffffff"; // optional - supported since MOBAC 1.9.1
+ignoreError = "True"; // optional since MOBAC 1.9.4
 
 /**
  This method is called for each tile: input parameters for this script: "zoom", "x" and "y"

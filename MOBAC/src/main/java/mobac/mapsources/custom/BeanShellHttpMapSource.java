@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
@@ -32,6 +33,8 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 	private final Interpreter i;
 
 	private Color backgroundColor = Color.BLACK;
+
+	private boolean ignoreError = false;
 
 	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
 		FileInputStream in = new FileInputStream(f);
@@ -92,6 +95,16 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		if (o != null)
 			tileUpdate = (TileUpdate) o;
 
+		o = i.get("ignoreError");
+		if (o != null) {
+			if (o instanceof String) {
+				ignoreError = Boolean.parseBoolean((String) o);
+			} else if (o instanceof Boolean) {
+				ignoreError = ((Boolean) o).booleanValue();
+			} else
+				throw new EvalError("Invalid type for \"ignoreError\": " + o.getClass(), null, null);
+		}
+
 		o = i.get("backgroundColor");
 		if (o != null)
 			try {
@@ -124,6 +137,18 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 			}
 		}
 		return conn;
+	}
+
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+			InterruptedException {
+		if (!ignoreError)
+			return super.getTileData(zoom, x, y, loadMethod);
+		try {
+			return super.getTileData(zoom, x, y, loadMethod);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public boolean testCode() throws IOException {

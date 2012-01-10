@@ -354,6 +354,7 @@ public class AlpineQuestMap extends AtlasCreator {
 		}
 
 		ImageIO.setUseCache(false);
+		writer.initialize();
 
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {
@@ -374,7 +375,6 @@ public class AlpineQuestMap extends AtlasCreator {
 
 							buffer.reset();
 
-							writer.initialize();
 							writer.processImage(tileImage, buffer);
 
 							sourceTileData = buffer.toByteArray();

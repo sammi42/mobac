@@ -43,6 +43,7 @@ import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -75,6 +76,7 @@ import mobac.gui.actions.BookmarkManage;
 import mobac.gui.actions.DebugSetLogLevel;
 import mobac.gui.actions.DebugShowLogFile;
 import mobac.gui.actions.DebugShowMapSourceNames;
+import mobac.gui.actions.DebugShowMapTileGrid;
 import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.PanelShowHide;
@@ -423,11 +425,17 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		// Debug menu
 		JMenu debugMenu = new JMenu("Debug");
+		JMenuItem mapGrid = new JCheckBoxMenuItem("Show/Hide map tile borders", false);
+		mapGrid.addActionListener(new DebugShowMapTileGrid());
+		debugMenu.add(mapGrid);
+		debugMenu.addSeparator();
+
 		debugMenu.setMnemonic(KeyEvent.VK_D);
 		JMenuItem mapSourceNames = new JMenuItem2("Show all map source names", DebugShowMapSourceNames.class);
 		mapSourceNames.setMnemonic(KeyEvent.VK_N);
 		debugMenu.add(mapSourceNames);
 		debugMenu.addSeparator();
+		
 		JMenuItem refreshCustomMapSources = new JMenuItem2("Refresh custom map sources", RefreshCustomMapsources.class);
 		debugMenu.add(refreshCustomMapSources);
 		debugMenu.addSeparator();

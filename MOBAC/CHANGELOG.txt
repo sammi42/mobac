@@ -11,6 +11,7 @@
 
 1.9.4 (2012-01-??)
  + BeanShell map source: ignoreError=true feature added
+ + Debug menu: Show/hide map tile borders
 
 1.9.3 (2011-12-01)
  + Custom map source from local tiles XML schema changed: 

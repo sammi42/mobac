@@ -40,7 +40,9 @@ public class TileDownLoader {
 	public static String ACCEPT = "text/html, image/png, image/jpeg, image/gif, */*;q=0.1";
 
 	static {
-		System.setProperty("sun.net.client.defaultReadTimeout", "15000");
+		Object defaultReadTimeout = System.getProperty("sun.net.client.defaultReadTimeout");
+		if (defaultReadTimeout == null)
+			System.setProperty("sun.net.client.defaultReadTimeout", "15000");
 		System.setProperty("http.maxConnections", "20");
 	}
 

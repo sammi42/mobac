@@ -30,10 +30,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobac.gui.mapview.PreviewMap;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.LayerInterface;
-import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.utilities.Utilities;
 
@@ -45,7 +43,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 	@XmlAttribute
 	private int version = 0;
 
-	private String name = "Unnamed atlas";
+	private String name = "Unnamed";
 
 	@XmlElements({ @XmlElement(name = "Layer", type = Layer.class) })
 	private List<LayerInterface> layers = new LinkedList<LayerInterface>();
@@ -157,7 +155,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 		}
 		return lon;
 	}
-	
+
 	public String getToolTip() {
 		StringWriter sw = new StringWriter(1024);
 		sw.write("<html>");

@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.5 (2012-03-??)
+ ~ Improvements in atlas download progress dialog (patch by dvodvo)
+
 1.9.4 (2012-01-29)
  + BeanShell map source: ignoreError=true feature added
  + Debug menu: Show/hide map tile borders

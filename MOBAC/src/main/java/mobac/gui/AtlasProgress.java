@@ -85,7 +85,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		int totalNumberOfTiles = 0;
 		int totalNumberOfMaps = 0;
 		int totalProgress = 0;
-		int totalProgressPercent = -1;
+		int totalProgressTenthPercent = -1;
 		int currentMapNumber = 0;
 		int mapDownloadProgress = 0;
 		int mapDownloadNumberOfTiles = 0;
@@ -122,8 +122,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 	private JLabel nrOfCacheBytesValue;
 	private JLabel activeDownloads;
 	private JLabel activeDownloadsValue;
-	private JLabel downloadErrors;
-	private JLabel downloadErrorsValue;
+	private JLabel retryableDownloadErrors;
+	private JLabel retryableDownloadErrorsValue;
+	private JLabel permanentDownloadErrors;
+	private JLabel permanentDownloadErrorsValue;
 	private JLabel totalDownloadTime;
 	private JLabel totalDownloadTimeValue;
 
@@ -142,8 +144,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 	private ArrayList<MapInfo> mapInfos = null;
 
-	private static String TEXT_MAP_DOWNLOAD = "Downloading tiles for map number ";
-	private static String TEXT_PERCENT = "Percent done: %d%%";
+	private static String TEXT_MAP_DOWNLOAD = "Collecting tiles for zoom level ";
+	private static String TEXT_PERCENT = "%d%% done";
+	private static String TEXT_TENTHPERCENT = "%.1f%% done";
 
 	public AtlasProgress(AtlasThread atlasThread) {
 		super("Atlas creation in progress");
@@ -182,10 +185,11 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 		title = new JLabel("Processing maps of atlas:");
 
-		mapInfoLabel = new JLabel("Processing map: ");
+		mapInfoLabel = new JLabel("Processing map ABCDEFGHIJKLMNOPQRSTUVWXYZ-nn "
+				+ "of layer ABCDEFGHIJKLMNOPQRSTUVWXYZ from map source ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
 		atlasMapsDone = new JLabel("000 of 000 done");
-		atlasPercent = new JLabel(String.format(TEXT_PERCENT, 100));
+		atlasPercent = new JLabel(String.format(TEXT_TENTHPERCENT, 100.0));
 		atlasTimeLeft = new JLabel("Time remaining: 00000 minutes 00 seconds", JLabel.RIGHT);
 		atlasProgressBar = new JProgressBar();
 
@@ -207,19 +211,23 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 		activeDownloads = new JLabel("Active tile fetcher threads");
 		activeDownloadsValue = new JLabel();
-		downloadErrors = new JLabel("Download errors");
-		downloadErrors
-				.setToolTipText("<html><h4>Download errors for the current map and for the total atlas (retryable/permanent)</h4>"
-						+ "<p>Mobile Atlas Creator tries to retry failed tile downloads up to two times.<br>"
-						+ "The first time a tile download fails the <b>retryable</b> counter increases by one.<br>"
+		retryableDownloadErrors = new JLabel("Transient download errors");
+		retryableDownloadErrors
+				.setToolTipText("<html><h4>Download errors for the current map and for the total atlas (transient/unrecoverable)</h4>"
+						+ "<p>Mobile Atlas Creator retries failed tile downloads up to two times. <br>"
 						+ "If the tile downloads fails the second time the tile will be counted as <br>"
-						+ "<b>permanent</b> error and not tried again.<br></p></html>");
-		downloadErrorsValue = new JLabel();
-		downloadErrorsValue.setToolTipText(downloadErrors.getToolTipText());
+						+ "<b>unrecoverable</b> error and not tried again during the current map creation run.<br></p></html>");
+		retryableDownloadErrorsValue = new JLabel();
+		retryableDownloadErrorsValue.setToolTipText(retryableDownloadErrors.getToolTipText());
+		permanentDownloadErrors = new JLabel("Unrecoverable download errors");
+		permanentDownloadErrors.setToolTipText(retryableDownloadErrors.getToolTipText());
+		permanentDownloadErrorsValue = new JLabel();
+		permanentDownloadErrorsValue.setToolTipText(permanentDownloadErrors.getToolTipText());
 		totalDownloadTime = new JLabel("Total creation time");
 		totalDownloadTimeValue = new JLabel();
 
-		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically", Settings.getInstance().ignoreDlErrors);
+		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically",
+				Settings.getInstance().ignoreDlErrors);
 		abortAtlasCreationButton = new JButton("Abort creation");
 		abortAtlasCreationButton.setToolTipText("Abort current Atlas download");
 		dismissWindowButton = new JButton("Close Window");
@@ -269,8 +277,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		infoPanel.add(nrOfDownloadedBytesPerSecondValue, gbci.toggleEol());
 		infoPanel.add(activeDownloads, gbci.toggleEol());
 		infoPanel.add(activeDownloadsValue, gbci.toggleEol());
-		infoPanel.add(downloadErrors, gbci.toggleEol());
-		infoPanel.add(downloadErrorsValue, gbci.toggleEol());
+		infoPanel.add(retryableDownloadErrors, gbci.toggleEol());
+		infoPanel.add(retryableDownloadErrorsValue, gbci.toggleEol());
+		infoPanel.add(permanentDownloadErrors, gbci.toggleEol());
+		infoPanel.add(permanentDownloadErrorsValue, gbci.toggleEol());
 		infoPanel.add(totalDownloadTime, gbci.toggleEol());
 		infoPanel.add(totalDownloadTimeValue, gbci.toggleEol());
 
@@ -398,30 +408,19 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		updateGUI();
 	}
 
-	private String formatRemainingTime(long seconds) {
-		int minutesLeft = 0;
-		String timeLeftString;
+	private String formatTime(long longSeconds) {
+		String timeString = "";
 
-		if (seconds < 0) {
-			timeLeftString = "unknown";
-		} else if (seconds > 60) {
-			minutesLeft = (int) (seconds / 60);
-			int secondsLeft = (int) (seconds % 60);
-			if (secondsLeft > 119) {
-				timeLeftString = Integer.toString(minutesLeft) + " " + "minutes" + " " + Integer.toString(secondsLeft)
-						+ " " + "seconds";
-			} else {
-				timeLeftString = Integer.toString(minutesLeft) + " " + "minute" + " " + Integer.toString(secondsLeft)
-						+ " " + "seconds";
-			}
+		if (longSeconds < 0) {
+			timeString = "unknown";
 		} else {
-			if (seconds > 1) {
-				timeLeftString = Long.toString(seconds) + " " + "seconds";
-			} else {
-				timeLeftString = Long.toString(seconds) + " " + "second";
-			}
+			int minutes = (int) (longSeconds / 60);
+			int seconds = (int) (longSeconds % 60);
+			if (minutes > 0)
+				timeString += Integer.toString(minutes) + " " + (minutes == 1 ? "minute" : "minutes") + " ";
+			timeString += Integer.toString(seconds) + " " + (seconds == 1 ? "second" : "seconds");
 		}
-		return "Time remaining: " + timeLeftString;
+		return timeString;
 	}
 
 	public void setZoomLevel(int theZoomLevel) {
@@ -442,7 +441,8 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 					windowTitle.setText("<html><h2>ATLAS CREATION FINISHED " + "SUCCESSFULLY</h2></html>");
 					setTitle("Atlas creation finished successfully");
 				}
-				mapInfoLabel.setText("");
+				// mapInfoLabel.setText("");
+				atlasMapsDone.setText(data.currentMapNumber + " of " + data.totalNumberOfMaps + " done");
 
 				abortAtlasCreationButton.setVisible(false);
 
@@ -534,8 +534,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			}
 
 			if (data.map != null) {
-				String text = "<html>Processing map \"<b>" + data.map.getName() + "</b>\" of layer <b>\""
-						+ data.map.getLayer().getName() + "\"</b> map source: " + data.map.getMapSource() + "</html>";
+				String text = "<html>Processing map <b>" + data.map.getName() + "</b> " + "of layer <b>"
+						+ data.map.getLayer().getName() + "</b> " + "from map source <b>" + data.map.getMapSource()
+						+ "</b></html>";
 				mapInfoLabel.setText(text);
 			}
 
@@ -543,15 +544,15 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			atlasProgressBar.setMaximum(data.totalNumberOfTiles);
 			atlasProgressBar.setValue(data.totalProgress);
 
-			int newPercent = (int) (atlasProgressBar.getPercentComplete() * 100);
+			int newTenthPercent = (int) (atlasProgressBar.getPercentComplete() * 1000);
 			try {
 				boolean pauseState = atlasThread.isPaused();
-				if (data.totalProgressPercent != newPercent || pauseState != data.paused) {
-					data.totalProgressPercent = newPercent;
-					atlasPercent.setText(String.format(TEXT_PERCENT, data.totalProgressPercent));
+				if (data.totalProgressTenthPercent != newTenthPercent || pauseState != data.paused) {
+					data.totalProgressTenthPercent = newTenthPercent;
+					atlasPercent.setText(String.format(TEXT_TENTHPERCENT, data.totalProgressTenthPercent / 10.0));
 					if (data.atlasInterface != null) {
-						String text = String.format("%d%% - Processing atlas \"%s\"", data.totalProgressPercent,
-								data.atlasInterface.getName());
+						String text = String.format(TEXT_PERCENT + " - processing atlas \"%s\"",
+								data.totalProgressTenthPercent / 10, data.atlasInterface.getName());
 						if (pauseState)
 							text += " [PAUSED]";
 						AtlasProgress.this.setTitle(text);
@@ -569,7 +570,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 				long totalElapsedTime = System.currentTimeMillis() - initialTotalTime;
 				seconds = (totalElapsedTime * totalTilesRemaining / (1000L * totalProgress));
 			}
-			atlasTimeLeft.setText(formatRemainingTime(seconds));
+			atlasTimeLeft.setText("Time remaining: " + formatTime(seconds));
 
 			// layer progress
 			mapDownloadProgressBar.setMaximum(data.mapDownloadNumberOfTiles);
@@ -586,23 +587,23 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			if (mapDlProgress != 0 && initialMapDownloadTime > 0)
 				seconds = ((System.currentTimeMillis() - initialMapDownloadTime)
 						* (data.mapDownloadNumberOfTiles - mapDlProgress) / (1000L * mapDlProgress));
-			mapDownloadTimeLeft.setText(formatRemainingTime(seconds));
+			mapDownloadTimeLeft.setText("Time remaining: " + formatTime(seconds));
 
 			// map progress
 			mapCreation.setText("Map creation");
 			mapCreationProgressBar.setValue(data.mapCreationProgress);
 			mapCreationProgressBar.setMaximum(data.mapCreationMax);
-			atlasMapsDone.setText(data.currentMapNumber + " of " + data.totalNumberOfMaps + " done");
+			atlasMapsDone.setText((data.currentMapNumber - 1) + " of " + data.totalNumberOfMaps + " done");
 
 			// bytes per second
 			long rate = data.numberOfDownloadedBytes * 1000;
 			long time = System.currentTimeMillis() - initialMapDownloadTime;
 			if (data.mapCreationProgress == 0 && initialMapDownloadTime > 0) {
 				if (time == 0) {
-					nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / Second");
+					nrOfDownloadedBytesPerSecondValue.setText(": ?? KiByte / second");
 				} else {
 					rate = rate / time;
-					nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate) + " / Second");
+					nrOfDownloadedBytesPerSecondValue.setText(": " + Utilities.formatBytes(rate) + " / second");
 				}
 			}
 
@@ -611,24 +612,8 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			nrOfCacheBytesValue.setText(": " + Utilities.formatBytes(data.numberOfBytesLoadedFromCache));
 
 			// total creation time
-			String timeString = "";
-
-			seconds = 0;
-			long minutes = 0;
-
-			long totalMilliseconds = 0;
-
-			totalMilliseconds = System.currentTimeMillis() - initialTotalTime;
-
-			if (totalMilliseconds > 60000) {
-				minutes = totalMilliseconds / 60000;
-				seconds = (totalMilliseconds - (minutes * 60000)) / 1000;
-				timeString = minutes + " minute(s) and " + seconds + " second(s)";
-			} else {
-				seconds = totalMilliseconds / 1000;
-				timeString = seconds + " second(s)";
-			}
-			totalDownloadTimeValue.setText(": " + timeString);
+			long totalSeconds = (System.currentTimeMillis() - initialTotalTime) / 1000;
+			totalDownloadTimeValue.setText(": " + formatTime(totalSeconds));
 			totalDownloadTimeValue.repaint();
 
 			// active downloads
@@ -636,11 +621,14 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			activeDownloadsValue.setText(": " + activeDownloads);
 			activeDownloadsValue.repaint();
 
+			int totalRetryableErrors = data.prevMapsRetryErrors + data.mapRetryErrors;
+			retryableDownloadErrorsValue.setText(": current map: " + data.mapRetryErrors + ", total: "
+					+ totalRetryableErrors);
+			retryableDownloadErrorsValue.repaint();
 			int totalPermanentErrors = data.prevMapsPermanentErrors + data.mapPermanentErrors;
-			int totalRetylableErrors = data.prevMapsRetryErrors + data.mapRetryErrors;
-			downloadErrorsValue.setText(": map: " + data.mapRetryErrors + " / " + data.mapPermanentErrors + " total: "
-					+ totalRetylableErrors + " / " + totalPermanentErrors);
-			downloadErrorsValue.repaint();
+			permanentDownloadErrorsValue.setText(": current map: " + data.mapPermanentErrors + ", total: "
+					+ totalPermanentErrors);
+			permanentDownloadErrorsValue.repaint();
 		}
 	}
 

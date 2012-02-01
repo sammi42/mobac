@@ -25,7 +25,7 @@ import javax.swing.AbstractListModel;
 
 import mobac.program.interfaces.MapSource;
 
-public class MapSourcesListModel extends AbstractListModel {
+public class MapSourcesListModel extends AbstractListModel<MapSource> {
 
 	ArrayList<MapSource> mapSources;
 
@@ -33,7 +33,7 @@ public class MapSourcesListModel extends AbstractListModel {
 		this.mapSources = new ArrayList<MapSource>(source);
 	}
 
-	public Object getElementAt(int index) {
+	public MapSource getElementAt(int index) {
 		return mapSources.get(index);
 	}
 

@@ -179,12 +179,13 @@
 			-keep class mobac.program.jaxb.* { public *; }
 			-keep class mobac.program.interfaces.* { public *; }
 			-keep class mobac.program.download.UserAgent { public *; }
+			-keep class mobac.program.tilestore.berkeleydb.* { *; }
+			-keep class mobac.program.tilestore.TileStoreEntry { public *; }
+			-keep class mobac.program.atlascreators.AtlasCreator  { public *; }
 			-keep class mobac.utilities.beanshell.* { public *; }
 			-keep class mobac.utilities.tar.TarIndex { public *; }
 			-keep class mobac.utilities.tar.TarIndexedArchive { public *; }
 			-keep class mobac.data.gpx.gpx11.* { public *; }
-			-keep class mobac.program.tilestore.berkeleydb.* { *; }
-			-keep class mobac.program.tilestore.TileStoreEntry { public *; }
 			-keep class mobac.mapsources.MapSourceTools { public *; }
 			-keep class mobac.mapsources.MapSourceUrlUpdater { public *; }
 			-keep class mobac.mapsources.custom.* { *; }
@@ -196,8 +197,10 @@
 			-keep class org.apache.log4j.spi.ThrowableInformation { public *; }
 			-keep class org.apache.log4j.spi.LocationInfo { public *; }
 			-keep class org.apache.log4j.PatternLayout { public *; }
+			-keep class org.apache.log4j.Appender { public *; }
 			-keep class org.apache.log4j.FileAppender { public *; }
 			-keep class com.sixlegs.png.PngImage { public *; }
+			-keep class bsh.This { public *; }
 			-keep class bsh.XThis { public *; }
 			-keepclassmembers enum * {
 			    public static **[] values();

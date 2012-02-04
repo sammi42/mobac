@@ -25,7 +25,7 @@ import javax.swing.AbstractListModel;
 
 import mobac.program.interfaces.MapSource;
 
-public class MapSourcesListModel extends AbstractListModel<MapSource> {
+public class MapSourcesListModel extends AbstractListModel {
 
 	ArrayList<MapSource> mapSources;
 
@@ -33,7 +33,7 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 		this.mapSources = new ArrayList<MapSource>(source);
 	}
 
-	public MapSource getElementAt(int index) {
+	public Object getElementAt(int index) {
 		return mapSources.get(index);
 	}
 
@@ -46,13 +46,13 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	}
 
 	public MapSource removeElement(int index) {
-		fireIntervalRemoved(this, index, index);
+		fireIntervalRemoved((Object) this, index, index);
 		return mapSources.remove(index);
 	}
 
 	public void addElement(MapSource element) {
 		mapSources.add(element);
-		fireIntervalAdded(this, mapSources.size(), mapSources.size());
+		fireIntervalAdded((Object) this, mapSources.size(), mapSources.size());
 	}
 
 	public boolean moveUp(int index) {

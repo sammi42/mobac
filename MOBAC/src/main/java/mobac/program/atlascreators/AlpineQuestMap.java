@@ -44,8 +44,8 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ArrayOutputStream;
@@ -315,6 +315,8 @@ public class AlpineQuestMap extends AtlasCreator {
 
 			// add tiles
 			this.addLevelTiles();
+		} catch (InterruptedException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);
 		}

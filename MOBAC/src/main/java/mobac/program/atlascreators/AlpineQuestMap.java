@@ -58,7 +58,7 @@ import mobac.utilities.stream.ArrayOutputStream;
  * @author Camille
  */
 @AtlasCreatorName("AlpineQuestMap (AQM)")
-@SupportedParameters(names = { Name.format })
+@SupportedParameters(names = { Name.format, Name.height, Name.width })
 public class AlpineQuestMap extends AtlasCreator {
 
 	public static final String AQM_VERSION = "2";
@@ -339,7 +339,7 @@ public class AlpineQuestMap extends AtlasCreator {
 		ArrayOutputStream buffer = null;
 		TileImageDataWriter writer = null;
 
-		if ((xResizeRatio != 1.0) || (yResizeRatio != 1.0)) {
+		if ((parameters != null) || (xResizeRatio != 1.0) || (yResizeRatio != 1.0)) {
 			// resize image
 			tileImage = new BufferedImage(parameters.getWidth(), parameters.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 
@@ -353,10 +353,10 @@ public class AlpineQuestMap extends AtlasCreator {
 
 			// buffer to store compressed image
 			buffer = new ArrayOutputStream(3 * parameters.getWidth() * parameters.getHeight());
-		}
 
-		ImageIO.setUseCache(false);
-		writer.initialize();
+			ImageIO.setUseCache(false);
+			writer.initialize();
+		}
 
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {

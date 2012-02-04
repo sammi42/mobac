@@ -18,6 +18,7 @@ package mobac.gui.mapview.controller;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
+import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
@@ -25,9 +26,8 @@ import java.awt.event.MouseWheelListener;
 import mobac.gui.mapview.PreviewMap;
 
 /**
- * Abstract base class for all mouse controller implementations. For
- * implementing your own controller create a class that derives from this one
- * and implements one or more of the following interfaces:
+ * Abstract base class for all mouse controller implementations. For implementing your own controller create a class
+ * that derives from this one and implements one or more of the following interfaces:
  * <ul>
  * <li>{@link MouseListener}</li>
  * <li>{@link MouseMotionListener}</li>
@@ -71,5 +71,13 @@ public abstract class JMapController {
 		if (this instanceof MouseMotionListener)
 			map.removeMouseMotionListener((MouseMotionListener) this);
 		this.enabled = false;
+	}
+
+	protected Point convertToAbsolutePoint(Point p) {
+		Point mapPoint = map.getTopLeftCoordinate();
+		mapPoint.x += p.getX();
+		mapPoint.y += p.getY();
+		mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
+		return mapPoint;
 	}
 }

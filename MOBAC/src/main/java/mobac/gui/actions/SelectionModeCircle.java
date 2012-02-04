@@ -20,21 +20,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import mobac.gui.MainGUI;
-import mobac.gui.mapview.controller.AbstractPolygonSelectionMapController;
-import mobac.gui.mapview.controller.JMapController;
-import mobac.gui.mapview.controller.RectangleSelectionMapController;
+import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.controller.PolygonCircleSelectionMapController;
 
-public class AddMapLayer implements ActionListener {
+public class SelectionModeCircle implements ActionListener {
 
-	public static final AddMapLayer INSTANCE = new AddMapLayer();
+	public void actionPerformed(ActionEvent e) {
+		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+		previewMap.setMapSelectionController(new PolygonCircleSelectionMapController(previewMap));
 
-	public void actionPerformed(ActionEvent event) {
-		JMapController msc = MainGUI.getMainGUI().previewMap.getMapSelectionController();
-		if (msc instanceof RectangleSelectionMapController)
-			new AddRectangleMapAutocut().actionPerformed(event);
-		else if (msc instanceof AbstractPolygonSelectionMapController)
-			new AddPolygonMapLayer().actionPerformed(event);
-		else
-			throw new RuntimeException("Unknown mapSelectionController type");
 	}
+
 }

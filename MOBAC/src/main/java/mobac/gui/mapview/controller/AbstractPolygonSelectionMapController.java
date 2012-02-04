@@ -17,47 +17,51 @@
 package mobac.gui.mapview.controller;
 
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
+import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
+import mobac.gui.mapview.layer.PolygonSelectionLayer;
 
 /**
- * Implements the GUI logic for the preview map panel that manages the map selection and actions triggered by key
- * strokes.
- * 
  */
-public class PolygonSelectionMapController extends AbstractPolygonSelectionMapController implements MouseListener {
+public abstract class AbstractPolygonSelectionMapController extends JMapController {
 
-	public PolygonSelectionMapController(PreviewMap map) {
-		super(map);
+	protected boolean finished = false;
+	protected ArrayList<Point> polygonPoints = new ArrayList<Point>();
+	protected PolygonSelectionLayer mapLayer = null;
+
+	public AbstractPolygonSelectionMapController(PreviewMap map) {
+		super(map, false);
+		mapLayer = new PolygonSelectionLayer(this);
 	}
 
-	public void mouseClicked(MouseEvent e) {
+	public void reset() {
+		polygonPoints = new ArrayList<Point>();
+		finished = false;
 	}
 
-	public void mousePressed(MouseEvent e) {
-
+	public void finishPolygon() {
+		finished = true;
 	}
 
-	public void mouseReleased(MouseEvent e) {
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (finished)
-				reset();
-			Point mapPoint = map.getTopLeftCoordinate();
-			mapPoint.x += e.getX();
-			mapPoint.y += e.getY();
-			mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
-			polygonPoints.add(mapPoint);
-		}
-		map.grabFocus();
-		map.repaint();
+	@Override
+	public void enable() {
+		map.mapLayers.add(mapLayer);
+		super.enable();
 	}
 
-	public void mouseEntered(MouseEvent e) {
+	@Override
+	public void disable() {
+		map.mapLayers.remove(mapLayer);
+		super.disable();
 	}
 
-	public void mouseExited(MouseEvent e) {
+	/**
+	 * @return List of absolute tile coordinate points regarding {@link JMapViewer#MAX_ZOOM}
+	 */
+	public ArrayList<Point> getPolygonPoints() {
+		return polygonPoints;
 	}
 
 }

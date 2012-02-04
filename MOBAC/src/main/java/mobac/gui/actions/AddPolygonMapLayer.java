@@ -28,7 +28,7 @@ import mobac.exceptions.InvalidNameException;
 import mobac.gui.MainGUI;
 import mobac.gui.atlastree.JAtlasTree;
 import mobac.gui.mapview.JMapViewer;
-import mobac.gui.mapview.controller.PolygonSelectionMapController;
+import mobac.gui.mapview.controller.AbstractPolygonSelectionMapController;
 import mobac.program.interfaces.AtlasInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
@@ -42,7 +42,8 @@ public class AddPolygonMapLayer implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		MainGUI mg = MainGUI.getMainGUI();
 
-		PolygonSelectionMapController msc = (PolygonSelectionMapController) mg.previewMap.getMapSelectionController();
+		AbstractPolygonSelectionMapController msc = (AbstractPolygonSelectionMapController) mg.previewMap
+				.getMapSelectionController();
 
 		JAtlasTree jAtlasTree = mg.jAtlasTree;
 		final String mapNameFmt = "%s %02d";
@@ -75,6 +76,7 @@ public class AddPolygonMapLayer implements ActionListener {
 		for (int zoom : zoomLevels) {
 			int xpoints[] = new int[polygonPoints.size()];
 			int ypoints[] = new int[polygonPoints.size()];
+
 			for (int i = 0; i < xpoints.length; i++) {
 				Point p = mapSpace.changeZoom(polygonPoints.get(i), JMapViewer.MAX_ZOOM, zoom);
 				xpoints[i] = p.x;
@@ -82,6 +84,10 @@ public class AddPolygonMapLayer implements ActionListener {
 			}
 			TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
 			Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
+			// Rectangle bounds = polygon.getBounds();
+			// int maxMapSize = Settings.getInstance().maxMapSize;
+			// System.out.println(bounds.height + " " + bounds.width);
+
 			String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
 			MapPolygon map = new MapPolygon(layer, mapName, mapSource, zoom, polygon, customTileParameters);
 			layer.addMap(map);

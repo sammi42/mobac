@@ -19,6 +19,7 @@ package mobac.gui.mapview.controller;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import mobac.gui.mapview.PreviewMap;
 
@@ -27,9 +28,15 @@ import mobac.gui.mapview.PreviewMap;
  * strokes.
  * 
  */
-public class PolygonSelectionMapController extends AbstractPolygonSelectionMapController implements MouseListener {
+public class PolygonCircleSelectionMapController extends AbstractPolygonSelectionMapController implements
+		MouseMotionListener, MouseListener {
 
-	public PolygonSelectionMapController(PreviewMap map) {
+	private static final int POLYGON_POINTS = 16;
+	private static final double ANGLE_PART = Math.PI * 2.0 / POLYGON_POINTS;
+
+	private Point center;
+
+	public PolygonCircleSelectionMapController(PreviewMap map) {
 		super(map);
 	}
 
@@ -37,21 +44,34 @@ public class PolygonSelectionMapController extends AbstractPolygonSelectionMapCo
 	}
 
 	public void mousePressed(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			center = convertToAbsolutePoint(e.getPoint());
+			polygonPoints.ensureCapacity(POLYGON_POINTS);
+		}
+	}
 
+	public void mouseDragged(MouseEvent e) {
+		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
+			if (center != null) {
+				Point circlePoint = convertToAbsolutePoint(e.getPoint());
+				double radius = circlePoint.distance(center);
+				polygonPoints.clear();
+				for (int i = 0; i < POLYGON_POINTS; i++) {
+					double angle = ANGLE_PART * i;
+					int y = (int) Math.round(Math.sin(angle) * radius);
+					int x = (int) Math.round(Math.cos(angle) * radius);
+					polygonPoints.add(new Point(center.x + x, center.y + y));
+				}
+				map.grabFocus();
+				map.repaint();
+			}
+		}
+	}
+
+	public void mouseMoved(MouseEvent e) {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (finished)
-				reset();
-			Point mapPoint = map.getTopLeftCoordinate();
-			mapPoint.x += e.getX();
-			mapPoint.y += e.getY();
-			mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
-			polygonPoints.add(mapPoint);
-		}
-		map.grabFocus();
-		map.repaint();
 	}
 
 	public void mouseEntered(MouseEvent e) {

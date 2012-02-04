@@ -24,7 +24,7 @@ import java.util.List;
 
 import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
-import mobac.gui.mapview.controller.PolygonSelectionMapController;
+import mobac.gui.mapview.controller.AbstractPolygonSelectionMapController;
 import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.program.interfaces.MapSpace;
 
@@ -33,9 +33,9 @@ import mobac.program.interfaces.MapSpace;
  */
 public class PolygonSelectionLayer implements MapLayer {
 
-	private final PolygonSelectionMapController mapController;
+	private final AbstractPolygonSelectionMapController mapController;
 
-	public PolygonSelectionLayer(PolygonSelectionMapController mapController) {
+	public PolygonSelectionLayer(AbstractPolygonSelectionMapController mapController) {
 		this.mapController = mapController;
 	}
 

@@ -62,14 +62,6 @@ public class RectangleSelectionMapController extends JMapController implements M
 		super.disable();
 	}
 
-	private Point convertToAbsolutePoint(Point p) {
-		Point mapPoint = map.getTopLeftCoordinate();
-		mapPoint.x += p.getX();
-		mapPoint.y += p.getY();
-		mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
-		return mapPoint;
-	}
-
 	/**
 	 * Start drawing the selection rectangle if it was the 1st button (left button)
 	 */

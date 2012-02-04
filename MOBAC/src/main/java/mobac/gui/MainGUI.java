@@ -81,6 +81,7 @@ import mobac.gui.actions.DebugShowReport;
 import mobac.gui.actions.HelpLicenses;
 import mobac.gui.actions.PanelShowHide;
 import mobac.gui.actions.RefreshCustomMapsources;
+import mobac.gui.actions.SelectionModeCircle;
 import mobac.gui.actions.SelectionModePolygon;
 import mobac.gui.actions.SelectionModeRectangle;
 import mobac.gui.actions.ShowAboutDialog;
@@ -99,6 +100,7 @@ import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.PreviewMap;
 import mobac.gui.mapview.WgsGrid.WgsDensity;
 import mobac.gui.mapview.controller.JMapController;
+import mobac.gui.mapview.controller.PolygonCircleSelectionMapController;
 import mobac.gui.mapview.controller.PolygonSelectionMapController;
 import mobac.gui.mapview.controller.RectangleSelectionMapController;
 import mobac.gui.mapview.interfaces.MapEventListener;
@@ -184,6 +186,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	public JMenu logLevelMenu;
 	private JMenuItem smRectangle;
 	private JMenuItem smPolygon;
+	private JMenuItem smCircle;
 
 	private MercatorPixelCoordinate mapSelectionMax = null;
 	private MercatorPixelCoordinate mapSelectionMin = null;
@@ -383,6 +386,10 @@ public class MainGUI extends JFrame implements MapEventListener {
 		smPolygon.addActionListener(new SelectionModePolygon());
 		selectionModeMenu.add(smPolygon);
 
+		smCircle = new JRadioButtonMenuItem("Circle");
+		smCircle.addActionListener(new SelectionModeCircle());
+		selectionModeMenu.add(smCircle);
+
 		JMenuItem addSelection = new JMenuItem("Add selection");
 		addSelection.addActionListener(AddMapLayer.INSTANCE);
 		addSelection.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
@@ -435,7 +442,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		mapSourceNames.setMnemonic(KeyEvent.VK_N);
 		debugMenu.add(mapSourceNames);
 		debugMenu.addSeparator();
-		
+
 		JMenuItem refreshCustomMapSources = new JMenuItem2("Refresh custom map sources", RefreshCustomMapsources.class);
 		debugMenu.add(refreshCustomMapSources);
 		debugMenu.addSeparator();
@@ -935,17 +942,20 @@ public class MainGUI extends JFrame implements MapEventListener {
 	public void mapSourceChanged(MapSource newMapSource) {
 		// TODO update selected area if new map source has different projectionCategory
 		calculateNrOfTilesToDownload();
-//		if (newMapSource != null && newMapSource.equals(mapSourceCombo.getSelectedItem()))
-//			return;
+		// if (newMapSource != null && newMapSource.equals(mapSourceCombo.getSelectedItem()))
+		// return;
 		mapSourceCombo.setSelectedItem(newMapSource);
 	}
 
 	public void mapSelectionControllerChanged(JMapController newMapController) {
 		smPolygon.setSelected(false);
+		smCircle.setSelected(false);
 		smRectangle.setSelected(false);
 		if (newMapController instanceof PolygonSelectionMapController)
 			smPolygon.setSelected(true);
-		if (newMapController instanceof RectangleSelectionMapController)
+		else if (newMapController instanceof PolygonCircleSelectionMapController)
+			smCircle.setSelected(true);
+		else if (newMapController instanceof RectangleSelectionMapController)
 			smRectangle.setSelected(true);
 	}
 

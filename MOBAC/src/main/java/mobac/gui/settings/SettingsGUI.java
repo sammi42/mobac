@@ -836,7 +836,6 @@ public class SettingsGUI extends JDialog {
 				try {
 					Settings.save();
 				} catch (JAXBException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

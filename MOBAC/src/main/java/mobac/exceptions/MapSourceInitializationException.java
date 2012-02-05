@@ -19,22 +19,18 @@ package mobac.exceptions;
 public class MapSourceInitializationException extends Exception {
 
 	public MapSourceInitializationException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public MapSourceInitializationException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public MapSourceInitializationException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public MapSourceInitializationException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

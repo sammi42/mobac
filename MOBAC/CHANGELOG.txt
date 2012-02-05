@@ -13,6 +13,7 @@
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)
  ~ Improvements in atlas download progress dialog (patch by dvodvo)
  ~ Windows launcher "Mobile Atlas Creator.exe" increased max heap size to 1GB
+ + New selection mode: Circle (approximated by a 16 point polygon)
 
 1.9.4 (2012-01-29)
  + BeanShell map source: ignoreError=true feature added
@@ -39,7 +40,6 @@
  ! PaperAtlas: NullPointerException when WGS Grid=off has been fixed
  + CustomSQLite atlas as map source: OSMAND format added
  + New atlas output format: OSMAND SQLite
-
 
 1.9.1 (2011-09-09) 
  ! Opening settings dialog: ClassCastException on Linux/OpenJDK

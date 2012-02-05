@@ -342,7 +342,7 @@ public class AtlasThread extends Thread implements DownloadJobListener, AtlasCre
 				}
 				downloadJobDispatcher.cancelOutstandingJobs();
 				log.debug("Starting to create atlas from downloaded tiles");
-				mapTileProvider = new DownloadedTileProvider(tileIndex, map.getMapSource());
+				mapTileProvider = new DownloadedTileProvider(tileIndex, map);
 			} else {
 				// We don't need to download anything. Everything is already stored locally therefore we can just use it
 				mapTileProvider = new FilteredMapSourceProvider(map, LoadMethod.DEFAULT);

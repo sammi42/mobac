@@ -32,93 +32,72 @@ public class DummyTileStore extends TileStore {
 	}
 
 	public DummyTileStore() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void clearStore(String storeName) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void closeAll() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean contains(int x, int y, int zoom, MapSource mapSource) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires,
 			String eTag) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String[] getAllStoreNames() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
 			throws InterruptedException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void prepareTileStore(MapSource mapSource) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void putTile(TileStoreEntry tile, MapSource mapSource) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
 			long timeExpires, String eTag) throws IOException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean storeExists(MapSource mapSource) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

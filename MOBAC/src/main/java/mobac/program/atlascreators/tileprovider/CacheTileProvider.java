@@ -22,6 +22,8 @@ import java.lang.ref.SoftReference;
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import mobac.program.interfaces.MapSource;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -88,6 +90,10 @@ public class CacheTileProvider implements TileProvider {
 
 	public byte[] getTileData(int x, int y) throws IOException {
 		throw new RuntimeException("Not implemented");
+	}
+
+	public MapSource getMapSource() {
+		return tileProvider.getMapSource();
 	}
 
 	private void preloadTile(CachedTile tile) {

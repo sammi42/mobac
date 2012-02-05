@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 import mobac.utilities.tar.TarIndex;
@@ -35,11 +36,13 @@ public class DownloadedTileProvider implements TileProvider {
 	public static final String TILE_FILENAME_PATTERN = "x%dy%d";
 
 	protected final TarIndex tarIndex;
+	protected final MapInterface map;
 	protected final TileImageType mapTileType;
 
-	public DownloadedTileProvider(TarIndex tarIndex, MapSource mapSource) {
+	public DownloadedTileProvider(TarIndex tarIndex, MapInterface map) {
 		this.tarIndex = tarIndex;
-		this.mapTileType = mapSource.getTileImageType();
+		this.map = map;
+		this.mapTileType = map.getMapSource().getTileImageType();
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
@@ -52,6 +55,10 @@ public class DownloadedTileProvider implements TileProvider {
 		if (unconvertedTileData == null)
 			return null;
 		return ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
+	}
+
+	public MapSource getMapSource() {
+		return map.getMapSource();
 	}
 
 }

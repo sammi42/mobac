@@ -67,4 +67,12 @@ public class MapSourceProvider implements TileProvider {
 		}
 	}
 
+	public MapSource getMapSource() {
+		return mapSource;
+	}
+
+	public int getZoom() {
+		return zoom;
+	}
+
 }

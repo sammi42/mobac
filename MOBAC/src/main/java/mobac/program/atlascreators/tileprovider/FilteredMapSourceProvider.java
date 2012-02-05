@@ -24,6 +24,14 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.program.interfaces.TileFilter;
 
+/**
+ * Based on a given {@link TileFilter} implementation an {@link FilteredMapSourceProvider} instance ignores certain
+ * requests via {@link #getTileData(int, int)} and {@link #getTileImage(int, int)} and returns <code>null</code>
+ * instead.
+ * 
+ * This functionality is required especially for polygonal maps where certain tiles which are located outside of the
+ * polygon should be ignored.
+ */
 public class FilteredMapSourceProvider extends MapSourceProvider {
 
 	protected final TileFilter tileFilter;

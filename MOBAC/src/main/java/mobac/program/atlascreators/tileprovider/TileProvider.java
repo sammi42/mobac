@@ -19,10 +19,13 @@ package mobac.program.atlascreators.tileprovider;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import mobac.program.interfaces.MapSource;
+
 public interface TileProvider {
 
 	public byte[] getTileData(int x, int y) throws IOException;
 
 	public BufferedImage getTileImage(int x, int y) throws IOException;
 
+	public MapSource getMapSource();
 }

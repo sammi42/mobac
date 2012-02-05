@@ -19,35 +19,36 @@ package mobac.program.atlascreators.tileprovider;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import mobac.data.gpx.gpx11.Gpx;
 import mobac.program.interfaces.MapSource;
-
-import org.apache.log4j.Logger;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.model.TileImageFormat;
 
 /**
- * Base implementation of an {@link TileProvider} that changes somehow the images, e.g. combines two layers to one or
- * paints something onto a tile image.
+ * 
+ * Incomplete!
+ * 
  */
-public class FilterTileProvider implements TileProvider {
+public class GpxPainterTileProvider extends ConvertedRawTileProvider {
 
-	protected final Logger log;
+	private final MapSpace mapSpace;
 
-	protected final TileProvider tileProvider;
+	public GpxPainterTileProvider(MapSourceProvider tileProvider, TileImageFormat tileImageFormat, Gpx gpx) {
+		super(tileProvider, tileImageFormat);
+		int zoom = tileProvider.getZoom();
+		MapSource mapSource = tileProvider.getMapSource();
+		mapSpace = mapSource.getMapSpace();
 
-	public FilterTileProvider(TileProvider tileProvider) {
-		log = Logger.getLogger(this.getClass());
-		this.tileProvider = tileProvider;
+		// TODO Prepare GPX points
 	}
 
+	@Override
 	public BufferedImage getTileImage(int x, int y) throws IOException {
-		return tileProvider.getTileImage(x, y);
-	}
+		BufferedImage image = super.getTileImage(x, y);
 
-	public byte[] getTileData(int x, int y) throws IOException {
-		return tileProvider.getTileData(x, y);
-	}
+		// TODO Perform GPX painting
 
-	public MapSource getMapSource() {
-		return tileProvider.getMapSource();
+		return image;
 	}
 
 }

@@ -29,11 +29,12 @@ import javax.imageio.ImageWriter;
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageType;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.log4j.Logger;
 
 public class TileImageJpegDataWriter implements TileImageDataWriter {
 
-	protected Logger log;
+	protected static final Logger log = Logger.getLogger(TileImageJpegDataWriter.class);
 
 	protected ImageWriter jpegImageWriter = null;
 
@@ -52,7 +53,6 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 
 	public TileImageJpegDataWriter(float jpegCompressionLevel) {
 		this.jpegCompressionLevel = (float) jpegCompressionLevel;
-		log = Logger.getLogger(this.getClass());
 	}
 
 	public TileImageJpegDataWriter(TileImageJpegDataWriter jpegWriter) {
@@ -101,4 +101,16 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 		return TileImageType.JPG;
 	}
 
+	public static boolean performOpenJDKJpegTest() {
+		try {
+			TileImageJpegDataWriter writer = new TileImageJpegDataWriter(0.99d);
+			OutputStream out = new NullOutputStream();
+			BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+			writer.processImage(image, out);
+			return false;
+		} catch (Exception e) {
+			log.debug("Jpeg test failed", e);
+			return false;
+		}
+	}
 }

@@ -38,12 +38,14 @@ import mobac.program.model.Settings;
 import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
+import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.GBC;
 import mobac.utilities.Utilities;
 
 public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 	private static final long serialVersionUID = 1L;
+	private static boolean JPEG_TESTED = false;
 
 	private JCheckBox enableCustomTileProcessingCheckButton;
 	private JLabel tileSizeWidthLabel;
@@ -52,10 +54,10 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 	private JTileSizeCombo tileSizeWidth;
 	private JTileSizeCombo tileSizeHeight;
 	private JComboBox tileImageFormat;
-	
-	private boolean widthEnabled = true; 
-	private boolean heightEnabled = true; 
-	private boolean formatEnabled = true; 
+
+	private boolean widthEnabled = true;
+	private boolean heightEnabled = true;
+	private boolean formatEnabled = true;
 
 	public JTileImageParametersPanel() {
 		super("Layer settings: custom tile processing", new GridBagLayout());
@@ -129,7 +131,8 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		Class<? extends AtlasCreator> atlasCreatorClass = newAtlasOutputFormat.getMapCreatorClass();
 		SupportedParameters params = atlasCreatorClass.getAnnotation(SupportedParameters.class);
 		if (params != null) {
-			TreeSet<TileImageParameters.Name> paramNames = new TreeSet<TileImageParameters.Name>(Arrays.asList(params.names()));
+			TreeSet<TileImageParameters.Name> paramNames = new TreeSet<TileImageParameters.Name>(Arrays.asList(params
+					.names()));
 			formatEnabled = paramNames.contains(Name.format);
 			widthEnabled = paramNames.contains(Name.width);
 			heightEnabled = paramNames.contains(Name.height);
@@ -179,7 +182,12 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 		public void actionPerformed(ActionEvent event) {
 			TileImageFormat tif = (TileImageFormat) tileImageFormat.getSelectedItem();
-			if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
+			if (!JPEG_TESTED && (tif.getDataWriter() instanceof TileImageJpegDataWriter)) {
+				if (!TileImageJpegDataWriter.performOpenJDKJpegTest())
+					JOptionPane.showMessageDialog(null, "<html>The JPEG image format is not supported by OpenJDK.</html>",
+							"Image format not available on OpenJDK", JOptionPane.ERROR_MESSAGE);
+				JPEG_TESTED = true;
+			} else if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
 				if (Utilities.testJaiColorQuantizerAvailable())
 					return;
 				JOptionPane.showMessageDialog(null,

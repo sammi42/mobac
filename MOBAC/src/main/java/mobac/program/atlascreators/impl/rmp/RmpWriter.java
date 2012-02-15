@@ -32,9 +32,9 @@ import mobac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
 import mobac.program.atlascreators.impl.rmp.rmpfile.RmpIni;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.CountingOutputStream;
-import mobac.utilities.stream.NullOutputStream;
 import mobac.utilities.stream.RandomAccessFileOutputStream;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.log4j.Logger;
 
 /**

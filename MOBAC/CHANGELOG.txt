@@ -14,6 +14,7 @@
  ~ Improvements in atlas download progress dialog (patch by dvodvo)
  ~ Windows launcher "Mobile Atlas Creator.exe" increased max heap size to 1GB
  + New selection mode: Circle (approximated by a 16 point polygon)
+ + New map source: OSMapa-Topo with contours (PL)
 
 1.9.4 (2012-01-29)
  + BeanShell map source: ignoreError=true feature added

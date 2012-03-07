@@ -29,5 +29,8 @@ mobac.mapsourcesdir=${XDG_CONFIG_HOME}/mobac/mapsources
 # Directory where to create the cache databases of downloaded tiles
 mobac.tilestoredir=${XDG_CACHE_HOME}/mobac/tilestore
 
+# Directory where to save config files for executing external tools from within MOBAC
+mobac.toolsdir=${XDG_CACHE_HOME}/mobac/tools
+
 # Directory where to create the temporary download container
 # mobac.tmpdir=${TMP}/mobac

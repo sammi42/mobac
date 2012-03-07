@@ -38,5 +38,8 @@ mobac.usersettingsdir=D:/MOBAC
 # Directory where to create the cache databases of downloaded tiles
 mobac.tilestoredir=D:/MOBAC/tilestore
 
+# Directory where to save config files for executing external tools from within MOBAC
+#mobac.toolsdir=${mobac-prog}/tools
+
 # Directory where to create the temporary download container
 mobac.tmpdir=D:/MOBAC/Temp

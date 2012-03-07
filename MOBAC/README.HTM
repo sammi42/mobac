@@ -56,8 +56,7 @@ p,ul,ol {
 		<li><a href="#Requirements">Requirements</a>
 			<ul style="margin-left: 10px;">
 				<li><a href="#JAI">Java Advanced Imaging" (JAI)</a></li>
-			</ul>
-		</li>
+			</ul></li>
 		<li><a href="#Installation">Installation</a></li>
 		<li><a href="#Start">Application start</a></li>
 		<li><a href="#AtlasFormats">The different atlas formats</a>
@@ -90,11 +89,9 @@ p,ul,ol {
 				<li><a href="#SportsTracker">[Nokia] Sports Tracker</a></li>
 				<li><a href="#TTQV">Touratech QV</a></li>
 				<li><a href="#TrekBuddy">TrekBuddy</a></li>
-				<li><a href="#TwoNav">TwoNav (RMAP)</a>
-				</li>
+				<li><a href="#TwoNav">TwoNav (RMAP)</a></li>
 				<!-- UBlox -->
-			</ul>
-		</li>
+			</ul></li>
 		<li><a href="#Enhancement">Enhancement requests</a></li>
 		<li><a href="#Bugs">Problems, Bugs &amp; Errors</a></li>
 		<li><a href="#Limitations">Known problems and limitations</a></li>
@@ -104,6 +101,8 @@ p,ul,ol {
 						configuration</a></li>
 				<li><a href="#TileStoreDir">Moving the tile store directory</a>
 				</li>
+				<li><a href="#ExternalTools">Starting external tools from
+						within MOBAC</a></li>
 			</ul>
 		<li><a href="#CustomMapSource">Custom map sources</a>
 			<ul style="margin-left: 10px;">
@@ -119,8 +118,7 @@ p,ul,ol {
 				<li><a href="#CustomMapPack">Custom MapPack</a></li>
 				<li><a href="#FileBased">Custom atlas as map source /
 						locally generated tiles</a></li>
-			</ul>
-		</li>
+			</ul></li>
 	</ul>
 	<hr>
 
@@ -189,7 +187,8 @@ p,ul,ol {
 		Copy or move the unzipped files to a folder where you would like to
 		have Mobile Atlas Creator installed. On computers running Windows
 		please make sure <b>not to install MOBAC into <tt>Program
-				Files</tt> sub-directory!</b>
+				Files</tt> sub-directory!
+		</b>
 	</p>
 
 	<h2>
@@ -246,9 +245,7 @@ p,ul,ol {
 	<h3>
 		<a name="AlpineQuestMap">AlpineQuestMap (AQM)</a>
 	</h3>
-	<p>
-		Sorry no further details are available for this atlas format. 
-	</p>
+	<p>Sorry no further details are available for this atlas format.</p>
 	<!-- *************************************************************************** -->
 	<h3>
 		<a name="AndNav">Creating and using atlases with AndNav</a>
@@ -287,7 +284,8 @@ p,ul,ol {
 		<li>Structure of the atlas (which maps belongs to which layer)</li>
 		<li>Atlases created after another are merged into one Database
 			named <tt>[Atlasname] atlas.sqlitedb</tt> which is located in the
-			atlas output directory.</li>
+			atlas output directory.
+		</li>
 	</ul>
 	<!-- *************************************************************************** -->
 	<h3>
@@ -530,7 +528,8 @@ p,ul,ol {
 	<h4>How to copy the maps to your device</h4>
 	<ol>
 		<li>Create a folder named <tt>MGMapsCache</tt> in the root of you
-			device or memorycard</li>
+			device or memorycard
+		</li>
 		<li>Copy the created folders into this MGMapsCache folder so the
 			directory structure looks like:</li>
 	</ol>
@@ -795,7 +794,8 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		<li>Structure of the atlas (which maps belongs to which layer)</li>
 		<li>Atlases created after another are merged into one Database
 			named <tt>[AtlasName] atlas.sqlitedb</tt> which is located in the
-			atlas output directory.</li>
+			atlas output directory.
+		</li>
 	</ul>
 	<!-- *************************************************************************** -->
 	<h3>
@@ -1067,7 +1067,8 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 	</p>
 	<ol>
 		<li>Make sure you have closed MOBAC</li>
-		<li>Open <tt>settings.xml</tt> in an text editor</li>
+		<li>Open <tt>settings.xml</tt> in an text editor
+		</li>
 		<li>Inside of the tag <tt>&lt;settings&gt;</tt> search for the
 			tag <tt>&lt;directories&gt;</tt>. Inside this tag create a new tag
 			named <tt>&lt;tileStoreDirectory&gt;</tt></li>
@@ -1093,6 +1094,83 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		tag restores the old behavior (automatically tile store directory
 		selection).
 	</p>
+
+	<h3>
+		<a name="ExternalTools">Starting external tools from within MOBAC</a>
+	</h3>
+
+	<p>
+		External tools like scripts or other executable programs can be
+		started from the <b>Tools</b> menu from within MOBAC. This menu is
+		only visible if external programs have been configured. The advantage
+		of starting a program from within MOBAC is that certain information
+		about selected map source, selected region ... can be transmitted as
+		parameters to the executed program.<br> This allows you for
+		example to create your own maps (render tiles) with external tools
+		like <a href="http://wiki.openstreetmap.org/wiki/Osmfilter">OSMFILTER</a>,
+		<a href="http://wiki.openstreetmap.org/wiki/Osmconvert">OSMCONVERT</a>,
+		<a href="http://maperitive.net/">MAPERITIVE</a>...
+	</p>
+	<p>
+		For defining an external program, create an xml file for each
+		external program to be called. The content of the xml file has to be
+		like one of the following examples. The file-name of the xml is not
+		relevant - it only has to end with
+		<tt>.xml</tt>
+	<h4>test.xml</h4>
+	<p>Demonstrates how to execute an Windows batch file.</p>
+	<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;ExternalTool&gt;
+ &lt;name&gt;Name shown in tools menu&lt;/name&gt;
+ &lt;command&gt;cmd.exe /c start .\tools\mybatch.cmd&lt;/command&gt;
+ &lt;parameters&gt;MIN_LON MIN_LAT MAX_LON MAX_LAT MIN_ZOOM MAX_ZOOM MAPSOURCE_NAME MAPSOURCE_DISPLAYNAME NAME_EDITBOX &lt;/parameters&gt;
+ &lt;debug&gt;true&lt;/debug&gt;
+&lt;/ExternalTool&gt;
+</pre>
+	<p>
+		<a
+			href="https://mobac.svn.sourceforge.net/svnroot/mobac/tags/MOBAC%201.9/v1.9.4%20final/tools/test.xml">Annotated
+			sample file download</a>
+	</p>
+
+	<h4>test-exe.xml</h4>
+	<p>Demonstrates how to execute an regular windows program.</p>
+	<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;ExternalTool&gt;
+ &lt;name&gt;Name shown in tools menu&lt;/name&gt;
+ &lt;command&gt;C:\sample-path\program.exe&lt;/command&gt;
+ &lt;parameters&gt;MIN_LON MIN_LAT MAX_LON MAX_LAT MIN_ZOOM MAX_ZOOM MAPSOURCE_NAME MAPSOURCE_DISPLAYNAME NAME_EDITBOX &lt;/parameters&gt;
+ &lt;debug&gt;true&lt;/debug&gt;
+&lt;/ExternalTool&gt;
+</pre>
+
+	<p>
+		The most interesting section is the content of <b>&lt;parameters&gt;</b>.
+		It contains a space separated list of parameters the specified command
+		will be executed with. The following values can be used:
+	<ul>
+		<li><tt>MAX_LAT</tt> - Maximum latitude (upper border) off the
+			selected area</li>
+		<li><tt>MIN_LAT</tt> - Minimum latitude (lower border) off the
+			selected area</li>
+		<li><tt>MAX_LON</tt> - Maximum longitude (right border) off the
+			selected area</li>
+		<li><tt>MIN_LON</tt> - Minimum longitude (left border) off the
+			selected area</li>
+		<li><tt>MIN_ZOOM</tt> - minimum zoom of selected zoom levels
+			check-boxes</li>
+		<li><tt>MAX_ZOOM</tt> - maximum zoom of selected zoom levels
+			check-boxes</li>
+		<li><tt>MAPSOURCE_NAME</tt> - Currently select map source
+			internal name (used in atlas profile xml file)</li>
+		<li><tt>MAPSOURCE_DISPLAYNAME</tt> - Currently select map source
+			display name (as shown in the GUI)</li>
+		<li><tt>NAME_EDITBOX</tt> - content of the edit box "Name" in the
+			side panel "Atlas Content"
+	</ul>
+
 
 	<!-- *************************************************************************** -->
 	<h2>

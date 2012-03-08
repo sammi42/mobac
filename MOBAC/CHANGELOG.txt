@@ -13,6 +13,7 @@
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)
  ~ Improvements in atlas download progress dialog (patch by dvodvo)
  ~ Windows launcher "Mobile Atlas Creator.exe" increased max heap size to 1GB
+ ~ Linux start.sh increased max heap size to 1GB
  + New selection mode: Circle (approximated by a 16 point polygon)
  + New map source: OSMapa-Topo with contours (PL)
 

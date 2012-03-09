@@ -166,6 +166,14 @@ public class Settings {
 	 */
 	public String gpxFileChooserDir = "";
 
+	public final AtlasFormatSpecificSettings atlasFormatSpecificSettings = new AtlasFormatSpecificSettings();
+
+	public static class AtlasFormatSpecificSettings {
+
+		@XmlElement
+		public Integer garminCustomMaxMapCount = 100;
+	}
+
 	public final MainWindowSettings mainWindow = new MainWindowSettings();
 
 	public static class MainWindowSettings {

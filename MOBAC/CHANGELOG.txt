@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.6 (2012-04-??)
+ + New settings.xml option: <garminCustomMaxMapCount>
+
 1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)
  ~ Improvements in atlas download progress dialog (patch by dvodvo)

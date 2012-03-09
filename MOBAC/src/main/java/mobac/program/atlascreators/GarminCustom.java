@@ -24,6 +24,7 @@ import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.interfaces.LayerInterface;
+import mobac.program.model.Settings;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.stream.ArrayOutputStream;
@@ -39,9 +40,10 @@ public class GarminCustom extends GoogleEarthOverlay {
 
 	@Override
 	protected void testAtlas() throws AtlasTestException {
+		int maxMap = Settings.getInstance().atlasFormatSpecificSettings.garminCustomMaxMapCount;
 		for (LayerInterface layer : atlas) {
-			if (layer.getMapCount() > 100)
-				throw new AtlasTestException("Layer exceeeds the maximum map count of 100", layer);
+			if (layer.getMapCount() > maxMap)
+				throw new AtlasTestException("Layer exceeeds the maximum map count of " + maxMap, layer);
 		}
 	}
 

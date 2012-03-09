@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.5 (2012-03-??)
+1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)
  ~ Improvements in atlas download progress dialog (patch by dvodvo)
  ~ Windows launcher "Mobile Atlas Creator.exe" increased max heap size to 1GB

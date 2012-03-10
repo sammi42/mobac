@@ -66,6 +66,7 @@ import mobac.program.atlascreators.RunGPSAtlas;
 import mobac.program.atlascreators.SportsTracker;
 import mobac.program.atlascreators.TTQV;
 import mobac.program.atlascreators.TileStoreDownload;
+import mobac.program.atlascreators.TomTomRaster;
 import mobac.program.atlascreators.TrekBuddy;
 import mobac.program.atlascreators.TrekBuddyTared;
 import mobac.program.atlascreators.TwoNavRMAP;
@@ -120,6 +121,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(createByClass(RMapsSQLite.class));
 		FORMATS.add(createByClass(RunGPSAtlas.class));
 		FORMATS.add(createByClass(SportsTracker.class));
+		FORMATS.add(createByClass(TomTomRaster.class));
 		FORMATS.add(createByClass(TTQV.class));
 		FORMATS.add(createByClass(TrekBuddyTared.class));
 		FORMATS.add(createByClass(TrekBuddy.class));

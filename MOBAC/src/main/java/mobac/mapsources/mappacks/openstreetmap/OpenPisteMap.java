@@ -34,12 +34,12 @@ import mobac.program.model.TileImageType;
 public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSourceTextAttribution {
 
 	private static final String BASE = "http://tiles.openpistemap.org/nocontours";
-	private static final String CONTOURS = "http://tiles.openpistemap.org/contours-only";
+	//private static final String CONTOURS = "http://tiles.openpistemap.org/contours-only";
 	private static final String LAMDSHED = "http://tiles2.openpistemap.org/landshaded";
 
 	public OpenPisteMap() {
 		super("OpenPisteMapBCL", TileImageType.PNG);
-		mapSources = new MapSource[] { new OpenPisteMapBase(), new OpenPisteMapLandshed(), new OpenPisteMapContours() };
+		mapSources = new MapSource[] { new Mapnik(),  new OpenPisteMapBase(), new OpenPisteMapLandshed()/*, new OpenPisteMapContours()*/ };
 		initializeValues();
 	}
 
@@ -96,24 +96,24 @@ public class OpenPisteMap extends AbstractMultiLayerMapSource implements MapSour
 
 	}
 
-	public static class OpenPisteMapContours extends AbstractOpenPisteMap {
-
-		public OpenPisteMapContours() {
-			super("OpenPisteMapCont");
-			maxZoom = 17;
-			tileUpdate = HttpMapSource.TileUpdate.LastModified;
-		}
-
-		@Override
-		public String toString() {
-			return "Open Piste Map Base Layer";
-		}
-
-		public String getTileUrl(int zoom, int tilex, int tiley) {
-			return CONTOURS + super.getTileUrl(zoom, tilex, tiley);
-		}
-
-	}
+	// public static class OpenPisteMapContours extends AbstractOpenPisteMap {
+	//
+	// public OpenPisteMapContours() {
+	// super("OpenPisteMapCont");
+	// maxZoom = 17;
+	// tileUpdate = HttpMapSource.TileUpdate.LastModified;
+	// }
+	//
+	// @Override
+	// public String toString() {
+	// return "Open Piste Map Base Layer";
+	// }
+	//
+	// public String getTileUrl(int zoom, int tilex, int tiley) {
+	// return CONTOURS + super.getTileUrl(zoom, tilex, tiley);
+	// }
+	//
+	// }
 
 	public static class OpenPisteMapLandshed extends AbstractOpenPisteMap {
 

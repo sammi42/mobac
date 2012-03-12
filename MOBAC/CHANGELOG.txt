@@ -12,6 +12,7 @@
 1.9.6 (2012-04-??)
  + New settings.xml option: <garminCustomMaxMapCount>
  + New atlas format: TomTom raster
+ - Map source removed: Openstreetmap Osmarenderer (project has been retired)
 
 1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)

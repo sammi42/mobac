@@ -13,6 +13,7 @@
  + New settings.xml option: <garminCustomMaxMapCount>
  + New atlas format: TomTom raster
  - Map source removed: Openstreetmap Osmarenderer (project has been retired)
+ ! Paper atlas: Disabling compass in settings was ineffective 
 
 1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)

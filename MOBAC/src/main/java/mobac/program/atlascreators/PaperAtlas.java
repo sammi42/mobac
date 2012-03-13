@@ -159,124 +159,123 @@ public abstract class PaperAtlas extends AtlasCreator {
 	protected abstract void processPage(BufferedImage image, int pageNumber) throws MapCreationException;
 
 	private void processPages(final int ROWS, final int COLS) throws MapCreationException, InterruptedException {
+		try {
 
-		atlasProgress.initMapCreation(ROWS * COLS * 2);
-		for (int row = 0; row < ROWS; row++) {
-			for (int col = 0; col < COLS; col++) {
-				log.trace(String.format("cal=%d row=%d", col, row));
+			atlasProgress.initMapCreation(ROWS * COLS * 2);
+			for (int row = 0; row < ROWS; row++) {
+				for (int col = 0; col < COLS; col++) {
+					log.trace(String.format("cal=%d row=%d", col, row));
 
-				// Choose image
-				Dimension size;
+					// Choose image
+					Dimension size;
 
-				boolean firstRow = row == 0;
-				boolean lastRow = row + 1 == ROWS;
-				boolean lastCol = col + 1 == COLS;
-				if (corner != null && lastRow && lastCol) {
-					size = new Dimension(corner);
-				} else if (bottom != null && lastRow) {
-					size = new Dimension(bottom);
-				} else if (right != null && lastCol) {
-					size = new Dimension(right);
-				} else {
-					size = new Dimension(base);
-				}
+					boolean firstRow = row == 0;
+					boolean lastRow = row + 1 == ROWS;
+					boolean lastCol = col + 1 == COLS;
+					if (corner != null && lastRow && lastCol) {
+						size = new Dimension(corner);
+					} else if (bottom != null && lastRow) {
+						size = new Dimension(bottom);
+					} else if (right != null && lastCol) {
+						size = new Dimension(right);
+					} else {
+						size = new Dimension(base);
+					}
 
-				// Compute values
-				int pageXMin = col * base.width - col * overlap;
-				int pageYMin = row * base.height - row * overlap;
-				int firstTileX = pageXMin / tileSize + xMin;
-				int firstTileY = pageYMin / tileSize + yMin;
-				int firstTileXOffset = pageXMin % tileSize;
-				int firstTileYOffset = pageYMin % tileSize;
-				int tilesInCol = (size.height + firstTileYOffset - 1) / tileSize + 1;
-				int tilesInRow = (size.width + firstTileXOffset - 1) / tileSize + 1;
+					// Compute values
+					int pageXMin = col * base.width - col * overlap;
+					int pageYMin = row * base.height - row * overlap;
+					int firstTileX = pageXMin / tileSize + xMin;
+					int firstTileY = pageYMin / tileSize + yMin;
+					int firstTileXOffset = pageXMin % tileSize;
+					int firstTileYOffset = pageYMin % tileSize;
+					int tilesInCol = (size.height + firstTileYOffset - 1) / tileSize + 1;
+					int tilesInRow = (size.width + firstTileXOffset - 1) / tileSize + 1;
 
-				// Create image and graphics
-				int imageWidth = size.width + insets.left + insets.right;
-				int imageHeight = size.height + insets.top + insets.bottom;
-				BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_4BYTE_ABGR);
-				Graphics2D g = image.createGraphics();
-				g.translate(insets.left, insets.top);
-				g.clipRect(0, 0, size.width, size.height);
-				// Paint image
+					// Create image and graphics
+					int imageWidth = size.width + insets.left + insets.right;
+					int imageHeight = size.height + insets.top + insets.bottom;
+					BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_4BYTE_ABGR);
+					Graphics2D g = image.createGraphics();
+					g.translate(insets.left, insets.top);
+					g.clipRect(0, 0, size.width, size.height);
+					// Paint image
 
-				g.setBackground(IMAGE_BACKGROUND);
-				g.clearRect(0, 0, size.width, size.height);
-				g.translate(-firstTileXOffset, -firstTileYOffset);
-				for (int tileRow = 0; tileRow < tilesInCol; tileRow++) {
-					for (int tileCol = 0; tileCol < tilesInRow; tileCol++) {
-						int tileX = firstTileX + tileCol;
-						int tileY = firstTileY + tileRow;
-						int x = tileCol * tileSize;
-						int y = tileRow * tileSize;
-						try {
+					g.setBackground(IMAGE_BACKGROUND);
+					g.clearRect(0, 0, size.width, size.height);
+					g.translate(-firstTileXOffset, -firstTileYOffset);
+					for (int tileRow = 0; tileRow < tilesInCol; tileRow++) {
+						for (int tileCol = 0; tileCol < tilesInRow; tileCol++) {
+							int tileX = firstTileX + tileCol;
+							int tileY = firstTileY + tileRow;
+							int x = tileCol * tileSize;
+							int y = tileRow * tileSize;
 							BufferedImage tile = mapDlTileProvider.getTileImage(tileX, tileY);
 							if (tile != null)
 								g.drawImage(tile, null, x, y);
-						} catch (IOException e) {
-							throw new MapCreationException(map, e);
 						}
 					}
-				}
-				g.translate(firstTileXOffset, firstTileYOffset);
+					g.translate(firstTileXOffset, firstTileYOffset);
 
-				// Paint additions
-				dummy.setSize(size);
-				Point tlc = new Point(firstTileX * tileSize + firstTileXOffset, firstTileY * tileSize
-						+ firstTileYOffset);
-				if (s.wgsEnabled)
-					wgsGrid.paintWgsGrid(g, mapSource.getMapSpace(), tlc, zoom);
-				if (s.scaleBar)
-					ScaleBar.paintScaleBar(dummy, g, mapSource.getMapSpace(), tlc, zoom);
-				Image compassRaw;
-				try {
-					compassRaw = ImageIO.read(Utilities.loadResourceAsStream("images/compass.png"));
-					Image compass = compassRaw.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-					g.drawImage(compass, 0, 0, null);
-				} catch (IOException e) {
-					throw new MapCreationException(map, e);
-				}
-				if (s.pageNumbers) {
-					g.setBackground(LABEL_BACKGROUND);
-					g.setColor(LABEL_FOREGROUND);
-
-					String pageNumber = " " + getPageNumber(row, col, ROWS, COLS) + " ";
-					g.setFont(PAGE_NUMBER_FONT);
-					FontMetrics fontMetrics = g.getFontMetrics();
-					int fontHeight = fontMetrics.getHeight();
-					int pageNumberStringWidth = fontMetrics.stringWidth(pageNumber);
-					g.clearRect(0, 0, pageNumberStringWidth, fontHeight);
-					g.drawString(pageNumber, 0, fontHeight - fontMetrics.getDescent());
-
-					int centerX = size.width / 2;
-					g.setFont(LABEL_FONT);
-					fontMetrics = g.getFontMetrics();
-					fontHeight = fontMetrics.getHeight();
-
-					if (!firstRow) {
-						String text = UP + getPageNumber(row - 1, col, ROWS, COLS) + " ";
-						int stringWidth = fontMetrics.stringWidth(text);
-						g.clearRect(centerX - stringWidth / 2, 8, stringWidth, fontHeight);
-						g.drawString(text, centerX - stringWidth / 2, 8 + fontHeight - fontMetrics.getDescent());
+					// Paint additions
+					dummy.setSize(size);
+					Point tlc = new Point(firstTileX * tileSize + firstTileXOffset, firstTileY * tileSize
+							+ firstTileYOffset);
+					if (s.wgsEnabled)
+						wgsGrid.paintWgsGrid(g, mapSource.getMapSpace(), tlc, zoom);
+					if (s.scaleBar)
+						ScaleBar.paintScaleBar(dummy, g, mapSource.getMapSpace(), tlc, zoom);
+					if (s.compass) {
+						Image compassRaw = ImageIO.read(Utilities.loadResourceAsStream("images/compass.png"));
+						Image compass = compassRaw.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+						g.drawImage(compass, 0, 0, null);
 					}
-					if (!lastRow) {
-						String text = DOWN + getPageNumber(row + 1, col, ROWS, COLS) + " ";
-						int stringWidth = fontMetrics.stringWidth(text);
+					if (s.pageNumbers) {
+						g.setBackground(LABEL_BACKGROUND);
+						g.setColor(LABEL_FOREGROUND);
 
-						g.clearRect(centerX - stringWidth / 2, size.height - 32 - fontHeight, stringWidth, fontHeight);
-						g.drawString(text, centerX - stringWidth / 2, size.height - 32 - fontMetrics.getDescent());
+						String pageNumber = " " + getPageNumber(row, col, ROWS, COLS) + " ";
+						g.setFont(PAGE_NUMBER_FONT);
+						FontMetrics fontMetrics = g.getFontMetrics();
+						int fontHeight = fontMetrics.getHeight();
+						int pageNumberStringWidth = fontMetrics.stringWidth(pageNumber);
+						g.clearRect(0, 0, pageNumberStringWidth, fontHeight);
+						g.drawString(pageNumber, 0, fontHeight - fontMetrics.getDescent());
+
+						int centerX = size.width / 2;
+						g.setFont(LABEL_FONT);
+						fontMetrics = g.getFontMetrics();
+						fontHeight = fontMetrics.getHeight();
+
+						if (!firstRow) {
+							String text = UP + getPageNumber(row - 1, col, ROWS, COLS) + " ";
+							int stringWidth = fontMetrics.stringWidth(text);
+							g.clearRect(centerX - stringWidth / 2, 8, stringWidth, fontHeight);
+							g.drawString(text, centerX - stringWidth / 2, 8 + fontHeight - fontMetrics.getDescent());
+						}
+						if (!lastRow) {
+							String text = DOWN + getPageNumber(row + 1, col, ROWS, COLS) + " ";
+							int stringWidth = fontMetrics.stringWidth(text);
+
+							g.clearRect(centerX - stringWidth / 2, size.height - 32 - fontHeight, stringWidth,
+									fontHeight);
+							g.drawString(text, centerX - stringWidth / 2, size.height - 32 - fontMetrics.getDescent());
+						}
 					}
-				}
-				g.dispose();
+					g.dispose();
 
-				// Process image
-				atlasProgress.incMapCreationProgress();
-				checkUserAbort();
-				processPage(image, getPageNumber(row, col, ROWS, COLS));
-				atlasProgress.incMapCreationProgress();
-				checkUserAbort();
+					// Process image
+					atlasProgress.incMapCreationProgress();
+					checkUserAbort();
+					processPage(image, getPageNumber(row, col, ROWS, COLS));
+					atlasProgress.incMapCreationProgress();
+					checkUserAbort();
+				}
 			}
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
 		}
+
 	}
 
 	private int getPageNumber(int row, int col, int ROWS, int COLS) {

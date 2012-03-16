@@ -55,12 +55,12 @@
 		<mkdir dir="build/mobac" />
 		<!-- Compile the starter class for Java 1.4 (shows an verbose -->
 		<!-- error if the JRE requirements are not met -->
-		<javac srcdir="src/main/java" destdir="build/mobac" target="1.4" source="1.4" debug="true" includeantruntime="false">
+		<javac srcdir="src/main/java" destdir="build/mobac" target="1.4" source="1.4" debug="true" includeantruntime="false" encoding="UTF-8">
 			<classpath refid="maincp" />
 			<include name="mobac/StartMOBAC.java" />
 		</javac>
 		<!-- Compile the other classes for Java 1.6 -->
-		<javac srcdir="src/main/java" destdir="build/mobac" target="${java-target}" source="${java-target}" debug="true" includeantruntime="false">
+		<javac srcdir="src/main/java" destdir="build/mobac" target="${java-target}" source="${java-target}" debug="true" includeantruntime="false" encoding="UTF-8">
 			<classpath refid="maincp" />
 			<exclude name="mobac/StartMOBAC.java" />
 			<exclude name="mobac/mapsources/mappacks/**" />
@@ -94,7 +94,7 @@
 					<srcfiles dir="src/main/java/mobac/mapsources/mappacks/@{mappack}" />
 				</uptodate>
 				<echo message="No changes in map pack detected: @{mappack}" />
-				<javac srcdir="src/main/java" destdir="build/mp-@{mappack}" defaultexcludes="true" debug="true" target="${java-target}" source="${java-target}" includeantruntime="false">
+				<javac srcdir="src/main/java" destdir="build/mp-@{mappack}" defaultexcludes="true" debug="true" target="${java-target}" source="${java-target}" includeantruntime="false" encoding="UTF-8">
 					<include name="mobac/mapsources/mappacks/@{mappack}/**.java" />
 					<classpath>
 						<path refid="maincp" />
@@ -227,14 +227,14 @@
 	<target name="svnversion_svn">
 		<delete file="${rev.prop.file}" />
 		<exec executable="svnversion" outputproperty="mobac.revision.new" searchpath="true" failifexecutionfails="false" />
-		<property name="mobac.revision.new" value="exported"/> 
+		<property name="mobac.revision.new" value="exported" />
 		<condition property="mobac.revision.exported">
 			<equals arg1="${mobac.revision.new}" arg2="exported" />
 		</condition>
 		<echo message="MOBAC revision: ${mobac.revision.new}" />
 		<antcall target="svnversion_write_property_file" />
 	</target>
-	
+
 	<target name="svnversion_write_property_file" unless="mobac.revision.exported">
 		<propertyfile file="${rev.prop.file}">
 			<entry key="mobac.revision" value="${mobac.revision.new}" />

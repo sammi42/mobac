@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources.custom;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +28,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.interfaces.MapSource;
+import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
 
 /**
@@ -49,6 +52,10 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class) })
 	protected List<CustomMapSource> layers = new ArrayList<CustomMapSource>();
 
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	protected Color backgroundColor = Color.BLACK;
+	
 	public CustomMultiLayerMapSource() {
 		super();
 		mapSources = new MapSource[0];
@@ -76,6 +83,12 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 	public void setMLName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+	
 
 	// public static void main(String[] args) {
 	// OutputStream os = null;

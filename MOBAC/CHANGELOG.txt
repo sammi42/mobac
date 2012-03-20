@@ -15,6 +15,7 @@
  - Map source removed: Openstreetmap Osmarenderer (project has been retired)
  ! Paper atlas: Disabling compass in settings was ineffective 
  + New map source: OpenStreetMap 4uMaps.eu (Europe)
+ + backgroundColor option for customMultiLayerMapSource
 
 1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)

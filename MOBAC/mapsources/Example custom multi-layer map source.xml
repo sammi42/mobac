@@ -11,6 +11,7 @@ top of the OSM Mapnik layer.
 <customMultiLayerMapSource>
     <name>Custom OSM Mapnik with Hills (Ger)</name>
     <tileType>PNG</tileType>
+    <backgroundColor>#FFFFFF</backgroundColor>
     <layers>
     	<!-- 
     	    Place as many custom map sources in here as you want.
@@ -25,7 +26,6 @@ top of the OSM Mapnik layer.
             <tileType>PNG</tileType>
             <tileUpdate>None</tileUpdate>
             <url>http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png</url>
-            <backgroundColor>#000000</backgroundColor>
             
             <!-- Optional: IgnoreErrors - change to true for maps where only some tiles exist -->
             <ignoreErrors>false</ignoreErrors>

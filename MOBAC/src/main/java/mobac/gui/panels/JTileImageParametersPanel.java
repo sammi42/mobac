@@ -101,8 +101,9 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 	public void loadSettings() {
 		Settings settings = Settings.getInstance();
-		tileImageFormat.setSelectedItem(settings.getTileImageFormat());
 		enableCustomTileProcessingCheckButton.setSelected(settings.isCustomTileSize());
+		updateControlsState();
+		tileImageFormat.setSelectedItem(settings.getTileImageFormat());
 		tileSizeHeight.setValue(settings.getTileSize().height);
 		tileSizeWidth.setValue(settings.getTileSize().width);
 	}
@@ -181,11 +182,14 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 	private class TileImageFormatListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent event) {
+			if (!tileImageFormat.isEnabled())
+				return;
 			TileImageFormat tif = (TileImageFormat) tileImageFormat.getSelectedItem();
 			if (!JPEG_TESTED && (tif.getDataWriter() instanceof TileImageJpegDataWriter)) {
 				if (!TileImageJpegDataWriter.performOpenJDKJpegTest())
-					JOptionPane.showMessageDialog(null, "<html>The JPEG image format is not supported by OpenJDK.</html>",
-							"Image format not available on OpenJDK", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "<html>The JPEG image format is not supported by OpenJDK.<br>"
+							+ "Please select a different tile format.</html>", "Image format not available on OpenJDK",
+							JOptionPane.ERROR_MESSAGE);
 				JPEG_TESTED = true;
 			} else if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
 				if (Utilities.testJaiColorQuantizerAvailable())

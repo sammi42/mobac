@@ -16,6 +16,8 @@
  ! Paper atlas: Disabling compass in settings was ineffective 
  + New map source: OpenStreetMap 4uMaps.eu (Europe)
  + backgroundColor option for customMultiLayerMapSource
+ ! Message "The JPEG image format is not supported by OpenJDK." was shown at
+    start-up even is custom tiles processing was disabled
 
 1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)

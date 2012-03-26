@@ -21,6 +21,7 @@ import java.util.concurrent.Semaphore;
 
 import mobac.exceptions.TileException;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.model.TileImageType;
 
 public class MapQuest extends AbstractOsmMapSource {
 
@@ -31,9 +32,9 @@ public class MapQuest extends AbstractOsmMapSource {
 
 	public MapQuest() {
 		super("MapQuest");
-		minZoom = 2;
+		minZoom = 0;
 		maxZoom = 18;
-		tileUpdate = HttpMapSource.TileUpdate.IfModifiedSince;
+		tileUpdate = TileUpdate.IfModifiedSince;
 	}
 
 	@Override
@@ -45,6 +46,11 @@ public class MapQuest extends AbstractOsmMapSource {
 		} finally {
 			SEM.release();
 		}
+	}
+
+	@Override
+	public TileImageType getTileImageType() {
+		return TileImageType.JPG;
 	}
 
 	@Override

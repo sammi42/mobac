@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import mobac.exceptions.TileException;
-import mobac.program.interfaces.HttpMapSource;
 import mobac.program.model.TileImageType;
 
 public class MapQuest extends AbstractOsmMapSource {

@@ -51,6 +51,10 @@ public class CacheTileProvider implements TileProvider {
 		preLoader.start();
 	}
 
+	public boolean preferTileImageUsage() {
+		return true;
+	}
+
 	public BufferedImage getTileImage(int x, int y) throws IOException {
 		SRCachedTile cachedTile = cache.get(new CacheKey(x, y));
 		BufferedImage image = null;

@@ -67,6 +67,10 @@ public class MapSourceProvider implements TileProvider {
 		}
 	}
 
+	public boolean preferTileImageUsage() {
+		return false;
+	}
+
 	public MapSource getMapSource() {
 		return mapSource;
 	}

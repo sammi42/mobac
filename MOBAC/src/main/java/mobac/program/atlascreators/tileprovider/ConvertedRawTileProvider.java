@@ -49,4 +49,8 @@ public class ConvertedRawTileProvider extends FilterTileProvider {
 		return buffer.toByteArray();
 	}
 
+	public boolean preferTileImageUsage() {
+		return true;
+	}
+
 }

@@ -16,38 +16,40 @@
  ******************************************************************************/
 package mobac.program.atlascreators.tileprovider;
 
-import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import mobac.program.interfaces.MapSource;
-
-import org.apache.log4j.Logger;
+import mobac.program.interfaces.TileImageDataWriter;
+import mobac.program.model.TileImageType;
+import mobac.program.tiledatawriter.TileImagePng8DataWriter;
+import mobac.utilities.Utilities;
 
 /**
- * Base implementation of an {@link TileProvider} that changes somehow the images, e.g. combines two layers to one or
- * paints something onto a tile image.
+ * A tile provider for atlas formats that only allow PNG images. Each image processed is checked
  */
-public abstract class FilterTileProvider implements TileProvider {
+public class PngTileProvider extends FilterTileProvider {
 
-	protected final Logger log;
+	final TileImageDataWriter writer;
 
-	protected final TileProvider tileProvider;
-
-	public FilterTileProvider(TileProvider tileProvider) {
-		log = Logger.getLogger(this.getClass());
-		this.tileProvider = tileProvider;
+	public PngTileProvider(TileProvider tileProvider) {
+		super(tileProvider);
+		writer = new TileImagePng8DataWriter();
 	}
 
-	public BufferedImage getTileImage(int x, int y) throws IOException {
-		return tileProvider.getTileImage(x, y);
-	}
-
+	@Override
 	public byte[] getTileData(int x, int y) throws IOException {
-		return tileProvider.getTileData(x, y);
+		if (!tileProvider.preferTileImageUsage()) {
+			byte[] data = super.getTileData(x, y);
+			if (Utilities.getImageType(data) == TileImageType.PNG)
+				return data;
+		}
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
+		writer.processImage(getTileImage(x, y), buffer);
+		return buffer.toByteArray();
 	}
 
-	public MapSource getMapSource() {
-		return tileProvider.getMapSource();
+	public boolean preferTileImageUsage() {
+		return true;
 	}
 
 }

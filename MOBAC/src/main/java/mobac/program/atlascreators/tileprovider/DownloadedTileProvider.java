@@ -57,6 +57,10 @@ public class DownloadedTileProvider implements TileProvider {
 		return ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
 	}
 
+	public boolean preferTileImageUsage() {
+		return false;
+	}
+
 	public MapSource getMapSource() {
 		return map.getMapSource();
 	}

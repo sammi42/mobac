@@ -22,10 +22,10 @@ import mobac.exceptions.AtlasTestException;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.tileprovider.ConvertedRawTileProvider;
+import mobac.program.atlascreators.tileprovider.PngTileProvider;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
-import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.program.model.TileImageType;
 
@@ -53,13 +53,13 @@ public class Viewranger extends OSMTracker {
 	@Override
 	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		super.initializeMap(map, mapTileProvider);
-		mapDir = new File(atlasDir, map.getMapSource().getName());
+		File layerDir = new File(atlasDir, map.getLayer().getName());
+		mapDir = new File(layerDir, map.getName());
 		tileType = "";
-		if (parameters != null) {
+		if (parameters == null)
+			mapDlTileProvider = new PngTileProvider(mapDlTileProvider);
+		else
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
-		} else if (map.getMapSource().getTileImageType() != TileImageType.PNG) {
-			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
-		}
 	}
 
 }

@@ -53,8 +53,7 @@ public class Viewranger extends OSMTracker {
 	@Override
 	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		super.initializeMap(map, mapTileProvider);
-		File layerDir = new File(atlasDir, map.getLayer().getName());
-		mapDir = new File(layerDir, map.getName());
+		mapDir = new File(atlasDir, map.getLayer().getName());
 		tileType = "";
 		if (parameters == null)
 			mapDlTileProvider = new PngTileProvider(mapDlTileProvider);

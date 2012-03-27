@@ -34,6 +34,7 @@ public class PngTileProvider extends FilterTileProvider {
 	public PngTileProvider(TileProvider tileProvider) {
 		super(tileProvider);
 		writer = new TileImagePng8DataWriter();
+		writer.initialize();
 	}
 
 	@Override

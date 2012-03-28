@@ -623,7 +623,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 	</h3>
 	<p>
 		For creating atlases, compatible with <a
-			href="http://www.navifriends.com/phpbbForum/viewtopic.php?f=3&t=17004">nfComPass</a>,
+			href="http://www.navifriends.com/phpbbForum/viewtopic.php?f=3&amp;t=17004">nfComPass</a>,
 		you have to click <b>Atlas -> New Atlas</b>, select <b>nfComPass</b>
 		and give your Atlas a name.<br> By default atlases with a
 		tilesize of 64x64 are created (recommended). For different tile sizes
@@ -954,10 +954,49 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		<a name="Viewranger">Creating and using atlases with Viewranger</a>
 	</h3>
 	<p>
-		TBD
+		For creating atlases compatible with <a
+			href="http://www.viewranger.com/">Viewranger(VR)</a> you have to
+		select <b>Viewranger</b> as format in atlas format selection dialog
+		that appears when starting a new atlas (menu <b>Atlas</b> entry <b>New
+			Atlas</b>).
 	</p>
-	<!-- *************************************************************************** -->
-	<h2>
+	<p>
+		Do <b>not</b> select <b>Recreate/adjust map tiles</b>.
+	</p>
+	<p>Maximum Zoomlevel of Viewranger is 18, minimum is 3.</p>
+	<p>After creating youre atlas the folder structure looks like:</p>
+	<ul>
+		<li><tt>Mobile Atlas Creator 1.9\atlases\VR_2012-03-28_154944\OSM\13\4308</tt></li>
+		<li><tt>Mobile Atlas Creator 1.9\atlases\VR_2012-03-28_154944\OSM\14\43</tt></li>
+		<li><tt>Mobile Atlas Creator 1.9\atlases\VR_2012-03-28_154944\google\13\4308</tt></li>
+		<li><tt>Mobile Atlas Creator 1.9\atlases\VR_2012-03-28_154944\google\14\43</tt></li>
+	</ul>
+	<p>Now we have to <a
+			href="http://support.viewranger.com/wikihelp/index.php/Map_cache_structure"> Create a Folder Structure on the Device:</a>
+	</p>
+	<P>If you youre VR Folder is on E: it is on Symbian located in <tt>E:/ViewRanger/MapCache/_PAlbTN/</tt>
+	</P>
+	<P>In this folder create following Subfolders, if not already present:</P>
+	<P>84,85,87,88,89,129</P>
+	<P>e.g. <tt>/ViewRanger/MapCache/_PAlbTN/84</tt>
+	</p>
+	<p>Copy the content of "OSM" into 84, "google" into 85 and so on.</p>
+	<p> Now it looks like: <tt>E:/ViewRanger/MapCache/_PAlbTN/13/4308/2687</tt>, 2687 is a tile</p>
+	<p>VR has different Online Mapsources which are assigned to the Numbers as shown:</p>
+	
+	<ul>
+		<li><tt>OSM-&gt;84</tt></li>
+		<li><tt>Opencyclemap-&gt;85</tt></li>
+		<li><tt>OSM Direct-&gt;87</tt></li>
+		<li><tt>OSM Midnigth-&gt;88</tt></li>
+		<li><tt>OSM Fresh-&gt;89</tt></li>
+		<li><tt>Open Piste Map-&gt;129 </tt></li>
+	</ul>	
+	
+	<p>Of course you can fill the Tilecache with different Maps.</p>
+	<p>I use the Open Piste Map eg. as "OSM Public Transport"</p>
+	
+			<!-- *************************************************************************** --><h2>
 		<a name="Enhancement">Enhancement requests</a>
 	</h2>
 	<p>
@@ -1049,6 +1088,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		<li>On Windows without a system proxy set (see connection
 			settings of IE) it is strongly recommended <b>not to use</b> the
 			following proxy setting:<i>Use standard Java proxy settings</i>
+	
 	</ul>
 
 	<!-- *************************************************************************** -->
@@ -1131,6 +1171,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		of the following examples. The file-name of the xml is not relevant -
 		it only has to end with
 		<tt>.xml</tt>
+	
 	<h4>test.xml</h4>
 	<p>Demonstrates how to execute an Windows batch file.</p>
 	<pre>
@@ -1164,6 +1205,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		The most interesting section is the content of <b>&lt;parameters&gt;</b>.
 		It contains a space separated list of parameters the specified command
 		will be executed with. The following values can be used:
+	
 	<ul>
 		<li><tt>MAX_LAT</tt> - Maximum latitude (upper border) off the
 			selected area</li>
@@ -1183,6 +1225,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 			display name (as shown in the GUI)</li>
 		<li><tt>NAME_EDITBOX</tt> - content of the edit box "Name" in the
 			side panel "Atlas Content"
+	
 	</ul>
 
 
@@ -1362,7 +1405,7 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 		release available in the <a
 			href="http://sourceforge.net/projects/mobac/files/Mobile%20Atlas%20Creator/">files
 			section at Sourceforge</a> or you can get it directly from the <a
-			href="http://sourceforge.net/scm/?type=svn&group_id=238075">Subversion
+			href="http://sourceforge.net/scm/?type=svn&amp;group_id=238075">Subversion
 			code repository</a> using the latest
 		<tt>trunk</tt>
 		version.

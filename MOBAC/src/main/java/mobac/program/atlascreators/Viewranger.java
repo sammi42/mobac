@@ -46,6 +46,12 @@ public class Viewranger extends OSMTracker {
 					continue;
 				if (!TileImageType.PNG.equals(map.getParameters().getFormat().getType()))
 					throw new AtlasTestException("Only PNG output format allowed for Viewranger", map);
+				if (map.getZoom() > 18)
+					throw new AtlasTestException("Unsupported zoom level: " + map.getZoom()
+							+ "\nMaximum supported zoom level is 18", map);
+				if (map.getZoom() < 3)
+					throw new AtlasTestException("Unsupported zoom level: " + map.getZoom()
+							+ "\nMinimum suupported toom level is 3", map);
 			}
 		}
 	}

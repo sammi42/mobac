@@ -23,7 +23,8 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -81,7 +82,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		tileSizeHeight.setToolTipText("Tile height");
 
 		tileImageFormatLabel = new JLabel("Tile format:");
-		tileImageFormat = new JComboBox(TileImageFormat.values());
+		tileImageFormat = new JComboBox(new TileFormatComboModel(TileImageFormat.values()));
 		tileImageFormat.setMaximumRowCount(tileImageFormat.getItemCount());
 		tileImageFormat.addActionListener(new TileImageFormatListener());
 
@@ -156,7 +157,6 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		updateControlsState();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateControlsState() {
 		boolean b = false;
 		if (enableCustomTileProcessingCheckButton.isEnabled())
@@ -169,11 +169,16 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		tileImageFormatLabel.setEnabled(b && formatEnabled);
 		tileImageFormat.setEnabled(b && formatEnabled);
 		if (formatPngEnabled && !formatJpgEnabled)
-			tileImageFormat.setModel(new DefaultComboBoxModel(TileImageFormat.getPngFormats()));
+			updateFormatComboModel(TileImageFormat.getPngFormats());
 		else if (!formatPngEnabled && formatJpgEnabled)
-			tileImageFormat.setModel(new DefaultComboBoxModel(TileImageFormat.getPngFormats()));
+			updateFormatComboModel(TileImageFormat.getPngFormats());
 		else
-			tileImageFormat.setModel(new DefaultComboBoxModel(TileImageFormat.values()));
+			updateFormatComboModel(TileImageFormat.values());
+	}
+
+	private void updateFormatComboModel(TileImageFormat[] values) {
+		TileFormatComboModel model = (TileFormatComboModel) tileImageFormat.getModel();
+		model.changeValues(values);
 	}
 
 	public String getValidationErrorMessages() {
@@ -220,6 +225,58 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 				tileImageFormat.setSelectedIndex(0);
 			}
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private class TileFormatComboModel extends AbstractListModel implements ComboBoxModel {
+
+		TileImageFormat[] values;
+		Object selectedObject = null;
+
+		public TileFormatComboModel(TileImageFormat[] values) {
+			super();
+			this.values = values;
+			if (values.length > 0)
+				selectedObject = values[0];
+		}
+
+		public void changeValues(TileImageFormat[] values) {
+			this.values = values;
+			boolean found = false;
+			for (TileImageFormat format : values) {
+				if (format.equals(selectedObject)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				selectedObject = values[0];
+			fireContentsChanged(this, -1, -1);
+		}
+
+		@Override
+		public int getSize() {
+			return values.length;
+		}
+
+		@Override
+		public Object getElementAt(int index) {
+			return values[index];
+		}
+
+		@Override
+		public void setSelectedItem(Object anItem) {
+			if ((selectedObject != null && !selectedObject.equals(anItem)) || selectedObject == null && anItem != null) {
+				selectedObject = anItem;
+				fireContentsChanged(this, -1, -1);
+			}
+		}
+
+		@Override
+		public Object getSelectedItem() {
+			return selectedObject;
+		}
+
 	}
 
 }

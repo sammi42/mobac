@@ -25,6 +25,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageType;
@@ -70,6 +71,8 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 			log.trace(s);
 		}
 		jpegImageWriter = ImageIO.getImageWritersByFormatName("jpeg").next();
+		if (jpegImageWriter == null)
+			throw new NullPointerException("Unable to create a JPEG image writer");
 		jpegImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
 		log.debug("Used JPEG image writer: " + jpegImageWriter.getClass().getName());
 		iwp = jpegImageWriter.getDefaultWriteParam();
@@ -87,7 +90,8 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	}
 
 	public void processImage(BufferedImage image, OutputStream out) throws IOException {
-		jpegImageWriter.setOutput(ImageIO.createImageOutputStream(out));
+		ImageOutputStream imageOut = ImageIO.createImageOutputStream(out);
+		jpegImageWriter.setOutput(imageOut);
 		IIOImage ioImage = new IIOImage(image, null, null);
 		jpegImageWriter.write(null, ioImage, iwp);
 	}
@@ -104,10 +108,11 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	public static boolean performOpenJDKJpegTest() {
 		try {
 			TileImageJpegDataWriter writer = new TileImageJpegDataWriter(0.99d);
+			writer.initialize();
 			OutputStream out = new NullOutputStream();
 			BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 			writer.processImage(image, out);
-			return false;
+			return true;
 		} catch (Exception e) {
 			log.debug("Jpeg test failed", e);
 			return false;

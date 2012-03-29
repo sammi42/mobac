@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.program.atlascreators.tileprovider;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -45,7 +46,10 @@ public class PngTileProvider extends FilterTileProvider {
 				return data;
 		}
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
-		writer.processImage(getTileImage(x, y), buffer);
+		BufferedImage image = getTileImage(x, y);
+		if (image == null)
+			return null;
+		writer.processImage(image, buffer);
 		return buffer.toByteArray();
 	}
 

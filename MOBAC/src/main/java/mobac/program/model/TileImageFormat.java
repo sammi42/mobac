@@ -17,6 +17,7 @@
 package mobac.program.model;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 
@@ -83,4 +84,24 @@ public enum TileImageFormat {
 	public String getFileExt() {
 		return dataWriter.getType().getFileExt();
 	}
+
+	public static TileImageFormat[] getPngFormats() {
+		return getFormats(TileImageType.PNG);
+	}
+
+	public static TileImageFormat[] getJpgFormats() {
+		return getFormats(TileImageType.JPG);
+	}
+
+	protected static TileImageFormat[] getFormats(TileImageType tileImageType) {
+		ArrayList<TileImageFormat> list = new ArrayList<TileImageFormat>();
+		for (TileImageFormat format : values()) {
+			if (tileImageType.equals(format.getType()))
+				list.add(format);
+		}
+		TileImageFormat[] result = new TileImageFormat[0];
+		result = list.toArray(result);
+		return result;
+	}
+
 }

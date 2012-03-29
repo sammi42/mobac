@@ -29,8 +29,12 @@ import mobac.program.interfaces.MapInterface;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.program.model.TileImageType;
 
+
+/**
+ * http://sourceforge.net/tracker/index.php?func=detail&aid=3456454&group_id=238075&atid=1105497 
+ */
 @AtlasCreatorName("Viewranger")
-@SupportedParameters(names = { Name.format })
+@SupportedParameters(names = { Name.format_png })
 public class Viewranger extends OSMTracker {
 
 	public Viewranger() {

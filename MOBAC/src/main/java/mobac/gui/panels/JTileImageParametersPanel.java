@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.TreeSet;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -57,7 +58,8 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 	private boolean widthEnabled = true;
 	private boolean heightEnabled = true;
-	private boolean formatEnabled = true;
+	private boolean formatPngEnabled = true;
+	private boolean formatJpgEnabled = true;
 
 	public JTileImageParametersPanel() {
 		super("Layer settings: custom tile processing", new GridBagLayout());
@@ -134,12 +136,19 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		if (params != null) {
 			TreeSet<TileImageParameters.Name> paramNames = new TreeSet<TileImageParameters.Name>(Arrays.asList(params
 					.names()));
-			formatEnabled = paramNames.contains(Name.format);
+			if (paramNames.contains(Name.format)) {
+				formatPngEnabled = true;
+				formatJpgEnabled = true;
+			} else {
+				formatPngEnabled = paramNames.contains(Name.format_png);
+				formatJpgEnabled = paramNames.contains(Name.format_jpg);
+			}
 			widthEnabled = paramNames.contains(Name.width);
 			heightEnabled = paramNames.contains(Name.height);
 			enableCustomTileProcessingCheckButton.setEnabled(true);
 		} else {
-			formatEnabled = false;
+			formatPngEnabled = false;
+			formatJpgEnabled = false;
 			widthEnabled = false;
 			heightEnabled = false;
 			enableCustomTileProcessingCheckButton.setEnabled(false);
@@ -147,6 +156,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		updateControlsState();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateControlsState() {
 		boolean b = false;
 		if (enableCustomTileProcessingCheckButton.isEnabled())
@@ -155,8 +165,15 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		tileSizeWidthLabel.setEnabled(b && widthEnabled);
 		tileSizeHeightLabel.setEnabled(b && heightEnabled);
 		tileSizeHeight.setEnabled(b && heightEnabled);
+		boolean formatEnabled = formatJpgEnabled || formatPngEnabled;
 		tileImageFormatLabel.setEnabled(b && formatEnabled);
 		tileImageFormat.setEnabled(b && formatEnabled);
+		if (formatPngEnabled && !formatJpgEnabled)
+			tileImageFormat.setModel(new DefaultComboBoxModel(TileImageFormat.getPngFormats()));
+		else if (!formatPngEnabled && formatJpgEnabled)
+			tileImageFormat.setModel(new DefaultComboBoxModel(TileImageFormat.getPngFormats()));
+		else
+			tileImageFormat.setModel(new DefaultComboBoxModel(TileImageFormat.values()));
 	}
 
 	public String getValidationErrorMessages() {

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public final class TileImageParameters implements Cloneable {
 
 	public static enum Name {
-		width, height, format
+		width, height, format, format_png, format_jpg
 	}
 
 	@XmlAnyAttribute

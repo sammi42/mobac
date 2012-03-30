@@ -254,17 +254,14 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 			fireContentsChanged(this, -1, -1);
 		}
 
-		@Override
 		public int getSize() {
 			return values.length;
 		}
 
-		@Override
 		public Object getElementAt(int index) {
 			return values[index];
 		}
 
-		@Override
 		public void setSelectedItem(Object anItem) {
 			if ((selectedObject != null && !selectedObject.equals(anItem)) || selectedObject == null && anItem != null) {
 				selectedObject = anItem;
@@ -272,7 +269,6 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 			}
 		}
 
-		@Override
 		public Object getSelectedItem() {
 			return selectedObject;
 		}

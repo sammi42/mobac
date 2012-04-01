@@ -47,7 +47,7 @@ import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 
 @AtlasCreatorName(value = "Magellan (RMP)", type = "Rmp")
-@SupportedParameters(names = { Name.format })
+@SupportedParameters(names = { Name.format_jpg })
 public class MagellanRmp extends AtlasCreator {
 
 	TileImageDataWriter tileWriter = null;
@@ -77,8 +77,8 @@ public class MagellanRmp extends AtlasCreator {
 			for (MapInterface map : layer) {
 				Point max = map.getMaxTileCoordinate();
 				Point min = map.getMinTileCoordinate();
-				if (max.x - min.x > 18000 || max.y - min.y > 18000)
-					throw new AtlasTestException("Map too large. Max size 18000x18000");
+				// if (max.x - min.x > 18000 || max.y - min.y > 18000)
+				// throw new AtlasTestException("Map too large. Max size 18000x18000");
 				if (map.getParameters() != null) {
 					if (!(map.getParameters().getFormat().getDataWriter() instanceof TileImageJpegDataWriter))
 						throw new AtlasTestException("Only JPEG formats are supported", map);

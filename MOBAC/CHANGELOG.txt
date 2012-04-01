@@ -19,6 +19,7 @@
  ! Message "The JPEG image format is not supported by OpenJDK." was shown at
     start-up even is custom tiles processing was disabled
  + New atlas format: Viewranger
+ ~ Magellan (RMP): Removed 18000 pixel check
 
 1.9.5 (2012-03-09)
  ! Alpine Quest Map: Multiple bugs fixed (#3484328)

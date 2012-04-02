@@ -171,7 +171,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		if (formatPngEnabled && !formatJpgEnabled)
 			updateFormatComboModel(TileImageFormat.getPngFormats());
 		else if (!formatPngEnabled && formatJpgEnabled)
-			updateFormatComboModel(TileImageFormat.getPngFormats());
+			updateFormatComboModel(TileImageFormat.getJpgFormats());
 		else
 			updateFormatComboModel(TileImageFormat.values());
 	}

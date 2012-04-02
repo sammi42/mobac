@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.6 (2012-04-??)
+1.9.6 (2012-04-02)
  + New settings.xml option: <garminCustomMaxMapCount>
  + New atlas format: TomTom raster
  - Map source removed: Openstreetmap Osmarenderer (project has been retired)

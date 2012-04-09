@@ -478,14 +478,19 @@ public class BerkeleyDbTileStore extends TileStore {
 		long lastAccess;
 
 		public TileDatabase(String mapSourceName) throws IOException, EnvironmentLockedException, DatabaseException {
-			log.debug("Opening tile store db: \"" + mapSourceName + "\"");
+			this(mapSourceName, getStoreDir(mapSourceName));
+		}
+
+		public TileDatabase(String mapSourceName, File databaseDirectory) throws IOException,
+				EnvironmentLockedException, DatabaseException {
+			log.debug("Opening tile store db: \"" + databaseDirectory + "\"");
+			File storeDir = databaseDirectory;
 			DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
 			try {
 				t.pauseInterrupt();
 				this.mapSourceName = mapSourceName;
 				lastAccess = System.currentTimeMillis();
 
-				File storeDir = getStoreDir(mapSourceName);
 				Utilities.mkDirs(storeDir);
 
 				env = new Environment(storeDir, envConfig);
@@ -502,7 +507,6 @@ public class BerkeleyDbTileStore extends TileStore {
 					close();
 				t.resumeInterrupt();
 			}
-			log.debug("Opened tile store db: \"" + mapSourceName + "\"");
 		}
 
 		public boolean isClosed() {
@@ -531,6 +535,10 @@ public class BerkeleyDbTileStore extends TileStore {
 
 		public TileDbEntry get(TileDbKey key) throws DatabaseException {
 			return tileIndex.get(key);
+		}
+
+		public PrimaryIndex<TileDbKey, TileDbEntry> getTileIndex() {
+			return tileIndex;
 		}
 
 		public BufferedImage getCacheCoverage(int zoom, Point tileNumMin, Point tileNumMax) throws DatabaseException,

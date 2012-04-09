@@ -78,6 +78,7 @@ public class MapSourceTools {
 		tmp = tmp.replace("{$x}", Integer.toString(tilex));
 		tmp = tmp.replace("{$y}", Integer.toString(tiley));
 		tmp = tmp.replace("{$z}", Integer.toString(zoom));
+		tmp = tmp.replace("{$q}", MapSourceTools.encodeQuadTree(zoom, tilex, tiley));
 		return tmp;
 	}
 

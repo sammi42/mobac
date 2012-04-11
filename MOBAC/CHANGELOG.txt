@@ -11,6 +11,7 @@
 
 1.9.7 (2012-05-??)
  + Custom XML map source: New parameter {$q} for Quad-Tree encoded zoom, x & y
+ + New atlas output format: Osmdroid GEMF
 
 1.9.6 (2012-04-02)
  + New settings.xml option: <garminCustomMaxMapCount>

@@ -72,7 +72,7 @@ public class Settings {
 	@XmlElement(defaultValue = "")
 	private String version;
 
-	public int maxMapSize = 32767;
+	public int maxMapSize = 65536;
 
 	public boolean tileStoreEnabled = true;
 

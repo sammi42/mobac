@@ -28,6 +28,12 @@ import mobac.program.model.TileImageFormat;
  * 
  * Incomplete!
  * 
+ * TODO: Fully implement this class so that the content (points, tracks, ...) can be painted on each tile. If the
+ * implementation is complete the {@link GpxPainterTileProvider} can be chained into the tile provider chain after the
+ * {@link DownloadedTileProvider} (see AtlasThread line ~348).
+ * 
+ * Problem: texts and lines that span multiple tiles.
+ * 
  */
 public class GpxPainterTileProvider extends ConvertedRawTileProvider {
 

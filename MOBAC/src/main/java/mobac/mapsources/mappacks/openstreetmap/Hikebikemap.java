@@ -19,6 +19,10 @@
  */
 package mobac.mapsources.mappacks.openstreetmap;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import mobac.exceptions.TileException;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.interfaces.HttpMapSource;
@@ -39,7 +43,7 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 	public static class HikebikemapBase extends AbstractHttpMapSource {
 
 		public HikebikemapBase() {
-			super("HikebikemapTiles", 0, 18, TileImageType.PNG, HttpMapSource.TileUpdate.None);
+			super("HikebikemapTiles", 0, 17, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 		}
 
 		@Override
@@ -61,11 +65,19 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 	public static class HikebikemapRelief extends AbstractHttpMapSource {
 
 		public HikebikemapRelief() {
-			super("HikebikemapRelief", 0, 16, TileImageType.PNG, HttpMapSource.TileUpdate.None);
+			super("HikebikemapRelief", 0, 17, TileImageType.PNG, HttpMapSource.TileUpdate.None);
 		}
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return "http://toolserver.org/~cmarqu/hill/" + zoom + "/" + tilex + "/" + tiley + ".png";
+		}
+
+		@Override
+		public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
+				TileException, InterruptedException {
+			if (zoom > 16)
+				return null;
+			return super.getTileImage(zoom, x, y, loadMethod);
 		}
 
 	}

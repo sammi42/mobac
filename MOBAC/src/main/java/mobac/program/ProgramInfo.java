@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import mobac.Main;
+import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
 
 public class ProgramInfo {
@@ -45,7 +46,8 @@ public class ProgramInfo {
 			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
 			System.getProperties().putAll(props);
 		} catch (Exception e) {
-			Logging.LOG.error("Error reading mobac.properties", e);
+			String msg = "Error reading mobac.properties";
+			GUIExceptionHandler.processFatalExceptionSimpleDialog(msg, e);
 		} finally {
 			Utilities.closeStream(propIn);
 		}

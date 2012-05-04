@@ -1,0 +1,9 @@
+MOBAC TileStore utility
+usage: 
+	java -jar ts-util.jar merge <src-directory> <destination-directory>
+	java -jar ts-util.jar extract <src-directory> <destination-directory>
+	
+merge mode: 
+	
+Copies the tiles from the tile store in the src-directory
+into the tile-store in the destination-directory.

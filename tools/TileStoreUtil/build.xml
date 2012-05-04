@@ -1,0 +1,78 @@
+<project default="all" name="Compile and build java classes plus jar archives">
+
+	<property name="jar.name" value="ts-util.jar" />
+	<property name="zip.name" value="MOBAC TileStore Util.zip" />
+	<property name="zip_src.name" value="MOBAC TileStore Util.zip" />
+	<property name="main.class" value="mobac.program.tilestore.berkeleydb.TileStoreUtil" />
+
+	<!-- Java target version -->
+	<property name="java-target" value="1.6" />
+
+	<path id="maincp">
+		<fileset dir="../MOBAC" includes="Mobile_Atlas_Creator.jar" />
+	</path>
+
+	<target name="all" depends="clean_build,build,create_jar,create_release,create_release_src" />
+
+	<target name="clean_workspace" description="Deletes the work directories ozi, atlases, atlasestared">
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="atlases" includes="**/*" />
+			<fileset dir="build" includes="**/*" />
+			<fileset dir="tilestore" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="clean_build">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="build" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="delete_build" description="Deleted the entire build folder">
+		<delete failonerror="yes" dir="build" />
+	</target>
+
+	<target name="build">
+		<mkdir dir="build" />
+		<javac srcdir="src" destdir="build" target="${java-target}" source="${java-target}" debug="true" includeantruntime="false" encoding="UTF-8">
+			<classpath refid="maincp" />
+			<include name="mobac/**" />
+		</javac>
+		<copy todir="build" overwrite="true">
+			<fileset dir="src" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<target name="create_jar">
+		<delete file="${jar.name}" />
+		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+				<attribute name="Class-Path" value="./ Mobile_Atlas_Creator.jar ../MOBAC/Mobile_Atlas_Creator.jar" />
+			</manifest>
+			<fileset dir="build" />
+		</jar>
+	</target>
+
+
+	<target name="create_release" description="Packs all necessary files for the binary release into one zip archive">
+		<zip destfile="${zip.name}" update="false">
+			<fileset dir="./">
+				<include name="${jar.name}" />
+				<include name="gpl.txt" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="create_release_src" description="Packs all necessary files for the source code release into one zip archive">
+		<zip destfile="${zip_src.name}" update="false">
+			<fileset dir="./">
+				<include name="src/**" />
+				<include name="build.xml" />
+				<include name="gpl.txt" />
+				<include name=".classpath" />
+				<include name=".project" />
+			</fileset>
+		</zip>
+	</target>
+</project>

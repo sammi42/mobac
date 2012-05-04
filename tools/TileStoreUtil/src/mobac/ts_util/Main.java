@@ -1,12 +1,17 @@
-package mobac.program.tilestore.berkeleydb;
+package mobac.ts_util;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Properties;
 
 import mobac.program.Logging;
+import mobac.program.ProgramInfo;
 import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
+import mobac.program.tilestore.berkeleydb.Extract;
+import mobac.program.tilestore.berkeleydb.Merge;
 import mobac.utilities.Charsets;
 import mobac.utilities.file.FileExtFilter;
 
@@ -14,9 +19,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-public class TileStoreUtil {
+public class Main {
 
 	public static Logger log;
+
+	public static String version = "?";
 
 	static File srcDir = null;
 	static File destDir = null;
@@ -26,15 +33,20 @@ public class TileStoreUtil {
 		MERGE, EXTRACT;
 	};
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-
 		Logger.getRootLogger().removeAllAppenders();
-		Logging.configureConsoleLogging(Level.DEBUG, new PatternLayout("%d{HH:mm:ss} %-5p %c{1}: %m%n"));
+		Logging.configureConsoleLogging(Level.INFO, new PatternLayout("%d{HH:mm:ss} %-5p %c{1}: %m%n"));
 		log = Logger.getLogger("TileStoreUtil");
-		log.setLevel(Level.TRACE);
+		log.setLevel(Level.DEBUG);
+		ProgramInfo.initialize(); // Load revision info
+
+		Properties prop = new Properties();
+		try {
+			prop.load(Main.class.getResourceAsStream("ts-util.properties"));
+			version = prop.getProperty("ts-util.version");
+		} catch (IOException e) {
+			log.error("", e);
+		}
 
 		boolean parametersValid = false;
 
@@ -82,6 +94,7 @@ public class TileStoreUtil {
 	}
 
 	private static void showHelp() {
+		System.out.println(getNameAndVersion());
 		InputStream in = TileStoreUtil.class.getResourceAsStream("help.txt");
 		InputStreamReader reader = new InputStreamReader(in, Charsets.UTF_8);
 		char[] buf = new char[4096];
@@ -101,7 +114,12 @@ public class TileStoreUtil {
 		System.exit(1);
 	}
 
+	public static String getNameAndVersion() {
+		return "MOBAC TileStore utility v" + version;
+	}
+
 	public static boolean isValidTileStoreDirectory(File dir) {
 		return dir.listFiles(new FileExtFilter("jdb")).length > 0;
 	}
+
 }

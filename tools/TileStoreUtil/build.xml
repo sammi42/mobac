@@ -2,8 +2,8 @@
 
 	<property name="jar.name" value="ts-util.jar" />
 	<property name="zip.name" value="MOBAC TileStore Util.zip" />
-	<property name="zip_src.name" value="MOBAC TileStore Util.zip" />
-	<property name="main.class" value="mobac.program.tilestore.berkeleydb.TileStoreUtil" />
+	<property name="zip_src.name" value="MOBAC TileStore Util src.zip" />
+	<property name="main.class" value="mobac.ts_util.TileStoreUtil" />
 
 	<!-- Java target version -->
 	<property name="java-target" value="1.6" />
@@ -60,6 +60,7 @@
 			<fileset dir="./">
 				<include name="${jar.name}" />
 				<include name="gpl.txt" />
+				<include name="Readme.txt" />
 			</fileset>
 		</zip>
 	</target>
@@ -70,6 +71,7 @@
 				<include name="src/**" />
 				<include name="build.xml" />
 				<include name="gpl.txt" />
+				<include name="Readme.txt" />
 				<include name=".classpath" />
 				<include name=".project" />
 			</fileset>

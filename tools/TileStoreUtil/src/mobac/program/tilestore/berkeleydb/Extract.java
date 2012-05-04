@@ -7,6 +7,7 @@ import mobac.mapsources.MapSourceTools;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
+import mobac.ts_util.Main;
 import mobac.utilities.Utilities;
 
 import com.sleepycat.persist.EntityCursor;
@@ -18,12 +19,13 @@ public class Extract {
 		TileDatabase dbSource = null;
 		try {
 			dbSource = tileStore.new TileDatabase("Source", sourceDir);
-			TileStoreUtil.log.info("Source tile store entry count: " + dbSource.entryCount());
+			Main.log.info("Source tile store entry count: " + dbSource.entryCount());
+			long count = 0;
 			EntityCursor<TileDbEntry> cursor = dbSource.getTileIndex().entities();
 			try {
 				TileDbEntry entry = cursor.next();
 				while (entry != null) {
-					TileStoreUtil.log.trace("Extracting " + entry.shortInfo());
+					Main.log.trace("Extracting " + entry.shortInfo());
 					String pattern = "{$z}/{$x}/{$y}.{$ext}";
 					String fileName = MapSourceTools.formatMapUrl(pattern, entry.getZoom(), entry.getX(), entry.getY());
 					byte[] data = entry.getData();
@@ -36,13 +38,13 @@ public class Extract {
 					fout.write(data);
 					fout.flush();
 					fout.close();
-
+					count++;
 					entry = cursor.next();
 				}
 			} finally {
 				cursor.close();
 			}
-			TileStoreUtil.log.info("Destination tile store entry count: " + dbSource.entryCount() + " (after merging)");
+			Main.log.info("Number of extracted tiles: " + count);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

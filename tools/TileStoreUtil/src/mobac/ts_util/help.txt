@@ -1,4 +1,3 @@
-MOBAC TileStore utility
 usage: 
 	java -jar ts-util.jar merge <src-directory> <destination-directory>
 	java -jar ts-util.jar extract <src-directory> <destination-directory>

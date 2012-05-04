@@ -20,7 +20,6 @@ import java.util.Date;
 
 import mobac.program.tilestore.TileStoreEntry;
 
-
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.KeyField;
 import com.sleepycat.persist.model.Persistent;
@@ -52,8 +51,7 @@ public class TileDbEntry implements TileStoreEntry {
 		this.timeDownloaded = System.currentTimeMillis();
 	}
 
-	public TileDbEntry(int x, int y, int zoom, byte[] data, long timeLastModified,
-			long timeExpires, String eTag) {
+	public TileDbEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires, String eTag) {
 		this(x, y, zoom, data);
 		this.timeLastModified = timeLastModified;
 		this.timeExpires = timeExpires;
@@ -97,12 +95,16 @@ public class TileDbEntry implements TileStoreEntry {
 		return timeExpires;
 	}
 
+	public String shortInfo() {
+		return String.format("Tile z%d/%d/%d", tileKey.zoom, tileKey.x, tileKey.y);
+	}
+
 	@Override
 	public String toString() {
 		String tlm = (timeLastModified <= 0) ? "-" : new Date(timeLastModified).toString();
 		String txp = (timeExpires <= 0) ? "-" : new Date(timeExpires).toString();
-		return String.format("Tile z%d/%d/%d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.zoom,
-				tileKey.x, tileKey.y, new Date(timeDownloaded), tlm, txp, eTag);
+		return String.format("Tile z%d/%d/%d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.zoom, tileKey.x, tileKey.y,
+				new Date(timeDownloaded), tlm, txp, eTag);
 	}
 
 	@Persistent(version = 3)
@@ -129,9 +131,9 @@ public class TileDbEntry implements TileStoreEntry {
 
 		@Override
 		public String toString() {
-			return "TileDbKey [x=" + x + ", y=" + y + ", zoom=" + zoom + "]";
+			return "[x=" + x + ", y=" + y + ", zoom=" + zoom + "]";
 		}
-		
+
 	}
 
 }

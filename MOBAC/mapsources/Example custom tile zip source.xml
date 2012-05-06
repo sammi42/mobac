@@ -13,6 +13,8 @@ Supported file formats are PNG, JPG and GIF files.
 
 This file work with MOBAC 1.9.3 and higher
 
+Note: When working with large ZIP files (more than 4 GB) it is required to use Java 7.
+
 -->
 <localTileZip>
 	

@@ -416,7 +416,7 @@ public class SettingsGUI extends JDialog {
 		defaultExpirationPanel.setBorder(createSectionBorder(""));
 		defaultExpirationTime = new JTimeSlider();
 		defaultExpirationTime.addChangeListener(sliderChangeListener);
-		JLabel descr = new JLabel("<html>The default exipration time is used for map sources that do not <br>"
+		JLabel descr = new JLabel("<html>The default expiration time is used for map sources that do not <br>"
 				+ "provide an expiration time for each map tile.</html>", JLabel.CENTER);
 
 		defaultExpirationPanel.add(descr, gbc_ef);

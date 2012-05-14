@@ -182,10 +182,8 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				sb.append("\nDistribution name: " + dist);
 
 			sb.append("\nJava VM: " + prop("java.vm.name") + " (" + prop("java.runtime.version") + ")");
-			if (t != null && t.getClass().equals(java.lang.OutOfMemoryError.class)) {
-				Runtime r = Runtime.getRuntime();
-				sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
-			}
+			Runtime r = Runtime.getRuntime();
+			sb.append(String.format("\nMax heap size: %3.2f MiB", r.maxMemory() / MB_DIV));
 			// sb.append("\nMapsources rev: " + MapSourcesUpdater.getCurrentMapSourcesRev());
 
 			sb.append("\nCPU cores: " + Runtime.getRuntime().availableProcessors());
@@ -322,7 +320,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				throw new RuntimeException("Test", new Exception("Inner"));
 			} catch (Exception e) {
-				showExceptionDialog("Test 123",e);
+				showExceptionDialog("Test 123", e);
 			} catch (Error e) {
 				showExceptionDialog(e);
 			}

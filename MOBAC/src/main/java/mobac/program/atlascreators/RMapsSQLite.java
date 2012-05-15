@@ -59,6 +59,8 @@ import mobac.utilities.jdbc.SQLiteLoader;
 @SupportedParameters(names = { Name.format })
 public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
+	private static final int MAX_BATCH_SIZE = 1000;
+
 	private static final String TABLE_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))";
 	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z,s)";
 	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (x,y,z,s,image) VALUES (?,?,?,0,?)";
@@ -157,7 +159,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 	}
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		int maxMapProgress = (xMax - xMin + 1) * (yMax - yMin + 1);
+		int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
 		atlasProgress.initMapCreation(maxMapProgress);
 		TileImageParameters param = map.getParameters();
 		if (param != null)
@@ -179,7 +181,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 							long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
 
 							batchTileCount++;
-							if (heapAvailable < HEAP_MIN) {
+							if ((heapAvailable < HEAP_MIN) || (batchTileCount >= MAX_BATCH_SIZE)) {
 								log.trace("Executing batch containing " + batchTileCount + " tiles");
 								prepStmt.executeBatch();
 								prepStmt.clearBatch();
@@ -198,7 +200,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 			prepStmt.clearBatch();
 			System.gc();
 			updateTileMetaInfo();
-			log.trace("Final commit");
+			log.trace("Final commit containing " + batchTileCount + " tiles");
 			conn.commit();
 			atlasProgress.setMapCreationProgress(maxMapProgress);
 		} catch (SQLException e) {

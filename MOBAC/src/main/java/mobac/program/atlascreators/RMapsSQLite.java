@@ -186,9 +186,9 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 								prepStmt.executeBatch();
 								prepStmt.clearBatch();
 								System.gc();
-								batchTileCount = 0;
 								conn.commit();
 								atlasProgress.incMapCreationProgress(batchTileCount);
+								batchTileCount = 0;
 							}
 						}
 					} catch (IOException e) {

@@ -47,6 +47,8 @@ import mobac.utilities.jdbc.SQLiteLoader;
 @SupportedParameters(names = { Name.format })
 public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
+	private static final int MAX_BATCH_SIZE = 1000;
+
 	protected Connection conn = null;
 
 	public OsmdroidSQLite() {
@@ -91,7 +93,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			String provider = map.getMapSource().getName();
-			int maxMapProgress = (xMax - xMin + 1) * (yMax - yMin + 1);
+			int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
 			atlasProgress.initMapCreation(maxMapProgress);
 			conn.setAutoCommit(false);
 			int batchTileCount = 0;
@@ -116,14 +118,14 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
 						long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
 
-						if (heapAvailable < HEAP_MIN) {
+						if ((heapAvailable < HEAP_MIN) || (batchTileCount >= MAX_BATCH_SIZE)) {
 							log.trace("Executing batch containing " + batchTileCount + " tiles");
 							prep.executeBatch();
 							prep.clearBatch();
 							System.gc();
-							batchTileCount = 0;
 							conn.commit();
 							atlasProgress.incMapCreationProgress(batchTileCount);
+							batchTileCount = 0;
 						}
 
 					}

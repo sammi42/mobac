@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.7 (2012-05-??)
+1.9.7 (2012-05-16)
  + Custom XML map source: New parameter {$q} for Quad-Tree encoded zoom, x & y
  + New atlas output format: Osmdroid GEMF
  + Increased default map size to 65536

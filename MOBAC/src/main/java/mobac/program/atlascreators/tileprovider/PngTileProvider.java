@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.model.TileImageType;
-import mobac.program.tiledatawriter.TileImagePng8DataWriter;
+import mobac.program.tiledatawriter.TileImagePngDataWriter;
 import mobac.utilities.Utilities;
 
 /**
@@ -34,7 +34,7 @@ public class PngTileProvider extends FilterTileProvider {
 
 	public PngTileProvider(TileProvider tileProvider) {
 		super(tileProvider);
-		writer = new TileImagePng8DataWriter();
+		writer = new TileImagePngDataWriter();
 		writer.initialize();
 	}
 

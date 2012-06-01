@@ -195,7 +195,7 @@ public abstract class PaperAtlas extends AtlasCreator {
 					// Create image and graphics
 					int imageWidth = size.width + insets.left + insets.right;
 					int imageHeight = size.height + insets.top + insets.bottom;
-					BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_4BYTE_ABGR);
+					BufferedImage image = Utilities.safeCreateBufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_4BYTE_ABGR);
 					Graphics2D g = image.createGraphics();
 					g.translate(insets.left, insets.top);
 					g.clipRect(0, 0, size.width, size.height);

@@ -218,7 +218,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 					return;
 				JOptionPane.showMessageDialog(null,
 						"<html>This image format is requires additional libraries to be installed:<br>"
-								+ "<b>Java Advanced Image library</b>" + "(jai_core.jar & jai_codec.jar)<br>"
+								+ "<b>Java Advanced Image library</b> (jai_core.jar & jai_codec.jar)<br>"
 								+ "For more details please see the file <b>README.HTM</b> "
 								+ "in section <b>Requirements</b>.</html>",
 						"Image format not available - libraries missing", JOptionPane.ERROR_MESSAGE);

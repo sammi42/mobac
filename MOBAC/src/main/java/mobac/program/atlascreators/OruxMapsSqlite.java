@@ -161,6 +161,8 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 	private class OruxMapTileWriterDB implements MapTileWriter {
 
+		private static final int MAX_BATCH_SIZE = 1000;
+
 		private int tileCounter = 0;
 		private Runtime r = Runtime.getRuntime();
 
@@ -175,7 +177,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 				long heapAvailable = r.maxMemory() - r.totalMemory() + r.freeMemory();
 
 				tileCounter++;
-				if (heapAvailable < HEAP_MIN || tileCounter == customTileCount) {
+				if (heapAvailable < HEAP_MIN || tileCounter > MAX_BATCH_SIZE || tileCounter == customTileCount) {
 					commit();
 				}
 			} catch (SQLException e) {

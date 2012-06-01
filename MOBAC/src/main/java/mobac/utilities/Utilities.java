@@ -56,6 +56,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import mobac.Main;
+import mobac.exceptions.MOBACOutOfMemoryException;
 import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
@@ -111,6 +112,48 @@ public class Utilities {
 			g.dispose();
 		}
 		return emptyImage;
+	}
+
+	public static BufferedImage safeCreateBufferedImage(int width, int height, int imageType) {
+		try {
+			return new BufferedImage(width, height, imageType);
+		} catch (OutOfMemoryError e) {
+			int bytesPerPixel = getBytesPerPixel(imageType);
+			if (bytesPerPixel < 0)
+				throw e;
+			long requiredMemory = ((long) width) * ((long) height) * bytesPerPixel;
+			String message = String.format(
+					"Available free memory not sufficient for creating image of size %dx%d pixels", width, height);
+			throw new MOBACOutOfMemoryException(requiredMemory, message);
+		}
+	}
+
+	/**
+	 * 
+	 * @param imageType
+	 *            as used for {@link BufferedImage#BufferedImage(int, int, int)}
+	 * @return
+	 */
+	public static int getBytesPerPixel(int bufferedImageType) {
+		switch (bufferedImageType) {
+		case BufferedImage.TYPE_INT_ARGB:
+		case BufferedImage.TYPE_INT_ARGB_PRE:
+		case BufferedImage.TYPE_INT_BGR:
+		case BufferedImage.TYPE_4BYTE_ABGR:
+		case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+			return 4;
+		case BufferedImage.TYPE_3BYTE_BGR:
+			return 3;
+		case BufferedImage.TYPE_USHORT_GRAY:
+		case BufferedImage.TYPE_USHORT_565_RGB:
+		case BufferedImage.TYPE_USHORT_555_RGB:
+			return 2;
+		case BufferedImage.TYPE_BYTE_GRAY:
+		case BufferedImage.TYPE_BYTE_BINARY:
+		case BufferedImage.TYPE_BYTE_INDEXED:
+			return 1;
+		}
+		return -1;
 	}
 
 	public static byte[] createEmptyTileData(MapSource mapSource) {

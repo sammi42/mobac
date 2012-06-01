@@ -11,6 +11,7 @@
 
 1.9.8 (2012-06-??)
  ! Viewranger atlas format depends on Java Advanced Imaging without checking
+ ! OurxMaps SQLite: Memory handling changed (should prevent OutOfMemoryError)
 
 1.9.7 (2012-05-16)
  + Custom XML map source: New parameter {$q} for Quad-Tree encoded zoom, x & y

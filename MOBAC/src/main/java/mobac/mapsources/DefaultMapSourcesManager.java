@@ -199,7 +199,6 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		if (mapSources.size() == 0)
 			mapSources.add(new SimpleMapSource());
 		return mapSources;
-
 	}
 
 	@Override

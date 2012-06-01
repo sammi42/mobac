@@ -49,8 +49,8 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.interfaces.MapSpace.ProjectionCategory;
+import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
@@ -192,13 +192,13 @@ public class GoogleEarthOverlay extends AtlasCreator {
 		if (imageSize > Integer.MAX_VALUE)
 			throw new MapCreationException("Map image too large: (width/height: " + imageWidth + "/" + imageHeight
 					+ ") - reduce the map size and try again", map);
-		BufferedImage tileImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage tileImage = Utilities.safeCreateBufferedImage(imageWidth, imageHeight,
+				BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics = tileImage.createGraphics();
 		try {
 			if (scaleImage) {
 				graphics.setTransform(AffineTransform.getScaleInstance(scaleFactor, scaleFactor));
-				graphics
-						.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			}
 			int lineY = 0;
 			for (int y = yMin; y <= yMax; y++) {

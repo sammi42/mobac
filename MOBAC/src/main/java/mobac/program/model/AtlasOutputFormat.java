@@ -40,6 +40,7 @@ import mobac.program.atlascreators.Glopus;
 import mobac.program.atlascreators.GlopusMapFile;
 import mobac.program.atlascreators.GoogleEarthOverlay;
 import mobac.program.atlascreators.GpsSportsTracker;
+import mobac.program.atlascreators.IPhone3MapTiles5;
 import mobac.program.atlascreators.MBTiles;
 import mobac.program.atlascreators.MGMaps;
 import mobac.program.atlascreators.MagellanRmp;
@@ -99,6 +100,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 		FORMATS.add(createByClass(GlopusMapFile.class));
 		FORMATS.add(createByClass(GoogleEarthOverlay.class));
 		FORMATS.add(createByClass(GpsSportsTracker.class));
+		FORMATS.add(createByClass(IPhone3MapTiles5.class));
 		FORMATS.add(createByClass(MagellanRmp.class));
 		FORMATS.add(createByClass(Maplorer.class));
 		FORMATS.add(createByClass(Maverick.class));

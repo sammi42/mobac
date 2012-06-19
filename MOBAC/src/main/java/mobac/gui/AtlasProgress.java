@@ -429,6 +429,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 	public void atlasCreationFinished() {
 		stopUpdateTask();
+		forceUpdateGUI();
 		downloadControlListener = null;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -512,6 +513,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		guiUpdater.updateAsynchronously();
 	}
 
+	public void forceUpdateGUI() {
+		SwingUtilities.invokeLater(guiUpdater);
+	}
+
 	private class GUIUpdater implements Runnable {
 
 		int scheduledCounter = 0;
@@ -551,8 +556,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 					data.totalProgressTenthPercent = newTenthPercent;
 					atlasPercent.setText(String.format(TEXT_TENTHPERCENT, data.totalProgressTenthPercent / 10.0));
 					if (data.atlasInterface != null) {
-						String text = String.format(TEXT_PERCENT + " - processing atlas \"%s\"",
-								data.totalProgressTenthPercent / 10, data.atlasInterface.getName());
+						String text = String.format(TEXT_PERCENT + " - processing atlas \"%s\" of type %s",
+								data.totalProgressTenthPercent / 10, data.atlasInterface.getName(),
+								data.atlasInterface.getOutputFormat());
 						if (pauseState)
 							text += " [PAUSED]";
 						AtlasProgress.this.setTitle(text);

@@ -30,6 +30,7 @@ import mobac.mapsources.custom.StandardMapSourceLayer;
 import mobac.mapsources.impl.DebugLocalMapSource;
 import mobac.mapsources.impl.DebugMapSource;
 import mobac.mapsources.impl.DebugRandomLocalMapSource;
+import mobac.mapsources.impl.DebugTransparentLocalMapSource;
 import mobac.mapsources.impl.SimpleMapSource;
 import mobac.mapsources.loader.BeanShellMapSourceLoader;
 import mobac.mapsources.loader.CustomMapSourceLoader;
@@ -64,6 +65,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			if (devMode) {
 				addMapSource(new DebugMapSource());
 				addMapSource(new DebugLocalMapSource());
+				addMapSource(new DebugTransparentLocalMapSource());
 				addMapSource(new DebugRandomLocalMapSource());
 			}
 			File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();

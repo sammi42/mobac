@@ -163,6 +163,7 @@ public class Logging {
 					+ n + "tempDir:     \t\t" + DirectoryManager.tempDir /**/
 					+ n + "userHomeDir: \t\t" + DirectoryManager.userHomeDir /**/
 					+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
+					+ n + "atlasProfilesDir: \t" + DirectoryManager.atlasProfilesDir /**/
 					+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
 			);
 		}

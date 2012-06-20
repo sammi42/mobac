@@ -25,11 +25,16 @@ import java.util.Date;
 import java.util.EnumSet;
 
 import mobac.exceptions.AtlasTestException;
+import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.annotations.SupportedParameters;
+import mobac.program.atlascreators.impl.MapTileBuilder;
+import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSource;
+import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageType;
 
@@ -62,6 +67,7 @@ import mobac.program.model.TileImageType;
  * http://msdn.microsoft.com/en-us/library/bb259689.aspx
  */
 @AtlasCreatorName(value = "iPhone 3 Map Tiles v5")
+@SupportedParameters(names = {})
 public class IPhone3MapTiles5 extends RMapsSQLite {
 
 	private static final String INSERT_SQL = "INSERT or REPLACE INTO images(x,y,zoom,data,length,flags) VALUES (?,?,?,?,?,0);";
@@ -120,6 +126,30 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 	}
 
 	@Override
+	protected void createTiles() throws InterruptedException, MapCreationException {
+
+		try {
+			parameters = new TileImageParameters(128, 128, TileImageFormat.PNG);
+			conn.setAutoCommit(false);
+			prepStmt = conn.prepareStatement(getTileInsertSQL());
+
+			MapTileWriter mapTileWriter = new SQLiteMapTileWriter(map.getZoom());
+			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
+			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+			mapTileBuilder.createTiles();
+			mapTileWriter.finalizeMap();
+			prepStmt.close();
+		} catch (SQLException e) {
+			throw new MapCreationException(map, e);
+		} catch (IOException e) {
+			Throwable t = e;
+			if (t.getCause() instanceof SQLException)
+				t = t.getCause();
+			throw new MapCreationException(map, t);
+		}
+	}
+
+	@Override
 	protected void updateTileMetaInfo() throws SQLException {
 	}
 
@@ -128,19 +158,44 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 		return INSERT_SQL;
 	}
 
-	@Override
-	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
-		y = (1 << z) - y - 1;
-		prepStmt.setInt(1, x);
-		prepStmt.setInt(2, y);
-		prepStmt.setInt(3, z);
-		prepStmt.setBytes(4, tileData);
-		prepStmt.setInt(5, tileData.length);
-		prepStmt.addBatch();
-	}
-
 	protected String getDatabaseFileName() {
 		return atlas.getName() + ".sqlitedb";
+	}
+
+	private class SQLiteMapTileWriter implements MapTileWriter {
+
+		private final int z;
+
+		SQLiteMapTileWriter(int z) {
+			this.z = z;
+		}
+
+		@Override
+		public void writeTile(int x, int y, String tileType, byte[] tileData) throws IOException {
+			y = (1 << z) - y - 1;
+			try {
+				prepStmt.setInt(1, x);
+				prepStmt.setInt(2, y);
+				prepStmt.setInt(3, z);
+				prepStmt.setBytes(4, tileData);
+				prepStmt.setInt(5, tileData.length);
+				prepStmt.addBatch();
+			} catch (SQLException e) {
+				throw new IOException(e);
+			}
+		}
+
+		@Override
+		public void finalizeMap() throws IOException {
+			try {
+				prepStmt.executeBatch();
+				prepStmt.clearBatch();
+				conn.commit();
+			} catch (SQLException e) {
+				throw new IOException(e);
+			}
+		}
+
 	}
 
 }

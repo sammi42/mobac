@@ -13,6 +13,8 @@
  ! Viewranger atlas format depends on Java Advanced Imaging without checking
  ! OurxMaps SQLite: Memory handling changed (should prevent OutOfMemoryError)
  ! Fixed progress bar in atlas progress window for large atlases 
+ + Possibility added to use SQLite Java Wrapper (ch-werner) instead of default 
+    sqlite library 
 
 1.9.7 (2012-05-16)
  + Custom XML map source: New parameter {$q} for Quad-Tree encoded zoom, x & y

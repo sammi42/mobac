@@ -32,6 +32,9 @@ public class SQLiteLoader {
 
 	private static boolean SQLITE_LOADED = false;
 
+	private static final String SQLITE_DRIVERNAME1 = "SQLite.JDBCDriver";
+	private static final String SQLITE_DRIVERNAME2 = "org.sqlite.JDBC";
+
 	public static final String MSG_SQLITE_MISSING = "Unable to find the SQLite libraries. "
 			+ "These are required for the currently selected atlas format.<br>Please read the README.HTM "
 			+ "section \"SQLite atlas formats\". ";
@@ -48,15 +51,25 @@ public class SQLiteLoader {
 	}
 
 	public static synchronized void loadSQLite() throws SQLException {
+		try {
+			SQLiteLoader.loadSQLite(SQLITE_DRIVERNAME1);
+		} catch (Exception e) {
+		}
+		SQLiteLoader.loadSQLite(SQLITE_DRIVERNAME2);
+	}
+
+	protected static synchronized void loadSQLite(String driverClassName) throws SQLException {
 		if (SQLITE_LOADED)
 			return;
 		try {
 			// Load the sqlite library
-			Class.forName("org.sqlite.JDBC");
+			Class.forName(driverClassName);
 			SQLITE_LOADED = true;
+			log.debug("SQLite library loaded. Driver class name: " + driverClassName);
 			return;
 		} catch (Throwable t) {
-			SQLException e = new SQLException("Loading of SQLite library failed: " + t.getMessage(), t);
+			SQLException e = new SQLException("Loading of SQLite library failed (" + driverClassName + "): "
+					+ t.getMessage(), t);
 			log.error(e.getMessage());
 			throw e;
 		}

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
@@ -66,7 +67,9 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (x,y,z,s,image) VALUES (?,?,?,0,?)";
 	private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 AS minzoom, 0 AS maxzoom";
 	private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info;";
-	private static final String RMAPS_UPDATE_INFO_SQL = "INSERT INTO info SELECT MIN(z) as minzoom, MAX(z) as maxzoom FROM tiles;";
+	private static final String RMAPS_UPDATE_INFO_MINMAX_SQL = "INSERT INTO info (minzoom,maxzoom) VALUES (?,?);";
+	private static final String RMAPS_INFO_MAX_SQL = "SELECT DISTINCT z FROM tiles ORDER BY z DESC LIMIT 1;";
+	private static final String RMAPS_INFO_MIN_SQL = "SELECT DISTINCT z FROM tiles ORDER BY z ASC LIMIT 1;";
 
 	protected File databaseFile;
 
@@ -210,10 +213,24 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 
 	protected void updateTileMetaInfo() throws SQLException {
 		Statement stat = conn.createStatement();
-		stat.addBatch(RMAPS_CLEAR_INFO_SQL);
-		stat.addBatch(RMAPS_UPDATE_INFO_SQL);
-		stat.executeBatch();
+		ResultSet rs = stat.executeQuery(RMAPS_INFO_MAX_SQL);
+		if (!rs.next())
+			throw new SQLException("failed to retrieve max tile zoom info");
+		int max = rs.getInt(1);
+		rs.close();
+		rs = stat.executeQuery(RMAPS_INFO_MIN_SQL);
+		if (!rs.next())
+			throw new SQLException("failed to retrieve min tile zoom info");
+		int min = rs.getInt(1);
+		rs.close();
+		PreparedStatement ps = conn.prepareStatement(RMAPS_UPDATE_INFO_MINMAX_SQL);
+		ps.setInt(1, min);
+		ps.setInt(2, max);
+		
+		stat.execute(RMAPS_CLEAR_INFO_SQL);
+		ps.execute();
 		stat.close();
+		ps.close();
 	}
 
 	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {

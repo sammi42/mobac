@@ -144,7 +144,7 @@
 		<jar destfile="${jar.name}" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="${main.class}" />
-				<attribute name="Class-Path" value="./ sqlite.jar sqlitejdbc-v056.jar jai_core.jar jai_codec.jar lib/jai_core.jar lib/jai_codec.jar jai_*.jar lib/jai_*.jar" />
+				<attribute name="Class-Path" value="./ sqlite-jdbc-3.7.2.jar sqlite.jar jai_core.jar jai_codec.jar lib/jai_core.jar lib/jai_codec.jar jai_*.jar lib/jai_*.jar" />
 			</manifest>
 			<zipfileset src="lib/log4j-1.2.15.jar" includes="org/apache/log4j/**" />
 			<zipfileset src="lib/je-${je-version}.jar" />
@@ -254,7 +254,7 @@
 				<include name="Mobile Atlas Creator.exe" />
 				<include name="mapsources/mp-*.jar" />
 			</fileset>
-			<fileset dir="lib" includes="sqlitejdbc-v056.jar" />
+			<fileset dir="lib" includes="sqlite-jdbc-3.7.2.jar" />
 		</zip>
 	</target>
 

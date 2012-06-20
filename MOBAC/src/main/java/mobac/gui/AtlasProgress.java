@@ -385,8 +385,8 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 	public void setMapCreationProgress(int progress) {
 		data.mapCreationProgress = progress;
-		data.totalProgress = data.mapInfo.tileCountOnStart + data.mapInfo.mapTiles
-				+ (data.mapInfo.mapTiles * data.mapCreationProgress / data.mapCreationMax);
+		long creationProgressTiles = data.totalProgress = data.mapInfo.tileCountOnStart + data.mapInfo.mapTiles
+				+ (int) (((long) data.mapInfo.mapTiles) * data.mapCreationProgress / data.mapCreationMax);
 		updateGUI();
 	}
 
@@ -549,7 +549,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			atlasProgressBar.setMaximum(data.totalNumberOfTiles);
 			atlasProgressBar.setValue(data.totalProgress);
 
-			int newTenthPercent = (int) (atlasProgressBar.getPercentComplete() * 1000);
+			int newTenthPercent = (int) (data.totalProgress * 1000d / (double) data.totalNumberOfTiles);
 			try {
 				boolean pauseState = atlasThread.isPaused();
 				if (data.totalProgressTenthPercent != newTenthPercent || pauseState != data.paused) {

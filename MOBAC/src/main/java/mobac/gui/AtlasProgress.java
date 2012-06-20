@@ -18,6 +18,7 @@ package mobac.gui;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -101,6 +102,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 	private final Data data = new Data();
 
 	private boolean aborted = false;
+	private boolean finished = false;
 
 	private JLabel windowTitle;
 
@@ -130,6 +132,8 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 	private JLabel totalDownloadTimeValue;
 
 	private JCheckBox ignoreDlErrors;
+	private JLabel statusLabel;
+
 	private JButton dismissWindowButton;
 	private JButton openProgramFolderButton;
 	private JButton abortAtlasCreationButton;
@@ -228,6 +232,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
 		ignoreDlErrors = new JCheckBox("Ignore download errors and continue automatically",
 				Settings.getInstance().ignoreDlErrors);
+		statusLabel = new JLabel("Status:");
+		Font f = statusLabel.getFont();
+		statusLabel.setFont(f.deriveFont(Font.BOLD));
 		abortAtlasCreationButton = new JButton("Abort creation");
 		abortAtlasCreationButton.setToolTipText("Abort current Atlas download");
 		dismissWindowButton = new JButton("Close Window");
@@ -287,6 +294,8 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		JPanel bottomPanel = new JPanel(new GridBagLayout());
 		bottomPanel.add(infoPanel, GBC.std().gridheight(2).fillH());
 		bottomPanel.add(ignoreDlErrors, GBC.eol().anchor(GBC.EAST));
+
+		bottomPanel.add(statusLabel, GBC.eol().anchor(GBC.CENTER));
 
 		GBC gbcRight = GBC.std().anchor(GBC.SOUTHEAST).insets(5, 0, 0, 0);
 		bottomPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
@@ -428,6 +437,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 	}
 
 	public void atlasCreationFinished() {
+		finished = true;
 		stopUpdateTask();
 		forceUpdateGUI();
 		downloadControlListener = null;
@@ -552,6 +562,17 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			int newTenthPercent = (int) (data.totalProgress * 1000d / (double) data.totalNumberOfTiles);
 			try {
 				boolean pauseState = atlasThread.isPaused();
+				String statusText = "RUNNING";
+				if (aborted)
+					statusText = "ABORTED";
+				else if (finished)
+					statusText = "FINISHED";
+				else if (pauseState)
+					statusText = "PAUSED";
+				else
+					statusText = "RUNNING";
+				statusLabel.setText("Status: " + statusText);
+
 				if (data.totalProgressTenthPercent != newTenthPercent || pauseState != data.paused) {
 					data.totalProgressTenthPercent = newTenthPercent;
 					atlasPercent.setText(String.format(TEXT_TENTHPERCENT, data.totalProgressTenthPercent / 10.0));

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.program.atlascreators;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -87,6 +88,8 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 		// Test of output format - only jpg xor png is allowed
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
+				if (map.getZoom() < 1)
+					throw new AtlasTestException("Only zoom level 1 and higher is supported", map);
 				TileImageParameters parameters = map.getParameters();
 				TileImageType currentTit;
 				if (parameters == null) {
@@ -133,7 +136,7 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 			conn.setAutoCommit(false);
 			prepStmt = conn.prepareStatement(getTileInsertSQL());
 
-			MapTileWriter mapTileWriter = new SQLiteMapTileWriter(map.getZoom());
+			MapTileWriter mapTileWriter = new SQLiteMapTileWriter(map);
 			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
@@ -165,14 +168,20 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 	private class SQLiteMapTileWriter implements MapTileWriter {
 
 		private final int z;
+		private final int baseTileX;
+		private final int baseTileY;
 
-		SQLiteMapTileWriter(int z) {
-			this.z = z;
+		SQLiteMapTileWriter(MapInterface map) {
+			this.z = map.getZoom();
+			Point topLeft = map.getMinTileCoordinate();
+			baseTileX = topLeft.x / 128;
+			baseTileY = topLeft.y / 128;
 		}
 
 		@Override
 		public void writeTile(int x, int y, String tileType, byte[] tileData) throws IOException {
-			y = (1 << z) - y - 1;
+			x += baseTileX;
+			y += baseTileY;
 			try {
 				prepStmt.setInt(1, x);
 				prepStmt.setInt(2, y);

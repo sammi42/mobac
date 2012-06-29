@@ -88,8 +88,6 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 		// Test of output format - only jpg xor png is allowed
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
-				if (map.getZoom() < 1)
-					throw new AtlasTestException("Only zoom level 1 and higher is supported", map);
 				TileImageParameters parameters = map.getParameters();
 				TileImageType currentTit;
 				if (parameters == null) {
@@ -172,7 +170,7 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 		private final int baseTileY;
 
 		SQLiteMapTileWriter(MapInterface map) {
-			this.z = map.getZoom();
+			this.z = map.getZoom() + 1;
 			Point topLeft = map.getMinTileCoordinate();
 			baseTileX = topLeft.x / 128;
 			baseTileY = topLeft.y / 128;

@@ -23,15 +23,18 @@ import java.io.OutputStreamWriter;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
+import mobac.program.annotations.SupportedParameters;
 import mobac.program.atlascreators.impl.MapTileBuilder;
 import mobac.program.atlascreators.impl.MapTileWriter;
 import mobac.program.atlascreators.tileprovider.CacheTileProvider;
 import mobac.program.atlascreators.tileprovider.TileProvider;
 import mobac.program.interfaces.MapInterface;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 
 @AtlasCreatorName("CacheWolf (WFL)")
+@SupportedParameters(names = { Name.format, Name.height, Name.width })
 public class CacheWolf extends Ozi {
 
 	@Override

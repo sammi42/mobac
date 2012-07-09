@@ -18,6 +18,7 @@
  ~ Replaced the old SQLite library with recent version of Xerial. This fixes 
     all problems creating databases larger than 2GB on Windows 64bit
  ! CacheWolf: Custom tile processing re-enabled
+ + New atlas format: iPhone 3 Map Tiles v5
 
 1.9.7 (2012-05-16)
  + Custom XML map source: New parameter {$q} for Quad-Tree encoded zoom, x & y

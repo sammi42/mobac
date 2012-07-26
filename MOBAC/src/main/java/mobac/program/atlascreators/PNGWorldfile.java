@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
-import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
 
 /**
@@ -64,29 +63,22 @@ public class PNGWorldfile extends Glopus {
 			fout = new FileOutputStream(new File(layerDir, mapName + ".pgw"));
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
-			MapSpace mapSpace = mapSource.getMapSpace();
+			// MapSpace mapSpace = mapSource.getMapSpace();
 
-			int width = (xMax - xMin + 1) * tileSize;
-			int height = (yMax - yMin + 1) * tileSize;
+			double worldSize = 2 * Math.PI * 6378137;
+			double maxTiles = 1 << zoom;
+			double pixelSize = worldSize / (maxTiles * tileSize);
 
-			double lonMin = mapSpace.cXToLon(xMin * tileSize, zoom);
-			double lonMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
-			double latMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
-			double latMax = mapSpace.cYToLat(yMin * tileSize, zoom);
-
-			double originShift = 2 * Math.PI * 6378137 / 2.0;
-
-			double xMin1 = lonMin * originShift / 180.0;
-			double yMin1 = mercY(latMin);
-			double xMax1 = lonMax * originShift / 180.0;
-			double yMax1 = mercY(latMax);
-
-			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", (xMax1 - xMin1) / width));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", pixelSize));
 			mapWriter.write("0.0\n");
 			mapWriter.write("0.0\n");
-			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", -(yMax1 - yMin1) / height));
-			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", xMin1));
-			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", yMax1));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.15f\n", -pixelSize));
+
+			double xMin1 = worldSize * (xMin / maxTiles - 0.5);
+			double yMax1 = worldSize * (0.5 - yMin / maxTiles);
+
+			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", xMin1 + 0.5 * pixelSize));
+			mapWriter.write(String.format(Locale.ENGLISH, "%.7f\n", yMax1 - 0.5 * pixelSize));
 
 			mapWriter.flush();
 			mapWriter.close();
@@ -103,13 +95,17 @@ public class PNGWorldfile extends Glopus {
 			fout = new FileOutputStream(new File(layerDir, mapName + ".png.aux.xml"));
 			OutputStreamWriter writer = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
-			writer.write("<PAMDataset><SRS>" + "PROJCS[&quot;World_Mercator&quot;,GEOGCS[&quot;GCS_WGS_1984&quot;,"
-					+ "DATUM[&quot;WGS_1984&quot;,SPHEROID[&quot;WGS_1984&quot;,6378137.0,298.257223563]],"
-					+ "PRIMEM[&quot;Greenwich&quot;,0.0],UNIT[&quot;Degree&quot;,0.0174532925199433]],"
-					+ "PROJECTION[&quot;Mercator_1SP&quot;],PARAMETER[&quot;False_Easting&quot;,0.0],"
-					+ "PARAMETER[&quot;False_Northing&quot;,0.0]," + "PARAMETER[&quot;Central_Meridian&quot;,0.0],"
-					+ "PARAMETER[&quot;latitude_of_origin&quot;,0.0],"
-					+ "UNIT[&quot;Meter&quot;,1.0]]</SRS></PAMDataset>");
+			writer.write("<PAMDataset><SRS>PROJCS[&quot;WGS 84 / Pseudo-Mercator&quot;,GEOGCS[&quot;WGS 84&quot;,"
+					+ "DATUM[&quot;WGS_1984&quot;,SPHEROID[&quot;WGS 84&quot;,6378137,298.257223563,"
+					+ "AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],"
+					+ "PRIMEM[&quot;Greenwich&quot;,0],UNIT[&quot;degree&quot;,0.0174532925199433],"
+					+ "AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]],"
+					+ "PROJECTION[&quot;Mercator_1SP&quot;],PARAMETER[&quot;central_meridian&quot;,0],"
+					+ "PARAMETER[&quot;scale_factor&quot;,1],PARAMETER[&quot;false_easting&quot;,0],"
+					+ "PARAMETER[&quot;false_northing&quot;,0],UNIT[&quot;metre&quot;,1,"
+					+ "AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],"
+					+ "EXTENSION[&quot;PROJ4&quot;,&quot;+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs&quot;],"
+					+ "AUTHORITY[&quot;EPSG&quot;,&quot;3857&quot;]]</SRS></PAMDataset>");
 
 			writer.flush();
 			writer.close();
@@ -118,28 +114,5 @@ public class PNGWorldfile extends Glopus {
 		} finally {
 			Utilities.closeStream(fout);
 		}
-	}
-
-	final private static double R_MAJOR = 6378137.0;
-	final private static double R_MINOR = 6356752.3142;
-
-	private double mercY(double lat) {
-		if (lat > 89.5) {
-			lat = 89.5;
-		}
-		if (lat < -89.5) {
-			lat = -89.5;
-		}
-		double temp = R_MINOR / R_MAJOR;
-		double es = 1.0 - (temp * temp);
-		double eccent = Math.sqrt(es);
-		double phi = Math.toRadians(lat);
-		double sinphi = Math.sin(phi);
-		double con = eccent * sinphi;
-		double com = 0.5 * eccent;
-		con = Math.pow(((1.0 - con) / (1.0 + con)), com);
-		double ts = Math.tan(0.5 * ((Math.PI * 0.5) - phi)) / con;
-		double y = 0 - R_MAJOR * Math.log(ts);
-		return y;
 	}
 }

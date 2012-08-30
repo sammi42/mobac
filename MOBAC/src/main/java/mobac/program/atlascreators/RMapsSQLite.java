@@ -170,6 +170,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		try {
 			conn.setAutoCommit(false);
 			int batchTileCount = 0;
+			int tilesWritten = 0;
 			Runtime r = Runtime.getRuntime();
 			long heapMaxSize = r.maxMemory();
 			prepStmt = conn.prepareStatement(getTileInsertSQL());
@@ -181,6 +182,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 						byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
 						if (sourceTileData != null) {
 							writeTile(x, y, zoom, sourceTileData);
+							tilesWritten++;
 							long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
 
 							batchTileCount++;
@@ -202,7 +204,8 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 			prepStmt.executeBatch();
 			prepStmt.clearBatch();
 			System.gc();
-			updateTileMetaInfo();
+			if (tilesWritten > 0)
+				updateTileMetaInfo();
 			log.trace("Final commit containing " + batchTileCount + " tiles");
 			conn.commit();
 			atlasProgress.setMapCreationProgress(maxMapProgress);
@@ -226,7 +229,7 @@ public class RMapsSQLite extends AtlasCreator implements RequiresSQLite {
 		PreparedStatement ps = conn.prepareStatement(RMAPS_UPDATE_INFO_MINMAX_SQL);
 		ps.setInt(1, min);
 		ps.setInt(2, max);
-		
+
 		stat.execute(RMAPS_CLEAR_INFO_SQL);
 		ps.execute();
 		stat.close();

@@ -30,6 +30,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+
 /**
  * GEMF File creator class.
  * 
@@ -69,8 +71,9 @@ public class GEMFFileCreator {
 	 * @param pSourceFolders Each specified folder will be imported into the GEMF archive as a seperate source. The name
 	 * of the folder will be the name of the source in the archive.
 	 */
-	public GEMFFileCreator(final String pLocation, final List<File> pSourceFolders) throws FileNotFoundException,
+	public GEMFFileCreator(final String pLocation, final List<File> pSourceFolders, Logger log) throws FileNotFoundException,
 			IOException {
+		
 		/**
 		 * <pre>
 		 * 1. For each source folder
@@ -303,8 +306,13 @@ public class GEMFFileCreator {
 			for (int x = range.xMin; x < range.xMax + 1; ++x) {
 				for (int y = range.yMin; y < range.yMax + 1; ++y) {
 					gemfFile.writeLong(offset);
-					final long fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x)
-							.get(y).length();
+					
+					long fileSize = 0;
+					try {
+						fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y).length();
+					} catch (NullPointerException e) {
+						//dont' do anything here. Error will be logged later.
+					}
 					gemfFile.writeInt((int) fileSize);
 					offset += fileSize;
 				}
@@ -323,10 +331,14 @@ public class GEMFFileCreator {
 		for (final GEMFRange range : ranges) {
 			for (int x = range.xMin; x < range.xMax + 1; ++x) {
 				for (int y = range.yMin; y < range.yMax + 1; ++y) {
-
-					final long fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x)
-							.get(y).length();
-
+					
+					long fileSize = 0;
+					try {
+						fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y).length();
+					} catch (NullPointerException e) {
+						//don't do anything here. Error will be logged later.
+					}
+					
 					if (currentOffset + fileSize > FILE_SIZE_LIMIT) {
 						gemfFile.close();
 						++fileIndex;
@@ -336,16 +348,19 @@ public class GEMFFileCreator {
 						currentOffset += fileSize;
 					}
 
-					final FileInputStream tile = new FileInputStream(dirIndex.get(indexSource.get(range.sourceIndex))
-							.get(range.zoom).get(x).get(y));
-
-					int read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
-					while (read != -1) {
-						gemfFile.write(buf, 0, read);
-						read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
+					try {
+						final FileInputStream tile = new FileInputStream(dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y));
+	
+						int read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
+						while (read != -1) {
+							gemfFile.write(buf, 0, read);
+							read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
+						}
+	
+						tile.close(); 
+					} catch (Exception e) {
+						log.warn("Please check that all required Tiles have been downloaded correctly. I am missing tile for x=" + x + ", y=" + y + ", z=" + range.zoom);
 					}
-
-					tile.close();
 				}
 			}
 		}

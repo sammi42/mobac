@@ -46,7 +46,7 @@ public class OsmdroidGEMF extends OSMTracker {
 
 		String gemfLocation = new File(atlasDir, atlas.getName() + GEMF_FILE_EXTENSION).toString();
 
-		new GEMFFileCreator(gemfLocation, tileFolders);
+		new GEMFFileCreator(gemfLocation, tileFolders, log);
 
 		super.finishAtlasCreation();
 	}

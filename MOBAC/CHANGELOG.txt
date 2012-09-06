@@ -12,7 +12,8 @@
 1.9.9 (2012-08-??)
  ! Bugfix in PNGW calibration (patch by allib)
  ! RMAPS: Error "failed to retrieve max tile zoom info" fixed (#3561323)
- ~ GEMF: Error "NullPointerException" fixed (#3564146)
+ ! GEMF: Error "NullPointerException" fixed (#3564146)
+ ~ OruxMaps: Patch #3300055 applied
 
 1.9.8 (2012-07-05)
  ! Viewranger atlas format depends on Java Advanced Imaging without checking

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Locale;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
@@ -72,6 +73,9 @@ public class OruxMaps extends AtlasCreator {
 	protected File oruxMapsImagesDir;
 
 	protected LayerInterface currentLayer;
+	
+	// We need to override the map name, All maps must have the same prefix (layer name) 
+	protected String mapName;
 
 	public OruxMaps() {
 		super();
@@ -83,6 +87,30 @@ public class OruxMaps extends AtlasCreator {
 
 		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
 	}
+	
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		
+		for (LayerInterface layer : atlas) {
+			int cont = layer.getMapCount();
+			for (int i = 0; i < cont; i++){
+				MapInterface currMap = layer.getMap(i);
+				int currZoomLevel = currMap.getZoom();
+				for (int j = i + 1; j < cont; j++){
+					MapInterface nextMap = layer.getMap(j);
+					int nextZoomLevel = nextMap.getZoom();
+					if (currZoomLevel == nextZoomLevel)
+						throw new AtlasTestException(
+								"Unable to create a map with more than a layer with the same zoom level: " + 
+								currMap + " & " + nextMap + 
+								"\nPossible causes:\n" + 
+								"You are combining several layers (using drag & drop in 'Atlas Content')\n" + 
+								"You are creating a large map, and you have not selected the maximum value in 'Settings - Map size'");
+				}				
+			}
+		}		
+	}
+	
 
 	/*
 	 * @see mobac.program.atlascreators.AtlasCreator#initLayerCreation(mobac.program .interfaces.LayerInterface)
@@ -119,12 +147,13 @@ public class OruxMaps extends AtlasCreator {
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);
 		else
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, parameters.getFormat());
+		mapName = String.format("%s %02d", currentLayer.getName(), map.getZoom());
 	}
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
 
-		oruxMapsLayerDir = new File(oruxMapsMainDir, map.getName());
+		oruxMapsLayerDir = new File(oruxMapsMainDir, mapName);
 		oruxMapsImagesDir = new File(oruxMapsLayerDir, "set");
 		try {
 			Utilities.mkDir(oruxMapsLayerDir);
@@ -195,7 +224,7 @@ public class OruxMaps extends AtlasCreator {
 
 		FileOutputStream stream = null;
 		OutputStreamWriter mapWriter;
-		File otrk2File = new File(oruxMapsLayerDir, map.getName() + ORUXMAPS_EXT);
+		File otrk2File = new File(oruxMapsLayerDir, mapName + ORUXMAPS_EXT);
 		try {
 			stream = new FileOutputStream(otrk2File);
 			mapWriter = new OutputStreamWriter(stream, "UTF8");
@@ -223,10 +252,10 @@ public class OruxMaps extends AtlasCreator {
 		mapWriter.append("<OruxTracker " + "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n"
 				+ " versionCode=\"2.1\">\n");
 		mapWriter.append("<MapCalibration layers=\"false\" layerLevel=\"" + map.getZoom() + "\">\n");
-		mapWriter.append("<MapName><![CDATA[" + map.getName() + "]]></MapName>\n");
+		mapWriter.append("<MapName><![CDATA[" + mapName + "]]></MapName>\n");
 
 		// convert ampersands and others
-		String mapFileName = map.getName();
+		String mapFileName = mapName;
 		mapFileName = mapFileName.replaceAll("&", "&amp;");
 		mapFileName = mapFileName.replaceAll("<", "&lt;");
 		mapFileName = mapFileName.replaceAll(">", "&gt;");
@@ -272,7 +301,7 @@ public class OruxMaps extends AtlasCreator {
 	private class OruxMapTileWriter implements MapTileWriter {
 
 		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-			String tileFileName = String.format("%s_%d_%d.omc2", map.getName(), tilex, tiley);
+			String tileFileName = String.format("%s_%d_%d.omc2", mapName, tilex, tiley);
 			FileOutputStream out = new FileOutputStream(new File(oruxMapsImagesDir, tileFileName));
 			try {
 				out.write(tileData);

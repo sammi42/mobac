@@ -68,6 +68,9 @@ public class CustomMapSource implements HttpMapSource {
 	@XmlElement(required = true, nillable = false)
 	protected String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
 
+	@XmlElement(defaultValue = "false")
+	private boolean invertYCoordinate = false;
+
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	private Color backgroundColor = Color.BLACK;
@@ -136,6 +139,9 @@ public class CustomMapSource implements HttpMapSource {
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
 			UnrecoverableDownloadException, InterruptedException {
+		if (invertYCoordinate)
+			y = ((1 << zoom) - y - 1);
+
 		if (loadMethod == LoadMethod.CACHE) {
 			TileStoreEntry entry = TileStore.getInstance().getTile(x, y, zoom, this);
 			if (entry == null)

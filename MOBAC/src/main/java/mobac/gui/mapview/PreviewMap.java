@@ -83,13 +83,14 @@ public class PreviewMap extends JMapViewer {
 
 	protected JMapController mapKeyboardController;
 	protected JMapController mapSelectionController;
+	protected DefaultMapController defaultMapController;
 
 	private final WgsGrid wgsGrid = new WgsGrid(Settings.getInstance().wgsGrid, this);
 
 	public PreviewMap() {
 		super(MapSourcesManager.getInstance().getDefaultMapSource(), 5);
 		setEnabled(false);
-		new DefaultMapController(this);
+		defaultMapController = new DefaultMapController(this);
 		mapMarkersVisible = false;
 		setZoomContolsVisible(false);
 
@@ -502,4 +503,7 @@ public class PreviewMap extends JMapViewer {
 		repaint();
 	}
 
+	public void setWheelZoomEnabled(boolean wheelZoomEnabled) {
+		defaultMapController.setWheelZoomEnabled(wheelZoomEnabled);
+	}
 }

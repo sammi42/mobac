@@ -17,8 +17,7 @@
 /**
  * Package level definition of adapters for JAXB 
  */
-@XmlJavaTypeAdapters( {
-		@XmlJavaTypeAdapter(value = PointAdapter.class, type = java.awt.Point.class),
+@XmlJavaTypeAdapters({ @XmlJavaTypeAdapter(value = PointAdapter.class, type = java.awt.Point.class),
 		@XmlJavaTypeAdapter(value = DimensionAdapter.class, type = java.awt.Dimension.class),
 		@XmlJavaTypeAdapter(value = PolygonAdapter.class, type = java.awt.Polygon.class) })
 package mobac.program.model;

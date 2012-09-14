@@ -106,7 +106,6 @@ public class GpxLoad implements ActionListener {
 		}
 	}
 
-	
 	private void doMultiLoad(final File[] files, final MainGUI mainGUI) {
 		final JDialog progressDialog = new JDialog(mainGUI);
 		// prepare progress dialog
@@ -121,7 +120,6 @@ public class GpxLoad implements ActionListener {
 
 		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		mainGUI.setEnabled(false);
-		mainGUI.previewMap.setWheelZoomEnabled(false);
 		progressDialog.setVisible(true);
 
 		for (final File file : files) {
@@ -162,6 +160,8 @@ public class GpxLoad implements ActionListener {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							// close progress dialog
+							mainGUI.previewMap.repaint();
+							mainGUI.setCursor(Cursor.getDefaultCursor());
 							if (progressDialog != null) {
 								progressDialog.setVisible(false);
 								progressDialog.dispose();

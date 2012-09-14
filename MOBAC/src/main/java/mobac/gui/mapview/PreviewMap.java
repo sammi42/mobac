@@ -503,7 +503,4 @@ public class PreviewMap extends JMapViewer {
 		repaint();
 	}
 
-	public void setWheelZoomEnabled(boolean wheelZoomEnabled) {
-		defaultMapController.setWheelZoomEnabled(wheelZoomEnabled);
-	}
 }

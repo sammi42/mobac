@@ -21,6 +21,7 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.LinkedList;
 
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -87,7 +88,10 @@ public class GpxLoad implements ActionListener {
 			if (answer != JOptionPane.YES_OPTION)
 				return;
 		}
+		loadGpxFile(f, parent);
+	}
 
+	private void loadGpxFile(File f, Component parent) {
 		try {
 			Gpx gpx = GPXUtils.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
@@ -102,6 +106,7 @@ public class GpxLoad implements ActionListener {
 		}
 	}
 
+	
 	private void doMultiLoad(final File[] files, final MainGUI mainGUI) {
 		final JDialog progressDialog = new JDialog(mainGUI);
 		// prepare progress dialog
@@ -119,13 +124,26 @@ public class GpxLoad implements ActionListener {
 		mainGUI.previewMap.setWheelZoomEnabled(false);
 		progressDialog.setVisible(true);
 
+		for (final File file : files) {
+			LinkedList<File> openFiles = new LinkedList<File>();
+			if (panel.isFileOpen(file.getAbsolutePath())) {
+				openFiles.add(file);
+			}
+			if (openFiles.size() > 0) {
+				int answer = JOptionPane.showConfirmDialog(mainGUI, "One or more files are already opened.\n"
+						+ "Do you want to open a new instance of those files?", "Warning", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+				if (answer != JOptionPane.YES_OPTION)
+					return;
+			}
+		}
+
 		Thread job = new Thread() {
 
 			private int counter = 0;
 
 			public void run() {
 				try {
-
 					// iterate over files to load
 					for (final File file : files) {
 						counter++;
@@ -136,19 +154,15 @@ public class GpxLoad implements ActionListener {
 										+ file.getName() + ">");
 							}
 						});
-						doLoad(file, progressDialog);
+						loadGpxFile(file, mainGUI);
 					}
 				} catch (RuntimeException e) {
 					log.error(e.getMessage(), e);
 				} finally {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-
 							// close progress dialog
-							mainGUI.previewMap.repaint();
-							mainGUI.setCursor(Cursor.getDefaultCursor());
 							if (progressDialog != null) {
-								mainGUI.previewMap.setWheelZoomEnabled(true);
 								progressDialog.setVisible(false);
 								progressDialog.dispose();
 							}

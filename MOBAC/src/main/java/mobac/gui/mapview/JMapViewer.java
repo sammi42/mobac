@@ -28,6 +28,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -372,8 +374,18 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 		int bottomRightX = topLeftX + getWidth();
 		int bottomRightY = topLeftY + getHeight();
-		for (MapLayer l : mapLayers) {
-			l.paint(this, (Graphics2D) g, zoom, topLeftX, topLeftY, bottomRightX, bottomRightY);
+		try {
+			for (MapLayer l : mapLayers) {
+				l.paint(this, (Graphics2D) g, zoom, topLeftX, topLeftY, bottomRightX, bottomRightY);
+			}
+		} catch (ConcurrentModificationException e) {
+			// This may happen when multiple GPX files are loaded at once and in the mean time the map view is
+			// repainted.
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JMapViewer.this.repaint();
+				}
+			});
 		}
 
 		// outer border of the map

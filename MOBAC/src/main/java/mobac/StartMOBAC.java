@@ -33,10 +33,13 @@ public class StartMOBAC {
 
 	public static final String MAIN_CLASS = "mobac.Main";
 
+	public static String[] ARGS;
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		ARGS = args;
 		setLookAndFeel();
 		checkVersion();
 		try {

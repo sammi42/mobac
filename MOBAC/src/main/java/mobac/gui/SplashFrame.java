@@ -51,6 +51,8 @@ public class SplashFrame extends JFrame {
 	}
 
 	public static void hideFrame() {
+		if (startupFrame == null)
+			return;
 		startupFrame.setVisible(false);
 		startupFrame.dispose();
 		startupFrame = null;

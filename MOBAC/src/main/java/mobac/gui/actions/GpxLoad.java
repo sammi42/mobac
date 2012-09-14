@@ -16,12 +16,18 @@
  ******************************************************************************/
 package mobac.gui.actions;
 
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.xml.bind.JAXBException;
 
 import mobac.data.gpx.GPXUtils;
@@ -32,7 +38,11 @@ import mobac.gui.panels.JGpxPanel;
 import mobac.program.model.Settings;
 import mobac.utilities.file.GpxFileFilter;
 
+import org.apache.log4j.Logger;
+
 public class GpxLoad implements ActionListener {
+
+	private Logger log = Logger.getLogger(GpxLoad.class);
 
 	JGpxPanel panel;
 
@@ -50,40 +60,106 @@ public class GpxLoad implements ActionListener {
 			fc.setCurrentDirectory(dir); // restore the saved directory
 		} catch (Exception e) {
 		}
+		fc.setMultiSelectionEnabled(true);
 		fc.addChoosableFileFilter(new GpxFileFilter(false));
-		int returnVal = fc.showOpenDialog(MainGUI.getMainGUI());
+		final MainGUI mainGUI = MainGUI.getMainGUI();
+		int returnVal = fc.showOpenDialog(mainGUI);
 		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return;
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
-		File f = fc.getSelectedFile();
-		if (panel.isFileOpen(f.getAbsolutePath())) {
-			int answer = JOptionPane.showConfirmDialog(null, "The file was already opened.\n"
-					+ "Do you want to open a new instance of this file?", "Warning", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
-			if (answer != JOptionPane.YES_OPTION)
-				return;
+		File[] f = fc.getSelectedFiles();
+		if (f.length > 1) {
+			doMultiLoad(f, mainGUI);
+		} else if (f.length == 1) {
+			doLoad(f[0], mainGUI);
 		}
-		doLoad(f);
 	}
 
 	/**
 	 * @param f
 	 */
-	private void doLoad(File f) {
+	private void doLoad(File f, Component parent) {
+		if (panel.isFileOpen(f.getAbsolutePath())) {
+			int answer = JOptionPane.showConfirmDialog(parent, "The file <" + f.getName() + "> was already opened.\n"
+					+ "Do you want to open a new instance of this file?", "Warning", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+		}
+
 		try {
 			Gpx gpx = GPXUtils.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
 			gpxLayer.setFile(f);
 			panel.addGpxLayer(gpxLayer);
 		} catch (JAXBException e) {
-			JOptionPane.showMessageDialog(MainGUI.getMainGUI(), "<html>Unable to load the GPX file <br><i>"
-					+ f.getAbsolutePath()
+			JOptionPane.showMessageDialog(parent, "<html>Unable to load the GPX file <br><i>" + f.getAbsolutePath()
 					+ "</i><br><br><b>Please make sure the file is a valid GPX v1.1 file.</b><br>"
 					+ "<br>Internal error message:<br>" + e.getMessage() + "</html>", "GPX loading failed",
 					JOptionPane.ERROR_MESSAGE);
-
+			throw new RuntimeException(e);
 		}
-		MainGUI.getMainGUI().previewMap.repaint();
+	}
+
+	private void doMultiLoad(final File[] files, final MainGUI mainGUI) {
+		final JDialog progressDialog = new JDialog(mainGUI);
+		// prepare progress dialog
+		progressDialog.setSize(400, 50);
+		progressDialog.setResizable(false);
+		progressDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		progressDialog.setLocation(
+				Math.max(0, (int) (mainGUI.getLocation().getX() + mainGUI.getSize().getWidth() / 2 - 200)),
+				Math.max(0, (int) (mainGUI.getLocation().getY() + mainGUI.getSize().getHeight() / 2 - 25)));
+		final JProgressBar progressBar = new JProgressBar(0, files.length);
+		progressDialog.add(progressBar);
+
+		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		mainGUI.setEnabled(false);
+		mainGUI.previewMap.setWheelZoomEnabled(false);
+		progressDialog.setVisible(true);
+
+		Thread job = new Thread() {
+
+			private int counter = 0;
+
+			public void run() {
+				try {
+
+					// iterate over files to load
+					for (final File file : files) {
+						counter++;
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								progressBar.setValue(counter);
+								progressDialog.setTitle("Processing " + counter + " of " + files.length + " <"
+										+ file.getName() + ">");
+							}
+						});
+						doLoad(file, progressDialog);
+					}
+				} catch (RuntimeException e) {
+					log.error(e.getMessage(), e);
+				} finally {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+
+							// close progress dialog
+							mainGUI.previewMap.repaint();
+							mainGUI.setCursor(Cursor.getDefaultCursor());
+							if (progressDialog != null) {
+								mainGUI.previewMap.setWheelZoomEnabled(true);
+								progressDialog.setVisible(false);
+								progressDialog.dispose();
+							}
+							mainGUI.setEnabled(true);
+							mainGUI.toFront();
+						}
+					});
+				}
+			};
+		};
+
+		job.start();
 	}
 }

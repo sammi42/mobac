@@ -118,8 +118,6 @@ public class GpxLoad implements ActionListener {
 		final JProgressBar progressBar = new JProgressBar(0, files.length);
 		progressDialog.add(progressBar);
 
-		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		mainGUI.setEnabled(false);
 		progressDialog.setVisible(true);
 
 		for (final File file : files) {
@@ -135,7 +133,6 @@ public class GpxLoad implements ActionListener {
 					return;
 			}
 		}
-
 		Thread job = new Thread() {
 
 			private int counter = 0;
@@ -173,7 +170,8 @@ public class GpxLoad implements ActionListener {
 				}
 			};
 		};
-
+		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		mainGUI.setEnabled(false);
 		job.start();
 	}
 }

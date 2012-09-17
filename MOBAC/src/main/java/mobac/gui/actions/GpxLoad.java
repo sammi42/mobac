@@ -21,7 +21,6 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.LinkedList;
 
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -70,6 +69,23 @@ public class GpxLoad implements ActionListener {
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
 		File[] f = fc.getSelectedFiles();
+
+		// check already opened gpx files
+		boolean dublicates = false;
+		for (File selectedFile : f) {
+			dublicates = panel.isFileOpen(selectedFile.getAbsolutePath());
+			if (dublicates)
+				break;
+		}
+		if (dublicates) {
+			int answer = JOptionPane.showConfirmDialog(mainGUI, "One or more Gpx files are already opened.\n"
+					+ "Do you want to open new instances of these files?", "Warning", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+		}
+
+		// process
 		if (f.length > 1) {
 			doMultiLoad(f, mainGUI);
 		} else if (f.length == 1) {
@@ -81,17 +97,6 @@ public class GpxLoad implements ActionListener {
 	 * @param f
 	 */
 	private void doLoad(File f, Component parent) {
-		if (panel.isFileOpen(f.getAbsolutePath())) {
-			int answer = JOptionPane.showConfirmDialog(parent, "The file <" + f.getName() + "> was already opened.\n"
-					+ "Do you want to open a new instance of this file?", "Warning", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
-			if (answer != JOptionPane.YES_OPTION)
-				return;
-		}
-		loadGpxFile(f, parent);
-	}
-
-	private void loadGpxFile(File f, Component parent) {
 		try {
 			Gpx gpx = GPXUtils.loadGpxFile(f);
 			GpxLayer gpxLayer = new GpxLayer(gpx);
@@ -118,21 +123,10 @@ public class GpxLoad implements ActionListener {
 		final JProgressBar progressBar = new JProgressBar(0, files.length);
 		progressDialog.add(progressBar);
 
+		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		mainGUI.setEnabled(false);
 		progressDialog.setVisible(true);
 
-		for (final File file : files) {
-			LinkedList<File> openFiles = new LinkedList<File>();
-			if (panel.isFileOpen(file.getAbsolutePath())) {
-				openFiles.add(file);
-			}
-			if (openFiles.size() > 0) {
-				int answer = JOptionPane.showConfirmDialog(mainGUI, "One or more files are already opened.\n"
-						+ "Do you want to open a new instance of those files?", "Warning", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
-				if (answer != JOptionPane.YES_OPTION)
-					return;
-			}
-		}
 		Thread job = new Thread() {
 
 			private int counter = 0;
@@ -149,7 +143,7 @@ public class GpxLoad implements ActionListener {
 										+ file.getName() + ">");
 							}
 						});
-						loadGpxFile(file, mainGUI);
+						doLoad(file, progressDialog);
 					}
 				} catch (RuntimeException e) {
 					log.error(e.getMessage(), e);
@@ -170,8 +164,7 @@ public class GpxLoad implements ActionListener {
 				}
 			};
 		};
-		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		mainGUI.setEnabled(false);
+
 		job.start();
 	}
 }

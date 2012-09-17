@@ -283,16 +283,37 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	}
 
 	public static void installToolkitEventQueueProxy() {
-		EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
-		queue.push(new EventQueueProxy());
+
+		boolean isLikeJava7 = Float.parseFloat(System.getProperty("java.specification.version")) > 1.6;
+
+		EventQueueProxy eventQueueProxy = new EventQueueProxy();
+		// Bug handling. See
+		// http://stackoverflow.com/questions/3158254/how-to-replace-the-awt-eventqueue-with-own-implementation
+		try {
+			if (isLikeJava7)
+				EventQueue.invokeAndWait(eventQueueProxy);
+			else
+				eventQueueProxy.run();
+		} catch (Exception e) {
+			log.error("", e);
+		}
 	}
 
 	/**
 	 * Catching all Runtime Exceptions in Swing
 	 * 
-	 * http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions- in-swing/
+	 * http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions-in-swing/
 	 */
-	protected static class EventQueueProxy extends EventQueue {
+	protected static class EventQueueProxy extends EventQueue implements Runnable {
+
+		/**
+		 * Installs the {@link EventQueueProxy}
+		 */
+		@Override
+		public void run() {
+			EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+			queue.push(this);
+		}
 
 		protected void dispatchEvent(AWTEvent newEvent) {
 			try {

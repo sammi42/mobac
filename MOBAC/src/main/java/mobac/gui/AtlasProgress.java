@@ -156,6 +156,11 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		super("Atlas creation in progress");
 		this.atlasThread = atlasThread;
 		ToolTipManager.sharedInstance().setDismissDelay(12000);
+		if (MainGUI.getMainGUI() == null) // Atlas creation started via command-line, no MainGUi available
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		else
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
 		setIconImages(MainGUI.MOBAC_ICONS);
 		setLayout(new GridBagLayout());
 		updateTask = new UpdateTask();
@@ -509,10 +514,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		} else if (abortAtlasCreationButton.equals(source)) {
 			aborted = true;
 			updateTask.cancel();
-			if (downloadControlListener != null) {
+			if (downloadControlListener != null)
 				downloadControlListener.abortAtlasCreation();
-			} else
-				dispose();
+			else
+				closeWindow();
 		} else if (pauseResumeDownloadButton.equals(source)) {
 			if (downloadControlListener != null)
 				downloadControlListener.pauseResumeAtlasCreation();

@@ -513,7 +513,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			closeWindow();
 		} else if (abortAtlasCreationButton.equals(source)) {
 			aborted = true;
-			updateTask.cancel();
+			stopUpdateTask();
 			if (downloadControlListener != null)
 				downloadControlListener.abortAtlasCreation();
 			else

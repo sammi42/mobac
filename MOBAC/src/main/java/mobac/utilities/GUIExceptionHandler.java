@@ -56,7 +56,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
 	private static final double MB_DIV = 1024d * 1024d;
 
-	private static final String URL_BUGTRACKER = "http://sourceforge.net/tracker/?group_id=238075&atid=1105494";
+	private static final String URL_BUGTRACKER = "http://sourceforge.net/p/mobac/bugs/";
 
 	static {
 		Thread.setDefaultUncaughtExceptionHandler(instance);
@@ -220,7 +220,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 				sb.append("\n#############################################################");
 
 				guiText = "An unexpected exception occurred (" + exceptionName + ")<br>"
-						+ "<p>Please report a ticket in the bug tracker " + "on <a href=\"" + URL_BUGTRACKER
+						+ "<p>Please create a ticket in the bug tracker " + "on <a href=\"" + URL_BUGTRACKER
 						+ "\">SourceForge.net</a><br>"
 						+ "<b>Please include a detailed description of your performed actions <br>"
 						+ "before the error occurred.</b></p>Be sure to include the following information:";

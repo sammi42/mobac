@@ -19,14 +19,21 @@ package mobac;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.xml.bind.JAXBException;
 
+import mobac.exceptions.AtlasTestException;
 import mobac.gui.MainGUI;
 import mobac.gui.SplashFrame;
 import mobac.mapsources.DefaultMapSourcesManager;
+import mobac.program.AtlasThread;
 import mobac.program.DirectoryManager;
 import mobac.program.EnvironmentSetup;
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
+import mobac.program.commandline.CommandLineEmpty;
+import mobac.program.commandline.CreateAtlas;
+import mobac.program.interfaces.CommandLineAction;
+import mobac.program.model.Profile;
 import mobac.program.model.Settings;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GUIExceptionHandler;
@@ -36,11 +43,16 @@ import mobac.utilities.GUIExceptionHandler;
  */
 public class Main {
 
+	protected CommandLineAction cmdAction = new CommandLineEmpty();
+
 	public Main() {
 		try {
-			SplashFrame.showFrame();
+			parseCommandLine();
+			if (cmdAction.showSplashScreen())
+				SplashFrame.showFrame();
 			DirectoryManager.initialize();
 			Logging.configureLogging();
+
 			// MySocketImplFactory.install();
 			ProgramInfo.initialize(); // Load revision info
 			Logging.logSystemInfo();
@@ -55,16 +67,30 @@ public class Main {
 			EnvironmentSetup.createDefaultAtlases();
 			TileStore.initialize();
 			EnvironmentSetup.upgrade();
-			Logging.LOG.debug("Starting GUI");
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					MainGUI.createMainGui();
-					SplashFrame.hideFrame();
-				}
-			});
+			cmdAction.runBeforeMainGUI();
+			if (cmdAction.showMainGUI()) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						Logging.LOG.debug("Starting GUI");
+						MainGUI.createMainGui();
+						SplashFrame.hideFrame();
+						cmdAction.runMainGUI();
+					}
+				});
+			}
 		} catch (Throwable t) {
 			GUIExceptionHandler.processException(t);
 			System.exit(1);
+		}
+	}
+
+	protected void parseCommandLine() {
+		String[] args = StartMOBAC.ARGS;
+		if (args.length == 2) {
+			if ("create".equalsIgnoreCase(args[0])) {
+				cmdAction = new CreateAtlas(args[1]);
+				return;
+			}
 		}
 	}
 

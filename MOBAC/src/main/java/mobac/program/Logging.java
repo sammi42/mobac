@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Handler;
 
+import mobac.StartMOBAC;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Juli2Log4jHandler;
 import mobac.utilities.OSUtilities;
@@ -151,6 +152,9 @@ public class Logging {
 	public static void logSystemInfo() {
 		Logger log = Logger.getLogger("SysInfo");
 		if (log.isInfoEnabled()) {
+			log.info("Startup arguments (count=" + StartMOBAC.ARGS.length + "):");
+			for (int i = 0; i < StartMOBAC.ARGS.length; i++)
+				log.info("\t" + i + ": " + StartMOBAC.ARGS[i]);
 			String n = System.getProperty("line.separator");
 			log.info("Version: " + ProgramInfo.getCompleteTitle());
 			log.info("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")

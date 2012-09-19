@@ -152,9 +152,6 @@ public class Logging {
 	public static void logSystemInfo() {
 		Logger log = Logger.getLogger("SysInfo");
 		if (log.isInfoEnabled()) {
-			log.info("Startup arguments (count=" + StartMOBAC.ARGS.length + "):");
-			for (int i = 0; i < StartMOBAC.ARGS.length; i++)
-				log.info("\t" + i + ": " + StartMOBAC.ARGS[i]);
 			String n = System.getProperty("line.separator");
 			log.info("Version: " + ProgramInfo.getCompleteTitle());
 			log.info("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
@@ -170,6 +167,10 @@ public class Logging {
 					+ n + "atlasProfilesDir: \t" + DirectoryManager.atlasProfilesDir /**/
 					+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
 			);
+			log.info("System console available: " + (System.console() != null));
+			log.info("Startup arguments (count=" + StartMOBAC.ARGS.length + "):");
+			for (int i = 0; i < StartMOBAC.ARGS.length; i++)
+				log.info("\t" + i + ": " + StartMOBAC.ARGS[i]);
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("Detected operating system: " + OSUtilities.detectOs() + " (" + System.getProperty("os.name")

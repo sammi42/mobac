@@ -41,7 +41,7 @@ This file work with MOBAC 1.9.3 and higher
 	
 	<!-- 
 	  Directory in which the existing atlas is located.
-	  Inside directory structure and file name depends on the sourceType.
+	  The inner directory structure and file names are depending on the sourceType.
 	-->
 	<sourceFolder>D:\MOBAC\LocalTiles\OSMAND\TilesAtHome</sourceFolder>
 

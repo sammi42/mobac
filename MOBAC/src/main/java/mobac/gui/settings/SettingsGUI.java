@@ -47,9 +47,11 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -127,6 +129,8 @@ public class SettingsGUI extends JDialog {
 	private JTimeSlider maxExpirationTime;
 
 	private JMapSizeCombo mapSize;
+	
+	private JSpinner mapOverlapTiles;
 
 	private JTextField atlasOutputDirectory;
 
@@ -472,12 +476,18 @@ public class SettingsGUI extends JDialog {
 						+ "do not support map sizes larger than 32767.<br>"
 						+ "Newer versions can handle maps up to a size of 1048575.</html>");
 
+		mapOverlapTiles = new JSpinner(new SpinnerNumberModel(0,0,5,1));
+
+		JLabel mapOverlapTilesLabel = new JLabel("Number of tiles to overlap maps regions:");
+		
 		JPanel leftPanel = new JPanel(new GridBagLayout());
 		leftPanel.setBorder(createSectionBorder("Map size settings"));
 
 		GBC gbc = GBC.eol().insets(0, 5, 0, 5);
 		leftPanel.add(mapSizeLabel, GBC.std());
 		leftPanel.add(mapSize, GBC.eol());
+		leftPanel.add(mapOverlapTilesLabel, GBC.std());
+		leftPanel.add(mapOverlapTiles, GBC.eol());
 		leftPanel.add(mapSizeText, gbc.fill(GBC.HORIZONTAL));
 		leftPanel.add(Box.createVerticalGlue(), GBC.std().fill(GBC.VERTICAL));
 
@@ -617,6 +627,7 @@ public class SettingsGUI extends JDialog {
 		tileStoreTab.tileStoreEnabled.setSelected(s.tileStoreEnabled);
 
 		mapSize.setValue(s.maxMapSize);
+		mapOverlapTiles.setValue(s.mapOverlapTiles);
 
 		atlasOutputDirectory.setText(s.getAtlasOutputDirectoryString());
 
@@ -662,6 +673,8 @@ public class SettingsGUI extends JDialog {
 		s.tileMinExpirationTime = minExpirationTime.getTimeMilliValue();
 		s.tileMaxExpirationTime = maxExpirationTime.getTimeMilliValue();
 		s.maxMapSize = mapSize.getValue();
+		s.mapOverlapTiles = (Integer) mapOverlapTiles.getValue();
+
 
 		s.setAtlasOutputDirectory(atlasOutputDirectory.getText());
 		int threads = ((Integer) threadCount.getSelectedItem()).intValue();

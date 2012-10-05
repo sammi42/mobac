@@ -74,6 +74,8 @@ public class Settings {
 
 	public int maxMapSize = 65536;
 
+	public int mapOverlapTiles = 0;
+
 	public boolean tileStoreEnabled = true;
 
 	/**

@@ -17,6 +17,8 @@
  + Custom XML map: <invertYCoordinate> now works in simple XML map, too 
  + Loading multiple GPX files at once into MOBAC (based on patch by heckie) 
  ! Bugfix NullPointerException when aborting atlas download fixed (#3568849)
+ + Automatically splitted maps because of the specified maximum map size can 
+    now overlap 1-5 tiles 
 
 1.9.8 (2012-07-05)
  ! Viewranger atlas format depends on Java Advanced Imaging without checking

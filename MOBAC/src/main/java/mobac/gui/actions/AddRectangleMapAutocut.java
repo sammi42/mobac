@@ -80,7 +80,7 @@ public class AddRectangleMapAutocut implements ActionListener {
 			TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
 			try {
 				String mapName = String.format(mapNameFmt, new Object[] { layerName, zoom });
-				layer.addMapsAutocut(mapName, mapSource, tl, br, zoom, customTileParameters, settings.maxMapSize);
+				layer.addMapsAutocut(mapName, mapSource, tl, br, zoom, customTileParameters, settings.maxMapSize, settings.mapOverlapTiles);
 			} catch (InvalidNameException e) {
 				Logging.LOG.error("", e);
 			}

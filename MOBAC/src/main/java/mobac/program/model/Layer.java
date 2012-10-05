@@ -79,11 +79,11 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 			throws InvalidNameException {
 		MapSpace mapSpace = mapSource.getMapSpace();
 		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapSpace, zoom),
-				maxCoordinate.toTileCoordinate(mapSpace, zoom), zoom, parameters, maxMapSize);
+				maxCoordinate.toTileCoordinate(mapSpace, zoom), zoom, parameters, maxMapSize, 0);
 	}
 
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
-			Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize)
+			Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize, int overlapTiles)
 			throws InvalidNameException {
 		log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom + " min="
 				+ minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x + "/"
@@ -115,13 +115,18 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 			maps.add(s);
 			return;
 		}
-		int maxMapCounter = MyMath.divCeil(mapWidth, maxMapDimension.width)
-				* MyMath.divCeil(mapHeight, maxMapDimension.height);
+		Dimension nextMapStep = new Dimension(maxMapDimension.width - (tileDimension.width * overlapTiles),
+				maxMapDimension.height - (tileDimension.height * overlapTiles));
+
+		int maxXCounter = MyMath.divCeil(mapWidth, nextMapStep.width);
+		int maxYCounter = MyMath.divCeil(mapHeight, nextMapStep.height);
+
+		int maxMapCounter = maxXCounter * maxYCounter;
 		int maxMapCountDigits = (int) Math.ceil(Math.log10(maxMapCounter));
 		String mapNameFormat = "%s (%0" + maxMapCountDigits + "d)";
 		int mapCounter = 0;
-		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += maxMapDimension.width) {
-			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += maxMapDimension.height) {
+		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += nextMapStep.width) {
+			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += nextMapStep.height) {
 				int maxX = Math.min(mapX + maxMapDimension.width, maxTileCoordinate.x);
 				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
 				Point min = new Point(mapX, mapY);

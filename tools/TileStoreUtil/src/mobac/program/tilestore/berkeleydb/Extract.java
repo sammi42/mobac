@@ -2,19 +2,32 @@ package mobac.program.tilestore.berkeleydb;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.security.InvalidParameterException;
 
 import mobac.mapsources.MapSourceTools;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
 import mobac.ts_util.Main;
+import mobac.ts_util.ParamTests;
 import mobac.utilities.Utilities;
 
 import com.sleepycat.persist.EntityCursor;
 
-public class Extract {
+public class Extract implements Runnable {
+	final File sourceDir;
+	final File destDir;
 
-	public static void extract(File sourceDir, File destDir) {
+	public Extract(String srcDir, String destDir) {
+		this.sourceDir = new File(srcDir);
+		this.destDir = new File(destDir);
+		if (!ParamTests.testBerkelyDbDir(this.sourceDir))
+			throw new InvalidParameterException();
+		if (!ParamTests.testDir(this.destDir))
+			throw new InvalidParameterException();
+	}
+
+	public void run() {
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		TileDatabase dbSource = null;
 		try {

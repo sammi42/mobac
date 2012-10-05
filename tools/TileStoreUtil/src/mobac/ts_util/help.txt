@@ -1,8 +1,7 @@
+
 usage: 
-	java -jar ts-util.jar merge <src-directory> <destination-directory>
-	java -jar ts-util.jar extract <src-directory> <destination-directory>
+	java -jar ts-util.jar merge <db-src-directory> <db-destination-directory>
+	java -jar ts-util.jar extract <db-src-directory> <destination-directory>
+	java -jar ts-util.jar delete <db-directory> <condition>
+	java -jar ts-util.jar print <db-directory>
 	
-merge mode: 
-	
-Copies the tiles from the tile store in the src-directory
-into the tile-store in the destination-directory.

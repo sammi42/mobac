@@ -1,19 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) MOBAC developers
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package mobac.ts_util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.InvalidParameterException;
 import java.util.Properties;
 
 import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
+import mobac.program.tilestore.berkeleydb.Delete;
 import mobac.program.tilestore.berkeleydb.Extract;
 import mobac.program.tilestore.berkeleydb.Merge;
+import mobac.program.tilestore.berkeleydb.Print;
 import mobac.utilities.Charsets;
-import mobac.utilities.file.FileExtFilter;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -25,13 +42,7 @@ public class Main {
 
 	public static String version = "?";
 
-	static File srcDir = null;
-	static File destDir = null;
-	static MODE mode;
-
-	private enum MODE {
-		MERGE, EXTRACT;
-	};
+	static Runnable commandImplementation = null;
 
 	public static void main(String[] args) {
 		Logger.getRootLogger().removeAllAppenders();
@@ -48,54 +59,54 @@ public class Main {
 			log.error("", e);
 		}
 
-		boolean parametersValid = false;
+		if (args.length == 0)
+			showHelp(true);
 
-		if (args.length == 3) {
-
-			String modeStr = args[0].toUpperCase();
-			try {
-				mode = MODE.valueOf(modeStr);
-			} catch (IllegalArgumentException e) {
-				System.out.println("Error: Invalid operation mode \"" + args[0] + "\"\n");
-				showHelp();
+		try {
+			String modeStr = args[0].toLowerCase();
+			if ("help".equalsIgnoreCase(modeStr) || "?".equalsIgnoreCase(modeStr) || "-?".equalsIgnoreCase(modeStr)) {
+				showHelp(true);
 			}
+			if (args.length == 3) {
+				if ("merge".equalsIgnoreCase(modeStr))
+					commandImplementation = new Merge(args[1], args[2]);
+				else if ("extract".equalsIgnoreCase(modeStr))
+					commandImplementation = new Extract(args[1], args[2]);
+				else if ("delete".equalsIgnoreCase(modeStr))
+					commandImplementation = new Delete(args[1], args[2]);
+			} else if (args.length == 2) {
+				if ("print".equalsIgnoreCase(modeStr))
+					commandImplementation = new Print(args[1]);
 
-			srcDir = new File(args[1]);
-			if (!srcDir.isDirectory())
-				System.out.println("Error: Invalid source directory \"" + srcDir + "\"\n");
-
-			destDir = new File(args[2]);
-			if (!destDir.isDirectory())
-				System.out.println("Error: Invalid destination directory \"" + destDir + "\"\n");
-
-			parametersValid = srcDir.isDirectory() && destDir.isDirectory();
+			}
+		} catch (InvalidParameterException e) {
+			commandImplementation = null;
 		}
-		if (!parametersValid)
-			showHelp();
+		if (commandImplementation == null)
+			showHelp(false);
 
 		Thread t = new DelayedInterruptThread("TileStoreUtil") {
 
 			@Override
 			public void run() {
 				TileStore.initialize();
-				switch (mode) {
-				case MERGE:
-					Merge.merge(srcDir, destDir);
-					return;
-				case EXTRACT:
-					Extract.extract(srcDir, destDir);
-					return;
-				}
-
+				commandImplementation.run();
 			}
 
 		};
 		t.start();
 	}
 
-	private static void showHelp() {
+	private static void showHelp(boolean longHelp) {
 		System.out.println(getNameAndVersion());
-		InputStream in = TileStoreUtil.class.getResourceAsStream("help.txt");
+		printResource("help.txt");
+		if (longHelp)
+			printResource("help_long.txt");
+		System.exit(1);
+	}
+
+	public static void printResource(String resouceName) {
+		InputStream in = TileStoreUtil.class.getResourceAsStream(resouceName);
 		InputStreamReader reader = new InputStreamReader(in, Charsets.UTF_8);
 		char[] buf = new char[4096];
 		int read = 0;
@@ -111,15 +122,10 @@ public class Main {
 		} catch (IOException e) {
 			log.error("", e);
 		}
-		System.exit(1);
 	}
 
 	public static String getNameAndVersion() {
 		return "MOBAC TileStore utility v" + version;
-	}
-
-	public static boolean isValidTileStoreDirectory(File dir) {
-		return dir.listFiles(new FileExtFilter("jdb")).length > 0;
 	}
 
 }

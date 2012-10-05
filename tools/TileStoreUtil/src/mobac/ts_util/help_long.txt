@@ -1,0 +1,20 @@
+
+merge mode: 
+	Copies the tiles from the tile store of one map source in the 
+	db-src-directory into the tile-store in the db-destination-directory.
+
+extract mode:
+	Saves every tile from the tile store database of one map in 
+	db-directory as one file in the destination directory. 
+	Subdirectories will be created using the following pattern: zoom/x
+	The y coordinate is used as file name.
+
+delete mode:
+	Deletes all tiles that matches the condition from the tile store 
+	database specified by db-directory.
+	Condition example: etag:2ae23d-520c-4b08de03fd680	
+
+print mode:
+	Prints every tile (it's meta data) from the tile store database in 
+	db-directory on the console.
+	

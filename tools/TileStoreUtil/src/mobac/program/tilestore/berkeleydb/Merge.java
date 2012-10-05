@@ -1,16 +1,30 @@
 package mobac.program.tilestore.berkeleydb;
 
 import java.io.File;
+import java.security.InvalidParameterException;
 
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
 import mobac.ts_util.Main;
+import mobac.ts_util.ParamTests;
 
 import com.sleepycat.persist.EntityCursor;
 
-public class Merge {
+public class Merge implements Runnable {
 
-	public static void merge(File sourceDir, File destDir) {
+	final File sourceDir;
+	final File destDir;
+
+	public Merge(String sourceDir, String destDir) {
+		this.sourceDir = new File(sourceDir);
+		this.destDir = new File(destDir);
+		if (!ParamTests.testBerkelyDbDir(this.sourceDir))
+			throw new InvalidParameterException();
+		if (!ParamTests.testBerkelyDbDir(this.destDir))
+			throw new InvalidParameterException();
+	}
+
+	public void run() {
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		TileDatabase dbSource = null;
 		TileDatabase dbDest = null;

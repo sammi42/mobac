@@ -16,3 +16,11 @@ following command:
 java -jar ts-util.jar
 
 The details reference of the available command-line parameters will then be printed.
+
+Background:
+**************
+The "tile store" of MOBAC consists of one database per map layer - for simple map 
+sources with one layer this means one database per map source.
+The different tile store databases are stored as subdirectories in the "tilestore"
+directory of MOBAC. The present utility is designed to perform actions on one 
+specific tile store database - not on the overall tile store. 

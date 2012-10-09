@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.9 (2012-08-??)
+1.9.9 (2012-10-09)
  ! Bugfix in PNGW calibration (patch by allib)
  ! RMAPS: Error "failed to retrieve max tile zoom info" fixed (#3561323)
  ! GEMF: Error "NullPointerException" fixed (#3564146)

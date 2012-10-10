@@ -9,6 +9,10 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.10 (2012-12-??)
+ ! Bugfix Local tile [zip] files in quandkey format causes a 
+    NullPointerException when creating an atlas (#229)  
+
 1.9.9 (2012-10-09)
  ! Bugfix in PNGW calibration (patch by allib)
  ! RMAPS: Error "failed to retrieve max tile zoom info" fixed (#3561323)

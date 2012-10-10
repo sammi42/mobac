@@ -180,6 +180,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 			return; // Error no suitable file found
 		fileSyntax = "%s." + fileExt;
 
+		tileImageType = TileImageType.getTileImageType(fileExt);
 		p = Pattern.compile("([0123]+)\\.(" + fileExt + ")", Pattern.CASE_INSENSITIVE);
 
 		int min = PreviewMap.MAX_ZOOM;

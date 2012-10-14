@@ -45,6 +45,7 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 
 	@XmlElementWrapper(name = "layers")
 	@XmlElements({ @XmlElement(name = "customMapSource", type = CustomMapSource.class),
+			@XmlElement(name = "customWmsMapSource", type = CustomWmsMapSource.class),
 			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
 			@XmlElement(name = "cloudMade", type = CustomCloudMade.class),
 			@XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
@@ -55,7 +56,7 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
 	protected Color backgroundColor = Color.BLACK;
-	
+
 	public CustomMultiLayerMapSource() {
 		super();
 		mapSources = new MapSource[0];
@@ -88,7 +89,6 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
-	
 
 	// public static void main(String[] args) {
 	// OutputStream os = null;

@@ -11,7 +11,8 @@
 
 1.9.10 (2012-12-??)
  ! Bugfix Local tile [zip] files in quandkey format causes a 
-    NullPointerException when creating an atlas (#229)  
+    NullPointerException when creating an atlas (#229)
+ + Custom multi-layer map source can now contain <customWmsMapSource> maps  
 
 1.9.9 (2012-10-09)
  ! Bugfix in PNGW calibration (patch by allib)

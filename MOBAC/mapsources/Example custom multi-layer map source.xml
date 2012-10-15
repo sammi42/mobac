@@ -23,7 +23,6 @@ top of the OSM Mapnik layer.
             <name>Custom OSM Mapnik</name>
             <minZoom>0</minZoom>
             <maxZoom>18</maxZoom>
-            <tileType>PNG</tileType>
             <tileUpdate>None</tileUpdate>
             <url>http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png</url>
             
@@ -35,7 +34,6 @@ top of the OSM Mapnik layer.
             <name>Custom transparent hillshade</name>
             <minZoom>8</minZoom>
             <maxZoom>18</maxZoom>
-            <tileType>PNG</tileType>
             <tileUpdate>None</tileUpdate>
             <url>http://www.wanderreitkarte.de/hills/{$z}/{$x}/{$y}.png</url>
         </customMapSource>

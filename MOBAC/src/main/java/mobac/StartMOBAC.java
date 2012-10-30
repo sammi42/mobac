@@ -22,11 +22,9 @@ import javax.swing.UIManager;
 /**
  * Main class for starting Mobile Atlas Creator.
  * 
- * This class performs the Java Runtime version check and if the correct version
- * is installed it creates a new instance of the class specified by
- * {@link #MAIN_CLASS}. The class to be instantiated is specified by it's name
- * intentionally as this allows to compile this class without any further class
- * dependencies.
+ * This class performs the Java Runtime version check and if the correct version is installed it creates a new instance
+ * of the class specified by {@link #MAIN_CLASS}. The class to be instantiated is specified by it's name intentionally
+ * as this allows to compile this class without any further class dependencies.
  * 
  */
 public class StartMOBAC {
@@ -34,7 +32,7 @@ public class StartMOBAC {
 	public static final String MAIN_CLASS = "mobac.Main";
 
 	public static String[] ARGS;
-	
+
 	/**
 	 * @param args
 	 */
@@ -46,13 +44,15 @@ public class StartMOBAC {
 			Class.forName(MAIN_CLASS).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Unable to start Mobile Atlas Creator: "
-					+ e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Unable to start Mobile Atlas Creator: " + e.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	public static void setLookAndFeel() {
 		try {
+			if (System.getProperty("swing.defaultlaf") != null)
+				return;
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 		}
@@ -73,14 +73,12 @@ public class StartMOBAC {
 		int version = (major * 1000) + minor;
 		// 1.5 -> 1005; 1.6 -> 1006; 1.7 -> 1007
 		if (version < 1006) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"The used Java Runtime Environment does not meet the minimum requirements.\n"
-									+ "Mobile Atlas Creator requires at least Java 6 (1.6) or higher.\n"
-									+ "Please update your Java Runtime before starting Mobile Atlas Creator.\n\n"
-									+ "Detected Java Runtime Version: " + ver,
-							"Java Runtime version problem detected", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,
+					"The used Java Runtime Environment does not meet the minimum requirements.\n"
+							+ "Mobile Atlas Creator requires at least Java 6 (1.6) or higher.\n"
+							+ "Please update your Java Runtime before starting Mobile Atlas Creator.\n\n"
+							+ "Detected Java Runtime Version: " + ver, "Java Runtime version problem detected",
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 	}

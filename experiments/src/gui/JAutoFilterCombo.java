@@ -116,7 +116,7 @@ public class JAutoFilterCombo extends JComboBox {
 		frame.setLayout(new GridLayout(3, 1));
 		final JLabel label = new JLabel("label ");
 		frame.add(label);
-		final JAutoFilterCombo combo = new JAutoFilterCombo(MapSourcesManager.getInstance().getEnabledMapSources());
+		final JAutoFilterCombo combo = new JAutoFilterCombo(MapSourcesManager.getInstance().getEnabledOrderedMapSources());
 		combo.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

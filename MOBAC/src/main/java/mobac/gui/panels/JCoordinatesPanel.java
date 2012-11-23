@@ -21,7 +21,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.NumberFormat;
 import java.text.ParseException;
 
 import javax.swing.JButton;
@@ -41,12 +40,9 @@ import mobac.program.model.MapSelection;
 import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;
 
-
-
 /**
- * Encapsulates all interface components and code for the panel that shows the
- * coordinates of the current selection and allows the user to enter own
- * coordinates.
+ * Encapsulates all interface components and code for the panel that shows the coordinates of the current selection and
+ * allows the user to enter own coordinates.
  */
 public class JCoordinatesPanel extends JCollapsiblePanel {
 
@@ -123,22 +119,14 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 
 	public void setNumberFormat(CoordinateStringFormat csf) {
 		this.csf = csf;
-		NumberFormat numberFormat = csf.getNumberFormat();
-		latMaxTextField.setNumberFormat(numberFormat);
-		latMinTextField.setNumberFormat(numberFormat);
-		lonMaxTextField.setNumberFormat(numberFormat);
-		lonMinTextField.setNumberFormat(numberFormat);
+		latMaxTextField.setNumberFormat(csf.getNumberFormatLatitude());
+		latMinTextField.setNumberFormat(csf.getNumberFormatLatitude());
+		lonMaxTextField.setNumberFormat(csf.getNumberFormatLongitude());
+		lonMinTextField.setNumberFormat(csf.getNumberFormatLongitude());
 	}
 
 	public CoordinateStringFormat getNumberFormat() {
 		return csf;
-	}
-
-	protected void setNumberFormat(NumberFormat numberFormat) {
-		latMaxTextField.setNumberFormat(numberFormat);
-		latMinTextField.setNumberFormat(numberFormat);
-		lonMaxTextField.setNumberFormat(numberFormat);
-		lonMinTextField.setNumberFormat(numberFormat);
 	}
 
 	public void setCoordinates(EastNorthCoordinate max, EastNorthCoordinate min) {
@@ -164,9 +152,8 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 	}
 
 	/**
-	 * Checks if the values for min/max langitude and min/max latitude are
-	 * interchanged (smaller value in the max field and larger value in the min
-	 * field) and swaps them if necessary.
+	 * Checks if the values for min/max langitude and min/max latitude are interchanged (smaller value in the max field
+	 * and larger value in the min field) and swaps them if necessary.
 	 */
 	public void correctMinMax() {
 		try {
@@ -200,13 +187,11 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 	}
 
 	public EastNorthCoordinate getMaxCoordinate() {
-		return new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(), lonMaxTextField
-				.getCoordinateOrNaN());
+		return new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(), lonMaxTextField.getCoordinateOrNaN());
 	}
 
 	public EastNorthCoordinate getMinCoordinate() {
-		return new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(), lonMinTextField
-				.getCoordinateOrNaN());
+		return new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(), lonMinTextField.getCoordinateOrNaN());
 	}
 
 	public void addButtonActionListener(ActionListener l) {
@@ -224,6 +209,7 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			System.out.println(e);
 			JCoordinatesPanel.this.setNumberFormat(csf);
 		}
 

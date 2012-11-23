@@ -21,41 +21,54 @@ import java.text.NumberFormat;
 import mobac.utilities.Utilities;
 import mobac.utilities.geo.CoordinateDm2Format;
 import mobac.utilities.geo.CoordinateDms2Format;
-
+import mobac.utilities.geo.CoordinateTileFormat;
 
 public enum CoordinateStringFormat {
 
-	DEG_ENG("Degree (eng)", Utilities.FORMAT_6_DEC_ENG), // 
-	DEG_LOCAL("Degree (local)", Utilities.FORMAT_6_DEC), // 
+	DEG_ENG("Degree (eng)", Utilities.FORMAT_6_DEC_ENG), //
+	DEG_LOCAL("Degree (local)", Utilities.FORMAT_6_DEC), //
 	DEG_MIN_ENG("Deg Min (eng)", new CoordinateDm2Format(Utilities.DFS_ENG)), //
 	DEG_MIN_LOCAL("Deg Min (local)", new CoordinateDm2Format(Utilities.DFS_LOCAL)), //
 	DEG_MIN_SEC_ENG("Deg Min Sec (eng)", new CoordinateDms2Format(Utilities.DFS_ENG)), //
-	DEG_MIN_SEC_LOCAL("Deg Min Sec (local)", new CoordinateDms2Format(Utilities.DFS_LOCAL));
+	DEG_MIN_SEC_LOCAL("Deg Min Sec (local)", new CoordinateDms2Format(Utilities.DFS_LOCAL)), //
+	TILE_X_Y_Z("Tile (x or y / zoom)", new CoordinateTileFormat(false), new CoordinateTileFormat(true));
 
 	/*
-	 * formatButton.addDropDownItem(new JNumberFormatMenuItem());
-	 * formatButton.addDropDownItem(new
+	 * formatButton.addDropDownItem(new JNumberFormatMenuItem()); formatButton.addDropDownItem(new
 	 * JNumberFormatMenuItem("Deg Min Sec,2 (local)",
 	 */
 	private final String displayName;
-	private NumberFormat numberFormat;
+	private NumberFormat numberFormatLatitude;
+	private NumberFormat numberFormatLongitude;
 
 	private CoordinateStringFormat(String displayName, NumberFormat numberFormat) {
 		this.displayName = displayName;
-		this.numberFormat = numberFormat;
+		this.numberFormatLatitude = numberFormat;
+		this.numberFormatLongitude = numberFormat;
+	}
+
+	private CoordinateStringFormat(String displayName, NumberFormat numberFormatLatitude,
+			NumberFormat numberFormatLongitude) {
+		this.displayName = displayName;
+		this.numberFormatLatitude = numberFormatLatitude;
+		this.numberFormatLongitude = numberFormatLongitude;
 	}
 
 	public String getDisplayName() {
 		return displayName;
 	}
 
-	public NumberFormat getNumberFormat() {
-		return numberFormat;
+	public NumberFormat getNumberFormatLatitude() {
+		return numberFormatLatitude;
+	}
+
+	public NumberFormat getNumberFormatLongitude() {
+		return numberFormatLongitude;
 	}
 
 	@Override
 	public String toString() {
 		return displayName;
 	}
-	
+
 }

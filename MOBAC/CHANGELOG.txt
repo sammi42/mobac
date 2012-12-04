@@ -9,8 +9,8 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.10 (2012-12-??)
- ! Bugfix Local tile [zip] files in quandkey format causes a 
+1.9.10 (2012-12-04)
+ ! Bugfix Local tile [zip] files in quadkey format causes a 
     NullPointerException when creating an atlas (#229)
  + Custom multi-layer map source can now contain <customWmsMapSource> maps  
 

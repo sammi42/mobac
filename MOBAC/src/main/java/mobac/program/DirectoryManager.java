@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import mobac.utilities.Utilities;
 
 /**
- * Provides the five common directories used within Mobile Atlas Creator:
+ * Provides the common directories used within Mobile Atlas Creator:
  * <ul>
  * <li>current directory</li>
  * <li>program directory</li>

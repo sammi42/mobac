@@ -9,6 +9,9 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
+1.9.11 (2013-02-??)
+ ! Bugfix for servers that send case insensitive content-types
+
 1.9.10 (2012-12-04)
  ! Bugfix Local tile [zip] files in quadkey format causes a 
     NullPointerException when creating an atlas (#229)

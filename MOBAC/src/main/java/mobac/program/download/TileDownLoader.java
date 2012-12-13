@@ -376,11 +376,14 @@ public class TileDownLoader {
 
 	protected static void checkContentType(HttpURLConnection conn, byte[] data) throws UnrecoverableDownloadException {
 		String contentType = conn.getContentType();
-		if (contentType != null && !contentType.startsWith("image/")) {
-			if (log.isTraceEnabled() && contentType.startsWith("text/")) {
-				log.trace("Content (" + contentType + "): " + new String(data));
+		if (contentType != null) {
+			contentType = contentType.toLowerCase();
+			if (!contentType.startsWith("image/")) {
+				if (log.isTraceEnabled() && contentType.startsWith("text/")) {
+					log.trace("Content (" + contentType + "): " + new String(data));
+				}
+				throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
 			}
-			throw new UnrecoverableDownloadException("Content type of the loaded image is unknown: " + contentType);
 		}
 	}
 

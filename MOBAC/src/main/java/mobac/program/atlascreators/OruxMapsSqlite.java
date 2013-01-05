@@ -145,11 +145,15 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
 		try {
 			mapDlTileProvider = ctp;
-			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, new OruxMapTileWriterDB());
+			MapTileWriter mtw = new OruxMapTileWriterDB();
+			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, mtw);
 			customTileCount = mapTileBuilder.getCustomTileCount();
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
-		} finally {
+			mtw.finalizeMap();
+		} catch(IOException e){
+			throw new MapCreationException(map, e);
+		}finally {
 			ctp.cleanup();
 		}
 	}
@@ -177,7 +181,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 				long heapAvailable = r.maxMemory() - r.totalMemory() + r.freeMemory();
 
 				tileCounter++;
-				if (heapAvailable < HEAP_MIN || tileCounter > MAX_BATCH_SIZE || tileCounter == customTileCount) {
+				if (heapAvailable < HEAP_MIN || tileCounter > MAX_BATCH_SIZE) {
 					commit();
 				}
 			} catch (SQLException e) {

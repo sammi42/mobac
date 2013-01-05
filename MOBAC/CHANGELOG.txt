@@ -11,7 +11,7 @@
 
 1.9.11 (2013-02-??)
  ! Bugfix for servers that send case insensitive content-types
- ! Bugfix: OruxMaps final commit was missing (patch #30)  
+ ! Bugfix OruxMapsSQlite final commit was missing (patch #30)  
 
 1.9.10 (2012-12-04)
  ! Bugfix Local tile [zip] files in quadkey format causes a 

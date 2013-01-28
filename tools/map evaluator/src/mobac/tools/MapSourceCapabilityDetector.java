@@ -102,7 +102,7 @@ public class MapSourceCapabilityDetector {
 			contentType = contentType.substring(6);
 			if ("png".equals(contentType))
 				contentType = "png";
-			else if ("jpeg".equals(contentType))
+			else if ("jpeg".equals(contentType) || "jpg".equals(contentType))
 				contentType = "jpg";
 			else
 				contentType = "unknown: " + c.getContentType();

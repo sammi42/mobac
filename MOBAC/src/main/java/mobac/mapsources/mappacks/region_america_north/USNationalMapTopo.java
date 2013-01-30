@@ -19,21 +19,16 @@ package mobac.mapsources.mappacks.region_america_north;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
-public class USNationalMapBase extends AbstractHttpMapSource {
+public class USNationalMapTopo extends AbstractHttpMapSource {
 
-	public USNationalMapBase() {
-		super("US National Map Base", 0, 15, TileImageType.JPG, TileUpdate.ETag);
+	public USNationalMapTopo() {
+		super("US National Map Topo", 0, 15, TileImageType.JPG, TileUpdate.IfNoneMatch);
 	}
+
+	private static final String BASE_URL = "http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/";
 
 	public String getTileUrl(int zoom, int x, int y) {
-		return "http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/" + zoom + "/" + y + "/"
-				+ x;
+		return BASE_URL + zoom + "/" + y + "/" + x;
 	}
-
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/6/23/11
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSImageryOnly/MapServer/tile/4/7/3
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/TNM_Vector_Fills_Small/MapServer/tile/4/6/1
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/TNM_Vector_Small/MapServer/tile/4/6/2
-	// http://raster1.nationalmap.gov/ArcGIS/rest/services/TNM_Small_Scale_Shaded_Relief/MapServer/tile/4/7/6
 
 }

@@ -14,26 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/**
+ * 
+ */
 package mobac.mapsources.mappacks.region_america_north;
 
-import mobac.mapsources.AbstractHttpMapSource;
+import java.awt.Color;
+
+import mobac.mapsources.AbstractMultiLayerMapSource;
+import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 
-public class USNationalMapBase extends AbstractHttpMapSource {
+public class USNationalMapImageryV extends AbstractMultiLayerMapSource {
 
-	public USNationalMapBase() {
-		super("US National Map Base", 0, 15, TileImageType.JPG, TileUpdate.ETag);
+	public USNationalMapImageryV() {
+		super("US National Map Satellite+", TileImageType.JPG);
+		mapSources = new MapSource[] { new USNationalMapImagery(), new USNationalMapVS() };
+		initializeValues();
 	}
 
-	public String getTileUrl(int zoom, int x, int y) {
-		return "http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/" + zoom + "/" + y + "/"
-				+ x;
+	@Override
+	public Color getBackgroundColor() {
+		return Color.WHITE;
 	}
-
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/6/23/11
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSImageryOnly/MapServer/tile/4/7/3
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/TNM_Vector_Fills_Small/MapServer/tile/4/6/1
-	// http://basemap.nationalmap.gov/ArcGIS/rest/services/TNM_Vector_Small/MapServer/tile/4/6/2
-	// http://raster1.nationalmap.gov/ArcGIS/rest/services/TNM_Small_Scale_Shaded_Relief/MapServer/tile/4/7/6
-
 }

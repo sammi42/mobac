@@ -25,10 +25,13 @@ import mobac.mapsources.AbstractMultiLayerMapSource;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 
+/**
+ * http://viewer.nationalmap.gov/example/services.html
+ */
 public class USNationalMapImageryV extends AbstractMultiLayerMapSource {
 
 	public USNationalMapImageryV() {
-		super("US National Map Satellite+", TileImageType.JPG);
+		super("USGS National Map Satellite+", TileImageType.JPG);
 		mapSources = new MapSource[] { new USNationalMapImagery(), new USNationalMapVS() };
 		initializeValues();
 	}

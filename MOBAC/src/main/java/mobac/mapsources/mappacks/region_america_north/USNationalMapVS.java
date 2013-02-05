@@ -22,7 +22,7 @@ import mobac.program.model.TileImageType;
 public class USNationalMapVS extends AbstractHttpMapSource {
 
 	public USNationalMapVS() {
-		super("US National Map Vector Layer", 0, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
+		super("USGS National Map Vector Layer", 0, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
 	}
 
 	private static final String BASE_URL = "http://basemap.nationalmap.gov/ArcGIS/rest/services/TNM_Vector_Small/MapServer/tile/";

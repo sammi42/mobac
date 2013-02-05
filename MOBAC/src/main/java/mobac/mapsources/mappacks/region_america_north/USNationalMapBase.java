@@ -19,10 +19,13 @@ package mobac.mapsources.mappacks.region_america_north;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
+/**
+ * http://viewer.nationalmap.gov/example/services.html
+ */
 public class USNationalMapBase extends AbstractHttpMapSource {
 
 	public USNationalMapBase() {
-		super("US National Map Base", 0, 15, TileImageType.JPG, TileUpdate.ETag);
+		super("USGS National Map Base", 0, 15, TileImageType.JPG, TileUpdate.ETag);
 	}
 
 	public String getTileUrl(int zoom, int x, int y) {

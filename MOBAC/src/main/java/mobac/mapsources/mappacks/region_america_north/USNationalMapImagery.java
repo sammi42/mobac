@@ -19,10 +19,13 @@ package mobac.mapsources.mappacks.region_america_north;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
+/**
+ * http://viewer.nationalmap.gov/example/services.html
+ */
 public class USNationalMapImagery extends AbstractHttpMapSource {
 
 	public USNationalMapImagery() {
-		super("US National Map Satellite", 0, 15, TileImageType.JPG, TileUpdate.IfNoneMatch);
+		super("USGS National Map Satellite", 0, 15, TileImageType.JPG, TileUpdate.IfNoneMatch);
 	}
 
 	private static final String BASE_URL = " http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSImageryOnly/MapServer/tile/";

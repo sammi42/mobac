@@ -28,7 +28,7 @@ import mobac.program.model.TileImageType;
 public class USNationalMapVector extends AbstractMultiLayerMapSource {
 
 	public USNationalMapVector() {
-		super("US National Map Vector", TileImageType.PNG);
+		super("USGS National Map Vector", TileImageType.PNG);
 		mapSources = new MapSource[] { new USNationalMapVFS(), new USNationalMapVS() };
 		initializeValues();
 	}

@@ -12,7 +12,7 @@
 1.9.11 (2013-02-??)
  ! Bugfix for servers that send case insensitive content-types
  ! Bugfix OruxMapsSQlite final commit was missing (patch #30)
- + New map sources: US National Map Base/Satellite/Satellite+/Vector/Topo  
+ + New map sources: USGS National Map Base/Satellite/Satellite+/Vector/Topo  
 
 1.9.10 (2012-12-04)
  ! Bugfix Local tile [zip] files in quadkey format causes a 

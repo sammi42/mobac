@@ -25,7 +25,7 @@ import mobac.program.model.TileImageType;
 public class USNationalMapRelief extends AbstractHttpMapSource {
 
 	public USNationalMapRelief() {
-		super("US National Map Relief", 0, 6, TileImageType.JPG, TileUpdate.IfNoneMatch);
+		super("USGS National Map Relief", 0, 6, TileImageType.JPG, TileUpdate.IfNoneMatch);
 	}
 
 	private static final String BASE_URL = "http://raster1.nationalmap.gov/ArcGIS/rest/services/TNM_Small_Scale_Shaded_Relief/MapServer/tile/";

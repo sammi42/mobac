@@ -30,7 +30,7 @@ import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.stream.ArrayOutputStream;
 
 @AtlasCreatorName("Garmin Custom Map (KMZ)")
-@SupportedParameters(names = { Name.format })
+@SupportedParameters(names = { Name.format_jpg })
 public class GarminCustom extends GoogleEarthOverlay {
 
 	/**

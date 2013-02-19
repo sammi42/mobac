@@ -9,7 +9,7 @@
  ~ = Changes   since previous version
  - = Features that has been removed
 
-1.9.11 (2013-02-??)
+1.9.11 (2013-02-19)
  ! Bugfix for servers that send case insensitive content-types
  ! Bugfix OruxMapsSQlite final commit was missing (patch #30)
  + New map sources: USGS National Map Base/Satellite/Satellite+/Vector/Topo

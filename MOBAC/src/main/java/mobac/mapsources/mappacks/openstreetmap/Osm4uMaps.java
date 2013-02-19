@@ -34,7 +34,7 @@ public class Osm4uMaps extends AbstractOsmMapSource {
 
 	@Override
 	public String toString() {
-		return "OpenStreetMap 4umaps.eu (Europe)";
+		return "OpenStreetMap 4UMaps.eu";
 	}
 
 }

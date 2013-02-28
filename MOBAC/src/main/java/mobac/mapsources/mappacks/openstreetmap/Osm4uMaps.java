@@ -18,7 +18,7 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 public class Osm4uMaps extends AbstractOsmMapSource {
 
-	private static String SERVER = "http://176.28.41.237/";
+	private static String SERVER = "http://4umaps.eu/";
 
 	public Osm4uMaps() {
 		super("4uMaps");

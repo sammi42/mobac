@@ -10,7 +10,9 @@
  - = Features that has been removed
 
 1.9.12 (2013-03-??)
- ! Mapsource OpenStreetMap Maps4u.eu updated 
+ ! Mapsource OpenStreetMap Maps4u.eu updated
+ ~ Reduced the number of decimal places of coordinates in GPX files created by 
+    MOBAC to 5 places (#242)  
 
 1.9.11 (2013-02-19)
  ! Bugfix for servers that send case insensitive content-types

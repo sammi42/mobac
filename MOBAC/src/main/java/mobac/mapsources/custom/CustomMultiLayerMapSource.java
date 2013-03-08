@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -52,6 +53,9 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
 			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class) })
 	protected List<CustomMapSource> layers = new ArrayList<CustomMapSource>();
+
+	@XmlList()
+	protected List<Float> layersAlpha = new ArrayList<Float>();
 
 	@XmlElement(defaultValue = "#000000")
 	@XmlJavaTypeAdapter(ColorAdapter.class)
@@ -88,6 +92,14 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 	@Override
 	public Color getBackgroundColor() {
 		return backgroundColor;
+	}
+
+	@Override
+	protected float getLayerAlpha(int layerIndex) {
+		if (layersAlpha.size() <= layerIndex)
+			return 1.0f;
+
+		return layersAlpha.get(layerIndex);
 	}
 
 	// public static void main(String[] args) {

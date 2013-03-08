@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -119,10 +120,12 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 			g2.setColor(getBackgroundColor());
 			g2.fillRect(0, 0, tileSize, tileSize);
 			boolean used = false;
-			for (MapSource layerMapSource : mapSources) {
+			for (int i = 0; i < mapSources.length; i++) {
+				MapSource layerMapSource = mapSources[i];
 				BufferedImage layerImage = layerMapSource.getTileImage(zoom, x, y, loadMethod);
 				if (layerImage != null) {
 					log.debug("Multi layer loading: " + layerMapSource + " " + x + " " + y + " " + zoom);
+					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getLayerAlpha(i)));
 					g2.drawImage(layerImage, 0, 0, null);
 					used = true;
 				}
@@ -134,6 +137,10 @@ public abstract class AbstractMultiLayerMapSource implements MapSource, Iterable
 		} finally {
 			g2.dispose();
 		}
+	}
+
+	protected float getLayerAlpha(int layerIndex) {
+		return 1.0f;
 	}
 
 	public TileImageType getTileImageType() {

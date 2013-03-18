@@ -49,6 +49,8 @@ public class CoordinateDm2Format extends NumberFormat {
 		else
 			degrees = (int) Math.ceil(number);
 		double minutes = Math.abs((number - degrees) * 60);
+		if (number < 0 && degrees == 0)
+			toAppendTo.append("-");
 		toAppendTo.append(degFmt.format(degrees) + " ");
 		toAppendTo.append(minFmt.format(minutes));
 		return toAppendTo;
@@ -70,13 +72,14 @@ public class CoordinateDm2Format extends NumberFormat {
 		if (tokens.length != 2)
 			return null;
 		try {
-			int deg = Integer.parseInt(tokens[0].trim());
+			String degStr = tokens[0].trim();
+			int deg = Integer.parseInt(degStr);
 			double min = minFmtParser.parse(tokens[1].trim()).doubleValue();
 			double coord;
-			if (deg >= 0)
-				coord = deg + min / 60.0;
-			else
+			if (degStr.startsWith("-"))
 				coord = deg - min / 60.0;
+			else
+				coord = deg + min / 60.0;
 			return new Double(coord);
 		} catch (Exception e) {
 			parsePosition.setErrorIndex(0);

@@ -39,6 +39,9 @@ public class CordinateTestCase extends TestCase {
 		assertEquals("-13° 54.00'", cf.format(-13.9d));
 		assertEquals("13° 54.00'", cf.format(13.9d));
 
+		assertEquals("00° 06.00'", cf.format(0.1d));
+		assertEquals("-00° 06.00'", cf.format(-0.1d));
+		
 		assertEquals(-4.25, cf.parse("-04° 15.0'"));
 		assertEquals(+4.25, cf.parse("+04° 15.0'"));
 
@@ -47,6 +50,10 @@ public class CordinateTestCase extends TestCase {
 
 		assertEquals(-13.9, cf.parse("-13° 54'"));
 		assertEquals(+13.9, cf.parse("+13° 54'"));
+
+		assertEquals(-0.1, cf.parse("-00° 06'"));
+		assertEquals(+0.1, cf.parse("+00° 06'"));
+
 	}
 
 	public void testCoordinateDms2Format() throws Exception {
@@ -61,6 +68,9 @@ public class CordinateTestCase extends TestCase {
 		assertEquals("-13° 59' 24.00\"", cf.format(-13.99d));
 		assertEquals("13° 59' 24.00\"", cf.format(13.99d));
 
+		assertEquals("00° 06' 00.00\"", cf.format(0.1d));
+		assertEquals("-00° 06' 00.00\"", cf.format(-0.1d));
+
 		assertEquals(-3.55, cf.parse("-03° 32' 60.00\""));
 		assertEquals(+3.55, cf.parse("+03° 32' 60.00\""));
 
@@ -69,5 +79,8 @@ public class CordinateTestCase extends TestCase {
 
 		assertEquals(-1390, (int) (cf.parse("-13° 54' 24\"").doubleValue() * 100));
 		assertEquals(+1390, (int) (cf.parse("+13° 54' 24\"").doubleValue() * 100));
-	}
+
+		assertEquals(-0.1, cf.parse("-00° 06' 0\""));
+		assertEquals(+0.1, cf.parse("+00° 06' 0\""));
+}
 }

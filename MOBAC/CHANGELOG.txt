@@ -17,7 +17,7 @@
     transparency value, specified as space separated list in <layersAlpha>
     element
  ! Bufix of conversion between different coordinate formats (degree, deg/min, 
-    deg/min/sec) 
+    deg/min/sec)
 
 1.9.11 (2013-02-19)
  ! Bugfix for servers that send case insensitive content-types

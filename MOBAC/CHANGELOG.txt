@@ -15,7 +15,9 @@
     MOBAC to 5 places (#242)
  + Custom multi-layer map sources: Each layer can now have an alpha 
     transparency value, specified as space separated list in <layersAlpha>
-    element    
+    element
+ ! Bufix of conversion between different coordinate formats (degree, deg/min, 
+    deg/min/sec) 
 
 1.9.11 (2013-02-19)
  ! Bugfix for servers that send case insensitive content-types

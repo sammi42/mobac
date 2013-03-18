@@ -16,10 +16,12 @@
  ******************************************************************************/
 package mobac.utilities.geo;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.ParsePosition;
 
 import org.apache.log4j.Logger;
@@ -35,22 +37,31 @@ public class CoordinateDm2Format extends NumberFormat {
 	public CoordinateDm2Format(DecimalFormatSymbols dfs) {
 		degFmt = new DecimalFormat("00°", dfs);
 		minFmt = new DecimalFormat("00.00''", dfs);
+		minFmt.setRoundingMode(RoundingMode.FLOOR);
 		minFmtParser = new DecimalFormat("##.##", dfs);
 	}
 
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-		int degrees = (int) Math.floor(number);
-		number = (number - degrees) * 60;
-		double minutes = number;
+		int degrees;
+		if (number >= 0)
+			degrees = (int) Math.floor(number);
+		else
+			degrees = (int) Math.ceil(number);
+		double minutes = Math.abs((number - degrees) * 60);
 		toAppendTo.append(degFmt.format(degrees) + " ");
-		toAppendTo.append(minFmt.format(minutes) + " ");
+		toAppendTo.append(minFmt.format(minutes));
 		return toAppendTo;
 	}
 
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
 		throw new RuntimeException("Not implemented");
+	}
+
+	@Override
+	public Number parse(String source) throws ParseException {
+		return parse(source, new ParsePosition(0));
 	}
 
 	@Override
@@ -61,7 +72,11 @@ public class CoordinateDm2Format extends NumberFormat {
 		try {
 			int deg = Integer.parseInt(tokens[0].trim());
 			double min = minFmtParser.parse(tokens[1].trim()).doubleValue();
-			double coord = min / 60.0 + deg;
+			double coord;
+			if (deg >= 0)
+				coord = deg + min / 60.0;
+			else
+				coord = deg - min / 60.0;
 			return new Double(coord);
 		} catch (Exception e) {
 			parsePosition.setErrorIndex(0);

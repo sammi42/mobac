@@ -16,10 +16,12 @@
  ******************************************************************************/
 package mobac.utilities.geo;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.ParsePosition;
 
 import org.apache.log4j.Logger;
@@ -27,7 +29,7 @@ import org.apache.log4j.Logger;
 public class CoordinateDms2Format extends NumberFormat {
 
 	protected static Logger log = Logger.getLogger(CoordinateDms2Format.class);
-	
+
 	NumberFormat degFmt;
 	NumberFormat minFmt;
 	NumberFormat secFmt;
@@ -36,17 +38,24 @@ public class CoordinateDms2Format extends NumberFormat {
 	public CoordinateDms2Format(DecimalFormatSymbols dfs) {
 		degFmt = new DecimalFormat("00°", dfs);
 		minFmt = new DecimalFormat("00''", dfs);
+		minFmt.setRoundingMode(RoundingMode.FLOOR);
 		secFmt = new DecimalFormat("00.00\"", dfs);
+		secFmt.setRoundingMode(RoundingMode.FLOOR);
 		secFmtParser = new DecimalFormat("##.##", dfs);
 	}
 
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-		int degrees = (int) Math.floor(number);
-		number = (number - degrees) * 60;
-		int minutes = (int) Math.floor(number);
-		number = (number - minutes) * 60;
-		double seconds = number;
+		int degrees;
+		int minutes;
+		double seconds;
+		if (number >= 0)
+			degrees = (int) Math.floor(number);
+		else
+			degrees = (int) Math.ceil(number);
+		number = Math.abs((number - degrees) * 60);
+		minutes = (int) Math.floor(number);
+		seconds = (number - minutes) * 60;
 		toAppendTo.append(degFmt.format(degrees) + " ");
 		toAppendTo.append(minFmt.format(minutes) + " ");
 		toAppendTo.append(secFmt.format(seconds));
@@ -59,6 +68,11 @@ public class CoordinateDms2Format extends NumberFormat {
 	}
 
 	@Override
+	public Number parse(String source) throws ParseException {
+		return parse(source, new ParsePosition(0));
+	}
+
+	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
 		String[] tokens = source.trim().split("[°\\'\\\"]");
 		if (tokens.length != 3)
@@ -67,7 +81,11 @@ public class CoordinateDms2Format extends NumberFormat {
 			int deg = Integer.parseInt(tokens[0].trim());
 			int min = Integer.parseInt(tokens[1].trim());
 			double sec = secFmtParser.parse(tokens[2].trim()).doubleValue();
-			double coord = sec / 3600 + min / 60.0 + deg;
+			double coord;
+			if (deg >= 0)
+				coord = deg + sec / 3600 + min / 60.0;
+			else
+				coord = deg - sec / 3600 - min / 60.0;
 			return new Double(coord);
 		} catch (Exception e) {
 			parsePosition.setErrorIndex(0);

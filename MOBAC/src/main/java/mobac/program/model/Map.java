@@ -83,6 +83,8 @@ public class Map implements MapInterface, ToolTipProvider, CapabilityDeletable, 
 	}
 
 	protected void calculateRuntimeValues() {
+		if (mapSource == null)
+			throw new RuntimeException("The map source of map " + name + " is unknown to MOBAC");
 		if (parameters == null) {
 			int tileSize = mapSource.getMapSpace().getTileSize();
 			tileDimension = new Dimension(tileSize, tileSize);
